@@ -1,6 +1,8 @@
 'use strict';
 
 const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
 const { setupButtonInteractions, toggleOptionsModal } = require('./main');
 
 function createElement() {
@@ -106,9 +108,23 @@ function testSetupButtonInteractions() {
   assert.strictEqual(doc.modal.getAttribute('aria-hidden'), 'true');
 }
 
+function testStylesheetHasDecorations() {
+  const cssPath = path.join(__dirname, '../css/styles.css');
+  const cssContent = fs.readFileSync(cssPath, 'utf8');
+
+  assert.ok(cssContent.includes('--muted'), 'should define muted palette color');
+  assert.ok(
+    cssContent.includes('.zombie-hair.blue') && cssContent.includes('.zombie-hair.green'),
+    'should include zombie hair variants'
+  );
+  assert.ok(cssContent.includes('@keyframes climb'), 'should include climb animation');
+  assert.ok(cssContent.includes('.btn.zombie-held'), 'should keep zombie held button effect');
+}
+
 function run() {
   testToggleOptionsModal();
   testSetupButtonInteractions();
+  testStylesheetHasDecorations();
   console.log('All tests passed');
 }
 

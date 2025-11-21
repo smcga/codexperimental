@@ -1,9 +1,12 @@
 :root {
   --mud: #3c2d1e;
   --mud-deep: #2a1d12;
+  --mud-surface: #4b3827;
+  --mud-highlight: #5c4634;
   --slime: #7ac943;
   --slime-bright: #8ff154;
   --bone: #f2e9e4;
+  --muted: #cfc3bb;
   --shadow: rgba(0, 0, 0, 0.4);
   --overlay: rgba(0, 0, 0, 0.7);
 }
@@ -16,16 +19,46 @@ body {
   margin: 0;
   min-height: 100vh;
   font-family: "Inter", system-ui, -apple-system, sans-serif;
-  color: var(--bone);
-  background: radial-gradient(circle at 20% 20%, #4f3f2f 0, transparent 25%),
-    radial-gradient(circle at 80% 0%, #594330 0, transparent 30%),
-    linear-gradient(180deg, #4b3827 0%, #2b1f15 60%, #1c140e 100%);
+  color: var(--muted);
+  background-color: var(--mud-deep);
+  background-image:
+    repeating-linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.04) 0 12px,
+      transparent 12px 24px
+    ),
+    radial-gradient(circle at 18% 24%, rgba(92, 70, 52, 0.9) 0 18%, transparent 38%),
+    radial-gradient(circle at 78% 6%, rgba(75, 56, 39, 0.65) 0 22%, transparent 34%),
+    linear-gradient(180deg, var(--mud-surface) 0%, var(--mud-deep) 55%, #1c140e 100%);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--slime);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+p,
+label,
+small,
+span,
+li {
+  color: var(--muted);
 }
 
 .texture-mud {
   position: relative;
   background-color: var(--mud-deep);
-  background-image: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.06) 0 12%, transparent 18%),
+  background-image:
+    repeating-linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.04) 0 10px,
+      transparent 10px 18px
+    ),
+    radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.06) 0 12%, transparent 18%),
     radial-gradient(circle at 80% 0%, rgba(0, 0, 0, 0.18) 0 14%, transparent 20%),
     radial-gradient(circle at 60% 70%, rgba(255, 255, 255, 0.05) 0 10%, transparent 18%),
     radial-gradient(circle at 30% 90%, rgba(0, 0, 0, 0.22) 0 12%, transparent 20%),
@@ -140,13 +173,71 @@ body {
   transform: rotate(6deg);
 }
 
+.zombie-variant {
+  position: relative;
+  width: 54px;
+  height: 54px;
+  border-radius: 18px 18px 10px 10px;
+  background: radial-gradient(circle at 50% 16%, #e8d6cd 0 22%, transparent 32%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(0, 0, 0, 0.18)),
+    linear-gradient(145deg, #3d2c1e, #2c1f15);
+  box-shadow: inset 0 -6px 0 rgba(0, 0, 0, 0.25), 0 8px 16px rgba(0, 0, 0, 0.4);
+  display: inline-flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.zombie-variant::after {
+  content: "";
+  position: absolute;
+  inset: 8px 10px auto 10px;
+  height: 32px;
+  border-radius: 14px 14px 8px 8px;
+  background: linear-gradient(180deg, #d6c5bc 0%, #b39c91 100%);
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.2);
+}
+
+.zombie-hair {
+  position: relative;
+  z-index: 1;
+  width: 42px;
+  height: 22px;
+  border-radius: 12px 12px 8px 8px;
+  margin-bottom: 6px;
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.2), 0 6px 10px rgba(0, 0, 0, 0.35);
+}
+
+.zombie-hair.blue {
+  background: linear-gradient(145deg, #4fc3ff, #1c7bb8);
+  animation: climb 6s ease-in-out infinite;
+}
+
+.zombie-hair.green {
+  background: linear-gradient(145deg, #9af062, #3b8f2a);
+  animation: shuffle 5.5s ease-in-out infinite;
+}
+
 @keyframes shuffle {
   0%,
   100% {
-    transform: translateY(0) rotate(0deg);
+    transform: translateY(0) translateX(0) rotate(0deg);
   }
   50% {
-    transform: translateY(-6px) rotate(3deg);
+    transform: translateY(-6px) translateX(4px) rotate(3deg);
+  }
+}
+
+@keyframes climb {
+  0%,
+  100% {
+    transform: translateY(4px) translateX(-2px) rotate(-4deg);
+  }
+  45% {
+    transform: translateY(-6px) translateX(3px) rotate(2deg);
+  }
+  70% {
+    transform: translateY(-2px) translateX(-1px) rotate(0deg);
   }
 }
 
@@ -173,23 +264,53 @@ body {
   text-transform: uppercase;
   color: #0d0b08;
   cursor: pointer;
-  transition: transform 150ms ease, box-shadow 200ms ease, background-color 150ms ease;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
+  transition: transform 180ms ease, box-shadow 200ms ease, background-color 150ms ease,
+    filter 180ms ease;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.32), inset 0 -2px 0 rgba(0, 0, 0, 0.25);
   position: relative;
   overflow: hidden;
+  background-size: 160% 160%;
+  background-position: 30% 30%;
+  transform: translateZ(0);
 }
 
 .btn.primary {
-  background: linear-gradient(145deg, var(--slime), var(--slime-bright));
+  background-image: linear-gradient(145deg, var(--slime), var(--slime-bright)),
+    radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.22) 0 18%, transparent 38%),
+    repeating-linear-gradient(135deg, rgba(0, 0, 0, 0.08) 0 8px, transparent 8px 16px);
 }
 
 .btn.secondary {
-  background: linear-gradient(145deg, #d2c7c0, #f2e9e4);
+  background-image: linear-gradient(145deg, #d2c7c0, #f2e9e4),
+    radial-gradient(circle at 82% 24%, rgba(0, 0, 0, 0.12) 0 22%, transparent 40%),
+    repeating-linear-gradient(135deg, rgba(0, 0, 0, 0.06) 0 10px, transparent 10px 18px);
+}
+
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(0, 0, 0, 0.2));
+  mix-blend-mode: overlay;
+  opacity: 0.45;
+  pointer-events: none;
+  transition: opacity 160ms ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px) rotate(-1deg);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.34), inset 0 -2px 0 rgba(0, 0, 0, 0.22);
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.24));
+}
+
+.btn:hover::before {
+  opacity: 0.6;
 }
 
 .btn:active {
-  transform: translateY(2px) scale(0.98);
+  transform: translateY(2px) rotate(1deg) scale(0.985);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.18));
 }
 
 .btn:focus-visible {
@@ -198,15 +319,21 @@ body {
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1), 0 12px 24px rgba(0, 0, 0, 0.35);
 }
 
+.btn.zombie-held {
+  transform: rotate(-1deg);
+  box-shadow: 0 12px 22px rgba(0, 0, 0, 0.34), inset 0 -4px 0 rgba(0, 0, 0, 0.24);
+}
+
 .zombie-held::before,
 .zombie-held::after {
   content: "";
   position: absolute;
   width: 18px;
   height: 46px;
-  background: linear-gradient(180deg, #6cad3a 0%, #3f6f1f 80%);
+  background: linear-gradient(180deg, #6cad3a 0%, #3f6f1f 80%),
+    repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0 6px, transparent 6px 12px);
   border-radius: 10px;
-  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.2), 0 8px 12px rgba(0, 0, 0, 0.35);
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.2), 0 10px 16px rgba(0, 0, 0, 0.38);
   top: 50%;
   transform: translateY(-50%);
   z-index: 0;
@@ -228,6 +355,7 @@ body {
   display: inline-flex;
   gap: 0.4rem;
   align-items: center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
 }
 
 .zombie-held .btn-label::before,
