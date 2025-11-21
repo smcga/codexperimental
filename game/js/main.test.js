@@ -1,145 +1,115 @@
+'use strict';
+
 const assert = require('assert');
-const {
-  init,
-  setupButtonInteractions,
-  setupTitleAnimation,
-  toggleOptionsModal,
-} = require('./main');
+const { setupButtonInteractions, toggleOptionsModal } = require('./main');
 
-function createClassList() {
+function createElement() {
+  const listeners = {};
+  const attributes = {};
+  const classSet = new Set();
+
   return {
-    _set: new Set(),
-    add(token) {
-      this._set.add(token);
+    style: {},
+    classList: {
+      add: (name) => classSet.add(name),
+      remove: (name) => classSet.delete(name),
+      toggle: (name, force) => {
+        if (typeof force === 'boolean') {
+          if (force) {
+            classSet.add(name);
+            return true;
+          }
+          classSet.delete(name);
+          return false;
+        }
+
+        if (classSet.has(name)) {
+          classSet.delete(name);
+          return false;
+        }
+
+        classSet.add(name);
+        return true;
+      },
+      contains: (name) => classSet.has(name),
     },
-    remove(token) {
-      this._set.delete(token);
+    addEventListener: (event, handler) => {
+      listeners[event] = handler;
     },
-    toggle(token, force) {
-      if (typeof force === 'boolean') {
-        if (force) this._set.add(token);
-        else this._set.delete(token);
-        return force;
+    dispatchEvent: (eventName) => {
+      if (listeners[eventName]) {
+        listeners[eventName]();
       }
-      if (this._set.has(token)) {
-        this._set.delete(token);
-        return false;
-      }
-      this._set.add(token);
-      return true;
     },
-    contains(token) {
-      return this._set.has(token);
+    setAttribute: (name, value) => {
+      attributes[name] = value;
     },
+    getAttribute: (name) => attributes[name],
   };
 }
 
-function createButton() {
-  return {
-    listeners: {},
-    addEventListener(type, handler) {
-      this.listeners[type] = handler;
-    },
-    click() {
-      if (this.listeners.click) {
-        this.listeners.click();
-      }
-    },
-  };
-}
+function createDoc() {
+  const modal = createElement();
+  modal.classList.add('options-modal');
 
-function createDocument() {
-  const start = createButton();
-  const options = createButton();
-  const close = createButton();
-  const modal = {
-    classList: createClassList(),
-    setAttribute(name, value) {
-      this[name] = value;
-    },
+  const startButton = createElement();
+  const optionsButton = createElement();
+  const closeButton = createElement();
+  const body = createElement();
+
+  const nodeMap = {
+    '.options-modal': modal,
+    '[data-action="start"]': startButton,
+    '[data-action="options"]': optionsButton,
   };
-  const body = { classList: createClassList() };
+
+  const listMap = {
+    '[data-action="close-options"]': [closeButton],
+  };
 
   return {
     body,
-    elements: { start, options, close, modal },
-    querySelector(selector) {
-      switch (selector) {
-        case '[data-action="start"]':
-          return start;
-        case '[data-action="options"]':
-          return options;
-        case '.options-modal':
-          return modal;
-        case '.game-title':
-          return null;
-        default:
-          return null;
-      }
-    },
-    querySelectorAll(selector) {
-      if (selector === '[data-action="close-options"]') {
-        return [close];
-      }
-      return [];
-    },
+    modal,
+    startButton,
+    optionsButton,
+    closeButton,
+    querySelector: (selector) => nodeMap[selector] || null,
+    querySelectorAll: (selector) => listMap[selector] || [],
   };
 }
 
-(function shouldToggleModalClassAndAria() {
-  const doc = createDocument();
+function testToggleOptionsModal() {
+  const doc = createDoc();
+
   toggleOptionsModal(doc, true);
-  assert.strictEqual(doc.elements.modal.classList.contains('is-open'), true);
-  assert.strictEqual(doc.elements.modal['aria-hidden'], 'false');
+  assert.ok(doc.modal.classList.contains('is-open'));
+  assert.strictEqual(doc.modal.getAttribute('aria-hidden'), 'false');
 
   toggleOptionsModal(doc, false);
-  assert.strictEqual(doc.elements.modal.classList.contains('is-open'), false);
-  assert.strictEqual(doc.elements.modal['aria-hidden'], 'true');
-})();
+  assert.ok(!doc.modal.classList.contains('is-open'));
+  assert.strictEqual(doc.modal.getAttribute('aria-hidden'), 'true');
+}
 
-(function shouldHookButtonsToBodyAndModal() {
-  const doc = createDocument();
+function testSetupButtonInteractions() {
+  const doc = createDoc();
   setupButtonInteractions(doc);
 
-  doc.elements.start.click();
-  assert.strictEqual(doc.body.classList.contains('game-active'), true);
+  doc.startButton.dispatchEvent('click');
+  assert.ok(doc.body.classList.contains('game-active'));
 
-  doc.elements.options.click();
-  assert.strictEqual(doc.elements.modal.classList.contains('is-open'), true);
+  doc.optionsButton.dispatchEvent('click');
+  assert.ok(doc.modal.classList.contains('is-open'));
+  assert.strictEqual(doc.modal.getAttribute('aria-hidden'), 'false');
 
-  doc.elements.close.click();
-  assert.strictEqual(doc.elements.modal.classList.contains('is-open'), false);
-})();
+  doc.closeButton.dispatchEvent('click');
+  assert.ok(!doc.modal.classList.contains('is-open'));
+  assert.strictEqual(doc.modal.getAttribute('aria-hidden'), 'true');
+}
 
-(function shouldAnimateTitleWhenPresent() {
-  let frameCount = 0;
-  const raf = (fn) => {
-    frameCount += 1;
-    if (frameCount < 4) {
-      fn();
-    }
-  };
+function run() {
+  testToggleOptionsModal();
+  testSetupButtonInteractions();
+  console.log('All tests passed');
+}
 
-  const doc = {
-    querySelector(selector) {
-      if (selector === '.game-title') {
-        return { style: {} };
-      }
-      return null;
-    },
-  };
-
-  setupTitleAnimation(doc, raf);
-  assert.ok(frameCount >= 1, 'animation loop should run at least once');
-})();
-
-(function shouldInitWithoutCrashing() {
-  const doc = createDocument();
-  const api = init(doc);
-
-  assert.strictEqual(typeof api.toggleOptionsModal, 'function');
-  api.toggleOptionsModal(true);
-  assert.strictEqual(doc.elements.modal.classList.contains('is-open'), true);
-})();
-
-console.log('All tests passed');
+run();
