@@ -1,0 +1,42 @@
+{
+  "id": "expert-gauntlet",
+  "name": "Portal Gauntlet",
+  "tier": "Expert",
+  "timeLimit": 60,
+  "requiredSaves": 18,
+  "roles": { "builder": 5, "digger": 4, "floater": 2, "bomber": 2, "blocker": 1 },
+  "spawn": { "rate": 1, "max": 20, "offset": 0, "spawnPoint": { "x": 0, "y": 0 } },
+  "terrain": {
+    "legend": { "#": "steel", "x": "soft", ".": "empty" },
+    "bitmap": [
+      "##########",
+      "#..x..x..#",
+      "#..x..x..#",
+      "#..x..x..#",
+      "##########"
+    ]
+  },
+  "portals": [
+    {
+      "id": "E",
+      "entry": { "x": 1, "y": 1 },
+      "exit": { "x": 8, "y": 3 },
+      "cooldown": 2,
+      "maxUses": 6,
+      "rate": 2
+    },
+    {
+      "id": "F",
+      "entry": { "x": 8, "y": 1 },
+      "exit": { "x": 1, "y": 3 },
+      "cooldown": 2,
+      "maxUses": 6,
+      "rate": 2,
+      "offset": 1
+    }
+  ],
+  "hazards": [
+    { "type": "blades", "area": { "x1": 4, "y1": 2, "x2": 5, "y2": 2 } },
+    { "type": "acid", "area": { "x1": 2, "y1": 4, "x2": 7, "y2": 4 } }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "id": "advanced-foundry",
+  "name": "Foundry Run",
+  "tier": "Advanced",
+  "timeLimit": 75,
+  "requiredSaves": 14,
+  "roles": { "builder": 4, "digger": 3, "floater": 2, "bomber": 1 },
+  "spawn": { "rate": 2, "max": 18, "offset": 1, "spawnPoint": { "x": 0, "y": 1 } },
+  "terrain": {
+    "legend": { "#": "steel", "x": "soft", ".": "empty" },
+    "bitmap": [
+      "###....###",
+      "#..xxxx..#",
+      "#..#..#..#",
+      "#..xxxx..#",
+      "##########"
+    ]
+  },
+  "portals": [
+    {
+      "id": "D",
+      "entry": { "x": 2, "y": 3 },
+      "exit": { "x": 8, "y": 0 },
+      "cooldown": 3,
+      "maxUses": 5,
+      "rate": 2
+    }
+  ],
+  "hazards": [
+    { "type": "pistons", "area": { "x1": 3, "y1": 4, "x2": 6, "y2": 4 } }
+  ]
+}
