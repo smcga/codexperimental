@@ -1,0 +1,32 @@
+{
+  "id": "training-ground",
+  "name": "Training Ground",
+  "tier": "Training",
+  "timeLimit": 120,
+  "requiredSaves": 6,
+  "roles": { "builder": 2, "digger": 1 },
+  "spawn": { "rate": 3, "max": 10, "offset": 1, "spawnPoint": { "x": 1, "y": 0 } },
+  "terrain": {
+    "legend": { "#": "steel", "x": "soft", ".": "empty" },
+    "bitmap": [
+      "#####.....",
+      "#...#.....",
+      "#...#..x..",
+      "#...#..x..",
+      "##########"
+    ]
+  },
+  "portals": [
+    {
+      "id": "A",
+      "entry": { "x": 1, "y": 3 },
+      "exit": { "x": 8, "y": 1 },
+      "cooldown": 6,
+      "maxUses": 3,
+      "rate": 5
+    }
+  ],
+  "hazards": [
+    { "type": "fire", "area": { "x1": 4, "y1": 4, "x2": 8, "y2": 4 } }
+  ]
+}
