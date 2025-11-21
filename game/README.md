@@ -2,6 +2,7 @@
 
 ## Current Scope
 - Title screen shell with start and options interactions.
+- Core zombie simulation covering walking, falling, hazards, and portal transfers.
 
 ## Next Steps
 - Build toolbar layer for quick actions.
