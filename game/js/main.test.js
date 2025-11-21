@@ -121,10 +121,33 @@ function testStylesheetHasDecorations() {
   assert.ok(cssContent.includes('.btn.zombie-held'), 'should keep zombie held button effect');
 }
 
+function testAssetPlaceholdersExist() {
+  const imageReadmePath = path.join(__dirname, '../assets/img/README.md');
+  const sfxReadmePath = path.join(__dirname, '../assets/sfx/README.md');
+
+  assert.ok(fs.existsSync(imageReadmePath), 'image assets README should exist');
+  assert.ok(fs.existsSync(sfxReadmePath), 'sound effects README should exist');
+
+  const imageReadmeContent = fs.readFileSync(imageReadmePath, 'utf8');
+  const sfxReadmeContent = fs.readFileSync(sfxReadmePath, 'utf8');
+
+  assert.ok(
+    imageReadmeContent.toLowerCase().includes('sprites') &&
+      imageReadmeContent.toLowerCase().includes('terrain'),
+    'image README should describe sprite and terrain assets'
+  );
+  assert.ok(
+    sfxReadmeContent.toLowerCase().includes('portal') &&
+      sfxReadmeContent.toLowerCase().includes('sound'),
+    'sound README should describe portal and audio assets'
+  );
+}
+
 function run() {
   testToggleOptionsModal();
   testSetupButtonInteractions();
   testStylesheetHasDecorations();
+  testAssetPlaceholdersExist();
   console.log('All tests passed');
 }
 
