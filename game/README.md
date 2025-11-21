@@ -2,7 +2,7 @@
 
 ## Current Scope
 - Title screen shell with start and options interactions.
-- Core zombie simulation covering walking, falling, hazards, and portal transfers.
+- Core zombie simulation covering walking, falling, hazards, portal transfers, and role-driven behaviour (blockers, diggers, bashers, miners, builders, climbers, floaters, and bombers).
 
 ## Next Steps
 - Build toolbar layer for quick actions.
