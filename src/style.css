@@ -73,6 +73,44 @@ body,
   display: none;
 }
 
+#mobile-controls {
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  display: none;
+  flex-direction: column;
+  gap: 0.5rem;
+  z-index: 6;
+}
+
+#mobile-controls button {
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.45);
+  color: #e8f7ff;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.35;
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+}
+
+#mobile-controls button:focus-visible,
+#mobile-controls button:active {
+  opacity: 0.9;
+  outline: 1px solid rgba(142, 249, 255, 0.6);
+  outline-offset: 2px;
+}
+
+@media (pointer: coarse) {
+  #mobile-controls {
+    display: flex;
+  }
+}
+
 .debug-title {
   font-size: 1rem;
   letter-spacing: 0.08em;
