@@ -1,3 +1,5 @@
+import { validateTimelineConfig } from "./validateConfig";
+
 export type TransitionType = "fade" | "wipe";
 
 export type RawAudioConfig = {
@@ -48,8 +50,40 @@ export type RawTextCue = {
   };
 };
 
+export type RawIntroScriptEventType = "prompt" | "type" | "enter" | "output" | "ascii" | "clear";
+
+export type RawIntroScriptEvent = {
+  t: number;
+  type: RawIntroScriptEventType;
+  text?: string;
+  cps?: number;
+};
+
+export type RawIntroTheme = {
+  bg?: string;
+  fg?: string;
+  accent?: string;
+  dim?: string;
+  fontFamily?: string;
+  fontSize?: number;
+  lineHeight?: number;
+  padding?: number;
+  window?: {
+    title?: string;
+    chrome?: boolean;
+  };
+};
+
+export type RawIntroConfig = {
+  mode: "terminal";
+  end: number;
+  theme?: RawIntroTheme;
+  script: RawIntroScriptEvent[];
+};
+
 export type RawTimelineConfig = {
   audio: RawAudioConfig;
+  intro?: RawIntroConfig;
   sections: RawSectionConfig[];
   textCues?: RawTextCue[];
 };
@@ -94,11 +128,41 @@ export type TextCue = {
   };
 };
 
+export type IntroTheme = {
+  bg: string;
+  fg: string;
+  accent: string;
+  dim: string;
+  fontFamily: string;
+  fontSize: number;
+  lineHeight: number;
+  padding: number;
+  window: {
+    title: string;
+    chrome: boolean;
+  };
+};
+
+export type IntroScriptEvent = {
+  t: number;
+  type: RawIntroScriptEventType;
+  text?: string;
+  cps?: number;
+};
+
+export type IntroConfig = {
+  mode: "terminal";
+  end: number;
+  theme: IntroTheme;
+  script: IntroScriptEvent[];
+};
+
 export type TimelineConfig = {
   audio: {
     src: string;
     offset: number;
   };
+  intro: IntroConfig;
   sections: SectionConfig[];
   textCues: TextCue[];
 };
@@ -115,6 +179,20 @@ const DEFAULT_TEXT_ALIGN: "left" | "center" | "right" = "center";
 const DEFAULT_TEXT_X = 0.5;
 const DEFAULT_TEXT_Y = 0.7;
 const DEFAULT_CUE_DURATION = 3.0;
+const DEFAULT_INTRO_THEME: IntroTheme = {
+  bg: "#0b0f14",
+  fg: "#b7c7d6",
+  accent: "#7ee787",
+  dim: "#6b7785",
+  fontFamily: "monospace",
+  fontSize: 16,
+  lineHeight: 20,
+  padding: 24,
+  window: {
+    title: "demo@machine:~",
+    chrome: true
+  }
+};
 
 function assertNumber(value: unknown, label: string): number {
   if (typeof value !== "number" || Number.isNaN(value)) {
@@ -193,6 +271,71 @@ function normalizeTextSpans(cue: RawTextCue): TextSpan[] {
     ];
   }
   throw new Error(`textCue ${cue.id} must include text or spans`);
+}
+
+function normalizeIntroConfig(raw: RawTimelineConfig["intro"]): IntroConfig {
+  if (!raw || typeof raw !== "object") {
+    throw new Error("intro must be an object");
+  }
+  if (raw.mode !== "terminal") {
+    throw new Error('intro.mode must be "terminal"');
+  }
+  const end = assertNumber(raw.end, "intro.end");
+  const theme = raw.theme ?? {};
+  const introTheme: IntroTheme = {
+    bg: theme.bg ?? DEFAULT_INTRO_THEME.bg,
+    fg: theme.fg ?? DEFAULT_INTRO_THEME.fg,
+    accent: theme.accent ?? DEFAULT_INTRO_THEME.accent,
+    dim: theme.dim ?? DEFAULT_INTRO_THEME.dim,
+    fontFamily: theme.fontFamily ?? DEFAULT_INTRO_THEME.fontFamily,
+    fontSize: theme.fontSize ?? DEFAULT_INTRO_THEME.fontSize,
+    lineHeight: theme.lineHeight ?? DEFAULT_INTRO_THEME.lineHeight,
+    padding: theme.padding ?? DEFAULT_INTRO_THEME.padding,
+    window: {
+      title: theme.window?.title ?? DEFAULT_INTRO_THEME.window.title,
+      chrome: theme.window?.chrome ?? DEFAULT_INTRO_THEME.window.chrome
+    }
+  };
+  if (!Array.isArray(raw.script)) {
+    throw new Error("intro.script must be an array");
+  }
+  const script = raw.script.map((event, index) => {
+    if (!event || typeof event !== "object") {
+      throw new Error(`intro.script[${index}] must be an object`);
+    }
+    const type = event.type;
+    if (
+      type !== "prompt" &&
+      type !== "type" &&
+      type !== "enter" &&
+      type !== "output" &&
+      type !== "ascii" &&
+      type !== "clear"
+    ) {
+      throw new Error(`intro.script[${index}].type is invalid`);
+    }
+    const text = event.text;
+    if ((type === "prompt" || type === "type" || type === "output" || type === "ascii") && !text) {
+      throw new Error(`intro.script[${index}].text must be a string`);
+    }
+    const cps = event.cps;
+    if (cps !== undefined && (typeof cps !== "number" || cps <= 0)) {
+      throw new Error(`intro.script[${index}].cps must be a positive number`);
+    }
+    return {
+      t: assertNumber(event.t, `intro.script[${index}].t`),
+      type,
+      text,
+      cps
+    };
+  });
+
+  return {
+    mode: "terminal",
+    end,
+    theme: introTheme,
+    script
+  };
 }
 
 export function normalizeTimelineConfig(raw: RawTimelineConfig): TimelineConfig {
@@ -283,6 +426,7 @@ export function normalizeTimelineConfig(raw: RawTimelineConfig): TimelineConfig 
       src: audioSrc,
       offset: audioOffset
     },
+    intro: normalizeIntroConfig(raw.intro),
     sections,
     textCues
   };
@@ -294,5 +438,7 @@ export async function loadConfig(path = "/timeline.json"): Promise<TimelineConfi
     throw new Error(`Failed to load timeline config (${response.status})`);
   }
   const raw = (await response.json()) as RawTimelineConfig;
-  return normalizeTimelineConfig(raw);
+  const config = normalizeTimelineConfig(raw);
+  validateTimelineConfig(config);
+  return config;
 }

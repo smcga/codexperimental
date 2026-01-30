@@ -1,27 +1,37 @@
-import { TimelineConfig, SectionConfig, TextCue } from "../config/loadConfig";
+import { TimelineConfig, SectionConfig, TextCue, IntroConfig } from "../config/loadConfig";
 import { clamp } from "../util/math";
 
-export type TimelineState = {
-  section: SectionConfig;
-  transition?: {
-    from: SectionConfig;
-    to: SectionConfig;
-    progress: number;
-    type: "fade" | "wipe";
-  };
-  activeTextCues: TextCue[];
-};
+export type TimelineState =
+  | {
+      mode: "intro";
+      modeTime: number;
+      intro: IntroConfig;
+    }
+  | {
+      mode: "sections";
+      modeTime: number;
+      section: SectionConfig;
+      transition?: {
+        from: SectionConfig;
+        to: SectionConfig;
+        progress: number;
+        type: "fade" | "wipe";
+      };
+      activeTextCues: TextCue[];
+    };
 
 export class Timeline {
   private sections: SectionConfig[];
   private textCues: TextCue[];
   private audioOffset: number;
+  private intro: IntroConfig;
   private duration = 0;
 
   constructor(private config: TimelineConfig) {
     this.sections = [...config.sections];
     this.textCues = config.textCues;
     this.audioOffset = config.audio.offset;
+    this.intro = config.intro;
   }
 
   setAudioDuration(duration: number): void {
@@ -38,6 +48,14 @@ export class Timeline {
   }
 
   getState(time: number): TimelineState {
+    if (time < this.intro.end) {
+      return {
+        mode: "intro",
+        modeTime: time,
+        intro: this.intro
+      };
+    }
+    const modeTime = time - this.intro.end;
     const sectionIndex = this.findSectionIndex(time);
     const section = this.sections[sectionIndex];
     const prevSection = sectionIndex > 0 ? this.sections[sectionIndex - 1] : null;
@@ -45,6 +63,8 @@ export class Timeline {
     const activeTextCues = this.textCues.filter((cue) => time >= cue.start && time <= cue.end);
 
     return {
+      mode: "sections",
+      modeTime,
       section,
       transition,
       activeTextCues

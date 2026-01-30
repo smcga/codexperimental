@@ -3,653 +3,916 @@
     "src": "/song.mp3",
     "offset": 0
   },
+  "intro": {
+    "mode": "terminal",
+    "end": 54.15,
+    "theme": {
+      "bg": "#0b0f14",
+      "fg": "#b7c7d6",
+      "accent": "#7ee787",
+      "dim": "#6b7785",
+      "fontFamily": "monospace",
+      "fontSize": 16,
+      "lineHeight": 20,
+      "padding": 24,
+      "window": {
+        "title": "demo@machine:~",
+        "chrome": true
+      }
+    },
+    "script": [
+      {
+        "t": 0.4,
+        "type": "prompt",
+        "text": "demo@machine:~$ "
+      },
+      {
+        "t": 0.55,
+        "type": "type",
+        "text": "npm run build"
+      },
+      {
+        "t": 1.6,
+        "type": "enter"
+      },
+      {
+        "t": 1.75,
+        "type": "output",
+        "text": "> building...\n> optimising...\n> done.\n"
+      },
+      {
+        "t": 5,
+        "type": "prompt",
+        "text": "demo@machine:~$ "
+      },
+      {
+        "t": 5.1,
+        "type": "type",
+        "text": "cat prophecy.txt"
+      },
+      {
+        "t": 5.9,
+        "type": "enter"
+      },
+      {
+        "t": 6.1,
+        "type": "output",
+        "text": "Four years ago, in the year 2022...\n...artificial intelligence learned to write code...\n...it could only achieve modest outcomes...\n...but now...\n...AI...\n...can do THIS...\n"
+      },
+      {
+        "t": 16,
+        "type": "output",
+        "text": "\n"
+      },
+      {
+        "t": 18,
+        "type": "ascii",
+        "text": "  _____  ______ __  __  ____\n |  __ \\|  ____|  \\/  |/ __ \\\n | |  | | |__  | \\  / | |  | |\n | |  | |  __| | |\\/| | |  | |\n | |__| | |____| |  | | |__| |\n |_____/|______|_|  |_|\\____/\n"
+      },
+      {
+        "t": 30,
+        "type": "prompt",
+        "text": "demo@machine:~$ "
+      },
+      {
+        "t": 30.1,
+        "type": "type",
+        "text": "sudo unleash --colour --bass"
+      },
+      {
+        "t": 31,
+        "type": "enter"
+      },
+      {
+        "t": 40,
+        "type": "output",
+        "text": "[warning] containment failing...\n"
+      },
+      {
+        "t": 46,
+        "type": "output",
+        "text": "[error] signal overflow detected\n"
+      },
+      {
+        "t": 52,
+        "type": "output",
+        "text": "[critical] initiating release sequence...\n"
+      }
+    ]
+  },
   "sections": [
     {
       "id": "intro-starfield",
-      "start": "00:00.0",
-      "end": "00:21.6",
+      "start": "00:54.15",
+      "end": "01:15.75",
       "effect": "starfield",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 },
-      "params": { "speed": 1.0, "warp": 0.2 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 1,
+        "warp": 0.2
+      }
     },
     {
       "id": "intro-starfield1",
-      "start": "00:21.5",
-      "end": "00:21.6",
+      "start": "01:15.65",
+      "end": "01:15.75",
       "effect": "tunnel",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 },
-      "params": { "speed": 1.0 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 1
+      }
     },
     {
       "id": "plasma-swell",
-      "start": "00:21.6",
-      "end": "00:28.7",
+      "start": "01:15.75",
+      "end": "01:22.85",
       "effect": "plasma",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 },
-      "params": { "speed": 1.1 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 1.1
+      }
     },
     {
       "id": "tunnel-rise",
-      "start": "00:28.7",
-      "end": "00:54.3",
+      "start": "01:22.85",
+      "end": "01:48.45",
       "effect": "tunnel",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 },
-      "params": { "speed": 1.1 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 1.1
+      }
     },
     {
       "id": "roto-grid",
-      "start": "00:54.3",
-      "end": "00:59.8",
+      "start": "01:48.45",
+      "end": "01:53.95",
       "effect": "rotozoom",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.8 }
+      "transition": {
+        "in": "wipe",
+        "out": "fade",
+        "duration": 0.8
+      }
     },
     {
       "id": "blobs-bloom",
-      "start": "00:59.8",
-      "end": "01:04.7",
+      "start": "01:53.95",
+      "end": "01:58.85",
       "effect": "blobs",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      }
     },
     {
       "id": "ribbon-flow",
-      "start": "01:04.7",
-      "end": "01:15.8",
+      "start": "01:58.85",
+      "end": "02:09.95",
       "effect": "ribbons",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      }
     },
     {
       "id": "lissajous-scope",
-      "start": "01:15.8",
-      "end": "01:27.0",
+      "start": "02:09.95",
+      "end": "02:21.15",
       "effect": "lissajous",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      }
     },
     {
       "id": "glitch-burst",
-      "start": "01:27.0",
-      "end": "01:32.3",
+      "start": "02:21.15",
+      "end": "02:26.45",
       "effect": "glitch",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.2 }
+      "transition": {
+        "in": "wipe",
+        "out": "fade",
+        "duration": 0.2
+      }
     },
     {
       "id": "lissajous-scope",
-      "start": "01:32.3",
-      "end": "01:32.8",
+      "start": "02:26.45",
+      "end": "02:26.95",
       "effect": "lissajous",
-      "transition": { "in": "wipe", "out": "wipe", "duration": 0.03 }
+      "transition": {
+        "in": "wipe",
+        "out": "wipe",
+        "duration": 0.03
+      }
     },
     {
       "id": "glitch-burst",
-      "start": "01:32.8",
-      "end": "01:33.37",
+      "start": "02:26.95",
+      "end": "02:27.52",
       "effect": "glitch",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.01 }
+      "transition": {
+        "in": "wipe",
+        "out": "fade",
+        "duration": 0.01
+      }
     },
     {
       "id": "lissajous-scope",
-      "start": "01:33.7",
-      "end": "01:33.86",
+      "start": "02:27.85",
+      "end": "02:28.01",
       "effect": "lissajous",
-      "transition": { "in": "fade", "out": "wipe", "duration": 0.02 }
+      "transition": {
+        "in": "fade",
+        "out": "wipe",
+        "duration": 0.02
+      }
     },
     {
       "id": "glitch-burst",
-      "start": "01:33.86",
-      "end": "01:34.4",
+      "start": "02:28.01",
+      "end": "02:28.55",
       "effect": "glitch",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.01 }
+      "transition": {
+        "in": "wipe",
+        "out": "fade",
+        "duration": 0.01
+      }
     },
     {
       "id": "lissajous-scope",
-      "start": "01:34.4",
-      "end": "01:35.2",
+      "start": "02:28.55",
+      "end": "02:29.35",
       "effect": "lissajous",
-      "transition": { "in": "wipe", "out": "wipe", "duration": 0.015 }
+      "transition": {
+        "in": "wipe",
+        "out": "wipe",
+        "duration": 0.015
+      }
     },
     {
       "id": "bokeh-drift",
-      "start": "01:35.2",
-      "end": "01:37.5",
+      "start": "02:29.35",
+      "end": "02:31.65",
       "effect": "bokeh",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.08 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.08
+      }
     },
     {
       "id": "fractal-dream",
-      "start": "01:37.5",
-      "end": "01:47.76",
+      "start": "02:31.65",
+      "end": "02:41.91",
       "effect": "fractal",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      }
     },
     {
       "id": "feedback-echo",
-      "start": "01:47.76",
-      "end": "01:57.3",
+      "start": "02:41.91",
+      "end": "02:51.45",
       "effect": "feedback",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.04 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.04
+      }
     },
     {
       "id": "equalizer-pulse",
-      "start": "01:57.3",
-      "end": "02:04.9",
+      "start": "02:51.45",
+      "end": "02:59.05",
       "effect": "equalizer",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.6 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.6
+      }
     },
     {
       "id": "iso-grid",
-      "start": "02:04.9",
-      "end": "02:10.4",
+      "start": "02:59.05",
+      "end": "03:04.55",
       "effect": "isogrid",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      }
     },
     {
       "id": "neon-orbits",
-      "start": "02:10.4",
-      "end": "02:15.8",
+      "start": "03:04.55",
+      "end": "03:09.95",
       "effect": "neon",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      }
     },
     {
       "id": "particle-surge",
-      "start": "02:15.8",
-      "end": "02:20.9",
+      "start": "03:09.95",
+      "end": "03:15.05",
       "effect": "particles",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      }
     },
-
     {
       "id": "drop-impact",
-      "start": "02:20.9",
-      "end": "02:32.1",
+      "start": "03:15.05",
+      "end": "03:26.25",
       "effect": "rotozoom",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.25 },
-      "params": { "speed": 1.35 }
+      "transition": {
+        "in": "wipe",
+        "out": "fade",
+        "duration": 0.25
+      },
+      "params": {
+        "speed": 1.35
+      }
     },
     {
       "id": "mini-drop-flash",
-      "start": "02:32.1",
-      "end": "02:37.5",
+      "start": "03:26.25",
+      "end": "03:31.65",
       "effect": "equalizer",
-      "transition": { "in": "fade", "out": "wipe", "duration": 0.18 },
-      "params": { "speed": 1.25 }
+      "transition": {
+        "in": "fade",
+        "out": "wipe",
+        "duration": 0.18
+      },
+      "params": {
+        "speed": 1.25
+      }
     },
     {
       "id": "glitch-stab",
-      "start": "02:37.5",
-      "end": "02:40.2",
+      "start": "03:31.65",
+      "end": "03:34.35",
       "effect": "glitch",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.04 }
+      "transition": {
+        "in": "wipe",
+        "out": "fade",
+        "duration": 0.04
+      }
     },
     {
       "id": "breakdown-haze",
-      "start": "02:40.2",
-      "end": "03:04.2",
+      "start": "03:34.35",
+      "end": "03:58.35",
       "effect": "bokeh",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 },
-      "params": { "speed": 0.75 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 0.75
+      }
     },
     {
       "id": "breakdown-haze1",
-      "start": "02:40.21",
-      "end": "03:04.2",
+      "start": "03:34.36",
+      "end": "03:58.35",
       "effect": "tunnel",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 },
-      "params": { "speed": 0.75 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 0.75
+      }
     },
     {
       "id": "pre-drop-melody",
-      "start": "03:04.2",
-      "end": "03:20.4",
+      "start": "03:58.35",
+      "end": "04:14.55",
       "effect": "lissajous",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.6 },
-      "params": { "speed": 1.05 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.6
+      },
+      "params": {
+        "speed": 1.05
+      }
     },
     {
       "id": "buildup-spiral",
-      "start": "03:20.4",
-      "end": "03:26.0",
+      "start": "04:14.55",
+      "end": "04:20.15",
       "effect": "tunnel",
-      "transition": { "in": "fade", "out": "wipe", "duration": 0.35 },
-      "params": { "speed": 1.25 }
+      "transition": {
+        "in": "fade",
+        "out": "wipe",
+        "duration": 0.35
+      },
+      "params": {
+        "speed": 1.25
+      }
     },
     {
       "id": "pre-drop-heat",
-      "start": "03:26.0",
-      "end": "03:31.4",
+      "start": "04:20.15",
+      "end": "04:25.55",
       "effect": "plasma",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.25 },
-      "params": { "speed": 1.3 }
+      "transition": {
+        "in": "wipe",
+        "out": "fade",
+        "duration": 0.25
+      },
+      "params": {
+        "speed": 1.3
+      }
     },
     {
       "id": "big-drop-warp",
-      "start": "03:31.4",
-      "end": "03:46.6",
+      "start": "04:25.55",
+      "end": "04:40.75",
       "effect": "starfield",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.22 },
-      "params": { "speed": 1.4, "warp": 0.55 }
+      "transition": {
+        "in": "wipe",
+        "out": "fade",
+        "duration": 0.22
+      },
+      "params": {
+        "speed": 1.4,
+        "warp": 0.55
+      }
     },
     {
       "id": "fill-fractal",
-      "start": "03:46.6",
-      "end": "03:47.78",
+      "start": "04:40.75",
+      "end": "04:41.93",
       "effect": "fractal",
-      "transition": { "in": "wipe", "out": "wipe", "duration": 0.06 },
-      "params": { "speed": 1.2 }
+      "transition": {
+        "in": "wipe",
+        "out": "wipe",
+        "duration": 0.06
+      },
+      "params": {
+        "speed": 1.2
+      }
     },
     {
       "id": "half-time-drop",
-      "start": "03:47.78",
-      "end": "03:53.2",
+      "start": "04:41.93",
+      "end": "04:47.35",
       "effect": "feedback",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.12 },
-      "params": { "speed": 0.9 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.12
+      },
+      "params": {
+        "speed": 0.9
+      }
     },
     {
       "id": "transition-blobs",
-      "start": "03:53.2",
-      "end": "03:58.7",
+      "start": "04:47.35",
+      "end": "04:52.85",
       "effect": "blobs",
-      "transition": { "in": "fade", "out": "wipe", "duration": 0.22 },
-      "params": { "speed": 1.05 }
+      "transition": {
+        "in": "fade",
+        "out": "wipe",
+        "duration": 0.22
+      },
+      "params": {
+        "speed": 1.05
+      }
     },
     {
       "id": "transition-ribbons",
-      "start": "03:58.7",
-      "end": "04:04.0",
+      "start": "04:52.85",
+      "end": "04:58.15",
       "effect": "ribbons",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.3 },
-      "params": { "speed": 1.1 }
+      "transition": {
+        "in": "wipe",
+        "out": "fade",
+        "duration": 0.3
+      },
+      "params": {
+        "speed": 1.1
+      }
     },
     {
       "id": "switch-neon",
-      "start": "04:04.0",
-      "end": "04:08.3",
+      "start": "04:58.15",
+      "end": "05:02.45",
       "effect": "neon",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.18 },
-      "params": { "speed": 1.2 }
+      "transition": {
+        "in": "wipe",
+        "out": "fade",
+        "duration": 0.18
+      },
+      "params": {
+        "speed": 1.2
+      }
     },
     {
       "id": "epic-ambient-breakdown",
-      "start": "04:08.3",
-      "end": "04:20.0",
+      "start": "05:02.45",
+      "end": "05:14.15",
       "effect": "fractal",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.9 },
-      "params": { "speed": 0.75 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.9
+      },
+      "params": {
+        "speed": 0.75
+      }
     },
-
     {
       "id": "switch-0420",
-      "start": "04:20.0",
-      "end": "04:21.3",
+      "start": "05:14.15",
+      "end": "05:15.45",
       "effect": "isogrid",
-      "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.25 }
+      "transition": {
+        "in": "wipe",
+        "out": "wipe",
+        "duration": 0.05
+      },
+      "params": {
+        "speed": 1.25
+      }
     },
     {
       "id": "switch-04213",
-      "start": "04:21.3",
-      "end": "04:21.8",
+      "start": "05:15.45",
+      "end": "05:15.95",
       "effect": "glitch",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.03 }
+      "transition": {
+        "in": "wipe",
+        "out": "fade",
+        "duration": 0.03
+      }
     },
     {
       "id": "switch-04218",
-      "start": "04:21.8",
-      "end": "04:22.9",
+      "start": "05:15.95",
+      "end": "05:17.05",
       "effect": "rotozoom",
-      "transition": { "in": "fade", "out": "wipe", "duration": 0.06 },
-      "params": { "speed": 1.35 }
+      "transition": {
+        "in": "fade",
+        "out": "wipe",
+        "duration": 0.06
+      },
+      "params": {
+        "speed": 1.35
+      }
     },
     {
       "id": "switch-04229",
-      "start": "04:22.9",
-      "end": "04:23.9",
+      "start": "05:17.05",
+      "end": "05:18.05",
       "effect": "equalizer",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.06 },
-      "params": { "speed": 1.3 }
+      "transition": {
+        "in": "wipe",
+        "out": "fade",
+        "duration": 0.06
+      },
+      "params": {
+        "speed": 1.3
+      }
     },
     {
       "id": "switch-04239",
-      "start": "04:23.9",
-      "end": "04:24.85",
+      "start": "05:18.05",
+      "end": "05:19.00",
       "effect": "particles",
-      "transition": { "in": "fade", "out": "wipe", "duration": 0.06 },
-      "params": { "speed": 1.25 }
+      "transition": {
+        "in": "fade",
+        "out": "wipe",
+        "duration": 0.06
+      },
+      "params": {
+        "speed": 1.25
+      }
     },
     {
       "id": "switch-042485",
-      "start": "04:24.85",
-      "end": "04:25.7",
+      "start": "05:19.00",
+      "end": "05:19.85",
       "effect": "lissajous",
-      "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.15 }
+      "transition": {
+        "in": "wipe",
+        "out": "wipe",
+        "duration": 0.05
+      },
+      "params": {
+        "speed": 1.15
+      }
     },
     {
       "id": "switch-04257",
-      "start": "04:25.7",
-      "end": "04:26.5",
+      "start": "05:19.85",
+      "end": "05:20.65",
       "effect": "glitch",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.03 }
+      "transition": {
+        "in": "wipe",
+        "out": "fade",
+        "duration": 0.03
+      }
     },
     {
       "id": "switch-04265",
-      "start": "04:26.5",
-      "end": "04:27.1",
+      "start": "05:20.65",
+      "end": "05:21.25",
       "effect": "neon",
-      "transition": { "in": "fade", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.25 }
+      "transition": {
+        "in": "fade",
+        "out": "wipe",
+        "duration": 0.05
+      },
+      "params": {
+        "speed": 1.25
+      }
     },
     {
       "id": "switch-04271",
-      "start": "04:27.1",
-      "end": "04:27.76",
+      "start": "05:21.25",
+      "end": "05:21.91",
       "effect": "isogrid",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.05 },
-      "params": { "speed": 1.3 }
+      "transition": {
+        "in": "wipe",
+        "out": "fade",
+        "duration": 0.05
+      },
+      "params": {
+        "speed": 1.3
+      }
     },
     {
       "id": "switch-042776",
-      "start": "04:27.76",
-      "end": "04:28.47",
+      "start": "05:21.91",
+      "end": "05:22.62",
       "effect": "rotozoom",
-      "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.4 }
+      "transition": {
+        "in": "wipe",
+        "out": "wipe",
+        "duration": 0.05
+      },
+      "params": {
+        "speed": 1.4
+      }
     },
     {
       "id": "switch-042847",
-      "start": "04:28.47",
-      "end": "04:31.14",
+      "start": "05:22.62",
+      "end": "05:25.29",
       "effect": "particles",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.08 },
-      "params": { "speed": 1.2 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.08
+      },
+      "params": {
+        "speed": 1.2
+      }
     },
     {
       "id": "switch-043114",
-      "start": "04:31.14",
-      "end": "04:32.14",
+      "start": "05:25.29",
+      "end": "05:26.29",
       "effect": "glitch",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.04 }
+      "transition": {
+        "in": "wipe",
+        "out": "fade",
+        "duration": 0.04
+      }
     },
     {
       "id": "switch-043214",
-      "start": "04:32.14",
-      "end": "04:32.54",
+      "start": "05:26.29",
+      "end": "05:26.69",
       "effect": "lissajous",
-      "transition": { "in": "fade", "out": "wipe", "duration": 0.04 },
-      "params": { "speed": 1.1 }
+      "transition": {
+        "in": "fade",
+        "out": "wipe",
+        "duration": 0.04
+      },
+      "params": {
+        "speed": 1.1
+      }
     },
-
     {
       "id": "pre-outro-breathe",
-      "start": "04:32.54",
-      "end": "04:35.0",
+      "start": "05:26.69",
+      "end": "05:29.15",
       "effect": "bokeh",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.35 },
-      "params": { "speed": 0.85 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.35
+      },
+      "params": {
+        "speed": 0.85
+      }
     },
-
     {
       "id": "switch-04350",
-      "start": "04:35.0",
-      "end": "04:37.0",
+      "start": "05:29.15",
+      "end": "05:31.15",
       "effect": "ribbons",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.12 },
-      "params": { "speed": 1.15 }
+      "transition": {
+        "in": "wipe",
+        "out": "fade",
+        "duration": 0.12
+      },
+      "params": {
+        "speed": 1.15
+      }
     },
     {
       "id": "switch-04370",
-      "start": "04:37.0",
-      "end": "04:38.0",
+      "start": "05:31.15",
+      "end": "05:32.15",
       "effect": "glitch",
-      "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 }
+      "transition": {
+        "in": "wipe",
+        "out": "wipe",
+        "duration": 0.05
+      }
     },
     {
       "id": "switch-04380",
-      "start": "04:38.0",
-      "end": "04:42.0",
+      "start": "05:32.15",
+      "end": "05:36.15",
       "effect": "plasma",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.25 },
-      "params": { "speed": 1.0 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.25
+      },
+      "params": {
+        "speed": 1
+      }
     },
     {
       "id": "switch-04420",
-      "start": "04:42.0",
-      "end": "04:43.3",
+      "start": "05:36.15",
+      "end": "05:37.45",
       "effect": "equalizer",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.12 },
-      "params": { "speed": 1.1 }
+      "transition": {
+        "in": "wipe",
+        "out": "fade",
+        "duration": 0.12
+      },
+      "params": {
+        "speed": 1.1
+      }
     },
     {
       "id": "switch-04433",
-      "start": "04:43.3",
-      "end": "04:47.6",
+      "start": "05:37.45",
+      "end": "05:41.75",
       "effect": "feedback",
-      "transition": { "in": "fade", "out": "wipe", "duration": 0.12 },
-      "params": { "speed": 0.95 }
+      "transition": {
+        "in": "fade",
+        "out": "wipe",
+        "duration": 0.12
+      },
+      "params": {
+        "speed": 0.95
+      }
     },
     {
       "id": "outro-drift",
-      "start": "04:47.6",
-      "end": "04:53.0",
+      "start": "05:41.75",
+      "end": "05:47.15",
       "effect": "starfield",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.6 },
-      "params": { "speed": 0.9, "warp": 0.15 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.6
+      },
+      "params": {
+        "speed": 0.9,
+        "warp": 0.15
+      }
     },
     {
       "id": "switch-04530",
-      "start": "04:53.0",
-      "end": "04:58.2",
+      "start": "05:47.15",
+      "end": "05:52.35",
       "effect": "fractal",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.7 },
-      "params": { "speed": 0.8 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.7
+      },
+      "params": {
+        "speed": 0.8
+      }
     },
     {
       "id": "switch-04582",
-      "start": "04:58.2",
-      "end": "05:04.7",
+      "start": "05:52.35",
+      "end": "05:58.85",
       "effect": "bokeh",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.6 },
-      "params": { "speed": 0.8 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.6
+      },
+      "params": {
+        "speed": 0.8
+      }
     },
     {
       "id": "switch-05047",
-      "start": "05:04.7",
-      "end": "05:09.2",
+      "start": "05:58.85",
+      "end": "06:03.35",
       "effect": "ribbons",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.3 },
-      "params": { "speed": 0.95 }
+      "transition": {
+        "in": "wipe",
+        "out": "fade",
+        "duration": 0.3
+      },
+      "params": {
+        "speed": 0.95
+      }
     },
     {
       "id": "switch-05092",
-      "start": "05:09.2",
-      "end": "05:15.2",
+      "start": "06:03.35",
+      "end": "06:09.35",
       "effect": "lissajous",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.35 },
-      "params": { "speed": 0.9 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.35
+      },
+      "params": {
+        "speed": 0.9
+      }
     },
     {
       "id": "switch-05152",
-      "start": "05:15.2",
-      "end": "05:18.8",
+      "start": "06:09.35",
+      "end": "06:12.95",
       "effect": "glitch",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.08 }
+      "transition": {
+        "in": "wipe",
+        "out": "fade",
+        "duration": 0.08
+      }
     },
     {
       "id": "switch-05188",
-      "start": "05:18.8",
-      "end": "05:19.0",
+      "start": "06:12.95",
+      "end": "06:13.15",
       "effect": "rotozoom",
-      "transition": { "in": "wipe", "out": "wipe", "duration": 0.02 },
-      "params": { "speed": 1.5 }
+      "transition": {
+        "in": "wipe",
+        "out": "wipe",
+        "duration": 0.02
+      },
+      "params": {
+        "speed": 1.5
+      }
     },
-
     {
       "id": "final-drop",
-      "start": "05:19.0",
+      "start": "06:13.15",
       "effect": "finale",
-      "transition": { "in": "fade", "out": "fade", "duration": 1.0 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 1
+      }
     }
   ],
-  "textCues": [
-    {
-      "id": "line1",
-      "start": "00:22.8",
-      "end": "00:23.9",
-      "text": "Four years ago\u2026",
-      "x": 0.5,
-      "y": 0.25,
-      "align": "center",
-      "size": 18,
-      "color": "#ffffff",
-      "effects": {
-        "glitchIn": true,
-        "shadow": true,
-        "scanlineMask": 0.35
-      }
-    },
-    {
-      "id": "line1b",
-      "start": "00:25.6",
-      "end": "00:28.3",
-      "text": "In the year 2022\u2026",
-      "x": 0.5,
-      "y": 0.25,
-      "align": "center",
-      "size": 22,
-      "color": "#ffffff",
-      "effects": {
-        "glitchIn": true,
-        "shadow": true,
-        "scanlineMask": 0.35
-      }
-    },
-    {
-      "id": "line2",
-      "start": "00:30.89",
-      "end": "00:34.0",
-      "text": "\u2026artificial intelligence learned to write code\u2026",
-      "x": 0.5,
-      "y": 0.32,
-      "align": "center",
-      "size": 12,
-      "color": "#c8f0ff",
-      "effects": {
-        "shadow": true,
-        "typewriter": {
-          "speed": 18
-        }
-      }
-    },
-    {
-      "id": "line3",
-      "start": "00:36.2",
-      "end": "00:38.6",
-      "text": "\u2026it could only achieve modest outcomes\u2026",
-      "x": 0.5,
-      "y": 0.38,
-      "align": "center",
-      "size": 14,
-      "color": "#ffffff",
-      "effects": {
-        "shadow": true
-      }
-    },
-    {
-      "id": "line4",
-      "start": "00:43.1",
-      "end": "00:44.2",
-      "text": "\u2026but now\u2026",
-      "x": 0.5,
-      "y": 0.44,
-      "align": "center",
-      "size": 17,
-      "color": "#ffffff",
-      "effects": {
-        "glitchIn": true,
-        "shadow": true
-      }
-    },
-    {
-      "id": "line5",
-      "start": "00:52.8",
-      "end": "00:53.4",
-      "text": "\u2026AI\u2026",
-      "x": 0.5,
-      "y": 0.52,
-      "align": "center",
-      "size": 18,
-      "color": "#ffffff",
-      "effects": {
-        "shadow": true,
-        "scanlineMask": 0.25
-      }
-    },
-    {
-      "id": "line6",
-      "start": "00:53.4",
-      "end": "00:53.79",
-      "spans": [
-        {
-          "text": "\u2026can",
-          "color": "#ffffff"
-        }
-      ],
-      "x": 0.5,
-      "y": 0.6,
-      "align": "center",
-      "size": 22,
-      "effects": {
-        "glitchIn": true,
-        "shadow": true,
-        "scanlineMask": 0.4
-      }
-    },
-    {
-      "id": "line6",
-      "start": "00:53.8",
-      "end": "00:54.1",
-      "spans": [
-        {
-          "text": "\u2026can do ",
-          "color": "#ffffff"
-        }
-      ],
-      "x": 0.5,
-      "y": 0.6,
-      "align": "center",
-      "size": 22,
-      "effects": {
-        "glitchIn": true,
-        "shadow": true,
-        "scanlineMask": 0.4
-      }
-    },
-    {
-      "id": "line6",
-      "start": "00:54.15",
-      "end": "00:56.0",
-      "spans": [
-        {
-          "text": "\u2026can do ",
-          "color": "#ffffff"
-        },
-        {
-          "text": "THIS",
-          "color": "#ffb347"
-        },
-        {
-          "text": "\u2026",
-          "color": "#ffffff"
-        }
-      ],
-      "x": 0.5,
-      "y": 0.6,
-      "align": "center",
-      "size": 22,
-      "effects": {
-        "glitchIn": true,
-        "shadow": true,
-        "scanlineMask": 0.4
-      }
-    }
-  ]
+  "textCues": []
 }
