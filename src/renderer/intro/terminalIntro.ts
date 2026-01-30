@@ -29,7 +29,7 @@ export class TerminalIntroRenderer {
     this.ensureSorted(intro.script);
     const theme = intro.theme;
     ctx.clearRect(0, 0, width, height);
-    ctx.fillStyle = theme.bg;
+    ctx.fillStyle = "#05070b";
     ctx.fillRect(0, 0, width, height);
 
     const layout = this.computeLayout(ctx, width, height, theme);
@@ -112,12 +112,18 @@ export class TerminalIntroRenderer {
     ctx.fillStyle = theme.bg;
     this.roundedRect(ctx, layout.x, layout.y, layout.width, layout.height, radius);
     ctx.fill();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
+    ctx.stroke();
     ctx.restore();
 
     if (theme.window.chrome) {
       const barHeight = theme.lineHeight + 16;
       ctx.save();
-      ctx.fillStyle = theme.dim;
+      const barGradient = ctx.createLinearGradient(layout.x, layout.y, layout.x, layout.y + barHeight);
+      barGradient.addColorStop(0, "rgba(255, 255, 255, 0.12)");
+      barGradient.addColorStop(1, theme.dim);
+      ctx.fillStyle = barGradient;
       this.roundedRect(ctx, layout.x, layout.y, layout.width, barHeight, radius, true);
       ctx.fill();
       ctx.restore();
@@ -143,7 +149,38 @@ export class TerminalIntroRenderer {
         ctx.fill();
       });
       ctx.restore();
+
+      this.drawWindowControls(ctx, layout, barHeight);
     }
+  }
+
+  private drawWindowControls(ctx: CanvasRenderingContext2D, layout: TerminalLayout, barHeight: number): void {
+    const controlSize = 12;
+    const gap = 10;
+    const rightPadding = 16;
+    const top = layout.y + (barHeight - controlSize) / 2;
+    const startX = layout.x + layout.width - rightPadding - controlSize * 3 - gap * 2;
+
+    ctx.save();
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.7)";
+    ctx.lineWidth = 1.4;
+
+    ctx.beginPath();
+    ctx.moveTo(startX + 1, top + controlSize - 2);
+    ctx.lineTo(startX + controlSize - 1, top + controlSize - 2);
+    ctx.stroke();
+
+    const midX = startX + controlSize + gap;
+    ctx.strokeRect(midX + 1, top + 2, controlSize - 2, controlSize - 4);
+
+    const closeX = startX + (controlSize + gap) * 2;
+    ctx.beginPath();
+    ctx.moveTo(closeX + 2, top + 2);
+    ctx.lineTo(closeX + controlSize - 2, top + controlSize - 2);
+    ctx.moveTo(closeX + controlSize - 2, top + 2);
+    ctx.lineTo(closeX + 2, top + controlSize - 2);
+    ctx.stroke();
+    ctx.restore();
   }
 
   private roundedRect(
