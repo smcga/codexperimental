@@ -3,12 +3,18 @@ import { loadConfig } from "./config/loadConfig";
 import { AudioPlayer, AudioFeatures } from "./audio/audioPlayer";
 import { Timeline } from "./timeline/timeline";
 import { Renderer } from "./renderer/renderer";
+import { effectRegistry } from "./renderer/effects";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
 const overlayText = overlay?.querySelector<HTMLDivElement>(".start-text");
+const debugOverlay = document.querySelector<HTMLDivElement>("#debug-overlay");
+const debugTimestamp = document.querySelector<HTMLSpanElement>("#debug-timestamp");
+const debugTransitionSelect = document.querySelector<HTMLSelectElement>("#debug-transition");
+const debugEffectsContainer = document.querySelector<HTMLDivElement>("#debug-effects");
+const debugMonochromeToggle = document.querySelector<HTMLInputElement>("#debug-monochrome");
 
-if (!canvas || !overlay || !overlayText) {
+if (!canvas || !overlay || !overlayText || !debugOverlay || !debugTimestamp || !debugTransitionSelect) {
   throw new Error("Missing canvas or overlay element");
 }
 
@@ -23,6 +29,12 @@ let timeline: Timeline | null = null;
 let animationFrame = 0;
 let lastDemoTime = 0;
 let isRunning = false;
+const debugState = {
+  enabled: false,
+  forcedEffect: null as string | null,
+  transitionOverride: null as "fade" | "wipe" | null,
+  monochromeOverride: null as boolean | null
+};
 
 function resize(): void {
   canvas.width = window.innerWidth;
@@ -41,6 +53,73 @@ function setOverlay(text: string, show = true, isError = false): void {
     overlay.classList.add("hidden");
   }
 }
+
+function formatTimestamp(time: number): string {
+  const minutes = Math.floor(time / 60);
+  const seconds = Math.max(0, time - minutes * 60);
+  return `${minutes.toString().padStart(2, "0")}:${seconds.toFixed(1).padStart(4, "0")}`;
+}
+
+function setDebugOverlayVisible(visible: boolean): void {
+  debugState.enabled = visible;
+  debugOverlay.classList.toggle("hidden", !visible);
+}
+
+function createEffectButtons(): void {
+  if (!debugEffectsContainer) {
+    return;
+  }
+  debugEffectsContainer.innerHTML = "";
+  const timelineButton = document.createElement("button");
+  timelineButton.type = "button";
+  timelineButton.textContent = "timeline";
+  timelineButton.addEventListener("click", () => {
+    debugState.forcedEffect = null;
+    updateEffectButtonStates();
+  });
+  debugEffectsContainer.appendChild(timelineButton);
+
+  Object.keys(effectRegistry).forEach((effectName) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = effectName;
+    button.addEventListener("click", () => {
+      debugState.forcedEffect = effectName;
+      updateEffectButtonStates();
+    });
+    debugEffectsContainer.appendChild(button);
+  });
+  updateEffectButtonStates();
+}
+
+function updateEffectButtonStates(): void {
+  if (!debugEffectsContainer) {
+    return;
+  }
+  const buttons = Array.from(debugEffectsContainer.querySelectorAll<HTMLButtonElement>("button"));
+  buttons.forEach((button) => {
+    const isActive =
+      (button.textContent === "timeline" && debugState.forcedEffect === null) ||
+      button.textContent === debugState.forcedEffect;
+    button.classList.toggle("active", isActive);
+  });
+}
+
+if (debugTransitionSelect) {
+  debugTransitionSelect.addEventListener("change", () => {
+    const value = debugTransitionSelect.value;
+    debugState.transitionOverride = value === "auto" ? null : (value as "fade" | "wipe");
+  });
+}
+
+if (debugMonochromeToggle) {
+  debugMonochromeToggle.addEventListener("change", () => {
+    debugState.monochromeOverride = debugMonochromeToggle.checked ? true : null;
+  });
+}
+
+createEffectButtons();
+setDebugOverlayVisible(false);
 
 async function startDemo(): Promise<void> {
   if (isRunning) {
@@ -100,6 +179,16 @@ function loop(): void {
 
   const audioFeatures: AudioFeatures = audioPlayer.updateFeatures();
   const state = timeline.getState(demoTime);
+  const sectionOverride = debugState.forcedEffect
+    ? { ...state.section, effect: debugState.forcedEffect }
+    : state.section;
+  const transitionOverride = state.transition
+    ? {
+        ...state.transition,
+        to: debugState.forcedEffect ? { ...state.transition.to, effect: debugState.forcedEffect } : state.transition.to,
+        type: debugState.transitionOverride ?? state.transition.type
+      }
+    : undefined;
 
   renderer.render({
     ctx,
@@ -107,11 +196,14 @@ function loop(): void {
     height: canvas.height,
     time: demoTime,
     delta,
-    section: state.section,
-    transition: state.transition,
+    section: sectionOverride,
+    transition: transitionOverride,
     textCues: state.activeTextCues,
-    audio: audioFeatures
+    audio: audioFeatures,
+    monochromeOverride: debugState.monochromeOverride
   });
+
+  debugTimestamp.textContent = formatTimestamp(demoTime);
 
   if (audioPlayer.ended) {
     isRunning = false;
@@ -127,6 +219,9 @@ overlay.addEventListener("click", () => {
 });
 
 window.addEventListener("keydown", (event) => {
+  if (event.key.toLowerCase() === "d") {
+    setDebugOverlayVisible(!debugState.enabled);
+  }
   if (event.key.toLowerCase() === "r") {
     restartDemo();
   }
