@@ -57,4 +57,27 @@ describe("timeline config normalization", () => {
     const config = normalizeTimelineConfig(raw);
     expect(config.textCues[0].end).toBeCloseTo(5.5, 5);
   });
+
+  it("parses time strings for section and cue timings", () => {
+    const raw = {
+      audio: { src: "/song.mp3", offset: 0 },
+      sections: buildSections().map((section, index) => ({
+        ...section,
+        start: `00:${String(index * 4).padStart(2, "0")}.0`
+      })),
+      textCues: [
+        {
+          id: "line",
+          start: "00:01.5",
+          end: "00:03.0",
+          text: "Hello"
+        }
+      ]
+    };
+
+    const config = normalizeTimelineConfig(raw);
+    expect(config.sections[2].start).toBeCloseTo(8, 5);
+    expect(config.textCues[0].start).toBeCloseTo(1.5, 5);
+    expect(config.textCues[0].end).toBeCloseTo(3, 5);
+  });
 });

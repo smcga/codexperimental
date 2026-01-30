@@ -1,196 +1,300 @@
 {
-  "audio": { "src": "/song.mp3", "offset": 0 },
+  "audio": {
+    "src": "/song.mp3",
+    "offset": 0
+  },
   "sections": [
     {
       "id": "intro-starfield",
-      "start": 0.0,
-      "end": 8.0,
+      "start": "00:00.0",
+      "end": "00:08.0",
       "effect": "starfield",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 },
-      "params": { "speed": 1.0, "warp": 0.2 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 1.0,
+        "warp": 0.2
+      }
     },
     {
       "id": "plasma-swell",
-      "start": 8.0,
-      "end": 16.0,
+      "start": "00:08.0",
+      "end": "00:16.0",
       "effect": "plasma",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 },
-      "params": { "speed": 1.1 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 1.1
+      }
     },
     {
       "id": "tunnel-rise",
-      "start": 16.0,
-      "end": 24.0,
+      "start": "00:16.0",
+      "end": "00:24.0",
       "effect": "tunnel",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 },
-      "params": { "speed": 1.1 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 1.1
+      }
     },
     {
       "id": "roto-grid",
-      "start": 24.0,
-      "end": 32.0,
+      "start": "00:24.0",
+      "end": "00:32.0",
       "effect": "rotozoom",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.8 }
+      "transition": {
+        "in": "wipe",
+        "out": "fade",
+        "duration": 0.8
+      }
     },
     {
       "id": "blobs-bloom",
-      "start": 32.0,
-      "end": 40.0,
+      "start": "00:32.0",
+      "end": "00:40.0",
       "effect": "blobs",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      }
     },
     {
       "id": "ribbon-flow",
-      "start": 40.0,
-      "end": 48.0,
+      "start": "00:40.0",
+      "end": "00:48.0",
       "effect": "ribbons",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      }
     },
     {
       "id": "lissajous-scope",
-      "start": 48.0,
-      "end": 56.0,
+      "start": "00:48.0",
+      "end": "00:56.0",
       "effect": "lissajous",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      }
     },
     {
       "id": "glitch-burst",
-      "start": 56.0,
-      "end": 64.0,
+      "start": "00:56.0",
+      "end": "01:04.0",
       "effect": "glitch",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.6 }
+      "transition": {
+        "in": "wipe",
+        "out": "fade",
+        "duration": 0.6
+      }
     },
     {
       "id": "bokeh-drift",
-      "start": 64.0,
-      "end": 72.0,
+      "start": "01:04.0",
+      "end": "01:12.0",
       "effect": "bokeh",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      }
     },
     {
       "id": "fractal-dream",
-      "start": 72.0,
-      "end": 80.0,
+      "start": "01:12.0",
+      "end": "01:20.0",
       "effect": "fractal",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      }
     },
     {
       "id": "feedback-echo",
-      "start": 80.0,
-      "end": 88.0,
+      "start": "01:20.0",
+      "end": "01:28.0",
       "effect": "feedback",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      }
     },
     {
       "id": "equalizer-pulse",
-      "start": 88.0,
-      "end": 96.0,
+      "start": "01:28.0",
+      "end": "01:36.0",
       "effect": "equalizer",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.6 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.6
+      }
     },
     {
       "id": "iso-grid",
-      "start": 96.0,
-      "end": 104.0,
+      "start": "01:36.0",
+      "end": "01:44.0",
       "effect": "isogrid",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      }
     },
     {
       "id": "neon-orbits",
-      "start": 104.0,
-      "end": 112.0,
+      "start": "01:44.0",
+      "end": "01:52.0",
       "effect": "neon",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      }
     },
     {
       "id": "particle-surge",
-      "start": 112.0,
-      "end": 120.0,
+      "start": "01:52.0",
+      "end": "02:00.0",
       "effect": "particles",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      }
     },
     {
       "id": "final-drop",
-      "start": 120.0,
+      "start": "02:00.0",
       "effect": "finale",
-      "transition": { "in": "fade", "out": "fade", "duration": 1.0 }
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 1.0
+      }
     }
   ],
   "textCues": [
     {
       "id": "line1",
-      "start": 1.2,
-      "end": 4.8,
-      "text": "Four years ago, in the year 2022…",
+      "start": "00:01.2",
+      "end": "00:04.8",
+      "text": "Four years ago, in the year 2022\u2026",
       "x": 0.5,
       "y": 0.25,
       "align": "center",
       "size": 42,
       "color": "#ffffff",
-      "effects": { "glitchIn": true, "shadow": true, "scanlineMask": 0.35 }
+      "effects": {
+        "glitchIn": true,
+        "shadow": true,
+        "scanlineMask": 0.35
+      }
     },
     {
       "id": "line2",
-      "start": 5.4,
-      "end": 8.6,
-      "text": "…artificial intelligence learned to write code…",
+      "start": "00:05.4",
+      "end": "00:08.6",
+      "text": "\u2026artificial intelligence learned to write code\u2026",
       "x": 0.5,
       "y": 0.32,
       "align": "center",
       "size": 40,
       "color": "#c8f0ff",
-      "effects": { "shadow": true, "typewriter": { "speed": 18 } }
+      "effects": {
+        "shadow": true,
+        "typewriter": {
+          "speed": 18
+        }
+      }
     },
     {
       "id": "line3",
-      "start": 9.6,
-      "end": 13.2,
-      "text": "…it could only achieve modest outcomes…",
+      "start": "00:09.6",
+      "end": "00:13.2",
+      "text": "\u2026it could only achieve modest outcomes\u2026",
       "x": 0.5,
       "y": 0.38,
       "align": "center",
       "size": 38,
       "color": "#ffffff",
-      "effects": { "shadow": true }
+      "effects": {
+        "shadow": true
+      }
     },
     {
       "id": "line4",
-      "start": 14.4,
-      "end": 17.2,
-      "text": "…but now…",
+      "start": "00:14.4",
+      "end": "00:17.2",
+      "text": "\u2026but now\u2026",
       "x": 0.5,
       "y": 0.44,
       "align": "center",
       "size": 44,
       "color": "#ffffff",
-      "effects": { "glitchIn": true, "shadow": true }
+      "effects": {
+        "glitchIn": true,
+        "shadow": true
+      }
     },
     {
       "id": "line5",
-      "start": 17.8,
-      "end": 20.4,
-      "text": "…AI…",
+      "start": "00:17.8",
+      "end": "00:20.4",
+      "text": "\u2026AI\u2026",
       "x": 0.5,
       "y": 0.52,
       "align": "center",
       "size": 52,
       "color": "#ffffff",
-      "effects": { "shadow": true, "scanlineMask": 0.25 }
+      "effects": {
+        "shadow": true,
+        "scanlineMask": 0.25
+      }
     },
     {
       "id": "line6",
-      "start": 20.8,
-      "end": 24.0,
+      "start": "00:20.8",
+      "end": "00:24.0",
       "spans": [
-        { "text": "…can do ", "color": "#ffffff" },
-        { "text": "THIS", "color": "#ffb347" },
-        { "text": "…", "color": "#ffffff" }
+        {
+          "text": "\u2026can do ",
+          "color": "#ffffff"
+        },
+        {
+          "text": "THIS",
+          "color": "#ffb347"
+        },
+        {
+          "text": "\u2026",
+          "color": "#ffffff"
+        }
       ],
       "x": 0.5,
       "y": 0.6,
       "align": "center",
       "size": 54,
-      "effects": { "glitchIn": true, "shadow": true, "scanlineMask": 0.4 }
+      "effects": {
+        "glitchIn": true,
+        "shadow": true,
+        "scanlineMask": 0.4
+      }
     }
   ]
 }
