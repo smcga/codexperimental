@@ -59,11 +59,17 @@ describe("timeline config normalization", () => {
   });
 
   it("parses time strings for sections and cues", () => {
+    const formatTime = (totalSeconds: number): string => {
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      const paddedSeconds = seconds.toFixed(1).padStart(4, "0");
+      return `${String(minutes).padStart(2, "0")}:${paddedSeconds}`;
+    };
     const raw = {
       audio: { src: "/song.mp3", offset: 0 },
       sections: buildSections().map((section, index) => ({
         ...section,
-        start: `00:${String(index * 4).padStart(2, "0")}.0`
+        start: formatTime(index * 4)
       })),
       textCues: [
         {

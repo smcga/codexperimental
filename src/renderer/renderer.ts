@@ -2,6 +2,7 @@ import { AudioFeatures } from "../audio/audioPlayer";
 import { SectionConfig, TextCue } from "../config/loadConfig";
 import { clamp } from "../util/math";
 import { effectRegistry, resetEffects } from "./effects";
+import { isMonochromeTime } from "./monochrome";
 import { renderTextCues } from "./text/textRenderer";
 
 export type RenderState = {
@@ -60,10 +61,16 @@ export class Renderer {
   render({ ctx, width, height, time, delta, section, transition, textCues, audio }: RenderState): void {
     const shake = audio.beatStrength * 6;
     const { scale, offsetX, offsetY } = this.computeLetterbox(width, height);
+    const monochrome = isMonochromeTime(time);
 
     ctx.clearRect(0, 0, width, height);
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, width, height);
+
+    if (monochrome) {
+      ctx.save();
+      ctx.filter = "grayscale(1)";
+    }
 
     if (transition) {
       this.renderSectionTo(this.transitionCtx, transition.from, time, delta, audio);
@@ -72,6 +79,10 @@ export class Renderer {
     } else {
       this.renderSectionTo(this.baseCtx, section, time, delta, audio);
       this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shake, 1);
+    }
+
+    if (monochrome) {
+      ctx.restore();
     }
 
     ctx.save();
