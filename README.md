@@ -13,6 +13,11 @@ npm install
 npm run dev
 ```
 
+## Configuration
+
+- `public/timeline.json` drives audio source, section timings, transitions, and text cues.
+- Place your MP3 at `public/song.mp3` (or update `audio.src` in the JSON). A placeholder file is committed so you can drop in your own track.
+
 ## Test
 
 ```bash

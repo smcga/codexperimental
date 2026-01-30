@@ -1,0 +1,206 @@
+{
+  "audio": { "src": "/song.mp3", "offset": 0 },
+  "sections": [
+    {
+      "id": "intro-starfield",
+      "start": 0,
+      "end": 6,
+      "effect": "starfield",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.8 },
+      "params": { "speed": 0.9, "warp": 0.3 }
+    },
+    {
+      "id": "plasma-drive",
+      "start": 6,
+      "end": 12,
+      "effect": "plasma",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.8 },
+      "params": { "scale": 1.1 }
+    },
+    {
+      "id": "deep-tunnel",
+      "start": 12,
+      "end": 18,
+      "effect": "tunnel",
+      "transition": { "in": "wipe", "out": "fade", "duration": 0.7 },
+      "params": { "twist": 0.6 }
+    },
+    {
+      "id": "roto-tiles",
+      "start": 18,
+      "end": 24,
+      "effect": "rotozoom",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.8 },
+      "params": { "zoom": 1.2 }
+    },
+    {
+      "id": "metaballs",
+      "start": 24,
+      "end": 30,
+      "effect": "metaballs",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.9 },
+      "params": { "blobCount": 5 }
+    },
+    {
+      "id": "ribbon-surge",
+      "start": 30,
+      "end": 36,
+      "effect": "ribbons",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.7 },
+      "params": { "count": 4 }
+    },
+    {
+      "id": "lissajous",
+      "start": 36,
+      "end": 42,
+      "effect": "lissajous",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.7 },
+      "params": { "trails": 0.18 }
+    },
+    {
+      "id": "glitch-wash",
+      "start": 42,
+      "end": 48,
+      "effect": "glitch",
+      "transition": { "in": "wipe", "out": "fade", "duration": 0.6 },
+      "params": { "sliceCount": 10 }
+    },
+    {
+      "id": "bokeh",
+      "start": 48,
+      "end": 54,
+      "effect": "bokeh",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.8 },
+      "params": { "dotCount": 120 }
+    },
+    {
+      "id": "fractal-flow",
+      "start": 54,
+      "end": 60,
+      "effect": "fractal",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.8 },
+      "params": { "drift": 0.4 }
+    },
+    {
+      "id": "feedback-zoom",
+      "start": 60,
+      "end": 66,
+      "effect": "feedback",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.7 },
+      "params": { "zoom": 1.03 }
+    },
+    {
+      "id": "equalizer",
+      "start": 66,
+      "end": 72,
+      "effect": "equalizer",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.8 }
+    },
+    {
+      "id": "iso-grid",
+      "start": 72,
+      "end": 78,
+      "effect": "isogrid",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.8 },
+      "params": { "height": 0.6 }
+    },
+    {
+      "id": "neon-surge",
+      "start": 78,
+      "end": 84,
+      "effect": "neon",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.7 },
+      "params": { "shapeCount": 5 }
+    },
+    {
+      "id": "vortex",
+      "start": 84,
+      "end": 90,
+      "effect": "vortex",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.7 },
+      "params": { "arms": 5 }
+    },
+    {
+      "id": "final-drop",
+      "start": 90,
+      "effect": "finale",
+      "transition": { "in": "fade", "out": "fade", "duration": 1 }
+    }
+  ],
+  "textCues": [
+    {
+      "id": "line1",
+      "start": 1.2,
+      "end": 4.8,
+      "text": "Four years ago, in the year 2022…",
+      "x": 0.5,
+      "y": 0.25,
+      "align": "center",
+      "size": 42,
+      "color": "#ffffff",
+      "effects": { "glitchIn": true, "shadow": true, "scanlineMask": 0.35 }
+    },
+    {
+      "id": "line2",
+      "start": 7.2,
+      "end": 10.6,
+      "text": "…artificial intelligence learned to write code…",
+      "x": 0.5,
+      "y": 0.3,
+      "align": "center",
+      "size": 38,
+      "color": "#ffffff",
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "line3",
+      "start": 13.2,
+      "end": 16.6,
+      "text": "…it could only achieve modest outcomes…",
+      "x": 0.5,
+      "y": 0.32,
+      "align": "center",
+      "size": 36,
+      "color": "#ffffff",
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "line4",
+      "start": 19.2,
+      "end": 22.2,
+      "text": "…but now…",
+      "x": 0.5,
+      "y": 0.4,
+      "align": "center",
+      "size": 44,
+      "color": "#ffffff",
+      "effects": { "glitchIn": true, "shadow": true }
+    },
+    {
+      "id": "line5",
+      "start": 25,
+      "end": 27.8,
+      "spans": [
+        { "text": "…AI", "color": "#9ff" },
+        { "text": "…", "color": "#ffffff" }
+      ],
+      "x": 0.5,
+      "y": 0.42,
+      "align": "center",
+      "size": 48,
+      "effects": { "typewriter": { "speed": 12 }, "shadow": true }
+    },
+    {
+      "id": "line6",
+      "start": 31,
+      "end": 34.8,
+      "text": "…can do THIS…",
+      "x": 0.5,
+      "y": 0.45,
+      "align": "center",
+      "size": 46,
+      "color": "#ffffff",
+      "effects": { "glitchIn": true, "shadow": true, "scanlineMask": 0.4 }
+    }
+  ]
+}
