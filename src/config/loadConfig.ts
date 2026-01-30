@@ -5,6 +5,35 @@ export type RawAudioConfig = {
   offset?: number;
 };
 
+export type RawIntroTheme = {
+  bg: string;
+  fg: string;
+  accent: string;
+  dim: string;
+  fontFamily: string;
+  fontSize: number;
+  lineHeight: number;
+  padding: number;
+  window: {
+    title: string;
+    chrome: boolean;
+  };
+};
+
+export type RawIntroScriptEvent = {
+  t: number | string;
+  type: "prompt" | "type" | "enter" | "output" | "ascii" | "clear";
+  text?: string;
+  cps?: number;
+};
+
+export type RawIntroConfig = {
+  mode: "terminal";
+  end: number | string;
+  theme: RawIntroTheme;
+  script: RawIntroScriptEvent[];
+};
+
 export type RawSectionConfig = {
   id: string;
   start: number | string;
@@ -50,6 +79,7 @@ export type RawTextCue = {
 
 export type RawTimelineConfig = {
   audio: RawAudioConfig;
+  intro: RawIntroConfig;
   sections: RawSectionConfig[];
   textCues?: RawTextCue[];
 };
@@ -58,6 +88,22 @@ export type TransitionConfig = {
   in: TransitionType;
   out: TransitionType;
   duration: number;
+};
+
+export type IntroTheme = RawIntroTheme;
+
+export type IntroScriptEvent = {
+  t: number;
+  type: RawIntroScriptEvent["type"];
+  text?: string;
+  cps?: number;
+};
+
+export type IntroConfig = {
+  mode: "terminal";
+  end: number;
+  theme: IntroTheme;
+  script: IntroScriptEvent[];
 };
 
 export type SectionConfig = {
@@ -99,6 +145,7 @@ export type TimelineConfig = {
     src: string;
     offset: number;
   };
+  intro: IntroConfig;
   sections: SectionConfig[];
   textCues: TextCue[];
 };
@@ -115,6 +162,7 @@ const DEFAULT_TEXT_ALIGN: "left" | "center" | "right" = "center";
 const DEFAULT_TEXT_X = 0.5;
 const DEFAULT_TEXT_Y = 0.7;
 const DEFAULT_CUE_DURATION = 3.0;
+const DEFAULT_INTRO_CPS = 28;
 
 function assertNumber(value: unknown, label: string): number {
   if (typeof value !== "number" || Number.isNaN(value)) {
@@ -169,6 +217,60 @@ function normalizeTransition(transition?: RawSectionConfig["transition"]): Trans
   return { in: incoming, out: outgoing, duration };
 }
 
+function normalizeIntroTheme(theme: RawIntroTheme): IntroTheme {
+  return {
+    bg: assertString(theme.bg, "intro.theme.bg"),
+    fg: assertString(theme.fg, "intro.theme.fg"),
+    accent: assertString(theme.accent, "intro.theme.accent"),
+    dim: assertString(theme.dim, "intro.theme.dim"),
+    fontFamily: assertString(theme.fontFamily, "intro.theme.fontFamily"),
+    fontSize: assertNumber(theme.fontSize, "intro.theme.fontSize"),
+    lineHeight: assertNumber(theme.lineHeight, "intro.theme.lineHeight"),
+    padding: assertNumber(theme.padding, "intro.theme.padding"),
+    window: {
+      title: assertString(theme.window?.title, "intro.theme.window.title"),
+      chrome: Boolean(theme.window?.chrome)
+    }
+  };
+}
+
+function normalizeIntroScript(script: RawIntroScriptEvent[]): IntroScriptEvent[] {
+  if (!Array.isArray(script)) {
+    throw new Error("intro.script must be an array");
+  }
+  return script.map((event, index) => {
+    const time = parseTimelineTime(event.t, `intro.script[${index}].t`);
+    if (
+      event.type !== "prompt" &&
+      event.type !== "type" &&
+      event.type !== "enter" &&
+      event.type !== "output" &&
+      event.type !== "ascii" &&
+      event.type !== "clear"
+    ) {
+      throw new Error(`intro.script[${index}].type is invalid`);
+    }
+    if (
+      (event.type === "prompt" ||
+        event.type === "type" ||
+        event.type === "output" ||
+        event.type === "ascii") &&
+      (!event.text || event.text.length === 0)
+    ) {
+      throw new Error(`intro.script[${index}].text is required for ${event.type}`);
+    }
+    if (event.cps !== undefined && (typeof event.cps !== "number" || event.cps <= 0)) {
+      throw new Error(`intro.script[${index}].cps must be a positive number`);
+    }
+    return {
+      t: time,
+      type: event.type,
+      text: event.text,
+      cps: event.cps ?? (event.type === "type" ? DEFAULT_INTRO_CPS : undefined)
+    };
+  });
+}
+
 function normalizeTextSpans(cue: RawTextCue): TextSpan[] {
   if (cue.spans && cue.spans.length > 0) {
     return cue.spans.map((span) => {
@@ -204,6 +306,16 @@ export function normalizeTimelineConfig(raw: RawTimelineConfig): TimelineConfig 
   const audioOffset = audio.offset ?? 0;
   assertNumber(audioOffset, "audio.offset");
 
+  if (!raw.intro || typeof raw.intro !== "object") {
+    throw new Error("intro must be an object");
+  }
+  if (raw.intro.mode !== "terminal") {
+    throw new Error('intro.mode must be "terminal"');
+  }
+  const introEnd = parseTimelineTime(raw.intro.end, "intro.end");
+  const introTheme = normalizeIntroTheme(raw.intro.theme);
+  const introScript = normalizeIntroScript(raw.intro.script);
+
   if (!Array.isArray(raw.sections)) {
     throw new Error("sections must be an array");
   }
@@ -227,6 +339,12 @@ export function normalizeTimelineConfig(raw: RawTimelineConfig): TimelineConfig 
   });
 
   sections.sort((a, b) => a.start - b.start);
+  if (sections.length === 0) {
+    throw new Error("sections must include at least one entry");
+  }
+  if (Math.abs(sections[0].start - introEnd) > 0.0001) {
+    throw new Error(`Config error: first section must start at ${introEnd}`);
+  }
   for (let i = 1; i < sections.length; i += 1) {
     if (sections[i].start === sections[i - 1].start) {
       throw new Error("Section start times must be unique");
@@ -282,6 +400,12 @@ export function normalizeTimelineConfig(raw: RawTimelineConfig): TimelineConfig 
     audio: {
       src: audioSrc,
       offset: audioOffset
+    },
+    intro: {
+      mode: "terminal",
+      end: introEnd,
+      theme: introTheme,
+      script: introScript
     },
     sections,
     textCues

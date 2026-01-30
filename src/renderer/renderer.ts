@@ -22,6 +22,7 @@ export type RenderState = {
   };
   textCues: TextCue[];
   audio: AudioFeatures;
+  screenShake?: { x: number; y: number };
 };
 
 export class Renderer {
@@ -70,9 +71,12 @@ export class Renderer {
     transition,
     textCues,
     audio,
-    monochromeOverride
+    monochromeOverride,
+    screenShake
   }: RenderState): void {
-    const shake = audio.beatStrength * 6;
+    const baseShake = audio.beatStrength * 6;
+    const shakeX = baseShake + (screenShake?.x ?? 0);
+    const shakeY = baseShake + (screenShake?.y ?? 0);
     const { scale, offsetX, offsetY } = this.computeLetterbox(width, height);
     const monochrome = resolveMonochrome(time, monochromeOverride);
     const camera = computeDynamicCamera(time, audio, this.baseWidth, this.baseHeight);
@@ -89,10 +93,10 @@ export class Renderer {
     if (transition) {
       this.renderSectionTo(this.transitionCtx, transition.from, time, delta, audio);
       this.renderSectionTo(this.baseCtx, transition.to, time, delta, audio);
-      this.drawTransition(ctx, transition, scale, offsetX, offsetY, shake, camera);
+      this.drawTransition(ctx, transition, scale, offsetX, offsetY, shakeX, shakeY, camera);
     } else {
       this.renderSectionTo(this.baseCtx, section, time, delta, audio);
-      this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shake, 1, camera);
+      this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1, camera);
     }
 
     if (monochrome) {
@@ -100,7 +104,7 @@ export class Renderer {
     }
 
     ctx.save();
-    ctx.translate(offsetX + shake, offsetY + shake);
+    ctx.translate(offsetX + shakeX, offsetY + shakeY);
     ctx.scale(scale, scale);
     this.applyCameraTransform(ctx, camera);
     this.renderOverlays(ctx, this.baseWidth, this.baseHeight, audio);
@@ -140,24 +144,25 @@ export class Renderer {
     scale: number,
     offsetX: number,
     offsetY: number,
-    shake: number,
+    shakeX: number,
+    shakeY: number,
     camera: CameraState
   ): void {
     const progress = transition.progress;
     if (transition.type === "wipe") {
-      this.drawScaled(ctx, this.transitionCanvas, scale, offsetX, offsetY, shake, 1, camera);
+      this.drawScaled(ctx, this.transitionCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1, camera);
       ctx.save();
       ctx.beginPath();
-      const wipeX = offsetX + (this.baseWidth * scale + shake) * progress;
-      ctx.rect(offsetX, offsetY, wipeX - offsetX, this.baseHeight * scale + shake * 2);
+      const wipeX = offsetX + (this.baseWidth * scale + shakeX) * progress;
+      ctx.rect(offsetX, offsetY, wipeX - offsetX, this.baseHeight * scale + shakeY * 2);
       ctx.clip();
-      this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shake, 1, camera);
+      this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1, camera);
       ctx.restore();
       return;
     }
 
-    this.drawScaled(ctx, this.transitionCanvas, scale, offsetX, offsetY, shake, 1 - progress, camera);
-    this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shake, progress, camera);
+    this.drawScaled(ctx, this.transitionCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1 - progress, camera);
+    this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shakeX, shakeY, progress, camera);
   }
 
   private drawScaled(
@@ -166,14 +171,15 @@ export class Renderer {
     scale: number,
     offsetX: number,
     offsetY: number,
-    shake: number,
+    shakeX: number,
+    shakeY: number,
     alpha: number,
     camera: CameraState
   ): void {
     ctx.save();
     ctx.globalAlpha = clamp(alpha, 0, 1);
     ctx.imageSmoothingEnabled = false;
-    ctx.translate(offsetX + shake, offsetY + shake);
+    ctx.translate(offsetX + shakeX, offsetY + shakeY);
     ctx.translate((this.baseWidth * scale) / 2, (this.baseHeight * scale) / 2);
     ctx.scale(camera.zoom, camera.zoom);
     ctx.translate(

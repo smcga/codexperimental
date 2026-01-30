@@ -2,6 +2,7 @@ import { TimelineConfig, SectionConfig, TextCue } from "../config/loadConfig";
 import { clamp } from "../util/math";
 
 export type TimelineState = {
+  mode: "intro" | "sections";
   section: SectionConfig;
   transition?: {
     from: SectionConfig;
@@ -10,18 +11,21 @@ export type TimelineState = {
     type: "fade" | "wipe";
   };
   activeTextCues: TextCue[];
+  introTime: number;
 };
 
 export class Timeline {
   private sections: SectionConfig[];
   private textCues: TextCue[];
   private audioOffset: number;
+  private introEnd: number;
   private duration = 0;
 
   constructor(private config: TimelineConfig) {
     this.sections = [...config.sections];
     this.textCues = config.textCues;
     this.audioOffset = config.audio.offset;
+    this.introEnd = config.intro.end;
   }
 
   setAudioDuration(duration: number): void {
@@ -38,6 +42,14 @@ export class Timeline {
   }
 
   getState(time: number): TimelineState {
+    if (time < this.introEnd) {
+      return {
+        mode: "intro",
+        section: this.sections[0],
+        activeTextCues: [],
+        introTime: time
+      };
+    }
     const sectionIndex = this.findSectionIndex(time);
     const section = this.sections[sectionIndex];
     const prevSection = sectionIndex > 0 ? this.sections[sectionIndex - 1] : null;
@@ -45,9 +57,11 @@ export class Timeline {
     const activeTextCues = this.textCues.filter((cue) => time >= cue.start && time <= cue.end);
 
     return {
+      mode: "sections",
       section,
       transition,
-      activeTextCues
+      activeTextCues,
+      introTime: Math.max(0, time - this.introEnd)
     };
   }
 
