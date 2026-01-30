@@ -8,4 +8,8 @@ describe("getTypingReveal", () => {
     expect(getTypingReveal("hello", 10, 0.2)).toBe(2);
     expect(getTypingReveal("hello", 10, 0.5)).toBe(5);
   });
+
+  it("clamps reveal length to the text length", () => {
+    expect(getTypingReveal("hi", 10, 1)).toBe(2);
+  });
 });

@@ -29,22 +29,23 @@
       { "t": 5.1, "type": "type", "text": "cat prophecy.txt" },
       { "t": 5.9, "type": "enter" },
       {
-        "t": 6.1,
-        "type": "output",
-        "text": "Four years ago, in the year 2022...\n...artificial intelligence learned to write code...\n...it could only achieve modest outcomes...\n...but now...\n...AI...\n...can do THIS...\n"
-      },
-      { "t": 16.0, "type": "output", "text": "\n" },
-      {
         "t": 18.0,
         "type": "ascii",
         "text": "  _____  ______ __  __  ____\n |  __ \\\\|  ____|  \\/  |/ __ \\\\\n | |  | | |__  | \\\\  / | |  | |\n | |  | |  __| | |\\\\/| | |  | |\n | |__| | |____| |  | | |__| |\n |_____/|______|_|  |_|\\\\____/\n"
       },
+      { "t": 22.8, "type": "output", "text": "Four years ago…\n" },
+      { "t": 25.6, "type": "output", "text": "In the year 2022…\n" },
       { "t": 30.0, "type": "prompt", "text": "demo@machine:~$ " },
       { "t": 30.1, "type": "type", "text": "sudo unleash --colour --bass" },
+      { "t": 30.89, "type": "output", "text": "…artificial intelligence learned to write code…\n" },
       { "t": 31.0, "type": "enter" },
+      { "t": 36.2, "type": "output", "text": "…it could only achieve modest outcomes…\n" },
       { "t": 40.0, "type": "output", "text": "[warning] containment failing...\n" },
+      { "t": 43.1, "type": "output", "text": "…but now…\n" },
       { "t": 46.0, "type": "output", "text": "[error] signal overflow detected\n" },
-      { "t": 52.0, "type": "output", "text": "[critical] initiating release sequence...\n" }
+      { "t": 52.0, "type": "output", "text": "[critical] initiating release sequence...\n" },
+      { "t": 52.8, "type": "output", "text": "…AI…\n" },
+      { "t": 54.15, "type": "output", "text": "…can do THIS…\n" }
     ]
   },
   "sections": [

@@ -138,14 +138,14 @@ export class TerminalIntroRenderer {
     const windowHeight = Math.min(height * 0.72, 520);
     const windowX = (width - windowWidth) / 2;
     const windowY = (height - windowHeight) / 2;
-    const radius = 14;
-    const titleBarHeight = theme.window.chrome ? theme.lineHeight + 18 : 0;
+    const radius = 8;
+    const titleBarHeight = theme.window.chrome ? theme.lineHeight + 20 : 0;
 
     ctx.save();
-    ctx.shadowColor = "rgba(0, 0, 0, 0.45)";
+    ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
     ctx.shadowBlur = 18;
     drawRoundedRect(ctx, windowX, windowY, windowWidth, windowHeight, radius);
-    ctx.fillStyle = "#10151c";
+    ctx.fillStyle = "#0f141b";
     ctx.fill();
     ctx.restore();
 
@@ -156,25 +156,44 @@ export class TerminalIntroRenderer {
     ctx.fillRect(windowX, windowY, windowWidth, windowHeight);
 
     if (theme.window.chrome) {
-      ctx.fillStyle = "rgba(255, 255, 255, 0.06)";
+      const titleGradient = ctx.createLinearGradient(0, windowY, 0, windowY + titleBarHeight);
+      titleGradient.addColorStop(0, "rgba(30, 36, 46, 0.96)");
+      titleGradient.addColorStop(1, "rgba(18, 23, 31, 0.96)");
+      ctx.fillStyle = titleGradient;
       ctx.fillRect(windowX, windowY, windowWidth, titleBarHeight);
+
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(windowX, windowY + titleBarHeight + 0.5);
+      ctx.lineTo(windowX + windowWidth, windowY + titleBarHeight + 0.5);
+      ctx.stroke();
+
       ctx.fillStyle = theme.dim;
       ctx.font = `600 ${theme.fontSize - 2}px ${theme.fontFamily}`;
       ctx.textBaseline = "middle";
-      ctx.fillText(theme.window.title, windowX + 80, windowY + titleBarHeight / 2);
+      ctx.fillText(theme.window.title, windowX + 42, windowY + titleBarHeight / 2);
 
-      const buttonY = windowY + titleBarHeight / 2;
-      const buttonX = windowX + 22;
-      const buttonGap = 14;
-      const buttonRadius = 6;
-      const buttonColors = ["#ff5f57", "#febc2e", "#28c840"];
-      buttonColors.forEach((color, index) => {
+      const controlY = windowY + titleBarHeight / 2;
+      const controlX = windowX + windowWidth - 56;
+      const controlGap = 16;
+      const controlSize = 10;
+      ["#f7768e", "#e0af68", "#9ece6a"].forEach((color, index) => {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.fillStyle = color;
-        ctx.arc(buttonX + index * buttonGap, buttonY, buttonRadius, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.rect(controlX + index * controlGap, controlY - controlSize / 2, controlSize, controlSize);
+        ctx.stroke();
       });
+
+      ctx.fillStyle = theme.accent;
+      ctx.fillRect(windowX + 16, windowY + titleBarHeight / 2 - 4, 8, 8);
     }
+
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
+    ctx.lineWidth = 1;
+    drawRoundedRect(ctx, windowX, windowY, windowWidth, windowHeight, radius);
+    ctx.stroke();
 
     ctx.font = `${theme.fontSize}px ${theme.fontFamily}`;
     ctx.textBaseline = "alphabetic";
