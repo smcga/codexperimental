@@ -6,6 +6,11 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 
 - Node.js 18+ recommended
 
+## Setup
+
+1. Add your MP3 track at `public/song.mp3` (replace the placeholder file).
+2. Edit `public/timeline.json` to change section timing, transitions, or text cues.
+
 ## Run
 
 ```bash

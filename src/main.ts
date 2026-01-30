@@ -1,14 +1,14 @@
 import "./style.css";
+import { loadTimelineConfig } from "./config/loadConfig";
+import { AudioPlayer } from "./audio/audioPlayer";
+import { createTimeline } from "./timeline/timeline";
 import { Renderer } from "./renderer/renderer";
-import { Transport } from "./audio/transport";
-import { scheduleStep, isKickStep } from "./audio/song";
-import { dropTime, totalDuration } from "./timeline";
-import { Synth } from "./audio/synth";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
+const overlayText = document.querySelector<HTMLDivElement>(".start-text");
 
-if (!canvas || !overlay) {
+if (!canvas || !overlay || !overlayText) {
   throw new Error("Missing canvas or overlay element");
 }
 
@@ -17,16 +17,13 @@ if (!ctx) {
   throw new Error("Unable to create 2D context");
 }
 
-const renderer = new Renderer();
-let audioContext: AudioContext | null = null;
-let transport: Transport | null = null;
+let renderer: Renderer | null = null;
+let audioPlayer: AudioPlayer | null = null;
+let timeline: ReturnType<typeof createTimeline> | null = null;
+let configOffset = 0;
 let animationFrame = 0;
-let startPerf = 0;
-let audioStartTime = 0;
 let lastFrameTime = 0;
-let lastStep = -1;
-let kickPulse = 0;
-let energy = 0;
+let started = false;
 
 function resize(): void {
   canvas.width = window.innerWidth;
@@ -36,29 +33,35 @@ function resize(): void {
 resize();
 window.addEventListener("resize", resize);
 
-function startDemo(): void {
-  if (audioContext) {
-    audioContext.close();
+function setOverlay(message: string, visible = true): void {
+  overlayText.textContent = message;
+  overlay.classList.toggle("hidden", !visible);
+}
+
+async function startDemo(): Promise<void> {
+  if (started) {
+    return;
   }
+  started = true;
+  setOverlay("LOADING…", true);
 
-  audioContext = new AudioContext();
-  audioStartTime = audioContext.currentTime + 0.05;
-  const synth = new Synth(audioContext);
-  transport = new Transport(audioContext, audioStartTime, (step, time) => {
-    scheduleStep(synth, step, time);
-  });
+  try {
+    const config = await loadTimelineConfig("/timeline.json");
+    configOffset = config.audio.offset;
+    audioPlayer = await AudioPlayer.create({ src: config.audio.src, offset: config.audio.offset });
+    renderer = new Renderer();
+    timeline = createTimeline(config, audioPlayer.duration);
 
-  audioContext.resume();
-  transport.start();
-  startPerf = performance.now();
-  lastFrameTime = startPerf;
-  lastStep = -1;
-  kickPulse = 0;
-  energy = 0;
-  overlay.classList.add("hidden");
-
-  cancelAnimationFrame(animationFrame);
-  animationFrame = requestAnimationFrame(loop);
+    await audioPlayer.play();
+    lastFrameTime = performance.now();
+    setOverlay("", false);
+    cancelAnimationFrame(animationFrame);
+    animationFrame = requestAnimationFrame(loop);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Failed to start demo.";
+    setOverlay(message, true);
+    started = false;
+  }
 }
 
 function loop(timestamp: number): void {
@@ -66,28 +69,22 @@ function loop(timestamp: number): void {
   const delta = (timestamp - lastFrameTime) / 1000;
   lastFrameTime = timestamp;
 
-  if (!audioContext || !transport) {
+  if (!renderer || !timeline || !audioPlayer) {
     return;
   }
 
-  const demoTime = audioContext.currentTime - audioStartTime;
-  if (demoTime > totalDuration) {
-    restartToOverlay();
+  if (audioPlayer.ended) {
+    setOverlay("THE END (press R to restart)", true);
     return;
   }
 
-  const beat = transport.getBeatAtTime(audioContext.currentTime);
-  const step = Math.floor(beat * 4);
-  const kick = step !== lastStep && isKickStep(step, beat);
-  if (step !== lastStep) {
-    lastStep = step;
+  if (!audioPlayer.isPlaying) {
+    return;
   }
 
-  if (kick) {
-    kickPulse = 1;
-  }
-  kickPulse = Math.max(0, kickPulse - delta * 2.2);
-  energy = Math.max(0.2, energy * 0.9 + kickPulse * 0.8);
+  const demoTime = audioPlayer.currentTime + configOffset;
+  const features = audioPlayer.update();
+  const state = timeline.getState(demoTime);
 
   renderer.render({
     ctx,
@@ -95,21 +92,19 @@ function loop(timestamp: number): void {
     height: canvas.height,
     time: demoTime,
     delta,
-    kick,
-    energy: energy + (demoTime > dropTime ? 0.3 : 0)
+    features,
+    state
   });
 }
 
-function restartToOverlay(): void {
-  if (transport) {
-    transport.stop();
+async function restartDemo(): Promise<void> {
+  if (!audioPlayer || !renderer) {
+    return;
   }
-  if (audioContext) {
-    audioContext.close();
-  }
-  transport = null;
-  audioContext = null;
-  overlay.classList.remove("hidden");
+  renderer.reset();
+  await audioPlayer.restart();
+  lastFrameTime = performance.now();
+  setOverlay("", false);
 }
 
 overlay.addEventListener("click", () => {
@@ -118,7 +113,7 @@ overlay.addEventListener("click", () => {
 
 window.addEventListener("keydown", (event) => {
   if (event.key.toLowerCase() === "r") {
-    restartToOverlay();
+    restartDemo();
   }
   if (event.key.toLowerCase() === "f" && document.fullscreenEnabled) {
     if (!document.fullscreenElement) {
