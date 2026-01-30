@@ -3,42 +3,54 @@
     "src": "/song.mp3",
     "offset": 0
   },
+  "intro": {
+    "mode": "terminal",
+    "end": 54.15,
+    "theme": {
+      "bg": "#0b0f14",
+      "fg": "#b7c7d6",
+      "accent": "#7ee787",
+      "dim": "#6b7785",
+      "fontFamily": "monospace",
+      "fontSize": 16,
+      "lineHeight": 20,
+      "padding": 24,
+      "window": {
+        "title": "demo@machine:~",
+        "chrome": true
+      }
+    },
+    "script": [
+      { "t": 0.4, "type": "prompt", "text": "demo@machine:~$ " },
+      { "t": 0.55, "type": "type", "text": "npm run build" },
+      { "t": 1.6, "type": "enter" },
+      { "t": 1.75, "type": "output", "text": "> building...\n> optimising...\n> done.\n" },
+      { "t": 5.0, "type": "prompt", "text": "demo@machine:~$ " },
+      { "t": 5.1, "type": "type", "text": "cat prophecy.txt" },
+      { "t": 5.9, "type": "enter" },
+      {
+        "t": 6.1,
+        "type": "output",
+        "text": "Four years ago, in the year 2022...\n...artificial intelligence learned to write code...\n...it could only achieve modest outcomes...\n...but now...\n...AI...\n...can do THIS...\n"
+      },
+      { "t": 16.0, "type": "output", "text": "\n" },
+      {
+        "t": 18.0,
+        "type": "ascii",
+        "text": "  _____  ______ __  __  ____\n |  __ \\\\|  ____|  \\/  |/ __ \\\\\n | |  | | |__  | \\\\  / | |  | |\n | |  | |  __| | |\\\\/| | |  | |\n | |__| | |____| |  | | |__| |\n |_____/|______|_|  |_|\\\\____/\n"
+      },
+      { "t": 30.0, "type": "prompt", "text": "demo@machine:~$ " },
+      { "t": 30.1, "type": "type", "text": "sudo unleash --colour --bass" },
+      { "t": 31.0, "type": "enter" },
+      { "t": 40.0, "type": "output", "text": "[warning] containment failing...\n" },
+      { "t": 46.0, "type": "output", "text": "[error] signal overflow detected\n" },
+      { "t": 52.0, "type": "output", "text": "[critical] initiating release sequence...\n" }
+    ]
+  },
   "sections": [
     {
-      "id": "intro-starfield",
-      "start": "00:00.0",
-      "end": "00:21.6",
-      "effect": "starfield",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 },
-      "params": { "speed": 1.0, "warp": 0.2 }
-    },
-    {
-      "id": "intro-starfield1",
-      "start": "00:21.5",
-      "end": "00:21.6",
-      "effect": "tunnel",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 },
-      "params": { "speed": 1.0 }
-    },
-    {
-      "id": "plasma-swell",
-      "start": "00:21.6",
-      "end": "00:28.7",
-      "effect": "plasma",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 },
-      "params": { "speed": 1.1 }
-    },
-    {
-      "id": "tunnel-rise",
-      "start": "00:28.7",
-      "end": "00:54.3",
-      "effect": "tunnel",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 },
-      "params": { "speed": 1.1 }
-    },
-    {
       "id": "roto-grid",
-      "start": "00:54.3",
+      "start": "00:54.15",
       "end": "00:59.8",
       "effect": "rotozoom",
       "transition": { "in": "wipe", "out": "fade", "duration": 0.8 }
@@ -489,167 +501,5 @@
       "transition": { "in": "fade", "out": "fade", "duration": 1.0 }
     }
   ],
-  "textCues": [
-    {
-      "id": "line1",
-      "start": "00:22.8",
-      "end": "00:23.9",
-      "text": "Four years ago\u2026",
-      "x": 0.5,
-      "y": 0.25,
-      "align": "center",
-      "size": 18,
-      "color": "#ffffff",
-      "effects": {
-        "glitchIn": true,
-        "shadow": true,
-        "scanlineMask": 0.35
-      }
-    },
-    {
-      "id": "line1b",
-      "start": "00:25.6",
-      "end": "00:28.3",
-      "text": "In the year 2022\u2026",
-      "x": 0.5,
-      "y": 0.25,
-      "align": "center",
-      "size": 22,
-      "color": "#ffffff",
-      "effects": {
-        "glitchIn": true,
-        "shadow": true,
-        "scanlineMask": 0.35
-      }
-    },
-    {
-      "id": "line2",
-      "start": "00:30.89",
-      "end": "00:34.0",
-      "text": "\u2026artificial intelligence learned to write code\u2026",
-      "x": 0.5,
-      "y": 0.32,
-      "align": "center",
-      "size": 12,
-      "color": "#c8f0ff",
-      "effects": {
-        "shadow": true,
-        "typewriter": {
-          "speed": 18
-        }
-      }
-    },
-    {
-      "id": "line3",
-      "start": "00:36.2",
-      "end": "00:38.6",
-      "text": "\u2026it could only achieve modest outcomes\u2026",
-      "x": 0.5,
-      "y": 0.38,
-      "align": "center",
-      "size": 14,
-      "color": "#ffffff",
-      "effects": {
-        "shadow": true
-      }
-    },
-    {
-      "id": "line4",
-      "start": "00:43.1",
-      "end": "00:44.2",
-      "text": "\u2026but now\u2026",
-      "x": 0.5,
-      "y": 0.44,
-      "align": "center",
-      "size": 17,
-      "color": "#ffffff",
-      "effects": {
-        "glitchIn": true,
-        "shadow": true
-      }
-    },
-    {
-      "id": "line5",
-      "start": "00:52.8",
-      "end": "00:53.4",
-      "text": "\u2026AI\u2026",
-      "x": 0.5,
-      "y": 0.52,
-      "align": "center",
-      "size": 18,
-      "color": "#ffffff",
-      "effects": {
-        "shadow": true,
-        "scanlineMask": 0.25
-      }
-    },
-    {
-      "id": "line6",
-      "start": "00:53.4",
-      "end": "00:53.79",
-      "spans": [
-        {
-          "text": "\u2026can",
-          "color": "#ffffff"
-        }
-      ],
-      "x": 0.5,
-      "y": 0.6,
-      "align": "center",
-      "size": 22,
-      "effects": {
-        "glitchIn": true,
-        "shadow": true,
-        "scanlineMask": 0.4
-      }
-    },
-    {
-      "id": "line6",
-      "start": "00:53.8",
-      "end": "00:54.1",
-      "spans": [
-        {
-          "text": "\u2026can do ",
-          "color": "#ffffff"
-        }
-      ],
-      "x": 0.5,
-      "y": 0.6,
-      "align": "center",
-      "size": 22,
-      "effects": {
-        "glitchIn": true,
-        "shadow": true,
-        "scanlineMask": 0.4
-      }
-    },
-    {
-      "id": "line6",
-      "start": "00:54.15",
-      "end": "00:56.0",
-      "spans": [
-        {
-          "text": "\u2026can do ",
-          "color": "#ffffff"
-        },
-        {
-          "text": "THIS",
-          "color": "#ffb347"
-        },
-        {
-          "text": "\u2026",
-          "color": "#ffffff"
-        }
-      ],
-      "x": 0.5,
-      "y": 0.6,
-      "align": "center",
-      "size": 22,
-      "effects": {
-        "glitchIn": true,
-        "shadow": true,
-        "scanlineMask": 0.4
-      }
-    }
-  ]
+  "textCues": []
 }

@@ -1,9 +1,11 @@
 import "./style.css";
-import { loadConfig } from "./config/loadConfig";
+import { IntroConfig, loadConfig } from "./config/loadConfig";
 import { AudioPlayer, AudioFeatures } from "./audio/audioPlayer";
 import { Timeline } from "./timeline/timeline";
 import { Renderer } from "./renderer/renderer";
 import { effectRegistry } from "./renderer/effects";
+import { TerminalIntroRenderer } from "./renderer/intro/terminalIntro";
+import { createExplosionState, getExplosionShake, renderExplosion } from "./renderer/overlays/explosion";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
@@ -24,8 +26,11 @@ if (!ctx) {
 }
 
 const renderer = new Renderer();
+const introRenderer = new TerminalIntroRenderer();
+const explosionState = createExplosionState();
 let audioPlayer: AudioPlayer | null = null;
 let timeline: Timeline | null = null;
+let introConfig: IntroConfig | null = null;
 let animationFrame = 0;
 let lastDemoTime = 0;
 let isRunning = false;
@@ -129,6 +134,7 @@ async function startDemo(): Promise<void> {
 
   try {
     const config = await loadConfig();
+    introConfig = config.intro;
     if (audioPlayer) {
       audioPlayer.destroy();
     }
@@ -168,7 +174,7 @@ async function restartDemo(): Promise<void> {
 }
 
 function loop(): void {
-  if (!audioPlayer || !timeline) {
+  if (!audioPlayer || !timeline || !introConfig) {
     isRunning = false;
     return;
   }
@@ -179,29 +185,43 @@ function loop(): void {
 
   const audioFeatures: AudioFeatures = audioPlayer.updateFeatures();
   const state = timeline.getState(demoTime);
-  const sectionOverride = debugState.forcedEffect
-    ? { ...state.section, effect: debugState.forcedEffect }
-    : state.section;
-  const transitionOverride = state.transition
-    ? {
-        ...state.transition,
-        to: debugState.forcedEffect ? { ...state.transition.to, effect: debugState.forcedEffect } : state.transition.to,
-        type: debugState.transitionOverride ?? state.transition.type
-      }
-    : undefined;
+  if (state.mode === "intro") {
+    introRenderer.render({
+      ctx,
+      width: canvas.width,
+      height: canvas.height,
+      time: demoTime,
+      config: introConfig
+    });
+  } else {
+    const sectionOverride = debugState.forcedEffect
+      ? { ...state.section, effect: debugState.forcedEffect }
+      : state.section;
+    const transitionOverride = state.transition
+      ? {
+          ...state.transition,
+          to: debugState.forcedEffect ? { ...state.transition.to, effect: debugState.forcedEffect } : state.transition.to,
+          type: debugState.transitionOverride ?? state.transition.type
+        }
+      : undefined;
+    const explosionTime = demoTime - introConfig.end;
+    const explosionShake = getExplosionShake(explosionTime);
 
-  renderer.render({
-    ctx,
-    width: canvas.width,
-    height: canvas.height,
-    time: demoTime,
-    delta,
-    section: sectionOverride,
-    transition: transitionOverride,
-    textCues: state.activeTextCues,
-    audio: audioFeatures,
-    monochromeOverride: debugState.monochromeOverride
-  });
+    renderer.render({
+      ctx,
+      width: canvas.width,
+      height: canvas.height,
+      time: demoTime,
+      delta,
+      section: sectionOverride,
+      transition: transitionOverride,
+      textCues: state.activeTextCues,
+      audio: audioFeatures,
+      monochromeOverride: debugState.monochromeOverride,
+      screenShake: explosionShake
+    });
+    renderExplosion(ctx, canvas.width, canvas.height, explosionTime, explosionState, explosionShake);
+  }
 
   debugTimestamp.textContent = formatTimestamp(demoTime);
 
