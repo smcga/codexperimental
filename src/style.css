@@ -30,18 +30,25 @@ body,
   place-items: center;
   background: #000;
   color: #fff;
-  font-size: clamp(1.5rem, 3vw, 3rem);
-  letter-spacing: 0.25em;
+  font-size: clamp(1.3rem, 3vw, 2.8rem);
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   cursor: pointer;
+  transition: opacity 0.6s ease;
 }
 
 #start-overlay.hidden {
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.6s ease;
+}
+
+#start-overlay[data-state="error"] {
+  color: #ff7b7b;
+  letter-spacing: 0.08em;
 }
 
 .start-text {
   text-shadow: 0 0 12px rgba(0, 255, 255, 0.8);
+  text-align: center;
+  padding: 0 2rem;
 }

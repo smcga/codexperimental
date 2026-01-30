@@ -31,7 +31,13 @@ export class Starfield {
     });
   }
 
-  render(ctx: CanvasRenderingContext2D, width: number, height: number, intensity: number): void {
+  render(
+    ctx: CanvasRenderingContext2D,
+    width: number,
+    height: number,
+    intensity: number,
+    warp = 0
+  ): void {
     const centerX = width / 2;
     const centerY = height / 2;
     const scale = Math.min(width, height) * 0.45;
@@ -45,6 +51,13 @@ export class Starfield {
       const alpha = Math.min(1, 0.6 + intensity * 0.8);
       ctx.fillStyle = `rgba(180, 220, 255, ${alpha})`;
       ctx.fillRect(x, y, size, size);
+      if (warp > 0.01) {
+        ctx.strokeStyle = `rgba(120, 200, 255, ${alpha * warp})`;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(centerX + star.x * perspective * (1 + warp * 2), centerY + star.y * perspective * (1 + warp * 2));
+        ctx.stroke();
+      }
     });
     ctx.restore();
   }

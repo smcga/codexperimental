@@ -1,120 +1,186 @@
-import { buildPalette } from "../util/palette";
-import { clamp, lerp } from "../util/math";
-import { getDropIntensity, getEffectMix } from "../timeline";
-import { plasmaValue } from "./effects/plasma";
-import { tunnelValue } from "./effects/tunnel";
-import { rotoValue } from "./effects/rotozoom";
-import { Starfield } from "./effects/starfield";
-import { ParticleSystem } from "./effects/particles";
-import { renderStoryText } from "./overlay/text";
+import { AudioFeatures } from "../audio/audioPlayer";
+import { SectionConfig, TextCue } from "../config/loadConfig";
+import { clamp } from "../util/math";
+import { effectRegistry, resetEffects } from "./effects";
+import { renderTextCues } from "./text/textRenderer";
 
-export type RenderContext = {
+export type RenderState = {
   ctx: CanvasRenderingContext2D;
   width: number;
   height: number;
   time: number;
   delta: number;
-  kick: boolean;
-  energy: number;
+  section: SectionConfig;
+  transition?: {
+    from: SectionConfig;
+    to: SectionConfig;
+    progress: number;
+    type: "fade" | "wipe";
+  };
+  textCues: TextCue[];
+  audio: AudioFeatures;
 };
 
 export class Renderer {
-  private lowResCanvas: HTMLCanvasElement;
-  private lowResCtx: CanvasRenderingContext2D;
-  private imageData: ImageData;
-  private palette = buildPalette();
-  private starfield = new Starfield(220, 2.5);
-  private particles = new ParticleSystem();
-  private lastGlitch = 0;
+  private baseCanvas: HTMLCanvasElement;
+  private baseCtx: CanvasRenderingContext2D;
+  private transitionCanvas: HTMLCanvasElement;
+  private transitionCtx: CanvasRenderingContext2D;
+  private baseWidth: number;
+  private baseHeight: number;
 
-  constructor(private baseWidth = 320, private baseHeight = 180) {
-    this.lowResCanvas = document.createElement("canvas");
-    this.lowResCanvas.width = baseWidth;
-    this.lowResCanvas.height = baseHeight;
-    const ctx = this.lowResCanvas.getContext("2d");
-    if (!ctx) {
-      throw new Error("Unable to create low-res canvas");
+  constructor(baseWidth = 320, baseHeight = 180) {
+    this.baseWidth = baseWidth;
+    this.baseHeight = baseHeight;
+    this.baseCanvas = document.createElement("canvas");
+    this.baseCanvas.width = baseWidth;
+    this.baseCanvas.height = baseHeight;
+    const baseCtx = this.baseCanvas.getContext("2d");
+    if (!baseCtx) {
+      throw new Error("Unable to create base canvas");
     }
-    this.lowResCtx = ctx;
-    this.imageData = ctx.createImageData(baseWidth, baseHeight);
+    this.baseCtx = baseCtx;
+
+    this.transitionCanvas = document.createElement("canvas");
+    this.transitionCanvas.width = baseWidth;
+    this.transitionCanvas.height = baseHeight;
+    const transitionCtx = this.transitionCanvas.getContext("2d");
+    if (!transitionCtx) {
+      throw new Error("Unable to create transition canvas");
+    }
+    this.transitionCtx = transitionCtx;
   }
 
-  handleKick(width: number, height: number, intensity: number): void {
-    this.particles.emitBurst(32, width, height, 2 + intensity * 4);
-    this.lastGlitch = 0.12 + intensity * 0.2;
+  reset(): void {
+    resetEffects();
+    this.baseCtx.clearRect(0, 0, this.baseWidth, this.baseHeight);
+    this.transitionCtx.clearRect(0, 0, this.baseWidth, this.baseHeight);
   }
 
-  render({ ctx, width, height, time, delta, kick, energy }: RenderContext): void {
-    const dropIntensity = getDropIntensity(time);
-    if (kick) {
-      this.handleKick(width, height, dropIntensity + energy);
-    }
-    this.starfield.update(delta, 0.7 + energy * 1.2 + dropIntensity * 2.4);
-    this.particles.update(delta);
+  render({ ctx, width, height, time, delta, section, transition, textCues, audio }: RenderState): void {
+    const shake = audio.beatStrength * 6;
+    const { scale, offsetX, offsetY } = this.computeLetterbox(width, height);
 
-    this.renderLowRes(time, energy, dropIntensity);
+    ctx.clearRect(0, 0, width, height);
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, width, height);
+
+    if (transition) {
+      this.renderSectionTo(this.transitionCtx, transition.from, time, delta, audio);
+      this.renderSectionTo(this.baseCtx, transition.to, time, delta, audio);
+      this.drawTransition(ctx, transition, scale, offsetX, offsetY, shake);
+    } else {
+      this.renderSectionTo(this.baseCtx, section, time, delta, audio);
+      this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shake, 1);
+    }
 
     ctx.save();
-    ctx.clearRect(0, 0, width, height);
+    ctx.translate(offsetX + shake, offsetY + shake);
+    ctx.scale(scale, scale);
+    this.renderOverlays(ctx, this.baseWidth, this.baseHeight, audio);
+    renderTextCues(ctx, this.baseWidth, this.baseHeight, textCues, time);
+    ctx.restore();
+  }
+
+  private renderSectionTo(
+    targetCtx: CanvasRenderingContext2D,
+    section: SectionConfig,
+    time: number,
+    delta: number,
+    audio: AudioFeatures
+  ): void {
+    const effect = effectRegistry[section.effect];
+    if (!effect) {
+      targetCtx.fillStyle = "#000";
+      targetCtx.fillRect(0, 0, this.baseWidth, this.baseHeight);
+      targetCtx.fillStyle = "#fff";
+      targetCtx.fillText(`Missing effect: ${section.effect}`, 12, 24);
+      return;
+    }
+    effect.render({
+      ctx: targetCtx,
+      width: this.baseWidth,
+      height: this.baseHeight,
+      time,
+      delta,
+      audio,
+      params: section.params
+    });
+  }
+
+  private drawTransition(
+    ctx: CanvasRenderingContext2D,
+    transition: Required<RenderState>["transition"],
+    scale: number,
+    offsetX: number,
+    offsetY: number,
+    shake: number
+  ): void {
+    const progress = transition.progress;
+    if (transition.type === "wipe") {
+      this.drawScaled(ctx, this.transitionCanvas, scale, offsetX, offsetY, shake, 1);
+      ctx.save();
+      ctx.beginPath();
+      const wipeX = offsetX + (this.baseWidth * scale + shake) * progress;
+      ctx.rect(offsetX, offsetY, wipeX - offsetX, this.baseHeight * scale + shake * 2);
+      ctx.clip();
+      this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shake, 1);
+      ctx.restore();
+      return;
+    }
+
+    this.drawScaled(ctx, this.transitionCanvas, scale, offsetX, offsetY, shake, 1 - progress);
+    this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shake, progress);
+  }
+
+  private drawScaled(
+    ctx: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
+    scale: number,
+    offsetX: number,
+    offsetY: number,
+    shake: number,
+    alpha: number
+  ): void {
+    ctx.save();
+    ctx.globalAlpha = clamp(alpha, 0, 1);
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(
+      canvas,
+      offsetX + shake,
+      offsetY + shake,
+      this.baseWidth * scale,
+      this.baseHeight * scale
+    );
+    ctx.restore();
+  }
+
+  private computeLetterbox(width: number, height: number): { scale: number; offsetX: number; offsetY: number } {
     const scale = Math.min(width / this.baseWidth, height / this.baseHeight);
     const drawWidth = this.baseWidth * scale;
     const drawHeight = this.baseHeight * scale;
-    const offsetX = (width - drawWidth) / 2;
-    const offsetY = (height - drawHeight) / 2;
-
-    ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(this.lowResCanvas, offsetX, offsetY, drawWidth, drawHeight);
-    ctx.restore();
-
-    this.starfield.render(ctx, width, height, energy + dropIntensity);
-    this.particles.render(ctx, dropIntensity + energy);
-
-    this.renderGlitch(ctx, width, height, dropIntensity);
-    this.renderScanlines(ctx, width, height, energy + dropIntensity);
-    renderStoryText(ctx, width, height, time);
+    return {
+      scale,
+      offsetX: (width - drawWidth) / 2,
+      offsetY: (height - drawHeight) / 2
+    };
   }
 
-  private renderLowRes(time: number, energy: number, dropIntensity: number): void {
-    const mix = getEffectMix(time);
-    const data = this.imageData.data;
-    const width = this.baseWidth;
-    const height = this.baseHeight;
-    const t = time * 0.8;
-
-    for (let y = 0; y < height; y += 1) {
-      for (let x = 0; x < width; x += 1) {
-        const idx = (y * width + x) * 4;
-        const plasma = plasmaValue(x, y, t) * mix.plasma;
-        const tunnel = tunnelValue(x, y, t) * mix.tunnel;
-        const roto = rotoValue(x, y, t) * mix.roto;
-        const value = clamp(plasma + tunnel + roto, 0, 1);
-        const paletteIndex = Math.floor(value * 255);
-        const color = this.palette[paletteIndex];
-        const brightness = lerp(0.8, 1.2, clamp(energy + dropIntensity * 0.6, 0, 1));
-        data[idx] = Math.min(255, (color & 255) * brightness);
-        data[idx + 1] = Math.min(255, ((color >> 8) & 255) * brightness);
-        data[idx + 2] = Math.min(255, ((color >> 16) & 255) * brightness);
-        data[idx + 3] = 255;
-      }
-    }
-
-    this.lowResCtx.putImageData(this.imageData, 0, 0);
-  }
-
-  private renderScanlines(
+  private renderOverlays(
     ctx: CanvasRenderingContext2D,
     width: number,
     height: number,
-    intensity: number
+    audio: AudioFeatures
   ): void {
     ctx.save();
     ctx.globalCompositeOperation = "overlay";
-    ctx.fillStyle = `rgba(0, 0, 0, ${0.12 + intensity * 0.15})`;
+    ctx.fillStyle = `rgba(0, 0, 0, ${0.1 + audio.rms * 0.2})`;
     for (let y = 0; y < height; y += 4) {
       ctx.fillRect(0, y, width, 2);
     }
+    ctx.restore();
 
-    const gradient = ctx.createRadialGradient(
+    const vignette = ctx.createRadialGradient(
       width / 2,
       height / 2,
       Math.min(width, height) * 0.2,
@@ -122,29 +188,9 @@ export class Renderer {
       height / 2,
       Math.max(width, height) * 0.8
     );
-    gradient.addColorStop(0, "rgba(0, 0, 0, 0)");
-    gradient.addColorStop(1, "rgba(0, 0, 0, 0.45)");
-    ctx.fillStyle = gradient;
+    vignette.addColorStop(0, "rgba(0, 0, 0, 0)");
+    vignette.addColorStop(1, "rgba(0, 0, 0, 0.6)");
+    ctx.fillStyle = vignette;
     ctx.fillRect(0, 0, width, height);
-    ctx.restore();
-  }
-
-  private renderGlitch(
-    ctx: CanvasRenderingContext2D,
-    width: number,
-    height: number,
-    dropIntensity: number
-  ): void {
-    if (this.lastGlitch <= 0 && dropIntensity < 0.4) {
-      return;
-    }
-    this.lastGlitch = Math.max(0, this.lastGlitch - 0.016);
-    const slices = Math.floor(3 + dropIntensity * 6);
-    for (let i = 0; i < slices; i += 1) {
-      const sliceHeight = 8 + Math.random() * 18;
-      const y = Math.random() * (height - sliceHeight);
-      const offset = (Math.random() - 0.5) * 24 * (dropIntensity + 0.3);
-      ctx.drawImage(ctx.canvas, 0, y, width, sliceHeight, offset, y, width, sliceHeight);
-    }
   }
 }
