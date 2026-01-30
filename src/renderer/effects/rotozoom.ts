@@ -1,8 +1,30 @@
-export function rotoValue(x: number, y: number, time: number): number {
-  const angle = time * 0.6;
-  const scale = 0.8 + 0.2 * Math.sin(time * 0.8);
-  const u = (x - 160) * Math.cos(angle) - (y - 90) * Math.sin(angle);
-  const v = (x - 160) * Math.sin(angle) + (y - 90) * Math.cos(angle);
-  const checks = ((Math.floor((u * scale) / 20) + Math.floor((v * scale) / 20)) & 1) === 0 ? 1 : 0;
-  return checks ? 0.8 : 0.2;
+import { EffectDefinition } from "./types";
+
+export class RotozoomEffect implements EffectDefinition {
+  name = "rotozoom";
+
+  render({ ctx, width, height, time, audio, params }: Parameters<EffectDefinition["render"]>[0]): void {
+    const scale = 1.2 + Math.sin(time * 0.8) * 0.2 + audio.bass * 0.4;
+    const rotation = time * (params.rotateSpeed ?? 0.3) + audio.treble * 0.8;
+    const size = params.tileSize ?? 24;
+
+    ctx.save();
+    ctx.fillStyle = "#050009";
+    ctx.fillRect(0, 0, width, height);
+    ctx.translate(width / 2, height / 2);
+    ctx.rotate(rotation);
+    ctx.scale(scale, scale);
+
+    for (let y = -height; y < height; y += size) {
+      for (let x = -width; x < width; x += size) {
+        const checker = ((x / size) ^ (y / size)) & 1;
+        ctx.fillStyle = checker
+          ? `rgba(255, 120, 220, ${0.3 + audio.mid * 0.4})`
+          : `rgba(50, 160, 255, ${0.2 + audio.mid * 0.3})`;
+        ctx.fillRect(x, y, size, size);
+      }
+    }
+
+    ctx.restore();
+  }
 }
