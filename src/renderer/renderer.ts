@@ -2,7 +2,7 @@ import { AudioFeatures } from "../audio/audioPlayer";
 import { SectionConfig, TextCue } from "../config/loadConfig";
 import { clamp } from "../util/math";
 import { effectRegistry, resetEffects } from "./effects";
-import { isMonochromeTime } from "./monochrome";
+import { resolveMonochrome } from "./monochrome";
 import { renderTextCues } from "./text/textRenderer";
 
 export type RenderState = {
@@ -11,6 +11,7 @@ export type RenderState = {
   height: number;
   time: number;
   delta: number;
+  monochromeOverride?: boolean | null;
   section: SectionConfig;
   transition?: {
     from: SectionConfig;
@@ -58,10 +59,21 @@ export class Renderer {
     this.transitionCtx.clearRect(0, 0, this.baseWidth, this.baseHeight);
   }
 
-  render({ ctx, width, height, time, delta, section, transition, textCues, audio }: RenderState): void {
+  render({
+    ctx,
+    width,
+    height,
+    time,
+    delta,
+    section,
+    transition,
+    textCues,
+    audio,
+    monochromeOverride
+  }: RenderState): void {
     const shake = audio.beatStrength * 6;
     const { scale, offsetX, offsetY } = this.computeLetterbox(width, height);
-    const monochrome = isMonochromeTime(time);
+    const monochrome = resolveMonochrome(time, monochromeOverride);
 
     ctx.clearRect(0, 0, width, height);
     ctx.fillStyle = "black";
