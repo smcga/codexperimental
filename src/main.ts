@@ -1,14 +1,14 @@
 import "./style.css";
 import { Renderer } from "./renderer/renderer";
-import { Transport } from "./audio/transport";
-import { scheduleStep, isKickStep } from "./audio/song";
-import { dropTime, totalDuration } from "./timeline";
-import { Synth } from "./audio/synth";
+import { loadTimelineConfig, type TimelineConfig } from "./config/loadConfig";
+import { AudioPlayer } from "./audio/audioPlayer";
+import { getActiveTextCues, getSectionState } from "./timeline/timeline";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
+const overlayText = document.querySelector<HTMLDivElement>(".start-text");
 
-if (!canvas || !overlay) {
+if (!canvas || !overlay || !overlayText) {
   throw new Error("Missing canvas or overlay element");
 }
 
@@ -18,15 +18,12 @@ if (!ctx) {
 }
 
 const renderer = new Renderer();
-let audioContext: AudioContext | null = null;
-let transport: Transport | null = null;
+let audioPlayer: AudioPlayer | null = null;
 let animationFrame = 0;
-let startPerf = 0;
-let audioStartTime = 0;
 let lastFrameTime = 0;
-let lastStep = -1;
-let kickPulse = 0;
-let energy = 0;
+let isRunning = false;
+let isLoading = false;
+let timelineConfig: TimelineConfig | null = null;
 
 function resize(): void {
   canvas.width = window.innerWidth;
@@ -36,58 +33,79 @@ function resize(): void {
 resize();
 window.addEventListener("resize", resize);
 
-function startDemo(): void {
-  if (audioContext) {
-    audioContext.close();
+function setOverlay(message: string, visible: boolean): void {
+  overlayText.textContent = message;
+  overlay.classList.toggle("hidden", !visible);
+}
+
+async function startDemo(): Promise<void> {
+  if (isLoading || isRunning) {
+    return;
   }
 
-  audioContext = new AudioContext();
-  audioStartTime = audioContext.currentTime + 0.05;
-  const synth = new Synth(audioContext);
-  transport = new Transport(audioContext, audioStartTime, (step, time) => {
-    scheduleStep(synth, step, time);
-  });
+  isLoading = true;
+  setOverlay("Loading…", true);
 
-  audioContext.resume();
-  transport.start();
-  startPerf = performance.now();
-  lastFrameTime = startPerf;
-  lastStep = -1;
-  kickPulse = 0;
-  energy = 0;
-  overlay.classList.add("hidden");
+  try {
+    const config = await loadTimelineConfig();
 
+    if (audioPlayer) {
+      audioPlayer.stop();
+      audioPlayer.context.close();
+    }
+
+    audioPlayer = new AudioPlayer(config.audio.src, config.audio.offset);
+    await audioPlayer.load();
+    await audioPlayer.play();
+
+    timelineConfig = config;
+    renderer.reset();
+    lastFrameTime = performance.now();
+    isRunning = true;
+    setOverlay("CLICK TO START", false);
+
+    cancelAnimationFrame(animationFrame);
+    animationFrame = requestAnimationFrame(loop);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    setOverlay(`Config error: ${message}`, true);
+  } finally {
+    isLoading = false;
+  }
+}
+
+function stopDemo(message: string): void {
+  isRunning = false;
   cancelAnimationFrame(animationFrame);
-  animationFrame = requestAnimationFrame(loop);
+  setOverlay(message, true);
 }
 
 function loop(timestamp: number): void {
-  animationFrame = requestAnimationFrame(loop);
+  if (!audioPlayer || !timelineConfig) {
+    return;
+  }
+
+  if (audioPlayer.isPaused) {
+    stopDemo("CLICK TO START");
+    return;
+  }
+
+  if (audioPlayer.isEnded) {
+    stopDemo("THE END (press R to restart)");
+    return;
+  }
+
   const delta = (timestamp - lastFrameTime) / 1000;
   lastFrameTime = timestamp;
 
-  if (!audioContext || !transport) {
-    return;
-  }
-
-  const demoTime = audioContext.currentTime - audioStartTime;
-  if (demoTime > totalDuration) {
-    restartToOverlay();
-    return;
-  }
-
-  const beat = transport.getBeatAtTime(audioContext.currentTime);
-  const step = Math.floor(beat * 4);
-  const kick = step !== lastStep && isKickStep(step, beat);
-  if (step !== lastStep) {
-    lastStep = step;
-  }
-
-  if (kick) {
-    kickPulse = 1;
-  }
-  kickPulse = Math.max(0, kickPulse - delta * 2.2);
-  energy = Math.max(0.2, energy * 0.9 + kickPulse * 0.8);
+  const demoTime = audioPlayer.demoTime;
+  const features = audioPlayer.updateFeatures();
+  const sectionState = getSectionState(
+    demoTime,
+    timelineConfig.sections,
+    audioPlayer.duration + timelineConfig.audio.offset
+  );
+  const activeTextCues = getActiveTextCues(demoTime, timelineConfig.textCues);
 
   renderer.render({
     ctx,
@@ -95,21 +113,27 @@ function loop(timestamp: number): void {
     height: canvas.height,
     time: demoTime,
     delta,
-    kick,
-    energy: energy + (demoTime > dropTime ? 0.3 : 0)
+    features,
+    sectionState,
+    textCues: activeTextCues
   });
+
+  animationFrame = requestAnimationFrame(loop);
 }
 
-function restartToOverlay(): void {
-  if (transport) {
-    transport.stop();
+function restart(): void {
+  if (!audioPlayer || !timelineConfig) {
+    startDemo();
+    return;
   }
-  if (audioContext) {
-    audioContext.close();
-  }
-  transport = null;
-  audioContext = null;
-  overlay.classList.remove("hidden");
+  audioPlayer.restart();
+  void audioPlayer.play();
+  renderer.reset();
+  lastFrameTime = performance.now();
+  isRunning = true;
+  setOverlay("CLICK TO START", false);
+  cancelAnimationFrame(animationFrame);
+  animationFrame = requestAnimationFrame(loop);
 }
 
 overlay.addEventListener("click", () => {
@@ -118,7 +142,7 @@ overlay.addEventListener("click", () => {
 
 window.addEventListener("keydown", (event) => {
   if (event.key.toLowerCase() === "r") {
-    restartToOverlay();
+    restart();
   }
   if (event.key.toLowerCase() === "f" && document.fullscreenEnabled) {
     if (!document.fullscreenElement) {
