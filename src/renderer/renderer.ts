@@ -1,6 +1,7 @@
 import { AudioFeatures } from "../audio/audioPlayer";
 import { SectionConfig, TextCue } from "../config/loadConfig";
 import { clamp } from "../util/math";
+import { CameraState, computeDynamicCamera } from "./camera";
 import { effectRegistry, resetEffects } from "./effects";
 import { resolveMonochrome } from "./monochrome";
 import { renderTextCues } from "./text/textRenderer";
@@ -74,6 +75,7 @@ export class Renderer {
     const shake = audio.beatStrength * 6;
     const { scale, offsetX, offsetY } = this.computeLetterbox(width, height);
     const monochrome = resolveMonochrome(time, monochromeOverride);
+    const camera = computeDynamicCamera(time, audio, this.baseWidth, this.baseHeight);
 
     ctx.clearRect(0, 0, width, height);
     ctx.fillStyle = "black";
@@ -87,10 +89,10 @@ export class Renderer {
     if (transition) {
       this.renderSectionTo(this.transitionCtx, transition.from, time, delta, audio);
       this.renderSectionTo(this.baseCtx, transition.to, time, delta, audio);
-      this.drawTransition(ctx, transition, scale, offsetX, offsetY, shake);
+      this.drawTransition(ctx, transition, scale, offsetX, offsetY, shake, camera);
     } else {
       this.renderSectionTo(this.baseCtx, section, time, delta, audio);
-      this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shake, 1);
+      this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shake, 1, camera);
     }
 
     if (monochrome) {
@@ -100,6 +102,7 @@ export class Renderer {
     ctx.save();
     ctx.translate(offsetX + shake, offsetY + shake);
     ctx.scale(scale, scale);
+    this.applyCameraTransform(ctx, camera);
     this.renderOverlays(ctx, this.baseWidth, this.baseHeight, audio);
     renderTextCues(ctx, this.baseWidth, this.baseHeight, textCues, time);
     ctx.restore();
@@ -137,23 +140,24 @@ export class Renderer {
     scale: number,
     offsetX: number,
     offsetY: number,
-    shake: number
+    shake: number,
+    camera: CameraState
   ): void {
     const progress = transition.progress;
     if (transition.type === "wipe") {
-      this.drawScaled(ctx, this.transitionCanvas, scale, offsetX, offsetY, shake, 1);
+      this.drawScaled(ctx, this.transitionCanvas, scale, offsetX, offsetY, shake, 1, camera);
       ctx.save();
       ctx.beginPath();
       const wipeX = offsetX + (this.baseWidth * scale + shake) * progress;
       ctx.rect(offsetX, offsetY, wipeX - offsetX, this.baseHeight * scale + shake * 2);
       ctx.clip();
-      this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shake, 1);
+      this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shake, 1, camera);
       ctx.restore();
       return;
     }
 
-    this.drawScaled(ctx, this.transitionCanvas, scale, offsetX, offsetY, shake, 1 - progress);
-    this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shake, progress);
+    this.drawScaled(ctx, this.transitionCanvas, scale, offsetX, offsetY, shake, 1 - progress, camera);
+    this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shake, progress, camera);
   }
 
   private drawScaled(
@@ -163,18 +167,20 @@ export class Renderer {
     offsetX: number,
     offsetY: number,
     shake: number,
-    alpha: number
+    alpha: number,
+    camera: CameraState
   ): void {
     ctx.save();
     ctx.globalAlpha = clamp(alpha, 0, 1);
     ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(
-      canvas,
-      offsetX + shake,
-      offsetY + shake,
-      this.baseWidth * scale,
-      this.baseHeight * scale
+    ctx.translate(offsetX + shake, offsetY + shake);
+    ctx.translate((this.baseWidth * scale) / 2, (this.baseHeight * scale) / 2);
+    ctx.scale(camera.zoom, camera.zoom);
+    ctx.translate(
+      -(this.baseWidth * scale) / 2 + camera.panX * scale,
+      -(this.baseHeight * scale) / 2 + camera.panY * scale
     );
+    ctx.drawImage(canvas, 0, 0, this.baseWidth * scale, this.baseHeight * scale);
     ctx.restore();
   }
 
@@ -215,5 +221,11 @@ export class Renderer {
     vignette.addColorStop(1, "rgba(0, 0, 0, 0.6)");
     ctx.fillStyle = vignette;
     ctx.fillRect(0, 0, width, height);
+  }
+
+  private applyCameraTransform(ctx: CanvasRenderingContext2D, camera: CameraState): void {
+    ctx.translate(this.baseWidth / 2, this.baseHeight / 2);
+    ctx.scale(camera.zoom, camera.zoom);
+    ctx.translate(-this.baseWidth / 2 + camera.panX, -this.baseHeight / 2 + camera.panY);
   }
 }
