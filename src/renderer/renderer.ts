@@ -1,5 +1,5 @@
 import { AudioFeatures } from "../audio/audioPlayer";
-import { SectionConfig, TextCue } from "../config/loadConfig";
+import { SectionConfig, TextCue, TransitionType } from "../config/loadConfig";
 import { clamp } from "../util/math";
 import { CameraState, computeDynamicCamera } from "./camera";
 import { effectRegistry, resetEffects } from "./effects";
@@ -18,7 +18,7 @@ export type RenderState = {
     from: SectionConfig;
     to: SectionConfig;
     progress: number;
-    type: "fade" | "wipe";
+    type: TransitionType;
   };
   textCues: TextCue[];
   audio: AudioFeatures;
@@ -149,20 +149,129 @@ export class Renderer {
     camera: CameraState
   ): void {
     const progress = transition.progress;
-    if (transition.type === "wipe") {
-      this.drawScaled(ctx, this.transitionCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1, camera);
-      ctx.save();
-      ctx.beginPath();
-      const wipeX = offsetX + (this.baseWidth * scale + shakeX) * progress;
-      ctx.rect(offsetX, offsetY, wipeX - offsetX, this.baseHeight * scale + shakeY * 2);
-      ctx.clip();
-      this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1, camera);
-      ctx.restore();
-      return;
+    switch (transition.type) {
+      case "wipe": {
+        this.drawScaled(ctx, this.transitionCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1, camera);
+        ctx.save();
+        ctx.beginPath();
+        const wipeX = offsetX + (this.baseWidth * scale + shakeX) * progress;
+        ctx.rect(offsetX, offsetY, wipeX - offsetX, this.baseHeight * scale + shakeY * 2);
+        ctx.clip();
+        this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1, camera);
+        ctx.restore();
+        return;
+      }
+      case "slide-left":
+        this.drawSlideTransition(ctx, progress, -1, 0, scale, offsetX, offsetY, shakeX, shakeY, camera);
+        return;
+      case "slide-right":
+        this.drawSlideTransition(ctx, progress, 1, 0, scale, offsetX, offsetY, shakeX, shakeY, camera);
+        return;
+      case "slide-up":
+        this.drawSlideTransition(ctx, progress, 0, -1, scale, offsetX, offsetY, shakeX, shakeY, camera);
+        return;
+      case "slide-down":
+        this.drawSlideTransition(ctx, progress, 0, 1, scale, offsetX, offsetY, shakeX, shakeY, camera);
+        return;
+      case "iris":
+        this.drawIrisTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera);
+        return;
+      case "flash":
+        this.drawFlashTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera);
+        return;
+      case "fade":
+        this.drawFadeTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera);
+        return;
+      default: {
+        const _exhaustiveCheck: never = transition.type;
+        return _exhaustiveCheck;
+      }
     }
+  }
 
+  private drawFadeTransition(
+    ctx: CanvasRenderingContext2D,
+    progress: number,
+    scale: number,
+    offsetX: number,
+    offsetY: number,
+    shakeX: number,
+    shakeY: number,
+    camera: CameraState
+  ): void {
     this.drawScaled(ctx, this.transitionCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1 - progress, camera);
     this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shakeX, shakeY, progress, camera);
+  }
+
+  private drawSlideTransition(
+    ctx: CanvasRenderingContext2D,
+    progress: number,
+    directionX: number,
+    directionY: number,
+    scale: number,
+    offsetX: number,
+    offsetY: number,
+    shakeX: number,
+    shakeY: number,
+    camera: CameraState
+  ): void {
+    const width = this.baseWidth * scale;
+    const height = this.baseHeight * scale;
+    const fromOffsetX = offsetX + width * progress * directionX;
+    const fromOffsetY = offsetY + height * progress * directionY;
+    const toOffsetX = offsetX - width * (1 - progress) * directionX;
+    const toOffsetY = offsetY - height * (1 - progress) * directionY;
+
+    this.drawScaled(ctx, this.transitionCanvas, scale, fromOffsetX, fromOffsetY, shakeX, shakeY, 1, camera);
+    this.drawScaled(ctx, this.baseCanvas, scale, toOffsetX, toOffsetY, shakeX, shakeY, 1, camera);
+  }
+
+  private drawIrisTransition(
+    ctx: CanvasRenderingContext2D,
+    progress: number,
+    scale: number,
+    offsetX: number,
+    offsetY: number,
+    shakeX: number,
+    shakeY: number,
+    camera: CameraState
+  ): void {
+    this.drawScaled(ctx, this.transitionCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1, camera);
+    const width = this.baseWidth * scale;
+    const height = this.baseHeight * scale;
+    const maxRadius = Math.hypot(width, height) / 2;
+    const centerX = offsetX + shakeX + width / 2;
+    const centerY = offsetY + shakeY + height / 2;
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, maxRadius * progress, 0, Math.PI * 2);
+    ctx.clip();
+    this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1, camera);
+    ctx.restore();
+  }
+
+  private drawFlashTransition(
+    ctx: CanvasRenderingContext2D,
+    progress: number,
+    scale: number,
+    offsetX: number,
+    offsetY: number,
+    shakeX: number,
+    shakeY: number,
+    camera: CameraState
+  ): void {
+    this.drawFadeTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera);
+    const flashStrength = 1 - Math.abs(0.5 - progress) * 2;
+    ctx.save();
+    ctx.globalAlpha = flashStrength * 0.65;
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(
+      offsetX + shakeX,
+      offsetY + shakeY,
+      this.baseWidth * scale,
+      this.baseHeight * scale
+    );
+    ctx.restore();
   }
 
   private drawScaled(

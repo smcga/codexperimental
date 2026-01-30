@@ -53,3 +53,43 @@ describe("normalizeTimelineConfig intro validation", () => {
     expect(() => normalizeTimelineConfig(config)).toThrow("Config error: first section must start at 54.15");
   });
 });
+
+describe("normalizeTimelineConfig transition validation", () => {
+  it("accepts the extended transition set", () => {
+    const config = {
+      ...baseConfig,
+      sections: [
+        {
+          ...baseConfig.sections[0],
+          transition: {
+            in: "slide-left",
+            out: "iris",
+            duration: 0.6
+          }
+        }
+      ]
+    } satisfies RawTimelineConfig;
+    const normalized = normalizeTimelineConfig(config);
+    expect(normalized.sections[0].transition.in).toBe("slide-left");
+    expect(normalized.sections[0].transition.out).toBe("iris");
+  });
+
+  it("rejects unknown transition values", () => {
+    const config = {
+      ...baseConfig,
+      sections: [
+        {
+          ...baseConfig.sections[0],
+          transition: {
+            in: "warp" as "fade",
+            out: "wipe",
+            duration: 0.6
+          }
+        }
+      ]
+    } satisfies RawTimelineConfig;
+    expect(() => normalizeTimelineConfig(config)).toThrow(
+      'transition.in must be one of "fade", "wipe", "slide-left", "slide-right", "slide-up", "slide-down", "iris", "flash"'
+    );
+  });
+});
