@@ -207,9 +207,6 @@ export function normalizeTimelineConfig(raw: RawTimelineConfig): TimelineConfig 
   if (!Array.isArray(raw.sections)) {
     throw new Error("sections must be an array");
   }
-  if (raw.sections.length !== 16) {
-    throw new Error("Exactly 16 sections are required");
-  }
 
   const sections = raw.sections.map((section, index) => {
     const start = parseTimelineTime(section.start, `sections[${index}].start`);
