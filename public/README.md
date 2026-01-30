@@ -1,4 +1,4 @@
 # Public assets
 
 - `song.mp3` must be placed in this folder. Replace the placeholder file with your own MP3 track.
-- `timeline.json` controls the audio source, section timings, transitions, and text cues.
+- `timeline.json` controls the audio source, section timings, transitions, and text cues (timings accept seconds or `mm:ss.s` time strings).

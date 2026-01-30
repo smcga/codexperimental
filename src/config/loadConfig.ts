@@ -5,10 +5,12 @@ export type RawAudioConfig = {
   offset?: number;
 };
 
+type RawTimeValue = number | string;
+
 export type RawSectionConfig = {
   id: string;
-  start: number;
-  end?: number;
+  start: RawTimeValue;
+  end?: RawTimeValue;
   effect: string;
   transition?: {
     in?: TransitionType;
@@ -28,8 +30,8 @@ export type RawTextSpan = {
 
 export type RawTextCue = {
   id: string;
-  start: number;
-  end?: number;
+  start: RawTimeValue;
+  end?: RawTimeValue;
   text?: string;
   spans?: RawTextSpan[];
   x?: number;
@@ -123,6 +125,23 @@ function assertNumber(value: unknown, label: string): number {
   return value;
 }
 
+function parseTimeValue(value: unknown, label: string): number {
+  if (typeof value === "number") {
+    return assertNumber(value, label);
+  }
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    const match = /^(\d+):([0-5]\d(?:\.\d+)?)$/.exec(trimmed);
+    if (!match) {
+      throw new Error(`${label} must be a number of seconds or time string (mm:ss.s)`);
+    }
+    const minutes = Number(match[1]);
+    const seconds = Number(match[2]);
+    return minutes * 60 + seconds;
+  }
+  throw new Error(`${label} must be a number of seconds or time string (mm:ss.s)`);
+}
+
 function assertString(value: unknown, label: string): string {
   if (typeof value !== "string" || value.trim().length === 0) {
     throw new Error(`${label} must be a non-empty string`);
@@ -189,8 +208,8 @@ export function normalizeTimelineConfig(raw: RawTimelineConfig): TimelineConfig 
   }
 
   const sections = raw.sections.map((section, index) => {
-    const start = assertNumber(section.start, `sections[${index}].start`);
-    const end = section.end !== undefined ? assertNumber(section.end, `sections[${index}].end`) : null;
+    const start = parseTimeValue(section.start, `sections[${index}].start`);
+    const end = section.end !== undefined ? parseTimeValue(section.end, `sections[${index}].end`) : null;
     if (end !== null && end <= start) {
       throw new Error(`sections[${index}].end must be greater than start`);
     }
@@ -227,8 +246,8 @@ export function normalizeTimelineConfig(raw: RawTimelineConfig): TimelineConfig 
   });
 
   const textCues = (raw.textCues ?? []).map((cue, index) => {
-    const start = assertNumber(cue.start, `textCues[${index}].start`);
-    const end = cue.end !== undefined ? assertNumber(cue.end, `textCues[${index}].end`) : start + DEFAULT_CUE_DURATION;
+    const start = parseTimeValue(cue.start, `textCues[${index}].start`);
+    const end = cue.end !== undefined ? parseTimeValue(cue.end, `textCues[${index}].end`) : start + DEFAULT_CUE_DURATION;
     if (end <= start) {
       throw new Error(`textCues[${index}].end must be greater than start`);
     }
