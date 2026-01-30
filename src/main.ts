@@ -179,29 +179,47 @@ function loop(): void {
 
   const audioFeatures: AudioFeatures = audioPlayer.updateFeatures();
   const state = timeline.getState(demoTime);
-  const sectionOverride = debugState.forcedEffect
-    ? { ...state.section, effect: debugState.forcedEffect }
-    : state.section;
-  const transitionOverride = state.transition
-    ? {
-        ...state.transition,
-        to: debugState.forcedEffect ? { ...state.transition.to, effect: debugState.forcedEffect } : state.transition.to,
-        type: debugState.transitionOverride ?? state.transition.type
-      }
-    : undefined;
-
-  renderer.render({
-    ctx,
-    width: canvas.width,
-    height: canvas.height,
-    time: demoTime,
-    delta,
-    section: sectionOverride,
-    transition: transitionOverride,
-    textCues: state.activeTextCues,
-    audio: audioFeatures,
-    monochromeOverride: debugState.monochromeOverride
-  });
+  if (state.mode === "intro") {
+    renderer.render({
+      ctx,
+      width: canvas.width,
+      height: canvas.height,
+      time: demoTime,
+      delta,
+      mode: "intro",
+      modeTime: state.modeTime,
+      intro: state.intro,
+      audio: audioFeatures,
+      monochromeOverride: debugState.monochromeOverride
+    });
+  } else {
+    const sectionOverride = debugState.forcedEffect
+      ? { ...state.section, effect: debugState.forcedEffect }
+      : state.section;
+    const transitionOverride = state.transition
+      ? {
+          ...state.transition,
+          to: debugState.forcedEffect
+            ? { ...state.transition.to, effect: debugState.forcedEffect }
+            : state.transition.to,
+          type: debugState.transitionOverride ?? state.transition.type
+        }
+      : undefined;
+    renderer.render({
+      ctx,
+      width: canvas.width,
+      height: canvas.height,
+      time: demoTime,
+      delta,
+      mode: "sections",
+      modeTime: state.modeTime,
+      section: sectionOverride,
+      transition: transitionOverride,
+      textCues: state.activeTextCues,
+      audio: audioFeatures,
+      monochromeOverride: debugState.monochromeOverride
+    });
+  }
 
   debugTimestamp.textContent = formatTimestamp(demoTime);
 

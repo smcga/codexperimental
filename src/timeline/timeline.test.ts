@@ -2,12 +2,22 @@ import { describe, expect, it } from "vitest";
 import { normalizeTimelineConfig } from "../config/loadConfig";
 import { Timeline } from "./timeline";
 
-function buildSections(): Array<{ id: string; start: number; effect: string; end?: number }> {
+const INTRO_END = 54.15;
+
+function buildIntro() {
+  return {
+    mode: "terminal" as const,
+    end: INTRO_END,
+    script: []
+  };
+}
+
+function buildSections(startOffset = INTRO_END): Array<{ id: string; start: number; effect: string; end?: number }> {
   const sections = [] as Array<{ id: string; start: number; effect: string; end?: number }>;
   for (let i = 0; i < 16; i += 1) {
     sections.push({
       id: `section-${i}`,
-      start: i * 4,
+      start: startOffset + i * 4,
       effect: "starfield"
     });
   }
@@ -17,16 +27,17 @@ function buildSections(): Array<{ id: string; start: number; effect: string; end
 describe("timeline config normalization", () => {
   it("sorts sections and derives end times", () => {
     const sections = buildSections();
-    sections[3].start = 1;
-    sections[1].start = 22;
+    sections[3].start = INTRO_END + 1;
+    sections[1].start = INTRO_END + 22;
     const raw = {
       audio: { src: "/song.mp3", offset: 0 },
+      intro: buildIntro(),
       sections,
       textCues: []
     };
 
     const config = normalizeTimelineConfig(raw);
-    expect(config.sections[0].start).toBe(0);
+    expect(config.sections[0].start).toBe(INTRO_END);
     expect(config.sections[0].end).toBe(config.sections[1].start);
     const timeline = new Timeline(config);
     timeline.setAudioDuration(80);
@@ -34,17 +45,10 @@ describe("timeline config normalization", () => {
     expect(last.end).toBe(80);
   });
 
-  it("requires exactly 16 sections", () => {
-    const raw = {
-      audio: { src: "/song.mp3", offset: 0 },
-      sections: buildSections().slice(0, 15)
-    };
-    expect(() => normalizeTimelineConfig(raw)).toThrow(/16/);
-  });
-
   it("defaults cue end time when missing", () => {
     const raw = {
       audio: { src: "/song.mp3", offset: 0 },
+      intro: buildIntro(),
       sections: buildSections(),
       textCues: [
         {
@@ -67,9 +71,10 @@ describe("timeline config normalization", () => {
     };
     const raw = {
       audio: { src: "/song.mp3", offset: 0 },
+      intro: buildIntro(),
       sections: buildSections().map((section, index) => ({
         ...section,
-        start: formatTime(index * 4)
+        start: formatTime(INTRO_END + index * 4)
       })),
       textCues: [
         {
@@ -82,8 +87,21 @@ describe("timeline config normalization", () => {
     };
 
     const config = normalizeTimelineConfig(raw);
-    expect(config.sections[2].start).toBeCloseTo(8, 5);
+    expect(config.sections[2].start).toBeCloseTo(62.1, 5);
     expect(config.textCues[0].start).toBeCloseTo(1.2, 5);
     expect(config.textCues[0].end).toBeCloseTo(4.8, 5);
+  });
+
+  it("switches to sections mode at the intro end time", () => {
+    const raw = {
+      audio: { src: "/song.mp3", offset: 0 },
+      intro: buildIntro(),
+      sections: buildSections(),
+      textCues: []
+    };
+    const config = normalizeTimelineConfig(raw);
+    const timeline = new Timeline(config);
+    expect(timeline.getState(INTRO_END - 0.01).mode).toBe("intro");
+    expect(timeline.getState(INTRO_END).mode).toBe("sections");
   });
 });

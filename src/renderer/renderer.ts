@@ -1,9 +1,11 @@
 import { AudioFeatures } from "../audio/audioPlayer";
-import { SectionConfig, TextCue } from "../config/loadConfig";
+import { IntroConfig, SectionConfig, TextCue } from "../config/loadConfig";
 import { clamp } from "../util/math";
 import { CameraState, computeDynamicCamera } from "./camera";
 import { effectRegistry, resetEffects } from "./effects";
+import { TerminalIntroRenderer } from "./intro/terminalIntro";
 import { resolveMonochrome } from "./monochrome";
+import { computeExplosionShake, ExplosionOverlay } from "./overlays/explosion";
 import { renderTextCues } from "./text/textRenderer";
 
 export type RenderState = {
@@ -12,15 +14,18 @@ export type RenderState = {
   height: number;
   time: number;
   delta: number;
+  mode: "intro" | "sections";
+  modeTime: number;
+  intro?: IntroConfig;
   monochromeOverride?: boolean | null;
-  section: SectionConfig;
+  section?: SectionConfig;
   transition?: {
     from: SectionConfig;
     to: SectionConfig;
     progress: number;
     type: "fade" | "wipe";
   };
-  textCues: TextCue[];
+  textCues?: TextCue[];
   audio: AudioFeatures;
 };
 
@@ -31,6 +36,8 @@ export class Renderer {
   private transitionCtx: CanvasRenderingContext2D;
   private baseWidth: number;
   private baseHeight: number;
+  private terminalIntro = new TerminalIntroRenderer();
+  private explosionOverlay = new ExplosionOverlay();
 
   constructor(baseWidth = 320, baseHeight = 180) {
     this.baseWidth = baseWidth;
@@ -66,13 +73,29 @@ export class Renderer {
     height,
     time,
     delta,
+    mode,
+    modeTime,
+    intro,
     section,
     transition,
     textCues,
     audio,
     monochromeOverride
   }: RenderState): void {
-    const shake = audio.beatStrength * 6;
+    if (mode === "intro") {
+      if (!intro) {
+        throw new Error("Missing intro configuration");
+      }
+      this.terminalIntro.render(ctx, width, height, time, intro);
+      return;
+    }
+
+    if (!section) {
+      throw new Error("Missing section configuration");
+    }
+
+    const explosionShake = computeExplosionShake(modeTime) * 16;
+    const shake = audio.beatStrength * 6 + explosionShake;
     const { scale, offsetX, offsetY } = this.computeLetterbox(width, height);
     const monochrome = resolveMonochrome(time, monochromeOverride);
     const camera = computeDynamicCamera(time, audio, this.baseWidth, this.baseHeight);
@@ -104,8 +127,10 @@ export class Renderer {
     ctx.scale(scale, scale);
     this.applyCameraTransform(ctx, camera);
     this.renderOverlays(ctx, this.baseWidth, this.baseHeight, audio);
-    renderTextCues(ctx, this.baseWidth, this.baseHeight, textCues, time);
+    renderTextCues(ctx, this.baseWidth, this.baseHeight, textCues ?? [], time);
     ctx.restore();
+
+    this.explosionOverlay.render(ctx, width, height, modeTime);
   }
 
   private renderSectionTo(

@@ -9,8 +9,8 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 ## Audio + timeline configuration
 
 - Place an MP3 at `public/song.mp3` (replace the placeholder file).
-- Edit `public/timeline.json` to change section timings, transitions, or text cues. Use `mm:ss` or `mm:ss.s` time strings for section and cue start/end values (for example, `01:44.5`).
-- Visual effects are rendered in monochrome until `00:54.1` to match the intro build-up timing.
+- Edit `public/timeline.json` to change the terminal intro script, section timings, transitions, or text cues. Use `mm:ss` or `mm:ss.s` time strings for section and cue start/end values (for example, `01:44.5`).
+- The terminal intro runs from `00:00.0` until the `intro.end` value, and the first section must start at the same timestamp (currently `00:54.15`).
 - Visuals include subtle camera zoom and panning that respond to audio energy.
 
 ## Run
