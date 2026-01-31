@@ -551,5 +551,402 @@
       ]
     }
   ],
-  "textCues": []
+  "textCues": [
+    {
+      "id": "drop-ai",
+      "start": "00:54.2",
+      "end": "00:55.6",
+      "text": "A. I.",
+      "size": 30,
+      "y": 0.78,
+      "effects": { "glitchIn": true, "shadow": true }
+    },
+    {
+      "id": "drop-can-do",
+      "start": "00:56.5",
+      "end": "00:58.3",
+      "text": "CAN... DO...",
+      "size": 28,
+      "y": 0.72,
+      "effects": { "typewriter": { "speed": 18 }, "shadow": true }
+    },
+    {
+      "id": "drop-this",
+      "start": "00:56.5",
+      "end": "00:59.4",
+      "text": "THIS!",
+      "size": 34,
+      "y": 0.84,
+      "effects": { "glitchIn": true, "shadow": true }
+    },
+    {
+      "id": "build-impressed",
+      "start": "01:05.0",
+      "end": "01:08.0",
+      "text": "Are you impressed yet?",
+      "size": 26,
+      "y": 0.78,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "build-future-top",
+      "start": "01:08.2",
+      "end": "01:12.0",
+      "text": "Are you ready",
+      "size": 26,
+      "y": 0.72,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "build-future-bottom",
+      "start": "01:08.2",
+      "end": "01:12.0",
+      "text": "to explore the future?",
+      "size": 26,
+      "y": 0.84,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "build-hater",
+      "start": "01:12.2",
+      "end": "01:15.4",
+      "text": "Or are you just a hater?",
+      "size": 26,
+      "y": 0.78,
+      "effects": { "glitchIn": true }
+    },
+    {
+      "id": "build-genie-top",
+      "start": "01:16.0",
+      "end": "01:20.0",
+      "text": "The genie is out",
+      "size": 26,
+      "y": 0.72,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "build-genie-bottom",
+      "start": "01:16.0",
+      "end": "01:20.0",
+      "text": "the bottle...",
+      "size": 26,
+      "y": 0.84,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "build-happening",
+      "start": "01:20.2",
+      "end": "01:23.4",
+      "text": "This is happening...",
+      "size": 26,
+      "y": 0.78,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "build-evolve",
+      "start": "01:23.6",
+      "end": "01:27.0",
+      "text": "Evolve your mind!",
+      "size": 28,
+      "y": 0.78,
+      "effects": { "glitchIn": true, "shadow": true }
+    },
+    {
+      "id": "cool-stretch",
+      "start": "01:35.6",
+      "end": "01:38.4",
+      "text": "It's sooooooo",
+      "size": 26,
+      "y": 0.78,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "cool-fucking",
+      "start": "01:38.6",
+      "end": "01:41.0",
+      "text": "fucking",
+      "size": 26,
+      "y": 0.78,
+      "effects": { "glitchIn": true }
+    },
+    {
+      "id": "cool-end",
+      "start": "01:41.1",
+      "end": "01:44.2",
+      "text": "cool...",
+      "size": 26,
+      "y": 0.78,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "cool-evolve",
+      "start": "01:44.2",
+      "end": "01:47.0",
+      "text": "Evolve your mind!",
+      "size": 26,
+      "y": 0.78,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "breakdown-ai",
+      "start": "02:42.0",
+      "end": "02:47.0",
+      "text": "A. I. did this...",
+      "size": 26,
+      "y": 0.78,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "breakdown-demo-top",
+      "start": "02:47.2",
+      "end": "02:54.0",
+      "text": "...democratization",
+      "size": 24,
+      "y": 0.72,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "breakdown-demo-bottom",
+      "start": "02:47.2",
+      "end": "02:54.0",
+      "text": "of intelligence...",
+      "size": 24,
+      "y": 0.84,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "breakdown-idea-top",
+      "start": "02:54.0",
+      "end": "03:00.0",
+      "text": "people used to say",
+      "size": 24,
+      "y": 0.72,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "breakdown-idea-bottom",
+      "start": "02:54.0",
+      "end": "03:00.0",
+      "text": "\"i have an idea\"....",
+      "size": 24,
+      "y": 0.84,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "breakdown-dead-top",
+      "start": "03:00.0",
+      "end": "03:06.0",
+      "text": "so many ideas dead",
+      "size": 24,
+      "y": 0.72,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "breakdown-dead-bottom",
+      "start": "03:00.0",
+      "end": "03:06.0",
+      "text": "because of \"don't know how\".",
+      "size": 22,
+      "y": 0.84,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "breakdown-now-top",
+      "start": "03:06.0",
+      "end": "03:12.0",
+      "text": "but now... When",
+      "size": 24,
+      "y": 0.72,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "breakdown-now-bottom",
+      "start": "03:06.0",
+      "end": "03:12.0",
+      "text": "I have an idea...",
+      "size": 24,
+      "y": 0.84,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "breakdown-whisper-top",
+      "start": "03:12.0",
+      "end": "03:18.0",
+      "text": "...I just whisper it",
+      "size": 24,
+      "y": 0.72,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "breakdown-whisper-bottom",
+      "start": "03:12.0",
+      "end": "03:18.0",
+      "text": "into existence...",
+      "size": 24,
+      "y": 0.84,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "breakdown-so-cool",
+      "start": "03:18.0",
+      "end": "03:20.4",
+      "text": "it's so fucking cool...",
+      "size": 24,
+      "y": 0.78,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "predrop-ai",
+      "start": "03:20.4",
+      "end": "03:23.0",
+      "text": "A. I... can... do...",
+      "size": 26,
+      "y": 0.78,
+      "effects": { "typewriter": { "speed": 18 }, "shadow": true }
+    },
+    {
+      "id": "predrop-this",
+      "start": "03:23.0",
+      "end": "03:26.0",
+      "text": "THIS!",
+      "size": 32,
+      "y": 0.78,
+      "effects": { "glitchIn": true, "shadow": true }
+    },
+    {
+      "id": "big-drop-declare",
+      "start": "03:31.4",
+      "end": "03:35.0",
+      "text": "A. I. CAN DO THIS!",
+      "size": 30,
+      "y": 0.78,
+      "effects": { "glitchIn": true, "shadow": true }
+    },
+    {
+      "id": "mid-drop-again",
+      "start": "03:48.0",
+      "end": "03:50.2",
+      "text": "AGAIN!",
+      "size": 30,
+      "y": 0.78,
+      "effects": { "glitchIn": true }
+    },
+    {
+      "id": "mid-drop-crowd",
+      "start": "03:50.2",
+      "end": "03:53.0",
+      "text": "A. I. CAN DO THIS!",
+      "size": 28,
+      "y": 0.78,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "outro-magic-top",
+      "start": "04:47.8",
+      "end": "04:53.0",
+      "text": "a magical world",
+      "size": 24,
+      "y": 0.72,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "outro-magic-bottom",
+      "start": "04:47.8",
+      "end": "04:53.0",
+      "text": "of endless possibilities....",
+      "size": 22,
+      "y": 0.84,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "outro-sooooo-top",
+      "start": "04:53.0",
+      "end": "04:58.2",
+      "text": "it is sooooooo,",
+      "size": 24,
+      "y": 0.72,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "outro-sooooo-bottom",
+      "start": "04:53.0",
+      "end": "04:58.2",
+      "text": "really, sooooo",
+      "size": 24,
+      "y": 0.84,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "outro-coool-top",
+      "start": "04:58.2",
+      "end": "05:04.7",
+      "text": "fucking-king coooooo",
+      "size": 22,
+      "y": 0.72,
+      "effects": { "glitchIn": true, "shadow": true }
+    },
+    {
+      "id": "outro-coool-bottom",
+      "start": "04:58.2",
+      "end": "05:04.7",
+      "text": "coooo coo-coo-c-c-c-c-cooooool.",
+      "size": 20,
+      "y": 0.84,
+      "effects": { "glitchIn": true, "shadow": true }
+    },
+    {
+      "id": "outro-explorers-top",
+      "start": "05:04.7",
+      "end": "05:09.2",
+      "text": "to all my twenty first",
+      "size": 22,
+      "y": 0.72,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "outro-explorers-bottom",
+      "start": "05:04.7",
+      "end": "05:09.2",
+      "text": "century explorers...",
+      "size": 22,
+      "y": 0.84,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "outro-culture",
+      "start": "05:09.2",
+      "end": "05:15.2",
+      "text": "Ignore the culture war...",
+      "size": 24,
+      "y": 0.78,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "outro-over",
+      "start": "05:15.2",
+      "end": "05:18.8",
+      "text": "It’s already over....",
+      "size": 24,
+      "y": 0.78,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "outro-won",
+      "start": "05:18.8",
+      "end": "05:21.0",
+      "text": "...and you won",
+      "size": 24,
+      "y": 0.78,
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "outro-evolve",
+      "start": "05:21.0",
+      "end": "05:27.0",
+      "text": "evolve or die!",
+      "size": 28,
+      "y": 0.78,
+      "effects": { "glitchIn": true, "shadow": true }
+    }
+  ]
 }
