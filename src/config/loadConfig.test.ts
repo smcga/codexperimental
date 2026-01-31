@@ -149,3 +149,26 @@ describe("normalizeTimelineConfig layer validation", () => {
     );
   });
 });
+
+describe("normalizeTimelineConfig text cue normalization", () => {
+  it("applies default cue settings and preserves typewriter effects", () => {
+    const config = {
+      ...baseConfig,
+      textCues: [
+        {
+          id: "cue-1",
+          start: "00:55.0",
+          text: "Hello world",
+          effects: { typewriter: { speed: 12 } }
+        }
+      ]
+    } satisfies RawTimelineConfig;
+    const normalized = normalizeTimelineConfig(config);
+    expect(normalized.textCues[0].start).toBeCloseTo(55);
+    expect(normalized.textCues[0].end).toBeCloseTo(58);
+    expect(normalized.textCues[0].align).toBe("center");
+    expect(normalized.textCues[0].units).toBe("normalized");
+    expect(normalized.textCues[0].spans[0].font).toBe("Courier New");
+    expect(normalized.textCues[0].effects.typewriter?.speed).toBe(12);
+  });
+});
