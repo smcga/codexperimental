@@ -33,6 +33,11 @@
         "type": "ascii",
         "text": "  _____  ______ __  __  ____\n |  __ \\\\|  ____|  \\/  |/ __ \\\\\n | |  | | |__  | \\\\  / | |  | |\n | |  | |  __| | |\\\\/| | |  | |\n | |__| | |____| |  | | |__| |\n |_____/|______|_|  |_|\\\\____/\n"
       },
+      {
+        "t": 19.4,
+        "type": "output",
+        "text": "[Intro][Cold][Minimal]\n(bitcrush hiss)\n(clock tick, detuned)\n(modem screech stretched to pitch)\n"
+      },
       { "t": 22.8, "type": "type", "text": "Four years ago…\n", "cps": 18 },
       { "t": 25.6, "type": "type", "text": "In the year 2022…\n", "cps": 18 },
       { "t": 30.0, "type": "prompt", "text": "demo@machine:~$ " },
@@ -43,6 +48,7 @@
       { "t": 40.0, "type": "output", "text": "[warning] containment failing...\n" },
       { "t": 43.1, "type": "type", "text": "…but now…\n", "cps": 22 },
       { "t": 46.0, "type": "output", "text": "[error] signal overflow detected\n" },
+      { "t": 48.2, "type": "output", "text": "[pause] (long pause)\n" },
       { "t": 52.0, "type": "output", "text": "[critical] initiating release sequence...\n" },
       { "t": 52.8, "type": "type", "text": "…AI…\n", "cps": 24 },
       { "t": 54.15, "type": "type", "text": "…can do THIS…\n", "cps": 24 }
@@ -551,5 +557,154 @@
       ]
     }
   ],
-  "textCues": []
+  "textCues": [
+    {
+      "id": "intro-cold-minimal",
+      "start": "00:54.2",
+      "end": "00:59.0",
+      "text": "[Intro][Cold][Minimal]",
+      "x": 0.5,
+      "y": 0.18,
+      "align": "center",
+      "size": 36,
+      "color": "#b9f7d0",
+      "effects": { "glitchIn": true, "shadow": true }
+    },
+    {
+      "id": "bitcrush-hiss",
+      "start": "00:54.7",
+      "end": "00:59.0",
+      "text": "(bitcrush hiss • clock tick • modem screech)",
+      "x": 0.5,
+      "y": 0.28,
+      "align": "center",
+      "size": 18,
+      "color": "#7b8794",
+      "effects": { "scanlineMask": 0.35 }
+    },
+    {
+      "id": "ai-drop-1",
+      "start": "00:59.8",
+      "end": "01:04.7",
+      "spans": [
+        { "text": "A. I.", "color": "#f7e9a4", "size": 54 },
+        { "text": "  CAN DO  ", "color": "#ffffff", "size": 42 },
+        { "text": "THIS!", "color": "#ff6b6b", "size": 60 }
+      ],
+      "x": 0.5,
+      "y": 0.48,
+      "align": "center",
+      "effects": { "glitchIn": true, "shadow": true }
+    },
+    {
+      "id": "build-curious",
+      "start": "01:04.7",
+      "end": "01:15.8",
+      "text": "Are you impressed yet?\nAre you ready to explore the future?",
+      "x": 0.5,
+      "y": 0.22,
+      "align": "center",
+      "size": 24,
+      "color": "#c3f4ff",
+      "effects": { "typewriter": { "speed": 22 }, "scanlineMask": 0.2 }
+    },
+    {
+      "id": "hater-callout",
+      "start": "01:15.8",
+      "end": "01:27.0",
+      "text": "Or are you just a hater?",
+      "x": 0.5,
+      "y": 0.7,
+      "align": "center",
+      "size": 28,
+      "color": "#f5a3ff",
+      "effects": { "glitchIn": true }
+    },
+    {
+      "id": "evolve-your-mind",
+      "start": "01:27.0",
+      "end": "01:37.5",
+      "spans": [
+        { "text": "The genie is out the bottle…\n", "color": "#b7c7d6", "size": 22 },
+        { "text": "This is happening…\n", "color": "#7ee787", "size": 24 },
+        { "text": "EVOLVE YOUR MIND!", "color": "#ffd166", "size": 32 }
+      ],
+      "x": 0.5,
+      "y": 0.58,
+      "align": "center",
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "breakdown-tense",
+      "start": "02:40.2",
+      "end": "03:04.2",
+      "text": "[Breakdown][Sparse][Tense]\n(single sine wobble, unstable)",
+      "x": 0.08,
+      "y": 0.12,
+      "align": "left",
+      "size": 20,
+      "color": "#9fb0c0",
+      "effects": { "scanlineMask": 0.4 }
+    },
+    {
+      "id": "pre-drop-democratize",
+      "start": "03:04.2",
+      "end": "03:20.4",
+      "text": "…democratization of intelligence…\n\"I have an idea\" → whisper it into existence.",
+      "x": 0.5,
+      "y": 0.3,
+      "align": "center",
+      "size": 24,
+      "color": "#e0e6ef",
+      "effects": { "typewriter": { "speed": 26 }, "shadow": true }
+    },
+    {
+      "id": "drop-violent",
+      "start": "03:31.4",
+      "end": "03:46.6",
+      "text": "A. I. CAN DO THIS!",
+      "x": 0.5,
+      "y": 0.5,
+      "align": "center",
+      "size": 64,
+      "color": "#ff3b30",
+      "effects": { "glitchIn": true, "shadow": true }
+    },
+    {
+      "id": "mid-drop-again",
+      "start": "03:46.6",
+      "end": "03:53.2",
+      "text": "(AGAIN!)",
+      "x": 0.82,
+      "y": 0.18,
+      "align": "center",
+      "size": 26,
+      "color": "#ffffff",
+      "effects": { "scanlineMask": 0.25 }
+    },
+    {
+      "id": "outro-proof",
+      "start": "04:47.6",
+      "end": "05:09.2",
+      "text": "a magical world of endless possibilities…\nIgnore the culture war… it’s already over…\n…and you won.",
+      "x": 0.5,
+      "y": 0.62,
+      "align": "center",
+      "size": 22,
+      "color": "#d7e2f1",
+      "effects": { "typewriter": { "speed": 20 }, "shadow": true }
+    },
+    {
+      "id": "final-command",
+      "start": "05:19.0",
+      "end": "05:28.5",
+      "text": "evolve or die!",
+      "x": 0.5,
+      "y": 0.5,
+      "align": "center",
+      "size": 48,
+      "color": "#f7e9a4",
+      "effects": { "glitchIn": true, "shadow": true }
+    }
+  ]
 }
