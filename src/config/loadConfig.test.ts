@@ -63,15 +63,28 @@ describe("normalizeTimelineConfig transition validation", () => {
           ...baseConfig.sections[0],
           transition: {
             in: "slide-left",
-            out: "iris",
+            out: "flash",
             duration: 0.6
+          }
+        },
+        {
+          id: "follow-up",
+          start: 60,
+          end: 62,
+          effect: "blobs",
+          transition: {
+            in: "iris",
+            out: "slide-right",
+            duration: 0.4
           }
         }
       ]
     } satisfies RawTimelineConfig;
     const normalized = normalizeTimelineConfig(config);
     expect(normalized.sections[0].transition.in).toBe("slide-left");
-    expect(normalized.sections[0].transition.out).toBe("iris");
+    expect(normalized.sections[0].transition.out).toBe("flash");
+    expect(normalized.sections[1].transition.in).toBe("iris");
+    expect(normalized.sections[1].transition.out).toBe("slide-right");
   });
 
   it("rejects unknown transition values", () => {

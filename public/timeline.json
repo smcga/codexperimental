@@ -54,35 +54,35 @@
       "start": "00:54.15",
       "end": "00:59.8",
       "effect": "rotozoom",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.8 }
+      "transition": { "in": "slide-left", "out": "flash", "duration": 0.8 }
     },
     {
       "id": "blobs-bloom",
       "start": "00:59.8",
       "end": "01:04.7",
       "effect": "blobs",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 }
+      "transition": { "in": "slide-right", "out": "fade", "duration": 0.8 }
     },
     {
       "id": "ribbon-flow",
       "start": "01:04.7",
       "end": "01:15.8",
       "effect": "ribbons",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 }
+      "transition": { "in": "iris", "out": "fade", "duration": 0.8 }
     },
     {
       "id": "lissajous-scope",
       "start": "01:15.8",
       "end": "01:27.0",
       "effect": "lissajous",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 }
+      "transition": { "in": "slide-up", "out": "fade", "duration": 0.8 }
     },
     {
       "id": "glitch-burst",
       "start": "01:27.0",
       "end": "01:32.3",
       "effect": "glitch",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.2 }
+      "transition": { "in": "flash", "out": "fade", "duration": 0.2 }
     },
     {
       "id": "lissajous-scope",
@@ -124,7 +124,7 @@
       "start": "01:35.2",
       "end": "01:37.5",
       "effect": "bokeh",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.08 }
+      "transition": { "in": "slide-down", "out": "fade", "duration": 0.08 }
     },
     {
       "id": "fractal-dream",
@@ -261,7 +261,7 @@
       "start": "03:53.2",
       "end": "03:58.7",
       "effect": "blobs",
-      "transition": { "in": "fade", "out": "wipe", "duration": 0.22 },
+      "transition": { "in": "iris", "out": "slide-right", "duration": 0.22 },
       "params": { "speed": 1.05 }
     },
     {
@@ -269,7 +269,7 @@
       "start": "03:58.7",
       "end": "04:04.0",
       "effect": "ribbons",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.3 },
+      "transition": { "in": "slide-left", "out": "fade", "duration": 0.3 },
       "params": { "speed": 1.1 }
     },
     {
@@ -277,7 +277,7 @@
       "start": "04:04.0",
       "end": "04:08.3",
       "effect": "neon",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.18 },
+      "transition": { "in": "slide-up", "out": "fade", "duration": 0.18 },
       "params": { "speed": 1.2 }
     },
     {
