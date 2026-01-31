@@ -8,6 +8,9 @@ export type Star = {
 
 export class Starfield {
   private stars: Star[];
+  private turnPhase = randRange(0, Math.PI * 2);
+  private turnStrength = 0.35;
+  private turnRate = 0.6;
 
   constructor(private count: number, private depth: number) {
     this.stars = Array.from({ length: count }, () => this.spawnStar());
@@ -21,7 +24,10 @@ export class Starfield {
     };
   }
 
-  update(delta: number, speed: number): void {
+  update(delta: number, speed: number, turnRate = 0.6, turnStrength = 0.35): void {
+    this.turnRate = turnRate;
+    this.turnStrength = turnStrength;
+    this.turnPhase += delta * this.turnRate;
     const movement = speed * delta;
     this.stars.forEach((star) => {
       star.z -= movement;
@@ -41,11 +47,15 @@ export class Starfield {
     const centerX = width / 2;
     const centerY = height / 2;
     const scale = Math.min(width, height) * 0.45;
+    const yaw = Math.sin(this.turnPhase) * this.turnStrength;
     ctx.save();
     ctx.globalCompositeOperation = "lighter";
     this.stars.forEach((star) => {
       const perspective = scale / star.z;
-      const x = centerX + star.x * perspective;
+      const yawOffset = yaw * (1 - star.z / this.depth);
+      const offsetX = star.x + yawOffset;
+      const offsetY = star.y;
+      const x = centerX + offsetX * perspective;
       const y = centerY + star.y * perspective;
       const size = Math.max(0.8, (1 - star.z / this.depth) * 3) + intensity * 1.5;
       const alpha = Math.min(1, 0.6 + intensity * 0.8);
@@ -55,7 +65,10 @@ export class Starfield {
         ctx.strokeStyle = `rgba(120, 200, 255, ${alpha * warp})`;
         ctx.beginPath();
         ctx.moveTo(x, y);
-        ctx.lineTo(centerX + star.x * perspective * (1 + warp * 2), centerY + star.y * perspective * (1 + warp * 2));
+        ctx.lineTo(
+          centerX + offsetX * perspective * (1 + warp * 2),
+          centerY + offsetY * perspective * (1 + warp * 2)
+        );
         ctx.stroke();
       }
     });
