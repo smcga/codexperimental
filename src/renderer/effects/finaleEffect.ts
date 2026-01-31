@@ -10,7 +10,12 @@ export class FinaleEffect implements Effect {
     ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
     ctx.fillRect(0, 0, width, height);
 
-    this.starfield.update(delta, 1.2 + audio.bass * 3);
+    this.starfield.update(
+      delta,
+      1.2 + audio.bass * 3,
+      0.9 + audio.beatStrength * 0.6,
+      0.35 + audio.rms * 0.3
+    );
     this.starfield.render(ctx, width, height, audio.rms + audio.bass, 0.6 + audio.beatStrength);
 
     if (audio.beat) {
