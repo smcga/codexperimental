@@ -31,6 +31,8 @@ export class Renderer {
   private baseCtx: CanvasRenderingContext2D;
   private transitionCanvas: HTMLCanvasElement;
   private transitionCtx: CanvasRenderingContext2D;
+  private layerCanvas: HTMLCanvasElement;
+  private layerCtx: CanvasRenderingContext2D;
   private baseWidth: number;
   private baseHeight: number;
 
@@ -54,12 +56,22 @@ export class Renderer {
       throw new Error("Unable to create transition canvas");
     }
     this.transitionCtx = transitionCtx;
+
+    this.layerCanvas = document.createElement("canvas");
+    this.layerCanvas.width = baseWidth;
+    this.layerCanvas.height = baseHeight;
+    const layerCtx = this.layerCanvas.getContext("2d");
+    if (!layerCtx) {
+      throw new Error("Unable to create layer canvas");
+    }
+    this.layerCtx = layerCtx;
   }
 
   reset(): void {
     resetEffects();
     this.baseCtx.clearRect(0, 0, this.baseWidth, this.baseHeight);
     this.transitionCtx.clearRect(0, 0, this.baseWidth, this.baseHeight);
+    this.layerCtx.clearRect(0, 0, this.baseWidth, this.baseHeight);
   }
 
   render({
@@ -120,12 +132,37 @@ export class Renderer {
     delta: number,
     audio: AudioFeatures
   ): void {
-    const effect = effectRegistry[section.effect];
+    this.renderEffectTo(targetCtx, section.effect, time, delta, audio, section.params);
+
+    if (section.layers.length === 0) {
+      return;
+    }
+
+    section.layers.forEach((layer) => {
+      this.layerCtx.clearRect(0, 0, this.baseWidth, this.baseHeight);
+      this.renderEffectTo(this.layerCtx, layer.effect, time, delta, audio, layer.params);
+      targetCtx.save();
+      targetCtx.globalCompositeOperation = layer.blend;
+      targetCtx.globalAlpha = layer.opacity;
+      targetCtx.drawImage(this.layerCanvas, 0, 0);
+      targetCtx.restore();
+    });
+  }
+
+  private renderEffectTo(
+    targetCtx: CanvasRenderingContext2D,
+    effectName: string,
+    time: number,
+    delta: number,
+    audio: AudioFeatures,
+    params: Record<string, number>
+  ): void {
+    const effect = effectRegistry[effectName];
     if (!effect) {
       targetCtx.fillStyle = "#000";
       targetCtx.fillRect(0, 0, this.baseWidth, this.baseHeight);
       targetCtx.fillStyle = "#fff";
-      targetCtx.fillText(`Missing effect: ${section.effect}`, 12, 24);
+      targetCtx.fillText(`Missing effect: ${effectName}`, 12, 24);
       return;
     }
     effect.render({
@@ -135,7 +172,7 @@ export class Renderer {
       time,
       delta,
       audio,
-      params: section.params
+      params
     });
   }
 

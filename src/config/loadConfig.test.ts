@@ -106,3 +106,46 @@ describe("normalizeTimelineConfig transition validation", () => {
     );
   });
 });
+
+describe("normalizeTimelineConfig layer validation", () => {
+  it("normalizes section layers with defaults", () => {
+    const config = {
+      ...baseConfig,
+      sections: [
+        {
+          ...baseConfig.sections[0],
+          layers: [
+            {
+              effect: "glitch",
+              params: { intensity: 0.5 }
+            }
+          ]
+        }
+      ]
+    } satisfies RawTimelineConfig;
+    const normalized = normalizeTimelineConfig(config);
+    expect(normalized.sections[0].layers[0].blend).toBe("screen");
+    expect(normalized.sections[0].layers[0].opacity).toBe(0.6);
+    expect(normalized.sections[0].layers[0].params.intensity).toBe(0.5);
+  });
+
+  it("rejects unsupported blend modes", () => {
+    const config = {
+      ...baseConfig,
+      sections: [
+        {
+          ...baseConfig.sections[0],
+          layers: [
+            {
+              effect: "glitch",
+              blend: "unknown" as "screen"
+            }
+          ]
+        }
+      ]
+    } satisfies RawTimelineConfig;
+    expect(() => normalizeTimelineConfig(config)).toThrow(
+      'sections[0].layers[0].blend must be one of "source-over", "screen", "overlay", "lighter", "multiply", "soft-light", "hard-light", "color-dodge", "difference", "exclusion", "xor"'
+    );
+  });
+});
