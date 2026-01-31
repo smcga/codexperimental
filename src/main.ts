@@ -19,8 +19,6 @@ const debugMonochromeToggle = document.querySelector<HTMLInputElement>("#debug-m
 const mobileControls = document.querySelector<HTMLDivElement>("#mobile-controls");
 const mobileDebugButton = document.querySelector<HTMLButtonElement>("#mobile-debug");
 const mobileFullscreenButton = document.querySelector<HTMLButtonElement>("#mobile-fullscreen");
-const fullscreenFallbackClass = "fullscreen-fallback";
-
 if (!canvas || !overlay || !overlayText || !debugOverlay || !debugTimestamp || !debugTransitionSelect) {
   throw new Error("Missing canvas or overlay element");
 }
@@ -51,8 +49,8 @@ type WebkitDocument = Document & {
   webkitFullscreenEnabled?: boolean;
 };
 
-type WebkitCanvas = HTMLCanvasElement & {
-  webkitRequestFullscreen?: () => Promise<void> | void;
+type WebkitHTMLElement = HTMLElement & {
+  webkitRequestFullscreen?: (options?: FullscreenOptions) => Promise<void> | void;
 };
 
 function resize(): void {
@@ -88,36 +86,21 @@ function toggleDebugOverlay(): void {
   setDebugOverlayVisible(getNextDebugOverlayVisibility(debugState.enabled));
 }
 
-function isFullscreenFallbackActive(): boolean {
-  return document.body.classList.contains(fullscreenFallbackClass);
-}
-
-function setFullscreenFallback(active: boolean): void {
-  document.body.classList.toggle(fullscreenFallbackClass, active);
-  resize();
-}
-
 function toggleFullscreen(): void {
   const webkitDocument = document as WebkitDocument;
-  const webkitCanvas = canvas as WebkitCanvas;
   const fullscreenElement = document.fullscreenElement ?? webkitDocument.webkitFullscreenElement ?? null;
+  const fullscreenTarget = document.documentElement as WebkitHTMLElement;
   const hasNativeFullscreen =
-    document.fullscreenEnabled && typeof canvas.requestFullscreen === "function";
+    document.fullscreenEnabled && typeof fullscreenTarget.requestFullscreen === "function";
   const hasWebkitFullscreen =
-    typeof webkitCanvas.webkitRequestFullscreen === "function" &&
+    typeof fullscreenTarget.webkitRequestFullscreen === "function" &&
     (webkitDocument.webkitFullscreenEnabled ?? true);
-  const fullscreenEnabled = hasNativeFullscreen || hasWebkitFullscreen;
-  const action = getFullscreenAction(
-    fullscreenEnabled,
-    fullscreenElement,
-    !fullscreenEnabled,
-    isFullscreenFallbackActive()
-  );
+  const action = getFullscreenAction(hasNativeFullscreen || hasWebkitFullscreen, fullscreenElement);
   if (action === "enter") {
     if (hasNativeFullscreen) {
-      void canvas.requestFullscreen();
-    } else if (webkitCanvas.webkitRequestFullscreen) {
-      void webkitCanvas.webkitRequestFullscreen();
+      void fullscreenTarget.requestFullscreen({ navigationUI: "hide" });
+    } else if (fullscreenTarget.webkitRequestFullscreen) {
+      void fullscreenTarget.webkitRequestFullscreen({ navigationUI: "hide" });
     }
   }
   if (action === "exit") {
@@ -126,12 +109,6 @@ function toggleFullscreen(): void {
     } else if (webkitDocument.webkitFullscreenElement) {
       void webkitDocument.webkitExitFullscreen?.();
     }
-  }
-  if (action === "enter-fallback") {
-    setFullscreenFallback(true);
-  }
-  if (action === "exit-fallback") {
-    setFullscreenFallback(false);
   }
 }
 

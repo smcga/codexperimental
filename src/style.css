@@ -23,21 +23,6 @@ body,
   height: 100%;
 }
 
-body.fullscreen-fallback {
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
-}
-
-body.fullscreen-fallback #app,
-body.fullscreen-fallback #demo {
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
-}
-
 #start-overlay {
   position: absolute;
   inset: 0;

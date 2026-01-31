@@ -1,4 +1,4 @@
-export type FullscreenAction = "enter" | "exit" | "enter-fallback" | "exit-fallback" | "noop";
+export type FullscreenAction = "enter" | "exit" | "noop";
 
 export function getNextDebugOverlayVisibility(isVisible: boolean): boolean {
   return !isVisible;
@@ -6,16 +6,10 @@ export function getNextDebugOverlayVisibility(isVisible: boolean): boolean {
 
 export function getFullscreenAction(
   fullscreenEnabled: boolean,
-  fullscreenElement: Element | null,
-  fallbackEnabled: boolean,
-  fallbackActive: boolean
+  fullscreenElement: Element | null
 ): FullscreenAction {
   if (fullscreenEnabled) {
     return fullscreenElement ? "exit" : "enter";
-  }
-
-  if (fallbackEnabled) {
-    return fallbackActive ? "exit-fallback" : "enter-fallback";
   }
 
   return "noop";
