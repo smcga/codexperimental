@@ -17,6 +17,7 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 - The timeline includes two 3D showcase effects: `proper3d` (perspective projection + lighting) and `fake3d` (2D skew/shading tricks).
 - The `intro` block controls the terminal presentation from `t=0` until `intro.end`; the first section must start exactly at the same time so the colour pipeline can take over. Script events are time-coded, so you can align story lines with audio or prior text cue timings.
 - Visuals include subtle camera zoom and panning that respond to audio energy.
+- The timeline can reference the `imagepulse` effect to display the custom image from the `img/` folder with audio-reactive pulsing.
 - Post-intro effects render on a 16:9 base canvas; landscape uses letterboxing, while portrait screens scale to fill the height and crop the sides.
 
 ## Run

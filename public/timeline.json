@@ -381,11 +381,12 @@
       "params": { "speed": 1.15 }
     },
     {
-      "id": "switch-04257",
+      "id": "image-pulse",
       "start": "04:25.7",
       "end": "04:26.5",
-      "effect": "glitch",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.03 }
+      "effect": "imagepulse",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.05 },
+      "params": { "speed": 1.1 }
     },
     {
       "id": "switch-04265",
