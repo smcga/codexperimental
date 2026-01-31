@@ -13,6 +13,7 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 - The bundled timeline includes lyric-style overlays in `textCues`; adjust or replace those cues to change the on-screen callouts synced to the music.
 - Transition types include `fade`, `wipe`, `slide-left`, `slide-right`, `slide-up`, `slide-down`, `iris`, and `flash`.
 - Effect sections can include a `params` object to tune effect-specific settings such as starfield speed, warp, or turning intensity.
+- The timeline includes a proper 3D solids scene (`proper3d`) and a faux-3D scene (`fake3d`) to showcase real projection vs. hacky 2D tricks.
 - Sections can optionally define `layers` to mix multiple effects together, with `blend` modes like `screen` or `overlay` and per-layer `opacity`.
 - The `intro` block controls the terminal presentation from `t=0` until `intro.end`; the first section must start exactly at the same time so the colour pipeline can take over. Script events are time-coded, so you can align story lines with audio or prior text cue timings.
 - Visuals include subtle camera zoom and panning that respond to audio energy.

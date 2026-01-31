@@ -154,17 +154,17 @@
       "transition": { "in": "fade", "out": "fade", "duration": 0.6 }
     },
     {
-      "id": "iso-grid",
+      "id": "proper-3d-objects",
       "start": "02:04.9",
       "end": "02:10.4",
-      "effect": "isogrid",
+      "effect": "proper3d",
       "transition": { "in": "fade", "out": "fade", "duration": 0.8 }
     },
     {
-      "id": "neon-orbits",
+      "id": "fake-3d-objects",
       "start": "02:10.4",
       "end": "02:15.8",
-      "effect": "neon",
+      "effect": "fake3d",
       "transition": { "in": "fade", "out": "fade", "duration": 0.8 }
     },
     {
@@ -633,6 +633,30 @@
       "y": 0.58,
       "align": "center",
       "effects": { "shadow": true }
+    },
+    {
+      "id": "proper-3d-label",
+      "start": "02:04.9",
+      "end": "02:10.4",
+      "text": "Proper 3D solids (real projection + lighting)",
+      "x": 0.5,
+      "y": 0.16,
+      "align": "center",
+      "size": 20,
+      "color": "#c4f1ff",
+      "effects": { "shadow": true, "scanlineMask": 0.2 }
+    },
+    {
+      "id": "fake-3d-label",
+      "start": "02:10.4",
+      "end": "02:15.8",
+      "text": "Hacky 2D tricks that still feel 3D",
+      "x": 0.5,
+      "y": 0.18,
+      "align": "center",
+      "size": 20,
+      "color": "#ffd6ff",
+      "effects": { "shadow": true, "scanlineMask": 0.2 }
     },
     {
       "id": "breakdown-tense",
