@@ -1,5 +1,5 @@
 import "./style.css";
-import { IntroConfig, loadConfig } from "./config/loadConfig";
+import { IntroConfig, TransitionType, loadConfig } from "./config/loadConfig";
 import { AudioPlayer, AudioFeatures } from "./audio/audioPlayer";
 import { Timeline } from "./timeline/timeline";
 import { Renderer } from "./renderer/renderer";
@@ -41,7 +41,7 @@ let isRunning = false;
 const debugState = {
   enabled: false,
   forcedEffect: null as string | null,
-  transitionOverride: null as "fade" | "wipe" | null,
+  transitionOverride: null as TransitionType | null,
   monochromeOverride: null as boolean | null
 };
 
@@ -131,7 +131,7 @@ function updateEffectButtonStates(): void {
 if (debugTransitionSelect) {
   debugTransitionSelect.addEventListener("change", () => {
     const value = debugTransitionSelect.value;
-    debugState.transitionOverride = value === "auto" ? null : (value as "fade" | "wipe");
+    debugState.transitionOverride = value === "auto" ? null : (value as TransitionType);
   });
 }
 

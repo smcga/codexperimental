@@ -1,4 +1,4 @@
-import { TimelineConfig, SectionConfig, TextCue } from "../config/loadConfig";
+import { TimelineConfig, SectionConfig, TextCue, TransitionType } from "../config/loadConfig";
 import { clamp } from "../util/math";
 
 export type TimelineState = {
@@ -8,7 +8,7 @@ export type TimelineState = {
     from: SectionConfig;
     to: SectionConfig;
     progress: number;
-    type: "fade" | "wipe";
+    type: TransitionType;
   };
   activeTextCues: TextCue[];
   introTime: number;

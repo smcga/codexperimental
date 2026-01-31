@@ -1,4 +1,15 @@
-export type TransitionType = "fade" | "wipe";
+const TRANSITION_TYPES = [
+  "fade",
+  "wipe",
+  "slide-left",
+  "slide-right",
+  "slide-up",
+  "slide-down",
+  "iris",
+  "flash"
+] as const;
+
+export type TransitionType = (typeof TRANSITION_TYPES)[number];
 
 export type RawAudioConfig = {
   src: string;
@@ -205,11 +216,12 @@ function normalizeTransition(transition?: RawSectionConfig["transition"]): Trans
   const incoming = transition?.in ?? DEFAULT_TRANSITION.in;
   const outgoing = transition?.out ?? DEFAULT_TRANSITION.out;
   const duration = transition?.duration ?? DEFAULT_TRANSITION.duration;
-  if (incoming !== "fade" && incoming !== "wipe") {
-    throw new Error(`transition.in must be "fade" or "wipe"`);
+  const allowedList = TRANSITION_TYPES.map((type) => `"${type}"`).join(", ");
+  if (!TRANSITION_TYPES.includes(incoming)) {
+    throw new Error(`transition.in must be one of ${allowedList}`);
   }
-  if (outgoing !== "fade" && outgoing !== "wipe") {
-    throw new Error(`transition.out must be "fade" or "wipe"`);
+  if (!TRANSITION_TYPES.includes(outgoing)) {
+    throw new Error(`transition.out must be one of ${allowedList}`);
   }
   if (duration <= 0) {
     throw new Error("transition.duration must be positive");
