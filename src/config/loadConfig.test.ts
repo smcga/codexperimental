@@ -159,6 +159,10 @@ describe("normalizeTimelineConfig text cue normalization", () => {
           id: "cue-1",
           start: "00:55.0",
           text: "Hello world",
+          size: 28,
+          x: 120,
+          y: 640,
+          units: "px",
           effects: { typewriter: { speed: 12 } }
         }
       ]
@@ -167,7 +171,10 @@ describe("normalizeTimelineConfig text cue normalization", () => {
     expect(normalized.textCues[0].start).toBeCloseTo(55);
     expect(normalized.textCues[0].end).toBeCloseTo(58);
     expect(normalized.textCues[0].align).toBe("center");
-    expect(normalized.textCues[0].units).toBe("normalized");
+    expect(normalized.textCues[0].units).toBe("px");
+    expect(normalized.textCues[0].x).toBe(120);
+    expect(normalized.textCues[0].y).toBe(640);
+    expect(normalized.textCues[0].size).toBe(28);
     expect(normalized.textCues[0].spans[0].font).toBe("Courier New");
     expect(normalized.textCues[0].effects.typewriter?.speed).toBe(12);
   });
