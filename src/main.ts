@@ -21,7 +21,6 @@ const debugSkipSecondHalfButton = document.querySelector<HTMLButtonElement>("#de
 const mobileControls = document.querySelector<HTMLDivElement>("#mobile-controls");
 const mobileDebugButton = document.querySelector<HTMLButtonElement>("#mobile-debug");
 const mobileFullscreenButton = document.querySelector<HTMLButtonElement>("#mobile-fullscreen");
-
 if (!canvas || !overlay || !overlayText || !debugOverlay || !debugTimestamp || !debugTransitionSelect) {
   throw new Error("Missing canvas or overlay element");
 }
@@ -45,6 +44,15 @@ const debugState = {
   forcedEffect: null as string | null,
   transitionOverride: null as TransitionType | null,
   monochromeOverride: null as boolean | null
+};
+type WebkitDocument = Document & {
+  webkitFullscreenElement?: Element | null;
+  webkitExitFullscreen?: () => Promise<void> | void;
+  webkitFullscreenEnabled?: boolean;
+};
+
+type WebkitHTMLElement = HTMLElement & {
+  webkitRequestFullscreen?: (options?: FullscreenOptions) => Promise<void> | void;
 };
 
 function resize(): void {
@@ -81,12 +89,28 @@ function toggleDebugOverlay(): void {
 }
 
 function toggleFullscreen(): void {
-  const action = getFullscreenAction(document.fullscreenEnabled, document.fullscreenElement);
+  const webkitDocument = document as WebkitDocument;
+  const fullscreenElement = document.fullscreenElement ?? webkitDocument.webkitFullscreenElement ?? null;
+  const fullscreenTarget = document.documentElement as WebkitHTMLElement;
+  const hasNativeFullscreen =
+    document.fullscreenEnabled && typeof fullscreenTarget.requestFullscreen === "function";
+  const hasWebkitFullscreen =
+    typeof fullscreenTarget.webkitRequestFullscreen === "function" &&
+    (webkitDocument.webkitFullscreenEnabled ?? true);
+  const action = getFullscreenAction(hasNativeFullscreen || hasWebkitFullscreen, fullscreenElement);
   if (action === "enter") {
-    canvas.requestFullscreen();
+    if (hasNativeFullscreen) {
+      void fullscreenTarget.requestFullscreen({ navigationUI: "hide" });
+    } else if (fullscreenTarget.webkitRequestFullscreen) {
+      void fullscreenTarget.webkitRequestFullscreen({ navigationUI: "hide" });
+    }
   }
   if (action === "exit") {
-    document.exitFullscreen();
+    if (document.fullscreenElement) {
+      void document.exitFullscreen();
+    } else if (webkitDocument.webkitFullscreenElement) {
+      void webkitDocument.webkitExitFullscreen?.();
+    }
   }
 }
 
@@ -309,7 +333,7 @@ window.addEventListener("keydown", (event) => {
   if (event.key.toLowerCase() === "r") {
     restartDemo();
   }
-  if (event.key.toLowerCase() === "f" && document.fullscreenEnabled) {
+  if (event.key.toLowerCase() === "f") {
     toggleFullscreen();
   }
 });

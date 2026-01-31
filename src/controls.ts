@@ -18,9 +18,9 @@ export function getFullscreenAction(
   fullscreenEnabled: boolean,
   fullscreenElement: Element | null
 ): FullscreenAction {
-  if (!fullscreenEnabled) {
-    return "noop";
+  if (fullscreenEnabled) {
+    return fullscreenElement ? "exit" : "enter";
   }
 
-  return fullscreenElement ? "exit" : "enter";
+  return "noop";
 }
