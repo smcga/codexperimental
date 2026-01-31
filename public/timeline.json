@@ -154,17 +154,17 @@
       "transition": { "in": "fade", "out": "fade", "duration": 0.6 }
     },
     {
-      "id": "iso-grid",
+      "id": "proper-3d",
       "start": "02:04.9",
       "end": "02:10.4",
-      "effect": "isogrid",
+      "effect": "proper3d",
       "transition": { "in": "fade", "out": "fade", "duration": 0.8 }
     },
     {
-      "id": "neon-orbits",
+      "id": "fake-3d",
       "start": "02:10.4",
       "end": "02:15.8",
-      "effect": "neon",
+      "effect": "fake3d",
       "transition": { "in": "fade", "out": "fade", "duration": 0.8 }
     },
     {
@@ -632,6 +632,30 @@
       "x": 0.5,
       "y": 0.58,
       "align": "center",
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "proper-3d-callout",
+      "start": "02:04.9",
+      "end": "02:10.4",
+      "text": "PROPER 3D\n(perspective + lighting)",
+      "x": 0.5,
+      "y": 0.2,
+      "align": "center",
+      "size": 24,
+      "color": "#9ef0ff",
+      "effects": { "shadow": true }
+    },
+    {
+      "id": "fake-3d-callout",
+      "start": "02:10.4",
+      "end": "02:15.8",
+      "text": "FAKE 3D\n(2D hacks + shading)",
+      "x": 0.5,
+      "y": 0.2,
+      "align": "center",
+      "size": 24,
+      "color": "#ffd166",
       "effects": { "shadow": true }
     },
     {
