@@ -50,7 +50,7 @@
       { "t": 51.85, "type": "enter" },
       { "t": 52.0, "type": "output", "text": "[warning] containment failing...\n" },
       { "t": 53.2, "type": "output", "text": "[error] signal overflow detected\n" },
-      { "t": 54.1, "type": "output", "text": "[critical] initiating release sequence...\n" 
+      { "t": 54.1, "type": "output", "text": "[critical] initiating release sequence...\n"}
     ]
   },
   "sections": [
