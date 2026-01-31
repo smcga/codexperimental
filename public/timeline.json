@@ -44,7 +44,7 @@
       { "t": 36.2, "type": "type", "text": "It could only achieve\nmodest outcomes.\n", "cps": 20 },
       { "t": 43.1, "type": "type", "text": "...but now...\n", "cps": 22 },
       { "t": 46.8, "type": "type", "text": "A.I.\n", "cps": 24 },
-      { "t": 50.15, "type": "type", "text": "Now, A.I. can do THIS\n", "cps": 24 }
+      { "t": 50.15, "type": "type", "text": "Now, A.I. can do THIS\n", "cps": 24 },
       { "t": 51.0, "type": "prompt", "text": "demo@machine:~$ " },
       { "t": 51.1, "type": "type", "text": "sudo unleash --drums --bass" },
       { "t": 51.85, "type": "enter" },
