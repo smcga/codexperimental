@@ -6,6 +6,7 @@ import { Renderer } from "./renderer/renderer";
 import { effectRegistry } from "./renderer/effects";
 import { TerminalIntroRenderer } from "./renderer/intro/terminalIntro";
 import { createExplosionState, getExplosionShake, renderExplosion } from "./renderer/overlays/explosion";
+import { getFullscreenAction, getNextDebugOverlayVisibility } from "./controls";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
@@ -15,6 +16,9 @@ const debugTimestamp = document.querySelector<HTMLSpanElement>("#debug-timestamp
 const debugTransitionSelect = document.querySelector<HTMLSelectElement>("#debug-transition");
 const debugEffectsContainer = document.querySelector<HTMLDivElement>("#debug-effects");
 const debugMonochromeToggle = document.querySelector<HTMLInputElement>("#debug-monochrome");
+const mobileControls = document.querySelector<HTMLDivElement>("#mobile-controls");
+const mobileDebugButton = document.querySelector<HTMLButtonElement>("#mobile-debug");
+const mobileFullscreenButton = document.querySelector<HTMLButtonElement>("#mobile-fullscreen");
 
 if (!canvas || !overlay || !overlayText || !debugOverlay || !debugTimestamp || !debugTransitionSelect) {
   throw new Error("Missing canvas or overlay element");
@@ -68,6 +72,20 @@ function formatTimestamp(time: number): string {
 function setDebugOverlayVisible(visible: boolean): void {
   debugState.enabled = visible;
   debugOverlay.classList.toggle("hidden", !visible);
+}
+
+function toggleDebugOverlay(): void {
+  setDebugOverlayVisible(getNextDebugOverlayVisibility(debugState.enabled));
+}
+
+function toggleFullscreen(): void {
+  const action = getFullscreenAction(document.fullscreenEnabled, document.fullscreenElement);
+  if (action === "enter") {
+    canvas.requestFullscreen();
+  }
+  if (action === "exit") {
+    document.exitFullscreen();
+  }
 }
 
 function createEffectButtons(): void {
@@ -240,16 +258,24 @@ overlay.addEventListener("click", () => {
 
 window.addEventListener("keydown", (event) => {
   if (event.key.toLowerCase() === "d") {
-    setDebugOverlayVisible(!debugState.enabled);
+    toggleDebugOverlay();
   }
   if (event.key.toLowerCase() === "r") {
     restartDemo();
   }
   if (event.key.toLowerCase() === "f" && document.fullscreenEnabled) {
-    if (!document.fullscreenElement) {
-      canvas.requestFullscreen();
-    } else {
-      document.exitFullscreen();
-    }
+    toggleFullscreen();
   }
 });
+
+if (mobileControls && mobileDebugButton) {
+  mobileDebugButton.addEventListener("click", () => {
+    toggleDebugOverlay();
+  });
+}
+
+if (mobileControls && mobileFullscreenButton) {
+  mobileFullscreenButton.addEventListener("click", () => {
+    toggleFullscreen();
+  });
+}
