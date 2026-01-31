@@ -149,3 +149,32 @@ describe("normalizeTimelineConfig layer validation", () => {
     );
   });
 });
+
+describe("normalizeTimelineConfig text cue validation", () => {
+  it("normalizes text cues with spans, effects, and units", () => {
+    const config = {
+      ...baseConfig,
+      textCues: [
+        {
+          id: "cue-1",
+          start: "00:54.2",
+          end: "00:58.0",
+          spans: [
+            { text: "A. I.", color: "#ffffff", size: 32 },
+            { text: " CAN DO THIS!", color: "#ff0055", size: 40 }
+          ],
+          x: 120,
+          y: 80,
+          units: "px",
+          effects: { typewriter: { speed: 18 }, shadow: true }
+        }
+      ]
+    } satisfies RawTimelineConfig;
+
+    const normalized = normalizeTimelineConfig(config);
+    expect(normalized.textCues).toHaveLength(1);
+    expect(normalized.textCues[0].spans[0].text).toBe("A. I.");
+    expect(normalized.textCues[0].effects.typewriter?.speed).toBe(18);
+    expect(normalized.textCues[0].units).toBe("px");
+  });
+});

@@ -10,6 +10,7 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 
 - Place an MP3 at `public/song.mp3` (replace the placeholder file).
 - Edit `public/timeline.json` to change the intro terminal script, section timings, transitions, or text cues. Use `mm:ss` or `mm:ss.s` time strings for section and cue start/end values (for example, `01:44.5`).
+- The bundled timeline includes lyric-style overlays in `textCues`; adjust or replace those cues to change the on-screen callouts synced to the music.
 - Transition types include `fade`, `wipe`, `slide-left`, `slide-right`, `slide-up`, `slide-down`, `iris`, and `flash`.
 - Effect sections can include a `params` object to tune effect-specific settings such as starfield speed, warp, or turning intensity.
 - Sections can optionally define `layers` to mix multiple effects together, with `blend` modes like `screen` or `overlay` and per-layer `opacity`.
