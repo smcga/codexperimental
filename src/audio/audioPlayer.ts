@@ -86,6 +86,12 @@ export class AudioPlayer {
     this.audio.pause();
   }
 
+  seek(time: number): void {
+    const duration = this.duration;
+    const target = duration ? clamp(time, 0, duration) : Math.max(0, time);
+    this.audio.currentTime = target;
+  }
+
   async restart(): Promise<void> {
     this.audio.currentTime = 0;
     this.lastRms = 0;

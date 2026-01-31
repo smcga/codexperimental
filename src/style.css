@@ -133,6 +133,24 @@ body,
   padding: 0.2rem 0.4rem;
 }
 
+.debug-row button {
+  flex: 1;
+  min-width: 120px;
+  background: rgba(255, 255, 255, 0.08);
+  color: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.2rem 0.4rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.debug-row button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .debug-section-title {
   margin-bottom: 0.5rem;
   font-weight: 600;

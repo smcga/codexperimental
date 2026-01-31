@@ -6,7 +6,7 @@ import { Renderer } from "./renderer/renderer";
 import { effectRegistry } from "./renderer/effects";
 import { TerminalIntroRenderer } from "./renderer/intro/terminalIntro";
 import { createExplosionState, getExplosionShake, renderExplosion } from "./renderer/overlays/explosion";
-import { getFullscreenAction, getNextDebugOverlayVisibility } from "./controls";
+import { getFullscreenAction, getIntroSkipTime, getNextDebugOverlayVisibility } from "./controls";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
@@ -16,6 +16,7 @@ const debugTimestamp = document.querySelector<HTMLSpanElement>("#debug-timestamp
 const debugTransitionSelect = document.querySelector<HTMLSelectElement>("#debug-transition");
 const debugEffectsContainer = document.querySelector<HTMLDivElement>("#debug-effects");
 const debugMonochromeToggle = document.querySelector<HTMLInputElement>("#debug-monochrome");
+const debugSkipIntroButton = document.querySelector<HTMLButtonElement>("#debug-skip-intro");
 const mobileControls = document.querySelector<HTMLDivElement>("#mobile-controls");
 const mobileDebugButton = document.querySelector<HTMLButtonElement>("#mobile-debug");
 const mobileFullscreenButton = document.querySelector<HTMLButtonElement>("#mobile-fullscreen");
@@ -88,6 +89,17 @@ function toggleFullscreen(): void {
   }
 }
 
+function updateSkipIntroButtonState(demoTime: number | null): void {
+  if (!debugSkipIntroButton) {
+    return;
+  }
+  if (!audioPlayer || !timeline || !introConfig || demoTime === null) {
+    debugSkipIntroButton.disabled = true;
+    return;
+  }
+  debugSkipIntroButton.disabled = demoTime >= introConfig.end;
+}
+
 function createEffectButtons(): void {
   if (!debugEffectsContainer) {
     return;
@@ -141,8 +153,19 @@ if (debugMonochromeToggle) {
   });
 }
 
+if (debugSkipIntroButton) {
+  debugSkipIntroButton.addEventListener("click", () => {
+    if (!audioPlayer || !timeline || !introConfig) {
+      return;
+    }
+    const targetTime = getIntroSkipTime(introConfig.end, timeline.getAudioOffset(), audioPlayer.currentTime);
+    audioPlayer.seek(targetTime);
+  });
+}
+
 createEffectButtons();
 setDebugOverlayVisible(false);
+updateSkipIntroButtonState(null);
 
 async function startDemo(): Promise<void> {
   if (isRunning) {
@@ -167,6 +190,7 @@ async function startDemo(): Promise<void> {
     isRunning = true;
     lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
     setOverlay("", false);
+    updateSkipIntroButtonState(lastDemoTime);
 
     cancelAnimationFrame(animationFrame);
     animationFrame = requestAnimationFrame(loop);
@@ -184,6 +208,7 @@ async function restartDemo(): Promise<void> {
   await audioPlayer.restart();
   renderer.reset();
   lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+  updateSkipIntroButtonState(lastDemoTime);
   setOverlay("", false);
   if (!isRunning) {
     isRunning = true;
@@ -194,6 +219,7 @@ async function restartDemo(): Promise<void> {
 function loop(): void {
   if (!audioPlayer || !timeline || !introConfig) {
     isRunning = false;
+    updateSkipIntroButtonState(null);
     return;
   }
 
@@ -242,6 +268,7 @@ function loop(): void {
   }
 
   debugTimestamp.textContent = formatTimestamp(demoTime);
+  updateSkipIntroButtonState(demoTime);
 
   if (audioPlayer.ended) {
     isRunning = false;
