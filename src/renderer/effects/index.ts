@@ -15,6 +15,8 @@ import { IsoGridEffect } from "./isoGridEffect";
 import { NeonShapesEffect } from "./neonShapesEffect";
 import { ParticleFieldEffect } from "./particleFieldEffect";
 import { FinaleEffect } from "./finaleEffect";
+import { Proper3DEffect } from "./proper3dEffect";
+import { Fake3DEffect } from "./fake3dEffect";
 
 export const effectRegistry: Record<string, Effect> = {
   starfield: new StarfieldEffect(),
@@ -32,7 +34,9 @@ export const effectRegistry: Record<string, Effect> = {
   isogrid: new IsoGridEffect(),
   neon: new NeonShapesEffect(),
   particles: new ParticleFieldEffect(),
-  finale: new FinaleEffect()
+  finale: new FinaleEffect(),
+  proper3d: new Proper3DEffect(),
+  fake3d: new Fake3DEffect()
 };
 
 export function resetEffects(): void {
