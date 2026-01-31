@@ -3,6 +3,7 @@ import { SectionConfig, TextCue, TransitionType } from "../config/loadConfig";
 import { clamp } from "../util/math";
 import { CameraState, computeDynamicCamera } from "./camera";
 import { effectRegistry, resetEffects } from "./effects";
+import { computeLetterbox } from "./letterbox";
 import { resolveMonochrome } from "./monochrome";
 import { renderTextCues } from "./text/textRenderer";
 
@@ -77,7 +78,7 @@ export class Renderer {
     const baseShake = audio.beatStrength * 6;
     const shakeX = baseShake + (screenShake?.x ?? 0);
     const shakeY = baseShake + (screenShake?.y ?? 0);
-    const { scale, offsetX, offsetY } = this.computeLetterbox(width, height);
+    const { scale, offsetX, offsetY } = computeLetterbox(width, height, this.baseWidth, this.baseHeight);
     const monochrome = resolveMonochrome(time, monochromeOverride);
     const camera = computeDynamicCamera(time, audio, this.baseWidth, this.baseHeight);
 
@@ -297,17 +298,6 @@ export class Renderer {
     );
     ctx.drawImage(canvas, 0, 0, this.baseWidth * scale, this.baseHeight * scale);
     ctx.restore();
-  }
-
-  private computeLetterbox(width: number, height: number): { scale: number; offsetX: number; offsetY: number } {
-    const scale = Math.min(width / this.baseWidth, height / this.baseHeight);
-    const drawWidth = this.baseWidth * scale;
-    const drawHeight = this.baseHeight * scale;
-    return {
-      scale,
-      offsetX: (width - drawWidth) / 2,
-      offsetY: (height - drawHeight) / 2
-    };
   }
 
   private renderOverlays(
