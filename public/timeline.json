@@ -439,9 +439,9 @@
       "id": "pre-outro-breathe",
       "start": "04:32.54",
       "end": "04:35.0",
-      "effect": "bokeh",
+      "effect": "portrait",
       "transition": { "in": "fade", "out": "fade", "duration": 0.35 },
-      "params": { "speed": 0.85 }
+      "params": { "zoom": 1.08, "drift": 0.9 }
     },
 
     {
