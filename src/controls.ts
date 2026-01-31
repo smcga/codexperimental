@@ -9,6 +9,11 @@ export function getIntroSkipTime(introEnd: number, audioOffset: number, currentT
   return Math.max(currentTime, targetTime);
 }
 
+export function getSecondHalfSkipTime(secondHalfStart: number, audioOffset: number, currentTime: number): number {
+  const targetTime = Math.max(0, secondHalfStart - audioOffset);
+  return Math.max(currentTime, targetTime);
+}
+
 export function getFullscreenAction(
   fullscreenEnabled: boolean,
   fullscreenElement: Element | null
