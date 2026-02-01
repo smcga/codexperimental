@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { applyMove, buildBoardAtMove, createInitialBoard } from "./chessEffect";
+import { applyMove, buildBoardAtMove, createInitialBoard, resolveLocalStartTime } from "./chessEffect";
 
 describe("chessEffect helpers", () => {
   it("builds the initial board with standard piece placement", () => {
@@ -25,5 +25,22 @@ describe("chessEffect helpers", () => {
     expect(resolved.capture).toBe(false);
     expect(board[7][1]).toBeNull();
     expect(board[5][2]).toBe("N");
+  });
+
+  it("anchors local time and re-anchors on large gaps or backwards jumps", () => {
+    const anchorKey = {};
+    const moveInterval = 1;
+
+    const firstAnchor = resolveLocalStartTime(anchorKey, 10, moveInterval);
+    expect(firstAnchor).toBe(10);
+
+    const sameAnchor = resolveLocalStartTime(anchorKey, 12, moveInterval);
+    expect(sameAnchor).toBe(10);
+
+    const gapAnchor = resolveLocalStartTime(anchorKey, 20, moveInterval);
+    expect(gapAnchor).toBe(20);
+
+    const backwardAnchor = resolveLocalStartTime(anchorKey, 5, moveInterval);
+    expect(backwardAnchor).toBe(5);
   });
 });

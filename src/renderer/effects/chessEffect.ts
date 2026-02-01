@@ -18,6 +18,7 @@ type ResolvedMove = {
 
 const BASE_MOVE_INTERVAL = 1.5;
 const CAPTURE_FLASH_DURATION = 0.4;
+const REANCHOR_GAP_MULTIPLIER = 4;
 
 // Scripted moves: no castling, en passant, or promotions are modeled.
 const MOVE_SCRIPT: Move[] = [
@@ -69,6 +70,13 @@ const MOVE_SCRIPT: Move[] = [
   { from: "g7", to: "h6" }
 ];
 
+type AnchorState = {
+  localStartTime: number;
+  lastRenderTime: number;
+};
+
+const anchorState = new WeakMap<object, AnchorState>();
+
 export function createInitialBoard(): Board {
   return [
     ["r", "n", "b", "q", "k", "b", "n", "r"],
@@ -118,6 +126,33 @@ export function buildBoardAtMove(moveIndex: number): { board: Board; lastMove?: 
   }
 
   return { board, lastMove };
+}
+
+export function resolveLocalStartTime(
+  anchorKey: object,
+  time: number,
+  moveInterval: number,
+  startTime?: number
+): number {
+  if (typeof startTime === "number" && Number.isFinite(startTime)) {
+    anchorState.set(anchorKey, { localStartTime: startTime, lastRenderTime: time });
+    return startTime;
+  }
+
+  const existing = anchorState.get(anchorKey);
+  if (!existing) {
+    anchorState.set(anchorKey, { localStartTime: time, lastRenderTime: time });
+    return time;
+  }
+
+  const timeGap = time - existing.lastRenderTime;
+  if (time < existing.lastRenderTime || timeGap > moveInterval * REANCHOR_GAP_MULTIPLIER) {
+    anchorState.set(anchorKey, { localStartTime: time, lastRenderTime: time });
+    return time;
+  }
+
+  anchorState.set(anchorKey, { ...existing, lastRenderTime: time });
+  return existing.localStartTime;
 }
 
 function drawPiece(ctx: CanvasRenderingContext2D, piece: PieceCode, x: number, y: number, size: number): void {
@@ -215,7 +250,9 @@ export class ChessEffect implements Effect {
     const speed = typeof params.speed === "number" && params.speed > 0 ? params.speed : 1;
     const showHighlights = params.showHighlights === undefined ? true : params.showHighlights !== 0;
     const moveInterval = BASE_MOVE_INTERVAL * speed;
-    const moveIndex = Math.floor(time / moveInterval);
+    const localStartTime = resolveLocalStartTime(this, time, moveInterval, params.startTime);
+    const localTime = time - localStartTime;
+    const moveIndex = Math.max(0, Math.floor(localTime / moveInterval));
     const { board, lastMove } = buildBoardAtMove(moveIndex);
 
     ctx.fillStyle = "#0b0f14";
