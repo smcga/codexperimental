@@ -50,5 +50,5 @@ npm run preview
 - `R` to restart
 - `F` to toggle fullscreen (if supported)
 - `D` to toggle the debug overlay (timestamp, skip intro, skip to second half, transition selection, effect overrides, monochrome toggle)
-- When the debug overlay is visible, selecting the `flyover` effect reveals a separate flyover controls panel for live tuning.
+- When the debug overlay is visible, selecting an effect reveals a secondary panel with effect-specific controls (or a note when none are available).
 - On touch devices, two floating buttons appear in the lower-right corner: `DBG` toggles the debug overlay and `⛶` toggles fullscreen.

@@ -183,6 +183,11 @@ body,
   padding: 0.2rem 0.4rem;
 }
 
+.debug-field input[type="checkbox"] {
+  width: auto;
+  accent-color: #8ef9ff;
+}
+
 #debug-effects {
   display: flex;
   flex-wrap: wrap;
@@ -210,4 +215,9 @@ body,
 
 .debug-toggle input {
   accent-color: #8ef9ff;
+}
+
+.debug-empty {
+  font-size: 0.75rem;
+  color: rgba(232, 247, 255, 0.75);
 }

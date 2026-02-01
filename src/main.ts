@@ -4,11 +4,11 @@ import { AudioPlayer, AudioFeatures } from "./audio/audioPlayer";
 import { Timeline } from "./timeline/timeline";
 import { Renderer } from "./renderer/renderer";
 import { effectRegistry } from "./renderer/effects";
-import { DEFAULT_FLYOVER_PARAMS, FlyoverDebugParams, coerceFlyoverParams } from "./renderer/debug/flyoverDebug";
+import { coerceEffectParams, getEffectDebugConfig, getEffectDebugDefaults, EffectParamControl } from "./renderer/debug/effectDebug";
 import { TerminalIntroRenderer } from "./renderer/intro/terminalIntro";
 import { createExplosionState, getExplosionShake, renderExplosion } from "./renderer/overlays/explosion";
 import { getFullscreenAction, getIntroSkipTime, getNextDebugOverlayVisibility, getSecondHalfSkipTime } from "./controls";
-import { shouldShowFlyoverPanel } from "./debug/debugPanel";
+import { shouldShowEffectPanel } from "./debug/debugPanel";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
@@ -17,7 +17,10 @@ const debugOverlay = document.querySelector<HTMLDivElement>("#debug-overlay");
 const debugTimestamp = document.querySelector<HTMLSpanElement>("#debug-timestamp");
 const debugTransitionSelect = document.querySelector<HTMLSelectElement>("#debug-transition");
 const debugEffectsContainer = document.querySelector<HTMLDivElement>("#debug-effects");
-const debugFlyoverPanel = document.querySelector<HTMLDivElement>("#debug-flyover-panel");
+const debugEffectPanel = document.querySelector<HTMLDivElement>("#debug-effect-panel");
+const debugEffectTitle = document.querySelector<HTMLDivElement>("#debug-effect-title");
+const debugEffectControls = document.querySelector<HTMLDivElement>("#debug-effect-controls");
+const debugEffectEmpty = document.querySelector<HTMLDivElement>("#debug-effect-empty");
 const debugMonochromeToggle = document.querySelector<HTMLInputElement>("#debug-monochrome");
 const debugSkipIntroButton = document.querySelector<HTMLButtonElement>("#debug-skip-intro");
 const debugSkipSecondHalfButton = document.querySelector<HTMLButtonElement>("#debug-skip-second-half");
@@ -50,7 +53,9 @@ const debugState = {
   forcedEffect: null as string | null,
   transitionOverride: null as TransitionType | null,
   monochromeOverride: null as boolean | null,
-  flyoverParams: { ...DEFAULT_FLYOVER_PARAMS }
+  effectParams: Object.fromEntries(
+    Object.keys(effectRegistry).map((effectName) => [effectName, getEffectDebugDefaults(effectName)])
+  )
 };
 
 function resize(): void {
@@ -81,12 +86,12 @@ function setDebugOverlayVisible(visible: boolean): void {
   if (releaseMode) {
     debugState.enabled = false;
     debugOverlay.classList.add("hidden");
-    updateFlyoverPanelVisibility();
+    updateEffectPanelVisibility();
     return;
   }
   debugState.enabled = visible;
   debugOverlay.classList.toggle("hidden", !visible);
-  updateFlyoverPanelVisibility();
+  updateEffectPanelVisibility();
 }
 
 function toggleDebugOverlay(): void {
@@ -149,33 +154,124 @@ function createEffectButtons(): void {
   updateEffectButtonStates();
 }
 
-const flyoverInputs = debugFlyoverPanel?.querySelectorAll<HTMLInputElement | HTMLSelectElement>("[data-flyover-param]");
-
-function syncFlyoverInputs(params: FlyoverDebugParams): void {
-  if (!flyoverInputs) {
+function syncEffectInputs(effectName: string, controls: EffectParamControl[]): void {
+  if (!debugEffectControls) {
     return;
   }
-  flyoverInputs.forEach((input) => {
-    const key = input.dataset.flyoverParam as keyof FlyoverDebugParams | undefined;
-    if (!key) {
+  const params = debugState.effectParams[effectName] ?? {};
+  controls.forEach((control) => {
+    const input = debugEffectControls.querySelector<HTMLInputElement | HTMLSelectElement>(
+      `[data-effect-param="${control.key}"]`
+    );
+    if (!input) {
       return;
     }
-    if (input instanceof HTMLSelectElement) {
-      input.value = params[key];
-    } else {
-      input.value = String(params[key]);
+    const value = params[control.key] ?? control.defaultValue;
+    if (control.type === "select" && input instanceof HTMLSelectElement) {
+      input.value = String(value);
+      return;
+    }
+    if (control.type === "toggle" && input instanceof HTMLInputElement) {
+      input.checked = Number(value) !== 0;
+      return;
+    }
+    if (input instanceof HTMLInputElement) {
+      input.value = String(value);
     }
   });
 }
 
-function updateFlyoverPanelVisibility(): void {
-  if (!debugFlyoverPanel) {
+function renderEffectPanel(effectName: string): void {
+  if (!debugEffectPanel || !debugEffectControls || !debugEffectTitle || !debugEffectEmpty) {
     return;
   }
-  const visible = shouldShowFlyoverPanel(debugState.enabled, debugState.forcedEffect);
-  debugFlyoverPanel.classList.toggle("hidden", !visible);
-  if (visible) {
-    syncFlyoverInputs(debugState.flyoverParams);
+  const config = getEffectDebugConfig(effectName);
+  if (!config) {
+    return;
+  }
+  debugEffectTitle.textContent = config.title;
+  debugEffectControls.innerHTML = "";
+  if (config.controls.length === 0) {
+    debugEffectEmpty.classList.remove("hidden");
+    return;
+  }
+  debugEffectEmpty.classList.add("hidden");
+  config.controls.forEach((control) => {
+    const field = document.createElement("label");
+    field.classList.add("debug-field");
+    const label = document.createElement("span");
+    label.textContent = control.label;
+    field.appendChild(label);
+
+    if (control.type === "select") {
+      const select = document.createElement("select");
+      select.dataset.effectParam = control.key;
+      (control.options ?? []).forEach((option) => {
+        const optionEl = document.createElement("option");
+        optionEl.value = option.value;
+        optionEl.textContent = option.label;
+        select.appendChild(optionEl);
+      });
+      select.addEventListener("change", () => {
+        const nextParams = coerceEffectParams(effectName, {
+          ...debugState.effectParams[effectName],
+          [control.key]: select.value
+        });
+        debugState.effectParams[effectName] = nextParams;
+        syncEffectInputs(effectName, config.controls);
+      });
+      field.appendChild(select);
+      debugEffectControls.appendChild(field);
+      return;
+    }
+
+    const input = document.createElement("input");
+    input.dataset.effectParam = control.key;
+    if (control.type === "toggle") {
+      input.type = "checkbox";
+      input.addEventListener("change", () => {
+        const nextParams = coerceEffectParams(effectName, {
+          ...debugState.effectParams[effectName],
+          [control.key]: input.checked ? 1 : 0
+        });
+        debugState.effectParams[effectName] = nextParams;
+        syncEffectInputs(effectName, config.controls);
+      });
+    } else {
+      input.type = "number";
+      if (control.step !== undefined) {
+        input.step = String(control.step);
+      }
+      if (control.min !== undefined) {
+        input.min = String(control.min);
+      }
+      if (control.max !== undefined) {
+        input.max = String(control.max);
+      }
+      input.addEventListener("input", () => {
+        const nextParams = coerceEffectParams(effectName, {
+          ...debugState.effectParams[effectName],
+          [control.key]: Number.parseFloat(input.value)
+        });
+        debugState.effectParams[effectName] = nextParams;
+        syncEffectInputs(effectName, config.controls);
+      });
+    }
+
+    field.appendChild(input);
+    debugEffectControls.appendChild(field);
+  });
+  syncEffectInputs(effectName, config.controls);
+}
+
+function updateEffectPanelVisibility(): void {
+  if (!debugEffectPanel) {
+    return;
+  }
+  const visible = shouldShowEffectPanel(debugState.enabled, debugState.forcedEffect);
+  debugEffectPanel.classList.toggle("hidden", !visible);
+  if (visible && debugState.forcedEffect) {
+    renderEffectPanel(debugState.forcedEffect);
   }
 }
 
@@ -190,7 +286,7 @@ function updateEffectButtonStates(): void {
       button.textContent === debugState.forcedEffect;
     button.classList.toggle("active", isActive);
   });
-  updateFlyoverPanelVisibility();
+  updateEffectPanelVisibility();
 }
 
 if (!releaseMode && debugTransitionSelect) {
@@ -203,25 +299,6 @@ if (!releaseMode && debugTransitionSelect) {
 if (!releaseMode && debugMonochromeToggle) {
   debugMonochromeToggle.addEventListener("change", () => {
     debugState.monochromeOverride = debugMonochromeToggle.checked ? true : null;
-  });
-}
-
-if (!releaseMode && flyoverInputs && debugFlyoverPanel) {
-  syncFlyoverInputs(debugState.flyoverParams);
-  flyoverInputs.forEach((input) => {
-    input.addEventListener("input", () => {
-      const key = input.dataset.flyoverParam as keyof FlyoverDebugParams | undefined;
-      if (!key) {
-        return;
-      }
-      const nextValue =
-        input instanceof HTMLSelectElement ? input.value : Number.parseFloat(input.value);
-      debugState.flyoverParams = coerceFlyoverParams({
-        ...debugState.flyoverParams,
-        [key]: nextValue
-      });
-      syncFlyoverInputs(debugState.flyoverParams);
-    });
   });
 }
 
@@ -331,15 +408,14 @@ function loop(): void {
       config: introConfig
     });
   } else {
-    const flyoverParamOverrides =
-      debugState.forcedEffect === "flyover"
-        ? (debugState.flyoverParams as unknown as Record<string, number>)
-        : null;
+    const effectParamOverrides = debugState.forcedEffect ? debugState.effectParams[debugState.forcedEffect] : null;
+    const effectParamOverridesRecord = effectParamOverrides as Record<string, number> | null;
+    const hasEffectOverrides = effectParamOverrides && Object.keys(effectParamOverrides).length > 0;
     let sectionOverride = debugState.forcedEffect
       ? { ...state.section, effect: debugState.forcedEffect }
       : state.section;
-    if (flyoverParamOverrides) {
-      sectionOverride = { ...sectionOverride, params: { ...sectionOverride.params, ...flyoverParamOverrides } };
+    if (hasEffectOverrides && effectParamOverridesRecord) {
+      sectionOverride = { ...sectionOverride, params: { ...sectionOverride.params, ...effectParamOverridesRecord } };
     }
     const transitionOverride = state.transition
       ? {
@@ -348,8 +424,8 @@ function loop(): void {
             ? {
                 ...state.transition.to,
                 effect: debugState.forcedEffect,
-                params: flyoverParamOverrides
-                  ? { ...state.transition.to.params, ...flyoverParamOverrides }
+                params: hasEffectOverrides && effectParamOverridesRecord
+                  ? { ...state.transition.to.params, ...effectParamOverridesRecord }
                   : state.transition.to.params
               }
             : state.transition.to,

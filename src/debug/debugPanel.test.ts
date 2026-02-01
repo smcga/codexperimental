@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { shouldShowFlyoverPanel } from "./debugPanel";
+import { shouldShowEffectPanel } from "./debugPanel";
 
-describe("shouldShowFlyoverPanel", () => {
-  it("shows the panel only when debug is enabled and flyover is selected", () => {
-    expect(shouldShowFlyoverPanel(false, "flyover")).toBe(false);
-    expect(shouldShowFlyoverPanel(true, null)).toBe(false);
-    expect(shouldShowFlyoverPanel(true, "timeline")).toBe(false);
-    expect(shouldShowFlyoverPanel(true, "flyover")).toBe(true);
+describe("shouldShowEffectPanel", () => {
+  it("shows the panel only when debug is enabled and an effect is selected", () => {
+    expect(shouldShowEffectPanel(false, "flyover")).toBe(false);
+    expect(shouldShowEffectPanel(true, null)).toBe(false);
+    expect(shouldShowEffectPanel(true, "starfield")).toBe(true);
+    expect(shouldShowEffectPanel(true, "flyover")).toBe(true);
   });
 });
