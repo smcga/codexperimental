@@ -22,6 +22,8 @@ const mobileControls = document.querySelector<HTMLDivElement>("#mobile-controls"
 const mobileDebugButton = document.querySelector<HTMLButtonElement>("#mobile-debug");
 const mobileFullscreenButton = document.querySelector<HTMLButtonElement>("#mobile-fullscreen");
 
+const releaseMode = new URLSearchParams(window.location.search).get("release") === "1";
+
 if (!canvas || !overlay || !overlayText || !debugOverlay || !debugTimestamp || !debugTransitionSelect) {
   throw new Error("Missing canvas or overlay element");
 }
@@ -72,6 +74,11 @@ function formatTimestamp(time: number): string {
 }
 
 function setDebugOverlayVisible(visible: boolean): void {
+  if (releaseMode) {
+    debugState.enabled = false;
+    debugOverlay.classList.add("hidden");
+    return;
+  }
   debugState.enabled = visible;
   debugOverlay.classList.toggle("hidden", !visible);
 }
@@ -149,20 +156,20 @@ function updateEffectButtonStates(): void {
   });
 }
 
-if (debugTransitionSelect) {
+if (!releaseMode && debugTransitionSelect) {
   debugTransitionSelect.addEventListener("change", () => {
     const value = debugTransitionSelect.value;
     debugState.transitionOverride = value === "auto" ? null : (value as TransitionType);
   });
 }
 
-if (debugMonochromeToggle) {
+if (!releaseMode && debugMonochromeToggle) {
   debugMonochromeToggle.addEventListener("change", () => {
     debugState.monochromeOverride = debugMonochromeToggle.checked ? true : null;
   });
 }
 
-if (debugSkipIntroButton) {
+if (!releaseMode && debugSkipIntroButton) {
   debugSkipIntroButton.addEventListener("click", () => {
     if (!audioPlayer || !timeline || !introConfig) {
       return;
@@ -172,7 +179,7 @@ if (debugSkipIntroButton) {
   });
 }
 
-if (debugSkipSecondHalfButton) {
+if (!releaseMode && debugSkipSecondHalfButton) {
   debugSkipSecondHalfButton.addEventListener("click", () => {
     if (!audioPlayer || !timeline) {
       return;
@@ -182,9 +189,16 @@ if (debugSkipSecondHalfButton) {
   });
 }
 
-createEffectButtons();
-setDebugOverlayVisible(false);
-updateDebugSkipButtonState(null);
+if (!releaseMode) {
+  createEffectButtons();
+  setDebugOverlayVisible(false);
+  updateDebugSkipButtonState(null);
+} else {
+  setDebugOverlayVisible(false);
+  if (mobileDebugButton) {
+    mobileDebugButton.style.display = "none";
+  }
+}
 
 async function startDemo(): Promise<void> {
   if (isRunning) {
@@ -193,7 +207,7 @@ async function startDemo(): Promise<void> {
   setOverlay("Loading…", true);
 
   try {
-    const config = await loadConfig();
+    const config = await loadConfig(releaseMode ? "/timeline.release.json" : "/timeline.json");
     introConfig = config.intro;
     if (audioPlayer) {
       audioPlayer.destroy();
@@ -209,7 +223,9 @@ async function startDemo(): Promise<void> {
     isRunning = true;
     lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
     setOverlay("", false);
-    updateDebugSkipButtonState(lastDemoTime);
+    if (!releaseMode) {
+      updateDebugSkipButtonState(lastDemoTime);
+    }
 
     cancelAnimationFrame(animationFrame);
     animationFrame = requestAnimationFrame(loop);
@@ -227,7 +243,9 @@ async function restartDemo(): Promise<void> {
   await audioPlayer.restart();
   renderer.reset();
   lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
-  updateDebugSkipButtonState(lastDemoTime);
+  if (!releaseMode) {
+    updateDebugSkipButtonState(lastDemoTime);
+  }
   setOverlay("", false);
   if (!isRunning) {
     isRunning = true;
@@ -267,7 +285,7 @@ function loop(): void {
           type: debugState.transitionOverride ?? state.transition.type
         }
       : undefined;
-    const explosionTime = demoTime - introConfig.end;
+    const explosionTime = state.section.era === "future" ? demoTime - state.section.start : -1;
     const explosionShake = getExplosionShake(explosionTime);
 
     renderer.render({
@@ -287,7 +305,9 @@ function loop(): void {
   }
 
   debugTimestamp.textContent = formatTimestamp(demoTime);
-  updateDebugSkipButtonState(demoTime);
+  if (!releaseMode) {
+    updateDebugSkipButtonState(demoTime);
+  }
 
   if (audioPlayer.ended) {
     isRunning = false;
@@ -303,7 +323,7 @@ overlay.addEventListener("click", () => {
 });
 
 window.addEventListener("keydown", (event) => {
-  if (event.key.toLowerCase() === "d") {
+  if (!releaseMode && event.key.toLowerCase() === "d") {
     toggleDebugOverlay();
   }
   if (event.key.toLowerCase() === "r") {
@@ -314,7 +334,7 @@ window.addEventListener("keydown", (event) => {
   }
 });
 
-if (mobileControls && mobileDebugButton) {
+if (!releaseMode && mobileControls && mobileDebugButton) {
   mobileDebugButton.addEventListener("click", () => {
     toggleDebugOverlay();
   });
