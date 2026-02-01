@@ -14,6 +14,8 @@ export type WebGLUniformPayload = {
   exposure: number;
   seed: number;
   steps: number;
+  quality?: number;
+  aspect?: number;
 };
 
 const VERTEX_SHADER_SOURCE = `#version 300 es
@@ -48,8 +50,16 @@ export class WebGLEffectBase {
   private errorMessage: string | null = null;
   private warned = false;
 
-  constructor(private fragmentShaderSource: string, private effectName: string) {
+  constructor(
+    private fragmentShaderSource: string,
+    private effectName: string,
+    private vertexShaderSource: string = VERTEX_SHADER_SOURCE
+  ) {
     this.init();
+  }
+
+  get lastError(): string | null {
+    return this.errorMessage;
   }
 
   renderToCanvas2D(
@@ -64,40 +74,52 @@ export class WebGLEffectBase {
       return false;
     }
 
-    const gl = this.gl;
     const qualityScale = QUALITY_SCALES[quality] ?? QUALITY_SCALES[2];
-    const internalWidth = Math.max(1, Math.floor(width * qualityScale));
-    const internalHeight = Math.max(1, Math.floor(height * qualityScale));
-    this.resize(internalWidth, internalHeight);
+    this.resize(width, height, qualityScale);
+
+    const rendered = this.renderFrame(uniforms);
+    if (!rendered) {
+      return false;
+    }
+    this.drawToCanvas2D(ctx, 0, 0, width, height);
+    return true;
+  }
+
+  renderFrame(uniforms: WebGLUniformPayload): boolean {
+    if (!this.gl || !this.program || !this.canvas || this.errorMessage) {
+      this.setFallbackStatus(this.errorMessage ?? "WebGL2 unavailable");
+      return false;
+    }
+
+    const gl = this.gl;
+    const { width, height } = this.size;
+    if (width === 0 || height === 0) {
+      return false;
+    }
 
     gl.useProgram(this.program);
     gl.bindVertexArray(this.vao);
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
-    gl.viewport(0, 0, internalWidth, internalHeight);
+    gl.viewport(0, 0, width, height);
 
-    const resolvedUniforms = { ...uniforms, resolution: [internalWidth, internalHeight] as [number, number] };
+    const resolvedUniforms = { ...uniforms, resolution: [width, height] as [number, number] };
     this.setUniforms(resolvedUniforms);
 
     gl.drawArrays(gl.TRIANGLES, 0, 3);
 
     gl.bindFramebuffer(gl.READ_FRAMEBUFFER, this.framebuffer);
     gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, null);
-    gl.blitFramebuffer(
-      0,
-      0,
-      internalWidth,
-      internalHeight,
-      0,
-      0,
-      internalWidth,
-      internalHeight,
-      gl.COLOR_BUFFER_BIT,
-      gl.NEAREST
-    );
+    gl.blitFramebuffer(0, 0, width, height, 0, 0, width, height, gl.COLOR_BUFFER_BIT, gl.NEAREST);
 
-    ctx.drawImage(this.canvas, 0, 0, width, height);
     setWebGLStatus({ mode: "ok" });
     return true;
+  }
+
+  drawToCanvas2D(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number): void {
+    if (!this.canvas) {
+      return;
+    }
+    ctx.drawImage(this.canvas, x, y, width, height);
   }
 
   private init(): void {
@@ -109,7 +131,7 @@ export class WebGLEffectBase {
       return;
     }
     this.gl = gl;
-    const program = this.createProgram(gl, VERTEX_SHADER_SOURCE, this.fragmentShaderSource);
+    const program = this.createProgram(gl, this.vertexShaderSource, this.fragmentShaderSource);
     if (!program) {
       this.errorMessage = "WebGL2 shader compile failed";
       this.setFallbackStatus(this.errorMessage);
@@ -140,23 +162,27 @@ export class WebGLEffectBase {
       u_hueShift: gl.getUniformLocation(program, "u_hueShift"),
       u_exposure: gl.getUniformLocation(program, "u_exposure"),
       u_seed: gl.getUniformLocation(program, "u_seed"),
-      u_steps: gl.getUniformLocation(program, "u_steps")
+      u_steps: gl.getUniformLocation(program, "u_steps"),
+      u_quality: gl.getUniformLocation(program, "u_quality"),
+      u_aspect: gl.getUniformLocation(program, "u_aspect")
     };
 
     gl.disable(gl.BLEND);
     gl.disable(gl.DEPTH_TEST);
   }
 
-  private resize(width: number, height: number): void {
+  resize(width: number, height: number, scale = 1): void {
     if (!this.canvas || !this.gl || !this.framebuffer || !this.colorTexture) {
       return;
     }
-    if (this.size.width === width && this.size.height === height) {
+    const internalWidth = Math.max(1, Math.floor(width * scale));
+    const internalHeight = Math.max(1, Math.floor(height * scale));
+    if (this.size.width === internalWidth && this.size.height === internalHeight) {
       return;
     }
-    this.size = { width, height };
-    this.canvas.width = width;
-    this.canvas.height = height;
+    this.size = { width: internalWidth, height: internalHeight };
+    this.canvas.width = internalWidth;
+    this.canvas.height = internalHeight;
 
     const gl = this.gl;
     gl.bindTexture(gl.TEXTURE_2D, this.colorTexture);
@@ -164,7 +190,7 @@ export class WebGLEffectBase {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, internalWidth, internalHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
     gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.colorTexture, 0);
@@ -172,13 +198,16 @@ export class WebGLEffectBase {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   }
 
-  private setUniforms(payload: WebGLUniformPayload): void {
+  setUniforms(payload: WebGLUniformPayload): void {
     if (!this.gl) {
       return;
     }
     const gl = this.gl;
-    const set1f = (name: keyof WebGLUniformPayload, value: number): void => {
-      const location = this.uniformLocations[`u_${name}`];
+    const set1f = (uniformName: string, value: number | undefined): void => {
+      if (typeof value !== "number" || !Number.isFinite(value)) {
+        return;
+      }
+      const location = this.uniformLocations[uniformName];
       if (location) {
         gl.uniform1f(location, value);
       }
@@ -187,20 +216,22 @@ export class WebGLEffectBase {
     if (resLocation) {
       gl.uniform2f(resLocation, payload.resolution[0], payload.resolution[1]);
     }
-    set1f("time", payload.time);
-    set1f("rms", payload.rms);
-    set1f("bass", payload.bass);
-    set1f("mid", payload.mid);
-    set1f("treble", payload.treble);
-    set1f("beat", payload.beat);
-    set1f("beatStrength", payload.beatStrength);
-    set1f("warp", payload.warp);
-    set1f("hueShift", payload.hueShift);
-    set1f("exposure", payload.exposure);
-    set1f("seed", payload.seed);
+    set1f("u_time", payload.time);
+    set1f("u_rms", payload.rms);
+    set1f("u_bass", payload.bass);
+    set1f("u_mid", payload.mid);
+    set1f("u_treble", payload.treble);
+    set1f("u_beat", payload.beat);
+    set1f("u_beatStrength", payload.beatStrength);
+    set1f("u_warp", payload.warp);
+    set1f("u_hueShift", payload.hueShift);
+    set1f("u_exposure", payload.exposure);
+    set1f("u_seed", payload.seed);
+    set1f("u_quality", payload.quality);
+    set1f("u_aspect", payload.aspect);
 
     const stepsLocation = this.uniformLocations.u_steps;
-    if (stepsLocation) {
+    if (stepsLocation && Number.isFinite(payload.steps)) {
       gl.uniform1i(stepsLocation, payload.steps);
     }
   }
