@@ -3,8 +3,9 @@ import { SectionConfig, TextCue, TransitionType } from "../config/loadConfig";
 import { clamp } from "../util/math";
 import { CameraState, computeDynamicCamera } from "./camera";
 import { effectRegistry, resetEffects } from "./effects";
-import { computeLetterbox } from "./letterbox";
+import { ContentRect, computeLetterbox, getContentRect } from "./letterbox";
 import { resolveMonochrome } from "./monochrome";
+import { layoutSpans } from "./text/layout";
 import { renderTextCues } from "./text/textRenderer";
 
 export type RenderState = {
@@ -74,6 +75,10 @@ export class Renderer {
     this.layerCtx.clearRect(0, 0, this.baseWidth, this.baseHeight);
   }
 
+  getContentRect(width: number, height: number): ContentRect {
+    return getContentRect(width, height, this.baseWidth, this.baseHeight);
+  }
+
   render({
     ctx,
     width,
@@ -122,6 +127,62 @@ export class Renderer {
     this.applyCameraTransform(ctx, camera);
     this.renderOverlays(ctx, this.baseWidth, this.baseHeight, audio);
     renderTextCues(ctx, this.baseWidth, this.baseHeight, textCues, time);
+    ctx.restore();
+  }
+
+  drawTextCueDebug(
+    ctx: CanvasRenderingContext2D,
+    width: number,
+    height: number,
+    cue: TextCue,
+    time: number,
+    audio: AudioFeatures,
+    showSafeArea = true,
+    screenShake?: { x: number; y: number }
+  ): void {
+    const { scale, offsetX, offsetY } = computeLetterbox(width, height, this.baseWidth, this.baseHeight);
+    const camera = computeDynamicCamera(time, audio, this.baseWidth, this.baseHeight);
+    const shakeX = audio.beatStrength * 6 + (screenShake?.x ?? 0);
+    const shakeY = audio.beatStrength * 6 + (screenShake?.y ?? 0);
+
+    ctx.save();
+    ctx.translate(offsetX + shakeX, offsetY + shakeY);
+    ctx.scale(scale, scale);
+    this.applyCameraTransform(ctx, camera);
+
+    if (showSafeArea) {
+      const insetX = this.baseWidth * 0.05;
+      const insetY = this.baseHeight * 0.05;
+      ctx.save();
+      ctx.strokeStyle = "rgba(142, 249, 255, 0.35)";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(insetX, insetY, this.baseWidth - insetX * 2, this.baseHeight - insetY * 2);
+      ctx.restore();
+    }
+
+    const cueX = cue.units === "px" ? cue.x : cue.x * this.baseWidth;
+    const cueY = cue.units === "px" ? cue.y : cue.y * this.baseHeight;
+    ctx.translate(cueX, cueY);
+    ctx.textBaseline = "middle";
+
+    const layout = layoutSpans(cue.spans, cue.align, (text, span) => {
+      ctx.font = `${span.weight} ${span.size}px ${span.font}`;
+      return ctx.measureText(text).width;
+    });
+    const maxSize = cue.spans.reduce((max, span) => Math.max(max, span.size), cue.size);
+    const heightEstimate = maxSize * 1.2;
+    const top = -heightEstimate / 2;
+
+    ctx.save();
+    ctx.strokeStyle = "rgba(255, 214, 84, 0.9)";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(layout.startX, top, layout.totalWidth, heightEstimate);
+    ctx.fillStyle = "rgba(255, 214, 84, 0.9)";
+    ctx.beginPath();
+    ctx.arc(0, 0, Math.max(2, maxSize * 0.06), 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
     ctx.restore();
   }
 
