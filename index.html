@@ -11,39 +11,45 @@
       <div id="start-overlay">
         <div class="start-text">CLICK TO START</div>
       </div>
-      <div id="debug-overlay" class="hidden">
-        <div class="debug-title">Debug Controls</div>
-        <div class="debug-row">
-          <span>Time</span>
-          <span id="debug-timestamp">00:00.0</span>
+      <div id="debug-panels">
+        <div id="debug-overlay" class="debug-panel hidden">
+          <div class="debug-title">Debug Controls</div>
+          <div class="debug-row">
+            <span>Time</span>
+            <span id="debug-timestamp">00:00.0</span>
+          </div>
+          <div class="debug-row">
+            <span>Intro</span>
+            <button id="debug-skip-intro" type="button">Skip intro</button>
+          </div>
+          <div class="debug-row">
+            <span>Second half</span>
+            <button id="debug-skip-second-half" type="button">Skip to second half</button>
+          </div>
+          <label class="debug-row">
+            <span>Transition</span>
+            <select id="debug-transition">
+              <option value="auto">Auto</option>
+              <option value="fade">Fade</option>
+              <option value="wipe">Wipe</option>
+              <option value="slide-left">Slide Left</option>
+              <option value="slide-right">Slide Right</option>
+              <option value="slide-up">Slide Up</option>
+              <option value="slide-down">Slide Down</option>
+              <option value="iris">Iris</option>
+              <option value="flash">Flash</option>
+            </select>
+          </label>
+          <div class="debug-section">
+            <div class="debug-section-title">Effects</div>
+            <div id="debug-effects"></div>
+          </div>
+          <label class="debug-row debug-toggle">
+            <input type="checkbox" id="debug-monochrome" />
+            <span>Force monochrome</span>
+          </label>
         </div>
-        <div class="debug-row">
-          <span>Intro</span>
-          <button id="debug-skip-intro" type="button">Skip intro</button>
-        </div>
-        <div class="debug-row">
-          <span>Second half</span>
-          <button id="debug-skip-second-half" type="button">Skip to second half</button>
-        </div>
-        <label class="debug-row">
-          <span>Transition</span>
-          <select id="debug-transition">
-            <option value="auto">Auto</option>
-            <option value="fade">Fade</option>
-            <option value="wipe">Wipe</option>
-            <option value="slide-left">Slide Left</option>
-            <option value="slide-right">Slide Right</option>
-            <option value="slide-up">Slide Up</option>
-            <option value="slide-down">Slide Down</option>
-            <option value="iris">Iris</option>
-            <option value="flash">Flash</option>
-          </select>
-        </label>
-        <div class="debug-section">
-          <div class="debug-section-title">Effects</div>
-          <div id="debug-effects"></div>
-        </div>
-        <div id="debug-flyover-panel" class="debug-section hidden">
+        <div id="debug-flyover-panel" class="debug-panel debug-section hidden">
           <div class="debug-section-title">Flyover Controls</div>
           <div class="debug-grid">
             <label class="debug-field">
@@ -92,10 +98,6 @@
             </label>
           </div>
         </div>
-        <label class="debug-row debug-toggle">
-          <input type="checkbox" id="debug-monochrome" />
-          <span>Force monochrome</span>
-        </label>
       </div>
       <div id="mobile-controls" aria-label="Mobile controls">
         <button id="mobile-debug" type="button" aria-label="Toggle debug panel">

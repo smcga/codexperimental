@@ -8,6 +8,7 @@ import { DEFAULT_FLYOVER_PARAMS, FlyoverDebugParams, coerceFlyoverParams } from 
 import { TerminalIntroRenderer } from "./renderer/intro/terminalIntro";
 import { createExplosionState, getExplosionShake, renderExplosion } from "./renderer/overlays/explosion";
 import { getFullscreenAction, getIntroSkipTime, getNextDebugOverlayVisibility, getSecondHalfSkipTime } from "./controls";
+import { shouldShowFlyoverPanel } from "./debug/debugPanel";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
@@ -80,10 +81,12 @@ function setDebugOverlayVisible(visible: boolean): void {
   if (releaseMode) {
     debugState.enabled = false;
     debugOverlay.classList.add("hidden");
+    updateFlyoverPanelVisibility();
     return;
   }
   debugState.enabled = visible;
   debugOverlay.classList.toggle("hidden", !visible);
+  updateFlyoverPanelVisibility();
 }
 
 function toggleDebugOverlay(): void {
@@ -169,7 +172,7 @@ function updateFlyoverPanelVisibility(): void {
   if (!debugFlyoverPanel) {
     return;
   }
-  const visible = debugState.forcedEffect === "flyover";
+  const visible = shouldShowFlyoverPanel(debugState.enabled, debugState.forcedEffect);
   debugFlyoverPanel.classList.toggle("hidden", !visible);
   if (visible) {
     syncFlyoverInputs(debugState.flyoverParams);
