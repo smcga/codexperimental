@@ -500,20 +500,21 @@
       ]
     },
     {
-      "id": "switch-04530",
+      "id": "physics-pile-demo",
       "start": "04:53.0",
-      "end": "04:58.2",
-      "effect": "fractal",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.7 },
-      "params": { "speed": 0.8 }
-    },
-    {
-      "id": "switch-04582",
-      "start": "04:58.2",
       "end": "05:04.7",
-      "effect": "bokeh",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.6 },
-      "params": { "speed": 0.8 }
+      "effect": "physics_pile",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.7 },
+      "params": {
+        "count": 18,
+        "restitution": 0.3,
+        "friction": 0.65,
+        "gravity": 900,
+        "beatImpulse": 280,
+        "trail": 0.18,
+        "spawnMode": "pile",
+        "seed": 12
+      }
     },
     {
       "id": "switch-05047",
