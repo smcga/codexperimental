@@ -24,6 +24,7 @@ import { ChessEffect } from "./chessEffect";
 import { FlyoverEffect } from "./flyoverEffect";
 import { SynthwaveSunsetEffect } from "./synthwaveSunset";
 import { FractalTunnelEffect } from "./gl/fractalTunnelEffect";
+import { PhysicsPileEffect } from "./physicsPile";
 import { ImpossibleCorridorEffect } from "./gl/impossibleCorridorEffect";
 
 export const effectRegistry: Record<string, Effect> = {
@@ -51,6 +52,7 @@ export const effectRegistry: Record<string, Effect> = {
   chess: new ChessEffect(),
   flyover: new FlyoverEffect(),
   gl_fractal_tunnel: new FractalTunnelEffect(),
+  physics_pile: new PhysicsPileEffect(),
   gl_impossible_corridor: new ImpossibleCorridorEffect(),
   synthwaveSunset: new SynthwaveSunsetEffect(),
 };
