@@ -72,6 +72,7 @@ export type RawSectionConfig = {
   effect: string;
   era?: EraPreset;
   layers?: RawSectionLayerConfig[];
+  overlays?: RawSectionOverlayConfig;
   transition?: {
     in?: TransitionType;
     out?: TransitionType;
@@ -85,6 +86,40 @@ export type RawSectionLayerConfig = {
   opacity?: number;
   blend?: BlendMode;
   params?: Record<string, number>;
+};
+
+export type RawLighting2DConfig = {
+  enabled?: boolean;
+  ambient?: number;
+  lights?: RawLighting2DLightConfig[];
+  occluders?: RawLighting2DOccluderConfig[];
+  shadow?: {
+    softness?: number;
+    length?: number;
+  };
+};
+
+export type RawLighting2DLightConfig = {
+  kind: "point";
+  x: number;
+  y: number;
+  radius: number;
+  intensity: number;
+  colour?: string;
+  flicker?: number;
+  follow?: "none" | "centre" | "beatJitter";
+};
+
+export type RawLighting2DOccluderConfig = {
+  kind: "rect";
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+};
+
+export type RawSectionOverlayConfig = {
+  lighting2d?: RawLighting2DConfig;
 };
 
 export type RawTextSpan = {
@@ -155,6 +190,7 @@ export type SectionConfig = {
   transition: TransitionConfig;
   params: Record<string, number>;
   layers: SectionLayerConfig[];
+  overlays: SectionOverlayConfig;
   endFromAudio: boolean;
 };
 
@@ -163,6 +199,40 @@ export type SectionLayerConfig = {
   opacity: number;
   blend: BlendMode;
   params: Record<string, number>;
+};
+
+export type Lighting2DConfig = {
+  enabled: boolean;
+  ambient: number;
+  lights: Lighting2DLightConfig[];
+  occluders: Lighting2DOccluderConfig[];
+  shadow: {
+    softness: number;
+    length: number;
+  };
+};
+
+export type Lighting2DLightConfig = {
+  kind: "point";
+  x: number;
+  y: number;
+  radius: number;
+  intensity: number;
+  colour: string;
+  flicker: number;
+  follow: "none" | "centre" | "beatJitter";
+};
+
+export type Lighting2DOccluderConfig = {
+  kind: "rect";
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+};
+
+export type SectionOverlayConfig = {
+  lighting2d?: Lighting2DConfig;
 };
 
 export type TextSpan = RawTextSpan & { size: number; color: string; weight: string; font: string };
@@ -212,6 +282,9 @@ const DEFAULT_TEXT_X = 0.5;
 const DEFAULT_TEXT_Y = 0.7;
 const DEFAULT_CUE_DURATION = 3.0;
 const DEFAULT_INTRO_CPS = 28;
+const DEFAULT_LIGHTING_AMBIENT = 0.6;
+const DEFAULT_SHADOW_SOFTNESS = 0.25;
+const DEFAULT_SHADOW_LENGTH = 0.35;
 
 function assertNumber(value: unknown, label: string): number {
   if (typeof value !== "number" || Number.isNaN(value)) {
@@ -410,6 +483,118 @@ function normalizeSectionLayers(layers: RawSectionLayerConfig[] | undefined, lab
   });
 }
 
+function normalizeLighting2DLight(
+  light: RawLighting2DLightConfig,
+  label: string
+): Lighting2DLightConfig {
+  if (light.kind !== "point") {
+    throw new Error(`${label}.kind must be "point"`);
+  }
+  const x = assertNumber(light.x, `${label}.x`);
+  const y = assertNumber(light.y, `${label}.y`);
+  const radius = assertNumber(light.radius, `${label}.radius`);
+  const intensity = assertNumber(light.intensity, `${label}.intensity`);
+  if (radius <= 0) {
+    throw new Error(`${label}.radius must be greater than 0`);
+  }
+  if (intensity < 0) {
+    throw new Error(`${label}.intensity must be >= 0`);
+  }
+  if (light.flicker !== undefined && (typeof light.flicker !== "number" || light.flicker < 0)) {
+    throw new Error(`${label}.flicker must be >= 0`);
+  }
+  if (
+    light.follow &&
+    light.follow !== "none" &&
+    light.follow !== "centre" &&
+    light.follow !== "beatJitter"
+  ) {
+    throw new Error(`${label}.follow must be "none", "centre", or "beatJitter"`);
+  }
+  return {
+    kind: "point",
+    x,
+    y,
+    radius,
+    intensity,
+    colour: light.colour ?? "#ffffff",
+    flicker: light.flicker ?? 0,
+    follow: light.follow ?? "none"
+  };
+}
+
+function normalizeLighting2DOccluder(
+  occluder: RawLighting2DOccluderConfig,
+  label: string
+): Lighting2DOccluderConfig {
+  if (occluder.kind !== "rect") {
+    throw new Error(`${label}.kind must be "rect"`);
+  }
+  const x = assertNumber(occluder.x, `${label}.x`);
+  const y = assertNumber(occluder.y, `${label}.y`);
+  const w = assertNumber(occluder.w, `${label}.w`);
+  const h = assertNumber(occluder.h, `${label}.h`);
+  if (w <= 0 || h <= 0) {
+    throw new Error(`${label}.w and ${label}.h must be > 0`);
+  }
+  return { kind: "rect", x, y, w, h };
+}
+
+function normalizeLighting2DConfig(
+  lighting: RawLighting2DConfig,
+  label: string
+): Lighting2DConfig {
+  const ambient = lighting.ambient ?? DEFAULT_LIGHTING_AMBIENT;
+  if (typeof ambient !== "number" || ambient < 0 || ambient > 1) {
+    throw new Error(`${label}.ambient must be between 0 and 1`);
+  }
+  const lights = lighting.lights ?? [];
+  if (!Array.isArray(lights)) {
+    throw new Error(`${label}.lights must be an array`);
+  }
+  const occluders = lighting.occluders ?? [];
+  if (!Array.isArray(occluders)) {
+    throw new Error(`${label}.occluders must be an array`);
+  }
+  const shadowSoftness = lighting.shadow?.softness ?? DEFAULT_SHADOW_SOFTNESS;
+  const shadowLength = lighting.shadow?.length ?? DEFAULT_SHADOW_LENGTH;
+  if (typeof shadowSoftness !== "number" || shadowSoftness < 0 || shadowSoftness > 1) {
+    throw new Error(`${label}.shadow.softness must be between 0 and 1`);
+  }
+  if (typeof shadowLength !== "number" || shadowLength < 0) {
+    throw new Error(`${label}.shadow.length must be >= 0`);
+  }
+  return {
+    enabled: Boolean(lighting.enabled),
+    ambient,
+    lights: lights.map((light, index) =>
+      normalizeLighting2DLight(light, `${label}.lights[${index}]`)
+    ),
+    occluders: occluders.map((occluder, index) =>
+      normalizeLighting2DOccluder(occluder, `${label}.occluders[${index}]`)
+    ),
+    shadow: {
+      softness: shadowSoftness,
+      length: shadowLength
+    }
+  };
+}
+
+function normalizeSectionOverlays(
+  overlays: RawSectionOverlayConfig | undefined,
+  label: string
+): SectionOverlayConfig {
+  if (!overlays) {
+    return {};
+  }
+  if (typeof overlays !== "object") {
+    throw new Error(`${label} must be an object`);
+  }
+  return {
+    lighting2d: overlays.lighting2d ? normalizeLighting2DConfig(overlays.lighting2d, `${label}.lighting2d`) : undefined
+  };
+}
+
 export function normalizeTimelineConfig(raw: RawTimelineConfig): TimelineConfig {
   if (!raw || typeof raw !== "object") {
     throw new Error("Timeline config must be an object");
@@ -450,6 +635,7 @@ export function normalizeTimelineConfig(raw: RawTimelineConfig): TimelineConfig 
       transition: normalizeTransition(section.transition),
       params,
       layers: normalizeSectionLayers(section.layers, `sections[${index}]`),
+      overlays: normalizeSectionOverlays(section.overlays, `sections[${index}].overlays`),
       endFromAudio: end === null
     };
   });

@@ -215,7 +215,40 @@
       "layers": [
         { "effect": "tunnel", "blend": "soft-light", "opacity": 0.45, "params": { "speed": 0.75 } },
         { "effect": "fractal", "blend": "screen", "opacity": 0.2, "params": { "speed": 0.7 } }
-      ]
+      ],
+      "overlays": {
+        "lighting2d": {
+          "enabled": true,
+          "ambient": 0.68,
+          "shadow": { "softness": 0.25, "length": 0.45 },
+          "lights": [
+            {
+              "kind": "point",
+              "x": 0.3,
+              "y": 0.6,
+              "radius": 0.55,
+              "intensity": 1.1,
+              "colour": "#54d2ff",
+              "flicker": 0.3,
+              "follow": "beatJitter"
+            },
+            {
+              "kind": "point",
+              "x": 0.68,
+              "y": 0.38,
+              "radius": 0.5,
+              "intensity": 1.0,
+              "colour": "#ff7ad9",
+              "flicker": 0.25
+            }
+          ],
+          "occluders": [
+            { "kind": "rect", "x": 0.16, "y": 0.18, "w": 0.14, "h": 0.5 },
+            { "kind": "rect", "x": 0.58, "y": 0.12, "w": 0.16, "h": 0.35 },
+            { "kind": "rect", "x": 0.62, "y": 0.62, "w": 0.18, "h": 0.22 }
+          ]
+        }
+      }
     },
     {
       "id": "pre-drop-melody",
