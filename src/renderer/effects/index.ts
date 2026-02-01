@@ -22,6 +22,7 @@ import { SphereEffect } from "./sphereEffect";
 import { SphereCloudEffect } from "./sphereCloudEffect";
 import { ChessEffect } from "./chessEffect";
 import { FlyoverEffect } from "./flyoverEffect";
+import { SynthwaveSunsetEffect } from "./synthwaveSunset";
 import { FractalTunnelEffect } from "./gl/fractalTunnelEffect";
 
 export const effectRegistry: Record<string, Effect> = {
@@ -48,6 +49,7 @@ export const effectRegistry: Record<string, Effect> = {
   spherecloud: new SphereCloudEffect(),
   chess: new ChessEffect(),
   flyover: new FlyoverEffect(),
+  synthwaveSunset: new SynthwaveSunsetEffect(),
   gl_fractal_tunnel: new FractalTunnelEffect()
 };
 
