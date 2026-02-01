@@ -156,6 +156,26 @@ body,
   font-weight: 600;
 }
 
+.debug-grid {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.debug-field {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+}
+
+.debug-field input,
+.debug-field select {
+  width: 100%;
+  background: #0b0b0b;
+  color: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.2rem 0.4rem;
+}
+
 #debug-effects {
   display: flex;
   flex-wrap: wrap;

@@ -43,6 +43,55 @@
           <div class="debug-section-title">Effects</div>
           <div id="debug-effects"></div>
         </div>
+        <div id="debug-flyover-panel" class="debug-section hidden">
+          <div class="debug-section-title">Flyover Controls</div>
+          <div class="debug-grid">
+            <label class="debug-field">
+              <span>Speed</span>
+              <input type="number" step="0.05" min="0" data-flyover-param="speed" />
+            </label>
+            <label class="debug-field">
+              <span>Horizon</span>
+              <input type="number" step="0.01" min="0" max="1" data-flyover-param="horizon" />
+            </label>
+            <label class="debug-field">
+              <span>Sea Detail</span>
+              <input type="number" step="0.1" min="0.5" data-flyover-param="seaDetail" />
+            </label>
+            <label class="debug-field">
+              <span>Wave Speed</span>
+              <input type="number" step="0.05" min="0" data-flyover-param="waveSpeed" />
+            </label>
+            <label class="debug-field">
+              <span>Wave Intensity</span>
+              <input type="number" step="0.05" min="0" data-flyover-param="waveIntensity" />
+            </label>
+            <label class="debug-field">
+              <span>Island Count</span>
+              <input type="number" step="1" min="1" data-flyover-param="islandCount" />
+            </label>
+            <label class="debug-field">
+              <span>Island Seed</span>
+              <input type="number" step="1" data-flyover-param="islandSeed" />
+            </label>
+            <label class="debug-field">
+              <span>Fog</span>
+              <input type="number" step="0.05" min="0" max="1" data-flyover-param="fog" />
+            </label>
+            <label class="debug-field">
+              <span>Palette</span>
+              <select data-flyover-param="palette">
+                <option value="day">Day</option>
+                <option value="sunset">Sunset</option>
+                <option value="night">Night</option>
+              </select>
+            </label>
+            <label class="debug-field">
+              <span>Audio Reactive</span>
+              <input type="number" step="0.05" min="0" max="1" data-flyover-param="audioReactive" />
+            </label>
+          </div>
+        </div>
         <label class="debug-row debug-toggle">
           <input type="checkbox" id="debug-monochrome" />
           <span>Force monochrome</span>
