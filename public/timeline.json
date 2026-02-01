@@ -157,7 +157,7 @@
       "id": "proper-3d",
       "start": "02:04.9",
       "end": "02:10.4",
-      "effect": "proper3d",
+      "effect": "sphere3d",
       "transition": { "in": "fade", "out": "fade", "duration": 0.8 }
     },
     {
@@ -640,7 +640,7 @@
       "id": "proper-3d-callout",
       "start": "02:04.9",
       "end": "02:10.4",
-      "text": "PROPER 3D\n(perspective + lighting)",
+      "text": "SPHERE 3D\n(perspective + lighting)",
       "x": 0.5,
       "y": 0.2,
       "align": "center",

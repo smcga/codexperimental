@@ -112,7 +112,7 @@
       "id": "era-ps1-proper3d",
       "start": "01:52.0",
       "end": "02:06.0",
-      "effect": "proper3d",
+      "effect": "sphere3d",
       "era": "ps1",
       "transition": { "in": "flash", "out": "fade", "duration": 0.25 }
     },
