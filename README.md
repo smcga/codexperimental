@@ -19,6 +19,7 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 - The `spherecloud` effect renders a glowing point-cloud sphere with subtle audio-reactive rotation and lighting.
 - The `flyover` effect renders a sky/sea flythrough with distant islands; tune `params` like `speed`, `horizon`, `seaDetail`, `islandSeed`, and `palette`.
 - The `chess` effect renders a deterministic, self-playing chess match driven by the timeline; tune pacing with `params.speed` or anchor with `params.startTime`.
+- The `gl_fractal_tunnel` effect renders a WebGL2 raymarched tunnel with audio-reactive pulses and bloom; tune `params` like `quality`, `warp`, `hueShift`, `exposure`, and `seed`. It falls back to the `tunnel` effect when WebGL2 is unavailable.
 - The `portrait` effect pulls in `img/94B53814-80C3-4851-A6D3-A590FBB6022F.png` for a full-frame image glow; replace that file if you want a different portrait.
 - The `intro` block controls the terminal presentation from `t=0` until `intro.end`; the first section must start exactly at the same time so the colour pipeline can take over. Script events are time-coded, so you can align story lines with audio or prior text cue timings.
 - Visuals include subtle camera zoom and panning that respond to audio energy.
@@ -51,5 +52,6 @@ npm run preview
 - `R` to restart
 - `F` to toggle fullscreen (if supported)
 - `D` to toggle the debug overlay (timestamp, skip intro, skip to second half, transition selection, effect overrides, monochrome toggle)
+- The debug overlay shows WebGL status as `OK` or `FALLBACK` when available.
 - When the debug overlay is visible, selecting an effect reveals a secondary panel with effect-specific controls (or a note when none are available).
 - On touch devices, two floating buttons appear in the lower-right corner: `DBG` toggles the debug overlay and `⛶` toggles fullscreen.

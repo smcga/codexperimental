@@ -257,13 +257,9 @@
       "id": "big-drop-warp",
       "start": "03:31.4",
       "end": "03:46.6",
-      "effect": "starfield",
+      "effect": "gl_fractal_tunnel",
       "transition": { "in": "wipe", "out": "fade", "duration": 0.22 },
-      "params": { "speed": 1.4, "warp": 0.55 },
-      "layers": [
-        { "effect": "ribbons", "blend": "screen", "opacity": 0.3, "params": { "speed": 1.1 } },
-        { "effect": "particles", "blend": "lighter", "opacity": 0.2, "params": { "speed": 1.3 } }
-      ]
+      "params": { "quality": 2, "warp": 1.1, "exposure": 1.2, "hueShift": 0.15, "seed": 7 }
     },
     {
       "id": "fill-fractal",

@@ -177,6 +177,16 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
         step: 0.05
       })
     ]
+  },
+  gl_fractal_tunnel: {
+    title: "Fractal Tunnel (WebGL) Controls",
+    controls: [
+      numberControl("quality", "Quality", 2, { min: 1, max: 3, step: 1 }),
+      numberControl("warp", "Warp", 1.1, { min: 0, max: 2, step: 0.05 }),
+      numberControl("hueShift", "Hue Shift", 0.15, { min: 0, max: 1, step: 0.01 }),
+      numberControl("exposure", "Exposure", 1.2, { min: 0.5, max: 2, step: 0.05 }),
+      numberControl("seed", "Seed", 7, { step: 1 })
+    ]
   }
 };
 

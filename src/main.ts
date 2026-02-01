@@ -5,6 +5,7 @@ import { Timeline } from "./timeline/timeline";
 import { Renderer } from "./renderer/renderer";
 import { effectRegistry } from "./renderer/effects";
 import { coerceEffectParams, getEffectDebugConfig, getEffectDebugDefaults, EffectParamControl } from "./renderer/debug/effectDebug";
+import { getWebGLStatusLabel } from "./renderer/effects/gl/webglStatus";
 import { TerminalIntroRenderer } from "./renderer/intro/terminalIntro";
 import { createExplosionState, getExplosionShake, renderExplosion } from "./renderer/overlays/explosion";
 import { getFullscreenAction, getIntroSkipTime, getNextDebugOverlayVisibility, getSecondHalfSkipTime } from "./controls";
@@ -15,6 +16,7 @@ const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
 const overlayText = overlay?.querySelector<HTMLDivElement>(".start-text");
 const debugOverlay = document.querySelector<HTMLDivElement>("#debug-overlay");
 const debugTimestamp = document.querySelector<HTMLSpanElement>("#debug-timestamp");
+const debugWebglStatus = document.querySelector<HTMLSpanElement>("#debug-webgl-status");
 const debugTransitionSelect = document.querySelector<HTMLSelectElement>("#debug-transition");
 const debugEffectsContainer = document.querySelector<HTMLDivElement>("#debug-effects");
 const debugEffectPanel = document.querySelector<HTMLDivElement>("#debug-effect-panel");
@@ -452,6 +454,9 @@ function loop(): void {
   }
 
   debugTimestamp.textContent = formatTimestamp(demoTime);
+  if (debugWebglStatus) {
+    debugWebglStatus.textContent = getWebGLStatusLabel();
+  }
   if (!releaseMode) {
     updateDebugSkipButtonState(demoTime);
   }
