@@ -24,6 +24,7 @@ import { ChessEffect } from "./chessEffect";
 import { FlyoverEffect } from "./flyoverEffect";
 import { SynthwaveSunsetEffect } from "./synthwaveSunset";
 import { FractalTunnelEffect } from "./gl/fractalTunnelEffect";
+import { ImpossibleCorridorEffect } from "./gl/impossibleCorridorEffect";
 
 export const effectRegistry: Record<string, Effect> = {
   starfield: new StarfieldEffect(),
@@ -49,8 +50,9 @@ export const effectRegistry: Record<string, Effect> = {
   spherecloud: new SphereCloudEffect(),
   chess: new ChessEffect(),
   flyover: new FlyoverEffect(),
+  gl_fractal_tunnel: new FractalTunnelEffect(),
+  gl_impossible_corridor: new ImpossibleCorridorEffect(),
   synthwaveSunset: new SynthwaveSunsetEffect(),
-  gl_fractal_tunnel: new FractalTunnelEffect()
 };
 
 export function resetEffects(): void {

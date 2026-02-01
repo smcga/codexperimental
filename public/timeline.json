@@ -316,15 +316,14 @@
       ]
     },
     {
-      "id": "epic-ambient-breakdown",
+      "id": "impossible-corridor",
       "start": "04:08.3",
       "end": "04:20.0",
-      "effect": "fractal",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.9 },
-      "params": { "speed": 0.75 },
+      "effect": "gl_impossible_corridor",
+      "transition": { "in": "fade", "out": "flash", "duration": 0.35 },
+      "params": { "quality": 2, "warp": 1.2, "exposure": 1.2, "hueShift": 0.18, "seed": 7, "speed": 0.7 },
       "layers": [
-        { "effect": "tunnel", "blend": "multiply", "opacity": 0.35, "params": { "speed": 0.7 } },
-        { "effect": "particles", "blend": "screen", "opacity": 0.2, "params": { "speed": 0.9 } }
+        { "effect": "particles", "blend": "lighter", "opacity": 0.25 }
       ]
     },
 
