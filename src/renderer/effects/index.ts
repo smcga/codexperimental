@@ -18,6 +18,7 @@ import { FinaleEffect } from "./finaleEffect";
 import { Proper3DEffect } from "./proper3dEffect";
 import { Fake3DEffect } from "./fake3dEffect";
 import { PortraitGlowEffect } from "./portraitGlowEffect";
+import { SphereEffect } from "./sphereEffect";
 
 export const effectRegistry: Record<string, Effect> = {
   starfield: new StarfieldEffect(),
@@ -38,7 +39,8 @@ export const effectRegistry: Record<string, Effect> = {
   finale: new FinaleEffect(),
   proper3d: new Proper3DEffect(),
   fake3d: new Fake3DEffect(),
-  portrait: new PortraitGlowEffect()
+  portrait: new PortraitGlowEffect(),
+  sphere3d: new SphereEffect()
 };
 
 export function resetEffects(): void {
