@@ -462,9 +462,14 @@
       "id": "switch-04380",
       "start": "04:38.0",
       "end": "04:42.0",
-      "effect": "plasma",
+      "effect": "flyover",
       "transition": { "in": "fade", "out": "fade", "duration": 0.25 },
-      "params": { "speed": 1.0 },
+      "params": {
+        "speed": 1.0,
+        "palette": "sunset",
+        "seaDetail": 1.1,
+        "islandSeed": 3
+      },
       "layers": [{ "effect": "glitch", "blend": "overlay", "opacity": 0.2 }]
     },
     {

@@ -4,6 +4,7 @@ import { AudioPlayer, AudioFeatures } from "./audio/audioPlayer";
 import { Timeline } from "./timeline/timeline";
 import { Renderer } from "./renderer/renderer";
 import { effectRegistry } from "./renderer/effects";
+import { DEFAULT_FLYOVER_PARAMS, FlyoverDebugParams, coerceFlyoverParams } from "./renderer/debug/flyoverDebug";
 import { TerminalIntroRenderer } from "./renderer/intro/terminalIntro";
 import { createExplosionState, getExplosionShake, renderExplosion } from "./renderer/overlays/explosion";
 import { getFullscreenAction, getIntroSkipTime, getNextDebugOverlayVisibility, getSecondHalfSkipTime } from "./controls";
@@ -15,6 +16,7 @@ const debugOverlay = document.querySelector<HTMLDivElement>("#debug-overlay");
 const debugTimestamp = document.querySelector<HTMLSpanElement>("#debug-timestamp");
 const debugTransitionSelect = document.querySelector<HTMLSelectElement>("#debug-transition");
 const debugEffectsContainer = document.querySelector<HTMLDivElement>("#debug-effects");
+const debugFlyoverPanel = document.querySelector<HTMLDivElement>("#debug-flyover-panel");
 const debugMonochromeToggle = document.querySelector<HTMLInputElement>("#debug-monochrome");
 const debugSkipIntroButton = document.querySelector<HTMLButtonElement>("#debug-skip-intro");
 const debugSkipSecondHalfButton = document.querySelector<HTMLButtonElement>("#debug-skip-second-half");
@@ -46,7 +48,8 @@ const debugState = {
   enabled: false,
   forcedEffect: null as string | null,
   transitionOverride: null as TransitionType | null,
-  monochromeOverride: null as boolean | null
+  monochromeOverride: null as boolean | null,
+  flyoverParams: { ...DEFAULT_FLYOVER_PARAMS }
 };
 
 function resize(): void {
@@ -143,6 +146,36 @@ function createEffectButtons(): void {
   updateEffectButtonStates();
 }
 
+const flyoverInputs = debugFlyoverPanel?.querySelectorAll<HTMLInputElement | HTMLSelectElement>("[data-flyover-param]");
+
+function syncFlyoverInputs(params: FlyoverDebugParams): void {
+  if (!flyoverInputs) {
+    return;
+  }
+  flyoverInputs.forEach((input) => {
+    const key = input.dataset.flyoverParam as keyof FlyoverDebugParams | undefined;
+    if (!key) {
+      return;
+    }
+    if (input instanceof HTMLSelectElement) {
+      input.value = params[key];
+    } else {
+      input.value = String(params[key]);
+    }
+  });
+}
+
+function updateFlyoverPanelVisibility(): void {
+  if (!debugFlyoverPanel) {
+    return;
+  }
+  const visible = debugState.forcedEffect === "flyover";
+  debugFlyoverPanel.classList.toggle("hidden", !visible);
+  if (visible) {
+    syncFlyoverInputs(debugState.flyoverParams);
+  }
+}
+
 function updateEffectButtonStates(): void {
   if (!debugEffectsContainer) {
     return;
@@ -154,6 +187,7 @@ function updateEffectButtonStates(): void {
       button.textContent === debugState.forcedEffect;
     button.classList.toggle("active", isActive);
   });
+  updateFlyoverPanelVisibility();
 }
 
 if (!releaseMode && debugTransitionSelect) {
@@ -166,6 +200,25 @@ if (!releaseMode && debugTransitionSelect) {
 if (!releaseMode && debugMonochromeToggle) {
   debugMonochromeToggle.addEventListener("change", () => {
     debugState.monochromeOverride = debugMonochromeToggle.checked ? true : null;
+  });
+}
+
+if (!releaseMode && flyoverInputs && debugFlyoverPanel) {
+  syncFlyoverInputs(debugState.flyoverParams);
+  flyoverInputs.forEach((input) => {
+    input.addEventListener("input", () => {
+      const key = input.dataset.flyoverParam as keyof FlyoverDebugParams | undefined;
+      if (!key) {
+        return;
+      }
+      const nextValue =
+        input instanceof HTMLSelectElement ? input.value : Number.parseFloat(input.value);
+      debugState.flyoverParams = coerceFlyoverParams({
+        ...debugState.flyoverParams,
+        [key]: nextValue
+      });
+      syncFlyoverInputs(debugState.flyoverParams);
+    });
   });
 }
 
@@ -275,13 +328,28 @@ function loop(): void {
       config: introConfig
     });
   } else {
-    const sectionOverride = debugState.forcedEffect
+    const flyoverParamOverrides =
+      debugState.forcedEffect === "flyover"
+        ? (debugState.flyoverParams as unknown as Record<string, number>)
+        : null;
+    let sectionOverride = debugState.forcedEffect
       ? { ...state.section, effect: debugState.forcedEffect }
       : state.section;
+    if (flyoverParamOverrides) {
+      sectionOverride = { ...sectionOverride, params: { ...sectionOverride.params, ...flyoverParamOverrides } };
+    }
     const transitionOverride = state.transition
       ? {
           ...state.transition,
-          to: debugState.forcedEffect ? { ...state.transition.to, effect: debugState.forcedEffect } : state.transition.to,
+          to: debugState.forcedEffect
+            ? {
+                ...state.transition.to,
+                effect: debugState.forcedEffect,
+                params: flyoverParamOverrides
+                  ? { ...state.transition.to.params, ...flyoverParamOverrides }
+                  : state.transition.to.params
+              }
+            : state.transition.to,
           type: debugState.transitionOverride ?? state.transition.type
         }
       : undefined;
