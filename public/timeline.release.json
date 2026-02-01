@@ -57,121 +57,697 @@
     {
       "id": "era8bit-starfield",
       "start": "00:54.15",
-      "end": "01:02.0",
+      "end": "01:05.0",
       "effect": "starfield",
       "era": "8bit",
       "transition": { "in": "fade", "out": "wipe", "duration": 0.2 },
-      "params": { "speed": 0.7, "warp": 0.15 }
+      "params": { "speed": 0.7, "warp": 0.2, "turnRate": 0.6 }
     },
     {
       "id": "era8bit-plasma",
-      "start": "01:02.0",
-      "end": "01:10.5",
+      "start": "01:05.0",
+      "end": "01:15.0",
       "effect": "plasma",
       "era": "8bit",
-      "transition": { "in": "wipe", "out": "wipe", "duration": 0.15 },
-      "params": { "speed": 0.8 }
+      "transition": { "in": "wipe", "out": "wipe", "duration": 0.2 },
+      "params": { "speed": 0.85 }
     },
     {
       "id": "era8bit-equalizer",
-      "start": "01:10.5",
-      "end": "01:18.0",
+      "start": "01:15.0",
+      "end": "01:16.5",
       "effect": "equalizer",
       "era": "8bit",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.2 },
-      "params": { "speed": 0.9 }
-    },
-    {
-      "id": "era16bit-ribbons",
-      "start": "01:18.0",
-      "end": "01:30.0",
-      "effect": "ribbons",
-      "era": "16bit",
-      "transition": { "in": "slide-right", "out": "slide-left", "duration": 0.35 },
-      "params": { "speed": 1.0 }
-    },
-    {
-      "id": "era16bit-plasma",
-      "start": "01:30.0",
-      "end": "01:42.0",
-      "effect": "plasma",
-      "era": "16bit",
-      "transition": { "in": "slide-left", "out": "wipe", "duration": 0.35 },
-      "params": { "speed": 1.05 }
-    },
-    {
-      "id": "era16bit-isogrid",
-      "start": "01:42.0",
-      "end": "01:52.0",
-      "effect": "isogrid",
-      "era": "16bit",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.3 },
+      "transition": { "in": "wipe", "out": "flash", "duration": 0.15 },
       "params": { "speed": 1.1 }
     },
     {
-      "id": "era-ps1-proper3d",
-      "start": "01:52.0",
-      "end": "02:06.0",
-      "effect": "proper3d",
-      "era": "ps1",
-      "transition": { "in": "flash", "out": "fade", "duration": 0.25 }
-    },
-    {
-      "id": "era-ps1-fake3d",
-      "start": "02:06.0",
-      "end": "02:20.0",
-      "effect": "fake3d",
-      "era": "ps1",
-      "transition": { "in": "fade", "out": "iris", "duration": 0.3 }
-    },
-    {
-      "id": "era-pcdemo-fractal",
-      "start": "02:20.0",
-      "end": "02:40.0",
-      "effect": "fractal",
-      "era": "pcdemo",
-      "transition": { "in": "iris", "out": "fade", "duration": 0.45 },
-      "params": { "speed": 0.95 }
-    },
-    {
-      "id": "era-pcdemo-tunnel",
-      "start": "02:40.0",
-      "end": "03:05.0",
-      "effect": "tunnel",
-      "era": "pcdemo",
-      "transition": { "in": "fade", "out": "flash", "duration": 0.35 },
-      "params": { "speed": 1.1 },
+      "id": "era8bit-rotozoom",
+      "start": "01:16.5",
+      "end": "01:27.4",
+      "effect": "rotozoom",
+      "era": "8bit",
+      "transition": { "in": "flash", "out": "slide-left", "duration": 0.2 },
+      "params": { "speed": 0.95 },
       "layers": [
-        { "effect": "particles", "blend": "lighter", "opacity": 0.3, "params": { "speed": 1.15 } },
-        { "effect": "feedback", "blend": "screen", "opacity": 0.2, "params": { "speed": 0.9 } }
+        { "effect": "particles", "blend": "lighter", "opacity": 0.2, "params": { "speed": 0.9 } }
       ]
     },
     {
-      "id": "era-future-neon",
-      "start": "03:05.0",
-      "end": "03:26.0",
-      "effect": "neon",
-      "era": "future",
-      "transition": { "in": "flash", "out": "wipe", "duration": 0.3 },
-      "params": { "speed": 1.2 },
+      "id": "era8bit-lissajous",
+      "start": "01:27.4",
+      "end": "01:33.0",
+      "effect": "lissajous",
+      "era": "8bit",
+      "transition": { "in": "slide-left", "out": "fade", "duration": 0.2 },
       "layers": [
-        { "effect": "particles", "blend": "lighter", "opacity": 0.35, "params": { "speed": 1.2 } },
+        { "effect": "starfield", "blend": "screen", "opacity": 0.15, "params": { "speed": 0.6, "warp": 0.1 } }
+      ]
+    },
+    {
+      "id": "era8bit-blobs",
+      "start": "01:33.0",
+      "end": "01:35.5",
+      "effect": "blobs",
+      "era": "8bit",
+      "transition": { "in": "fade", "out": "wipe", "duration": 0.18 }
+    },
+    {
+      "id": "era8bit-equalizer-hit",
+      "start": "01:35.5",
+      "end": "01:36.8",
+      "effect": "equalizer",
+      "era": "8bit",
+      "transition": { "in": "wipe", "out": "flash", "duration": 0.15 },
+      "params": { "speed": 1.25 },
+      "layers": [
         { "effect": "glitch", "blend": "overlay", "opacity": 0.2 }
       ]
     },
     {
-      "id": "era-future-feedback",
-      "start": "03:26.0",
-      "end": "03:46.6",
-      "effect": "gl_fractal_tunnel",
-      "era": "future",
-      "transition": { "in": "wipe", "out": "fade", "duration": 0.25 },
-      "params": { "quality": 2, "warp": 1.1, "exposure": 1.2, "hueShift": 0.15, "seed": 7 }
+      "id": "era8bit-starfield-rush",
+      "start": "01:36.8",
+      "end": "01:38.3",
+      "effect": "starfield",
+      "era": "8bit",
+      "transition": { "in": "flash", "out": "slide-right", "duration": 0.18 },
+      "params": { "speed": 1.2, "warp": 0.5, "turnRate": 0.9, "turnStrength": 0.5 }
     },
     {
-      "id": "era-future-finale",
-      "start": "03:46.6",
-      "end": "05:19.0",
+      "id": "era16bit-ribbons",
+      "start": "01:38.3",
+      "end": "01:43.7",
+      "effect": "ribbons",
+      "era": "16bit",
+      "transition": { "in": "slide-right", "out": "wipe", "duration": 0.25 },
+      "layers": [
+        { "effect": "particles", "blend": "lighter", "opacity": 0.25, "params": { "speed": 1.1 } }
+      ]
+    },
+    {
+      "id": "era16bit-plasma-flash",
+      "start": "01:43.7",
+      "end": "01:44.2",
+      "effect": "plasma",
+      "era": "16bit",
+      "transition": { "in": "wipe", "out": "flash", "duration": 0.12 },
+      "params": { "speed": 1.1 }
+    },
+    {
+      "id": "era16bit-isogrid",
+      "start": "01:44.2",
+      "end": "01:44.7",
+      "effect": "isogrid",
+      "era": "16bit",
+      "transition": { "in": "flash", "out": "slide-up", "duration": 0.12 }
+    },
+    {
+      "id": "era16bit-bokeh",
+      "start": "01:44.7",
+      "end": "01:45.2",
+      "effect": "bokeh",
+      "era": "16bit",
+      "transition": { "in": "slide-up", "out": "flash", "duration": 0.12 }
+    },
+    {
+      "id": "era16bit-equalizer-hit",
+      "start": "01:45.2",
+      "end": "01:45.7",
+      "effect": "equalizer",
+      "era": "16bit",
+      "transition": { "in": "flash", "out": "wipe", "duration": 0.12 },
+      "params": { "speed": 1.3 }
+    },
+    {
+      "id": "era16bit-rush-lissajous",
+      "start": "01:45.7",
+      "end": "01:46.3",
+      "effect": "lissajous",
+      "era": "16bit",
+      "transition": { "in": "wipe", "out": "flash", "duration": 0.12 }
+    },
+    {
+      "id": "era16bit-rush-rotozoom",
+      "start": "01:46.3",
+      "end": "01:46.9",
+      "effect": "rotozoom",
+      "era": "16bit",
+      "transition": { "in": "flash", "out": "slide-left", "duration": 0.12 },
+      "params": { "speed": 1.2 }
+    },
+    {
+      "id": "era16bit-rush-plasma",
+      "start": "01:46.9",
+      "end": "01:47.5",
+      "effect": "plasma",
+      "era": "16bit",
+      "transition": { "in": "slide-left", "out": "flash", "duration": 0.12 },
+      "params": { "speed": 1.25 }
+    },
+    {
+      "id": "era16bit-rush-ribbons",
+      "start": "01:47.5",
+      "end": "01:48.1",
+      "effect": "ribbons",
+      "era": "16bit",
+      "transition": { "in": "flash", "out": "wipe", "duration": 0.12 }
+    },
+    {
+      "id": "era16bit-rush-isogrid",
+      "start": "01:48.1",
+      "end": "01:48.6",
+      "effect": "isogrid",
+      "era": "16bit",
+      "transition": { "in": "wipe", "out": "flash", "duration": 0.12 }
+    },
+    {
+      "id": "era16bit-rush-starfield",
+      "start": "01:48.6",
+      "end": "01:49.1",
+      "effect": "starfield",
+      "era": "16bit",
+      "transition": { "in": "flash", "out": "fade", "duration": 0.12 },
+      "params": { "speed": 1.4, "warp": 0.4 }
+    },
+    {
+      "id": "calm-sunset",
+      "start": "01:49.1",
+      "end": "02:02.0",
+      "effect": "synthwaveSunset",
+      "era": "ps1",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.3 },
+      "params": { "horizon": 0.55, "sunRadius": 0.23, "seaSpeed": 0.7, "glow": 0.25, "scanlines": 0.2 },
+      "layers": [
+        { "effect": "flyover", "blend": "screen", "opacity": 0.25, "params": { "speed": 0.7, "horizon": 0.32, "islandSeed": 3 } },
+        { "effect": "spherecloud", "blend": "overlay", "opacity": 0.18, "params": { "speed": 0.6 } }
+      ]
+    },
+    {
+      "id": "build-snare-rush",
+      "start": "02:02.0",
+      "end": "02:08.5",
+      "effect": "feedback",
+      "era": "ps1",
+      "transition": { "in": "fade", "out": "flash", "duration": 0.2 },
+      "params": { "speed": 1.2 },
+      "layers": [
+        { "effect": "glitch", "blend": "screen", "opacity": 0.25 },
+        { "effect": "particles", "blend": "lighter", "opacity": 0.25, "params": { "speed": 1.4 } }
+      ]
+    },
+    {
+      "id": "spoken-word",
+      "start": "02:08.5",
+      "end": "02:32.0",
+      "effect": "portrait",
+      "era": "ps1",
+      "transition": { "in": "flash", "out": "fade", "duration": 0.35 },
+      "params": { "zoom": 1.04, "drift": 0.8 },
+      "layers": [
+        { "effect": "sphere3d", "blend": "screen", "opacity": 0.2, "params": { "speed": 0.4 } }
+      ]
+    },
+    {
+      "id": "cool-stretch",
+      "start": "02:32.0",
+      "end": "02:38.0",
+      "effect": "bokeh",
+      "era": "ps1",
+      "transition": { "in": "fade", "out": "flash", "duration": 0.25 },
+      "layers": [
+        { "effect": "glitch", "blend": "overlay", "opacity": 0.2 }
+      ]
+    },
+    {
+      "id": "polygons-drop",
+      "start": "02:38.0",
+      "end": "02:43.6",
+      "effect": "proper3d",
+      "era": "ps1",
+      "transition": { "in": "flash", "out": "slide-right", "duration": 0.25 },
+      "params": { "speed": 1.1 },
+      "layers": [
+        { "effect": "glitch", "blend": "screen", "opacity": 0.2 }
+      ]
+    },
+    {
+      "id": "polygons-variant",
+      "start": "02:43.6",
+      "end": "02:48.9",
+      "effect": "fake3d",
+      "era": "ps1",
+      "transition": { "in": "slide-right", "out": "wipe", "duration": 0.22 },
+      "params": { "speed": 1.15 },
+      "layers": [
+        { "effect": "particles", "blend": "lighter", "opacity": 0.2, "params": { "speed": 1.0 } }
+      ]
+    },
+    {
+      "id": "polygons-corridor",
+      "start": "02:48.9",
+      "end": "02:55.0",
+      "effect": "gl_impossible_corridor",
+      "era": "ps1",
+      "transition": { "in": "wipe", "out": "fade", "duration": 0.25 },
+      "params": { "speed": 1.05, "warp": 1.1 },
+      "layers": [
+        { "effect": "glitch", "blend": "overlay", "opacity": 0.15 }
+      ]
+    },
+    {
+      "id": "chill-breakdown",
+      "start": "02:55.0",
+      "end": "03:10.4",
+      "effect": "flyover",
+      "era": "pcdemo",
+      "transition": { "in": "fade", "out": "slide-left", "duration": 0.35 },
+      "params": { "speed": 0.65, "horizon": 0.4, "islandSeed": 5, "fog": 0.7 },
+      "layers": [
+        { "effect": "synthwaveSunset", "blend": "screen", "opacity": 0.2, "params": { "horizon": 0.58, "glow": 0.2, "scanlines": 0.15 } }
+      ]
+    },
+    {
+      "id": "this-callout",
+      "start": "03:10.4",
+      "end": "03:15.2",
+      "effect": "neon",
+      "era": "pcdemo",
+      "transition": { "in": "slide-left", "out": "flash", "duration": 0.2 },
+      "params": { "speed": 1.25 },
+      "layers": [
+        { "effect": "glitch", "blend": "overlay", "opacity": 0.25 }
+      ]
+    },
+    {
+      "id": "physics-first",
+      "start": "03:15.2",
+      "end": "03:18.6",
+      "effect": "physics_pile",
+      "era": "pcdemo",
+      "transition": { "in": "flash", "out": "wipe", "duration": 0.2 },
+      "params": { "count": 18, "restitution": 0.5, "gravity": 900, "trail": 0.35 }
+    },
+    {
+      "id": "switch-neon",
+      "start": "03:18.6",
+      "end": "03:24.0",
+      "effect": "neon",
+      "era": "pcdemo",
+      "transition": { "in": "wipe", "out": "slide-up", "duration": 0.2 },
+      "params": { "speed": 1.1 },
+      "layers": [
+        { "effect": "particles", "blend": "lighter", "opacity": 0.3, "params": { "speed": 1.3 } }
+      ]
+    },
+    {
+      "id": "switch-fractal",
+      "start": "03:24.0",
+      "end": "03:26.6",
+      "effect": "fractal",
+      "era": "pcdemo",
+      "transition": { "in": "slide-up", "out": "flash", "duration": 0.18 },
+      "params": { "speed": 1.1 }
+    },
+    {
+      "id": "switch-tunnel",
+      "start": "03:26.6",
+      "end": "03:32.0",
+      "effect": "tunnel",
+      "era": "pcdemo",
+      "transition": { "in": "flash", "out": "slide-right", "duration": 0.2 },
+      "params": { "speed": 1.25 },
+      "layers": [
+        { "effect": "feedback", "blend": "screen", "opacity": 0.2, "params": { "speed": 1.0 } }
+      ]
+    },
+    {
+      "id": "switch-fractal-tunnel",
+      "start": "03:32.0",
+      "end": "03:37.6",
+      "effect": "gl_fractal_tunnel",
+      "era": "pcdemo",
+      "transition": { "in": "slide-right", "out": "flash", "duration": 0.2 },
+      "params": { "quality": 2, "warp": 1.1, "exposure": 1.15, "hueShift": 0.2, "seed": 11 }
+    },
+    {
+      "id": "chess-intro",
+      "start": "03:37.6",
+      "end": "03:43.0",
+      "effect": "chess",
+      "era": "future",
+      "transition": { "in": "flash", "out": "fade", "duration": 0.25 },
+      "params": { "speed": 1.0, "startTime": 0 }
+    },
+    {
+      "id": "chess-overlay",
+      "start": "03:43.0",
+      "end": "03:48.0",
+      "effect": "chess",
+      "era": "future",
+      "transition": { "in": "fade", "out": "flash", "duration": 0.2 },
+      "params": { "speed": 1.1, "startTime": 0 },
+      "layers": [
+        { "effect": "glitch", "blend": "overlay", "opacity": 0.2 },
+        { "effect": "particles", "blend": "lighter", "opacity": 0.25, "params": { "speed": 1.2 } }
+      ]
+    },
+    {
+      "id": "rush-1",
+      "start": "03:48.0",
+      "end": "03:48.7",
+      "effect": "starfield",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 },
+      "params": { "speed": 1.4, "warp": 0.6 }
+    },
+    {
+      "id": "rush-2",
+      "start": "03:48.7",
+      "end": "03:49.4",
+      "effect": "plasma",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 },
+      "params": { "speed": 1.3 }
+    },
+    {
+      "id": "rush-3",
+      "start": "03:49.4",
+      "end": "03:50.1",
+      "effect": "tunnel",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 },
+      "params": { "speed": 1.35 }
+    },
+    {
+      "id": "rush-4",
+      "start": "03:50.1",
+      "end": "03:50.8",
+      "effect": "neon",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 },
+      "params": { "speed": 1.3 }
+    },
+    {
+      "id": "rush-5",
+      "start": "03:50.8",
+      "end": "03:51.5",
+      "effect": "fractal",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 },
+      "params": { "speed": 1.2 }
+    },
+    {
+      "id": "rush-6",
+      "start": "03:51.5",
+      "end": "03:52.2",
+      "effect": "gl_impossible_corridor",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 },
+      "params": { "speed": 1.3, "warp": 1.2 }
+    },
+    {
+      "id": "rush-7",
+      "start": "03:52.2",
+      "end": "03:52.9",
+      "effect": "bokeh",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 }
+    },
+    {
+      "id": "rush-8",
+      "start": "03:52.9",
+      "end": "03:53.6",
+      "effect": "rotozoom",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 },
+      "params": { "speed": 1.35 }
+    },
+    {
+      "id": "rush-9",
+      "start": "03:53.6",
+      "end": "03:54.3",
+      "effect": "gl_fractal_tunnel",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 },
+      "params": { "quality": 2, "warp": 1.2, "exposure": 1.2, "hueShift": 0.3, "seed": 3 }
+    },
+    {
+      "id": "rush-10",
+      "start": "03:54.3",
+      "end": "03:55.0",
+      "effect": "sphere3d",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 },
+      "params": { "speed": 1.1 }
+    },
+    {
+      "id": "rush-11",
+      "start": "03:55.0",
+      "end": "03:55.7",
+      "effect": "equalizer",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 },
+      "params": { "speed": 1.4 }
+    },
+    {
+      "id": "rush-12",
+      "start": "03:55.7",
+      "end": "03:56.4",
+      "effect": "glitch",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 }
+    },
+    {
+      "id": "rush-13",
+      "start": "03:56.4",
+      "end": "03:57.1",
+      "effect": "proper3d",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 },
+      "params": { "speed": 1.25 }
+    },
+    {
+      "id": "rush-14",
+      "start": "03:57.1",
+      "end": "03:57.8",
+      "effect": "fake3d",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 },
+      "params": { "speed": 1.2 }
+    },
+    {
+      "id": "rush-15",
+      "start": "03:57.8",
+      "end": "03:58.5",
+      "effect": "ribbons",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 }
+    },
+    {
+      "id": "rush-16",
+      "start": "03:58.5",
+      "end": "03:59.2",
+      "effect": "particles",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 },
+      "params": { "speed": 1.5 }
+    },
+    {
+      "id": "rush-17",
+      "start": "03:59.2",
+      "end": "03:59.9",
+      "effect": "feedback",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 },
+      "params": { "speed": 1.3 }
+    },
+    {
+      "id": "rush-18",
+      "start": "03:59.9",
+      "end": "04:00.6",
+      "effect": "fractal",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 },
+      "params": { "speed": 1.25 }
+    },
+    {
+      "id": "rush-19",
+      "start": "04:00.6",
+      "end": "04:01.3",
+      "effect": "gl_impossible_corridor",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 },
+      "params": { "speed": 1.35, "warp": 1.3 }
+    },
+    {
+      "id": "rush-20",
+      "start": "04:01.3",
+      "end": "04:02.0",
+      "effect": "tunnel",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 },
+      "params": { "speed": 1.4 }
+    },
+    {
+      "id": "rush-21",
+      "start": "04:02.0",
+      "end": "04:02.7",
+      "effect": "gl_fractal_tunnel",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 },
+      "params": { "quality": 2, "warp": 1.15, "exposure": 1.1, "hueShift": 0.25, "seed": 9 }
+    },
+    {
+      "id": "rush-22",
+      "start": "04:02.7",
+      "end": "04:03.4",
+      "effect": "spherecloud",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 },
+      "params": { "speed": 1.1 }
+    },
+    {
+      "id": "rush-23",
+      "start": "04:03.4",
+      "end": "04:04.1",
+      "effect": "proper3d",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 },
+      "params": { "speed": 1.3 }
+    },
+    {
+      "id": "rush-24",
+      "start": "04:04.1",
+      "end": "04:04.8",
+      "effect": "fake3d",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 },
+      "params": { "speed": 1.25 }
+    },
+    {
+      "id": "rush-25",
+      "start": "04:04.8",
+      "end": "04:05.5",
+      "effect": "neon",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 },
+      "params": { "speed": 1.35 }
+    },
+    {
+      "id": "rush-26",
+      "start": "04:05.5",
+      "end": "04:06.2",
+      "effect": "equalizer",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 },
+      "params": { "speed": 1.5 }
+    },
+    {
+      "id": "rush-27",
+      "start": "04:06.2",
+      "end": "04:06.9",
+      "effect": "plasma",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 },
+      "params": { "speed": 1.4 }
+    },
+    {
+      "id": "rush-28",
+      "start": "04:06.9",
+      "end": "04:07.6",
+      "effect": "ribbons",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 }
+    },
+    {
+      "id": "rush-29",
+      "start": "04:07.6",
+      "end": "04:08.3",
+      "effect": "bokeh",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 }
+    },
+    {
+      "id": "rush-30",
+      "start": "04:08.3",
+      "end": "04:09.0",
+      "effect": "starfield",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 },
+      "params": { "speed": 1.5, "warp": 0.7 }
+    },
+    {
+      "id": "rush-31",
+      "start": "04:09.0",
+      "end": "04:09.7",
+      "effect": "glitch",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 }
+    },
+    {
+      "id": "rush-32",
+      "start": "04:09.7",
+      "end": "04:10.4",
+      "effect": "gl_fractal_tunnel",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.08 },
+      "params": { "quality": 2, "warp": 1.25, "exposure": 1.2, "hueShift": 0.35, "seed": 12 }
+    },
+    {
+      "id": "rush-33",
+      "start": "04:10.4",
+      "end": "04:11.0",
+      "effect": "sphere3d",
+      "era": "future",
+      "transition": { "in": "flash", "out": "fade", "duration": 0.08 },
+      "params": { "speed": 1.25 }
+    },
+    {
+      "id": "cooldown-layered",
+      "start": "04:11.0",
+      "end": "04:28.0",
+      "effect": "synthwaveSunset",
+      "era": "future",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.35 },
+      "params": { "horizon": 0.54, "sunRadius": 0.24, "seaSpeed": 0.6, "glow": 0.3, "scanlines": 0.2 },
+      "layers": [
+        { "effect": "flyover", "blend": "screen", "opacity": 0.3, "params": { "speed": 0.8, "horizon": 0.33, "islandSeed": 9 } },
+        { "effect": "sphere3d", "blend": "overlay", "opacity": 0.25, "params": { "speed": 0.5 } },
+        { "effect": "spherecloud", "blend": "screen", "opacity": 0.2, "params": { "speed": 0.45 } }
+      ]
+    },
+    {
+      "id": "build-to-drop",
+      "start": "04:28.0",
+      "end": "04:33.0",
+      "effect": "tunnel",
+      "era": "future",
+      "transition": { "in": "fade", "out": "flash", "duration": 0.2 },
+      "params": { "speed": 1.4 },
+      "layers": [
+        { "effect": "glitch", "blend": "overlay", "opacity": 0.3 },
+        { "effect": "particles", "blend": "lighter", "opacity": 0.35, "params": { "speed": 1.4 } }
+      ]
+    },
+    {
+      "id": "drop-wild",
+      "start": "04:33.0",
+      "end": "04:47.7",
+      "effect": "finale",
+      "era": "future",
+      "transition": { "in": "flash", "out": "flash", "duration": 0.25 },
+      "layers": [
+        { "effect": "gl_fractal_tunnel", "blend": "screen", "opacity": 0.3, "params": { "quality": 2, "warp": 1.3, "exposure": 1.25, "hueShift": 0.4, "seed": 4 } },
+        { "effect": "glitch", "blend": "overlay", "opacity": 0.35 },
+        { "effect": "particles", "blend": "lighter", "opacity": 0.4, "params": { "speed": 1.6 } },
+        { "effect": "starfield", "blend": "screen", "opacity": 0.25, "params": { "speed": 1.5, "warp": 0.7 } },
+        { "effect": "physics_pile", "blend": "screen", "opacity": 0.2, "params": { "count": 20, "restitution": 0.6, "trail": 0.4 } }
+      ]
+    },
+    {
+      "id": "finale-layer",
+      "start": "04:47.7",
+      "end": "05:30.0",
       "effect": "finale",
       "era": "future",
       "transition": { "in": "fade", "out": "fade", "duration": 0.9 },
@@ -197,8 +773,8 @@
     },
     {
       "id": "title-16bit",
-      "start": "01:18.2",
-      "end": "01:20.4",
+      "start": "01:38.4",
+      "end": "01:40.8",
       "text": "16-BIT",
       "x": 0.5,
       "y": 0.18,
@@ -209,8 +785,8 @@
     },
     {
       "id": "title-polygons",
-      "start": "01:52.2",
-      "end": "01:54.4",
+      "start": "02:38.2",
+      "end": "02:40.6",
       "text": "POLYGONS",
       "x": 0.5,
       "y": 0.2,
@@ -220,26 +796,98 @@
       "effects": { "shadow": true }
     },
     {
-      "id": "title-demo-scene",
-      "start": "02:20.2",
-      "end": "02:22.6",
-      "text": "DEMO SCENE",
+      "id": "spoken-1",
+      "start": "02:08.5",
+      "end": "02:14.2",
+      "text": "people used to say",
       "x": 0.5,
-      "y": 0.2,
+      "y": 0.22,
       "align": "center",
-      "size": 32,
-      "color": "#c3f4ff",
-      "effects": { "shadow": true }
+      "size": 24,
+      "color": "#e0e6ef",
+      "effects": { "typewriter": { "speed": 22 }, "shadow": true }
     },
     {
-      "id": "title-beyond",
-      "start": "03:05.2",
-      "end": "03:07.6",
-      "text": "BEYOND",
+      "id": "spoken-2",
+      "start": "02:14.2",
+      "end": "02:20.6",
+      "text": "\"i have an idea\"....",
       "x": 0.5,
-      "y": 0.2,
+      "y": 0.3,
       "align": "center",
-      "size": 40,
+      "size": 24,
+      "color": "#9ef0ff",
+      "effects": { "typewriter": { "speed": 22 }, "shadow": true }
+    },
+    {
+      "id": "spoken-3",
+      "start": "02:20.6",
+      "end": "02:26.8",
+      "text": "so many ideas dead because of...  \"don't know how\".",
+      "x": 0.5,
+      "y": 0.38,
+      "align": "center",
+      "size": 22,
+      "color": "#f7e9a4",
+      "effects": { "typewriter": { "speed": 24 }, "shadow": true }
+    },
+    {
+      "id": "spoken-4",
+      "start": "02:26.8",
+      "end": "02:29.6",
+      "text": "but now....",
+      "x": 0.5,
+      "y": 0.5,
+      "align": "center",
+      "size": 24,
+      "color": "#ff9f68",
+      "effects": { "typewriter": { "speed": 26 }, "shadow": true }
+    },
+    {
+      "id": "spoken-5",
+      "start": "02:29.6",
+      "end": "02:31.4",
+      "text": "now... When I have an idea...",
+      "x": 0.5,
+      "y": 0.6,
+      "align": "center",
+      "size": 22,
+      "color": "#c3f4ff",
+      "effects": { "typewriter": { "speed": 26 }, "shadow": true }
+    },
+    {
+      "id": "spoken-6",
+      "start": "02:31.4",
+      "end": "02:32.0",
+      "text": "...I just whisper it into existence...",
+      "x": 0.5,
+      "y": 0.7,
+      "align": "center",
+      "size": 22,
+      "color": "#ffffff",
+      "effects": { "typewriter": { "speed": 28 }, "shadow": true }
+    },
+    {
+      "id": "spoken-7",
+      "start": "02:32.0",
+      "end": "02:38.0",
+      "text": "it's so fucking cool...",
+      "x": 0.5,
+      "y": 0.78,
+      "align": "center",
+      "size": 26,
+      "color": "#ff6b6b",
+      "effects": { "shadow": true, "glitchIn": true }
+    },
+    {
+      "id": "this-hit",
+      "start": "03:10.4",
+      "end": "03:12.0",
+      "text": "THIS",
+      "x": 0.5,
+      "y": 0.5,
+      "align": "center",
+      "size": 64,
       "color": "#ff6b6b",
       "effects": { "glitchIn": true, "shadow": true }
     }
