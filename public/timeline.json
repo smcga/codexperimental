@@ -209,13 +209,9 @@
       "id": "breakdown-haze",
       "start": "02:40.2",
       "end": "03:04.2",
-      "effect": "bokeh",
+      "effect": "chess",
       "transition": { "in": "fade", "out": "fade", "duration": 0.8 },
-      "params": { "speed": 0.75 },
-      "layers": [
-        { "effect": "tunnel", "blend": "soft-light", "opacity": 0.45, "params": { "speed": 0.75 } },
-        { "effect": "fractal", "blend": "screen", "opacity": 0.2, "params": { "speed": 0.7 } }
-      ]
+      "params": { "speed": 1.1 }
     },
     {
       "id": "pre-drop-melody",

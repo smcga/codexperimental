@@ -100,13 +100,13 @@
       "params": { "speed": 1.05 }
     },
     {
-      "id": "era16bit-isogrid",
+      "id": "era16bit-chess",
       "start": "01:42.0",
       "end": "01:52.0",
-      "effect": "isogrid",
+      "effect": "chess",
       "era": "16bit",
       "transition": { "in": "wipe", "out": "fade", "duration": 0.3 },
-      "params": { "speed": 1.1 }
+      "params": { "speed": 1.2 }
     },
     {
       "id": "era-ps1-proper3d",
