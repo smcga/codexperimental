@@ -7,7 +7,7 @@ import { BlobsEffect } from "./blobsEffect";
 import { RibbonEffect } from "./ribbonEffect";
 import { LissajousEffect } from "./lissajousEffect";
 import { GlitchEffect } from "./glitchEffect";
-import { BokehEffect } from "./bokehEffect";
+import { BokehEffect, SlowBokehEffect } from "./bokehEffect";
 import { FractalEffect } from "./fractalEffect";
 import { FeedbackEffect } from "./feedbackEffect";
 import { EqualizerEffect } from "./equalizerEffect";
@@ -30,6 +30,7 @@ export const effectRegistry: Record<string, Effect> = {
   lissajous: new LissajousEffect(),
   glitch: new GlitchEffect(),
   bokeh: new BokehEffect(),
+  slowbokeh: new SlowBokehEffect(),
   fractal: new FractalEffect(),
   feedback: new FeedbackEffect(),
   equalizer: new EqualizerEffect(),
