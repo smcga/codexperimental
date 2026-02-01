@@ -54,4 +54,21 @@ describe("normalizeTimelineConfig", () => {
     raw.sections[0].era = "future-nope" as "pcdemo";
     expect(() => normalizeTimelineConfig(raw)).toThrow("sections[0].era must be one of");
   });
+
+  it("defaults blend illusions intensity and mode for future sections", () => {
+    const raw = createBaseConfig();
+    raw.sections[0].era = "future";
+    raw.sections[0].overlays = { blendIllusions: {} };
+    const normalized = normalizeTimelineConfig(raw);
+    expect(normalized.sections[0].overlays.blendIllusions?.intensity).toBe(1);
+    expect(normalized.sections[0].overlays.blendIllusions?.mode).toBe("all");
+  });
+
+  it("accepts explicit blend illusion mode and intensity", () => {
+    const raw = createBaseConfig();
+    raw.sections[0].overlays = { blendIllusions: { mode: "torch", intensity: 0.6 } };
+    const normalized = normalizeTimelineConfig(raw);
+    expect(normalized.sections[0].overlays.blendIllusions?.mode).toBe("torch");
+    expect(normalized.sections[0].overlays.blendIllusions?.intensity).toBeCloseTo(0.6);
+  });
 });

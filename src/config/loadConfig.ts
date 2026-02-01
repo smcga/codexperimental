@@ -72,6 +72,7 @@ export type RawSectionConfig = {
   effect: string;
   era?: EraPreset;
   layers?: RawSectionLayerConfig[];
+  overlays?: RawSectionOverlaysConfig;
   transition?: {
     in?: TransitionType;
     out?: TransitionType;
@@ -85,6 +86,17 @@ export type RawSectionLayerConfig = {
   opacity?: number;
   blend?: BlendMode;
   params?: Record<string, number>;
+};
+
+export type BlendIllusionMode = "torch" | "glow" | "moire" | "all";
+
+export type RawBlendIllusionsConfig = {
+  mode?: BlendIllusionMode;
+  intensity?: number;
+};
+
+export type RawSectionOverlaysConfig = {
+  blendIllusions?: RawBlendIllusionsConfig;
 };
 
 export type RawTextSpan = {
@@ -155,6 +167,7 @@ export type SectionConfig = {
   transition: TransitionConfig;
   params: Record<string, number>;
   layers: SectionLayerConfig[];
+  overlays: SectionOverlaysConfig;
   endFromAudio: boolean;
 };
 
@@ -163,6 +176,15 @@ export type SectionLayerConfig = {
   opacity: number;
   blend: BlendMode;
   params: Record<string, number>;
+};
+
+export type BlendIllusionsConfig = {
+  mode: BlendIllusionMode;
+  intensity: number;
+};
+
+export type SectionOverlaysConfig = {
+  blendIllusions?: BlendIllusionsConfig;
 };
 
 export type TextSpan = RawTextSpan & { size: number; color: string; weight: string; font: string };
@@ -410,6 +432,50 @@ function normalizeSectionLayers(layers: RawSectionLayerConfig[] | undefined, lab
   });
 }
 
+const BLEND_ILLUSION_MODES = ["torch", "glow", "moire", "all"] as const;
+
+function normalizeBlendIllusionsConfig(
+  value: RawBlendIllusionsConfig | undefined,
+  label: string,
+  era: EraPreset
+): BlendIllusionsConfig | undefined {
+  if (!value) {
+    return undefined;
+  }
+  if (typeof value !== "object" || Array.isArray(value)) {
+    throw new Error(`${label} must be an object`);
+  }
+  const mode = value.mode ?? (era === "future" ? "all" : "torch");
+  if (typeof mode !== "string" || !BLEND_ILLUSION_MODES.includes(mode as BlendIllusionMode)) {
+    const allowed = BLEND_ILLUSION_MODES.map((entry) => `"${entry}"`).join(", ");
+    throw new Error(`${label}.mode must be one of ${allowed}`);
+  }
+  const intensity = value.intensity ?? 1;
+  if (typeof intensity !== "number" || Number.isNaN(intensity) || intensity < 0) {
+    throw new Error(`${label}.intensity must be a non-negative number`);
+  }
+  return {
+    mode: mode as BlendIllusionMode,
+    intensity
+  };
+}
+
+function normalizeSectionOverlays(
+  overlays: RawSectionOverlaysConfig | undefined,
+  label: string,
+  era: EraPreset
+): SectionOverlaysConfig {
+  if (!overlays) {
+    return {};
+  }
+  if (typeof overlays !== "object" || Array.isArray(overlays)) {
+    throw new Error(`${label}.overlays must be an object`);
+  }
+  return {
+    blendIllusions: normalizeBlendIllusionsConfig(overlays.blendIllusions, `${label}.overlays.blendIllusions`, era)
+  };
+}
+
 export function normalizeTimelineConfig(raw: RawTimelineConfig): TimelineConfig {
   if (!raw || typeof raw !== "object") {
     throw new Error("Timeline config must be an object");
@@ -441,15 +507,17 @@ export function normalizeTimelineConfig(raw: RawTimelineConfig): TimelineConfig 
       throw new Error(`sections[${index}].end must be greater than start`);
     }
     const params = section.params ?? {};
+    const era = normalizeEra(section.era, `sections[${index}].era`);
     return {
       id: assertString(section.id, `sections[${index}].id`),
       start,
       end,
       effect: assertString(section.effect, `sections[${index}].effect`),
-      era: normalizeEra(section.era, `sections[${index}].era`),
+      era,
       transition: normalizeTransition(section.transition),
       params,
       layers: normalizeSectionLayers(section.layers, `sections[${index}]`),
+      overlays: normalizeSectionOverlays(section.overlays, `sections[${index}]`, era),
       endFromAudio: end === null
     };
   });
