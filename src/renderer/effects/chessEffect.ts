@@ -1,0 +1,276 @@
+import { Effect, EffectRenderContext } from "./types";
+
+type PieceCode = "P" | "R" | "N" | "B" | "Q" | "K" | "p" | "r" | "n" | "b" | "q" | "k";
+
+type Board = (PieceCode | null)[][];
+
+type Move = {
+  from: string;
+  to: string;
+};
+
+type ResolvedMove = {
+  from: string;
+  to: string;
+  capture: boolean;
+  captured?: PieceCode | null;
+};
+
+const BASE_MOVE_INTERVAL = 1.5;
+const CAPTURE_FLASH_DURATION = 0.4;
+
+// Scripted moves: no castling, en passant, or promotions are modeled.
+const MOVE_SCRIPT: Move[] = [
+  { from: "e2", to: "e4" },
+  { from: "e7", to: "e5" },
+  { from: "g1", to: "f3" },
+  { from: "b8", to: "c6" },
+  { from: "f1", to: "c4" },
+  { from: "g8", to: "f6" },
+  { from: "d2", to: "d3" },
+  { from: "f8", to: "c5" },
+  { from: "c2", to: "c3" },
+  { from: "d7", to: "d6" },
+  { from: "b1", to: "d2" },
+  { from: "c8", to: "g4" },
+  { from: "h2", to: "h3" },
+  { from: "g4", to: "h5" },
+  { from: "b2", to: "b4" },
+  { from: "h7", to: "h6" },
+  { from: "b4", to: "c5" },
+  { from: "d6", to: "c5" },
+  { from: "d3", to: "d4" },
+  { from: "c5", to: "d4" },
+  { from: "c3", to: "d4" },
+  { from: "c6", to: "d4" },
+  { from: "f3", to: "d4" },
+  { from: "e5", to: "d4" },
+  { from: "c4", to: "f7" },
+  { from: "e8", to: "f7" },
+  { from: "d1", to: "b3" },
+  { from: "f7", to: "f8" },
+  { from: "b3", to: "b7" },
+  { from: "c7", to: "c6" },
+  { from: "b7", to: "b5" },
+  { from: "a7", to: "a6" },
+  { from: "b5", to: "b7" },
+  { from: "d8", to: "d7" },
+  { from: "b7", to: "d7" },
+  { from: "f6", to: "d7" },
+  { from: "d2", to: "f3" },
+  { from: "h5", to: "f3" },
+  { from: "g2", to: "f3" },
+  { from: "d4", to: "d3" },
+  { from: "c1", to: "f4" },
+  { from: "d3", to: "d2" },
+  { from: "e1", to: "d2" },
+  { from: "d7", to: "f6" },
+  { from: "f4", to: "h6" },
+  { from: "g7", to: "h6" }
+];
+
+export function createInitialBoard(): Board {
+  return [
+    ["r", "n", "b", "q", "k", "b", "n", "r"],
+    ["p", "p", "p", "p", "p", "p", "p", "p"],
+    [null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null, null],
+    ["P", "P", "P", "P", "P", "P", "P", "P"],
+    ["R", "N", "B", "Q", "K", "B", "N", "R"]
+  ];
+}
+
+export function squareToCoords(square: string): { row: number; col: number } {
+  const file = square.charCodeAt(0) - 97;
+  const rank = parseInt(square[1] ?? "0", 10);
+  return { row: 8 - rank, col: file };
+}
+
+export function applyMove(board: Board, move: Move): ResolvedMove {
+  const { row: fromRow, col: fromCol } = squareToCoords(move.from);
+  const { row: toRow, col: toCol } = squareToCoords(move.to);
+  const piece = board[fromRow]?.[fromCol] ?? null;
+  const captured = board[toRow]?.[toCol] ?? null;
+
+  if (!piece) {
+    return { ...move, capture: false, captured: null };
+  }
+
+  board[fromRow][fromCol] = null;
+  board[toRow][toCol] = piece;
+
+  return { ...move, capture: captured !== null, captured };
+}
+
+export function buildBoardAtMove(moveIndex: number): { board: Board; lastMove?: ResolvedMove } {
+  const board = createInitialBoard();
+  let lastMove: ResolvedMove | undefined;
+  const clampedIndex = Math.max(0, Math.min(moveIndex, MOVE_SCRIPT.length));
+
+  for (let i = 0; i < clampedIndex; i += 1) {
+    const move = MOVE_SCRIPT[i];
+    const resolved = applyMove(board, move);
+    if (i === clampedIndex - 1) {
+      lastMove = resolved;
+    }
+  }
+
+  return { board, lastMove };
+}
+
+function drawPiece(ctx: CanvasRenderingContext2D, piece: PieceCode, x: number, y: number, size: number): void {
+  const isWhite = piece === piece.toUpperCase();
+  const fill = isWhite ? "#f6f2e8" : "#1b1b1b";
+  const stroke = isWhite ? "#1b1b1b" : "#f6f2e8";
+  const base = size * 0.34;
+
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = fill;
+  ctx.strokeStyle = stroke;
+  ctx.lineWidth = Math.max(1.5, size * 0.06);
+
+  switch (piece.toLowerCase()) {
+    case "p": {
+      ctx.beginPath();
+      ctx.arc(0, -base * 0.35, base * 0.55, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.rect(-base * 0.5, base * 0.1, base, base * 0.55);
+      ctx.fill();
+      ctx.stroke();
+      break;
+    }
+    case "r": {
+      ctx.beginPath();
+      ctx.rect(-base * 0.65, -base * 0.2, base * 1.3, base * 1.1);
+      ctx.fill();
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.rect(-base * 0.8, -base * 0.7, base * 1.6, base * 0.4);
+      ctx.fill();
+      ctx.stroke();
+      break;
+    }
+    case "n": {
+      ctx.beginPath();
+      ctx.moveTo(-base * 0.7, base * 0.7);
+      ctx.lineTo(-base * 0.3, -base * 0.7);
+      ctx.lineTo(base * 0.6, -base * 0.3);
+      ctx.lineTo(base * 0.4, base * 0.8);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      break;
+    }
+    case "b": {
+      ctx.beginPath();
+      ctx.arc(0, -base * 0.3, base * 0.6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(0, -base * 0.1);
+      ctx.lineTo(0, base * 0.8);
+      ctx.stroke();
+      break;
+    }
+    case "q": {
+      ctx.beginPath();
+      ctx.moveTo(-base * 0.7, base * 0.7);
+      ctx.lineTo(-base * 0.5, -base * 0.2);
+      ctx.lineTo(0, -base * 0.8);
+      ctx.lineTo(base * 0.5, -base * 0.2);
+      ctx.lineTo(base * 0.7, base * 0.7);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      break;
+    }
+    case "k": {
+      ctx.beginPath();
+      ctx.rect(-base * 0.45, -base * 0.7, base * 0.9, base * 1.4);
+      ctx.fill();
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(0, -base * 1.0);
+      ctx.lineTo(0, -base * 1.4);
+      ctx.moveTo(-base * 0.3, -base * 1.2);
+      ctx.lineTo(base * 0.3, -base * 1.2);
+      ctx.stroke();
+      break;
+    }
+    default:
+      break;
+  }
+
+  ctx.restore();
+}
+
+export class ChessEffect implements Effect {
+  render({ ctx, width, height, time, audio, params }: EffectRenderContext): void {
+    const speed = typeof params.speed === "number" && params.speed > 0 ? params.speed : 1;
+    const showHighlights = params.showHighlights === undefined ? true : params.showHighlights !== 0;
+    const moveInterval = BASE_MOVE_INTERVAL * speed;
+    const moveIndex = Math.floor(time / moveInterval);
+    const { board, lastMove } = buildBoardAtMove(moveIndex);
+
+    ctx.fillStyle = "#0b0f14";
+    ctx.fillRect(0, 0, width, height);
+
+    const boardSize = Math.min(width, height) * 0.72;
+    const squareSize = boardSize / 8;
+    const boardLeft = width / 2 - boardSize / 2;
+    const boardTop = height / 2 - boardSize / 2;
+
+    ctx.save();
+    ctx.translate(boardLeft, boardTop);
+
+    for (let row = 0; row < 8; row += 1) {
+      for (let col = 0; col < 8; col += 1) {
+        const isLight = (row + col) % 2 === 0;
+        ctx.fillStyle = isLight ? "#e6e0d0" : "#2b2f3a";
+        ctx.fillRect(col * squareSize, row * squareSize, squareSize, squareSize);
+      }
+    }
+
+    if (showHighlights && lastMove) {
+      const fromCoords = squareToCoords(lastMove.from);
+      const toCoords = squareToCoords(lastMove.to);
+      ctx.fillStyle = "rgba(255, 215, 120, 0.35)";
+      ctx.fillRect(fromCoords.col * squareSize, fromCoords.row * squareSize, squareSize, squareSize);
+      ctx.fillStyle = "rgba(120, 210, 255, 0.4)";
+      ctx.fillRect(toCoords.col * squareSize, toCoords.row * squareSize, squareSize, squareSize);
+
+      if (lastMove.capture) {
+        const timeIntoMove = time - moveIndex * moveInterval;
+        const flash = Math.max(0, 1 - timeIntoMove / CAPTURE_FLASH_DURATION);
+        const intensity = flash * (0.6 + audio.beatStrength * 0.6);
+        ctx.fillStyle = `rgba(255, 120, 120, ${intensity})`;
+        ctx.fillRect(toCoords.col * squareSize, toCoords.row * squareSize, squareSize, squareSize);
+      }
+    }
+
+    for (let row = 0; row < 8; row += 1) {
+      for (let col = 0; col < 8; col += 1) {
+        const piece = board[row][col];
+        if (!piece) {
+          continue;
+        }
+        const centerX = col * squareSize + squareSize / 2;
+        const centerY = row * squareSize + squareSize / 2;
+        drawPiece(ctx, piece, centerX, centerY, squareSize);
+      }
+    }
+
+    ctx.restore();
+
+    ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+    ctx.font = `${Math.max(12, squareSize * 0.25)}px "Courier New", monospace`;
+    ctx.textAlign = "center";
+    ctx.fillText(`Move ${Math.min(moveIndex, MOVE_SCRIPT.length)}`, width / 2, boardTop + boardSize + squareSize * 0.8);
+  }
+}
