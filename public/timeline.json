@@ -208,13 +208,25 @@
     {
       "id": "breakdown-haze",
       "start": "02:40.2",
-      "end": "03:04.2",
+      "end": "02:52.2",
       "effect": "bokeh",
       "transition": { "in": "fade", "out": "fade", "duration": 0.8 },
       "params": { "speed": 0.75 },
       "layers": [
         { "effect": "tunnel", "blend": "soft-light", "opacity": 0.45, "params": { "speed": 0.75 } },
         { "effect": "fractal", "blend": "screen", "opacity": 0.2, "params": { "speed": 0.7 } }
+      ]
+    },
+    {
+      "id": "impossible-corridor",
+      "start": "02:52.2",
+      "end": "03:04.2",
+      "effect": "gl_impossible_corridor",
+      "era": "pcdemo",
+      "transition": { "in": "fade", "out": "flash", "duration": 0.35 },
+      "params": { "quality": 2, "warp": 1.2, "exposure": 1.2, "hueShift": 0.18, "seed": 7, "speed": 0.7 },
+      "layers": [
+        { "effect": "particles", "blend": "lighter", "opacity": 0.25 }
       ]
     },
     {
