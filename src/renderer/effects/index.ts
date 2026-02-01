@@ -22,6 +22,7 @@ import { SphereEffect } from "./sphereEffect";
 import { SphereCloudEffect } from "./sphereCloudEffect";
 import { ChessEffect } from "./chessEffect";
 import { FlyoverEffect } from "./flyoverEffect";
+import { SynthwaveSunsetEffect } from "./synthwaveSunset";
 
 export const effectRegistry: Record<string, Effect> = {
   starfield: new StarfieldEffect(),
@@ -46,7 +47,8 @@ export const effectRegistry: Record<string, Effect> = {
   sphere3d: new SphereEffect(),
   spherecloud: new SphereCloudEffect(),
   chess: new ChessEffect(),
-  flyover: new FlyoverEffect()
+  flyover: new FlyoverEffect(),
+  synthwaveSunset: new SynthwaveSunsetEffect()
 };
 
 export function resetEffects(): void {
