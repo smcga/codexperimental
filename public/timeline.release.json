@@ -163,14 +163,10 @@
       "id": "era-future-feedback",
       "start": "03:26.0",
       "end": "03:46.6",
-      "effect": "feedback",
+      "effect": "gl_fractal_tunnel",
       "era": "future",
       "transition": { "in": "wipe", "out": "fade", "duration": 0.25 },
-      "params": { "speed": 1.1 },
-      "layers": [
-        { "effect": "fractal", "blend": "screen", "opacity": 0.25, "params": { "speed": 1.05 } },
-        { "effect": "lissajous", "blend": "lighter", "opacity": 0.2, "params": { "speed": 1.1 } }
-      ]
+      "params": { "quality": 2, "warp": 1.1, "exposure": 1.2, "hueShift": 0.15, "seed": 7 }
     },
     {
       "id": "era-future-finale",
