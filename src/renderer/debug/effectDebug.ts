@@ -143,6 +143,10 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
     title: "Sphere Controls",
     controls: [numberControl("speed", "Speed", 1.0, { min: 0, step: 0.05 })]
   },
+  spherecloud: {
+    title: "Sphere Cloud Controls",
+    controls: [numberControl("speed", "Speed", 1.0, { min: 0, step: 0.05 })]
+  },
   chess: {
     title: "Chess Controls",
     controls: [
@@ -270,4 +274,3 @@ export function coerceEffectParams(
     return acc;
   }, {});
 }
-
