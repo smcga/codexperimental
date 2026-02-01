@@ -178,9 +178,18 @@
       "id": "drop-impact",
       "start": "02:20.9",
       "end": "02:32.1",
-      "effect": "rotozoom",
+      "effect": "physics_pile",
       "transition": { "in": "wipe", "out": "fade", "duration": 0.25 },
-      "params": { "speed": 1.35 }
+      "params": {
+        "count": 20,
+        "restitution": 0.3,
+        "friction": 0.6,
+        "gravity": 900,
+        "beatImpulse": 280,
+        "spawnMode": "pile",
+        "trail": 0.2,
+        "seed": 4
+      }
     },
     {
       "id": "mini-drop-flash",

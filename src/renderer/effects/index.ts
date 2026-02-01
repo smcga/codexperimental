@@ -23,6 +23,7 @@ import { SphereCloudEffect } from "./sphereCloudEffect";
 import { ChessEffect } from "./chessEffect";
 import { FlyoverEffect } from "./flyoverEffect";
 import { FractalTunnelEffect } from "./gl/fractalTunnelEffect";
+import { PhysicsPileEffect } from "./physicsPile";
 
 export const effectRegistry: Record<string, Effect> = {
   starfield: new StarfieldEffect(),
@@ -48,7 +49,8 @@ export const effectRegistry: Record<string, Effect> = {
   spherecloud: new SphereCloudEffect(),
   chess: new ChessEffect(),
   flyover: new FlyoverEffect(),
-  gl_fractal_tunnel: new FractalTunnelEffect()
+  gl_fractal_tunnel: new FractalTunnelEffect(),
+  physics_pile: new PhysicsPileEffect()
 };
 
 export function resetEffects(): void {
