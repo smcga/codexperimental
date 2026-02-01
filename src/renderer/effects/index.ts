@@ -20,6 +20,7 @@ import { Fake3DEffect } from "./fake3dEffect";
 import { PortraitGlowEffect } from "./portraitGlowEffect";
 import { SphereEffect } from "./sphereEffect";
 import { ChessEffect } from "./chessEffect";
+import { FlyoverEffect } from "./flyoverEffect";
 
 export const effectRegistry: Record<string, Effect> = {
   starfield: new StarfieldEffect(),
@@ -42,7 +43,8 @@ export const effectRegistry: Record<string, Effect> = {
   fake3d: new Fake3DEffect(),
   portrait: new PortraitGlowEffect(),
   sphere3d: new SphereEffect(),
-  chess: new ChessEffect()
+  chess: new ChessEffect(),
+  flyover: new FlyoverEffect()
 };
 
 export function resetEffects(): void {
