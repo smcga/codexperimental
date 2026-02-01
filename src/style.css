@@ -58,6 +58,7 @@ body,
   top: 1.5rem;
   left: 1.5rem;
   width: min(320px, 90vw);
+  max-height: min(80vh, 680px);
   padding: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.2);
   background: rgba(0, 0, 0, 0.7);
@@ -67,6 +68,7 @@ body,
   gap: 0.75rem;
   z-index: 5;
   backdrop-filter: blur(6px);
+  overflow-y: auto;
 }
 
 #debug-overlay.hidden {
@@ -124,6 +126,11 @@ body,
   gap: 0.75rem;
 }
 
+.debug-row-stack {
+  align-items: flex-start;
+  flex-direction: column;
+}
+
 .debug-row select {
   flex: 1;
   min-width: 120px;
@@ -131,6 +138,21 @@ body,
   color: inherit;
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 0.2rem 0.4rem;
+}
+
+.debug-row input[type="number"],
+.debug-row input[type="color"],
+.debug-row input[type="range"] {
+  flex: 1;
+  min-width: 120px;
+  background: #0b0b0b;
+  color: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.2rem 0.4rem;
+}
+
+.debug-row input[type="range"] {
+  padding: 0;
 }
 
 .debug-row button {
@@ -154,6 +176,11 @@ body,
 .debug-section-title {
   margin-bottom: 0.5rem;
   font-weight: 600;
+}
+
+.debug-section.disabled {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 #debug-effects {
@@ -183,4 +210,65 @@ body,
 
 .debug-toggle input {
   accent-color: #8ef9ff;
+}
+
+.debug-nudges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.debug-nudges button {
+  flex: 1 1 auto;
+  min-width: 72px;
+}
+
+.debug-editor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.5rem;
+}
+
+.debug-editor-grid label {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+}
+
+.debug-text-units {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: rgba(232, 247, 255, 0.7);
+}
+
+.debug-actions {
+  gap: 0.5rem;
+}
+
+#debug-text-export {
+  width: 100%;
+  min-height: 6rem;
+  background: #0b0b0b;
+  color: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.4rem;
+  font-size: 0.7rem;
+}
+
+#debug-text-pick.active {
+  border-color: #ffd654;
+  color: #ffd654;
+}
+
+@media (pointer: coarse) {
+  #debug-overlay {
+    width: min(360px, 92vw);
+  }
+
+  .debug-row button,
+  #debug-effects button {
+    padding: 0.45rem 0.6rem;
+    font-size: 0.8rem;
+  }
 }

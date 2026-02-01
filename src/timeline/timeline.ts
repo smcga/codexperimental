@@ -41,6 +41,10 @@ export class Timeline {
     return this.audioOffset;
   }
 
+  getSections(): SectionConfig[] {
+    return [...this.sections];
+  }
+
   getState(time: number): TimelineState {
     if (time < this.introEnd) {
       return {

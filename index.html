@@ -47,6 +47,113 @@
           <input type="checkbox" id="debug-monochrome" />
           <span>Force monochrome</span>
         </label>
+        <div class="debug-section" id="debug-scrub">
+          <div class="debug-section-title">Scrub</div>
+          <div class="debug-row">
+            <span>Demo</span>
+            <span id="debug-demo-time">00:00.0</span>
+          </div>
+          <div class="debug-row">
+            <span>Audio</span>
+            <span id="debug-audio-time">0.00s</span>
+          </div>
+          <div class="debug-row">
+            <span>Offset</span>
+            <span id="debug-audio-offset">0.00s</span>
+          </div>
+          <div class="debug-row">
+            <button id="debug-play-toggle" type="button">Play</button>
+          </div>
+          <label class="debug-row debug-row-stack">
+            <span>Seek</span>
+            <input id="debug-seek" type="range" min="0" max="0" step="0.01" value="0" />
+          </label>
+          <div class="debug-row debug-nudges">
+            <button type="button" data-nudge="-5">-5s</button>
+            <button type="button" data-nudge="-1">-1s</button>
+            <button type="button" data-nudge="-0.1">-0.1s</button>
+            <button type="button" data-nudge="0.1">+0.1s</button>
+            <button type="button" data-nudge="1">+1s</button>
+            <button type="button" data-nudge="5">+5s</button>
+          </div>
+          <label class="debug-row">
+            <span>Section</span>
+            <select id="debug-snap-section"></select>
+          </label>
+        </div>
+        <div class="debug-section" id="debug-text">
+          <div class="debug-section-title">Text</div>
+          <label class="debug-row">
+            <span>Active</span>
+            <select id="debug-text-active"></select>
+          </label>
+          <label class="debug-row">
+            <span>All</span>
+            <select id="debug-text-all"></select>
+          </label>
+          <div class="debug-editor-grid">
+            <label>
+              <span>X</span>
+              <input id="debug-text-x" type="number" step="0.001" inputmode="decimal" />
+            </label>
+            <label>
+              <span>Y</span>
+              <input id="debug-text-y" type="number" step="0.001" inputmode="decimal" />
+            </label>
+            <label>
+              <span>Size</span>
+              <input id="debug-text-size" type="number" step="1" inputmode="decimal" />
+            </label>
+            <label>
+              <span>Align</span>
+              <select id="debug-text-align">
+                <option value="left">Left</option>
+                <option value="center">Center</option>
+                <option value="right">Right</option>
+              </select>
+            </label>
+            <label>
+              <span>Color</span>
+              <input id="debug-text-color" type="color" />
+            </label>
+            <div class="debug-text-units">
+              <span>Units</span>
+              <span id="debug-text-units">norm</span>
+            </div>
+          </div>
+          <div class="debug-row debug-row-stack">
+            <span>Nudge X</span>
+            <div class="debug-nudges">
+              <button type="button" data-nudge-axis="x" data-nudge-step="-0.05">-0.05</button>
+              <button type="button" data-nudge-axis="x" data-nudge-step="-0.01">-0.01</button>
+              <button type="button" data-nudge-axis="x" data-nudge-step="0.01">+0.01</button>
+              <button type="button" data-nudge-axis="x" data-nudge-step="0.05">+0.05</button>
+            </div>
+          </div>
+          <div class="debug-row debug-row-stack">
+            <span>Nudge Y</span>
+            <div class="debug-nudges">
+              <button type="button" data-nudge-axis="y" data-nudge-step="-0.05">-0.05</button>
+              <button type="button" data-nudge-axis="y" data-nudge-step="-0.01">-0.01</button>
+              <button type="button" data-nudge-axis="y" data-nudge-step="0.01">+0.01</button>
+              <button type="button" data-nudge-axis="y" data-nudge-step="0.05">+0.05</button>
+            </div>
+          </div>
+          <div class="debug-row">
+            <span>Start</span>
+            <span id="debug-text-start">00:00.0</span>
+            <span>End</span>
+            <span id="debug-text-end">00:00.0</span>
+          </div>
+          <div class="debug-row debug-actions">
+            <button id="debug-text-pick" type="button">Pick from canvas</button>
+            <button id="debug-text-reset" type="button">Reset</button>
+          </div>
+          <div class="debug-row debug-actions">
+            <button id="debug-text-copy" type="button">Copy JSON</button>
+          </div>
+          <textarea id="debug-text-export" rows="6" readonly></textarea>
+        </div>
       </div>
       <div id="mobile-controls" aria-label="Mobile controls">
         <button id="mobile-debug" type="button" aria-label="Toggle debug panel">

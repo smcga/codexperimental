@@ -45,5 +45,5 @@ npm run preview
 - Click to start (audio + visuals)
 - `R` to restart
 - `F` to toggle fullscreen (if supported)
-- `D` to toggle the debug overlay (timestamp, skip intro, skip to second half, transition selection, effect overrides, monochrome toggle)
+- `D` to toggle the debug overlay (timestamp, skip intro, skip to second half, transition selection, effect overrides, monochrome toggle, scrubber, and text cue editor)
 - On touch devices, two floating buttons appear in the lower-right corner: `DBG` toggles the debug overlay and `⛶` toggles fullscreen.

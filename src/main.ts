@@ -7,6 +7,10 @@ import { effectRegistry } from "./renderer/effects";
 import { TerminalIntroRenderer } from "./renderer/intro/terminalIntro";
 import { createExplosionState, getExplosionShake, renderExplosion } from "./renderer/overlays/explosion";
 import { getFullscreenAction, getIntroSkipTime, getNextDebugOverlayVisibility, getSecondHalfSkipTime } from "./controls";
+import { clamp } from "./util/math";
+import { createScrubberController } from "./debug/tools/scrubber";
+import { createTextCueEditor } from "./debug/tools/textCueEditor";
+import { formatTimestamp } from "./debug/time";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
@@ -18,11 +22,22 @@ const debugEffectsContainer = document.querySelector<HTMLDivElement>("#debug-eff
 const debugMonochromeToggle = document.querySelector<HTMLInputElement>("#debug-monochrome");
 const debugSkipIntroButton = document.querySelector<HTMLButtonElement>("#debug-skip-intro");
 const debugSkipSecondHalfButton = document.querySelector<HTMLButtonElement>("#debug-skip-second-half");
+const debugScrubSection = document.querySelector<HTMLDivElement>("#debug-scrub");
+const debugTextSection = document.querySelector<HTMLDivElement>("#debug-text");
 const mobileControls = document.querySelector<HTMLDivElement>("#mobile-controls");
 const mobileDebugButton = document.querySelector<HTMLButtonElement>("#mobile-debug");
 const mobileFullscreenButton = document.querySelector<HTMLButtonElement>("#mobile-fullscreen");
 
-if (!canvas || !overlay || !overlayText || !debugOverlay || !debugTimestamp || !debugTransitionSelect) {
+if (
+  !canvas ||
+  !overlay ||
+  !overlayText ||
+  !debugOverlay ||
+  !debugTimestamp ||
+  !debugTransitionSelect ||
+  !debugScrubSection ||
+  !debugTextSection
+) {
   throw new Error("Missing canvas or overlay element");
 }
 
@@ -40,6 +55,14 @@ let introConfig: IntroConfig | null = null;
 let animationFrame = 0;
 let lastDemoTime = 0;
 let isRunning = false;
+let debugTime = 0;
+const scrubber = createScrubberController(debugScrubSection, {
+  onSeek: (time) => seekDemoTime(time),
+  onTogglePlay: () => togglePlayPause(),
+  onNudge: (delta) => seekDemoTime(debugTime + delta),
+  onSnap: (time) => seekDemoTime(time)
+});
+let textCueEditor: ReturnType<typeof createTextCueEditor> | null = null;
 const debugState = {
   enabled: false,
   forcedEffect: null as string | null,
@@ -65,15 +88,11 @@ function setOverlay(text: string, show = true, isError = false): void {
   }
 }
 
-function formatTimestamp(time: number): string {
-  const minutes = Math.floor(time / 60);
-  const seconds = Math.max(0, time - minutes * 60);
-  return `${minutes.toString().padStart(2, "0")}:${seconds.toFixed(1).padStart(4, "0")}`;
-}
-
 function setDebugOverlayVisible(visible: boolean): void {
   debugState.enabled = visible;
   debugOverlay.classList.toggle("hidden", !visible);
+  scrubber.setEnabled(visible && Boolean(audioPlayer && timeline));
+  textCueEditor?.setEnabled(visible && Boolean(audioPlayer && timeline));
 }
 
 function toggleDebugOverlay(): void {
@@ -168,7 +187,7 @@ if (debugSkipIntroButton) {
       return;
     }
     const targetTime = getIntroSkipTime(introConfig.end, timeline.getAudioOffset(), audioPlayer.currentTime);
-    audioPlayer.seek(targetTime);
+    seekDemoTime(targetTime + timeline.getAudioOffset());
   });
 }
 
@@ -178,7 +197,7 @@ if (debugSkipSecondHalfButton) {
       return;
     }
     const targetTime = getSecondHalfSkipTime(SECOND_HALF_START, timeline.getAudioOffset(), audioPlayer.currentTime);
-    audioPlayer.seek(targetTime);
+    seekDemoTime(targetTime + timeline.getAudioOffset());
   });
 }
 
@@ -208,6 +227,12 @@ async function startDemo(): Promise<void> {
     renderer.reset();
     isRunning = true;
     lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+    debugTime = lastDemoTime;
+    scrubber.setSections(timeline.getSections());
+    if (!textCueEditor) {
+      textCueEditor = createTextCueEditor(debugTextSection, config.textCues);
+    }
+    setDebugOverlayVisible(debugState.enabled);
     setOverlay("", false);
     updateDebugSkipButtonState(lastDemoTime);
 
@@ -227,6 +252,7 @@ async function restartDemo(): Promise<void> {
   await audioPlayer.restart();
   renderer.reset();
   lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+  debugTime = lastDemoTime;
   updateDebugSkipButtonState(lastDemoTime);
   setOverlay("", false);
   if (!isRunning) {
@@ -242,7 +268,12 @@ function loop(): void {
     return;
   }
 
-  const demoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+  const audioTime = audioPlayer.currentTime;
+  const isPlaying = !audioPlayer.paused;
+  const demoTime = isPlaying ? audioTime + timeline.getAudioOffset() : debugTime;
+  if (isPlaying) {
+    debugTime = demoTime;
+  }
   const delta = Math.max(0, demoTime - lastDemoTime);
   lastDemoTime = demoTime;
 
@@ -284,9 +315,33 @@ function loop(): void {
       screenShake: explosionShake
     });
     renderExplosion(ctx, canvas.width, canvas.height, explosionTime, explosionState, explosionShake);
+    const selectedCue = textCueEditor?.getSelectedCue() ?? null;
+    if (debugState.enabled && selectedCue) {
+      renderer.drawTextCueDebug(
+        ctx,
+        canvas.width,
+        canvas.height,
+        selectedCue,
+        demoTime,
+        audioFeatures,
+        true,
+        explosionShake
+      );
+    }
   }
 
   debugTimestamp.textContent = formatTimestamp(demoTime);
+  scrubber.update({
+    demoTime,
+    audioTime,
+    audioOffset: timeline.getAudioOffset(),
+    isPlaying,
+    demoEndTime: getDemoEndTime()
+  });
+  textCueEditor?.update({
+    time: demoTime,
+    activeCues: state.activeTextCues
+  });
   updateDebugSkipButtonState(demoTime);
 
   if (audioPlayer.ended) {
@@ -298,11 +353,74 @@ function loop(): void {
   animationFrame = requestAnimationFrame(loop);
 }
 
+function getDemoEndTime(): number {
+  if (!timeline) {
+    return 0;
+  }
+  const duration = timeline.getDurationFallback();
+  return Math.max(0, duration + timeline.getAudioOffset());
+}
+
+function seekDemoTime(targetTime: number): void {
+  if (!audioPlayer || !timeline) {
+    return;
+  }
+  const maxTime = getDemoEndTime();
+  debugTime = clamp(targetTime, 0, maxTime);
+  const audioTarget = debugTime - timeline.getAudioOffset();
+  audioPlayer.seek(audioTarget);
+  lastDemoTime = debugTime;
+}
+
+function togglePlayPause(): void {
+  if (!audioPlayer || !timeline) {
+    return;
+  }
+  if (audioPlayer.paused) {
+    const audioTarget = debugTime - timeline.getAudioOffset();
+    audioPlayer.seek(audioTarget);
+    audioPlayer.play();
+  } else {
+    audioPlayer.pause();
+    debugTime = audioPlayer.currentTime + timeline.getAudioOffset();
+  }
+}
+
+function handleCanvasPick(event: PointerEvent): void {
+  if (!debugState.enabled || !textCueEditor || !textCueEditor.isPickMode()) {
+    return;
+  }
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  const canvasX = (event.clientX - rect.left) * scaleX;
+  const canvasY = (event.clientY - rect.top) * scaleY;
+  const contentRect = renderer.getContentRect(canvas.width, canvas.height);
+  textCueEditor.handleCanvasPick(canvasX, canvasY, contentRect);
+}
+
 overlay.addEventListener("click", () => {
   startDemo();
 });
 
+canvas.addEventListener("pointerdown", (event) => {
+  handleCanvasPick(event);
+});
+
 window.addEventListener("keydown", (event) => {
+  if (debugState.enabled && ["ArrowLeft", "ArrowRight"].includes(event.key)) {
+    const target = event.target as HTMLElement | null;
+    const isTypingField =
+      target instanceof HTMLInputElement ||
+      target instanceof HTMLTextAreaElement ||
+      target instanceof HTMLSelectElement;
+    if (!isTypingField) {
+      const direction = event.key === "ArrowLeft" ? -1 : 1;
+      const step = event.shiftKey ? 5 : event.altKey ? 0.1 : 1;
+      seekDemoTime(debugTime + direction * step);
+      event.preventDefault();
+    }
+  }
   if (event.key.toLowerCase() === "d") {
     toggleDebugOverlay();
   }
