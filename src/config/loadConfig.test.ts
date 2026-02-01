@@ -54,4 +54,29 @@ describe("normalizeTimelineConfig", () => {
     raw.sections[0].era = "future-nope" as "pcdemo";
     expect(() => normalizeTimelineConfig(raw)).toThrow("sections[0].era must be one of");
   });
+
+  it("defaults blend illusion intensity and mode for pcdemo", () => {
+    const raw = createBaseConfig();
+    raw.sections[0].overlays = { blendIllusions: {} };
+    const normalized = normalizeTimelineConfig(raw);
+    expect(normalized.sections[0].overlays.blendIllusions?.intensity).toBe(1);
+    expect(normalized.sections[0].overlays.blendIllusions?.mode).toBe("torch");
+  });
+
+  it("defaults blend illusion mode to all in future sections", () => {
+    const raw = createBaseConfig();
+    raw.sections[0].era = "future";
+    raw.sections[0].overlays = { blendIllusions: { intensity: 0.8 } };
+    const normalized = normalizeTimelineConfig(raw);
+    expect(normalized.sections[0].overlays.blendIllusions?.mode).toBe("all");
+    expect(normalized.sections[0].overlays.blendIllusions?.intensity).toBeCloseTo(0.8);
+  });
+
+  it("rejects invalid blend illusion modes", () => {
+    const raw = createBaseConfig();
+    raw.sections[0].overlays = {
+      blendIllusions: { mode: "vivid" as "torch" }
+    };
+    expect(() => normalizeTimelineConfig(raw)).toThrow("sections[0].overlays.blendIllusions.mode must be one of");
+  });
 });

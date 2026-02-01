@@ -6,6 +6,7 @@ import { EraConstraints, getEraConstraints, quantizeToPalette } from "./eraConst
 import { effectRegistry, resetEffects } from "./effects";
 import { computeLetterbox } from "./letterbox";
 import { resolveMonochrome } from "./monochrome";
+import { ContentRect, renderBlendIllusions } from "./overlays/blendIllusions";
 import { renderTextCues } from "./text/textRenderer";
 
 export type RenderState = {
@@ -145,11 +146,32 @@ export class Renderer {
       ctx.restore();
     }
 
+    const contentRect: ContentRect = {
+      x: 0,
+      y: 0,
+      width: this.baseWidth,
+      height: this.baseHeight
+    };
+
     ctx.save();
+    ctx.beginPath();
+    ctx.rect(offsetX + shakeX, offsetY + shakeY, this.baseWidth * scale, this.baseHeight * scale);
+    ctx.clip();
     ctx.translate(offsetX + shakeX, offsetY + shakeY);
     ctx.scale(scale, scale);
     this.applyCameraTransform(ctx, camera);
     this.renderOverlays(ctx, this.baseWidth, this.baseHeight, audio, eraConstraints);
+    if (activeSection.overlays.blendIllusions) {
+      renderBlendIllusions(
+        ctx,
+        contentRect,
+        time,
+        delta,
+        audio,
+        activeSection.overlays.blendIllusions,
+        activeSection.id
+      );
+    }
     renderTextCues(ctx, this.baseWidth, this.baseHeight, textCues, time);
     ctx.restore();
   }

@@ -31,6 +31,10 @@ const BLEND_MODES = [
 
 export type BlendMode = (typeof BLEND_MODES)[number];
 
+const BLEND_ILLUSION_MODES = ["torch", "glow", "moire", "all"] as const;
+
+export type BlendIllusionsMode = (typeof BLEND_ILLUSION_MODES)[number];
+
 export type RawAudioConfig = {
   src: string;
   offset?: number;
@@ -72,6 +76,7 @@ export type RawSectionConfig = {
   effect: string;
   era?: EraPreset;
   layers?: RawSectionLayerConfig[];
+  overlays?: RawSectionOverlayConfig;
   transition?: {
     in?: TransitionType;
     out?: TransitionType;
@@ -85,6 +90,13 @@ export type RawSectionLayerConfig = {
   opacity?: number;
   blend?: BlendMode;
   params?: Record<string, number>;
+};
+
+export type RawSectionOverlayConfig = {
+  blendIllusions?: {
+    mode?: BlendIllusionsMode;
+    intensity?: number;
+  };
 };
 
 export type RawTextSpan = {
@@ -155,6 +167,7 @@ export type SectionConfig = {
   transition: TransitionConfig;
   params: Record<string, number>;
   layers: SectionLayerConfig[];
+  overlays: SectionOverlayConfig;
   endFromAudio: boolean;
 };
 
@@ -163,6 +176,15 @@ export type SectionLayerConfig = {
   opacity: number;
   blend: BlendMode;
   params: Record<string, number>;
+};
+
+export type BlendIllusionsConfig = {
+  mode: BlendIllusionsMode;
+  intensity: number;
+};
+
+export type SectionOverlayConfig = {
+  blendIllusions?: BlendIllusionsConfig;
 };
 
 export type TextSpan = RawTextSpan & { size: number; color: string; weight: string; font: string };
@@ -231,6 +253,14 @@ function normalizeBlendMode(value: unknown, label: string): BlendMode {
   return value as BlendMode;
 }
 
+function normalizeBlendIllusionMode(value: unknown, label: string): BlendIllusionsMode {
+  if (typeof value !== "string" || !BLEND_ILLUSION_MODES.includes(value as BlendIllusionsMode)) {
+    const allowedList = BLEND_ILLUSION_MODES.map((mode) => `"${mode}"`).join(", ");
+    throw new Error(`${label} must be one of ${allowedList}`);
+  }
+  return value as BlendIllusionsMode;
+}
+
 function normalizeOpacity(value: unknown, label: string): number {
   if (value === undefined) {
     return 0.6;
@@ -250,6 +280,31 @@ function normalizeLayerParams(value: unknown, label: string): Record<string, num
     throw new Error(`${label} must be an object`);
   }
   return value as Record<string, number>;
+}
+
+function normalizeBlendIllusions(
+  value: unknown,
+  era: EraPreset,
+  label: string
+): BlendIllusionsConfig | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error(`${label} must be an object`);
+  }
+  const raw = value as RawSectionOverlayConfig["blendIllusions"];
+  const intensity = raw?.intensity ?? 1;
+  if (typeof intensity !== "number" || Number.isNaN(intensity) || intensity < 0) {
+    throw new Error(`${label}.intensity must be a non-negative number`);
+  }
+  const mode =
+    raw?.mode !== undefined
+      ? normalizeBlendIllusionMode(raw.mode, `${label}.mode`)
+      : era === "future"
+        ? "all"
+        : "torch";
+  return { mode, intensity };
 }
 
 function parseTimelineTime(value: number | string, label: string): number {
@@ -410,6 +465,22 @@ function normalizeSectionLayers(layers: RawSectionLayerConfig[] | undefined, lab
   });
 }
 
+function normalizeSectionOverlays(
+  overlays: RawSectionOverlayConfig | undefined,
+  era: EraPreset,
+  label: string
+): SectionOverlayConfig {
+  if (!overlays) {
+    return {};
+  }
+  if (!overlays || typeof overlays !== "object" || Array.isArray(overlays)) {
+    throw new Error(`${label}.overlays must be an object`);
+  }
+  return {
+    blendIllusions: normalizeBlendIllusions(overlays.blendIllusions, era, `${label}.overlays.blendIllusions`)
+  };
+}
+
 export function normalizeTimelineConfig(raw: RawTimelineConfig): TimelineConfig {
   if (!raw || typeof raw !== "object") {
     throw new Error("Timeline config must be an object");
@@ -441,15 +512,17 @@ export function normalizeTimelineConfig(raw: RawTimelineConfig): TimelineConfig 
       throw new Error(`sections[${index}].end must be greater than start`);
     }
     const params = section.params ?? {};
+    const era = normalizeEra(section.era, `sections[${index}].era`);
     return {
       id: assertString(section.id, `sections[${index}].id`),
       start,
       end,
       effect: assertString(section.effect, `sections[${index}].effect`),
-      era: normalizeEra(section.era, `sections[${index}].era`),
+      era,
       transition: normalizeTransition(section.transition),
       params,
       layers: normalizeSectionLayers(section.layers, `sections[${index}]`),
+      overlays: normalizeSectionOverlays(section.overlays, era, `sections[${index}]`),
       endFromAudio: end === null
     };
   });

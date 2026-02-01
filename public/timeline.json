@@ -136,7 +136,8 @@
       "start": "01:37.5",
       "end": "01:47.76",
       "effect": "fractal",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.8 }
+      "transition": { "in": "fade", "out": "fade", "duration": 0.8 },
+      "overlays": { "blendIllusions": { "mode": "torch", "intensity": 1.1 } }
     },
     {
       "id": "feedback-echo",
@@ -260,6 +261,7 @@
       "effect": "starfield",
       "transition": { "in": "wipe", "out": "fade", "duration": 0.22 },
       "params": { "speed": 1.4, "warp": 0.55 },
+      "overlays": { "blendIllusions": { "mode": "glow", "intensity": 1.2 } },
       "layers": [
         { "effect": "ribbons", "blend": "screen", "opacity": 0.3, "params": { "speed": 1.1 } },
         { "effect": "particles", "blend": "lighter", "opacity": 0.2, "params": { "speed": 1.3 } }
@@ -280,6 +282,7 @@
       "effect": "feedback",
       "transition": { "in": "fade", "out": "fade", "duration": 0.12 },
       "params": { "speed": 0.9 },
+      "overlays": { "blendIllusions": { "mode": "moire", "intensity": 1.0 } },
       "layers": [
         { "effect": "bokeh", "blend": "soft-light", "opacity": 0.35, "params": { "speed": 0.8 } },
         { "effect": "lissajous", "blend": "screen", "opacity": 0.25, "params": { "speed": 0.95 } }

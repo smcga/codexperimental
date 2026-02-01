@@ -131,7 +131,8 @@
       "effect": "fractal",
       "era": "pcdemo",
       "transition": { "in": "iris", "out": "fade", "duration": 0.45 },
-      "params": { "speed": 0.95 }
+      "params": { "speed": 0.95 },
+      "overlays": { "blendIllusions": { "mode": "torch", "intensity": 1.1 } }
     },
     {
       "id": "era-pcdemo-tunnel",
@@ -141,6 +142,7 @@
       "era": "pcdemo",
       "transition": { "in": "fade", "out": "flash", "duration": 0.35 },
       "params": { "speed": 1.1 },
+      "overlays": { "blendIllusions": { "mode": "moire", "intensity": 1.0 } },
       "layers": [
         { "effect": "particles", "blend": "lighter", "opacity": 0.3, "params": { "speed": 1.15 } },
         { "effect": "feedback", "blend": "screen", "opacity": 0.2, "params": { "speed": 0.9 } }
@@ -154,6 +156,7 @@
       "era": "future",
       "transition": { "in": "flash", "out": "wipe", "duration": 0.3 },
       "params": { "speed": 1.2 },
+      "overlays": { "blendIllusions": { "mode": "glow", "intensity": 1.2 } },
       "layers": [
         { "effect": "particles", "blend": "lighter", "opacity": 0.35, "params": { "speed": 1.2 } },
         { "effect": "glitch", "blend": "overlay", "opacity": 0.2 }
@@ -167,6 +170,7 @@
       "era": "future",
       "transition": { "in": "wipe", "out": "fade", "duration": 0.25 },
       "params": { "speed": 1.1 },
+      "overlays": { "blendIllusions": { "intensity": 1.05 } },
       "layers": [
         { "effect": "fractal", "blend": "screen", "opacity": 0.25, "params": { "speed": 1.05 } },
         { "effect": "lissajous", "blend": "lighter", "opacity": 0.2, "params": { "speed": 1.1 } }
