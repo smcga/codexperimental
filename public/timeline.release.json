@@ -128,10 +128,10 @@
       "id": "era-pcdemo-fractal",
       "start": "02:20.0",
       "end": "02:40.0",
-      "effect": "fractal",
+      "effect": "gl_fractal_tunnel",
       "era": "pcdemo",
       "transition": { "in": "iris", "out": "fade", "duration": 0.45 },
-      "params": { "speed": 0.95 }
+      "params": { "quality": 2, "warp": 1.1, "exposure": 1.2, "hueShift": 0.15, "seed": 7 }
     },
     {
       "id": "era-pcdemo-tunnel",
