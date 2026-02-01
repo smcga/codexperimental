@@ -221,13 +221,9 @@
       "id": "pre-drop-melody",
       "start": "03:04.2",
       "end": "03:20.4",
-      "effect": "lissajous",
+      "effect": "gl_fractal_tunnel",
       "transition": { "in": "fade", "out": "fade", "duration": 0.6 },
-      "params": { "speed": 1.05 },
-      "layers": [
-        { "effect": "particles", "blend": "lighter", "opacity": 0.25, "params": { "speed": 1.1 } },
-        { "effect": "bokeh", "blend": "screen", "opacity": 0.2, "params": { "speed": 0.9 } }
-      ]
+      "params": { "quality": 2, "warp": 1.1, "exposure": 1.2, "hueShift": 0.15, "seed": 7 }
     },
     {
       "id": "buildup-spiral",

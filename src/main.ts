@@ -9,12 +9,14 @@ import { TerminalIntroRenderer } from "./renderer/intro/terminalIntro";
 import { createExplosionState, getExplosionShake, renderExplosion } from "./renderer/overlays/explosion";
 import { getFullscreenAction, getIntroSkipTime, getNextDebugOverlayVisibility, getSecondHalfSkipTime } from "./controls";
 import { shouldShowEffectPanel } from "./debug/debugPanel";
+import { getWebGLStatusLabel } from "./renderer/effects/gl/webglStatus";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
 const overlayText = overlay?.querySelector<HTMLDivElement>(".start-text");
 const debugOverlay = document.querySelector<HTMLDivElement>("#debug-overlay");
 const debugTimestamp = document.querySelector<HTMLSpanElement>("#debug-timestamp");
+const debugWebglStatus = document.querySelector<HTMLSpanElement>("#debug-webgl-status");
 const debugTransitionSelect = document.querySelector<HTMLSelectElement>("#debug-transition");
 const debugEffectsContainer = document.querySelector<HTMLDivElement>("#debug-effects");
 const debugEffectPanel = document.querySelector<HTMLDivElement>("#debug-effect-panel");
@@ -30,7 +32,7 @@ const mobileFullscreenButton = document.querySelector<HTMLButtonElement>("#mobil
 
 const releaseMode = new URLSearchParams(window.location.search).get("release") === "1";
 
-if (!canvas || !overlay || !overlayText || !debugOverlay || !debugTimestamp || !debugTransitionSelect) {
+if (!canvas || !overlay || !overlayText || !debugOverlay || !debugTimestamp || !debugWebglStatus || !debugTransitionSelect) {
   throw new Error("Missing canvas or overlay element");
 }
 
@@ -452,6 +454,7 @@ function loop(): void {
   }
 
   debugTimestamp.textContent = formatTimestamp(demoTime);
+  debugWebglStatus.textContent = getWebGLStatusLabel();
   if (!releaseMode) {
     updateDebugSkipButtonState(demoTime);
   }
