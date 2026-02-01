@@ -729,6 +729,16 @@
       "size": 48,
       "color": "#f7e9a4",
       "effects": { "glitchIn": true, "shadow": true }
+    },
+    {
+      "id": "impossible-corridor-showcase",
+      "start": "05:28.5",
+      "end": "05:44.5",
+      "effect": "gl_impossible_corridor",
+      "era": "pcdemo",
+      "transition": { "in": "fade", "out": "flash", "duration": 0.35 },
+      "params": { "quality": 2, "warp": 1.2, "exposure": 1.2, "hueShift": 0.18, "seed": 7, "speed": 0.7 },
+      "layers": [{ "effect": "particles", "blend": "lighter", "opacity": 0.25 }]
     }
   ]
 }
