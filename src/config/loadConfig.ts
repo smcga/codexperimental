@@ -11,6 +11,10 @@ const TRANSITION_TYPES = [
 
 export type TransitionType = (typeof TRANSITION_TYPES)[number];
 
+const ERA_PRESETS = ["8bit", "16bit", "ps1", "pcdemo", "future"] as const;
+
+export type EraPreset = (typeof ERA_PRESETS)[number];
+
 const BLEND_MODES = [
   "source-over",
   "screen",
@@ -66,6 +70,7 @@ export type RawSectionConfig = {
   start: number | string;
   end?: number | string;
   effect: string;
+  era?: EraPreset;
   layers?: RawSectionLayerConfig[];
   transition?: {
     in?: TransitionType;
@@ -146,6 +151,7 @@ export type SectionConfig = {
   start: number;
   end: number | null;
   effect: string;
+  era: EraPreset;
   transition: TransitionConfig;
   params: Record<string, number>;
   layers: SectionLayerConfig[];
@@ -293,6 +299,17 @@ function normalizeTransition(transition?: RawSectionConfig["transition"]): Trans
   return { in: incoming, out: outgoing, duration };
 }
 
+function normalizeEra(value: unknown, label: string): EraPreset {
+  if (!value) {
+    return "pcdemo";
+  }
+  if (typeof value !== "string" || !ERA_PRESETS.includes(value as EraPreset)) {
+    const allowedList = ERA_PRESETS.map((preset) => `"${preset}"`).join(", ");
+    throw new Error(`${label} must be one of ${allowedList}`);
+  }
+  return value as EraPreset;
+}
+
 function normalizeIntroTheme(theme: RawIntroTheme): IntroTheme {
   return {
     bg: assertString(theme.bg, "intro.theme.bg"),
@@ -429,6 +446,7 @@ export function normalizeTimelineConfig(raw: RawTimelineConfig): TimelineConfig 
       start,
       end,
       effect: assertString(section.effect, `sections[${index}].effect`),
+      era: normalizeEra(section.era, `sections[${index}].era`),
       transition: normalizeTransition(section.transition),
       params,
       layers: normalizeSectionLayers(section.layers, `sections[${index}]`),
