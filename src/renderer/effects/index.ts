@@ -19,6 +19,7 @@ import { Proper3DEffect } from "./proper3dEffect";
 import { Fake3DEffect } from "./fake3dEffect";
 import { PortraitGlowEffect } from "./portraitGlowEffect";
 import { SphereEffect } from "./sphereEffect";
+import { SphereCloudEffect } from "./sphereCloudEffect";
 import { ChessEffect } from "./chessEffect";
 import { FlyoverEffect } from "./flyoverEffect";
 
@@ -43,6 +44,7 @@ export const effectRegistry: Record<string, Effect> = {
   fake3d: new Fake3DEffect(),
   portrait: new PortraitGlowEffect(),
   sphere3d: new SphereEffect(),
+  spherecloud: new SphereCloudEffect(),
   chess: new ChessEffect(),
   flyover: new FlyoverEffect()
 };
