@@ -15,6 +15,7 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 - Transition types include `fade`, `wipe`, `slide-left`, `slide-right`, `slide-up`, `slide-down`, `iris`, and `flash`.
 - Effect sections can include a `params` object to tune effect-specific settings such as starfield speed, warp, or turning intensity.
 - Sections can optionally define `layers` to mix multiple effects together, with `blend` modes like `screen` or `overlay` and per-layer `opacity`.
+- Sections can optionally define `overlays.lighting2d` to add ambient darkness, point lights, and occluder shadows as a post-process pass on top of the canvas render.
 - The timeline includes two 3D showcase effects: `proper3d` (perspective projection + lighting) and `fake3d` (2D skew/shading tricks). The `sphere3d` effect renders a rotating lit point sphere with orbiting satellites.
 - The `spherecloud` effect renders a glowing point-cloud sphere with subtle audio-reactive rotation and lighting.
 - The `flyover` effect renders a sky/sea flythrough with distant islands; tune `params` like `speed`, `horizon`, `seaDetail`, `islandSeed`, and `palette`.

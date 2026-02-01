@@ -7,6 +7,7 @@ import { effectRegistry, resetEffects } from "./effects";
 import { computeLetterbox } from "./letterbox";
 import { resolveMonochrome } from "./monochrome";
 import { renderTextCues } from "./text/textRenderer";
+import { Lighting2DOverlay } from "./overlays/lighting2d";
 
 export type RenderState = {
   ctx: CanvasRenderingContext2D;
@@ -38,6 +39,7 @@ export class Renderer {
   private layerCtx: CanvasRenderingContext2D;
   private baseWidth: number;
   private baseHeight: number;
+  private lightingOverlay: Lighting2DOverlay;
 
   constructor(baseWidth = 320, baseHeight = 180) {
     this.baseWidth = baseWidth;
@@ -77,6 +79,7 @@ export class Renderer {
       throw new Error("Unable to create layer canvas");
     }
     this.layerCtx = layerCtx;
+    this.lightingOverlay = new Lighting2DOverlay(baseWidth, baseHeight);
   }
 
   reset(): void {
@@ -85,6 +88,7 @@ export class Renderer {
     this.transitionCtx.clearRect(0, 0, this.baseWidth, this.baseHeight);
     this.sceneCtx.clearRect(0, 0, this.sceneCanvas.width, this.sceneCanvas.height);
     this.layerCtx.clearRect(0, 0, this.baseWidth, this.baseHeight);
+    this.lightingOverlay.reset();
   }
 
   render({
@@ -149,6 +153,7 @@ export class Renderer {
     ctx.translate(offsetX + shakeX, offsetY + shakeY);
     ctx.scale(scale, scale);
     this.applyCameraTransform(ctx, camera);
+    this.lightingOverlay.render(ctx, this.baseWidth, this.baseHeight, time, delta, audio, activeSection);
     this.renderOverlays(ctx, this.baseWidth, this.baseHeight, audio, eraConstraints);
     renderTextCues(ctx, this.baseWidth, this.baseHeight, textCues, time);
     ctx.restore();
