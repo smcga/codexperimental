@@ -78,11 +78,16 @@ describe("normalizeTimelineConfig", () => {
     const rainLayerCounts = normalized.sections.map(
       (section) => section.layers?.filter((layer) => layer.effect === "rain").length ?? 0
     );
-    const lightningLayers = normalized.sections.flatMap(
-      (section) => section.layers?.filter((layer) => layer.effect === "lightning") ?? []
+    const rainSections = normalized.sections.filter(
+      (section) => (section.layers?.some((layer) => layer.effect === "rain") ?? false)
+    );
+    const lightningSections = normalized.sections.filter(
+      (section) => (section.layers?.some((layer) => layer.effect === "lightning") ?? false)
     );
 
     expect(Math.max(...rainLayerCounts)).toBeGreaterThanOrEqual(2);
-    expect(lightningLayers.length).toBeGreaterThan(0);
+    expect(lightningSections.length).toBeGreaterThan(0);
+    expect(rainSections[0]?.start ?? Number.POSITIVE_INFINITY).toBeLessThan(180);
+    expect(lightningSections[0]?.start ?? Number.POSITIVE_INFINITY).toBeLessThan(180);
   });
 });
