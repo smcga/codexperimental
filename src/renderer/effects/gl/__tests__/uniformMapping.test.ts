@@ -9,7 +9,8 @@ const buildAudio = () => ({
   mid: 0.3,
   treble: 0.6,
   beat: true,
-  beatStrength: 1.4
+  beatStrength: 1.4,
+  impactStrength: 0
 });
 
 describe("fractal tunnel uniform mapping", () => {

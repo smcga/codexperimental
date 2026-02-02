@@ -22,6 +22,7 @@ type Body = {
   axisYy: number;
   fill: string;
   stroke: string;
+  render: boolean;
 };
 
 type Contact = {
@@ -36,6 +37,25 @@ type Contact = {
   friction: number;
 };
 
+type Joint = {
+  a: Body;
+  b: Body;
+  restLength: number;
+  stiffness: number;
+  damping: number;
+};
+
+type ShatterParticle = {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  life: number;
+  maxLife: number;
+  size: number;
+  color: string;
+};
+
 type SpawnMode = "pile" | "rain";
 
 const MAX_BODIES = 40;
@@ -46,6 +66,11 @@ const SOLVER_ITERATIONS = 6;
 const GRAVITY_AUDIO_SCALE = 0.35;
 const POSITION_SLOP = 0.01;
 const POSITION_PERCENT = 0.2;
+const IMPACT_STRENGTH_SCALE = 0.02;
+const JOINT_STIFFNESS = 0.45;
+const JOINT_DAMPING = 0.12;
+const SHATTER_DURATION = 0.8;
+const SHATTER_PARTICLES_PER_BODY = 5;
 
 const PALETTE = [
   { fill: "#1b263b", stroke: "#f77f00" },
@@ -80,12 +105,17 @@ function resolveNumberParam(value: unknown, fallback: number): number {
 export class PhysicsWorld {
   bodies: Body[] = [];
   contacts: Contact[] = [];
+  joints: Joint[] = [];
   contactCount = 0;
   width: number;
   height: number;
   gravity: number;
   accumulator = 0;
   lastTime = 0;
+  impactStrength = 0;
+  wreckingBall: Body | null = null;
+  wreckingAnchor: Body | null = null;
+  wreckingTriggered = false;
   private tempSupportA = { x: 0, y: 0 };
   private tempSupportB = { x: 0, y: 0 };
   private tempSupportWall = { x: 0, y: 0 };
@@ -118,6 +148,10 @@ export class PhysicsWorld {
   ): void {
     const rng = seed === null ? Math.random : mulberry32(seed);
     this.bodies.length = 0;
+    this.joints.length = 0;
+    this.wreckingBall = null;
+    this.wreckingAnchor = null;
+    this.wreckingTriggered = false;
 
     const clamped = clamp(count, 5, MAX_BODIES);
     const columns = Math.max(3, Math.floor(Math.sqrt(clamped)));
@@ -162,6 +196,8 @@ export class PhysicsWorld {
         stroke: palette.stroke
       });
     }
+
+    this.buildStickJoints(rng);
   }
 
   addBody(options: {
@@ -178,11 +214,12 @@ export class PhysicsWorld {
     fill?: string;
     stroke?: string;
     mass?: number;
+    render?: boolean;
   }): Body {
     const mass = options.mass ?? Math.max(0.5, (options.width * options.height) / 2000);
-    const invMass = 1 / mass;
-    const inertia = (mass * (options.width * options.width + options.height * options.height)) / 12;
-    const invInertia = 1 / inertia;
+    const invMass = mass > 0 ? 1 / mass : 0;
+    const inertia = mass > 0 ? (mass * (options.width * options.width + options.height * options.height)) / 12 : 0;
+    const invInertia = inertia > 0 ? 1 / inertia : 0;
     const body: Body = {
       x: options.x,
       y: options.y,
@@ -203,11 +240,58 @@ export class PhysicsWorld {
       axisYx: 0,
       axisYy: 1,
       fill: options.fill ?? "#111827",
-      stroke: options.stroke ?? "#f97316"
+      stroke: options.stroke ?? "#f97316",
+      render: options.render ?? true
     };
     this.updateAxes(body);
     this.bodies.push(body);
     return body;
+  }
+
+  addJoint(a: Body, b: Body, restLength: number, stiffness = JOINT_STIFFNESS, damping = JOINT_DAMPING): void {
+    this.joints.push({
+      a,
+      b,
+      restLength,
+      stiffness,
+      damping
+    });
+  }
+
+  triggerWreckingBall(): void {
+    if (this.wreckingTriggered) {
+      return;
+    }
+    this.wreckingTriggered = true;
+    const anchor = this.addBody({
+      x: this.width * 0.85,
+      y: this.height * 0.15,
+      width: 8,
+      height: 8,
+      restitution: 0,
+      friction: 0.8,
+      mass: 0,
+      render: false
+    });
+    const ballSize = Math.min(this.width, this.height) * 0.18;
+    const length = Math.min(this.width, this.height) * 0.4;
+    const ball = this.addBody({
+      x: anchor.x + length,
+      y: anchor.y + length * 0.25,
+      width: ballSize,
+      height: ballSize,
+      restitution: 0.1,
+      friction: 0.7,
+      mass: 14,
+      fill: "#2b2d42",
+      stroke: "#f72585",
+      angularVelocity: -0.4
+    });
+    ball.vx = -120;
+    ball.vy = 20;
+    this.addJoint(anchor, ball, length, 0.8, 0.2);
+    this.wreckingBall = ball;
+    this.wreckingAnchor = anchor;
   }
 
   applyBeatImpulse(magnitude: number, strength: number): void {
@@ -234,9 +318,46 @@ export class PhysicsWorld {
     }
   }
 
+  private buildStickJoints(rng: () => number): void {
+    if (this.bodies.length < 4) {
+      return;
+    }
+    const bridgeCount = Math.min(6, this.bodies.length - 1);
+    for (let i = 0; i < bridgeCount; i += 1) {
+      const a = this.bodies[i];
+      const b = this.bodies[i + 1];
+      const restLength = Math.hypot(b.x - a.x, b.y - a.y);
+      this.addJoint(a, b, restLength, JOINT_STIFFNESS, JOINT_DAMPING);
+    }
+    const base = Math.floor(this.bodies.length * 0.4);
+    const torso = this.bodies[base];
+    const head = this.bodies[base + 1];
+    const arm = this.bodies[base + 2];
+    const leg = this.bodies[base + 3];
+    if (torso && head) {
+      this.addJoint(torso, head, Math.hypot(head.x - torso.x, head.y - torso.y), 0.6, 0.18);
+    }
+    if (torso && arm) {
+      this.addJoint(torso, arm, Math.hypot(arm.x - torso.x, arm.y - torso.y), 0.55, 0.16);
+    }
+    if (torso && leg) {
+      this.addJoint(torso, leg, Math.hypot(leg.x - torso.x, leg.y - torso.y), 0.55, 0.16);
+      if (rng() > 0.4 && this.bodies.length > base + 4) {
+        const extra = this.bodies[base + 4];
+        if (extra) {
+          this.addJoint(leg, extra, Math.hypot(extra.x - leg.x, extra.y - leg.y), 0.5, 0.14);
+        }
+      }
+    }
+  }
+
   step(dt: number): void {
+    this.impactStrength = 0;
     for (let i = 0; i < this.bodies.length; i += 1) {
       const body = this.bodies[i];
+      if (body.invMass === 0) {
+        continue;
+      }
       body.vy += this.gravity * dt;
       body.x += body.vx * dt;
       body.y += body.vy * dt;
@@ -255,6 +376,9 @@ export class PhysicsWorld {
     }
 
     for (let iter = 0; iter < SOLVER_ITERATIONS; iter += 1) {
+      for (let i = 0; i < this.joints.length; i += 1) {
+        this.applyJointConstraint(this.joints[i]);
+      }
       for (let i = 0; i < this.contactCount; i += 1) {
         this.applyImpulse(this.contacts[i]);
       }
@@ -262,6 +386,9 @@ export class PhysicsWorld {
 
     for (let i = 0; i < this.contactCount; i += 1) {
       this.applyPositionCorrection(this.contacts[i]);
+    }
+    for (let i = 0; i < this.joints.length; i += 1) {
+      this.applyJointConstraint(this.joints[i]);
     }
   }
 
@@ -463,6 +590,8 @@ export class PhysicsWorld {
       return;
     }
 
+    this.impactStrength = Math.max(this.impactStrength, -velAlongNormal);
+
     const rAcn = rAx * ny - rAy * nx;
     const rBcn = rBx * ny - rBy * nx;
     const invMassSum =
@@ -510,6 +639,39 @@ export class PhysicsWorld {
     }
   }
 
+  private applyJointConstraint(joint: Joint): void {
+    const { a, b } = joint;
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    const dist = Math.hypot(dx, dy);
+    if (dist < 1e-5) {
+      return;
+    }
+    const nx = dx / dist;
+    const ny = dy / dist;
+    const invMassSum = a.invMass + b.invMass;
+    if (invMassSum <= 0) {
+      return;
+    }
+    const error = dist - joint.restLength;
+    const correction = (error * joint.stiffness) / invMassSum;
+    const corrX = correction * nx;
+    const corrY = correction * ny;
+    a.x += corrX * a.invMass;
+    a.y += corrY * a.invMass;
+    b.x -= corrX * b.invMass;
+    b.y -= corrY * b.invMass;
+
+    const relVel = (b.vx - a.vx) * nx + (b.vy - a.vy) * ny;
+    const dampingImpulse = (-relVel * joint.damping) / invMassSum;
+    const dampX = dampingImpulse * nx;
+    const dampY = dampingImpulse * ny;
+    a.vx -= dampX * a.invMass;
+    a.vy -= dampY * a.invMass;
+    b.vx += dampX * b.invMass;
+    b.vy += dampY * b.invMass;
+  }
+
   private applyPositionCorrection(contact: Contact): void {
     const a = contact.a;
     const b = contact.b;
@@ -544,6 +706,9 @@ export class PhysicsPileEffect implements Effect {
   };
   private trailStyle = "rgba(0, 0, 0, 0.2)";
   private trailAlpha = DEFAULT_TRAIL;
+  private shatterParticles: ShatterParticle[] = [];
+  private shatterTimer = 0;
+  private shatterActive = false;
 
   render({ ctx, width, height, time, audio, params }: EffectRenderContext): void {
     const count = clamp(resolveNumberParam(params.count, DEFAULT_COUNT), 5, MAX_BODIES);
@@ -554,6 +719,8 @@ export class PhysicsPileEffect implements Effect {
     const seed = resolveNumberParam(params.seed, Number.NaN);
     const spawnMode = resolveSpawnMode((params as Record<string, unknown>).spawnMode);
     const trail = clamp(resolveNumberParam(params.trail, DEFAULT_TRAIL), 0, 1);
+    const shatter = clamp(resolveNumberParam(params.shatter, 0), 0, 1);
+    const wreckingCue = clamp(resolveNumberParam(params.wreckingCue, 0), 0, 1);
 
     if (!this.world || this.lastConfig.width !== width || this.lastConfig.height !== height) {
       this.world = new PhysicsWorld(width, height, gravity);
@@ -608,26 +775,54 @@ export class PhysicsPileEffect implements Effect {
       return;
     }
 
+    audio.impactStrength = 0;
     const frameDt = clamp(time - world.lastTime, 0, 0.05);
     world.lastTime = time;
     world.gravity = gravity * (1 + audio.bass * GRAVITY_AUDIO_SCALE);
-    world.update(frameDt);
-
-    if (audio.beat || audio.beatStrength > 0.2) {
-      world.applyBeatImpulse(beatImpulse, audio.beatStrength);
+    if (wreckingCue > 0.5) {
+      world.triggerWreckingBall();
     }
 
-    ctx.lineWidth = 2;
-    for (let i = 0; i < world.bodies.length; i += 1) {
-      const body = world.bodies[i];
-      ctx.save();
-      ctx.translate(body.x, body.y);
-      ctx.rotate(body.angle);
-      ctx.fillStyle = body.fill;
-      ctx.strokeStyle = body.stroke;
-      ctx.fillRect(-body.halfW, -body.halfH, body.width, body.height);
-      ctx.strokeRect(-body.halfW, -body.halfH, body.width, body.height);
-      ctx.restore();
+    if (shatter > 0.2 && !this.shatterActive) {
+      this.startShatter(world);
+    }
+
+    if (this.shatterActive) {
+      this.updateShatter(frameDt);
+      this.renderShatter(ctx);
+      world.accumulator = 0;
+    } else {
+      world.update(frameDt);
+      if (audio.beat || audio.beatStrength > 0.2) {
+        world.applyBeatImpulse(beatImpulse, audio.beatStrength);
+      }
+
+      audio.impactStrength = clamp(world.impactStrength * IMPACT_STRENGTH_SCALE, 0, 1);
+
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+      for (let i = 0; i < world.joints.length; i += 1) {
+        const joint = world.joints[i];
+        ctx.beginPath();
+        ctx.moveTo(joint.a.x, joint.a.y);
+        ctx.lineTo(joint.b.x, joint.b.y);
+        ctx.stroke();
+      }
+
+      for (let i = 0; i < world.bodies.length; i += 1) {
+        const body = world.bodies[i];
+        if (!body.render) {
+          continue;
+        }
+        ctx.save();
+        ctx.translate(body.x, body.y);
+        ctx.rotate(body.angle);
+        ctx.fillStyle = body.fill;
+        ctx.strokeStyle = body.stroke;
+        ctx.fillRect(-body.halfW, -body.halfH, body.width, body.height);
+        ctx.strokeRect(-body.halfW, -body.halfH, body.width, body.height);
+        ctx.restore();
+      }
     }
   }
 
@@ -635,5 +830,66 @@ export class PhysicsPileEffect implements Effect {
     this.world = null;
     this.trailAlpha = DEFAULT_TRAIL;
     this.trailStyle = `rgba(0, 0, 0, ${DEFAULT_TRAIL})`;
+    this.shatterParticles = [];
+    this.shatterTimer = 0;
+    this.shatterActive = false;
+  }
+
+  private startShatter(world: PhysicsWorld): void {
+    this.shatterParticles = [];
+    this.shatterTimer = 0;
+    this.shatterActive = true;
+    world.bodies.forEach((body) => {
+      if (!body.render) {
+        return;
+      }
+      for (let i = 0; i < SHATTER_PARTICLES_PER_BODY; i += 1) {
+        const offsetX = (i % 2 === 0 ? -1 : 1) * body.halfW * 0.4;
+        const offsetY = (i < 2 ? -1 : 1) * body.halfH * 0.4;
+        this.shatterParticles.push({
+          x: body.x + offsetX,
+          y: body.y + offsetY,
+          vx: body.vx * 0.3 + (Math.random() - 0.5) * 120,
+          vy: body.vy * 0.3 + (Math.random() - 0.5) * 120,
+          life: 0,
+          maxLife: SHATTER_DURATION,
+          size: Math.max(2, Math.min(body.halfW, body.halfH) * 0.25),
+          color: body.stroke
+        });
+      }
+    });
+  }
+
+  private updateShatter(delta: number): void {
+    this.shatterTimer += delta;
+    this.shatterParticles.forEach((particle) => {
+      particle.life += delta;
+      particle.x += particle.vx * delta;
+      particle.y += particle.vy * delta;
+      particle.vy += 120 * delta;
+    });
+    if (this.shatterTimer > SHATTER_DURATION) {
+      this.shatterParticles = this.shatterParticles.filter((particle) => particle.life < particle.maxLife);
+      if (this.shatterParticles.length === 0) {
+        this.shatterActive = false;
+      }
+    }
+  }
+
+  private renderShatter(ctx: CanvasRenderingContext2D): void {
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    this.shatterParticles.forEach((particle) => {
+      const lifeRatio = 1 - particle.life / particle.maxLife;
+      if (lifeRatio <= 0) {
+        return;
+      }
+      ctx.fillStyle = particle.color;
+      ctx.globalAlpha = lifeRatio;
+      ctx.beginPath();
+      ctx.arc(particle.x, particle.y, particle.size * (0.6 + lifeRatio * 0.6), 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.restore();
   }
 }

@@ -9,6 +9,7 @@ export type AudioFeatures = {
   treble: number;
   beat: boolean;
   beatStrength: number;
+  impactStrength: number;
 };
 
 const DEFAULT_FFT_SIZE = 2048;
@@ -147,7 +148,8 @@ export class AudioPlayer {
       mid,
       treble,
       beat,
-      beatStrength
+      beatStrength,
+      impactStrength: 0
     };
   }
 
