@@ -119,4 +119,66 @@ describe("PhysicsWorld", () => {
     expect(Math.abs(bodyA.vx - bodyB.vx)).toBeLessThan(0.6);
     expect(Math.abs(bodyA.vy - bodyB.vy)).toBeLessThan(0.6);
   });
+
+  it("keeps jointed bodies within a distance band", () => {
+    const world = new PhysicsWorld(400, 240, 600);
+    const a = world.addBody({
+      x: 160,
+      y: 80,
+      width: 30,
+      height: 20,
+      restitution: 0.2,
+      friction: 0.6
+    });
+    const b = world.addBody({
+      x: 220,
+      y: 80,
+      width: 30,
+      height: 20,
+      restitution: 0.2,
+      friction: 0.6
+    });
+    const restLength = Math.hypot(b.x - a.x, b.y - a.y);
+    world.addJoint(a, b, restLength, 0.7, 0.2);
+
+    stepWorld(world, 300);
+
+    const finalDistance = Math.hypot(b.x - a.x, b.y - a.y);
+    expect(finalDistance).toBeGreaterThan(restLength * 0.7);
+    expect(finalDistance).toBeLessThan(restLength * 1.3);
+  });
+
+  it("tracks impact strength from collisions", () => {
+    const world = new PhysicsWorld(300, 200, 0);
+    const a = world.addBody({
+      x: 100,
+      y: 100,
+      width: 30,
+      height: 20,
+      restitution: 0.3,
+      friction: 0.4,
+      vx: 120
+    });
+    world.addBody({
+      x: 160,
+      y: 100,
+      width: 30,
+      height: 20,
+      restitution: 0.3,
+      friction: 0.4,
+      vx: -80
+    });
+
+    let impact = 0;
+    for (let i = 0; i < 180; i += 1) {
+      world.step(STEP);
+      impact = Math.max(impact, world.impactStrength);
+      if (impact > 0) {
+        break;
+      }
+    }
+
+    expect(impact).toBeGreaterThan(0);
+    expect(Number.isFinite(a.vx)).toBe(true);
+  });
 });

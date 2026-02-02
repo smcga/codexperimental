@@ -9,7 +9,8 @@ const buildAudio = () => ({
   mid: 0.3,
   treble: 0.4,
   beat: false,
-  beatStrength: 0
+  beatStrength: 0,
+  impactStrength: 0
 });
 
 const createCanvasContext = (): CanvasRenderingContext2D =>

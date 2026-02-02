@@ -9,7 +9,8 @@ const buildAudio = () => ({
   mid: 0.2,
   treble: 0.7,
   beat: true,
-  beatStrength: 1.5
+  beatStrength: 1.5,
+  impactStrength: 0
 });
 
 describe("impossible corridor params", () => {
