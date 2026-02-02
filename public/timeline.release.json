@@ -444,7 +444,7 @@
       "effect": "chess",
       "era": "future",
       "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
-      "params": { "speed": 1.1, "showHighlights": 1 },
+      "params": { "speed": 3.1, "showHighlights": 1 },
       "layers": [
         { "effect": "glitch", "blend": "overlay", "opacity": 0.2 },
         { "effect": "particles", "blend": "lighter", "opacity": 0.25, "params": { "speed": 1.2 } },
