@@ -81,6 +81,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `physics_pile` | `count`, `restitution`, `friction`, `gravity`, `beatImpulse`, `spawnMode`, `trail`, `seed`, `wreckingCue`, `shatter` | `spawnMode` supports `pile` or `rain`. |
 | `gl_impossible_corridor` | `quality`, `warp`, `hueShift`, `exposure`, `seed`, `speed`, `internalScale` | Falls back to `tunnel` when WebGL2 is unavailable. |
 | `neon_alley` | `quality`, `speed`, `exposure`, `hueShift`, `seed` | Falls back to `neon` when WebGL2 is unavailable. |
+| `lowpoly_sunrise` | `quality`, `speed`, `seed` | Falls back to `synthwaveSunset` when WebGL2 is unavailable. |
 | `synthwaveSunset` | `horizon`, `sunRadius`, `stripeHeight`, `stripeGap`, `seaSpeed`, `starCount`, `glow`, `scanlines`, `audioReactive` |  |
 | `rain` | `intensity`, `wind`, `speed`, `streakLength`, `splash`, `hue`, `seed` |  |
 | `lightning` | `trigger`, `chancePerSecond`, `cooldown`, `flashDuration`, `bolt`, `branches`, `seed` | `trigger` supports `beat`, `random`, `both`. |
