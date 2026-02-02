@@ -1,4 +1,4 @@
-import { AudioFeatures } from "../../audio/audioPlayer";
+import { AudioFeatures } from "../../audio/audioSource";
 
 export type EffectRenderContext = {
   ctx: CanvasRenderingContext2D;

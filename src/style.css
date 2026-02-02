@@ -42,6 +42,29 @@ body,
   pointer-events: none;
 }
 
+#start-overlay .mic-button {
+  margin-top: 1.5rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.5);
+  color: inherit;
+  font-size: 0.9rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+#start-overlay .mic-button.hidden {
+  display: none;
+}
+
+#start-overlay .mic-button:focus-visible,
+#start-overlay .mic-button:active {
+  outline: 1px solid rgba(142, 249, 255, 0.8);
+  outline-offset: 2px;
+}
+
 #start-overlay[data-state="error"] {
   color: #ff7b7b;
   letter-spacing: 0.08em;
@@ -51,6 +74,26 @@ body,
   text-shadow: 0 0 12px rgba(0, 255, 255, 0.8);
   text-align: center;
   padding: 0 2rem;
+}
+
+.mic-status {
+  position: absolute;
+  left: 50%;
+  bottom: 1.5rem;
+  transform: translateX(-50%);
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #ffb8b8;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  pointer-events: none;
+  text-align: center;
+}
+
+.mic-status.hidden {
+  display: none;
 }
 
 #debug-panels {
