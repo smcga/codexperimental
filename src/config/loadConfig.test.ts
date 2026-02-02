@@ -66,6 +66,24 @@ describe("normalizeTimelineConfig", () => {
     expect(last.end).toBeCloseTo(330);
   });
 
+  it("includes hook hit sections and text cues in the release timeline", () => {
+    const releasePath = new URL("../../public/timeline.release.json", import.meta.url);
+    const raw = JSON.parse(readFileSync(releasePath, "utf-8")) as RawTimelineConfig;
+    const normalized = normalizeTimelineConfig(raw);
+
+    const hookSection = normalized.sections.find((section) => section.id === "hook-hit-01160");
+    const lateHookSection = normalized.sections.find((section) => section.id === "hook-hit-03470");
+    const hookText = normalized.textCues?.find((cue) => cue.id === "this-hit-01160");
+    const lateHookText = normalized.textCues?.find((cue) => cue.id === "this-hit-03470");
+
+    expect(hookSection?.start).toBeCloseTo(76);
+    expect(hookSection?.end).toBeCloseTo(76.5);
+    expect(lateHookSection?.start).toBeCloseTo(227);
+    expect(lateHookSection?.end).toBeCloseTo(228);
+    expect(hookText?.start).toBeCloseTo(76);
+    expect(lateHookText?.start).toBeCloseTo(227);
+  });
+
   it("uses rain and lightning as layered effects in the main timeline", () => {
     const timelinePath = new URL("../../public/timeline.json", import.meta.url);
     const raw = JSON.parse(readFileSync(timelinePath, "utf-8")) as RawTimelineConfig;
