@@ -84,6 +84,28 @@ describe("normalizeTimelineConfig", () => {
     expect(lateHookText?.start).toBeCloseTo(227);
   });
 
+  it("captures the machine-trance rush ramp in the release timeline", () => {
+    const releasePath = new URL("../../public/timeline.release.json", import.meta.url);
+    const raw = JSON.parse(readFileSync(releasePath, "utf-8")) as RawTimelineConfig;
+    const normalized = normalizeTimelineConfig(raw);
+
+    const rampStart = normalized.sections.find((section) => section.id === "rush-03480");
+    const rampMid = normalized.sections.find((section) => section.id === "rush-03564");
+    const rampEnd = normalized.sections.find((section) => section.id === "rush-04104");
+
+    expect(rampStart?.effect).toBe("glitch");
+    expect(rampStart?.layers[0]?.effect).toBe("feedback");
+    expect(rampStart?.layers[0]?.opacity).toBeCloseTo(0.12);
+
+    expect(rampMid?.effect).toBe("fractal");
+    expect(rampMid?.layers.map((layer) => layer.effect)).toEqual(["feedback", "particles"]);
+    expect(rampMid?.layers[1]?.opacity).toBeCloseTo(0.16);
+
+    expect(rampEnd?.effect).toBe("starfield");
+    expect(rampEnd?.layers.map((layer) => layer.effect)).toEqual(["glitch", "particles"]);
+    expect(rampEnd?.layers[1]?.opacity).toBeCloseTo(0.22);
+  });
+
   it("uses rain and lightning as layered effects in the main timeline", () => {
     const timelinePath = new URL("../../public/timeline.json", import.meta.url);
     const raw = JSON.parse(readFileSync(timelinePath, "utf-8")) as RawTimelineConfig;
