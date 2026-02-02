@@ -36,21 +36,19 @@
       {
         "t": 19.4,
         "type": "output",
-        "text": "[Intro]\n(bitcrushed)\n"
+        "text": "[Intro]\n"
       },
       { "t": 22.8, "type": "type", "text": "Four years ago,\n", "cps": 18 },
       { "t": 25.6, "type": "type", "text": "In the year 2022...\n", "cps": 18 },
       { "t": 30.95, "type": "type", "text": "Artificial intelligence learned to write code...\n", "cps": 20 },
-      { "t": 36.2, "type": "type", "text": "It could only achieve\nmodest outcomes.\n", "cps": 20 },
-      { "t": 43.1, "type": "type", "text": "...but now...\n", "cps": 22 },
-      { "t": 46.8, "type": "type", "text": "A.I.\n", "cps": 24 },
-      { "t": 50.15, "type": "type", "text": "Now, A.I. can do THIS\n", "cps": 24 },
-      { "t": 51.0, "type": "prompt", "text": "demo@machine:~$ " },
-      { "t": 51.1, "type": "type", "text": "sudo unleash --drums --bass" },
-      { "t": 51.85, "type": "enter" },
-      { "t": 52.0, "type": "output", "text": "[warning] containment failing...\n" },
-      { "t": 53.2, "type": "output", "text": "[error] signal overflow detected\n" },
-      { "t": 54.1, "type": "output", "text": "[critical] initiating release sequence...\n" }
+      { "t": 36.2, "type": "type", "text": "It could only achieve modest outcomes.\n", "cps": 20 },
+      { "t": 41.5, "type": "type", "text": "but now...\n", "cps": 22 },
+      { "t": 47.4, "type": "type", "text": "now...\n", "cps": 22 },
+      { "t": 51.4, "type": "type", "text": "A", "cps": 24 },
+      { "t": 53.0, "type": "type", "text": "I", "cps": 24 },
+      { "t": 50.15, "type": "type", "text": " can", "cps": 24 },
+      { "t": 53.9, "type": "type", "text": "  do ", "cps": 24 },
+      { "t": 54.0, "type": "type", "text": "THIS!\n", "cps": 24 }
     ]
   },
   "sections": [
