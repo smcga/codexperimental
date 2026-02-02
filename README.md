@@ -114,4 +114,5 @@ npm run preview
 - `D` to toggle the debug overlay (timestamp, skip intro, skip to second half, transition selection, effect overrides, monochrome toggle)
 - The debug overlay shows WebGL status as `OK` or `FALLBACK` when available.
 - When the debug overlay is visible, selecting an effect reveals a secondary panel with effect-specific controls (or a note when none are available).
+- The debug overlay includes 10-second skip buttons plus a timeline JSON editor; click "Apply changes" (or press Ctrl/Cmd+Enter inside the editor) to hot-reload the timeline while the demo runs.
 - On touch devices, two floating buttons appear in the lower-right corner: `DBG` toggles the debug overlay and `⛶` toggles fullscreen.

@@ -30,6 +30,13 @@
             <span>Second half</span>
             <button id="debug-skip-second-half" type="button">Skip to second half</button>
           </div>
+          <div class="debug-row">
+            <span>Skip 10s</span>
+            <div class="debug-row-actions">
+              <button id="debug-skip-back" type="button">Back</button>
+              <button id="debug-skip-forward" type="button">Forward</button>
+            </div>
+          </div>
           <label class="debug-row">
             <span>Transition</span>
             <select id="debug-transition">
@@ -58,6 +65,15 @@
           <div class="debug-section">
             <div class="debug-section-title">Effects</div>
             <div id="debug-effects"></div>
+          </div>
+          <div class="debug-section">
+            <div class="debug-section-title">Timeline JSON</div>
+            <div class="debug-row debug-row-actions">
+              <button id="debug-timeline-reload" type="button">Reload from file</button>
+              <button id="debug-timeline-apply" type="button">Apply changes</button>
+            </div>
+            <textarea id="debug-timeline-editor" class="debug-textarea" spellcheck="false"></textarea>
+            <div id="debug-timeline-error" class="debug-error hidden" role="alert"></div>
           </div>
           <label class="debug-row debug-toggle">
             <input type="checkbox" id="debug-monochrome" />

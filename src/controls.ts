@@ -1,3 +1,5 @@
+import { clamp } from "./util/math";
+
 export type FullscreenAction = "enter" | "exit" | "noop";
 
 export function getNextDebugOverlayVisibility(isVisible: boolean): boolean {
@@ -12,6 +14,14 @@ export function getIntroSkipTime(introEnd: number, audioOffset: number, currentT
 export function getSecondHalfSkipTime(secondHalfStart: number, audioOffset: number, currentTime: number): number {
   const targetTime = Math.max(0, secondHalfStart - audioOffset);
   return Math.max(currentTime, targetTime);
+}
+
+export function getRelativeSeekTime(currentTime: number, deltaSeconds: number, duration: number): number {
+  const nextTime = currentTime + deltaSeconds;
+  if (duration > 0) {
+    return clamp(nextTime, 0, duration);
+  }
+  return Math.max(0, nextTime);
 }
 
 export function getFullscreenAction(

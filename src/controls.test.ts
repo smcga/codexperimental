@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { getSecondHalfSkipTime } from "./controls";
+import { getRelativeSeekTime, getSecondHalfSkipTime } from "./controls";
 
 describe("getSecondHalfSkipTime", () => {
   it("skips forward to the configured second-half time", () => {
@@ -13,5 +13,23 @@ describe("getSecondHalfSkipTime", () => {
 
   it("accounts for audio offsets", () => {
     expect(getSecondHalfSkipTime(150, 5, 100)).toBe(145);
+  });
+});
+
+describe("getRelativeSeekTime", () => {
+  it("moves forward by the delta when duration is known", () => {
+    expect(getRelativeSeekTime(12, 10, 100)).toBe(22);
+  });
+
+  it("clamps to zero when rewinding past the start", () => {
+    expect(getRelativeSeekTime(4, -10, 100)).toBe(0);
+  });
+
+  it("clamps to duration when seeking past the end", () => {
+    expect(getRelativeSeekTime(98, 10, 100)).toBe(100);
+  });
+
+  it("does not clamp to duration when duration is unknown", () => {
+    expect(getRelativeSeekTime(5, 10, 0)).toBe(15);
   });
 });
