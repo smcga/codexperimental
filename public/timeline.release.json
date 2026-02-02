@@ -266,9 +266,9 @@
           "effect": "flyover",
           "blend": "screen",
           "opacity": 0.25,
-          "params": { "speed": 0.7, "palette": "sunset", "seaDetail": 1.0, "islandSeed": 2 }
+          "params": { "speed": 1.55, "palette": "sunset", "seaDetail": 4.1, "islandSeed": 2, "horizon": 0.7, "waveSpeed": 3.45 }
         },
-        { "effect": "spherecloud", "blend": "lighter", "opacity": 0.2, "params": { "speed": 0.8 } }
+        { "effect": "spherecloud", "blend": "lighter", "opacity": 0.2, "params": { "speed": 0.4 } }
       ]
     },
     {
@@ -297,7 +297,7 @@
           "effect": "synthwaveSunset",
           "blend": "soft-light",
           "opacity": 0.25,
-          "params": { "seaSpeed": 0.5, "glow": 0.4, "scanlines": 0.25 }
+          "params": { "seaSpeed": 4.5, "glow": 0.4, "scanlines": 0.25 }
         }
       ]
     },
@@ -818,7 +818,7 @@
       "id": "title-8bit",
       "start": "00:54.3",
       "end": "00:56.0",
-      "text": "8-BIT",
+      "text": "",
       "x": 0.5,
       "y": 0.18,
       "align": "center",
@@ -830,7 +830,7 @@
       "id": "title-16bit",
       "start": "01:38.5",
       "end": "01:41.0",
-      "text": "16-BIT",
+      "text": "",
       "x": 0.5,
       "y": 0.18,
       "align": "center",
@@ -839,22 +839,10 @@
       "effects": { "scanlineMask": 0.2, "shadow": true }
     },
     {
-      "id": "spoken-word",
-      "start": "02:08.5",
-      "end": "02:32.0",
-      "text": "people used to say\n\"i have an idea\"....\nso many ideas dead because of...  \"don't know how\".\nbut now....\nnow... When I have an idea...\n...I just whisper it into existence...\nit's so fucking cool...",
-      "x": 0.5,
-      "y": 0.22,
-      "align": "center",
-      "size": 20,
-      "color": "#e0e6ef",
-      "effects": { "typewriter": { "speed": 26 }, "shadow": true }
-    },
-    {
       "id": "cool-callout",
       "start": "02:32.0",
       "end": "02:38.0",
-      "text": "COOOOOOOOOL",
+      "text": "✨😎✨",
       "x": 0.5,
       "y": 0.62,
       "align": "center",
@@ -866,7 +854,7 @@
       "id": "title-polygons",
       "start": "02:43.7",
       "end": "02:46.0",
-      "text": "POLYGONS",
+      "text": "😍😍😍",
       "x": 0.5,
       "y": 0.2,
       "align": "center",
