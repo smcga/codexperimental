@@ -116,6 +116,15 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
     title: "Neon Controls",
     controls: []
   },
+  neon_alley: {
+    title: "Neon Alley (WebGL) Controls",
+    controls: [
+      numberControl("quality", "Quality", 2, { min: 1, max: 3, step: 1 }),
+      numberControl("speed", "Speed", 0.6, { min: 0.2, max: 1.6, step: 0.05 }),
+      numberControl("exposure", "Exposure", 1.05, { min: 0.6, max: 1.6, step: 0.05 }),
+      numberControl("seed", "Seed", 13, { step: 1 })
+    ]
+  },
   particles: {
     title: "Particle Field Controls",
     controls: []
