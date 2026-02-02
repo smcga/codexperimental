@@ -16,6 +16,8 @@ export type WebGLUniformPayload = {
   steps: number;
   quality?: number;
   aspect?: number;
+  speed?: number;
+  camOffset?: [number, number];
 };
 
 const VERTEX_SHADER_SOURCE = `#version 300 es
@@ -159,6 +161,8 @@ export class WebGLEffectBase {
       u_beat: gl.getUniformLocation(program, "u_beat"),
       u_beatStrength: gl.getUniformLocation(program, "u_beatStrength"),
       u_warp: gl.getUniformLocation(program, "u_warp"),
+      u_speed: gl.getUniformLocation(program, "u_speed"),
+      u_camOffset: gl.getUniformLocation(program, "u_camOffset"),
       u_hueShift: gl.getUniformLocation(program, "u_hueShift"),
       u_exposure: gl.getUniformLocation(program, "u_exposure"),
       u_seed: gl.getUniformLocation(program, "u_seed"),
@@ -224,11 +228,17 @@ export class WebGLEffectBase {
     set1f("u_beat", payload.beat);
     set1f("u_beatStrength", payload.beatStrength);
     set1f("u_warp", payload.warp);
+    set1f("u_speed", payload.speed);
     set1f("u_hueShift", payload.hueShift);
     set1f("u_exposure", payload.exposure);
     set1f("u_seed", payload.seed);
     set1f("u_quality", payload.quality);
     set1f("u_aspect", payload.aspect);
+
+    const camOffsetLocation = this.uniformLocations.u_camOffset;
+    if (camOffsetLocation && payload.camOffset) {
+      gl.uniform2f(camOffsetLocation, payload.camOffset[0], payload.camOffset[1]);
+    }
 
     const stepsLocation = this.uniformLocations.u_steps;
     if (stepsLocation && Number.isFinite(payload.steps)) {
