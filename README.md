@@ -31,6 +31,42 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 - Post-intro effects render on a 16:9 base canvas; landscape uses letterboxing, while portrait screens scale to fill the height and crop the sides.
 - Append `?release=1` to the URL to load the release timeline and disable the debug overlay/keybinds.
 
+### Effect catalog
+
+Each timeline section `effect` maps to one of the entries below. Include any of the parameters in a section `params` object; omit or set to defaults to use the built-in values.
+
+| Effect | Parameters | Notes |
+| --- | --- | --- |
+| `starfield` | `speed`, `warp`, `turnRate`, `turnStrength` | Warp/turn adjust the starfield flight feel. |
+| `plasma` | `speed` |  |
+| `tunnel` | `speed` |  |
+| `rotozoom` | `speed` |  |
+| `blobs` | None |  |
+| `ribbons` | None |  |
+| `lissajous` | None |  |
+| `glitch` | None |  |
+| `bokeh` | None |  |
+| `fractal` | None |  |
+| `feedback` | None |  |
+| `equalizer` | None |  |
+| `isogrid` | None |  |
+| `neon` | None |  |
+| `particles` | None |  |
+| `finale` | None |  |
+| `proper3d` | `speed` |  |
+| `fake3d` | `speed` |  |
+| `portrait` | `zoom`, `drift` |  |
+| `sphere3d` | `speed` |  |
+| `spherecloud` | `speed` |  |
+| `chess` | `speed`, `showHighlights`, `startTime` |  |
+| `flyover` | `speed`, `horizon`, `seaDetail`, `waveSpeed`, `waveIntensity`, `islandCount`, `islandSeed`, `fog`, `palette`, `audioReactive` | `palette` supports `day`, `sunset`, `night`. |
+| `gl_fractal_tunnel` | `quality`, `warp`, `hueShift`, `exposure`, `seed` | Falls back to `tunnel` when WebGL2 is unavailable. |
+| `physics_pile` | `count`, `restitution`, `friction`, `gravity`, `beatImpulse`, `spawnMode`, `trail`, `seed`, `wreckingCue`, `shatter` | `spawnMode` supports `pile` or `rain`. |
+| `gl_impossible_corridor` | `quality`, `warp`, `hueShift`, `exposure`, `seed`, `speed`, `internalScale` | Falls back to `tunnel` when WebGL2 is unavailable. |
+| `synthwaveSunset` | `horizon`, `sunRadius`, `stripeHeight`, `stripeGap`, `seaSpeed`, `starCount`, `glow`, `scanlines`, `audioReactive` |  |
+| `rain` | `intensity`, `wind`, `speed`, `streakLength`, `splash`, `hue`, `seed` |  |
+| `lightning` | `trigger`, `chancePerSecond`, `cooldown`, `flashDuration`, `bolt`, `branches`, `seed` | `trigger` supports `beat`, `random`, `both`. |
+
 ## Run
 
 ```bash
