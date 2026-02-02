@@ -27,6 +27,7 @@ import { SynthwaveSunsetEffect } from "./synthwaveSunset";
 import { FractalTunnelEffect } from "./gl/fractalTunnelEffect";
 import { PhysicsPileEffect } from "./physicsPile";
 import { ImpossibleCorridorEffect } from "./gl/impossibleCorridorEffect";
+import { NeonAlleyEffect } from "./gl/neonAlleyEffect";
 import { RainEffect } from "./rainEffect";
 import { LightningEffect } from "./lightningEffect";
 
@@ -58,6 +59,7 @@ export const effectRegistry: Record<string, Effect> = {
   gl_fractal_tunnel: new FractalTunnelEffect(),
   physics_pile: new PhysicsPileEffect(),
   gl_impossible_corridor: new ImpossibleCorridorEffect(),
+  neon_alley: new NeonAlleyEffect(),
   synthwaveSunset: new SynthwaveSunsetEffect(),
   rain: new RainEffect(),
   lightning: new LightningEffect()
