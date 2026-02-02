@@ -20,4 +20,10 @@ describe("buildHeartCloudPoints", () => {
       expect(point.hue).toBeLessThanOrEqual(340);
     });
   });
+
+  it("carves a visible cleft near the top center", () => {
+    const points = buildHeartCloudPoints(18);
+    const cleftPoints = points.filter((point) => point.y > 0.25 && Math.abs(point.x) < 0.12);
+    expect(cleftPoints).toHaveLength(0);
+  });
 });

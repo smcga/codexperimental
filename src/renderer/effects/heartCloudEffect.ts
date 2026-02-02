@@ -16,6 +16,10 @@ export function buildHeartCloudPoints(gridSteps = 20, extent = 1.3, threshold = 
   const steps = Math.max(8, Math.floor(gridSteps));
   const span = extent * 2;
   const step = span / (steps - 1);
+  const cleftStart = 0.2;
+  const cleftMax = 0.22;
+  const topBoostStart = 0.1;
+  const topBoostStrength = 0.45;
 
   for (let xi = 0; xi < steps; xi += 1) {
     const x = -extent + xi * step;
@@ -25,8 +29,17 @@ export function buildHeartCloudPoints(gridSteps = 20, extent = 1.3, threshold = 
         const z = -extent + zi * step;
         const equation =
           (x * x + 2.25 * y * y + z * z - 1) ** 3 - x * x * z * z * z - 0.1125 * y * y * z * z * z;
-        if (Math.abs(equation) > threshold) {
+        const topBoost = clamp((y / extent - topBoostStart) * topBoostStrength, 0, 0.35);
+        const adjustedThreshold = threshold * (1 + topBoost);
+        if (Math.abs(equation) > adjustedThreshold) {
           continue;
+        }
+        if (y > cleftStart * extent) {
+          const cleftT = clamp((y / extent - cleftStart) / (1 - cleftStart), 0, 1);
+          const cleftWidth = cleftMax * (0.6 + cleftT * 0.8);
+          if (Math.abs(x) < cleftWidth * extent) {
+            continue;
+          }
         }
         const normalizedY = (y / extent + 1) / 2;
         const baseHue = 330 - normalizedY * 80 + (z / extent) * 10;
