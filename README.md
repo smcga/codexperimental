@@ -14,6 +14,7 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 - The bundled timeline includes lyric-style overlays in `textCues`; adjust or replace those cues to change the on-screen callouts synced to the music.
 - Transition types include `fade`, `wipe`, `slide-left`, `slide-right`, `slide-up`, `slide-down`, `iris`, and `flash`.
 - Effect sections can include a `params` object to tune effect-specific settings such as starfield speed, warp, or turning intensity.
+- Effects can animate numeric params with an `automation` array on a section or a layer; entries are applied in array order (last wins) and ease over absolute demo time.
 - Sections can optionally define `layers` to mix multiple effects together, with `blend` modes like `screen` or `overlay` and per-layer `opacity`.
 - The timeline includes two 3D showcase effects: `proper3d` (perspective projection + lighting) and `fake3d` (2D skew/shading tricks). The `sphere3d` effect renders a rotating lit point sphere with orbiting satellites.
 - The `spherecloud` effect renders a glowing point-cloud sphere with subtle audio-reactive rotation and lighting.
@@ -30,6 +31,20 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 - Visuals include subtle camera zoom and panning that respond to audio energy.
 - Post-intro effects render on a 16:9 base canvas; landscape uses letterboxing, while portrait screens scale to fill the height and crop the sides.
 - Append `?release=1` to the URL to load the release timeline and disable the debug overlay/keybinds.
+
+Automation example:
+
+```json
+{
+  "effect": "tunnel",
+  "params": { "speed": 1.15 },
+  "automation": [
+    { "param": "speed", "from": 1.15, "to": 1.55, "t0": 122.0, "t1": 127.0, "ease": "easeInOutQuad" }
+  ]
+}
+```
+
+Automation supports numeric params only; non-numeric values fall back to the base params.
 
 ### Effect catalog
 

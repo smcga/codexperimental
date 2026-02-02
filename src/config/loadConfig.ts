@@ -1,3 +1,5 @@
+import { EaseName, ParamAutomation } from "../timeline/automation";
+
 const TRANSITION_TYPES = [
   "fade",
   "wipe",
@@ -72,6 +74,7 @@ export type RawSectionConfig = {
   effect: string;
   era?: EraPreset;
   layers?: RawSectionLayerConfig[];
+  automation?: RawParamAutomation[];
   transition?: {
     in?: TransitionType;
     out?: TransitionType;
@@ -85,6 +88,7 @@ export type RawSectionLayerConfig = {
   opacity?: number;
   blend?: BlendMode;
   params?: Record<string, number>;
+  automation?: RawParamAutomation[];
 };
 
 export type RawTextSpan = {
@@ -124,6 +128,15 @@ export type RawTimelineConfig = {
   textCues?: RawTextCue[];
 };
 
+export type RawParamAutomation = {
+  param: string;
+  from: number;
+  to: number;
+  t0: number | string;
+  t1: number | string;
+  ease?: string;
+};
+
 export type TransitionConfig = {
   in: TransitionType;
   out: TransitionType;
@@ -154,6 +167,7 @@ export type SectionConfig = {
   era: EraPreset;
   transition: TransitionConfig;
   params: Record<string, number>;
+  automation: ParamAutomation[];
   layers: SectionLayerConfig[];
   endFromAudio: boolean;
 };
@@ -163,6 +177,7 @@ export type SectionLayerConfig = {
   opacity: number;
   blend: BlendMode;
   params: Record<string, number>;
+  automation: ParamAutomation[];
 };
 
 export type TextSpan = RawTextSpan & { size: number; color: string; weight: string; font: string };
@@ -250,6 +265,46 @@ function normalizeLayerParams(value: unknown, label: string): Record<string, num
     throw new Error(`${label} must be an object`);
   }
   return value as Record<string, number>;
+}
+
+const EASE_NAMES: EaseName[] = ["linear", "easeInOutQuad"];
+
+function normalizeParamAutomation(
+  value: unknown,
+  label: string
+): ParamAutomation[] {
+  if (value === undefined) {
+    return [];
+  }
+  if (!Array.isArray(value)) {
+    throw new Error(`${label} must be an array`);
+  }
+  return value.map((entry, index) => {
+    if (!entry || typeof entry !== "object" || Array.isArray(entry)) {
+      throw new Error(`${label}[${index}] must be an object`);
+    }
+    const automation = entry as RawParamAutomation;
+    const param = assertString(automation.param, `${label}[${index}].param`);
+    const from = assertNumber(automation.from, `${label}[${index}].from`);
+    const to = assertNumber(automation.to, `${label}[${index}].to`);
+    const t0 = parseTimelineTime(automation.t0, `${label}[${index}].t0`);
+    const t1 = parseTimelineTime(automation.t1, `${label}[${index}].t1`);
+    let ease: EaseName | undefined;
+    if (automation.ease !== undefined) {
+      if (typeof automation.ease !== "string") {
+        throw new Error(`${label}[${index}].ease must be a string`);
+      }
+      ease = EASE_NAMES.includes(automation.ease as EaseName) ? (automation.ease as EaseName) : undefined;
+    }
+    return {
+      param,
+      from,
+      to,
+      t0,
+      t1,
+      ease
+    };
+  });
 }
 
 function parseTimelineTime(value: number | string, label: string): number {
@@ -405,7 +460,8 @@ function normalizeSectionLayers(layers: RawSectionLayerConfig[] | undefined, lab
       effect: assertString(layer.effect, `${label}.layers[${index}].effect`),
       opacity: normalizeOpacity(layer.opacity, `${label}.layers[${index}].opacity`),
       blend: normalizeBlendMode(layer.blend, `${label}.layers[${index}].blend`),
-      params: normalizeLayerParams(layer.params, `${label}.layers[${index}].params`)
+      params: normalizeLayerParams(layer.params, `${label}.layers[${index}].params`),
+      automation: normalizeParamAutomation(layer.automation, `${label}.layers[${index}].automation`)
     };
   });
 }
@@ -449,6 +505,7 @@ export function normalizeTimelineConfig(raw: RawTimelineConfig): TimelineConfig 
       era: normalizeEra(section.era, `sections[${index}].era`),
       transition: normalizeTransition(section.transition),
       params,
+      automation: normalizeParamAutomation(section.automation, `sections[${index}].automation`),
       layers: normalizeSectionLayers(section.layers, `sections[${index}]`),
       endFromAudio: end === null
     };
