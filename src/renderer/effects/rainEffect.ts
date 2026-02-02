@@ -1,7 +1,7 @@
 import { clamp } from "../../util/math";
 import { Effect, EffectRenderContext } from "./types";
 
-const BASE_DENSITY = 0.00028;
+const BASE_DENSITY = 0.00075;
 const BEAT_BOOST_DURATION = 0.16;
 
 type RainLayer = {
@@ -13,8 +13,8 @@ type RainLayer = {
 };
 
 const RAIN_LAYERS: RainLayer[] = [
-  { speed: 1.2, length: 1.3, alpha: 0.6, thickness: 1.4, countScale: 1.0 },
-  { speed: 0.75, length: 0.8, alpha: 0.35, thickness: 1.0, countScale: 0.65 }
+  { speed: 1.6, length: 1.1, alpha: 0.6, thickness: 1.0, countScale: 1.2 },
+  { speed: 1.1, length: 0.7, alpha: 0.35, thickness: 0.7, countScale: 0.9 }
 ];
 
 export function hashFloat(value: number): number {
@@ -61,8 +61,8 @@ export class RainEffect implements Effect {
     const brightness = clamp(0.35 + audio.rms * 0.6, 0, 1);
 
     const baseCount = Math.floor(width * height * BASE_DENSITY * intensity * densityBoost);
-    const baseSpeed = height * 0.6 * speed;
-    const baseStreak = 18 * streakLength;
+    const baseSpeed = height * 0.9 * speed;
+    const baseStreak = 12 * streakLength;
 
     ctx.save();
     ctx.lineCap = "round";

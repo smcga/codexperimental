@@ -54,4 +54,22 @@ describe("RainEffect", () => {
 
     expect(ctx.stroke).not.toHaveBeenCalled();
   });
+
+  it("renders a denser set of streaks for deterministic inputs", () => {
+    const effect = new RainEffect();
+    const ctx = createContext();
+
+    effect.render({
+      ctx,
+      width: 200,
+      height: 100,
+      time: 0,
+      delta: 0.016,
+      audio: createAudio(),
+      params: { intensity: 1, seed: 0 }
+    });
+
+    expect(ctx.moveTo).toHaveBeenCalledTimes(31);
+    expect(ctx.lineTo).toHaveBeenCalledTimes(31);
+  });
 });
