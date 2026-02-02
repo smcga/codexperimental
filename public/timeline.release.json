@@ -31,13 +31,9 @@
       {
         "t": 18.0,
         "type": "ascii",
-        "text": "  _____  ______ __  __  ____\n |  __ \\|  ____|  \/  |/ __ \\\n | |  | | |__  | \\  / | |  | |\n | |  | |  __| | |\\/| | |  | |\n | |__| | |____| |  | | |__| |\n |_____/|______|_|  |_|\\____/\n"
+        "text": "  _____  ______ __  __  ____\n |  __ \\|  ____|  \\/  |/ __ \\\n | |  | | |__  | \\  / | |  | |\n | |  | |  __| | |\\/| | |  | |\n | |__| | |____| |  | | |__| |\n |_____/|______|_|  |_|\\____/\n"
       },
-      {
-        "t": 19.4,
-        "type": "output",
-        "text": "[Intro]\n"
-      },
+      { "t": 19.4, "type": "output", "text": "[Intro]\n" },
       { "t": 22.8, "type": "type", "text": "Four years ago,\n", "cps": 18 },
       { "t": 25.6, "type": "type", "text": "In the year 2022...\n", "cps": 18 },
       { "t": 30.95, "type": "type", "text": "Artificial intelligence learned to write code...\n", "cps": 20 },
@@ -59,9 +55,14 @@
       "effect": "starfield",
       "era": "8bit",
       "transition": { "in": "fade", "out": "wipe", "duration": 0.25 },
-      "params": { "speed": 0.65, "warp": 0.2 },
+      "params": { "speed": 0.62, "warp": 0.18, "turnRate": 0.06, "turnStrength": 0.22 },
+      "automation": [
+        { "param": "speed", "from": 0.62, "to": 0.9, "t0": "00:54.15", "t1": "01:05.0", "ease": "easeInOutQuad" },
+        { "param": "warp", "from": 0.18, "to": 0.42, "t0": "00:58.0", "t1": "01:05.0", "ease": "easeInOutQuad" }
+      ],
       "layers": [
-        { "effect": "glitch", "blend": "overlay", "opacity": 0.15 }
+        { "effect": "glitch", "blend": "overlay", "opacity": 0.14 },
+        { "effect": "particles", "blend": "screen", "opacity": 0.12, "params": { "speed": 0.7 } }
       ]
     },
     {
@@ -71,9 +72,13 @@
       "effect": "rotozoom",
       "era": "8bit",
       "transition": { "in": "wipe", "out": "slide-left", "duration": 0.2 },
-      "params": { "speed": 1.0 },
+      "params": { "speed": 0.95 },
+      "automation": [
+        { "param": "speed", "from": 0.95, "to": 1.35, "t0": "01:05.0", "t1": "01:15.0", "ease": "easeInOutQuad" }
+      ],
       "layers": [
-        { "effect": "particles", "blend": "screen", "opacity": 0.2, "params": { "speed": 0.8 } }
+        { "effect": "particles", "blend": "screen", "opacity": 0.22, "params": { "speed": 0.85 } },
+        { "effect": "glitch", "blend": "overlay", "opacity": 0.08 }
       ]
     },
     {
@@ -83,7 +88,10 @@
       "effect": "equalizer",
       "era": "8bit",
       "transition": { "in": "slide-left", "out": "wipe", "duration": 0.12 },
-      "params": { "speed": 1.1 }
+      "params": { "speed": 1.12 },
+      "layers": [
+        { "effect": "starfield", "blend": "screen", "opacity": 0.18, "params": { "speed": 0.75, "warp": 0.12 } }
+      ]
     },
     {
       "id": "era8bit-ribbons",
@@ -92,9 +100,13 @@
       "effect": "ribbons",
       "era": "8bit",
       "transition": { "in": "wipe", "out": "fade", "duration": 0.25 },
-      "params": { "speed": 0.95 },
+      "params": { "speed": 0.92 },
+      "automation": [
+        { "param": "speed", "from": 0.92, "to": 1.08, "t0": "01:16.5", "t1": "01:27.4", "ease": "easeInOutQuad" }
+      ],
       "layers": [
-        { "effect": "glitch", "blend": "screen", "opacity": 0.2 }
+        { "effect": "glitch", "blend": "screen", "opacity": 0.18 },
+        { "effect": "plasma", "blend": "difference", "opacity": 0.12, "params": { "speed": 0.75 } }
       ]
     },
     {
@@ -103,9 +115,10 @@
       "end": "01:33.0",
       "effect": "glitch",
       "era": "8bit",
-      "transition": { "in": "flash", "out": "fade", "duration": 0.15 },
+      "transition": { "in": "flash", "out": "fade", "duration": 0.14 },
       "layers": [
-        { "effect": "lissajous", "blend": "screen", "opacity": 0.25, "params": { "speed": 0.9 } }
+        { "effect": "lissajous", "blend": "screen", "opacity": 0.28, "params": { "speed": 0.95 } },
+        { "effect": "starfield", "blend": "screen", "opacity": 0.12, "params": { "speed": 0.9, "warp": 0.15 } }
       ]
     },
     {
@@ -115,9 +128,12 @@
       "effect": "plasma",
       "era": "8bit",
       "transition": { "in": "fade", "out": "wipe", "duration": 0.18 },
-      "params": { "speed": 0.85 },
+      "params": { "speed": 0.86 },
+      "automation": [
+        { "param": "speed", "from": 0.86, "to": 1.18, "t0": "01:33.0", "t1": "01:35.5", "ease": "easeInOutQuad" }
+      ],
       "layers": [
-        { "effect": "rotozoom", "blend": "difference", "opacity": 0.2, "params": { "speed": 0.8 } }
+        { "effect": "rotozoom", "blend": "difference", "opacity": 0.22, "params": { "speed": 0.85 } }
       ]
     },
     {
@@ -127,7 +143,7 @@
       "effect": "lissajous",
       "era": "8bit",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.08 },
-      "params": { "speed": 1.0 }
+      "params": { "speed": 1.05 }
     },
     {
       "id": "era8bit-bokeh",
@@ -136,11 +152,12 @@
       "effect": "bokeh",
       "era": "8bit",
       "transition": { "in": "wipe", "out": "fade", "duration": 0.15 },
-      "params": { "speed": 0.8 },
+      "params": { "speed": 0.85 },
       "layers": [
-        { "effect": "starfield", "blend": "screen", "opacity": 0.2, "params": { "speed": 0.7, "warp": 0.1 } }
+        { "effect": "starfield", "blend": "screen", "opacity": 0.22, "params": { "speed": 0.85, "warp": 0.12, "turnRate": 0.08, "turnStrength": 0.25 } }
       ]
     },
+
     {
       "id": "era16bit-isogrid",
       "start": "01:38.3",
@@ -148,9 +165,13 @@
       "effect": "isogrid",
       "era": "16bit",
       "transition": { "in": "fade", "out": "slide-right", "duration": 0.25 },
-      "params": { "speed": 1.15 },
+      "params": { "speed": 1.12 },
+      "automation": [
+        { "param": "speed", "from": 1.12, "to": 1.32, "t0": "01:38.3", "t1": "01:43.7", "ease": "easeInOutQuad" }
+      ],
       "layers": [
-        { "effect": "particles", "blend": "lighter", "opacity": 0.2, "params": { "speed": 1.1 } }
+        { "effect": "particles", "blend": "lighter", "opacity": 0.22, "params": { "speed": 1.15 } },
+        { "effect": "glitch", "blend": "overlay", "opacity": 0.08 }
       ]
     },
     {
@@ -159,8 +180,8 @@
       "end": "01:44.2",
       "effect": "plasma",
       "era": "16bit",
-      "transition": { "in": "slide-right", "out": "wipe", "duration": 0.1 },
-      "params": { "speed": 1.1 }
+      "transition": { "in": "slide-right", "out": "wipe", "duration": 0.09 },
+      "params": { "speed": 1.2 }
     },
     {
       "id": "era16bit-lissajous",
@@ -168,8 +189,8 @@
       "end": "01:44.7",
       "effect": "lissajous",
       "era": "16bit",
-      "transition": { "in": "wipe", "out": "wipe", "duration": 0.08 },
-      "params": { "speed": 1.2 }
+      "transition": { "in": "wipe", "out": "wipe", "duration": 0.07 },
+      "params": { "speed": 1.25 }
     },
     {
       "id": "era16bit-neon",
@@ -177,10 +198,10 @@
       "end": "01:45.2",
       "effect": "neon",
       "era": "16bit",
-      "transition": { "in": "wipe", "out": "wipe", "duration": 0.08 },
-      "params": { "speed": 1.15 },
+      "transition": { "in": "wipe", "out": "wipe", "duration": 0.07 },
+      "params": { "speed": 1.22 },
       "layers": [
-        { "effect": "glitch", "blend": "overlay", "opacity": 0.2 }
+        { "effect": "glitch", "blend": "overlay", "opacity": 0.22 }
       ]
     },
     {
@@ -189,9 +210,13 @@
       "end": "01:45.7",
       "effect": "equalizer",
       "era": "16bit",
-      "transition": { "in": "wipe", "out": "flash", "duration": 0.08 },
-      "params": { "speed": 1.25 }
+      "transition": { "in": "wipe", "out": "flash", "duration": 0.07 },
+      "params": { "speed": 1.32 },
+      "layers": [
+        { "effect": "particles", "blend": "screen", "opacity": 0.15, "params": { "speed": 1.25 } }
+      ]
     },
+
     {
       "id": "era16bit-rush-1",
       "start": "01:45.7",
@@ -199,7 +224,10 @@
       "effect": "ribbons",
       "era": "16bit",
       "transition": { "in": "flash", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.2 }
+      "params": { "speed": 1.28 },
+      "layers": [
+        { "effect": "glitch", "blend": "overlay", "opacity": 0.16 }
+      ]
     },
     {
       "id": "era16bit-rush-2",
@@ -208,7 +236,7 @@
       "effect": "plasma",
       "era": "16bit",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.25 }
+      "params": { "speed": 1.35 }
     },
     {
       "id": "era16bit-rush-3",
@@ -218,7 +246,8 @@
       "era": "16bit",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.04 },
       "layers": [
-        { "effect": "rotozoom", "blend": "difference", "opacity": 0.3, "params": { "speed": 1.3 } }
+        { "effect": "rotozoom", "blend": "difference", "opacity": 0.32, "params": { "speed": 1.38 } },
+        { "effect": "particles", "blend": "lighter", "opacity": 0.18, "params": { "speed": 1.3 } }
       ]
     },
     {
@@ -228,7 +257,7 @@
       "effect": "isogrid",
       "era": "16bit",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.3 }
+      "params": { "speed": 1.38 }
     },
     {
       "id": "era16bit-rush-5",
@@ -237,7 +266,7 @@
       "effect": "equalizer",
       "era": "16bit",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.35 }
+      "params": { "speed": 1.42 }
     },
     {
       "id": "era16bit-rush-6",
@@ -246,59 +275,78 @@
       "effect": "ribbons",
       "era": "16bit",
       "transition": { "in": "wipe", "out": "fade", "duration": 0.05 },
-      "params": { "speed": 1.25 },
+      "params": { "speed": 1.32 },
       "layers": [
         { "effect": "glitch", "blend": "screen", "opacity": 0.2 }
       ]
     },
+
     {
       "id": "calm-sunset",
       "start": "01:49.1",
       "end": "02:02.0",
       "effect": "synthwaveSunset",
       "era": "ps1",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.4 },
-      "params": { "seaSpeed": 0.6, "glow": 0.45, "scanlines": 0.3, "horizon": 0.55 },
+      "transition": { "in": "fade", "out": "fade", "duration": 0.45 },
+      "params": { "seaSpeed": 0.55, "glow": 0.42, "scanlines": 0.28, "horizon": 0.55, "starCount": 45, "audioReactive": 0.25 },
+      "automation": [
+        { "param": "glow", "from": 0.42, "to": 0.55, "t0": "01:54.0", "t1": "02:02.0", "ease": "easeInOutQuad" },
+        { "param": "seaSpeed", "from": 0.55, "to": 0.75, "t0": "01:49.1", "t1": "02:02.0", "ease": "easeInOutQuad" }
+      ],
       "layers": [
         {
           "effect": "flyover",
           "blend": "screen",
-          "opacity": 0.25,
-          "params": { "speed": 1.55, "palette": "sunset", "seaDetail": 4.1, "islandSeed": 2, "horizon": 0.7, "waveSpeed": 3.45 }
+          "opacity": 0.26,
+          "params": { "speed": 1.45, "palette": "sunset", "seaDetail": 3.8, "islandSeed": 2, "horizon": 0.7, "waveSpeed": 3.2, "waveIntensity": 0.85, "fog": 0.25, "audioReactive": 0.25 }
         },
-        { "effect": "spherecloud", "blend": "lighter", "opacity": 0.2, "params": { "speed": 0.4 } }
+        { "effect": "spherecloud", "blend": "lighter", "opacity": 0.18, "params": { "speed": 0.38 } },
+        { "effect": "rain", "blend": "screen", "opacity": 0.14, "params": { "intensity": 0.28, "wind": 0.12, "speed": 0.65, "streakLength": 0.75, "splash": 0.22, "seed": 3 } },
+        { "effect": "lightning", "blend": "screen", "opacity": 0.16, "params": { "trigger": "random", "chancePerSecond": 0.08, "cooldown": 3.2, "flashDuration": 0.09, "bolt": 0.45, "branches": 0.28, "seed": 4 } }
       ]
     },
+
     {
       "id": "snare-buildup",
       "start": "02:02.0",
       "end": "02:08.5",
       "effect": "tunnel",
       "era": "ps1",
-      "transition": { "in": "fade", "out": "iris", "duration": 0.3 },
-      "params": { "speed": 1.15 },
+      "transition": { "in": "fade", "out": "iris", "duration": 0.32 },
+      "params": { "speed": 1.05 },
+      "automation": [
+        { "param": "speed", "from": 1.05, "to": 1.85, "t0": "02:02.0", "t1": "02:08.5", "ease": "easeInOutQuad" }
+      ],
       "layers": [
-        { "effect": "equalizer", "blend": "screen", "opacity": 0.35, "params": { "speed": 1.2 } },
-        { "effect": "glitch", "blend": "overlay", "opacity": 0.15 }
+        { "effect": "equalizer", "blend": "screen", "opacity": 0.34, "params": { "speed": 1.25 } },
+        { "effect": "glitch", "blend": "overlay", "opacity": 0.16 },
+        { "effect": "particles", "blend": "lighter", "opacity": 0.16, "params": { "speed": 1.15 } }
       ]
     },
+
     {
       "id": "spoken-word",
       "start": "02:08.5",
       "end": "02:32.0",
       "effect": "bokeh",
       "era": "ps1",
-      "transition": { "in": "iris", "out": "fade", "duration": 0.45 },
-      "params": { "speed": 0.7 },
+      "transition": { "in": "iris", "out": "fade", "duration": 0.5 },
+      "params": { "speed": 0.62 },
+      "automation": [
+        { "param": "speed", "from": 0.62, "to": 0.42, "t0": "02:08.5", "t1": "02:32.0", "ease": "easeInOutQuad" }
+      ],
       "layers": [
         {
           "effect": "synthwaveSunset",
           "blend": "soft-light",
-          "opacity": 0.25,
-          "params": { "seaSpeed": 4.5, "glow": 0.4, "scanlines": 0.25 }
-        }
+          "opacity": 0.22,
+          "params": { "seaSpeed": 3.8, "glow": 0.38, "scanlines": 0.22, "horizon": 0.56, "audioReactive": 0.12 }
+        },
+        { "effect": "sphere3d", "blend": "soft-light", "opacity": 0.12, "params": { "speed": 0.25 } },
+        { "effect": "glitch", "blend": "overlay", "opacity": 0.06 }
       ]
     },
+
     {
       "id": "cool-hold",
       "start": "02:32.0",
@@ -306,11 +354,17 @@
       "effect": "portrait",
       "era": "ps1",
       "transition": { "in": "fade", "out": "flash", "duration": 0.2 },
-      "params": { "zoom": 1.05, "drift": 0.8 },
+      "params": { "zoom": 1.06, "drift": 0.75 },
+      "automation": [
+        { "param": "zoom", "from": 1.06, "to": 1.14, "t0": "02:32.0", "t1": "02:38.0", "ease": "easeInOutQuad" },
+        { "param": "drift", "from": 0.75, "to": 0.35, "t0": "02:32.0", "t1": "02:38.0", "ease": "easeInOutQuad" }
+      ],
       "layers": [
-        { "effect": "glitch", "blend": "screen", "opacity": 0.2 }
+        { "effect": "glitch", "blend": "screen", "opacity": 0.22 },
+        { "effect": "lightning", "blend": "screen", "opacity": 0.18, "params": { "trigger": "both", "chancePerSecond": 0.1, "cooldown": 1.4, "flashDuration": 0.08, "bolt": 0.55, "branches": 0.35, "seed": 8 } }
       ]
     },
+
     {
       "id": "drop-hit",
       "start": "02:38.0",
@@ -318,8 +372,17 @@
       "effect": "gl_fractal_tunnel",
       "era": "ps1",
       "transition": { "in": "flash", "out": "wipe", "duration": 0.2 },
-      "params": { "quality": 2, "warp": 1.15, "exposure": 1.2, "hueShift": 0.1, "seed": 5 }
+      "params": { "quality": 2, "warp": 1.05, "exposure": 1.22, "hueShift": 0.05, "seed": 5 },
+      "automation": [
+        { "param": "warp", "from": 1.05, "to": 1.65, "t0": "02:38.0", "t1": "02:43.6", "ease": "easeInOutQuad" },
+        { "param": "hueShift", "from": 0.05, "to": 0.32, "t0": "02:38.0", "t1": "02:43.6", "ease": "easeInOutQuad" }
+      ],
+      "layers": [
+        { "effect": "particles", "blend": "lighter", "opacity": 0.18, "params": { "speed": 1.3 } },
+        { "effect": "glitch", "blend": "overlay", "opacity": 0.14 }
+      ]
     },
+
     {
       "id": "polygons-proper3d",
       "start": "02:43.6",
@@ -327,10 +390,16 @@
       "effect": "proper3d",
       "era": "ps1",
       "transition": { "in": "wipe", "out": "fade", "duration": 0.25 },
+      "params": { "speed": 1.05 },
+      "automation": [
+        { "param": "speed", "from": 1.05, "to": 1.28, "t0": "02:43.6", "t1": "02:48.9", "ease": "easeInOutQuad" }
+      ],
       "layers": [
-        { "effect": "particles", "blend": "lighter", "opacity": 0.2, "params": { "speed": 1.05 } }
+        { "effect": "particles", "blend": "lighter", "opacity": 0.22, "params": { "speed": 1.12 } },
+        { "effect": "isogrid", "blend": "overlay", "opacity": 0.12, "params": { "speed": 1.1 } }
       ]
     },
+
     {
       "id": "polygons-fake3d",
       "start": "02:48.9",
@@ -338,34 +407,46 @@
       "effect": "fake3d",
       "era": "ps1",
       "transition": { "in": "fade", "out": "fade", "duration": 0.25 },
+      "params": { "speed": 1.08 },
       "layers": [
-        { "effect": "glitch", "blend": "overlay", "opacity": 0.2 }
+        { "effect": "glitch", "blend": "overlay", "opacity": 0.22 },
+        { "effect": "sphere3d", "blend": "soft-light", "opacity": 0.16, "params": { "speed": 0.55 } },
+        { "effect": "rain", "blend": "screen", "opacity": 0.16, "params": { "intensity": 0.4, "wind": 0.18, "speed": 0.95, "streakLength": 0.9, "splash": 0.2, "seed": 10 } }
       ]
     },
+
     {
       "id": "chill-breakdown",
       "start": "02:55.0",
       "end": "03:10.4",
       "effect": "spherecloud",
       "era": "pcdemo",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.4 },
-      "params": { "speed": 0.6 },
+      "transition": { "in": "fade", "out": "fade", "duration": 0.45 },
+      "params": { "speed": 0.55 },
+      "automation": [
+        { "param": "speed", "from": 0.55, "to": 0.72, "t0": "02:55.0", "t1": "03:10.4", "ease": "easeInOutQuad" }
+      ],
       "layers": [
-        { "effect": "bokeh", "blend": "soft-light", "opacity": 0.3, "params": { "speed": 0.7 } }
+        { "effect": "bokeh", "blend": "soft-light", "opacity": 0.26, "params": { "speed": 0.65 } },
+        { "effect": "sphere3d", "blend": "soft-light", "opacity": 0.18, "params": { "speed": 0.38 } },
+        { "effect": "infinitycloud", "blend": "screen", "opacity": 0.14, "params": { "speed": 0.5 } }
       ]
     },
+
     {
       "id": "this-callout",
       "start": "03:10.4",
       "end": "03:15.2",
       "effect": "neon",
       "era": "pcdemo",
-      "transition": { "in": "flash", "out": "fade", "duration": 0.2 },
-      "params": { "speed": 1.2 },
+      "transition": { "in": "flash", "out": "fade", "duration": 0.22 },
+      "params": { "speed": 1.25 },
       "layers": [
-        { "effect": "glitch", "blend": "screen", "opacity": 0.25 }
+        { "effect": "glitch", "blend": "screen", "opacity": 0.28 },
+        { "effect": "particles", "blend": "lighter", "opacity": 0.2, "params": { "speed": 1.25 } }
       ]
     },
+
     {
       "id": "physics-first",
       "start": "03:15.2",
@@ -378,12 +459,19 @@
         "restitution": 0.35,
         "friction": 0.6,
         "gravity": 900,
-        "beatImpulse": 260,
+        "beatImpulse": 220,
         "spawnMode": "pile",
-        "trail": 0.25,
+        "trail": 0.28,
         "seed": 6
-      }
+      },
+      "automation": [
+        { "param": "beatImpulse", "from": 220, "to": 340, "t0": "03:15.2", "t1": "03:18.6", "ease": "easeInOutQuad" }
+      ],
+      "layers": [
+        { "effect": "glitch", "blend": "overlay", "opacity": 0.12 }
+      ]
     },
+
     {
       "id": "switch-03186",
       "start": "03:18.6",
@@ -391,11 +479,13 @@
       "effect": "particles",
       "era": "pcdemo",
       "transition": { "in": "wipe", "out": "fade", "duration": 0.2 },
-      "params": { "speed": 1.15 },
+      "params": { "speed": 1.2 },
       "layers": [
-        { "effect": "feedback", "blend": "screen", "opacity": 0.2, "params": { "speed": 0.9 } }
+        { "effect": "feedback", "blend": "screen", "opacity": 0.22, "params": { "speed": 0.95 } },
+        { "effect": "rain", "blend": "screen", "opacity": 0.14, "params": { "intensity": 0.5, "wind": 0.22, "speed": 1.1, "streakLength": 0.85, "splash": 0.25, "seed": 13 } }
       ]
     },
+
     {
       "id": "switch-03240",
       "start": "03:24.0",
@@ -403,8 +493,12 @@
       "effect": "tunnel",
       "era": "pcdemo",
       "transition": { "in": "fade", "out": "wipe", "duration": 0.2 },
-      "params": { "speed": 1.2 }
+      "params": { "speed": 1.12 },
+      "automation": [
+        { "param": "speed", "from": 1.12, "to": 1.48, "t0": "03:24.0", "t1": "03:26.6", "ease": "easeInOutQuad" }
+      ]
     },
+
     {
       "id": "switch-03266",
       "start": "03:26.6",
@@ -412,11 +506,13 @@
       "effect": "plasma",
       "era": "pcdemo",
       "transition": { "in": "wipe", "out": "fade", "duration": 0.2 },
-      "params": { "speed": 1.25 },
+      "params": { "speed": 1.28 },
       "layers": [
-        { "effect": "glitch", "blend": "difference", "opacity": 0.2 }
+        { "effect": "glitch", "blend": "difference", "opacity": 0.22 },
+        { "effect": "particles", "blend": "lighter", "opacity": 0.16, "params": { "speed": 1.2 } }
       ]
     },
+
     {
       "id": "switch-03320",
       "start": "03:32.0",
@@ -424,8 +520,12 @@
       "effect": "fractal",
       "era": "future",
       "transition": { "in": "fade", "out": "fade", "duration": 0.25 },
-      "params": { "speed": 1.1 }
+      "params": { "speed": 1.12 },
+      "layers": [
+        { "effect": "lightning", "blend": "screen", "opacity": 0.18, "params": { "trigger": "both", "chancePerSecond": 0.12, "cooldown": 1.7, "flashDuration": 0.08, "bolt": 0.52, "branches": 0.32, "seed": 14 } }
+      ]
     },
+
     {
       "id": "chess-debut",
       "start": "03:37.6",
@@ -433,8 +533,9 @@
       "effect": "chess",
       "era": "future",
       "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
-      "params": { "speed": 1.05, "showHighlights": 1 }
+      "params": { "speed": 1.05, "showHighlights": 1, "startTime": "03:37.6" }
     },
+
     {
       "id": "chess-overlay",
       "start": "03:43.0",
@@ -442,13 +543,15 @@
       "effect": "chess",
       "era": "future",
       "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
-      "params": { "speed": 3.1, "showHighlights": 1 },
+      "params": { "speed": 3.0, "showHighlights": 1, "startTime": "03:37.6" },
       "layers": [
-        { "effect": "glitch", "blend": "overlay", "opacity": 0.2 },
-        { "effect": "particles", "blend": "lighter", "opacity": 0.25, "params": { "speed": 1.2 } },
-        { "effect": "neon", "blend": "screen", "opacity": 0.2, "params": { "speed": 1.1 } }
+        { "effect": "glitch", "blend": "overlay", "opacity": 0.22 },
+        { "effect": "particles", "blend": "lighter", "opacity": 0.28, "params": { "speed": 1.25 } },
+        { "effect": "neon", "blend": "screen", "opacity": 0.22, "params": { "speed": 1.15 } },
+        { "effect": "rain", "blend": "screen", "opacity": 0.12, "params": { "intensity": 0.45, "wind": 0.18, "speed": 1.05, "streakLength": 0.9, "splash": 0.22, "seed": 15 } }
       ]
     },
+
     {
       "id": "rush-03480",
       "start": "03:48.0",
@@ -464,7 +567,7 @@
       "effect": "plasma",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.3 }
+      "params": { "speed": 1.35 }
     },
     {
       "id": "rush-03494",
@@ -473,7 +576,7 @@
       "effect": "isogrid",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.35 }
+      "params": { "speed": 1.4 }
     },
     {
       "id": "rush-03501",
@@ -482,7 +585,7 @@
       "effect": "lissajous",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.25 }
+      "params": { "speed": 1.28 }
     },
     {
       "id": "rush-03508",
@@ -491,7 +594,7 @@
       "effect": "blobs",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.2 }
+      "params": { "speed": 1.22 }
     },
     {
       "id": "rush-03515",
@@ -500,7 +603,7 @@
       "effect": "ribbons",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.25 }
+      "params": { "speed": 1.3 }
     },
     {
       "id": "rush-03522",
@@ -509,7 +612,7 @@
       "effect": "rotozoom",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.4 }
+      "params": { "speed": 1.45 }
     },
     {
       "id": "rush-03529",
@@ -518,7 +621,7 @@
       "effect": "equalizer",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.35 }
+      "params": { "speed": 1.4 }
     },
     {
       "id": "rush-03536",
@@ -527,7 +630,7 @@
       "effect": "starfield",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.1, "warp": 0.35 }
+      "params": { "speed": 1.18, "warp": 0.4, "turnRate": 0.1, "turnStrength": 0.32 }
     },
     {
       "id": "rush-03543",
@@ -536,7 +639,7 @@
       "effect": "feedback",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.0 }
+      "params": { "speed": 1.05 }
     },
     {
       "id": "rush-03550",
@@ -545,9 +648,9 @@
       "effect": "neon",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.3 },
+      "params": { "speed": 1.35 },
       "layers": [
-        { "effect": "glitch", "blend": "overlay", "opacity": 0.2 }
+        { "effect": "glitch", "blend": "overlay", "opacity": 0.22 }
       ]
     },
     {
@@ -557,7 +660,7 @@
       "effect": "bokeh",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.0 }
+      "params": { "speed": 1.05 }
     },
     {
       "id": "rush-03564",
@@ -566,7 +669,7 @@
       "effect": "fractal",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.2 }
+      "params": { "speed": 1.22 }
     },
     {
       "id": "rush-03571",
@@ -575,7 +678,7 @@
       "effect": "tunnel",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.25 }
+      "params": { "speed": 1.3 }
     },
     {
       "id": "rush-03578",
@@ -584,7 +687,7 @@
       "effect": "particles",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.3 }
+      "params": { "speed": 1.35 }
     },
     {
       "id": "rush-03585",
@@ -593,16 +696,16 @@
       "effect": "sphere3d",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.1 }
+      "params": { "speed": 1.18 }
     },
     {
       "id": "rush-03592",
       "start": "03:59.2",
       "end": "03:59.9",
-      "effect": "synthwaveSunset",
+      "effect": "neon_alley",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "seaSpeed": 1.1, "glow": 0.5, "scanlines": 0.3, "horizon": 0.55 }
+      "params": { "quality": 1, "speed": 1.2, "exposure": 1.2, "hueShift": 0.22, "seed": 11 }
     },
     {
       "id": "rush-03599",
@@ -611,24 +714,25 @@
       "effect": "flyover",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.1, "palette": "night", "seaDetail": 1.1, "islandSeed": 4 }
+      "params": { "speed": 1.1, "palette": "night", "seaDetail": 1.2, "islandSeed": 4, "fog": 0.35, "audioReactive": 0.25 }
     },
     {
       "id": "rush-04006",
       "start": "04:00.6",
       "end": "04:01.3",
-      "effect": "spherecloud",
+      "effect": "infinitycloud",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.2 }
+      "params": { "speed": 1.18 }
     },
     {
       "id": "rush-04013",
       "start": "04:01.3",
       "end": "04:02.0",
-      "effect": "proper3d",
+      "effect": "gl_fractal_tunnel",
       "era": "future",
-      "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 }
+      "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
+      "params": { "quality": 1, "warp": 1.15, "hueShift": 0.18, "exposure": 1.15, "seed": 7 }
     },
     {
       "id": "rush-04020",
@@ -636,7 +740,8 @@
       "end": "04:02.7",
       "effect": "fake3d",
       "era": "future",
-      "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 }
+      "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
+      "params": { "speed": 1.15 }
     },
     {
       "id": "rush-04027",
@@ -645,7 +750,7 @@
       "effect": "chess",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.2, "showHighlights": 1 }
+      "params": { "speed": 1.2, "showHighlights": 1, "startTime": "03:37.6" }
     },
     {
       "id": "rush-04034",
@@ -654,7 +759,7 @@
       "effect": "plasma",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.3 }
+      "params": { "speed": 1.35 }
     },
     {
       "id": "rush-04041",
@@ -663,7 +768,7 @@
       "effect": "lissajous",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.25 }
+      "params": { "speed": 1.28 }
     },
     {
       "id": "rush-04048",
@@ -672,7 +777,7 @@
       "effect": "isogrid",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.35 }
+      "params": { "speed": 1.42 }
     },
     {
       "id": "rush-04055",
@@ -689,16 +794,16 @@
       "effect": "ribbons",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.3 }
+      "params": { "speed": 1.35 }
     },
     {
       "id": "rush-04069",
       "start": "04:06.9",
       "end": "04:07.6",
-      "effect": "bokeh",
+      "effect": "rain",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.05 }
+      "params": { "intensity": 0.9, "wind": 0.28, "speed": 1.25, "streakLength": 0.95, "splash": 0.28, "seed": 12 }
     },
     {
       "id": "rush-04076",
@@ -707,7 +812,7 @@
       "effect": "tunnel",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.3 }
+      "params": { "speed": 1.35 }
     },
     {
       "id": "rush-04083",
@@ -716,7 +821,7 @@
       "effect": "particles",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.35 }
+      "params": { "speed": 1.4 }
     },
     {
       "id": "rush-04090",
@@ -725,9 +830,9 @@
       "effect": "neon",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.35 },
+      "params": { "speed": 1.38 },
       "layers": [
-        { "effect": "glitch", "blend": "overlay", "opacity": 0.2 }
+        { "effect": "glitch", "blend": "overlay", "opacity": 0.22 }
       ]
     },
     {
@@ -737,7 +842,7 @@
       "effect": "feedback",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.1 }
+      "params": { "speed": 1.15 }
     },
     {
       "id": "rush-04104",
@@ -746,27 +851,35 @@
       "effect": "starfield",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.2, "warp": 0.4 }
+      "params": { "speed": 1.25, "warp": 0.45, "turnRate": 0.12, "turnStrength": 0.35 }
     },
+
     {
       "id": "chill-sunset-flyover",
       "start": "04:11.0",
       "end": "04:28.0",
       "effect": "synthwaveSunset",
       "era": "future",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.5 },
-      "params": { "seaSpeed": 0.6, "glow": 0.4, "scanlines": 0.2, "horizon": 0.56 },
+      "transition": { "in": "fade", "out": "fade", "duration": 0.55 },
+      "params": { "seaSpeed": 0.55, "glow": 0.38, "scanlines": 0.18, "horizon": 0.56, "starCount": 55, "audioReactive": 0.28 },
+      "automation": [
+        { "param": "glow", "from": 0.38, "to": 0.5, "t0": "04:11.0", "t1": "04:28.0", "ease": "easeInOutQuad" },
+        { "param": "seaSpeed", "from": 0.55, "to": 0.78, "t0": "04:11.0", "t1": "04:28.0", "ease": "easeInOutQuad" }
+      ],
       "layers": [
         {
           "effect": "flyover",
           "blend": "screen",
-          "opacity": 0.35,
-          "params": { "speed": 0.8, "palette": "sunset", "seaDetail": 1.1, "islandSeed": 5 }
+          "opacity": 0.36,
+          "params": { "speed": 0.85, "palette": "sunset", "seaDetail": 1.25, "islandSeed": 5, "fog": 0.25, "audioReactive": 0.3 }
         },
-        { "effect": "spherecloud", "blend": "lighter", "opacity": 0.25, "params": { "speed": 0.7 } },
-        { "effect": "sphere3d", "blend": "soft-light", "opacity": 0.2, "params": { "speed": 0.6 } }
+        { "effect": "spherecloud", "blend": "lighter", "opacity": 0.24, "params": { "speed": 0.68 } },
+        { "effect": "sphere3d", "blend": "soft-light", "opacity": 0.18, "params": { "speed": 0.58 } },
+        { "effect": "rain", "blend": "screen", "opacity": 0.16, "params": { "intensity": 0.4, "wind": 0.15, "speed": 0.8, "streakLength": 0.85, "splash": 0.24, "seed": 16 } },
+        { "effect": "lightning", "blend": "screen", "opacity": 0.12, "params": { "trigger": "random", "chancePerSecond": 0.06, "cooldown": 4.2, "flashDuration": 0.09, "bolt": 0.4, "branches": 0.26, "seed": 17 } }
       ]
     },
+
     {
       "id": "build-up",
       "start": "04:28.0",
@@ -774,28 +887,41 @@
       "effect": "tunnel",
       "era": "future",
       "transition": { "in": "fade", "out": "flash", "duration": 0.25 },
-      "params": { "speed": 1.3 },
+      "params": { "speed": 1.15 },
+      "automation": [
+        { "param": "speed", "from": 1.15, "to": 2.05, "t0": "04:28.0", "t1": "04:33.0", "ease": "easeInOutQuad" }
+      ],
       "layers": [
-        { "effect": "equalizer", "blend": "screen", "opacity": 0.35, "params": { "speed": 1.25 } },
-        { "effect": "glitch", "blend": "overlay", "opacity": 0.2 }
+        { "effect": "equalizer", "blend": "screen", "opacity": 0.35, "params": { "speed": 1.3 } },
+        { "effect": "glitch", "blend": "overlay", "opacity": 0.22 },
+        { "effect": "lightning", "blend": "screen", "opacity": 0.18, "params": { "trigger": "both", "chancePerSecond": 0.12, "cooldown": 1.2, "flashDuration": 0.08, "bolt": 0.55, "branches": 0.35, "seed": 18 } }
       ]
     },
+
     {
       "id": "mega-drop",
       "start": "04:33.0",
       "end": "04:47.7",
       "effect": "gl_impossible_corridor",
       "era": "future",
-      "transition": { "in": "flash", "out": "fade", "duration": 0.3 },
-      "params": { "quality": 2, "warp": 1.3, "exposure": 1.25, "hueShift": 0.2, "seed": 9, "speed": 1.1 },
+      "transition": { "in": "flash", "out": "fade", "duration": 0.32 },
+      "params": { "quality": 2, "warp": 1.2, "exposure": 1.28, "hueShift": 0.2, "seed": 9, "speed": 1.12, "internalScale": 1.0 },
+      "automation": [
+        { "param": "warp", "from": 1.2, "to": 1.65, "t0": "04:33.0", "t1": "04:47.7", "ease": "easeInOutQuad" },
+        { "param": "exposure", "from": 1.28, "to": 1.4, "t0": "04:33.0", "t1": "04:47.7", "ease": "easeInOutQuad" }
+      ],
       "layers": [
-        { "effect": "glitch", "blend": "screen", "opacity": 0.3 },
-        { "effect": "particles", "blend": "lighter", "opacity": 0.3, "params": { "speed": 1.4 } },
-        { "effect": "plasma", "blend": "overlay", "opacity": 0.2, "params": { "speed": 1.4 } },
-        { "effect": "starfield", "blend": "screen", "opacity": 0.2, "params": { "speed": 1.3, "warp": 0.6 } },
-        { "effect": "ribbons", "blend": "screen", "opacity": 0.2, "params": { "speed": 1.35 } }
+        { "effect": "glitch", "blend": "screen", "opacity": 0.32 },
+        { "effect": "particles", "blend": "lighter", "opacity": 0.32, "params": { "speed": 1.45 } },
+        { "effect": "plasma", "blend": "overlay", "opacity": 0.22, "params": { "speed": 1.45 } },
+        { "effect": "starfield", "blend": "screen", "opacity": 0.22, "params": { "speed": 1.35, "warp": 0.65, "turnRate": 0.14, "turnStrength": 0.4 } },
+        { "effect": "ribbons", "blend": "screen", "opacity": 0.2, "params": { "speed": 1.38 } },
+        { "effect": "rain", "blend": "screen", "opacity": 0.22, "params": { "intensity": 0.95, "wind": 0.35, "speed": 1.35, "streakLength": 0.95, "splash": 0.3, "seed": 19 } },
+        { "effect": "lightning", "blend": "screen", "opacity": 0.24, "params": { "trigger": "both", "chancePerSecond": 0.18, "cooldown": 0.9, "flashDuration": 0.075, "bolt": 0.65, "branches": 0.42, "seed": 20 } },
+        { "effect": "neon_alley", "blend": "difference", "opacity": 0.14, "params": { "quality": 1, "speed": 1.1, "exposure": 1.2, "hueShift": 0.28, "seed": 21 } }
       ]
     },
+
     {
       "id": "finale-layer",
       "start": "04:47.7",
@@ -805,9 +931,12 @@
       "transition": { "in": "fade", "out": "fade", "duration": 0.9 },
       "layers": [
         { "effect": "glitch", "blend": "screen", "opacity": 0.28 },
-        { "effect": "particles", "blend": "lighter", "opacity": 0.25, "params": { "speed": 1.25 } },
-        { "effect": "starfield", "blend": "screen", "opacity": 0.2, "params": { "speed": 1.2, "warp": 0.5 } },
-        { "effect": "chess", "blend": "overlay", "opacity": 0.15, "params": { "speed": 0.9, "showHighlights": 0 } }
+        { "effect": "particles", "blend": "lighter", "opacity": 0.25, "params": { "speed": 1.28 } },
+        { "effect": "starfield", "blend": "screen", "opacity": 0.2, "params": { "speed": 1.22, "warp": 0.55, "turnRate": 0.12, "turnStrength": 0.36 } },
+        { "effect": "chess", "blend": "overlay", "opacity": 0.12, "params": { "speed": 0.9, "showHighlights": 0, "startTime": "03:37.6" } },
+        { "effect": "rain", "blend": "screen", "opacity": 0.18, "params": { "intensity": 0.7, "wind": 0.22, "speed": 1.05, "streakLength": 0.9, "splash": 0.28, "seed": 22 } },
+        { "effect": "lightning", "blend": "screen", "opacity": 0.18, "params": { "trigger": "both", "chancePerSecond": 0.12, "cooldown": 1.6, "flashDuration": 0.08, "bolt": 0.55, "branches": 0.35, "seed": 23 } },
+        { "effect": "neon_alley", "blend": "soft-light", "opacity": 0.12, "params": { "quality": 1, "speed": 0.9, "exposure": 1.15, "hueShift": 0.18, "seed": 24 } }
       ]
     }
   ],
@@ -822,7 +951,19 @@
       "align": "center",
       "size": 36,
       "color": "#9ef0ff",
-      "effects": { "scanlineMask": 0.2 }
+      "effects": { "scanlineMask": 0.2, "shadow": true, "glitchIn": true }
+    },
+    {
+      "id": "hook-01050",
+      "start": "01:05.0",
+      "end": "01:06.0",
+      "text": "AI CAN DO THIS",
+      "x": 0.5,
+      "y": 0.84,
+      "align": "center",
+      "size": 26,
+      "color": "#7ee787",
+      "effects": { "glitchIn": true, "shadow": true, "scanlineMask": 0.18 }
     },
     {
       "id": "title-16bit",
@@ -834,8 +975,106 @@
       "align": "center",
       "size": 38,
       "color": "#f7e9a4",
-      "effects": { "scanlineMask": 0.2, "shadow": true }
+      "effects": { "scanlineMask": 0.2, "shadow": true, "glitchIn": true }
     },
+    {
+      "id": "hook-01457",
+      "start": "01:45.7",
+      "end": "01:46.4",
+      "text": "THIS",
+      "x": 0.5,
+      "y": 0.5,
+      "align": "center",
+      "size": 54,
+      "color": "#ff3b30",
+      "effects": { "glitchIn": true, "shadow": true }
+    },
+
+    {
+      "id": "spoken-02086",
+      "start": "02:08.6",
+      "end": "02:12.2",
+      "text": "people used to say",
+      "x": 0.12,
+      "y": 0.72,
+      "align": "left",
+      "size": 26,
+      "color": "#b7c7d6",
+      "effects": { "typewriter": { "speed": 22 }, "shadow": true, "scanlineMask": 0.12 }
+    },
+    {
+      "id": "spoken-02122",
+      "start": "02:12.2",
+      "end": "02:15.4",
+      "text": "\"i have an idea\"....",
+      "x": 0.12,
+      "y": 0.72,
+      "align": "left",
+      "size": 26,
+      "color": "#b7c7d6",
+      "effects": { "typewriter": { "speed": 22 }, "shadow": true, "scanlineMask": 0.12 }
+    },
+    {
+      "id": "spoken-02154",
+      "start": "02:15.4",
+      "end": "02:20.0",
+      "text": "so many ideas dead because of...  \"don't know how\".",
+      "x": 0.12,
+      "y": 0.72,
+      "align": "left",
+      "size": 24,
+      "color": "#b7c7d6",
+      "effects": { "typewriter": { "speed": 24 }, "shadow": true, "scanlineMask": 0.12 }
+    },
+    {
+      "id": "spoken-02200",
+      "start": "02:20.0",
+      "end": "02:22.8",
+      "text": "but now....",
+      "x": 0.12,
+      "y": 0.72,
+      "align": "left",
+      "size": 26,
+      "color": "#7ee787",
+      "effects": { "typewriter": { "speed": 18 }, "shadow": true, "scanlineMask": 0.12 }
+    },
+    {
+      "id": "spoken-02228",
+      "start": "02:22.8",
+      "end": "02:26.4",
+      "text": "now... When I have an idea...",
+      "x": 0.12,
+      "y": 0.72,
+      "align": "left",
+      "size": 24,
+      "color": "#7ee787",
+      "effects": { "typewriter": { "speed": 24 }, "shadow": true, "scanlineMask": 0.12 }
+    },
+    {
+      "id": "spoken-02264",
+      "start": "02:26.4",
+      "end": "02:30.4",
+      "text": "...I just whisper it into existence...",
+      "x": 0.12,
+      "y": 0.72,
+      "align": "left",
+      "size": 24,
+      "color": "#ffd166",
+      "effects": { "typewriter": { "speed": 26 }, "shadow": true, "scanlineMask": 0.12 }
+    },
+    {
+      "id": "spoken-02304",
+      "start": "02:30.4",
+      "end": "02:32.0",
+      "text": "it's so fucking cool...",
+      "x": 0.12,
+      "y": 0.72,
+      "align": "left",
+      "size": 26,
+      "color": "#ffd166",
+      "effects": { "glitchIn": true, "shadow": true, "scanlineMask": 0.12 }
+    },
+
     {
       "id": "cool-callout",
       "start": "02:32.0",
@@ -849,16 +1088,29 @@
       "effects": { "glitchIn": true, "shadow": true }
     },
     {
+      "id": "hook-02380",
+      "start": "02:38.0",
+      "end": "02:39.0",
+      "text": "AI CAN DO THIS",
+      "x": 0.5,
+      "y": 0.84,
+      "align": "center",
+      "size": 28,
+      "color": "#7ee787",
+      "effects": { "glitchIn": true, "shadow": true, "scanlineMask": 0.18 }
+    },
+
+    {
       "id": "title-polygons",
       "start": "02:43.7",
       "end": "02:46.0",
-      "text": "😍😍😍",
+      "text": "POLYGONS",
       "x": 0.5,
       "y": 0.2,
       "align": "center",
       "size": 34,
       "color": "#ffd166",
-      "effects": { "shadow": true }
+      "effects": { "shadow": true, "glitchIn": true }
     },
     {
       "id": "this-drop",
@@ -871,6 +1123,42 @@
       "size": 64,
       "color": "#ff3b30",
       "effects": { "glitchIn": true, "shadow": true }
+    },
+    {
+      "id": "title-beyond",
+      "start": "03:32.0",
+      "end": "03:34.6",
+      "text": "BEYOND",
+      "x": 0.5,
+      "y": 0.2,
+      "align": "center",
+      "size": 34,
+      "color": "#9ef0ff",
+      "effects": { "glitchIn": true, "shadow": true, "scanlineMask": 0.16 }
+    },
+    {
+      "id": "hook-04330",
+      "start": "04:33.0",
+      "end": "04:34.0",
+      "text": "AI CAN DO THIS",
+      "x": 0.5,
+      "y": 0.84,
+      "align": "center",
+      "size": 30,
+      "color": "#7ee787",
+      "effects": { "glitchIn": true, "shadow": true }
+    },
+    {
+      "id": "finale-call",
+      "start": "04:47.7",
+      "end": "04:49.2",
+      "text": "WATCH",
+      "x": 0.5,
+      "y": 0.45,
+      "align": "center",
+      "size": 60,
+      "color": "#ffffff",
+      "effects": { "glitchIn": true, "shadow": true, "scanlineMask": 0.14 }
     }
   ]
 }
