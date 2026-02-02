@@ -57,18 +57,18 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `plasma` | `speed` |  |
 | `tunnel` | `speed` |  |
 | `rotozoom` | `speed` |  |
-| `blobs` | None |  |
-| `ribbons` | None |  |
-| `lissajous` | None |  |
-| `glitch` | None |  |
-| `bokeh` | None |  |
-| `fractal` | None |  |
-| `feedback` | None |  |
-| `equalizer` | None |  |
-| `isogrid` | None |  |
-| `neon` | None |  |
-| `particles` | None |  |
-| `finale` | None |  |
+| `blobs` | `count`, `radius`, `orbit`, `speed`, `glow` |  |
+| `ribbons` | `count`, `speed`, `amplitude`, `audioBoost`, `offset`, `spacing`, `thickness` |  |
+| `lissajous` | `points`, `speed`, `a`, `b`, `radius`, `lineWidth` |  |
+| `glitch` | `sparkles`, `sparkleSize`, `sliceCount`, `sliceBoost`, `sliceHeight`, `sliceVariance`, `offset`, `shake`, `maxShake` |  |
+| `bokeh` | `count`, `speed`, `radius`, `alpha`, `hueShift` |  |
+| `fractal` | `iterations`, `trebleBoost`, `speed`, `scale`, `alpha` |  |
+| `feedback` | `scale`, `wobble`, `rotation`, `trail`, `glow` |  |
+| `equalizer` | `bars`, `barWidth`, `height`, `bassBoost`, `alpha` |  |
+| `isogrid` | `opacity`, `lineWidth`, `spacing`, `wave`, `speed` |  |
+| `neon` | `shapes`, `radius`, `radiusStep`, `speed`, `glow`, `lineWidth` |  |
+| `particles` | `trail`, `burst`, `burstAudio`, `force`, `forceAudio` |  |
+| `finale` | `trail`, `starSpeed`, `starWarp`, `starTurn`, `particleCount`, `particleForce`, `bars`, `barHeight` |  |
 | `proper3d` | `speed` |  |
 | `fake3d` | `speed` |  |
 | `portrait` | `zoom`, `drift` |  |

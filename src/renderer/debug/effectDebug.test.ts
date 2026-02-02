@@ -35,4 +35,31 @@ describe("effect debug params", () => {
     const params = coerceEffectParams("flyover", { palette: "night" });
     expect(params.palette).toBe("night");
   });
+
+  it("provides defaults for newly tunable effects", () => {
+    expect(getEffectDebugDefaults("blobs")).toEqual({
+      count: 6,
+      radius: 0.12,
+      orbit: 0.25,
+      speed: 0.6,
+      glow: 0.8
+    });
+  });
+
+  it("clamps equalizer params within control bounds", () => {
+    const params = coerceEffectParams("equalizer", {
+      bars: 200,
+      barWidth: 2,
+      height: 0.1,
+      bassBoost: -5,
+      alpha: 2
+    });
+    expect(params).toEqual({
+      bars: 128,
+      barWidth: 1,
+      height: 0.2,
+      bassBoost: 0,
+      alpha: 1
+    });
+  });
 });
