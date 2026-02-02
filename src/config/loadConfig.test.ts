@@ -65,4 +65,24 @@ describe("normalizeTimelineConfig", () => {
     expect(normalized.sections[0].start).toBeCloseTo(normalized.intro.end);
     expect(last.end).toBeCloseTo(330);
   });
+
+  it("uses rain and lightning as layered effects in the main timeline", () => {
+    const timelinePath = new URL("../../public/timeline.json", import.meta.url);
+    const raw = JSON.parse(readFileSync(timelinePath, "utf-8")) as RawTimelineConfig;
+    const normalized = normalizeTimelineConfig(raw);
+
+    const baseEffects = new Set(normalized.sections.map((section) => section.effect));
+    expect(baseEffects.has("rain")).toBe(false);
+    expect(baseEffects.has("lightning")).toBe(false);
+
+    const rainLayerCounts = normalized.sections.map(
+      (section) => section.layers?.filter((layer) => layer.effect === "rain").length ?? 0
+    );
+    const lightningLayers = normalized.sections.flatMap(
+      (section) => section.layers?.filter((layer) => layer.effect === "lightning") ?? []
+    );
+
+    expect(Math.max(...rainLayerCounts)).toBeGreaterThanOrEqual(2);
+    expect(lightningLayers.length).toBeGreaterThan(0);
+  });
 });
