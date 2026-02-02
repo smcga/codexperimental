@@ -58,6 +58,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `portrait` | `zoom`, `drift` |  |
 | `sphere3d` | `speed` |  |
 | `spherecloud` | `speed` |  |
+| `handcloud` | `speed`, `scale`, `density`, `gesture` |  |
 | `chess` | `speed`, `showHighlights`, `startTime` |  |
 | `flyover` | `speed`, `horizon`, `seaDetail`, `waveSpeed`, `waveIntensity`, `islandCount`, `islandSeed`, `fog`, `palette`, `audioReactive` | `palette` supports `day`, `sunset`, `night`. |
 | `gl_fractal_tunnel` | `quality`, `warp`, `hueShift`, `exposure`, `seed` | Falls back to `tunnel` when WebGL2 is unavailable. |

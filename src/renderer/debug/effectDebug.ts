@@ -147,6 +147,15 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
     title: "Sphere Cloud Controls",
     controls: [numberControl("speed", "Speed", 1.0, { min: 0, step: 0.05 })]
   },
+  handcloud: {
+    title: "Hand Cloud Controls",
+    controls: [
+      numberControl("speed", "Speed", 1.0, { min: 0, step: 0.05 }),
+      numberControl("scale", "Scale", 1.0, { min: 0.5, max: 2.5, step: 0.05 }),
+      numberControl("density", "Density", 1.0, { min: 0.2, max: 1.5, step: 0.05 }),
+      numberControl("gesture", "Gesture", 0.0, { min: 0, max: 1, step: 0.05 })
+    ]
+  },
   chess: {
     title: "Chess Controls",
     controls: [
