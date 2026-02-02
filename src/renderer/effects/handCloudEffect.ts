@@ -11,6 +11,8 @@ type FingerConfig = {
   length: number;
   baseRadius: number;
   tipRadius: number;
+  baseInset?: number;
+  baseBulge?: number;
 };
 
 type PalmLoafConfig = {
@@ -107,11 +109,45 @@ function buildFingerPoints(fingers: FingerConfig[], ringSegments = 20, lengthSeg
   fingers.forEach((finger) => {
     const dir = normalize(finger.dir);
     const basis = buildPerpendicularBasis(dir);
+    const baseInset = Math.max(0, finger.baseInset ?? 0);
+    const baseBulge = finger.baseBulge ?? 1;
     const tipCenter = {
       x: finger.base.x + dir.x * finger.length,
       y: finger.base.y + dir.y * finger.length,
       z: finger.base.z + dir.z * finger.length
     };
+
+    if (baseInset > 0) {
+      const blendSteps = 3;
+      for (let blend = 0; blend <= blendSteps; blend += 1) {
+        const t = blend / blendSteps;
+        const inset = -baseInset * (1 - t);
+        const center = {
+          x: finger.base.x + dir.x * inset,
+          y: finger.base.y + dir.y * inset,
+          z: finger.base.z + dir.z * inset
+        };
+        const radius = lerp(finger.baseRadius * baseBulge, finger.baseRadius, t);
+        for (let r = 0; r < ringSegments; r += 1) {
+          const angle = (r / ringSegments) * Math.PI * 2;
+          const offset = {
+            x: basis.u.x * Math.cos(angle) * radius + basis.v.x * Math.sin(angle) * radius,
+            y: basis.u.y * Math.cos(angle) * radius + basis.v.y * Math.sin(angle) * radius,
+            z: basis.u.z * Math.cos(angle) * radius + basis.v.z * Math.sin(angle) * radius
+          };
+          const point = {
+            x: center.x + offset.x,
+            y: center.y + offset.y,
+            z: center.z + offset.z
+          };
+          points.push({
+            ...point,
+            hue: clampHueFromY(point.y),
+            normal: normalize({ x: point.x - center.x, y: point.y - center.y, z: point.z - center.z })
+          });
+        }
+      }
+    }
 
     for (let i = 0; i <= lengthSegments; i += 1) {
       const t = i / lengthSegments;
@@ -198,35 +234,45 @@ export function buildHandCloudPoints(): HandPoint[] {
       dir: { x: -0.55, y: 0.82, z: 0.05 },
       length: 1.05,
       baseRadius: 0.28,
-      tipRadius: 0.16
+      tipRadius: 0.16,
+      baseInset: 0.24,
+      baseBulge: 1.18
     },
     {
       base: { x: -0.45, y: 0.55, z: 0.32 },
       dir: { x: -0.1, y: 0.98, z: 0.05 },
       length: 1.6,
       baseRadius: 0.2,
-      tipRadius: 0.1
+      tipRadius: 0.1,
+      baseInset: 0.22,
+      baseBulge: 1.14
     },
     {
       base: { x: -0.1, y: 0.6, z: 0.34 },
       dir: { x: -0.02, y: 0.99, z: 0.02 },
       length: 1.75,
       baseRadius: 0.2,
-      tipRadius: 0.1
+      tipRadius: 0.1,
+      baseInset: 0.2,
+      baseBulge: 1.12
     },
     {
       base: { x: 0.25, y: 0.55, z: 0.32 },
       dir: { x: 0.12, y: 0.98, z: -0.04 },
       length: 1.65,
       baseRadius: 0.19,
-      tipRadius: 0.09
+      tipRadius: 0.09,
+      baseInset: 0.2,
+      baseBulge: 1.12
     },
     {
       base: { x: 0.55, y: 0.48, z: 0.3 },
       dir: { x: 0.25, y: 0.96, z: -0.08 },
       length: 1.45,
       baseRadius: 0.18,
-      tipRadius: 0.08
+      tipRadius: 0.08,
+      baseInset: 0.2,
+      baseBulge: 1.1
     }
   ]);
 
