@@ -26,4 +26,10 @@ describe("buildHeartCloudPoints", () => {
     const cleftPoints = points.filter((point) => point.y > 0.25 && Math.abs(point.x) < 0.12);
     expect(cleftPoints).toHaveLength(0);
   });
+
+  it("densifies the upper lobes", () => {
+    const points = buildHeartCloudPoints(18);
+    const lobePoints = points.filter((point) => point.y > 0.25 && Math.abs(point.x) > 0.25);
+    expect(lobePoints.length).toBeGreaterThan(120);
+  });
 });
