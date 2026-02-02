@@ -16,6 +16,10 @@ export type WebGLUniformPayload = {
   steps: number;
   quality?: number;
   aspect?: number;
+  sunPos?: [number, number];
+  sunDir?: [number, number, number];
+  fogAmount?: number;
+  cloudOffset?: [number, number, number];
 };
 
 const VERTEX_SHADER_SOURCE = `#version 300 es
@@ -164,7 +168,11 @@ export class WebGLEffectBase {
       u_seed: gl.getUniformLocation(program, "u_seed"),
       u_steps: gl.getUniformLocation(program, "u_steps"),
       u_quality: gl.getUniformLocation(program, "u_quality"),
-      u_aspect: gl.getUniformLocation(program, "u_aspect")
+      u_aspect: gl.getUniformLocation(program, "u_aspect"),
+      u_sunPos: gl.getUniformLocation(program, "u_sunPos"),
+      u_sunDir: gl.getUniformLocation(program, "u_sunDir"),
+      u_fogAmount: gl.getUniformLocation(program, "u_fogAmount"),
+      u_cloudOffset: gl.getUniformLocation(program, "u_cloudOffset")
     };
 
     gl.disable(gl.BLEND);
@@ -229,10 +237,26 @@ export class WebGLEffectBase {
     set1f("u_seed", payload.seed);
     set1f("u_quality", payload.quality);
     set1f("u_aspect", payload.aspect);
+    set1f("u_fogAmount", payload.fogAmount);
 
     const stepsLocation = this.uniformLocations.u_steps;
     if (stepsLocation && Number.isFinite(payload.steps)) {
       gl.uniform1i(stepsLocation, payload.steps);
+    }
+
+    const sunPosLocation = this.uniformLocations.u_sunPos;
+    if (sunPosLocation && payload.sunPos) {
+      gl.uniform2f(sunPosLocation, payload.sunPos[0], payload.sunPos[1]);
+    }
+
+    const sunDirLocation = this.uniformLocations.u_sunDir;
+    if (sunDirLocation && payload.sunDir) {
+      gl.uniform3f(sunDirLocation, payload.sunDir[0], payload.sunDir[1], payload.sunDir[2]);
+    }
+
+    const cloudOffsetLocation = this.uniformLocations.u_cloudOffset;
+    if (cloudOffsetLocation && payload.cloudOffset) {
+      gl.uniform3f(cloudOffsetLocation, payload.cloudOffset[0], payload.cloudOffset[1], payload.cloudOffset[2]);
     }
   }
 
