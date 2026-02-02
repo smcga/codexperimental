@@ -26,6 +26,8 @@ import { SynthwaveSunsetEffect } from "./synthwaveSunset";
 import { FractalTunnelEffect } from "./gl/fractalTunnelEffect";
 import { PhysicsPileEffect } from "./physicsPile";
 import { ImpossibleCorridorEffect } from "./gl/impossibleCorridorEffect";
+import { RainEffect } from "./rainEffect";
+import { LightningEffect } from "./lightningEffect";
 
 export const effectRegistry: Record<string, Effect> = {
   starfield: new StarfieldEffect(),
@@ -55,6 +57,8 @@ export const effectRegistry: Record<string, Effect> = {
   physics_pile: new PhysicsPileEffect(),
   gl_impossible_corridor: new ImpossibleCorridorEffect(),
   synthwaveSunset: new SynthwaveSunsetEffect(),
+  rain: new RainEffect(),
+  lightning: new LightningEffect()
 };
 
 export function resetEffects(): void {

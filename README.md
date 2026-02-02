@@ -19,6 +19,8 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 - The `spherecloud` effect renders a glowing point-cloud sphere with subtle audio-reactive rotation and lighting.
 - The `flyover` effect renders a sky/sea flythrough with distant islands; tune `params` like `speed`, `horizon`, `seaDetail`, `islandSeed`, and `palette`.
 - The `synthwaveSunset` effect renders an outrun sunset with a striped sun, neon sky, and reflective sea; tune `params` like `horizon`, `sunRadius`, `stripeHeight`, `stripeGap`, and `seaSpeed`.
+- The `rain` effect renders layered rain streaks with wind drift and optional splashes; tune `params` like `intensity`, `wind`, `speed`, `streakLength`, `splash`, `hue`, and `seed`.
+- The `lightning` effect renders brief flash overlays with optional bolt branches; tune `params` like `trigger`, `chancePerSecond`, `cooldown`, `flashDuration`, `bolt`, `branches`, and `seed`.
 - The `chess` effect renders a deterministic, self-playing chess match driven by the timeline; tune pacing with `params.speed` or anchor with `params.startTime`.
 - The `gl_fractal_tunnel` effect renders a WebGL2 raymarched tunnel with audio-reactive pulses and bloom; tune `params` like `quality`, `warp`, `hueShift`, `exposure`, and `seed`. It falls back to the `tunnel` effect when WebGL2 is unavailable.
 - The `physics_pile` effect simulates a stack of 2D rigid bodies; tune `params` like `count`, `restitution`, `friction`, `gravity`, `beatImpulse`, `spawnMode`, `trail`, `seed`, `wreckingCue` (swings in a heavy ball), and `shatter` (freezes and dissolves the stack into particles).
