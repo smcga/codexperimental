@@ -79,51 +79,134 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
   },
   blobs: {
     title: "Blobs Controls",
-    controls: []
+    controls: [
+      numberControl("count", "Count", 6, { min: 1, max: 12, step: 1 }),
+      numberControl("radius", "Radius", 0.12, { min: 0.05, max: 0.3, step: 0.01 }),
+      numberControl("orbit", "Orbit", 0.25, { min: 0, max: 0.6, step: 0.01 }),
+      numberControl("speed", "Speed", 0.6, { min: 0, step: 0.05 }),
+      numberControl("glow", "Glow", 0.8, { min: 0, max: 1.5, step: 0.05 })
+    ]
   },
   ribbons: {
     title: "Ribbon Controls",
-    controls: []
+    controls: [
+      numberControl("count", "Count", 5, { min: 1, max: 12, step: 1 }),
+      numberControl("speed", "Speed", 0.8, { min: 0, step: 0.05 }),
+      numberControl("amplitude", "Amplitude", 0.15, { min: 0.05, max: 0.4, step: 0.01 }),
+      numberControl("audioBoost", "Audio Boost", 0.2, { min: 0, max: 0.5, step: 0.01 }),
+      numberControl("offset", "Offset", 0.3, { min: 0, max: 0.8, step: 0.01 }),
+      numberControl("spacing", "Spacing", 0.08, { min: 0, max: 0.3, step: 0.01 }),
+      numberControl("thickness", "Thickness", 2, { min: 0.5, max: 6, step: 0.1 })
+    ]
   },
   lissajous: {
     title: "Lissajous Controls",
-    controls: []
+    controls: [
+      numberControl("points", "Points", 320, { min: 80, max: 800, step: 10 }),
+      numberControl("speed", "Speed", 1, { min: 0, max: 3, step: 0.05 }),
+      numberControl("a", "A Frequency", 3, { min: 1, max: 6, step: 0.1 }),
+      numberControl("b", "B Frequency", 2, { min: 1, max: 6, step: 0.1 }),
+      numberControl("radius", "Radius", 0.35, { min: 0.1, max: 0.5, step: 0.01 }),
+      numberControl("lineWidth", "Line Width", 1.5, { min: 0.5, max: 6, step: 0.1 })
+    ]
   },
   glitch: {
     title: "Glitch Controls",
-    controls: []
+    controls: [
+      numberControl("sparkles", "Sparkles", 60, { min: 10, max: 200, step: 5 }),
+      numberControl("sparkleSize", "Sparkle Size", 2, { min: 1, max: 6, step: 0.5 }),
+      numberControl("sliceCount", "Slice Count", 3, { min: 1, max: 10, step: 1 }),
+      numberControl("sliceBoost", "Slice Boost", 10, { min: 0, max: 20, step: 1 }),
+      numberControl("sliceHeight", "Slice Height", 4, { min: 1, max: 12, step: 1 }),
+      numberControl("sliceVariance", "Slice Variance", 18, { min: 0, max: 30, step: 1 }),
+      numberControl("offset", "Offset", 0.08, { min: 0, max: 0.3, step: 0.01 }),
+      numberControl("shake", "Shake", 4, { min: 0, max: 10, step: 0.1 }),
+      numberControl("maxShake", "Max Shake", 5, { min: 0.5, max: 12, step: 0.1 })
+    ]
   },
   bokeh: {
     title: "Bokeh Controls",
-    controls: []
+    controls: [
+      numberControl("count", "Count", 40, { min: 10, max: 120, step: 5 }),
+      numberControl("speed", "Speed", 0.7, { min: 0, max: 2, step: 0.05 }),
+      numberControl("radius", "Radius", 30, { min: 4, max: 80, step: 1 }),
+      numberControl("alpha", "Alpha", 0.15, { min: 0.05, max: 0.8, step: 0.05 }),
+      numberControl("hueShift", "Hue Shift", 0, { min: -180, max: 180, step: 5 })
+    ]
   },
   fractal: {
     title: "Fractal Controls",
-    controls: []
+    controls: [
+      numberControl("iterations", "Iterations", 600, { min: 200, max: 1400, step: 50 }),
+      numberControl("trebleBoost", "Treble Boost", 400, { min: 0, max: 800, step: 25 }),
+      numberControl("speed", "Speed", 1, { min: 0, max: 3, step: 0.05 }),
+      numberControl("scale", "Scale", 0.25, { min: 0.1, max: 0.4, step: 0.01 }),
+      numberControl("alpha", "Alpha", 0.1, { min: 0.05, max: 0.8, step: 0.05 })
+    ]
   },
   feedback: {
     title: "Feedback Controls",
-    controls: []
+    controls: [
+      numberControl("scale", "Scale", 0.02, { min: 0, max: 0.2, step: 0.005 }),
+      numberControl("wobble", "Wobble", 0.01, { min: 0, max: 0.05, step: 0.005 }),
+      numberControl("rotation", "Rotation", 0.02, { min: 0, max: 0.1, step: 0.005 }),
+      numberControl("trail", "Trail", 0.96, { min: 0.85, max: 0.99, step: 0.01 }),
+      numberControl("glow", "Glow", 0.2, { min: 0.05, max: 0.6, step: 0.05 })
+    ]
   },
   equalizer: {
     title: "Equalizer Controls",
-    controls: []
+    controls: [
+      numberControl("bars", "Bars", 48, { min: 8, max: 128, step: 1 }),
+      numberControl("barWidth", "Bar Width", 0.8, { min: 0.2, max: 1, step: 0.05 }),
+      numberControl("height", "Height", 0.8, { min: 0.2, max: 1, step: 0.05 }),
+      numberControl("bassBoost", "Bass Boost", 10, { min: 0, max: 60, step: 1 }),
+      numberControl("alpha", "Alpha", 0.8, { min: 0.1, max: 1, step: 0.05 })
+    ]
   },
   isogrid: {
     title: "Isogrid Controls",
-    controls: []
+    controls: [
+      numberControl("opacity", "Opacity", 0.2, { min: 0.05, max: 0.8, step: 0.05 }),
+      numberControl("lineWidth", "Line Width", 1, { min: 0.5, max: 4, step: 0.1 }),
+      numberControl("spacing", "Spacing", 18, { min: 8, max: 40, step: 1 }),
+      numberControl("wave", "Wave", 8, { min: 0, max: 20, step: 1 }),
+      numberControl("speed", "Speed", 0.8, { min: 0, max: 3, step: 0.05 })
+    ]
   },
   neon: {
     title: "Neon Controls",
-    controls: []
+    controls: [
+      numberControl("shapes", "Shapes", 4, { min: 1, max: 8, step: 1 }),
+      numberControl("radius", "Radius", 30, { min: 10, max: 80, step: 1 }),
+      numberControl("radiusStep", "Radius Step", 24, { min: 5, max: 60, step: 1 }),
+      numberControl("speed", "Speed", 0.6, { min: 0, max: 2, step: 0.05 }),
+      numberControl("glow", "Glow", 18, { min: 4, max: 40, step: 1 }),
+      numberControl("lineWidth", "Line Width", 2, { min: 0.5, max: 6, step: 0.1 })
+    ]
   },
   particles: {
     title: "Particle Field Controls",
-    controls: []
+    controls: [
+      numberControl("trail", "Trail", 0.2, { min: 0, max: 0.6, step: 0.05 }),
+      numberControl("burst", "Burst", 24, { min: 4, max: 80, step: 1 }),
+      numberControl("burstAudio", "Burst Audio", 20, { min: 0, max: 60, step: 1 }),
+      numberControl("force", "Force", 1, { min: 0.2, max: 4, step: 0.1 }),
+      numberControl("forceAudio", "Force Audio", 2, { min: 0, max: 6, step: 0.1 })
+    ]
   },
   finale: {
     title: "Finale Controls",
-    controls: []
+    controls: [
+      numberControl("trail", "Trail", 0.4, { min: 0.05, max: 0.8, step: 0.05 }),
+      numberControl("starSpeed", "Star Speed", 1.2, { min: 0, max: 4, step: 0.05 }),
+      numberControl("starWarp", "Star Warp", 0.9, { min: 0, max: 2, step: 0.05 }),
+      numberControl("starTurn", "Star Turn", 0.35, { min: 0, max: 1.5, step: 0.05 }),
+      numberControl("particleCount", "Particle Count", 40, { min: 10, max: 120, step: 1 }),
+      numberControl("particleForce", "Particle Force", 3, { min: 0.5, max: 6, step: 0.1 }),
+      numberControl("bars", "Bars", 32, { min: 8, max: 64, step: 1 }),
+      numberControl("barHeight", "Bar Height", 0.6, { min: 0.2, max: 1, step: 0.05 })
+    ]
   },
   proper3d: {
     title: "Proper 3D Controls",

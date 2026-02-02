@@ -16,9 +16,14 @@ export class FeedbackEffect implements Effect {
     this.bufferCtx = ctx;
   }
 
-  render({ ctx, width, height, time, audio }: EffectRenderContext): void {
-    const scale = 1 + audio.bass * 0.02 + Math.sin(time * 0.6) * 0.01;
-    const rotation = Math.sin(time * 0.3) * 0.02 + audio.treble * 0.04;
+  render({ ctx, width, height, time, audio, params }: EffectRenderContext): void {
+    const scaleAmount = clamp(params.scale ?? 0.02, 0, 0.2);
+    const wobble = clamp(params.wobble ?? 0.01, 0, 0.05);
+    const rotationAmount = clamp(params.rotation ?? 0.02, 0, 0.1);
+    const trail = clamp(params.trail ?? 0.96, 0.85, 0.99);
+    const glow = clamp(params.glow ?? 0.2, 0.05, 0.6);
+    const scale = 1 + audio.bass * scaleAmount + Math.sin(time * 0.6) * wobble;
+    const rotation = Math.sin(time * 0.3) * rotationAmount + audio.treble * 0.04;
     const intensity = clamp(audio.rms + audio.bass, 0, 1);
 
     ctx.save();
@@ -29,11 +34,11 @@ export class FeedbackEffect implements Effect {
     ctx.rotate(rotation);
     ctx.scale(scale, scale);
     ctx.translate(-width / 2, -height / 2);
-    ctx.globalAlpha = 0.96;
+    ctx.globalAlpha = trail;
     ctx.drawImage(this.buffer, 0, 0, width, height);
     ctx.restore();
 
-    ctx.fillStyle = `rgba(20, 200, 255, ${0.05 + intensity * 0.2})`;
+    ctx.fillStyle = `rgba(20, 200, 255, ${0.05 + intensity * glow})`;
     ctx.beginPath();
     ctx.arc(width * 0.5 + Math.sin(time) * width * 0.2, height * 0.5, 40 + audio.bass * 20, 0, Math.PI * 2);
     ctx.fill();
