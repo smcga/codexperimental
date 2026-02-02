@@ -1,5 +1,6 @@
 import { clamp } from "../../util/math";
 import { NEON_ALLEY_DEFAULTS } from "../effects/gl/neonAlleyEffect";
+import { SPACE_HANGAR_DEFAULTS } from "../effects/gl/spaceHangarEffect";
 import { DEFAULT_FLYOVER_PARAMS, coerceFlyoverParams } from "./flyoverDebug";
 
 export type EffectParamValue = number | string;
@@ -215,6 +216,15 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("exposure", "Exposure", NEON_ALLEY_DEFAULTS.exposure, { min: 0.6, max: 2, step: 0.05 }),
       numberControl("hueShift", "Hue Shift", NEON_ALLEY_DEFAULTS.hueShift, { min: 0, max: 1, step: 0.01 }),
       numberControl("seed", "Seed", NEON_ALLEY_DEFAULTS.seed, { step: 1 })
+    ]
+  },
+  space_hangar: {
+    title: "Space Hangar (WebGL) Controls",
+    controls: [
+      numberControl("quality", "Quality", SPACE_HANGAR_DEFAULTS.quality, { min: 1, max: 3, step: 1 }),
+      numberControl("speed", "Speed", SPACE_HANGAR_DEFAULTS.speed, { min: 0.2, max: 2, step: 0.05 }),
+      numberControl("exposure", "Exposure", SPACE_HANGAR_DEFAULTS.exposure, { min: 0.6, max: 1.8, step: 0.05 }),
+      numberControl("seed", "Seed", SPACE_HANGAR_DEFAULTS.seed, { step: 1 })
     ]
   }
 };
