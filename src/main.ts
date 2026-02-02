@@ -1,5 +1,5 @@
 import "./style.css";
-import { IntroConfig, TransitionType, loadConfig } from "./config/loadConfig";
+import { EraPreset, IntroConfig, TransitionType, loadConfig } from "./config/loadConfig";
 import { AudioPlayer, AudioFeatures } from "./audio/audioPlayer";
 import { Timeline } from "./timeline/timeline";
 import { Renderer } from "./renderer/renderer";
@@ -10,6 +10,7 @@ import { TerminalIntroRenderer } from "./renderer/intro/terminalIntro";
 import { createExplosionState, getExplosionShake, renderExplosion } from "./renderer/overlays/explosion";
 import { getFullscreenAction, getIntroSkipTime, getNextDebugOverlayVisibility, getSecondHalfSkipTime } from "./controls";
 import { shouldShowEffectPanel } from "./debug/debugPanel";
+import { applyEraOverride, applyEraOverrideToTransition } from "./debug/eraOverride";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
@@ -18,6 +19,7 @@ const debugOverlay = document.querySelector<HTMLDivElement>("#debug-overlay");
 const debugTimestamp = document.querySelector<HTMLSpanElement>("#debug-timestamp");
 const debugWebglStatus = document.querySelector<HTMLSpanElement>("#debug-webgl-status");
 const debugTransitionSelect = document.querySelector<HTMLSelectElement>("#debug-transition");
+const debugEraSelect = document.querySelector<HTMLSelectElement>("#debug-era");
 const debugEffectsContainer = document.querySelector<HTMLDivElement>("#debug-effects");
 const debugEffectPanel = document.querySelector<HTMLDivElement>("#debug-effect-panel");
 const debugEffectTitle = document.querySelector<HTMLDivElement>("#debug-effect-title");
@@ -32,7 +34,7 @@ const mobileFullscreenButton = document.querySelector<HTMLButtonElement>("#mobil
 
 const releaseMode = new URLSearchParams(window.location.search).get("release") === "1";
 
-if (!canvas || !overlay || !overlayText || !debugOverlay || !debugTimestamp || !debugTransitionSelect) {
+if (!canvas || !overlay || !overlayText || !debugOverlay || !debugTimestamp || !debugTransitionSelect || !debugEraSelect) {
   throw new Error("Missing canvas or overlay element");
 }
 
@@ -54,6 +56,7 @@ const debugState = {
   enabled: false,
   forcedEffect: null as string | null,
   transitionOverride: null as TransitionType | null,
+  eraOverride: null as EraPreset | null,
   monochromeOverride: null as boolean | null,
   effectParams: Object.fromEntries(
     Object.keys(effectRegistry).map((effectName) => [effectName, getEffectDebugDefaults(effectName)])
@@ -298,6 +301,13 @@ if (!releaseMode && debugTransitionSelect) {
   });
 }
 
+if (!releaseMode && debugEraSelect) {
+  debugEraSelect.addEventListener("change", () => {
+    const value = debugEraSelect.value;
+    debugState.eraOverride = value === "auto" ? null : (value as EraPreset);
+  });
+}
+
 if (!releaseMode && debugMonochromeToggle) {
   debugMonochromeToggle.addEventListener("change", () => {
     debugState.monochromeOverride = debugMonochromeToggle.checked ? true : null;
@@ -413,9 +423,11 @@ function loop(): void {
     const effectParamOverrides = debugState.forcedEffect ? debugState.effectParams[debugState.forcedEffect] : null;
     const effectParamOverridesRecord = effectParamOverrides as Record<string, number> | null;
     const hasEffectOverrides = effectParamOverrides && Object.keys(effectParamOverrides).length > 0;
+    const eraOverride = debugState.eraOverride;
     let sectionOverride = debugState.forcedEffect
       ? { ...state.section, effect: debugState.forcedEffect }
       : state.section;
+    sectionOverride = applyEraOverride(sectionOverride, eraOverride);
     if (hasEffectOverrides && effectParamOverridesRecord) {
       sectionOverride = { ...sectionOverride, params: { ...sectionOverride.params, ...effectParamOverridesRecord } };
     }
@@ -434,7 +446,8 @@ function loop(): void {
           type: debugState.transitionOverride ?? state.transition.type
         }
       : undefined;
-    const explosionTime = state.section.era === "future" ? demoTime - state.section.start : -1;
+    const transitionOverrideWithEra = applyEraOverrideToTransition(transitionOverride, eraOverride);
+    const explosionTime = sectionOverride.era === "future" ? demoTime - sectionOverride.start : -1;
     const explosionShake = getExplosionShake(explosionTime);
 
     renderer.render({
@@ -444,7 +457,7 @@ function loop(): void {
       time: demoTime,
       delta,
       section: sectionOverride,
-      transition: transitionOverride,
+      transition: transitionOverrideWithEra,
       textCues: state.activeTextCues,
       audio: audioFeatures,
       monochromeOverride: debugState.monochromeOverride,
