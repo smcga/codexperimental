@@ -13,15 +13,19 @@ type FingerConfig = {
   tipRadius: number;
 };
 
-type PalmSlabConfig = {
-  rx: number;
-  rz: number;
-  thickness: number;
-  n: number;
-  radialSteps: number;
-  angularSteps: number;
-  wristTaper: number;
-  thenarBump: number;
+type PalmLoafConfig = {
+  zMin: number;
+  zMax: number;
+  zSteps: number;
+  ringSteps: number;
+  wristWidth: number;
+  knuckleWidth: number;
+  wristThickness: number;
+  knuckleThickness: number;
+  midBulge: number;
+  thenarBulge: number;
+  thenarX: number;
+  thenarZ: number;
 };
 
 const LIGHT_DIRECTION = normalize({ x: -0.3, y: -0.2, z: -1 });
@@ -39,119 +43,49 @@ function clampHueFromY(y: number): number {
   return 180 + t * 160;
 }
 
-function superellipseRadius(x: number, z: number, rx: number, rz: number, n: number): number {
-  const ax = Math.abs(x) / rx;
-  const az = Math.abs(z) / rz;
-  return Math.pow(Math.pow(ax, n) + Math.pow(az, n), 1 / n);
+function smoothstep(t: number): number {
+  const clamped = clamp(t, 0, 1);
+  return clamped * clamped * (3 - 2 * clamped);
 }
 
-function palmHeightField(x: number, z: number, config: PalmSlabConfig): number {
-  const radius = superellipseRadius(x, z, config.rx, config.rz, config.n);
-  const inside = clamp(1 - radius, 0, 1);
-  const dome = inside * inside;
-  const wrist = clamp(-z / config.rz + 0.15, 0, 1);
-  const wristCut = wrist * config.wristTaper;
-
-  const tx = (x + config.rx * 0.55) / (config.rx * 0.55);
-  const tz = (z - config.rz * 0.15) / (config.rz * 0.55);
-  const thenar = Math.exp(-(tx * tx + tz * tz) * 2.2) * config.thenarBump;
-
-  return (
-    config.thickness * (0.55 + 0.45 * dome) -
-    config.thickness * 0.55 * wristCut +
-    config.thickness * 0.5 * thenar
-  );
-}
-
-function buildPalmPointsSlab(config: PalmSlabConfig): HandPoint[] {
+function buildPalmPointsLoaf(config: PalmLoafConfig): HandPoint[] {
   const points: HandPoint[] = [];
-  const radialSteps = Math.max(6, Math.floor(config.radialSteps));
-  const angularSteps = Math.max(24, Math.floor(config.angularSteps));
+  const zSteps = Math.max(6, Math.floor(config.zSteps));
+  const ringSteps = Math.max(16, Math.floor(config.ringSteps));
+  const zSpan = config.zMax - config.zMin;
 
-  for (let radial = 0; radial <= radialSteps; radial += 1) {
-    const t = radial / radialSteps;
-    for (let angular = 0; angular < angularSteps; angular += 1) {
-      const angle = (angular / angularSteps) * Math.PI * 2;
-      const dx = Math.cos(angle);
-      const dz = Math.sin(angle);
+  for (let zi = 0; zi <= zSteps; zi += 1) {
+    const t = zi / zSteps;
+    const s = smoothstep(t);
+    const z = lerp(config.zMin, config.zMax, t);
 
-      let s0 = 0;
-      let s1 = 1;
-      for (let i = 0; i < 10; i += 1) {
-        const mid = (s0 + s1) / 2;
-        const x = dx * config.rx * mid;
-        const z = dz * config.rz * mid;
-        const radius = superellipseRadius(x, z, config.rx, config.rz, config.n);
-        if (radius <= 1) {
-          s0 = mid;
-        } else {
-          s1 = mid;
-        }
-      }
+    let rx = lerp(config.wristWidth, config.knuckleWidth, s);
+    let ry = lerp(config.wristThickness, config.knuckleThickness, s);
+    const mid = 1 - Math.abs(t * 2 - 1);
+    const bulge = 1 + config.midBulge * (mid * mid);
+    rx *= bulge;
+    ry *= bulge;
 
-      const s = s0 * t;
-      const x = dx * config.rx * s;
-      const z = dz * config.rz * s;
-      const topY = palmHeightField(x, z, config);
-      const bottomY = -config.thickness * 0.9;
+    const dz = zSpan !== 0 ? (z - config.thenarZ) / zSpan : 0;
+    const thenar = Math.exp(-(dz * dz) * 12) * config.thenarBulge;
+    const centerX = config.thenarX * thenar * 0.6;
+    const rx2 = rx * (1 + thenar * 0.55);
+    const ry2 = ry * (1 + thenar * 0.25);
 
-      const eps = 0.02;
-      const hx = palmHeightField(x + eps, z, config) - palmHeightField(x - eps, z, config);
-      const hz = palmHeightField(x, z + eps, config) - palmHeightField(x, z - eps, config);
-      const topNormal = normalize({ x: -hx, y: 2 * eps, z: -hz });
+    for (let ai = 0; ai < ringSteps; ai += 1) {
+      const angle = (ai / ringSteps) * Math.PI * 2;
+      const x = centerX + Math.cos(angle) * rx2;
+      const y = Math.sin(angle) * ry2;
+      const nx = (x - centerX) / (rx2 * rx2);
+      const ny = y / (ry2 * ry2);
+      const normal = normalize({ x: nx, y: ny, z: 0 });
 
-      points.push({
-        x,
-        y: topY,
-        z,
-        hue: clampHueFromY(topY),
-        normal: topNormal
-      });
-
-      points.push({
-        x,
-        y: bottomY,
-        z,
-        hue: clampHueFromY(bottomY),
-        normal: { x: 0, y: -1, z: 0 }
-      });
-    }
-  }
-
-  const rimVerticalSteps = 6;
-  for (let angular = 0; angular < angularSteps; angular += 1) {
-    const angle = (angular / angularSteps) * Math.PI * 2;
-    const dx = Math.cos(angle);
-    const dz = Math.sin(angle);
-    let s0 = 0;
-    let s1 = 1;
-    for (let i = 0; i < 10; i += 1) {
-      const mid = (s0 + s1) / 2;
-      const x = dx * config.rx * mid;
-      const z = dz * config.rz * mid;
-      const radius = superellipseRadius(x, z, config.rx, config.rz, config.n);
-      if (radius <= 1) {
-        s0 = mid;
-      } else {
-        s1 = mid;
-      }
-    }
-
-    const x = dx * config.rx * s0;
-    const z = dz * config.rz * s0;
-    const topY = palmHeightField(x, z, config);
-    const bottomY = -config.thickness * 0.9;
-    const sideNormal = normalize({ x: dx / config.rx, y: 0, z: dz / config.rz });
-
-    for (let vertical = 0; vertical <= rimVerticalSteps; vertical += 1) {
-      const vt = vertical / rimVerticalSteps;
-      const y = lerp(bottomY, topY, vt);
       points.push({
         x,
         y,
         z,
         hue: clampHueFromY(y),
-        normal: sideNormal
+        normal
       });
     }
   }
@@ -243,48 +177,52 @@ function buildFingerPoints(fingers: FingerConfig[], ringSegments = 20, lengthSeg
 }
 
 export function buildHandCloudPoints(): HandPoint[] {
-  const palm = buildPalmPointsSlab({
-    rx: 1.15,
-    rz: 0.95,
-    thickness: 0.42,
-    n: 4.8,
-    radialSteps: 14,
-    angularSteps: 34,
-    wristTaper: 0.9,
-    thenarBump: 0.9
+  const palm = buildPalmPointsLoaf({
+    zMin: -1.05,
+    zMax: 0.55,
+    zSteps: 24,
+    ringSteps: 34,
+    wristWidth: 0.62,
+    knuckleWidth: 1.05,
+    wristThickness: 0.34,
+    knuckleThickness: 0.42,
+    midBulge: 0.35,
+    thenarBulge: 0.9,
+    thenarX: -0.55,
+    thenarZ: 0.1
   });
 
   const fingers = buildFingerPoints([
     {
-      base: { x: -0.95, y: 0.35, z: 0.15 },
+      base: { x: -0.95, y: 0.35, z: 0.32 },
       dir: { x: -0.55, y: 0.82, z: 0.05 },
       length: 1.05,
       baseRadius: 0.28,
       tipRadius: 0.16
     },
     {
-      base: { x: -0.45, y: 0.55, z: 0.2 },
+      base: { x: -0.45, y: 0.55, z: 0.32 },
       dir: { x: -0.1, y: 0.98, z: 0.05 },
       length: 1.6,
       baseRadius: 0.2,
       tipRadius: 0.1
     },
     {
-      base: { x: -0.1, y: 0.6, z: 0.2 },
+      base: { x: -0.1, y: 0.6, z: 0.34 },
       dir: { x: -0.02, y: 0.99, z: 0.02 },
       length: 1.75,
       baseRadius: 0.2,
       tipRadius: 0.1
     },
     {
-      base: { x: 0.25, y: 0.55, z: 0.18 },
+      base: { x: 0.25, y: 0.55, z: 0.32 },
       dir: { x: 0.12, y: 0.98, z: -0.04 },
       length: 1.65,
       baseRadius: 0.19,
       tipRadius: 0.09
     },
     {
-      base: { x: 0.55, y: 0.48, z: 0.12 },
+      base: { x: 0.55, y: 0.48, z: 0.3 },
       dir: { x: 0.25, y: 0.96, z: -0.08 },
       length: 1.45,
       baseRadius: 0.18,
