@@ -296,7 +296,10 @@
           "blend": "soft-light",
           "opacity": 0.25,
           "params": { "seaSpeed": 4.5, "glow": 0.4, "scanlines": 0.25 }
-        }
+        },
+        { "effect": "rain", "blend": "screen", "opacity": 0.25, "params": { "intensity": 0.3, "wind": 0.05, "speed": 0.9, "streakLength": 0.65, "splash": 0.35, "hue": 0.6, "seed": 4 } },
+        { "effect": "rain", "blend": "overlay", "opacity": 0.2, "params": { "intensity": 0.2, "wind": -0.1, "speed": 1.05, "streakLength": 0.5, "splash": 0.25, "hue": 0.56, "seed": 14 } },
+        { "effect": "lightning", "blend": "screen", "opacity": 0.3, "params": { "trigger": "random", "chancePerSecond": 0.25, "cooldown": 1.1, "flashDuration": 0.2, "bolt": 0.6, "branches": 0.25, "seed": 6 } }
       ]
     },
     {
@@ -351,7 +354,8 @@
       "transition": { "in": "fade", "out": "fade", "duration": 0.4 },
       "params": { "speed": 0.6 },
       "layers": [
-        { "effect": "bokeh", "blend": "soft-light", "opacity": 0.3, "params": { "speed": 0.7 } }
+        { "effect": "bokeh", "blend": "soft-light", "opacity": 0.3, "params": { "speed": 0.7 } },
+        { "effect": "rain", "blend": "screen", "opacity": 0.22, "params": { "intensity": 0.28, "wind": 0.12, "speed": 0.85, "streakLength": 0.6, "splash": 0.3, "hue": 0.58, "seed": 9 } }
       ]
     },
     {
@@ -793,6 +797,10 @@
         { "effect": "particles", "blend": "lighter", "opacity": 0.3, "params": { "speed": 1.4 } },
         { "effect": "plasma", "blend": "overlay", "opacity": 0.2, "params": { "speed": 1.4 } },
         { "effect": "starfield", "blend": "screen", "opacity": 0.2, "params": { "speed": 1.3, "warp": 0.6 } },
+        { "effect": "rain", "blend": "screen", "opacity": 0.2, "params": { "intensity": 0.35, "wind": 0.1, "speed": 1.1, "streakLength": 0.7, "splash": 0.4, "hue": 0.58, "seed": 12 } },
+        { "effect": "rain", "blend": "overlay", "opacity": 0.25, "params": { "intensity": 0.5, "wind": -0.15, "speed": 1.3, "streakLength": 0.9, "splash": 0.6, "hue": 0.62, "seed": 21 } },
+        { "effect": "rain", "blend": "screen", "opacity": 0.15, "params": { "intensity": 0.25, "wind": 0.3, "speed": 0.9, "streakLength": 0.55, "splash": 0.3, "hue": 0.55, "seed": 7 } },
+        { "effect": "lightning", "blend": "screen", "opacity": 0.35, "params": { "trigger": "both", "chancePerSecond": 0.45, "cooldown": 0.55, "flashDuration": 0.2, "bolt": 0.7, "branches": 0.35, "seed": 3 } },
         { "effect": "ribbons", "blend": "screen", "opacity": 0.2, "params": { "speed": 1.35 } }
       ]
     },
