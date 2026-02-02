@@ -96,3 +96,4 @@ npm run preview
 - The debug overlay shows WebGL status as `OK` or `FALLBACK` when available.
 - When the debug overlay is visible, selecting an effect reveals a secondary panel with effect-specific controls (or a note when none are available).
 - On touch devices, two floating buttons appear in the lower-right corner: `DBG` toggles the debug overlay and `⛶` toggles fullscreen.
+- Append `?mic=1` to enable microphone-driven visuals, then click the on-screen “Enable microphone” button to request access.

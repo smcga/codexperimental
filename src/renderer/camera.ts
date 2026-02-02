@@ -1,4 +1,4 @@
-import { AudioFeatures } from "../audio/audioPlayer";
+import { AudioFeatures } from "../audio/audioSource";
 import { clamp } from "../util/math";
 
 export type CameraState = {

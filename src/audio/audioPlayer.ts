@@ -1,33 +1,16 @@
 import { clamp } from "../util/math";
+import { AudioSource } from "./audioSource";
+import { DEFAULT_FFT_SIZE, computeBands, computeRms, createBeatDetector } from "./features";
 
-export type AudioFeatures = {
-  timeDomain: Uint8Array;
-  frequency: Uint8Array;
-  rms: number;
-  bass: number;
-  mid: number;
-  treble: number;
-  beat: boolean;
-  beatStrength: number;
-  impactStrength: number;
-};
-
-const DEFAULT_FFT_SIZE = 2048;
-const BEAT_THRESHOLD = 0.08;
-const BEAT_COOLDOWN = 0.2;
-
-export class AudioPlayer {
+export class AudioPlayer implements AudioSource {
   private audio: HTMLAudioElement;
   private context: AudioContext;
   private analyser: AnalyserNode;
   private source: MediaElementAudioSourceNode;
   private timeDomain: Uint8Array;
   private frequency: Uint8Array;
-  private lastRms = 0;
-  private lastBeatTime = -Infinity;
-  private bassRange: [number, number] = [0, 0];
-  private midRange: [number, number] = [0, 0];
-  private trebleRange: [number, number] = [0, 0];
+  private beatDetector = createBeatDetector();
+  private lastUpdateTime = 0;
 
   constructor(src: string) {
     this.audio = new Audio();
@@ -46,14 +29,12 @@ export class AudioPlayer {
 
   async load(): Promise<void> {
     if (this.audio.readyState >= 1) {
-      this.configureFrequencyRanges();
       return;
     }
     await new Promise<void>((resolve, reject) => {
       const onLoaded = () => {
         this.audio.removeEventListener("loadedmetadata", onLoaded);
         this.audio.removeEventListener("error", onError);
-        this.configureFrequencyRanges();
         resolve();
       };
       const onError = () => {
@@ -67,18 +48,7 @@ export class AudioPlayer {
     });
   }
 
-  private configureFrequencyRanges(): void {
-    const nyquist = this.context.sampleRate / 2;
-    const binCount = this.analyser.frequencyBinCount;
-    const hzPerBin = nyquist / binCount;
-
-    const bandToIndex = (hz: number) => Math.min(binCount - 1, Math.max(0, Math.floor(hz / hzPerBin)));
-    this.bassRange = [bandToIndex(20), bandToIndex(250)];
-    this.midRange = [bandToIndex(250), bandToIndex(2000)];
-    this.trebleRange = [bandToIndex(2000), bandToIndex(8000)];
-  }
-
-  async play(): Promise<void> {
+  async start(): Promise<void> {
     await this.context.resume();
     await this.audio.play();
   }
@@ -95,9 +65,9 @@ export class AudioPlayer {
 
   async restart(): Promise<void> {
     this.audio.currentTime = 0;
-    this.lastRms = 0;
-    this.lastBeatTime = -Infinity;
-    await this.play();
+    this.beatDetector = createBeatDetector();
+    this.lastUpdateTime = 0;
+    await this.start();
   }
 
   destroy(): void {
@@ -122,23 +92,20 @@ export class AudioPlayer {
     return this.audio.paused;
   }
 
-  updateFeatures(): AudioFeatures {
+  getTimeSeconds(): number {
+    return this.currentTime;
+  }
+
+  getFeatures() {
     this.analyser.getByteTimeDomainData(this.timeDomain);
     this.analyser.getByteFrequencyData(this.frequency);
 
     const rms = this.computeRms(this.timeDomain);
-    const bass = this.computeBandEnergy(this.bassRange);
-    const mid = this.computeBandEnergy(this.midRange);
-    const treble = this.computeBandEnergy(this.trebleRange);
-
-    const delta = rms - this.lastRms;
-    const now = this.currentTime;
-    const beat = delta > BEAT_THRESHOLD && now - this.lastBeatTime > BEAT_COOLDOWN;
-    if (beat) {
-      this.lastBeatTime = now;
-    }
-    const beatStrength = clamp(delta * 2.5, 0, 1);
-    this.lastRms = this.lastRms * 0.8 + rms * 0.2;
+    const { bass, mid, treble } = computeBands(this.frequency, this.context.sampleRate);
+    const now = this.getTimeSeconds();
+    const dt = now - this.lastUpdateTime;
+    this.lastUpdateTime = now;
+    const { beat, strength } = this.beatDetector(rms, dt);
 
     return {
       timeDomain: this.timeDomain,
@@ -148,30 +115,12 @@ export class AudioPlayer {
       mid,
       treble,
       beat,
-      beatStrength,
+      beatStrength: strength,
       impactStrength: 0
     };
   }
 
   private computeRms(buffer: Uint8Array): number {
-    let sum = 0;
-    for (let i = 0; i < buffer.length; i += 1) {
-      const sample = (buffer[i] - 128) / 128;
-      sum += sample * sample;
-    }
-    return Math.sqrt(sum / buffer.length);
-  }
-
-  private computeBandEnergy([start, end]: [number, number]): number {
-    let sum = 0;
-    let count = 0;
-    for (let i = start; i <= end; i += 1) {
-      sum += this.frequency[i];
-      count += 1;
-    }
-    if (count === 0) {
-      return 0;
-    }
-    return clamp(sum / count / 255, 0, 1);
+    return computeRms(buffer);
   }
 }

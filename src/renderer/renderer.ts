@@ -1,4 +1,4 @@
-import { AudioFeatures } from "../audio/audioPlayer";
+import { AudioFeatures } from "../audio/audioSource";
 import { SectionConfig, TextCue, TransitionType } from "../config/loadConfig";
 import { clamp } from "../util/math";
 import { CameraState, computeDynamicCamera } from "./camera";

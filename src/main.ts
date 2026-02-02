@@ -1,6 +1,8 @@
 import "./style.css";
 import { IntroConfig, TransitionType, loadConfig } from "./config/loadConfig";
-import { AudioPlayer, AudioFeatures } from "./audio/audioPlayer";
+import { AudioPlayer } from "./audio/audioPlayer";
+import { AudioFeatures, AudioSource } from "./audio/audioSource";
+import { MicAudioSource } from "./audio/micAudioSource";
 import { Timeline } from "./timeline/timeline";
 import { Renderer } from "./renderer/renderer";
 import { effectRegistry } from "./renderer/effects";
@@ -14,6 +16,7 @@ import { shouldShowEffectPanel } from "./debug/debugPanel";
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
 const overlayText = overlay?.querySelector<HTMLDivElement>(".start-text");
+const micButton = overlay?.querySelector<HTMLButtonElement>("#mic-button");
 const debugOverlay = document.querySelector<HTMLDivElement>("#debug-overlay");
 const debugTimestamp = document.querySelector<HTMLSpanElement>("#debug-timestamp");
 const debugWebglStatus = document.querySelector<HTMLSpanElement>("#debug-webgl-status");
@@ -29,8 +32,11 @@ const debugSkipSecondHalfButton = document.querySelector<HTMLButtonElement>("#de
 const mobileControls = document.querySelector<HTMLDivElement>("#mobile-controls");
 const mobileDebugButton = document.querySelector<HTMLButtonElement>("#mobile-debug");
 const mobileFullscreenButton = document.querySelector<HTMLButtonElement>("#mobile-fullscreen");
+const micStatus = document.querySelector<HTMLDivElement>("#mic-status");
 
-const releaseMode = new URLSearchParams(window.location.search).get("release") === "1";
+const searchParams = new URLSearchParams(window.location.search);
+const releaseMode = searchParams.get("release") === "1";
+const micMode = searchParams.get("mic") === "1";
 
 if (!canvas || !overlay || !overlayText || !debugOverlay || !debugTimestamp || !debugTransitionSelect) {
   throw new Error("Missing canvas or overlay element");
@@ -45,11 +51,14 @@ const renderer = new Renderer();
 const introRenderer = new TerminalIntroRenderer();
 const explosionState = createExplosionState();
 let audioPlayer: AudioPlayer | null = null;
+let audioSource: AudioSource | null = null;
+let micSource: MicAudioSource | null = null;
 let timeline: Timeline | null = null;
 let introConfig: IntroConfig | null = null;
 let animationFrame = 0;
 let lastDemoTime = 0;
 let isRunning = false;
+let micMessageTimeout: number | null = null;
 const debugState = {
   enabled: false,
   forcedEffect: null as string | null,
@@ -75,6 +84,22 @@ function setOverlay(text: string, show = true, isError = false): void {
     overlay.classList.remove("hidden");
   } else {
     overlay.classList.add("hidden");
+  }
+}
+
+function setMicStatus(message: string, show = true): void {
+  if (!micStatus) {
+    return;
+  }
+  micStatus.textContent = message;
+  micStatus.classList.toggle("hidden", !show);
+  if (micMessageTimeout) {
+    window.clearTimeout(micMessageTimeout);
+  }
+  if (show) {
+    micMessageTimeout = window.setTimeout(() => {
+      micStatus.classList.add("hidden");
+    }, 4000);
   }
 }
 
@@ -116,7 +141,8 @@ function updateDebugSkipButtonState(demoTime: number | null): void {
   if (!debugSkipIntroButton) {
     return;
   }
-  if (!audioPlayer || !timeline || !introConfig || demoTime === null) {
+  const canControlAudio = audioPlayer && audioSource === audioPlayer;
+  if (!canControlAudio || !timeline || !introConfig || demoTime === null) {
     debugSkipIntroButton.disabled = true;
     if (debugSkipSecondHalfButton) {
       debugSkipSecondHalfButton.disabled = true;
@@ -306,7 +332,7 @@ if (!releaseMode && debugMonochromeToggle) {
 
 if (!releaseMode && debugSkipIntroButton) {
   debugSkipIntroButton.addEventListener("click", () => {
-    if (!audioPlayer || !timeline || !introConfig) {
+    if (!audioPlayer || !timeline || !introConfig || audioSource !== audioPlayer) {
       return;
     }
     const targetTime = getIntroSkipTime(introConfig.end, timeline.getAudioOffset(), audioPlayer.currentTime);
@@ -316,7 +342,7 @@ if (!releaseMode && debugSkipIntroButton) {
 
 if (!releaseMode && debugSkipSecondHalfButton) {
   debugSkipSecondHalfButton.addEventListener("click", () => {
-    if (!audioPlayer || !timeline) {
+    if (!audioPlayer || !timeline || audioSource !== audioPlayer) {
       return;
     }
     const targetTime = getSecondHalfSkipTime(SECOND_HALF_START, timeline.getAudioOffset(), audioPlayer.currentTime);
@@ -335,11 +361,22 @@ if (!releaseMode) {
   }
 }
 
-async function startDemo(): Promise<void> {
-  if (isRunning) {
+if (micMode) {
+  setOverlay("Enable microphone to start", true);
+  if (micButton) {
+    micButton.classList.remove("hidden");
+  }
+} else if (micButton) {
+  micButton.classList.add("hidden");
+}
+
+async function startDemo(options: { useMic?: boolean; forceRestart?: boolean } = {}): Promise<void> {
+  if (isRunning && !options.forceRestart) {
     return;
   }
   setOverlay("Loading…", true);
+  setMicStatus("", false);
+  isRunning = false;
 
   try {
     const config = await loadConfig(releaseMode ? "/timeline.release.json" : "/timeline.json");
@@ -353,10 +390,36 @@ async function startDemo(): Promise<void> {
     timeline = new Timeline(config);
     timeline.setAudioDuration(audioPlayer.duration);
 
-    await audioPlayer.play();
+    if (options.useMic) {
+      if (micSource) {
+        micSource.stop?.();
+      }
+      micSource = new MicAudioSource();
+      audioSource = micSource;
+      void micSource.start().catch(async (error) => {
+        console.error("Microphone unavailable", error);
+        setMicStatus("Mic unavailable (permission denied).", true);
+        if (!audioPlayer || !timeline) {
+          return;
+        }
+        audioSource = audioPlayer;
+        const targetTime = Math.max(0, lastDemoTime - timeline.getAudioOffset());
+        audioPlayer.seek(targetTime);
+        await audioPlayer.start();
+        lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+        if (!releaseMode) {
+          updateDebugSkipButtonState(lastDemoTime);
+        }
+      });
+    } else {
+      audioSource = audioPlayer;
+      await audioPlayer.start();
+    }
+
     renderer.reset();
     isRunning = true;
-    lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+    const activeSource = audioSource;
+    lastDemoTime = activeSource ? activeSource.getTimeSeconds() + timeline.getAudioOffset() : 0;
     setOverlay("", false);
     if (!releaseMode) {
       updateDebugSkipButtonState(lastDemoTime);
@@ -371,35 +434,39 @@ async function startDemo(): Promise<void> {
 }
 
 async function restartDemo(): Promise<void> {
-  if (!audioPlayer || !timeline) {
-    await startDemo();
+  if (!audioSource || !timeline) {
+    await startDemo({ useMic: micMode });
     return;
   }
-  await audioPlayer.restart();
-  renderer.reset();
-  lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
-  if (!releaseMode) {
-    updateDebugSkipButtonState(lastDemoTime);
+  if (audioSource === audioPlayer && audioPlayer) {
+    await audioPlayer.restart();
+    renderer.reset();
+    lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+    if (!releaseMode) {
+      updateDebugSkipButtonState(lastDemoTime);
+    }
+    setOverlay("", false);
+    if (!isRunning) {
+      isRunning = true;
+      animationFrame = requestAnimationFrame(loop);
+    }
+    return;
   }
-  setOverlay("", false);
-  if (!isRunning) {
-    isRunning = true;
-    animationFrame = requestAnimationFrame(loop);
-  }
+  await startDemo({ useMic: micMode, forceRestart: true });
 }
 
 function loop(): void {
-  if (!audioPlayer || !timeline || !introConfig) {
+  if (!audioSource || !timeline || !introConfig) {
     isRunning = false;
     updateDebugSkipButtonState(null);
     return;
   }
 
-  const demoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+  const demoTime = audioSource.getTimeSeconds() + timeline.getAudioOffset();
   const delta = Math.max(0, demoTime - lastDemoTime);
   lastDemoTime = demoTime;
 
-  const audioFeatures: AudioFeatures = audioPlayer.updateFeatures();
+  const audioFeatures: AudioFeatures = audioSource.getFeatures();
   const state = timeline.getState(demoTime);
   if (state.mode === "intro") {
     introRenderer.render({
@@ -461,7 +528,7 @@ function loop(): void {
     updateDebugSkipButtonState(demoTime);
   }
 
-  if (audioPlayer.ended) {
+  if (audioSource === audioPlayer && audioPlayer.ended) {
     isRunning = false;
     setOverlay("THE END (press R to restart)", true);
     return;
@@ -470,9 +537,18 @@ function loop(): void {
   animationFrame = requestAnimationFrame(loop);
 }
 
-overlay.addEventListener("click", () => {
-  startDemo();
-});
+if (!micMode) {
+  overlay.addEventListener("click", () => {
+    startDemo();
+  });
+}
+
+if (micMode && micButton) {
+  micButton.addEventListener("click", (event) => {
+    event.stopPropagation();
+    startDemo({ useMic: true });
+  });
+}
 
 window.addEventListener("keydown", (event) => {
   if (!releaseMode && event.key.toLowerCase() === "d") {
