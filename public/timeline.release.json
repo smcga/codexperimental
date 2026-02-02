@@ -82,15 +82,39 @@
       ]
     },
     {
-      "id": "era8bit-equalizer",
+      "id": "era8bit-equalizer-a",
       "start": "01:15.0",
-      "end": "01:16.5",
+      "end": "01:16.0",
       "effect": "equalizer",
       "era": "8bit",
-      "transition": { "in": "slide-left", "out": "wipe", "duration": 0.12 },
-      "params": { "speed": 1.12 },
+      "transition": { "in": "slide-left", "out": "flash", "duration": 0.06 },
+      "params": { "speed": 1.12, "bars": 44, "barWidth": 3, "height": 0.78, "bassBoost": 0.35, "alpha": 0.9 },
+      "automation": [
+        { "param": "speed", "from": 0.9, "to": 1.12, "t0": "01:15.0", "t1": "01:16.0", "ease": "easeInOutQuad" },
+        { "param": "height", "from": 0.62, "to": 0.78, "t0": "01:15.0", "t1": "01:16.0", "ease": "easeInOutQuad" }
+      ]
+    },
+    {
+      "id": "hook-hit-01160",
+      "start": "01:16.0",
+      "end": "01:16.5",
+      "effect": "glitch",
+      "era": "8bit",
+      "transition": { "in": "flash", "out": "iris", "duration": 0.08 },
+      "params": {
+        "sparkles": 0.9,
+        "sparkleSize": 2.4,
+        "sliceCount": 14,
+        "sliceBoost": 1.25,
+        "sliceHeight": 0.12,
+        "sliceVariance": 0.45,
+        "offset": 0.6,
+        "shake": 0.65,
+        "maxShake": 8
+      },
       "layers": [
-        { "effect": "starfield", "blend": "screen", "opacity": 0.18, "params": { "speed": 0.75, "warp": 0.12 } }
+        { "effect": "starfield", "blend": "screen", "opacity": 0.28, "params": { "speed": 1.1, "warp": 0.42, "turnRate": 0.14, "turnStrength": 0.35 } },
+        { "effect": "particles", "blend": "lighter", "opacity": 0.18, "params": { "trail": 0.35, "burst": 0.65, "burstAudio": 0.9, "force": 0.55, "forceAudio": 0.75 } }
       ]
     },
     {
@@ -100,7 +124,7 @@
       "effect": "ribbons",
       "era": "8bit",
       "transition": { "in": "wipe", "out": "fade", "duration": 0.25 },
-      "params": { "speed": 0.92 },
+      "params": { "count": 10, "speed": 0.92, "amplitude": 0.65, "audioBoost": 0.55, "offset": 0.1, "spacing": 0.65, "thickness": 2.2 },
       "automation": [
         { "param": "speed", "from": 0.92, "to": 1.08, "t0": "01:16.5", "t1": "01:27.4", "ease": "easeInOutQuad" }
       ],
@@ -143,7 +167,7 @@
       "effect": "lissajous",
       "era": "8bit",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.08 },
-      "params": { "speed": 1.05 }
+      "params": { "points": 800, "speed": 1.05, "a": 3, "b": 5, "radius": 0.42, "lineWidth": 2.0 }
     },
     {
       "id": "era8bit-bokeh",
@@ -165,7 +189,7 @@
       "effect": "isogrid",
       "era": "16bit",
       "transition": { "in": "fade", "out": "slide-right", "duration": 0.25 },
-      "params": { "speed": 1.12 },
+      "params": { "opacity": 0.75, "lineWidth": 1.6, "spacing": 0.62, "wave": 0.35, "speed": 1.12 },
       "automation": [
         { "param": "speed", "from": 1.12, "to": 1.32, "t0": "01:38.3", "t1": "01:43.7", "ease": "easeInOutQuad" }
       ],
@@ -481,7 +505,7 @@
       "transition": { "in": "wipe", "out": "fade", "duration": 0.2 },
       "params": { "speed": 1.2 },
       "layers": [
-        { "effect": "feedback", "blend": "screen", "opacity": 0.22, "params": { "speed": 0.95 } },
+        { "effect": "feedback", "blend": "screen", "opacity": 0.22, "params": { "scale": 1.02, "wobble": 0.25, "rotation": 0.12, "trail": 0.82, "glow": 0.55 } },
         { "effect": "rain", "blend": "screen", "opacity": 0.14, "params": { "intensity": 0.5, "wind": 0.22, "speed": 1.1, "streakLength": 0.85, "splash": 0.25, "seed": 13 } }
       ]
     },
@@ -520,7 +544,7 @@
       "effect": "fractal",
       "era": "future",
       "transition": { "in": "fade", "out": "fade", "duration": 0.25 },
-      "params": { "speed": 1.12 },
+      "params": { "iterations": 7, "trebleBoost": 0.55, "speed": 1.12, "scale": 1.05, "alpha": 0.85 },
       "layers": [
         { "effect": "lightning", "blend": "screen", "opacity": 0.18, "params": { "trigger": "both", "chancePerSecond": 0.12, "cooldown": 1.7, "flashDuration": 0.08, "bolt": 0.52, "branches": 0.32, "seed": 14 } }
       ]
@@ -537,18 +561,34 @@
     },
 
     {
-      "id": "chess-overlay",
+      "id": "chess-overlay-a",
       "start": "03:43.0",
-      "end": "03:48.0",
+      "end": "03:47.0",
       "effect": "chess",
       "era": "future",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
+      "transition": { "in": "fade", "out": "flash", "duration": 0.18 },
       "params": { "speed": 3.0, "showHighlights": 1, "startTime": "03:37.6" },
+      "automation": [
+        { "param": "speed", "from": 2.2, "to": 3.0, "t0": "03:43.0", "t1": "03:47.0", "ease": "easeInOutQuad" },
+        { "param": "showHighlights", "from": 0.6, "to": 1, "t0": "03:43.0", "t1": "03:47.0", "ease": "easeInOutQuad" }
+      ],
       "layers": [
-        { "effect": "glitch", "blend": "overlay", "opacity": 0.22 },
-        { "effect": "particles", "blend": "lighter", "opacity": 0.28, "params": { "speed": 1.25 } },
-        { "effect": "neon", "blend": "screen", "opacity": 0.22, "params": { "speed": 1.15 } },
-        { "effect": "rain", "blend": "screen", "opacity": 0.12, "params": { "intensity": 0.45, "wind": 0.18, "speed": 1.05, "streakLength": 0.9, "splash": 0.22, "seed": 15 } }
+        { "effect": "glitch", "blend": "overlay", "opacity": 0.22, "params": { "sparkles": 0.25, "sliceCount": 8, "sliceBoost": 0.6, "shake": 0.2, "maxShake": 4 } },
+        { "effect": "particles", "blend": "lighter", "opacity": 0.28, "params": { "trail": 0.25, "burst": 0.25, "burstAudio": 0.45, "force": 0.35, "forceAudio": 0.4 } },
+        { "effect": "neon", "blend": "screen", "opacity": 0.2, "params": { "shapes": 6, "radius": 0.28, "radiusStep": 0.06, "speed": 1.1, "glow": 0.65, "lineWidth": 2.2 } }
+      ]
+    },
+    {
+      "id": "hook-hit-03470",
+      "start": "03:47.0",
+      "end": "03:48.0",
+      "effect": "gl_fractal_tunnel",
+      "era": "future",
+      "transition": { "in": "flash", "out": "iris", "duration": 0.1 },
+      "params": { "quality": 1, "warp": 1.35, "hueShift": 0.25, "exposure": 1.25, "seed": 12 },
+      "layers": [
+        { "effect": "glitch", "blend": "screen", "opacity": 0.3, "params": { "sparkles": 0.95, "sparkleSize": 2.2, "sliceCount": 16, "sliceBoost": 1.35, "shake": 0.75, "maxShake": 10 } },
+        { "effect": "particles", "blend": "lighter", "opacity": 0.22, "params": { "trail": 0.4, "burst": 0.8, "burstAudio": 1.0, "force": 0.6, "forceAudio": 0.85 } }
       ]
     },
 
@@ -639,7 +679,7 @@
       "effect": "feedback",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.05 }
+      "params": { "scale": 1.02, "wobble": 0.25, "rotation": 0.12, "trail": 0.82, "glow": 0.55 }
     },
     {
       "id": "rush-03550",
@@ -705,7 +745,11 @@
       "effect": "neon_alley",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "quality": 1, "speed": 1.2, "exposure": 1.2, "hueShift": 0.22, "seed": 11 }
+      "params": { "quality": 1, "speed": 1.2, "exposure": 1.2, "hueShift": 0.22, "seed": 11 },
+      "automation": [
+        { "param": "seed", "from": 3, "to": 48, "t0": "03:59.2", "t1": "03:59.9", "ease": "linear" },
+        { "param": "hueShift", "from": 0.18, "to": 0.32, "t0": "03:59.2", "t1": "03:59.9", "ease": "easeInOutQuad" }
+      ]
     },
     {
       "id": "rush-03599",
@@ -842,7 +886,7 @@
       "effect": "feedback",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.15 }
+      "params": { "scale": 1.02, "wobble": 0.25, "rotation": 0.12, "trail": 0.82, "glow": 0.55 }
     },
     {
       "id": "rush-04104",
@@ -964,6 +1008,18 @@
       "size": 26,
       "color": "#7ee787",
       "effects": { "glitchIn": true, "shadow": true, "scanlineMask": 0.18 }
+    },
+    {
+      "id": "this-hit-01160",
+      "start": "01:16.0",
+      "end": "01:16.55",
+      "text": "THIS",
+      "x": 0.5,
+      "y": 0.5,
+      "align": "center",
+      "size": 66,
+      "color": "#ff3b30",
+      "effects": { "glitchIn": true, "shadow": true, "scanlineMask": 0.14 }
     },
     {
       "id": "title-16bit",
@@ -1135,6 +1191,18 @@
       "size": 34,
       "color": "#9ef0ff",
       "effects": { "glitchIn": true, "shadow": true, "scanlineMask": 0.16 }
+    },
+    {
+      "id": "this-hit-03470",
+      "start": "03:47.0",
+      "end": "03:48.1",
+      "text": "AI CAN DO THIS",
+      "x": 0.5,
+      "y": 0.84,
+      "align": "center",
+      "size": 34,
+      "color": "#7ee787",
+      "effects": { "glitchIn": true, "shadow": true, "scanlineMask": 0.18 }
     },
     {
       "id": "hook-04330",
