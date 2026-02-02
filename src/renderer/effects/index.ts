@@ -21,6 +21,7 @@ import { PortraitGlowEffect } from "./portraitGlowEffect";
 import { SphereEffect } from "./sphereEffect";
 import { SphereCloudEffect } from "./sphereCloudEffect";
 import { InfinityCloudEffect } from "./infinityCloudEffect";
+import { HeartCloudEffect } from "./heartCloudEffect";
 import { ChessEffect } from "./chessEffect";
 import { FlyoverEffect } from "./flyoverEffect";
 import { SynthwaveSunsetEffect } from "./synthwaveSunset";
@@ -53,6 +54,7 @@ export const effectRegistry: Record<string, Effect> = {
   sphere3d: new SphereEffect(),
   spherecloud: new SphereCloudEffect(),
   infinitycloud: new InfinityCloudEffect(),
+  heartcloud: new HeartCloudEffect(),
   chess: new ChessEffect(),
   flyover: new FlyoverEffect(),
   gl_fractal_tunnel: new FractalTunnelEffect(),

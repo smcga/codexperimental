@@ -151,6 +151,10 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
     title: "Infinity Cloud Controls",
     controls: [numberControl("speed", "Speed", 1.0, { min: 0, step: 0.05 })]
   },
+  heartcloud: {
+    title: "Heart Cloud Controls",
+    controls: [numberControl("speed", "Speed", 1.0, { min: 0, step: 0.05 })]
+  },
   chess: {
     title: "Chess Controls",
     controls: [
