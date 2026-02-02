@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 import { RawTimelineConfig, normalizeTimelineConfig } from "./loadConfig";
@@ -53,5 +54,15 @@ describe("normalizeTimelineConfig", () => {
     const raw = createBaseConfig();
     raw.sections[0].era = "future-nope" as "pcdemo";
     expect(() => normalizeTimelineConfig(raw)).toThrow("sections[0].era must be one of");
+  });
+
+  it("normalizes the release timeline boundaries", () => {
+    const releasePath = new URL("../../public/timeline.release.json", import.meta.url);
+    const raw = JSON.parse(readFileSync(releasePath, "utf-8")) as RawTimelineConfig;
+    const normalized = normalizeTimelineConfig(raw);
+    const last = normalized.sections[normalized.sections.length - 1];
+
+    expect(normalized.sections[0].start).toBeCloseTo(normalized.intro.end);
+    expect(last.end).toBeCloseTo(330);
   });
 });
