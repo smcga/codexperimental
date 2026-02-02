@@ -809,6 +809,32 @@
         { "effect": "starfield", "blend": "screen", "opacity": 0.2, "params": { "speed": 1.2, "warp": 0.5 } },
         { "effect": "chess", "blend": "overlay", "opacity": 0.15, "params": { "speed": 0.9, "showHighlights": 0 } }
       ]
+    },
+    {
+      "id": "rain-layer-test",
+      "start": "05:30.0",
+      "end": "05:34.0",
+      "effect": "tunnel",
+      "era": "future",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
+      "params": { "speed": 0.9 },
+      "layers": [
+        {
+          "effect": "rain",
+          "blend": "screen",
+          "opacity": 0.35,
+          "params": { "intensity": 0.8, "wind": 0.15, "speed": 1.1, "streakLength": 1.1, "splash": 1, "seed": 2 }
+        }
+      ]
+    },
+    {
+      "id": "lightning-test",
+      "start": "05:34.0",
+      "end": "05:37.0",
+      "effect": "lightning",
+      "era": "future",
+      "transition": { "in": "flash", "out": "fade", "duration": 0.2 },
+      "params": { "trigger": "both", "chancePerSecond": 0.35, "cooldown": 1.2, "flashDuration": 0.14, "branches": 2, "seed": 4 }
     }
   ],
   "textCues": [
@@ -816,7 +842,7 @@
       "id": "title-8bit",
       "start": "00:54.3",
       "end": "00:56.0",
-      "text": "",
+      "text": "8BIT",
       "x": 0.5,
       "y": 0.18,
       "align": "center",
@@ -828,7 +854,7 @@
       "id": "title-16bit",
       "start": "01:38.5",
       "end": "01:41.0",
-      "text": "",
+      "text": "16BIT",
       "x": 0.5,
       "y": 0.18,
       "align": "center",
