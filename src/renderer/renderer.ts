@@ -1,5 +1,6 @@
 import { AudioFeatures } from "../audio/audioPlayer";
 import { SectionConfig, TextCue, TransitionType } from "../config/loadConfig";
+import { resolveAutomatedParams } from "../timeline/automation";
 import { clamp } from "../util/math";
 import { CameraState, computeDynamicCamera } from "./camera";
 import { EraConstraints, getEraConstraints, quantizeToPalette } from "./eraConstraints";
@@ -164,13 +165,14 @@ export class Renderer {
     const eraConstraints = getEraConstraints(section.era, this.baseWidth, this.baseHeight);
     this.ensureSceneSize(eraConstraints.renderWidth, eraConstraints.renderHeight);
     this.sceneCtx.clearRect(0, 0, this.sceneCanvas.width, this.sceneCanvas.height);
+    const sectionParams = resolveAutomatedParams(time, section.params, section.automation);
     this.renderEffectTo(
       this.sceneCtx,
       section.effect,
       time,
       delta,
       audio,
-      section.params,
+      sectionParams,
       this.sceneCanvas.width,
       this.sceneCanvas.height
     );
@@ -178,13 +180,14 @@ export class Renderer {
     if (section.layers.length > 0) {
       section.layers.forEach((layer) => {
         this.layerCtx.clearRect(0, 0, this.layerCanvas.width, this.layerCanvas.height);
+        const layerParams = resolveAutomatedParams(time, layer.params, layer.automation);
         this.renderEffectTo(
           this.layerCtx,
           layer.effect,
           time,
           delta,
           audio,
-          layer.params,
+          layerParams,
           this.layerCanvas.width,
           this.layerCanvas.height
         );

@@ -277,8 +277,19 @@
       "era": "ps1",
       "transition": { "in": "fade", "out": "iris", "duration": 0.3 },
       "params": { "speed": 1.15 },
+      "automation": [
+        { "param": "speed", "from": 1.15, "to": 1.55, "t0": "02:02.0", "t1": "02:07.0", "ease": "easeInOutQuad" }
+      ],
       "layers": [
-        { "effect": "equalizer", "blend": "screen", "opacity": 0.35, "params": { "speed": 1.2 } },
+        {
+          "effect": "equalizer",
+          "blend": "screen",
+          "opacity": 0.35,
+          "params": { "speed": 1.2 },
+          "automation": [
+            { "param": "speed", "from": 1.2, "to": 0.8, "t0": "02:03.0", "t1": "02:06.0", "ease": "linear" }
+          ]
+        },
         { "effect": "glitch", "blend": "overlay", "opacity": 0.15 }
       ]
     },
