@@ -66,7 +66,7 @@ export function buildLowpolySunriseUniforms(
   const sunRise = 0.22 + 0.06 * Math.tanh(time * 0.05);
   const sunPos: [number, number] = [0.5, sunRise];
   const sunDir = normalizeVec3([0.15, 0.55 + sunRise, 0.75]);
-  const fogAmount = 0.12 * (1 + smoothedRms * 0.5);
+  const fogAmount = 0.09 * (1 + smoothedRms * 0.5);
   const cloudSpeed = 0.4 * (1 + smoothedRms * 0.3);
   const cloudOffset: [number, number, number] = [time * cloudSpeed, time * cloudSpeed * 1.3, time * cloudSpeed * 1.7];
 

@@ -23,6 +23,7 @@ describe("lowpoly sunrise uniforms", () => {
     expect(uniforms.sunPos).toBeDefined();
     expect(uniforms.sunDir).toBeDefined();
     expect(uniforms.fogAmount).toBeDefined();
+    expect(uniforms.fogAmount).toBeCloseTo(0.1035, 4);
     expect(uniforms.cloudOffset).toBeDefined();
 
     Object.values(uniforms).forEach((value) => {

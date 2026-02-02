@@ -52,32 +52,32 @@ float ridgeNoise(vec2 p) {
 }
 
 float terrainHeight(vec2 p) {
-  float ridge = ridgeNoise(p * 0.6);
-  float detail = fbm(p * 1.8);
+  float ridge = ridgeNoise(p * 0.5);
+  float detail = fbm(p * 1.6);
   float sweep = smoothstep(-2.0, 4.0, p.y);
-  return ridge * 1.6 + detail * 0.4 + sweep * 0.2;
+  return ridge * 2.2 + detail * 0.6 + sweep * 0.25;
 }
 
 vec3 getSkyColor(vec2 uv, vec2 sunUv) {
-  vec3 top = vec3(0.08, 0.1, 0.3);
-  vec3 mid = vec3(0.22, 0.16, 0.35);
-  vec3 horizon = vec3(0.95, 0.5, 0.32);
+  vec3 top = vec3(0.06, 0.12, 0.38);
+  vec3 mid = vec3(0.25, 0.18, 0.42);
+  vec3 horizon = vec3(1.05, 0.55, 0.3);
   float t = clamp(uv.y, 0.0, 1.0);
   vec3 gradient = mix(horizon, mid, smoothstep(0.0, 0.6, t));
   gradient = mix(gradient, top, smoothstep(0.4, 1.0, t));
 
   vec2 sunVec = (uv - sunUv) * vec2(u_aspect, 1.0);
   float dist = length(sunVec);
-  float sunRadius = 0.06;
-  float sunDisk = smoothstep(sunRadius, sunRadius - 0.01, dist);
-  float glow = exp(-dist * 10.0) * (1.1 + u_bass * 0.8);
+  float sunRadius = 0.085;
+  float sunDisk = smoothstep(sunRadius, sunRadius - 0.015, dist);
+  float glow = exp(-dist * 6.5) * (1.4 + u_bass * 1.1);
 
   float angle = atan(sunVec.y, sunVec.x);
-  float rays = pow(max(0.0, 1.0 - dist * 2.3), 3.0);
-  rays *= 0.25 + 0.25 * sin(angle * 8.0 + u_time * 0.3 + u_seed);
+  float rays = pow(max(0.0, 1.0 - dist * 1.9), 3.0);
+  rays *= 0.4 + 0.35 * sin(angle * 8.0 + u_time * 0.3 + u_seed);
 
-  vec3 sunColor = vec3(1.0, 0.72, 0.45);
-  gradient += sunColor * (sunDisk + glow * 0.6 + rays * 0.5);
+  vec3 sunColor = vec3(1.1, 0.74, 0.45);
+  gradient += sunColor * (sunDisk + glow * 0.75 + rays * 0.7);
   return gradient;
 }
 
@@ -104,15 +104,15 @@ void main() {
   vec2 sunUv = vec2(u_sunPos.x, u_sunPos.y);
   vec3 skyColor = getSkyColor(uv, sunUv);
 
-  float cloudSpeed = 0.02 + u_rms * 0.008;
-  float cloud1 = cloudLayer(uv + vec2(u_cloudOffset.x * cloudSpeed, 0.0), 2.2, 0.55, u_cloudOffset.x);
-  float cloud2 = cloudLayer(uv + vec2(u_cloudOffset.y * cloudSpeed, 0.0), 3.6, 0.6, u_cloudOffset.y);
-  float cloud3 = cloudLayer(uv + vec2(u_cloudOffset.z * cloudSpeed, 0.0), 5.0, 0.65, u_cloudOffset.z);
+  float cloudSpeed = 0.025 + u_rms * 0.01;
+  float cloud1 = cloudLayer(uv + vec2(u_cloudOffset.x * cloudSpeed, 0.0), 2.0, 0.5, u_cloudOffset.x);
+  float cloud2 = cloudLayer(uv + vec2(u_cloudOffset.y * cloudSpeed, 0.0), 3.2, 0.56, u_cloudOffset.y);
+  float cloud3 = cloudLayer(uv + vec2(u_cloudOffset.z * cloudSpeed, 0.0), 4.6, 0.6, u_cloudOffset.z);
   float clouds = clamp(cloud1 * 0.6 + cloud2 * 0.45 + cloud3 * 0.3, 0.0, 1.0);
 
   float sunGlow = smoothstep(0.6, 0.0, distance(uv, sunUv));
-  vec3 cloudColor = mix(vec3(0.65, 0.6, 0.58), vec3(1.0, 0.9, 0.85), sunGlow);
-  skyColor = mix(skyColor, cloudColor, clouds);
+  vec3 cloudColor = mix(vec3(0.7, 0.62, 0.58), vec3(1.08, 0.96, 0.9), sunGlow);
+  skyColor = mix(skyColor, cloudColor, clouds * 0.85);
 
   float t = 0.0;
   float maxT = 40.0;
@@ -154,16 +154,16 @@ void main() {
     diffuse = floor(diffuse * steps) / steps;
 
     float rim = pow(1.0 - max(dot(normal, -rd), 0.0), 2.0);
-    rim *= 0.2 + u_bass * 0.4;
+    rim *= 0.35 + u_bass * 0.6;
 
     float depthTint = smoothstep(2.0, 16.0, t);
-    vec3 baseColor = mix(vec3(0.05, 0.07, 0.12), vec3(0.2, 0.14, 0.1), depthTint);
-    vec3 warmHighlight = vec3(0.9, 0.55, 0.35);
-    vec3 terrainColor = baseColor * (0.35 + diffuse * 0.9);
+    vec3 baseColor = mix(vec3(0.02, 0.04, 0.08), vec3(0.28, 0.18, 0.12), depthTint);
+    vec3 warmHighlight = vec3(1.05, 0.62, 0.35);
+    vec3 terrainColor = baseColor * (0.35 + diffuse * 1.1);
     terrainColor += rim * warmHighlight;
 
     float fog = 1.0 - exp(-t * u_fogAmount);
-    color = mix(terrainColor, skyColor, fog);
+    color = mix(terrainColor, skyColor, clamp(fog * 0.9, 0.0, 1.0));
   }
 
   fragColor = vec4(color, 1.0);
