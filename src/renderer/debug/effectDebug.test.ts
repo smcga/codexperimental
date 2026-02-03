@@ -46,6 +46,19 @@ describe("effect debug params", () => {
     });
   });
 
+  it("provides defaults for the fluid effect", () => {
+    expect(getEffectDebugDefaults("fluid")).toEqual({
+      scale: 16,
+      viscosity: 0.15,
+      diffusion: 0.25,
+      force: 1.2,
+      density: 0.7,
+      decay: 0.35,
+      hue: 200,
+      seed: 0
+    });
+  });
+
   it("provides defaults for wireframe ride controls", () => {
     expect(getEffectDebugDefaults("wireframeRide")).toEqual({
       speed: 1,
