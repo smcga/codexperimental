@@ -528,13 +528,50 @@
     },
 
     {
-      "id": "switch-03320",
+      "id": "switch-03320-wireframe",
       "start": "03:32.0",
+      "end": "03:35.2",
+      "effect": "wireframeRide",
+      "era": "future",
+      "transition": { "in": "fade", "out": "wipe", "duration": 0.22 },
+      "params": {
+        "speed": 1.05,
+        "gridWidth": 72,
+        "gridDepth": 150,
+        "gridResX": 180,
+        "gridResZ": 240,
+        "amplitude": 7.2,
+        "noiseFreq": 0.09,
+        "cameraHeight": 11,
+        "fov": 62,
+        "fog": 0.72,
+        "neon": 1.1,
+        "bassReactive": 0.78,
+        "rmsReactive": 0.46,
+        "sun": 1
+      },
+      "automation": [
+        { "param": "speed", "from": 1.05, "to": 1.35, "t0": "03:32.0", "t1": "03:35.2", "ease": "easeOutExpo" },
+        { "param": "amplitude", "from": 6.2, "to": 9.0, "t0": "03:32.0", "t1": "03:35.2", "ease": "easeInOutBack" },
+        { "param": "neon", "from": 1.05, "to": 1.35, "t0": "03:33.0", "t1": "03:35.2", "ease": "easeInOutCirc" }
+      ],
+      "layers": [
+        { "effect": "feedback", "blend": "screen", "opacity": 0.12, "params": { "scale": 1.018, "wobble": 0.22, "rotation": 0.08, "trail": 0.78, "glow": 0.34 } },
+        { "effect": "particles", "blend": "lighter", "opacity": 0.18, "params": { "trail": 0.28, "burst": 0.42, "burstAudio": 0.65, "force": 0.42, "forceAudio": 0.55 } }
+      ]
+    },
+
+    {
+      "id": "switch-03352-fractal",
+      "start": "03:35.2",
       "end": "03:37.6",
       "effect": "fractal",
       "era": "future",
-      "transition": { "in": "fade", "out": "fade", "duration": 0.25 },
-      "params": { "iterations": 7, "trebleBoost": 0.55, "speed": 1.12, "scale": 1.05, "alpha": 0.85 },
+      "transition": { "in": "wipe", "out": "fade", "duration": 0.18 },
+      "params": { "iterations": 7, "trebleBoost": 0.62, "speed": 1.18, "scale": 1.1, "alpha": 0.88 },
+      "automation": [
+        { "param": "scale", "from": 1.1, "to": 1.28, "t0": "03:35.2", "t1": "03:37.6", "ease": "easeOutElastic" }
+      ],
       "layers": [
         { "effect": "lightning", "blend": "screen", "opacity": 0.18, "params": { "trigger": "both", "chancePerSecond": 0.12, "cooldown": 1.7, "flashDuration": 0.08, "bolt": 0.52, "branches": 0.32, "seed": 14 } }
       ]
@@ -1044,14 +1081,14 @@
     {
       "id": "mega-drop",
       "start": "04:33.0",
-      "end": "04:47.7",
+      "end": "04:40.0",
       "effect": "gl_impossible_corridor",
       "era": "future",
       "transition": { "in": "flash", "out": "fade", "duration": 0.32 },
       "params": { "quality": 2, "warp": 1.2, "exposure": 1.28, "hueShift": 0.2, "seed": 9, "speed": 1.12, "internalScale": 1.0 },
       "automation": [
-        { "param": "warp", "from": 1.2, "to": 1.65, "t0": "04:33.0", "t1": "04:47.7", "ease": "easeInOutQuad" },
-        { "param": "exposure", "from": 1.28, "to": 1.4, "t0": "04:33.0", "t1": "04:47.7", "ease": "easeInOutQuad" }
+        { "param": "warp", "from": 1.2, "to": 1.45, "t0": "04:33.0", "t1": "04:40.0", "ease": "easeInOutExpo" },
+        { "param": "exposure", "from": 1.28, "to": 1.35, "t0": "04:33.0", "t1": "04:40.0", "ease": "easeInOutCirc" }
       ],
       "layers": [
         { "effect": "glitch", "blend": "screen", "opacity": 0.32 },
@@ -1062,6 +1099,46 @@
         { "effect": "rain", "blend": "screen", "opacity": 0.22, "params": { "intensity": 0.95, "wind": 0.35, "speed": 1.35, "streakLength": 0.95, "splash": 0.3, "seed": 19 } },
         { "effect": "lightning", "blend": "screen", "opacity": 0.24, "params": { "trigger": "both", "chancePerSecond": 0.18, "cooldown": 0.9, "flashDuration": 0.075, "bolt": 0.65, "branches": 0.42, "seed": 20 } },
         { "effect": "neon_alley", "blend": "difference", "opacity": 0.14, "params": { "quality": 1, "speed": 1.1, "exposure": 1.2, "hueShift": 0.28, "seed": 21 } }
+      ]
+    },
+    {
+      "id": "mega-drop-mutation",
+      "start": "04:40.0",
+      "end": "04:41.2",
+      "effect": "neon_alley",
+      "era": "future",
+      "transition": { "in": "flash", "out": "iris", "duration": 0.1 },
+      "params": { "quality": 1, "speed": 1.22, "exposure": 1.05, "hueShift": 0.26, "seed": 5 },
+      "automation": [
+        { "param": "seed", "from": 5, "to": 60, "t0": "04:40.0", "t1": "04:41.2", "ease": "linear" },
+        { "param": "exposure", "from": 1.05, "to": 1.12, "t0": "04:40.0", "t1": "04:41.2", "ease": "easeOutQuad" }
+      ],
+      "layers": [
+        { "effect": "glitch", "blend": "screen", "opacity": 0.24, "params": { "sparkles": 0.7, "sliceCount": 10, "sliceBoost": 0.9, "shake": 0.55, "maxShake": 9 } },
+        { "effect": "feedback", "blend": "screen", "opacity": 0.16, "params": { "scale": 1.03, "wobble": 0.32, "rotation": 0.12, "trail": 0.86, "glow": 0.48 } }
+      ]
+    },
+    {
+      "id": "mega-drop-regen",
+      "start": "04:41.2",
+      "end": "04:47.7",
+      "effect": "gl_impossible_corridor",
+      "era": "future",
+      "transition": { "in": "iris", "out": "fade", "duration": 0.28 },
+      "params": { "quality": 2, "warp": 1.45, "exposure": 1.32, "hueShift": 0.22, "seed": 10, "speed": 1.18, "internalScale": 1.05 },
+      "automation": [
+        { "param": "warp", "from": 1.45, "to": 1.68, "t0": "04:41.2", "t1": "04:47.7", "ease": "easeOutBack" },
+        { "param": "exposure", "from": 1.32, "to": 1.4, "t0": "04:41.2", "t1": "04:47.7", "ease": "easeInOutQuad" }
+      ],
+      "layers": [
+        { "effect": "glitch", "blend": "screen", "opacity": 0.34 },
+        { "effect": "particles", "blend": "lighter", "opacity": 0.34, "params": { "speed": 1.52 } },
+        { "effect": "plasma", "blend": "overlay", "opacity": 0.24, "params": { "speed": 1.5 } },
+        { "effect": "starfield", "blend": "screen", "opacity": 0.24, "params": { "speed": 1.4, "warp": 0.72, "turnRate": 0.16, "turnStrength": 0.45 } },
+        { "effect": "ribbons", "blend": "screen", "opacity": 0.22, "params": { "speed": 1.42 } },
+        { "effect": "rain", "blend": "screen", "opacity": 0.24, "params": { "intensity": 0.98, "wind": 0.38, "speed": 1.38, "streakLength": 0.96, "splash": 0.32, "seed": 19 } },
+        { "effect": "lightning", "blend": "screen", "opacity": 0.26, "params": { "trigger": "both", "chancePerSecond": 0.2, "cooldown": 0.85, "flashDuration": 0.07, "bolt": 0.68, "branches": 0.45, "seed": 20 } },
+        { "effect": "neon_alley", "blend": "difference", "opacity": 0.16, "params": { "quality": 1, "speed": 1.2, "exposure": 1.18, "hueShift": 0.3, "seed": 28 } }
       ]
     },
 
