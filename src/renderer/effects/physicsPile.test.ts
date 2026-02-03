@@ -9,6 +9,12 @@ const stepWorld = (world: PhysicsWorld, steps: number) => {
   }
 };
 
+const stddev = (values: number[]): number => {
+  const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
+  const variance = values.reduce((sum, value) => sum + (value - mean) ** 2, 0) / values.length;
+  return Math.sqrt(variance);
+};
+
 describe("PhysicsWorld", () => {
   it("settles a box on the floor", () => {
     const world = new PhysicsWorld(300, 200, 900);
@@ -180,5 +186,91 @@ describe("PhysicsWorld", () => {
 
     expect(impact).toBeGreaterThan(0);
     expect(Number.isFinite(a.vx)).toBe(true);
+  });
+
+  it("spawns bodies without initial overlaps", () => {
+    const world = new PhysicsWorld(360, 240, 900);
+    world.resetBodies(18, "pile", 0.2, 0.5, 9);
+
+    let maxOverlap = 0;
+    for (let i = 0; i < world.bodies.length; i += 1) {
+      for (let j = i + 1; j < world.bodies.length; j += 1) {
+        maxOverlap = Math.max(maxOverlap, world.getOverlapDepth(world.bodies[i], world.bodies[j]));
+      }
+    }
+    expect(maxOverlap).toBeLessThanOrEqual(1);
+  });
+
+  it("scatters bodies with varied velocities on beat kicks", () => {
+    const world = new PhysicsWorld(360, 240, 900);
+    world.resetBodies(16, "pile", 0.2, 0.5, 12);
+    world.kickRadius = 300;
+    world.scatterAngleRad = (30 * Math.PI) / 180;
+    world.scatterJitter = 0.4;
+    world.kickUpBias = 0.3;
+    world.kickTorque = 40;
+    world.maxLinVel = 2500;
+    world.maxAngVel = 25;
+    world.kickOriginMode = "floorCenter";
+
+    world.applyBeatImpulse(800, 1);
+    stepWorld(world, 10);
+
+    const vxs = world.bodies.map((body) => body.vx);
+    const vys = world.bodies.map((body) => body.vy);
+    const spins = world.bodies.map((body) => Math.abs(body.angularVelocity));
+    const spinCount = spins.filter((spin) => spin > 0.6).length;
+
+    expect(stddev(vxs)).toBeGreaterThan(30);
+    expect(stddev(vys)).toBeGreaterThan(30);
+    expect(spinCount).toBeGreaterThanOrEqual(Math.floor(world.bodies.length * 0.3));
+  });
+
+  it("remains stable with periodic beat impulses", () => {
+    const world = new PhysicsWorld(320, 180, 900);
+    world.resetBodies(14, "pile", 0.22, 0.55, 7);
+    world.kickRadius = 260;
+    world.kickOriginMode = "floorCenter";
+    world.maxLinVel = 1800;
+    world.maxAngVel = 18;
+
+    for (let i = 0; i < 1200; i += 1) {
+      if (i % 60 === 0) {
+        world.applyBeatImpulse(550, 0.8);
+      }
+      world.step(STEP);
+    }
+
+    world.bodies.forEach((body) => {
+      expect(Number.isFinite(body.x)).toBe(true);
+      expect(Number.isFinite(body.y)).toBe(true);
+      expect(Number.isFinite(body.vx)).toBe(true);
+      expect(Number.isFinite(body.vy)).toBe(true);
+      expect(Number.isFinite(body.angularVelocity)).toBe(true);
+    });
+  });
+
+  it("clamps beat impulses to maximum velocities", () => {
+    const world = new PhysicsWorld(240, 200, 0);
+    world.addBody({
+      x: 120,
+      y: 100,
+      width: 40,
+      height: 20,
+      restitution: 0.2,
+      friction: 0.6
+    });
+    world.kickRadius = 400;
+    world.kickOriginMode = "center";
+    world.maxLinVel = 200;
+    world.maxAngVel = 2;
+    world.kickTorque = 200;
+
+    world.applyBeatImpulse(5000, 1);
+
+    const body = world.bodies[0];
+    const speed = Math.hypot(body.vx, body.vy);
+    expect(speed).toBeLessThanOrEqual(world.maxLinVel + 1e-3);
+    expect(Math.abs(body.angularVelocity)).toBeLessThanOrEqual(world.maxAngVel + 1e-3);
   });
 });

@@ -57,6 +57,7 @@ type ShatterParticle = {
 };
 
 type SpawnMode = "pile" | "rain";
+type KickOriginMode = "center" | "floorCenter" | "random";
 
 const MAX_BODIES = 40;
 const MAX_CONTACTS = 2000;
@@ -83,6 +84,7 @@ const PALETTE = [
 
 const DEFAULT_TRAIL = 0.2;
 const DEFAULT_COUNT = 18;
+const DEFAULT_KICK_IMPULSE = 250;
 
 function mulberry32(seed: number): () => number {
   let t = seed >>> 0;
@@ -96,6 +98,13 @@ function mulberry32(seed: number): () => number {
 
 function resolveSpawnMode(value: unknown): SpawnMode {
   return value === "rain" ? "rain" : "pile";
+}
+
+function resolveKickOriginMode(value: unknown): KickOriginMode {
+  if (value === "center" || value === "random" || value === "floorCenter") {
+    return value;
+  }
+  return "floorCenter";
 }
 
 function resolveNumberParam(value: unknown, fallback: number): number {
@@ -116,6 +125,48 @@ export class PhysicsWorld {
   wreckingBall: Body | null = null;
   wreckingAnchor: Body | null = null;
   wreckingTriggered = false;
+  beatLoosenTimer = 0;
+  loosenDuration = 0.18;
+  loosenFrictionMult = 0.25;
+  loosenRestitutionAdd = 0.35;
+  loosenPosCorrMult = 0.35;
+  loosenExtraSlop = 1.5;
+  sepBiasRad = (10 * Math.PI) / 180;
+  kickRadius = 0;
+  scatterAngleRad = (25 * Math.PI) / 180;
+  scatterJitter = 0.35;
+  kickUpBias = 0.35;
+  kickTorque = 35;
+  maxLinVel = 1800;
+  maxAngVel = 18;
+  kickOriginMode: KickOriginMode = "floorCenter";
+  kickOriginY: number | null = null;
+  loosenActive = false;
+  private rng: () => number = Math.random;
+  private tempSpawnBody: Body = {
+    x: 0,
+    y: 0,
+    vx: 0,
+    vy: 0,
+    angle: 0,
+    angularVelocity: 0,
+    width: 0,
+    height: 0,
+    halfW: 0,
+    halfH: 0,
+    invMass: 0,
+    invInertia: 0,
+    restitution: 0,
+    friction: 0,
+    axisXx: 1,
+    axisXy: 0,
+    axisYx: 0,
+    axisYy: 1,
+    fill: "",
+    stroke: "",
+    render: false
+  };
+  private tempOverlap = { nx: 0, ny: 0, penetration: 0 };
   private tempSupportA = { x: 0, y: 0 };
   private tempSupportB = { x: 0, y: 0 };
   private tempSupportWall = { x: 0, y: 0 };
@@ -147,40 +198,79 @@ export class PhysicsWorld {
     seed: number | null
   ): void {
     const rng = seed === null ? Math.random : mulberry32(seed);
+    this.rng = rng;
     this.bodies.length = 0;
     this.joints.length = 0;
     this.wreckingBall = null;
     this.wreckingAnchor = null;
     this.wreckingTriggered = false;
+    this.beatLoosenTimer = 0;
 
     const clamped = clamp(count, 5, MAX_BODIES);
     const columns = Math.max(3, Math.floor(Math.sqrt(clamped)));
-    const baseX = this.width * 0.5;
-    const baseY = this.height * 0.78;
-    const spacingX = this.width * 0.08;
-    const spacingY = this.height * 0.06;
+    const widths: number[] = new Array(clamped);
+    const heights: number[] = new Array(clamped);
+    let maxW = 0;
+    let maxH = 0;
 
     for (let i = 0; i < clamped; i += 1) {
       const width = 30 + rng() * 40;
       const height = 24 + rng() * 36;
+      widths[i] = width;
+      heights[i] = height;
+      maxW = Math.max(maxW, width);
+      maxH = Math.max(maxH, height);
+    }
+
+    const maxExtent = Math.hypot(maxW, maxH);
+    const spacingX = Math.max(this.width * 0.08, maxExtent * 1.05);
+    const spacingY = Math.max(this.height * 0.06, maxExtent * 1.05);
+    const totalWidth = (columns - 1) * spacingX;
+    const minBaseX = maxExtent * 0.5 + totalWidth * 0.5;
+    const maxBaseX = this.width - maxExtent * 0.5 - totalWidth * 0.5;
+    const baseX = clamp(this.width * 0.5, minBaseX, maxBaseX);
+    const baseY = Math.min(this.height * 0.78, this.height - maxExtent * 0.5);
+
+    for (let i = 0; i < clamped; i += 1) {
+      const width = widths[i];
+      const height = heights[i];
       const palette = PALETTE[i % PALETTE.length];
       const col = i % columns;
       const row = Math.floor(i / columns);
-
-      let x = baseX + (col - (columns - 1) / 2) * spacingX + (rng() - 0.5) * 12;
-      let y = baseY - row * spacingY - rng() * 18;
-      let vx = (rng() - 0.5) * 40;
-      let vy = (rng() - 0.5) * 30;
-
-      if (spawnMode === "rain") {
-        x = rng() * this.width;
-        y = -rng() * this.height * 0.6 - 40;
-        vx = (rng() - 0.5) * 20;
-        vy = rng() * 40;
-      }
-
       const angle = (rng() - 0.5) * 0.6;
       const angularVelocity = (rng() - 0.5) * 1.2;
+
+      let x = 0;
+      let y = 0;
+      let vx = 0;
+      let vy = 0;
+
+      let placed = false;
+      const target = { x: 0, y: 0 };
+      for (let attempt = 0; attempt < 16; attempt += 1) {
+        if (spawnMode === "rain") {
+          x = rng() * this.width;
+          y = -rng() * this.height * 0.6 - 40 - attempt * 8;
+          vx = (rng() - 0.5) * 20;
+          vy = rng() * 40;
+        } else {
+          x = baseX + (col - (columns - 1) / 2) * spacingX;
+          y = baseY - row * spacingY - attempt * 6;
+          vx = (rng() - 0.5) * 40;
+          vy = (rng() - 0.5) * 30;
+        }
+        if (this.resolveSpawnPosition(x, y, width, height, angle, target)) {
+          x = target.x;
+          y = target.y;
+          placed = true;
+          break;
+        }
+      }
+      if (!placed) {
+        x = baseX + (col - (columns - 1) / 2) * spacingX;
+        y = -height - i * height * 1.5;
+      }
+
       this.addBody({
         x,
         y,
@@ -197,6 +287,7 @@ export class PhysicsWorld {
       });
     }
 
+    this.resolveInitialOverlaps();
     this.buildStickJoints(rng);
   }
 
@@ -295,14 +386,28 @@ export class PhysicsWorld {
   }
 
   applyBeatImpulse(magnitude: number, strength: number): void {
-    const centerX = this.width * 0.5;
-    const centerY = this.height * 0.5;
-    const scaled = magnitude * (0.4 + strength * 0.6);
+    const baseImpulse = magnitude * (0.4 + strength * 0.6);
+    const radius = this.kickRadius > 0 ? this.kickRadius : Math.min(this.width, this.height) * 0.6;
+    let originX = this.width * 0.5;
+    let originY = this.height * 0.65;
+    if (this.kickOriginMode === "center") {
+      originY = this.height * 0.5;
+    } else if (this.kickOriginMode === "random") {
+      originX = this.rng() * this.width;
+      originY = this.height * (0.45 + 0.3 * this.rng());
+    }
+    if (this.kickOriginY !== null) {
+      originY = this.kickOriginY;
+    }
+    this.beatLoosenTimer = Math.max(this.beatLoosenTimer, this.loosenDuration);
 
     for (let i = 0; i < this.bodies.length; i += 1) {
       const body = this.bodies[i];
-      let dx = body.x - centerX;
-      let dy = body.y - centerY;
+      if (body.invMass === 0) {
+        continue;
+      }
+      let dx = body.x - originX;
+      let dy = body.y - originY;
       const dist = Math.hypot(dx, dy);
       if (dist < 1) {
         dx = 0;
@@ -311,10 +416,34 @@ export class PhysicsWorld {
         dx /= dist;
         dy /= dist;
       }
-      const impulseX = dx * scaled;
-      const impulseY = dy * scaled;
-      body.vx += impulseX * body.invMass;
-      body.vy += impulseY * body.invMass;
+      const jitterAngle = (this.rng() * 2 - 1) * this.scatterAngleRad;
+      const jitterScale = 1 + (this.rng() * 2 - 1) * this.scatterJitter;
+      const cos = Math.cos(jitterAngle);
+      const sin = Math.sin(jitterAngle);
+      let dirX = dx * cos - dy * sin;
+      let dirY = dx * sin + dy * cos;
+      dirY -= this.kickUpBias;
+      const dirLength = Math.hypot(dirX, dirY);
+      if (dirLength > 1e-5) {
+        dirX /= dirLength;
+        dirY /= dirLength;
+      }
+      const falloff = clamp(1 - dist / radius, 0, 1);
+      const weight = 0.3 + 0.7 * falloff;
+      const impulse = baseImpulse * weight * jitterScale;
+      body.vx += dirX * impulse * body.invMass;
+      body.vy += dirY * impulse * body.invMass;
+      const spin = (this.rng() < 0.5 ? -1 : 1) * this.kickTorque * falloff;
+      body.angularVelocity += spin * body.invInertia;
+      const speed = Math.hypot(body.vx, body.vy);
+      if (speed > this.maxLinVel) {
+        const scale = this.maxLinVel / speed;
+        body.vx *= scale;
+        body.vy *= scale;
+      }
+      if (Math.abs(body.angularVelocity) > this.maxAngVel) {
+        body.angularVelocity = Math.sign(body.angularVelocity) * this.maxAngVel;
+      }
     }
   }
 
@@ -353,6 +482,10 @@ export class PhysicsWorld {
 
   step(dt: number): void {
     this.impactStrength = 0;
+    this.loosenActive = this.beatLoosenTimer > 0;
+    if (this.beatLoosenTimer > 0) {
+      this.beatLoosenTimer = Math.max(0, this.beatLoosenTimer - dt);
+    }
     for (let i = 0; i < this.bodies.length; i += 1) {
       const body = this.bodies[i];
       if (body.invMass === 0) {
@@ -407,6 +540,17 @@ export class PhysicsWorld {
 
   getBodyExtentY(body: Body): number {
     return Math.abs(body.axisXy) * body.halfW + Math.abs(body.axisYy) * body.halfH;
+  }
+
+  bodiesOverlap(a: Body, b: Body): boolean {
+    return this.checkBodiesOverlap(a, b);
+  }
+
+  getOverlapDepth(a: Body, b: Body): number {
+    if (!this.getOverlapInfo(a, b, this.tempOverlap)) {
+      return 0;
+    }
+    return this.tempOverlap.penetration;
   }
 
   private updateAxes(body: Body): void {
@@ -523,6 +667,156 @@ export class PhysicsWorld {
     return true;
   }
 
+  private getOverlapInfo(a: Body, b: Body, target: { nx: number; ny: number; penetration: number }): boolean {
+    let minOverlap = Number.POSITIVE_INFINITY;
+    let normalX = 0;
+    let normalY = 0;
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    if (!this.testAxis(a, b, a.axisXx, a.axisXy, dx, dy, (overlap, ax, ay) => {
+      if (overlap < minOverlap) {
+        minOverlap = overlap;
+        normalX = ax;
+        normalY = ay;
+      }
+    })) {
+      return false;
+    }
+    if (!this.testAxis(a, b, a.axisYx, a.axisYy, dx, dy, (overlap, ax, ay) => {
+      if (overlap < minOverlap) {
+        minOverlap = overlap;
+        normalX = ax;
+        normalY = ay;
+      }
+    })) {
+      return false;
+    }
+    if (!this.testAxis(a, b, b.axisXx, b.axisXy, dx, dy, (overlap, ax, ay) => {
+      if (overlap < minOverlap) {
+        minOverlap = overlap;
+        normalX = ax;
+        normalY = ay;
+      }
+    })) {
+      return false;
+    }
+    if (!this.testAxis(a, b, b.axisYx, b.axisYy, dx, dy, (overlap, ax, ay) => {
+      if (overlap < minOverlap) {
+        minOverlap = overlap;
+        normalX = ax;
+        normalY = ay;
+      }
+    })) {
+      return false;
+    }
+    if (dx * normalX + dy * normalY < 0) {
+      normalX = -normalX;
+      normalY = -normalY;
+    }
+    target.nx = normalX;
+    target.ny = normalY;
+    target.penetration = minOverlap;
+    return true;
+  }
+
+  private axisOverlap(a: Body, b: Body, axisX: number, axisY: number, dx: number, dy: number): boolean {
+    const distance = Math.abs(dx * axisX + dy * axisY);
+    const rA =
+      a.halfW * Math.abs(axisX * a.axisXx + axisY * a.axisXy) +
+      a.halfH * Math.abs(axisX * a.axisYx + axisY * a.axisYy);
+    const rB =
+      b.halfW * Math.abs(axisX * b.axisXx + axisY * b.axisXy) +
+      b.halfH * Math.abs(axisX * b.axisYx + axisY * b.axisYy);
+    return rA + rB - distance > 0;
+  }
+
+  private checkBodiesOverlap(a: Body, b: Body): boolean {
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    if (!this.axisOverlap(a, b, a.axisXx, a.axisXy, dx, dy)) {
+      return false;
+    }
+    if (!this.axisOverlap(a, b, a.axisYx, a.axisYy, dx, dy)) {
+      return false;
+    }
+    if (!this.axisOverlap(a, b, b.axisXx, b.axisXy, dx, dy)) {
+      return false;
+    }
+    if (!this.axisOverlap(a, b, b.axisYx, b.axisYy, dx, dy)) {
+      return false;
+    }
+    return true;
+  }
+
+  private resolveSpawnPosition(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    angle: number,
+    target: { x: number; y: number }
+  ): boolean {
+    const temp = this.tempSpawnBody;
+    temp.x = x;
+    temp.y = y;
+    temp.width = width;
+    temp.height = height;
+    temp.halfW = width * 0.5;
+    temp.halfH = height * 0.5;
+    temp.angle = angle;
+    this.updateAxes(temp);
+    for (let pass = 0; pass < 4; pass += 1) {
+      let overlapFound = false;
+      for (let i = 0; i < this.bodies.length; i += 1) {
+        if (!this.getOverlapInfo(temp, this.bodies[i], this.tempOverlap)) {
+          continue;
+        }
+        overlapFound = true;
+        temp.x -= this.tempOverlap.nx * (this.tempOverlap.penetration + 1);
+        temp.y -= this.tempOverlap.ny * (this.tempOverlap.penetration + 1);
+      }
+      if (!overlapFound) {
+        target.x = temp.x;
+        target.y = temp.y;
+        return true;
+      }
+    }
+    for (let lift = 0; lift < 12; lift += 1) {
+      let hasOverlap = false;
+      for (let i = 0; i < this.bodies.length; i += 1) {
+        if (this.checkBodiesOverlap(temp, this.bodies[i])) {
+          hasOverlap = true;
+          break;
+        }
+      }
+      if (!hasOverlap) {
+        target.x = temp.x;
+        target.y = temp.y;
+        return true;
+      }
+      temp.y -= height * 0.6;
+      temp.x += (this.rng() - 0.5) * 4;
+    }
+    return false;
+  }
+
+  private resolveInitialOverlaps(): void {
+    for (let pass = 0; pass < 12; pass += 1) {
+      this.contactCount = 0;
+      for (let i = 0; i < this.bodies.length; i += 1) {
+        for (let j = i + 1; j < this.bodies.length; j += 1) {
+          this.detectBodyContact(this.bodies[i], this.bodies[j]);
+        }
+      }
+      if (this.contactCount === 0) {
+        break;
+      }
+      for (let i = 0; i < this.contactCount; i += 1) {
+        this.applyPositionCorrection(this.contacts[i]);
+      }
+    }
+  }
+
   private supportPointInto(body: Body, nx: number, ny: number, target: { x: number; y: number }): void {
     const d1 = nx * body.axisXx + ny * body.axisXy;
     const d2 = nx * body.axisYx + ny * body.axisYy;
@@ -547,8 +841,12 @@ export class PhysicsWorld {
     }
     const contact = this.contacts[this.contactCount];
     this.contactCount += 1;
-    const friction = b ? Math.sqrt(a.friction * b.friction) : a.friction;
-    const restitution = b ? Math.min(a.restitution, b.restitution) : a.restitution;
+    const baseFriction = b ? Math.sqrt(a.friction * b.friction) : a.friction;
+    const baseRestitution = b ? Math.min(a.restitution, b.restitution) : a.restitution;
+    const friction = baseFriction * (this.loosenActive ? this.loosenFrictionMult : 1);
+    const restitution = this.loosenActive
+      ? Math.min(1, baseRestitution + this.loosenRestitutionAdd)
+      : baseRestitution;
     contact.a = a;
     contact.b = b;
     contact.nx = nx;
@@ -679,9 +977,22 @@ export class PhysicsWorld {
     if (invMassSum <= 0) {
       return;
     }
-    const correction = Math.max(contact.penetration - POSITION_SLOP, 0) / invMassSum * POSITION_PERCENT;
-    const corrX = correction * contact.nx;
-    const corrY = correction * contact.ny;
+    const slop = POSITION_SLOP + (this.loosenActive ? this.loosenExtraSlop : 0);
+    const percent = POSITION_PERCENT * (this.loosenActive ? this.loosenPosCorrMult : 1);
+    const correction = Math.max(contact.penetration - slop, 0) / invMassSum * percent;
+    let nx = contact.nx;
+    let ny = contact.ny;
+    if (this.loosenActive && this.sepBiasRad > 1e-5) {
+      const angle = (this.rng() * 2 - 1) * this.sepBiasRad;
+      const cos = Math.cos(angle);
+      const sin = Math.sin(angle);
+      const rx = nx * cos - ny * sin;
+      const ry = nx * sin + ny * cos;
+      nx = rx;
+      ny = ry;
+    }
+    const corrX = correction * nx;
+    const corrY = correction * ny;
     a.x -= corrX * a.invMass;
     a.y -= corrY * a.invMass;
     if (b) {
@@ -698,7 +1009,7 @@ export class PhysicsPileEffect implements Effect {
     restitution: 0.25,
     friction: 0.6,
     gravity: 900,
-    beatImpulse: 250,
+    beatImpulse: DEFAULT_KICK_IMPULSE,
     spawnMode: "pile" as SpawnMode,
     seed: null as number | null,
     width: 0,
@@ -715,7 +1026,27 @@ export class PhysicsPileEffect implements Effect {
     const restitution = clamp(resolveNumberParam(params.restitution, 0.25), 0, 1);
     const friction = clamp(resolveNumberParam(params.friction, 0.6), 0, 1);
     const gravity = resolveNumberParam(params.gravity, 900);
-    const beatImpulse = resolveNumberParam(params.beatImpulse, 250);
+    const kickImpulseParam = resolveNumberParam(params.kickImpulse, Number.NaN);
+    const beatImpulse = resolveNumberParam(params.beatImpulse, DEFAULT_KICK_IMPULSE);
+    const kickImpulse = Number.isFinite(kickImpulseParam) ? kickImpulseParam : beatImpulse;
+    const kickRadius = resolveNumberParam(
+      params.kickRadius,
+      Math.min(width, height) * 0.6
+    );
+    const scatterAngleDeg = resolveNumberParam(params.scatterAngleDeg, 25);
+    const scatterJitter = clamp(resolveNumberParam(params.scatterJitter, 0.35), 0, 1);
+    const kickUpBias = clamp(resolveNumberParam(params.kickUpBias, 0.35), 0, 1);
+    const kickTorque = resolveNumberParam(params.kickTorque, 35);
+    const loosenDuration = resolveNumberParam(params.loosenDuration, 0.18);
+    const loosenFrictionMult = clamp(resolveNumberParam(params.loosenFrictionMult, 0.25), 0, 1);
+    const loosenRestitutionAdd = clamp(resolveNumberParam(params.loosenRestitutionAdd, 0.35), 0, 1);
+    const loosenPosCorrMult = clamp(resolveNumberParam(params.loosenPosCorrMult, 0.35), 0, 1);
+    const loosenExtraSlop = resolveNumberParam(params.loosenExtraSlop, 1.5);
+    const maxLinVel = resolveNumberParam(params.maxLinVel, 1800);
+    const maxAngVel = resolveNumberParam(params.maxAngVel, 18);
+    const kickOrigin = resolveKickOriginMode((params as Record<string, unknown>).kickOrigin);
+    const kickOriginY = resolveNumberParam(params.kickOriginY, Number.NaN);
+    const sepBiasDeg = resolveNumberParam(params.sepBiasDeg, 10);
     const seed = resolveNumberParam(params.seed, Number.NaN);
     const spawnMode = resolveSpawnMode((params as Record<string, unknown>).spawnMode);
     const trail = clamp(resolveNumberParam(params.trail, DEFAULT_TRAIL), 0, 1);
@@ -730,7 +1061,7 @@ export class PhysicsPileEffect implements Effect {
       this.lastConfig.restitution = restitution;
       this.lastConfig.friction = friction;
       this.lastConfig.gravity = gravity;
-      this.lastConfig.beatImpulse = beatImpulse;
+      this.lastConfig.beatImpulse = kickImpulse;
       this.lastConfig.spawnMode = spawnMode;
       this.lastConfig.seed = Number.isFinite(seed) ? seed : null;
       this.world.resetBodies(
@@ -775,6 +1106,22 @@ export class PhysicsPileEffect implements Effect {
       return;
     }
 
+    world.kickRadius = kickRadius;
+    world.scatterAngleRad = (scatterAngleDeg * Math.PI) / 180;
+    world.scatterJitter = scatterJitter;
+    world.kickUpBias = kickUpBias;
+    world.kickTorque = kickTorque;
+    world.loosenDuration = loosenDuration;
+    world.loosenFrictionMult = loosenFrictionMult;
+    world.loosenRestitutionAdd = loosenRestitutionAdd;
+    world.loosenPosCorrMult = loosenPosCorrMult;
+    world.loosenExtraSlop = loosenExtraSlop;
+    world.maxLinVel = maxLinVel;
+    world.maxAngVel = maxAngVel;
+    world.kickOriginMode = kickOrigin;
+    world.kickOriginY = Number.isFinite(kickOriginY) ? kickOriginY : null;
+    world.sepBiasRad = (sepBiasDeg * Math.PI) / 180;
+
     audio.impactStrength = 0;
     const frameDt = clamp(time - world.lastTime, 0, 0.05);
     world.lastTime = time;
@@ -794,7 +1141,7 @@ export class PhysicsPileEffect implements Effect {
     } else {
       world.update(frameDt);
       if (audio.beat || audio.beatStrength > 0.2) {
-        world.applyBeatImpulse(beatImpulse, audio.beatStrength);
+        world.applyBeatImpulse(kickImpulse, audio.beatStrength);
       }
 
       audio.impactStrength = clamp(world.impactStrength * IMPACT_STRENGTH_SCALE, 0, 1);
