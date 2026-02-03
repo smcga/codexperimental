@@ -1,6 +1,51 @@
 import { describe, expect, it } from "vitest";
 
-import { resolveAutomatedParams } from "./automation";
+import { EaseName, easeFn, resolveAutomatedParams } from "./automation";
+
+const ALL_EASES: EaseName[] = [
+  "linear",
+  "easeInOutQuad",
+  "easeInQuad",
+  "easeOutQuad",
+  "easeInOutCubic",
+  "easeInCubic",
+  "easeOutCubic",
+  "easeInOutQuart",
+  "easeInOutQuint",
+  "easeInSine",
+  "easeOutSine",
+  "easeInOutSine",
+  "easeInExpo",
+  "easeOutExpo",
+  "easeInOutExpo",
+  "easeInBack",
+  "easeOutBack",
+  "easeInOutBack",
+  "easeOutBounce",
+  "easeOutElastic",
+  "easeInOutCirc"
+];
+
+const SMOOTH_EASES: EaseName[] = [
+  "linear",
+  "easeInOutQuad",
+  "easeInQuad",
+  "easeOutQuad",
+  "easeInOutCubic",
+  "easeInCubic",
+  "easeOutCubic",
+  "easeInOutQuart",
+  "easeInOutQuint",
+  "easeInSine",
+  "easeOutSine",
+  "easeInOutSine",
+  "easeInExpo",
+  "easeOutExpo",
+  "easeInOutExpo",
+  "easeInOutCirc"
+];
+
+const EPSILON = 1e-6;
 
 describe("resolveAutomatedParams", () => {
   it("interpolates linearly at the midpoint", () => {
@@ -53,5 +98,37 @@ describe("resolveAutomatedParams", () => {
 
     expect(params.speed).toBeCloseTo(1.5);
     expect(params.glow).toBeCloseTo(0.4);
+  });
+});
+
+describe("easeFn", () => {
+  it("hits endpoints for all easings", () => {
+    ALL_EASES.forEach((ease) => {
+      expect(easeFn(ease, 0)).toBeCloseTo(0, 6);
+      expect(easeFn(ease, 1)).toBeCloseTo(1, 6);
+    });
+  });
+
+  it("stays within [0,1] across the range", () => {
+    ALL_EASES.forEach((ease) => {
+      for (let step = 0; step <= 10; step += 1) {
+        const t = step / 10;
+        const value = easeFn(ease, t);
+        expect(value).toBeGreaterThanOrEqual(-EPSILON);
+        expect(value).toBeLessThanOrEqual(1 + EPSILON);
+      }
+    });
+  });
+
+  it("is monotone for smooth easings", () => {
+    SMOOTH_EASES.forEach((ease) => {
+      let previous = easeFn(ease, 0);
+      for (let step = 1; step <= 20; step += 1) {
+        const t = step / 20;
+        const value = easeFn(ease, t);
+        expect(value + EPSILON).toBeGreaterThanOrEqual(previous);
+        previous = value;
+      }
+    });
   });
 });
