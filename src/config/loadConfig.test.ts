@@ -126,6 +126,21 @@ describe("normalizeTimelineConfig", () => {
     expect(rampEnd?.layers[1]?.opacity).toBeCloseTo(0.22);
   });
 
+  it("accelerates chess playback in the release timeline", () => {
+    const releasePath = new URL("../../public/timeline.release.json", import.meta.url);
+    const raw = JSON.parse(readFileSync(releasePath, "utf-8")) as RawTimelineConfig;
+    const normalized = normalizeTimelineConfig(raw);
+
+    const chessMoment = normalized.sections.find((section) => section.id === "chess-overlay-a");
+    const chessRush = normalized.sections.find((section) => section.id === "rush-04027");
+    const finale = normalized.sections.find((section) => section.id === "finale-layer");
+    const finaleChessLayer = finale?.layers.find((layer) => layer.effect === "chess");
+
+    expect(chessMoment?.params.speed).toBeGreaterThan(6);
+    expect(chessRush?.params.speed).toBeGreaterThan(4);
+    expect(finaleChessLayer?.params.speed).toBeGreaterThan(2);
+  });
+
   it("uses rain and lightning as layered effects in the main timeline", () => {
     const timelinePath = new URL("../../public/timeline.json", import.meta.url);
     const raw = JSON.parse(readFileSync(timelinePath, "utf-8")) as RawTimelineConfig;
