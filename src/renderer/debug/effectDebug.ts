@@ -282,6 +282,19 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("audioReactive", "Audio Reactive", 0.3, { min: 0, max: 1, step: 0.05 })
       ]
   },
+  fluid: {
+    title: "Fluid Controls",
+    controls: [
+      numberControl("scale", "Scale", 16, { min: 8, max: 32, step: 1 }),
+      numberControl("viscosity", "Viscosity", 0.15, { min: 0, max: 1, step: 0.05 }),
+      numberControl("diffusion", "Diffusion", 0.25, { min: 0, max: 1, step: 0.05 }),
+      numberControl("force", "Force", 1.2, { min: 0, max: 4, step: 0.05 }),
+      numberControl("density", "Density", 0.7, { min: 0, max: 2, step: 0.05 }),
+      numberControl("decay", "Decay", 0.35, { min: 0, max: 2, step: 0.05 }),
+      numberControl("hue", "Hue", 200, { min: 0, max: 360, step: 1 }),
+      numberControl("seed", "Seed", 0, { min: 0, max: 9999, step: 1 })
+    ]
+  },
   gl_fractal_tunnel: {
     title: "Fractal Tunnel (WebGL) Controls",
     controls: [
