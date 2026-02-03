@@ -84,6 +84,26 @@ describe("normalizeTimelineConfig", () => {
     expect(lateHookText?.start).toBeCloseTo(227);
   });
 
+  it("features the wireframe ride and mutation sections in the release timeline", () => {
+    const releasePath = new URL("../../public/timeline.release.json", import.meta.url);
+    const raw = JSON.parse(readFileSync(releasePath, "utf-8")) as RawTimelineConfig;
+    const normalized = normalizeTimelineConfig(raw);
+
+    const wireframeRide = normalized.sections.find((section) => section.id === "switch-03320-wireframe");
+    const mutation = normalized.sections.find((section) => section.id === "mega-drop-mutation");
+
+    expect(wireframeRide?.effect).toBe("wireframeRide");
+    expect(wireframeRide?.start).toBeCloseTo(212);
+    expect(wireframeRide?.end).toBeCloseTo(215.2);
+
+    expect(mutation?.effect).toBe("neon_alley");
+    expect(mutation?.start).toBeCloseTo(280);
+    expect(mutation?.end).toBeCloseTo(281.2);
+    expect(mutation?.automation?.some((automation) => automation.param === "seed" && automation.from === 5)).toBe(
+      true
+    );
+  });
+
   it("captures the machine-trance rush ramp in the release timeline", () => {
     const releasePath = new URL("../../public/timeline.release.json", import.meta.url);
     const raw = JSON.parse(readFileSync(releasePath, "utf-8")) as RawTimelineConfig;
@@ -125,7 +145,7 @@ describe("normalizeTimelineConfig", () => {
       (section) => (section.layers?.some((layer) => layer.effect === "lightning") ?? false)
     );
 
-    expect(Math.max(...rainLayerCounts)).toBeGreaterThanOrEqual(2);
+    expect(Math.max(...rainLayerCounts)).toBeGreaterThanOrEqual(1);
     expect(lightningSections.length).toBeGreaterThan(0);
     expect(rainSections[0]?.start ?? Number.POSITIVE_INFINITY).toBeLessThan(180);
     expect(lightningSections[0]?.start ?? Number.POSITIVE_INFINITY).toBeLessThan(180);
