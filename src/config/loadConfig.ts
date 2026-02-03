@@ -267,7 +267,29 @@ function normalizeLayerParams(value: unknown, label: string): Record<string, num
   return value as Record<string, number>;
 }
 
-const EASE_NAMES: EaseName[] = ["linear", "easeInOutQuad"];
+const EASE_NAMES: EaseName[] = [
+  "linear",
+  "easeInOutQuad",
+  "easeInQuad",
+  "easeOutQuad",
+  "easeInOutCubic",
+  "easeInCubic",
+  "easeOutCubic",
+  "easeInOutQuart",
+  "easeInOutQuint",
+  "easeInSine",
+  "easeOutSine",
+  "easeInOutSine",
+  "easeInExpo",
+  "easeOutExpo",
+  "easeInOutExpo",
+  "easeInBack",
+  "easeOutBack",
+  "easeInOutBack",
+  "easeOutBounce",
+  "easeOutElastic",
+  "easeInOutCirc"
+];
 
 function normalizeParamAutomation(
   value: unknown,
