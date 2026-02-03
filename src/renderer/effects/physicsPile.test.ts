@@ -188,6 +188,19 @@ describe("PhysicsWorld", () => {
     expect(Number.isFinite(a.vx)).toBe(true);
   });
 
+  it("spawns bodies without initial overlaps", () => {
+    const world = new PhysicsWorld(360, 240, 900);
+    world.resetBodies(18, "pile", 0.2, 0.5, 9);
+
+    let maxOverlap = 0;
+    for (let i = 0; i < world.bodies.length; i += 1) {
+      for (let j = i + 1; j < world.bodies.length; j += 1) {
+        maxOverlap = Math.max(maxOverlap, world.getOverlapDepth(world.bodies[i], world.bodies[j]));
+      }
+    }
+    expect(maxOverlap).toBeLessThanOrEqual(1);
+  });
+
   it("scatters bodies with varied velocities on beat kicks", () => {
     const world = new PhysicsWorld(360, 240, 900);
     world.resetBodies(16, "pile", 0.2, 0.5, 12);

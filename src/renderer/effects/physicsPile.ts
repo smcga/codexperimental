@@ -143,6 +143,30 @@ export class PhysicsWorld {
   kickOriginY: number | null = null;
   loosenActive = false;
   private rng: () => number = Math.random;
+  private tempSpawnBody: Body = {
+    x: 0,
+    y: 0,
+    vx: 0,
+    vy: 0,
+    angle: 0,
+    angularVelocity: 0,
+    width: 0,
+    height: 0,
+    halfW: 0,
+    halfH: 0,
+    invMass: 0,
+    invInertia: 0,
+    restitution: 0,
+    friction: 0,
+    axisXx: 1,
+    axisXy: 0,
+    axisYx: 0,
+    axisYy: 1,
+    fill: "",
+    stroke: "",
+    render: false
+  };
+  private tempOverlap = { nx: 0, ny: 0, penetration: 0 };
   private tempSupportA = { x: 0, y: 0 };
   private tempSupportB = { x: 0, y: 0 };
   private tempSupportWall = { x: 0, y: 0 };
@@ -184,32 +208,69 @@ export class PhysicsWorld {
 
     const clamped = clamp(count, 5, MAX_BODIES);
     const columns = Math.max(3, Math.floor(Math.sqrt(clamped)));
-    const baseX = this.width * 0.5;
-    const baseY = this.height * 0.78;
-    const spacingX = this.width * 0.08;
-    const spacingY = this.height * 0.06;
+    const widths: number[] = new Array(clamped);
+    const heights: number[] = new Array(clamped);
+    let maxW = 0;
+    let maxH = 0;
 
     for (let i = 0; i < clamped; i += 1) {
       const width = 30 + rng() * 40;
       const height = 24 + rng() * 36;
+      widths[i] = width;
+      heights[i] = height;
+      maxW = Math.max(maxW, width);
+      maxH = Math.max(maxH, height);
+    }
+
+    const maxExtent = Math.hypot(maxW, maxH);
+    const spacingX = Math.max(this.width * 0.08, maxExtent * 1.05);
+    const spacingY = Math.max(this.height * 0.06, maxExtent * 1.05);
+    const totalWidth = (columns - 1) * spacingX;
+    const minBaseX = maxExtent * 0.5 + totalWidth * 0.5;
+    const maxBaseX = this.width - maxExtent * 0.5 - totalWidth * 0.5;
+    const baseX = clamp(this.width * 0.5, minBaseX, maxBaseX);
+    const baseY = Math.min(this.height * 0.78, this.height - maxExtent * 0.5);
+
+    for (let i = 0; i < clamped; i += 1) {
+      const width = widths[i];
+      const height = heights[i];
       const palette = PALETTE[i % PALETTE.length];
       const col = i % columns;
       const row = Math.floor(i / columns);
-
-      let x = baseX + (col - (columns - 1) / 2) * spacingX + (rng() - 0.5) * 12;
-      let y = baseY - row * spacingY - rng() * 18;
-      let vx = (rng() - 0.5) * 40;
-      let vy = (rng() - 0.5) * 30;
-
-      if (spawnMode === "rain") {
-        x = rng() * this.width;
-        y = -rng() * this.height * 0.6 - 40;
-        vx = (rng() - 0.5) * 20;
-        vy = rng() * 40;
-      }
-
       const angle = (rng() - 0.5) * 0.6;
       const angularVelocity = (rng() - 0.5) * 1.2;
+
+      let x = 0;
+      let y = 0;
+      let vx = 0;
+      let vy = 0;
+
+      let placed = false;
+      const target = { x: 0, y: 0 };
+      for (let attempt = 0; attempt < 16; attempt += 1) {
+        if (spawnMode === "rain") {
+          x = rng() * this.width;
+          y = -rng() * this.height * 0.6 - 40 - attempt * 8;
+          vx = (rng() - 0.5) * 20;
+          vy = rng() * 40;
+        } else {
+          x = baseX + (col - (columns - 1) / 2) * spacingX;
+          y = baseY - row * spacingY - attempt * 6;
+          vx = (rng() - 0.5) * 40;
+          vy = (rng() - 0.5) * 30;
+        }
+        if (this.resolveSpawnPosition(x, y, width, height, angle, target)) {
+          x = target.x;
+          y = target.y;
+          placed = true;
+          break;
+        }
+      }
+      if (!placed) {
+        x = baseX + (col - (columns - 1) / 2) * spacingX;
+        y = -height - i * height * 1.5;
+      }
+
       this.addBody({
         x,
         y,
@@ -226,6 +287,7 @@ export class PhysicsWorld {
       });
     }
 
+    this.resolveInitialOverlaps();
     this.buildStickJoints(rng);
   }
 
@@ -480,6 +542,17 @@ export class PhysicsWorld {
     return Math.abs(body.axisXy) * body.halfW + Math.abs(body.axisYy) * body.halfH;
   }
 
+  bodiesOverlap(a: Body, b: Body): boolean {
+    return this.checkBodiesOverlap(a, b);
+  }
+
+  getOverlapDepth(a: Body, b: Body): number {
+    if (!this.getOverlapInfo(a, b, this.tempOverlap)) {
+      return 0;
+    }
+    return this.tempOverlap.penetration;
+  }
+
   private updateAxes(body: Body): void {
     const cos = Math.cos(body.angle);
     const sin = Math.sin(body.angle);
@@ -592,6 +665,156 @@ export class PhysicsWorld {
     }
     onOverlap(overlap, axisX, axisY);
     return true;
+  }
+
+  private getOverlapInfo(a: Body, b: Body, target: { nx: number; ny: number; penetration: number }): boolean {
+    let minOverlap = Number.POSITIVE_INFINITY;
+    let normalX = 0;
+    let normalY = 0;
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    if (!this.testAxis(a, b, a.axisXx, a.axisXy, dx, dy, (overlap, ax, ay) => {
+      if (overlap < minOverlap) {
+        minOverlap = overlap;
+        normalX = ax;
+        normalY = ay;
+      }
+    })) {
+      return false;
+    }
+    if (!this.testAxis(a, b, a.axisYx, a.axisYy, dx, dy, (overlap, ax, ay) => {
+      if (overlap < minOverlap) {
+        minOverlap = overlap;
+        normalX = ax;
+        normalY = ay;
+      }
+    })) {
+      return false;
+    }
+    if (!this.testAxis(a, b, b.axisXx, b.axisXy, dx, dy, (overlap, ax, ay) => {
+      if (overlap < minOverlap) {
+        minOverlap = overlap;
+        normalX = ax;
+        normalY = ay;
+      }
+    })) {
+      return false;
+    }
+    if (!this.testAxis(a, b, b.axisYx, b.axisYy, dx, dy, (overlap, ax, ay) => {
+      if (overlap < minOverlap) {
+        minOverlap = overlap;
+        normalX = ax;
+        normalY = ay;
+      }
+    })) {
+      return false;
+    }
+    if (dx * normalX + dy * normalY < 0) {
+      normalX = -normalX;
+      normalY = -normalY;
+    }
+    target.nx = normalX;
+    target.ny = normalY;
+    target.penetration = minOverlap;
+    return true;
+  }
+
+  private axisOverlap(a: Body, b: Body, axisX: number, axisY: number, dx: number, dy: number): boolean {
+    const distance = Math.abs(dx * axisX + dy * axisY);
+    const rA =
+      a.halfW * Math.abs(axisX * a.axisXx + axisY * a.axisXy) +
+      a.halfH * Math.abs(axisX * a.axisYx + axisY * a.axisYy);
+    const rB =
+      b.halfW * Math.abs(axisX * b.axisXx + axisY * b.axisXy) +
+      b.halfH * Math.abs(axisX * b.axisYx + axisY * b.axisYy);
+    return rA + rB - distance > 0;
+  }
+
+  private checkBodiesOverlap(a: Body, b: Body): boolean {
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    if (!this.axisOverlap(a, b, a.axisXx, a.axisXy, dx, dy)) {
+      return false;
+    }
+    if (!this.axisOverlap(a, b, a.axisYx, a.axisYy, dx, dy)) {
+      return false;
+    }
+    if (!this.axisOverlap(a, b, b.axisXx, b.axisXy, dx, dy)) {
+      return false;
+    }
+    if (!this.axisOverlap(a, b, b.axisYx, b.axisYy, dx, dy)) {
+      return false;
+    }
+    return true;
+  }
+
+  private resolveSpawnPosition(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    angle: number,
+    target: { x: number; y: number }
+  ): boolean {
+    const temp = this.tempSpawnBody;
+    temp.x = x;
+    temp.y = y;
+    temp.width = width;
+    temp.height = height;
+    temp.halfW = width * 0.5;
+    temp.halfH = height * 0.5;
+    temp.angle = angle;
+    this.updateAxes(temp);
+    for (let pass = 0; pass < 4; pass += 1) {
+      let overlapFound = false;
+      for (let i = 0; i < this.bodies.length; i += 1) {
+        if (!this.getOverlapInfo(temp, this.bodies[i], this.tempOverlap)) {
+          continue;
+        }
+        overlapFound = true;
+        temp.x -= this.tempOverlap.nx * (this.tempOverlap.penetration + 1);
+        temp.y -= this.tempOverlap.ny * (this.tempOverlap.penetration + 1);
+      }
+      if (!overlapFound) {
+        target.x = temp.x;
+        target.y = temp.y;
+        return true;
+      }
+    }
+    for (let lift = 0; lift < 12; lift += 1) {
+      let hasOverlap = false;
+      for (let i = 0; i < this.bodies.length; i += 1) {
+        if (this.checkBodiesOverlap(temp, this.bodies[i])) {
+          hasOverlap = true;
+          break;
+        }
+      }
+      if (!hasOverlap) {
+        target.x = temp.x;
+        target.y = temp.y;
+        return true;
+      }
+      temp.y -= height * 0.6;
+      temp.x += (this.rng() - 0.5) * 4;
+    }
+    return false;
+  }
+
+  private resolveInitialOverlaps(): void {
+    for (let pass = 0; pass < 12; pass += 1) {
+      this.contactCount = 0;
+      for (let i = 0; i < this.bodies.length; i += 1) {
+        for (let j = i + 1; j < this.bodies.length; j += 1) {
+          this.detectBodyContact(this.bodies[i], this.bodies[j]);
+        }
+      }
+      if (this.contactCount === 0) {
+        break;
+      }
+      for (let i = 0; i < this.contactCount; i += 1) {
+        this.applyPositionCorrection(this.contacts[i]);
+      }
+    }
   }
 
   private supportPointInto(body: Body, nx: number, ny: number, target: { x: number; y: number }): void {
