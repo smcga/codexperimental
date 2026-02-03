@@ -46,6 +46,25 @@ describe("effect debug params", () => {
     });
   });
 
+  it("provides defaults for wireframe ride controls", () => {
+    expect(getEffectDebugDefaults("wireframeRide")).toEqual({
+      speed: 1,
+      gridWidth: 60,
+      gridDepth: 120,
+      gridResX: 160,
+      gridResZ: 220,
+      amplitude: 6,
+      noiseFreq: 0.08,
+      cameraHeight: 10,
+      fov: 60,
+      fog: 0.75,
+      neon: 1,
+      bassReactive: 0.6,
+      rmsReactive: 0.35,
+      sun: 1
+    });
+  });
+
   it("clamps equalizer params within control bounds", () => {
     const params = coerceEffectParams("equalizer", {
       bars: 200,
