@@ -44,6 +44,18 @@ const readRegistryEffects = (): string[] => {
   return effects;
 };
 
+const readAudioTimelineSection = (): string => {
+  const readmePath = path.resolve(process.cwd(), "README.md");
+  const readme = fs.readFileSync(readmePath, "utf-8");
+  const marker = "## Audio + timeline configuration";
+  const markerIndex = readme.indexOf(marker);
+  if (markerIndex === -1) {
+    throw new Error("README.md is missing the Audio + timeline configuration section.");
+  }
+  const afterMarker = readme.slice(markerIndex + marker.length);
+  return afterMarker.split("\n### Effect catalog")[0] ?? "";
+};
+
 describe("README effect catalog", () => {
   it("lists each effect registry entry", () => {
     const catalogEffects = readEffectCatalog();
@@ -54,5 +66,11 @@ describe("README effect catalog", () => {
 
     expect(missing).toEqual([]);
     expect(extra).toEqual([]);
+  });
+
+  it("documents WebGL effect highlights in the timeline section", () => {
+    const section = readAudioTimelineSection();
+    expect(section).toContain("`neon_alley`");
+    expect(section).toContain("`space_hangar`");
   });
 });
