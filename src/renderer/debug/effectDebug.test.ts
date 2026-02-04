@@ -81,6 +81,29 @@ describe("effect debug params", () => {
     });
   });
 
+  it("provides defaults for twister controls", () => {
+    expect(getEffectDebugDefaults("twister")).toEqual({
+      x: 0.5,
+      baseWidth: 220,
+      amplitude: 90,
+      turns: 3,
+      speed: 2.2,
+      sliceH: 2,
+      sat: 90,
+      hueSpeed: 55,
+      minWidthScale: 0.55,
+      maxWidthScale: 1,
+      minAlpha: 0.25,
+      maxAlpha: 0.95,
+      edgeShade: 0.35,
+      background: "clear",
+      trailFade: 0.08,
+      texture: "solid",
+      audioReact: 0.7,
+      beatKick: 0.7
+    });
+  });
+
   it("clamps equalizer params within control bounds", () => {
     const params = coerceEffectParams("equalizer", {
       bars: 200,

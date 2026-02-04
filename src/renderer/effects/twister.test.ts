@@ -60,4 +60,33 @@ describe("TwisterEffect", () => {
 
     expect((effect as unknown as { beatPulse: number }).beatPulse).toBeLessThan(1);
   });
+
+  it("treats x values between 0 and 1 as normalized width", () => {
+    const effect = new TwisterEffect();
+    const ctx = createContext();
+
+    effect.render({
+      ctx,
+      width: 200,
+      height: 10,
+      time: 0,
+      delta: 0.016,
+      audio: createAudio(),
+      params: {
+        x: 0.5,
+        baseWidth: 100,
+        amplitude: 0,
+        turns: 1,
+        speed: 0,
+        sliceH: 10,
+        minWidthScale: 1,
+        maxWidthScale: 1,
+        background: "clear"
+      }
+    });
+
+    const calls = (ctx.fillRect as unknown as { mock: { calls: Array<[number, number]> } }).mock.calls;
+    const sliceCall = calls[1];
+    expect(sliceCall[0]).toBeCloseTo(50, 2);
+  });
 });

@@ -82,7 +82,8 @@ export class TwisterEffect implements Effect {
     const audioReact = clamp01(toNumber(paramBag.audioReact, DEFAULTS.audioReact));
     const beatKick = clamp01(toNumber(paramBag.beatKick, DEFAULTS.beatKick));
 
-    const centerX = toNumber(paramBag.x, width / 2);
+    const rawX = toNumber(paramBag.x, width / 2);
+    const centerX = rawX >= 0 && rawX <= 1 ? rawX * width : rawX;
     const baseWidthParam = Math.max(10, toNumber(paramBag.baseWidth, DEFAULTS.baseWidth));
     const amplitudeParam = Math.max(0, toNumber(paramBag.amplitude, DEFAULTS.amplitude));
     const turnsParam = Math.max(0.1, toNumber(paramBag.turns, DEFAULTS.turns));
