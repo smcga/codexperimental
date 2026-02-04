@@ -1142,6 +1142,23 @@
       }
     },
     {
+      "id": "dev-shadebobs-bobs",
+      "start": "05:50.0",
+      "end": "05:55.0",
+      "effect": "shadebobs_bobs",
+      "era": "16bit",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.25 },
+      "params": {
+        "mode": "hybrid",
+        "shadeCount": 32,
+        "bobCount": 60,
+        "shadeScale": 2,
+        "blobRadius": 78,
+        "trailFade": 0.1,
+        "boingCheckers": true
+              }
+    },
+    {
       "id": "dev-sine-distorter",
       "start": "05:50.0",
       "end": "05:55.0",
