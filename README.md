@@ -81,6 +81,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `finale` | `trail`, `starSpeed`, `starWarp`, `starTurn`, `particleCount`, `particleForce`, `bars`, `barHeight` |  |
 | `proper3d` | `speed` |  |
 | `fake3d` | `speed` |  |
+| `textured_cube` | `scale`, `camDist`, `focalMul`, `rotXSpeed`, `rotYSpeed`, `rotZSpeed`, `backfaceCull`, `perspectiveCorrect`, `edge`, `edgeAlpha`, `shadeStrength`, `audioReact`, `beatKick`, `textureAnim` | Software-textured cube with optional affine/perspective mapping. |
 | `portrait` | `zoom`, `drift` |  |
 | `sphere3d` | `speed` |  |
 | `spherecloud` | `speed` |  |

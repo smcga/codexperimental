@@ -81,6 +81,25 @@ describe("effect debug params", () => {
     });
   });
 
+  it("provides defaults for textured cube controls", () => {
+    expect(getEffectDebugDefaults("textured_cube")).toEqual({
+      scale: 3,
+      camDist: 4,
+      focalMul: 0.9,
+      rotXSpeed: 0.5,
+      rotYSpeed: 0.8,
+      rotZSpeed: 0.15,
+      backfaceCull: 1,
+      perspectiveCorrect: 0,
+      edge: 1,
+      edgeAlpha: 0.25,
+      shadeStrength: 0.55,
+      audioReact: 0.7,
+      beatKick: 0.7,
+      textureAnim: 0
+    });
+  });
+
   it("clamps equalizer params within control bounds", () => {
     const params = coerceEffectParams("equalizer", {
       bars: 200,
