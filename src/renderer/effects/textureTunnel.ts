@@ -158,6 +158,13 @@ export const buildTunnelTexture = (seed = 0): Uint8ClampedArray => {
   return texRGB;
 };
 
+export const computeTunnelLight = (near: number, beatPulse: number, lighting: number): number => {
+  const core = 0.25 + 1.15 * Math.pow(near, 1.2);
+  const rim = 0.35 + 0.9 * Math.pow(near, 2.1);
+  const pulse = 1 + 0.35 * beatPulse;
+  return core * rim * pulse * lighting;
+};
+
 export class TextureTunnelEffect implements Effect {
   private bufferCanvas: HTMLCanvasElement | null = null;
   private bufferCtx: CanvasRenderingContext2D | null = null;
@@ -243,15 +250,19 @@ export class TextureTunnelEffect implements Effect {
     const speedEff = speed * (1 + 0.4 * audio.bass * audioReact + 0.6 * beatPulse * beatKick);
     const angTime = time * angScroll * speedEff;
     const depthTime = time * depthScroll * speedEff;
+    const twist = Math.sin(time * 0.6) * 18 * wobbleAmp;
+    const roll = Math.sin(time * 0.9) * 6 * wobbleAmp;
 
     const rowWobble = this.rowWobble as Float32Array;
     const colWobble = this.colWobble as Float32Array;
 
     for (let y = 0; y < bufH; y += 1) {
-      rowWobble[y] = Math.sin(time * 2 * wobbleSpeedY + y * 0.05) * wobbleAng * wobbleAmp;
+      const wave = Math.sin(time * 2 * wobbleSpeedY + y * 0.05);
+      rowWobble[y] = wave * wobbleAng * wobbleAmp + twist * Math.sin(y * 0.03);
     }
     for (let x = 0; x < bufW; x += 1) {
-      colWobble[x] = Math.sin(time * 1.3 * wobbleSpeedX + x * 0.04) * wobbleDepth * wobbleAmp;
+      const wave = Math.sin(time * 1.3 * wobbleSpeedX + x * 0.04);
+      colWobble[x] = wave * wobbleDepth * wobbleAmp + roll * Math.cos(x * 0.02);
     }
 
     const data = this.data as Uint8ClampedArray;
@@ -265,19 +276,19 @@ export class TextureTunnelEffect implements Effect {
       for (let x = 0; x < bufW; x += 1) {
         const ang = angLUT[idx];
         const invR = invRLUT[idx];
-        const u = (ang + angTime + wobbleU) & 255;
-        const v = (invR + depthTime + colWobble[x]) & 255;
+        const u = (ang + angTime + wobbleU + roll * (x - bufW / 2) * 0.02) & 255;
+        const v = (invR + depthTime + colWobble[x] + twist * (y - bufH / 2) * 0.02) & 255;
         const texIdx = (v * TEXTURE_SIZE + u) * 3;
 
         const near = invR / 255;
-        let light = (0.35 + 0.85 * near) * (0.6 + 0.4 * near);
-        light *= 1 + 0.25 * beatPulse;
-        light *= lighting;
+        let light = computeTunnelLight(near, beatPulse, lighting);
+        const sparkle = 0.92 + 0.08 * Math.sin((u + v) * 0.22 + time * 2.2);
+        light *= sparkle;
 
         const outIdx = idx * 4;
-        data[outIdx] = clampByte(texRGB[texIdx] * light);
+        data[outIdx] = clampByte(texRGB[texIdx] * light * (1.05 - near * 0.15));
         data[outIdx + 1] = clampByte(texRGB[texIdx + 1] * light);
-        data[outIdx + 2] = clampByte(texRGB[texIdx + 2] * light);
+        data[outIdx + 2] = clampByte(texRGB[texIdx + 2] * light * (0.95 + near * 0.2));
         data[outIdx + 3] = 255;
         idx += 1;
       }
@@ -293,10 +304,10 @@ export class TextureTunnelEffect implements Effect {
     if (lighting > 0.1) {
       ctx.save();
       ctx.globalCompositeOperation = "screen";
-      ctx.globalAlpha = 0.2 + beatPulse * 0.15;
-      ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+      ctx.globalAlpha = 0.25 + beatPulse * 0.2;
+      ctx.fillStyle = "rgba(180, 210, 255, 0.7)";
       ctx.beginPath();
-      ctx.arc(width / 2, height / 2, Math.min(width, height) * 0.12, 0, TWO_PI);
+      ctx.arc(width / 2, height / 2, Math.min(width, height) * 0.14, 0, TWO_PI);
       ctx.fill();
       ctx.restore();
     }

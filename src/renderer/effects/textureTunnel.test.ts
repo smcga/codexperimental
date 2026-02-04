@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { buildTunnelLuts, buildTunnelTexture } from "./textureTunnel";
+import { buildTunnelLuts, buildTunnelTexture, computeTunnelLight } from "./textureTunnel";
 
 describe("texture tunnel helpers", () => {
   it("builds angle and inverse radius lookup tables", () => {
@@ -18,5 +18,14 @@ describe("texture tunnel helpers", () => {
 
     expect(texA.slice(0, 30)).toEqual(texB.slice(0, 30));
     expect(texA.slice(0, 30)).not.toEqual(texC.slice(0, 30));
+  });
+
+  it("scales tunnel lighting with proximity and beat", () => {
+    const base = computeTunnelLight(0.2, 0, 1);
+    const near = computeTunnelLight(0.9, 0, 1);
+    const beat = computeTunnelLight(0.9, 1, 1);
+
+    expect(near).toBeGreaterThan(base);
+    expect(beat).toBeGreaterThan(near);
   });
 });
