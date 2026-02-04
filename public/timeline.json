@@ -1149,6 +1149,22 @@
       "era": "16bit",
       "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
       "params": { "barCount": 12, "splits": 3, "hamish": true, "barWobble": 34 }
+    },
+    {
+      "id": "envmap-donut",
+      "start": "06:05.0",
+      "end": "06:15.0",
+      "effect": "envmap_donut",
+      "era": "pcdemo",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.3 },
+      "params": {
+        "bufW": 240,
+        "bufH": 180,
+        "segmentsU": 64,
+        "segmentsV": 32,
+        "specStrength": 0.5,
+        "fresnelStrength": 0.35
+      }
     }
   ],
   "textCues": [

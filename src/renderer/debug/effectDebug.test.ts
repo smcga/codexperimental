@@ -81,6 +81,32 @@ describe("effect debug params", () => {
     });
   });
 
+  it("provides defaults for envmap donut controls", () => {
+    expect(getEffectDebugDefaults("envmap_donut")).toEqual({
+      bufW: 240,
+      bufH: 180,
+      segmentsU: 64,
+      segmentsV: 32,
+      R: 1.2,
+      r: 0.55,
+      camDist: 3.4,
+      focalMul: 1.2,
+      rotXSpeed: 0.35,
+      rotYSpeed: 0.75,
+      rotZSpeed: 0.15,
+      fresnelStrength: 0.35,
+      specStrength: 0.45,
+      shininess: 24,
+      chromeDesat: 0.35,
+      backfaceCull: 1,
+      scanlines: 0,
+      edge: 0,
+      audioReact: 0.7,
+      beatKick: 0.7,
+      seed: 0
+    });
+  });
+
   it("clamps equalizer params within control bounds", () => {
     const params = coerceEffectParams("equalizer", {
       bars: 200,
