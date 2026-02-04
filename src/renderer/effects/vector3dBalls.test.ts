@@ -8,13 +8,15 @@ describe("vector3d balls", () => {
       pointCount: 12,
       baseDotSize: 10,
       model: "sphere",
-      palette: "spectrum"
+      palette: "spectrum",
+      wireframe: false
     });
 
     expect(params.pointCount).toBe(80);
     expect(params.baseDotSize).toBe(6);
     expect(params.model).toBe("sphere");
     expect(params.palette).toBe("spectrum");
+    expect(params.wireframe).toBe(false);
   });
 
   it("anchors cube points to faces", () => {

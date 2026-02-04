@@ -111,20 +111,20 @@ export const VECTOR3D_BALLS_DEFAULTS = {
   pointCount: 420,
   wireframe: 1,
   roundDots: 0,
-  baseDotSize: 2.0,
-  dotDepthScale: 2.2,
-  lineWidth: 2,
+  baseDotSize: 1.8,
+  dotDepthScale: 2.0,
+  lineWidth: 1.6,
   camDist: 3.2,
-  rotXSpeed: 0.55,
-  rotYSpeed: 0.8,
-  rotZSpeed: 0.15,
+  rotXSpeed: 0.35,
+  rotYSpeed: 0.5,
+  rotZSpeed: 0.08,
   trail: 0,
-  stripeFreq: 6.0,
-  stripeSpeed: 0.25,
-  stripeStrength: 0.85,
+  stripeFreq: 5.0,
+  stripeSpeed: 0.18,
+  stripeStrength: 0.75,
   palette: "c64" as Vector3dPalette,
-  audioReact: 0.7,
-  beatKick: 0.7,
+  audioReact: 0.45,
+  beatKick: 0.45,
   seed: 11
 };
 
@@ -320,22 +320,28 @@ export class Vector3dBallsEffect implements Effect {
   private lastPointCount = 0;
   private lastSeed = Number.NaN;
   private kick = 0;
+  private smoothBass = 0;
+  private smoothKick = 0;
 
   render({ ctx, width, height, time, delta, audio, params }: EffectRenderContext): void {
     const settings = normalizeVector3dBallsParams(params as Record<string, unknown>);
     this.ensureGeometry(settings);
 
     const clampedDelta = clamp(delta, 0, 0.05);
-    const bass = clamp((audio?.bass ?? 0) * settings.audioReact, 0, 1);
+    const bassTarget = clamp((audio?.bass ?? 0) * settings.audioReact, 0, 1);
 
     if (audio?.beat) {
       this.kick = 1;
     } else {
-      this.kick = Math.max(0, this.kick - clampedDelta * 2.4);
+      this.kick = Math.max(0, this.kick - clampedDelta * 1.6);
     }
 
-    const kickBoost = this.kick * settings.beatKick;
-    const speedBoost = 1 + bass * 0.35 + kickBoost * 0.5;
+    const smoothFactor = clamp(clampedDelta * 3, 0, 1);
+    this.smoothBass += (bassTarget - this.smoothBass) * smoothFactor;
+    this.smoothKick += (this.kick - this.smoothKick) * smoothFactor;
+
+    const kickBoost = this.smoothKick * settings.beatKick;
+    const speedBoost = 1 + this.smoothBass * 0.22 + kickBoost * 0.3;
 
     const ax = time * settings.rotXSpeed * speedBoost;
     const ay = time * settings.rotYSpeed * speedBoost;
@@ -440,7 +446,7 @@ export class Vector3dBallsEffect implements Effect {
         const depthNorm = clamp((zCam - minZ) / depthRange, 0, 1);
         const brightness = 1 - depthNorm;
         const size = clamp(
-          settings.baseDotSize * (1 + settings.dotDepthScale * invZ) * (1 + bass * 0.4 + kickBoost * 0.3),
+          settings.baseDotSize * (1 + settings.dotDepthScale * invZ) * (1 + this.smoothBass * 0.25 + kickBoost * 0.2),
           0.6,
           6
         );
@@ -451,7 +457,7 @@ export class Vector3dBallsEffect implements Effect {
         stripeIndex = clamp(stripeIndex + depthBias, 0, palette.length - 1);
 
         const color = palette[stripeIndex];
-        const alpha = clamp(0.15 + brightness * 0.85 + kickBoost * 0.2, 0.1, 1);
+        const alpha = clamp(0.12 + brightness * 0.75 + kickBoost * 0.15, 0.08, 0.95);
         ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha})`;
 
         if (settings.roundDots) {
@@ -467,6 +473,8 @@ export class Vector3dBallsEffect implements Effect {
 
   reset(): void {
     this.kick = 0;
+    this.smoothBass = 0;
+    this.smoothKick = 0;
   }
 
   private renderWireframe(
