@@ -373,6 +373,34 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("seed", "Seed", 0, { min: 0, max: 10, step: 0.1 }),
       numberControl("growth", "Growth Override", 1, { min: 0, max: 1, step: 0.01 })
     ]
+  },
+  lens_wobbler: {
+    title: "Lens Wobbler Controls",
+    controls: [
+      numberControl("bufW", "Buffer Width", 240, { min: 120, max: 480, step: 4 }),
+      numberControl("bufH", "Buffer Height", 150, { min: 90, max: 360, step: 2 }),
+      numberControl("rotSpeed", "Rotation Speed", 0.25, { min: 0, max: 2, step: 0.01 }),
+      numberControl("baseScale", "Base Scale", 0.9, { min: 0.4, max: 1.6, step: 0.01 }),
+      numberControl("zoomAmp", "Zoom Amplitude", 0.15, { min: 0, max: 0.6, step: 0.01 }),
+      numberControl("zoomSpeed", "Zoom Speed", 0.6, { min: 0, max: 3, step: 0.05 }),
+      numberControl("scrollU", "Scroll U", 30, { min: -120, max: 120, step: 1 }),
+      numberControl("scrollV", "Scroll V", 18, { min: -120, max: 120, step: 1 }),
+      numberControl("lensRadius", "Lens Radius", 33, { min: 10, max: 120, step: 1 }),
+      numberControl("lensStrength", "Lens Strength", 0.75, { min: 0, max: 1.5, step: 0.05 }),
+      toggleControl("invertRing", "Invert Ring", true),
+      toggleControl("wobble", "Wobble", true),
+      numberControl("wobbleAmp", "Wobble Amplitude", 6, { min: 0, max: 16, step: 0.5 }),
+      numberControl("wobbleFreq", "Wobble Frequency", 0.1, { min: 0, max: 0.4, step: 0.01 }),
+      numberControl("wobbleSpeed", "Wobble Speed", 3.0, { min: 0, max: 8, step: 0.1 }),
+      numberControl("wobbleSlice", "Wobble Slice", 2, { min: 1, max: 8, step: 1 }),
+      numberControl("audioReact", "Audio React", 0.7, { min: 0, max: 1, step: 0.05 }),
+      numberControl("beatKick", "Beat Kick", 0.7, { min: 0, max: 1, step: 0.05 }),
+      numberControl("seed", "Seed", 0, { min: 0, max: 999, step: 1 }),
+      selectControl("lensPath", "Lens Path", "circle", [
+        { label: "Circle", value: "circle" },
+        { label: "Lissajous", value: "lissajous" }
+      ])
+    ]
   }
 };
 

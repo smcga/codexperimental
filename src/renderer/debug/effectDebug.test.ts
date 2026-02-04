@@ -81,6 +81,31 @@ describe("effect debug params", () => {
     });
   });
 
+  it("provides defaults for lens wobbler controls", () => {
+    expect(getEffectDebugDefaults("lens_wobbler")).toEqual({
+      bufW: 240,
+      bufH: 150,
+      rotSpeed: 0.25,
+      baseScale: 0.9,
+      zoomAmp: 0.15,
+      zoomSpeed: 0.6,
+      scrollU: 30,
+      scrollV: 18,
+      lensRadius: 33,
+      lensStrength: 0.75,
+      invertRing: 1,
+      wobble: 1,
+      wobbleAmp: 6,
+      wobbleFreq: 0.1,
+      wobbleSpeed: 3,
+      wobbleSlice: 2,
+      audioReact: 0.7,
+      beatKick: 0.7,
+      seed: 0,
+      lensPath: "circle"
+    });
+  });
+
   it("clamps equalizer params within control bounds", () => {
     const params = coerceEffectParams("equalizer", {
       bars: 200,
