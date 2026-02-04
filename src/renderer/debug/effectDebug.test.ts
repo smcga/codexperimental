@@ -239,6 +239,31 @@ describe("effect debug params", () => {
     });
   });
 
+  it("provides defaults for poly morph showcase controls", () => {
+    expect(getEffectDebugDefaults("poly_morph_showcase")).toEqual({
+      lat: 16,
+      lon: 24,
+      morphSpeed: 0.08,
+      styleSpeed: 0.1,
+      style: "auto",
+      camDist: 3.6,
+      focalMul: 0.9,
+      rotXSpeed: 0.5,
+      rotYSpeed: 0.8,
+      rotZSpeed: 0.2,
+      sat: 85,
+      baseHue: 200,
+      hueSpeed: 25,
+      solidAlpha: 0.9,
+      glenzAlpha: 0.13,
+      shadedAlpha: 0.95,
+      edge: 1,
+      edgeAlpha: 0.18,
+      sortSolid: 1,
+      sortShaded: 1,
+      sortGlenz: 0,
+          });
+  });
   it("provides defaults for bumpmap plane controls", () => {
     expect(getEffectDebugDefaults("bumpmap_plane")).toEqual({
       bufW: 240,
