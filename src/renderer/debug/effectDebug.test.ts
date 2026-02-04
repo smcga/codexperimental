@@ -65,6 +65,22 @@ describe("effect debug params", () => {
     });
   });
 
+  it("provides defaults for tree growth controls", () => {
+    expect(getEffectDebugDefaults("treegrowth")).toEqual({
+      speed: 0.18,
+      levels: 6,
+      trunkHeight: 0.45,
+      branchScale: 0.72,
+      branchAngle: 28,
+      trunkWidth: 10,
+      sway: 0.35,
+      leafSize: 3,
+      jitter: 0.25,
+      seed: 0,
+      growth: 1
+    });
+  });
+
   it("clamps equalizer params within control bounds", () => {
     const params = coerceEffectParams("equalizer", {
       bars: 200,
