@@ -1128,13 +1128,16 @@
       "params": { "density": 1.1, "motion": 0.75, "warp": 0.55, "trail": 0.2, "seed": 7 }
     },
     {
-      "id": "raster-bars-8bit",
+      "id": "sine-scroller-logo",
       "start": "05:40.0",
-      "end": "05:50.0",
-      "effect": "raster_bars",
-      "era": "8bit",
+      "end": "05:55.0",
+      "effect": "sine_scroller_logo",
+      "era": "16bit",
       "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
-      "params": { "barCount": 12, "waveAmp": 26, "splitStrength": 0.8, "border": true }
+      "params": {
+        "message": "    THIS IS A CANVAS2D DEMOSCENE ENGINE — SMOOTH SCROLLERS FOREVER —    ",
+        "layer2": true
+      }
     }
   ],
   "textCues": [
