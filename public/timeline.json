@@ -1142,6 +1142,22 @@
       }
     },
     {
+      "id": "raytrace-spheres",
+      "start": "05:50.0",
+      "end": "05:55.0",
+      "effect": "raytrace_spheres",
+      "era": "pcdemo",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
+      "params": {
+        "bufW": 200,
+        "bufH": 150,
+        "adaptive": true,
+        "cellSize": 2,
+        "maxDepth": 2,
+        "floorReflect": 0.6
+      }
+    },
+    {
       "id": "copper-gradient-splits",
       "start": "05:55.0",
       "end": "06:05.0",
