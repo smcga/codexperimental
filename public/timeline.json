@@ -1167,13 +1167,20 @@
       "params": { "barCount": 12, "splits": 3, "hamish": true, "barWobble": 34 }
     },
     {
-      "id": "metaballs-pcdemo",
+      "id": "dev-glenz-vectors",
       "start": "06:05.0",
       "end": "06:15.0",
-      "effect": "metaballs",
-      "era": "pcdemo",
+      "effect": "glenz_vectors",
+      "era": "16bit",
       "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
-      "params": { "bufW": 240, "bufH": 180, "count": 7, "palette": "chrome", "glow": 0.3 }
+      "params": {
+        "model": "octa",
+        "instances": 3,
+        "faceAlpha": 0.12,
+        "edge": true,
+        "trailFade": 0.08,
+        "sortFaces": "none"
+      }
     }
   ],
   "textCues": [

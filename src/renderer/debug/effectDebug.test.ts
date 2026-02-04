@@ -103,6 +103,31 @@ describe("effect debug params", () => {
     });
   });
 
+  it("provides defaults for glenz vectors controls", () => {
+    expect(getEffectDebugDefaults("glenz_vectors")).toEqual({
+      model: "octa",
+      instances: 2,
+      camDist: 3,
+      focal: 0,
+      rotXSpeed: 0.6,
+      rotYSpeed: 0.85,
+      rotZSpeed: 0.25,
+      baseHue: 200,
+      hueSpeed: 35,
+      sat: 85,
+      lightness: 55,
+      faceAlpha: 0.1,
+      edge: 1,
+      edgeAlpha: 0.22,
+      lineWidth: 2,
+      trailFade: 0,
+      sortFaces: "none",
+      audioReact: 0.7,
+      beatKick: 0.7,
+      seed: 0
+    });
+  });
+  
   it("provides defaults for raymarch fractal controls", () => {
     expect(getEffectDebugDefaults("raymarch_fractal")).toEqual({
       quality: 1,

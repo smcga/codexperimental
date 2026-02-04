@@ -41,6 +41,7 @@ import { SineScrollerLogoEffect } from "./sineScrollerLogo";
 import { BorderMultiplexEffect } from "./borderMultiplexEffect";
 import { RasterBarsEffect } from "./rasterBars";
 import { CopperGradientSplitsEffect } from "./copperGradientSplits";
+import { GlenzVectorsEffect } from "./glenzVectors";
 import { RaymarchFractalEffect } from "./raymarchFractal";
 import { MetaballsEffect } from "./metaballs";
 import { BumpmapPlaneEffect } from "./bumpmapPlane";
@@ -90,6 +91,7 @@ export const effectRegistry: Record<string, Effect> = {
   border_multiplex: new BorderMultiplexEffect(),
   raster_bars: new RasterBarsEffect(),
   copper_gradient_splits: new CopperGradientSplitsEffect(),
+  glenz_vectors: new GlenzVectorsEffect(),
   raymarch_fractal: new RaymarchFractalEffect(),
   metaballs: new MetaballsEffect(),
   bumpmap_plane: new BumpmapPlaneEffect(),
