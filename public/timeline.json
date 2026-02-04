@@ -1167,20 +1167,13 @@
       "params": { "barCount": 12, "splits": 3, "hamish": true, "barWobble": 34 }
     },
     {
-      "id": "pcdemo-vga-fire",
+      "id": "metaballs-pcdemo",
       "start": "06:05.0",
       "end": "06:15.0",
-      "effect": "vga_fire",
+      "effect": "metaballs",
       "era": "pcdemo",
       "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
-      "params": {
-        "fireW": 200,
-        "fireH": 140,
-        "decay": 3,
-        "wind": 0.2,
-        "logoText": "SMCGA",
-        "scanlines": true
-      }
+      "params": { "bufW": 240, "bufH": 180, "count": 7, "palette": "chrome", "glow": 0.3 }
     }
   ],
   "textCues": [

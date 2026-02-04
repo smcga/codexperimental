@@ -44,6 +44,28 @@ describe("effect debug params", () => {
       speed: 0.6,
       glow: 0.8
     });
+    expect(getEffectDebugDefaults("metaballs")).toEqual({
+      bufW: 240,
+      bufH: 180,
+      count: 6,
+      baseRadius: 34,
+      radiusVar: 10,
+      baseThreshold: 1.2,
+      edgeSoftness: 0.08,
+      normalZ: 220,
+      ambient: 0.15,
+      diffuse: 1,
+      specStrength: 0.35,
+      shininess: 24,
+      rimStrength: 0.25,
+      palette: "chrome",
+      hueSpeed: 22,
+      smoothing: 1,
+      glow: 0.25,
+      audioReact: 0.7,
+      beatKick: 0.7,
+      seed: 1
+    });
   });
 
   it("provides defaults for wireframe ride controls", () => {
