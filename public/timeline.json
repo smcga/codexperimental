@@ -1081,6 +1081,51 @@
         { "effect": "lightning", "blend": "screen", "opacity": 0.18, "params": { "trigger": "both", "chancePerSecond": 0.12, "cooldown": 1.6, "flashDuration": 0.08, "bolt": 0.55, "branches": 0.35, "seed": 23 } },
         { "effect": "neon_alley", "blend": "soft-light", "opacity": 0.12, "params": { "quality": 1, "speed": 0.9, "exposure": 1.15, "hueShift": 0.18, "seed": 24 } }
       ]
+    },
+    {
+      "id": "evolution-8bit",
+      "start": "05:30.0",
+      "end": "05:32.0",
+      "effect": "effect_evolution",
+      "era": "8bit",
+      "transition": { "in": "fade", "out": "wipe", "duration": 0.2 },
+      "params": { "density": 1.0, "motion": 0.55, "warp": 0.3, "trail": 0.1, "seed": 7 }
+    },
+    {
+      "id": "evolution-16bit",
+      "start": "05:32.0",
+      "end": "05:34.0",
+      "effect": "effect_evolution",
+      "era": "16bit",
+      "transition": { "in": "wipe", "out": "wipe", "duration": 0.2 },
+      "params": { "density": 1.0, "motion": 0.6, "warp": 0.35, "trail": 0.1, "seed": 7 }
+    },
+    {
+      "id": "evolution-ps1",
+      "start": "05:34.0",
+      "end": "05:36.0",
+      "effect": "effect_evolution",
+      "era": "ps1",
+      "transition": { "in": "wipe", "out": "wipe", "duration": 0.2 },
+      "params": { "density": 1.0, "motion": 0.65, "warp": 0.4, "trail": 0.12, "seed": 7 }
+    },
+    {
+      "id": "evolution-pcdemo",
+      "start": "05:36.0",
+      "end": "05:38.0",
+      "effect": "effect_evolution",
+      "era": "pcdemo",
+      "transition": { "in": "wipe", "out": "wipe", "duration": 0.2 },
+      "params": { "density": 1.05, "motion": 0.7, "warp": 0.45, "trail": 0.14, "seed": 7 }
+    },
+    {
+      "id": "evolution-future",
+      "start": "05:38.0",
+      "end": "05:40.0",
+      "effect": "effect_evolution",
+      "era": "future",
+      "transition": { "in": "wipe", "out": "fade", "duration": 0.2 },
+      "params": { "density": 1.1, "motion": 0.75, "warp": 0.55, "trail": 0.2, "seed": 7 }
     }
   ],
   "textCues": [

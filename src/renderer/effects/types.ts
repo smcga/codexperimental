@@ -8,6 +8,7 @@ export type EffectRenderContext = {
   delta: number;
   audio: AudioFeatures;
   params: Record<string, number>;
+  era?: string;
 };
 
 export type Effect = {
