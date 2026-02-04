@@ -1142,6 +1142,22 @@
       }
     },
     {
+      "id": "bumpmap-plane",
+      "start": "05:50.0",
+      "end": "05:55.0",
+      "effect": "bumpmap_plane",
+      "era": "pcdemo",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
+      "params": {
+        "bufW": 240,
+        "bufH": 180,
+        "embossText": "SMCGA",
+        "specStrength": 0.45,
+        "bumpStrength": 0.04,
+        "scanlines": true
+      }
+    },
+    {
       "id": "copper-gradient-splits",
       "start": "05:55.0",
       "end": "06:05.0",
