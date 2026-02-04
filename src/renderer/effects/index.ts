@@ -35,6 +35,7 @@ import { WireframeRideEffect } from "./wireframeRide";
 import { EffectEvolution } from "./effectEvolution";
 import { FluidSimEffect } from "./fluidSimEffect";
 import { TreeGrowthEffect } from "./treeGrowthEffect";
+import { BorderMultiplexEffect } from "./borderMultiplexEffect";
 
 export const effectRegistry: Record<string, Effect> = {
   starfield: new StarfieldEffect(),
@@ -72,7 +73,8 @@ export const effectRegistry: Record<string, Effect> = {
   wireframeRide: new WireframeRideEffect(),
   effect_evolution: new EffectEvolution(),
   fluid: new FluidSimEffect(),
-  treegrowth: new TreeGrowthEffect()
+  treegrowth: new TreeGrowthEffect(),
+  border_multiplex: new BorderMultiplexEffect()
 };
 
 export function resetEffects(): void {

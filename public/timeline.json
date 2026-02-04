@@ -1126,6 +1126,15 @@
       "era": "future",
       "transition": { "in": "wipe", "out": "fade", "duration": 0.2 },
       "params": { "density": 1.1, "motion": 0.75, "warp": 0.55, "trail": 0.2, "seed": 7 }
+    },
+    {
+      "id": "border-multiplex-8bit",
+      "start": "05:40.0",
+      "end": "05:44.0",
+      "effect": "border_multiplex",
+      "era": "8bit",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
+      "params": { "hwSprites": 8, "totalSprites": 120 }
     }
   ],
   "textCues": [
