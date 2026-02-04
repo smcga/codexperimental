@@ -36,6 +36,7 @@ import { EffectEvolution } from "./effectEvolution";
 import { FluidSimEffect } from "./fluidSimEffect";
 import { TreeGrowthEffect } from "./treeGrowthEffect";
 import { BorderMultiplexEffect } from "./borderMultiplexEffect";
+import { RasterBarsEffect } from "./rasterBars";
 
 export const effectRegistry: Record<string, Effect> = {
   starfield: new StarfieldEffect(),
@@ -74,7 +75,8 @@ export const effectRegistry: Record<string, Effect> = {
   effect_evolution: new EffectEvolution(),
   fluid: new FluidSimEffect(),
   treegrowth: new TreeGrowthEffect(),
-  border_multiplex: new BorderMultiplexEffect()
+  border_multiplex: new BorderMultiplexEffect(),
+  raster_bars: new RasterBarsEffect()
 };
 
 export function resetEffects(): void {
