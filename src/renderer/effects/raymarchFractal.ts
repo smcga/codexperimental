@@ -1,39 +1,28 @@
 import { clamp } from "../../util/math";
 import { Effect, EffectRenderContext } from "./types";
 import { FractalEffect } from "./fractalEffect";
-import { setWebGLStatus } from "./gl/webglStatus";
+import { WebGLEffectBase, WebGLUniformPayload } from "./gl/webglEffectBase";
 
-const VERTEX_SHADER_SOURCE = `
-attribute vec2 aPosition;
-
-varying vec2 vUv;
-
-void main() {
-  vUv = aPosition * 0.5 + 0.5;
-  gl_Position = vec4(aPosition, 0.0, 1.0);
-}
-`;
-
-const FRAGMENT_SHADER_SOURCE = `
+const FRAGMENT_SHADER_SOURCE = `#version 300 es
 precision highp float;
 
-uniform vec2 uResolution;
-uniform float uTime;
-uniform float uBass;
-uniform float uBeat;
-uniform int uMode;
-uniform float uQuality;
-uniform float uCameraRadius;
-uniform float uCameraHeight;
-uniform float uCameraOrbitSpeed;
-uniform float uPaletteSpeed;
-uniform float uAudioReact;
-uniform float uBeatKick;
-uniform float uFractalScale;
+uniform vec2 u_resolution;
+uniform float u_time;
+uniform float u_bass;
+uniform float u_beat;
+uniform int u_mode;
+uniform float u_quality;
+uniform float u_cameraRadius;
+uniform float u_cameraHeight;
+uniform float u_cameraOrbitSpeed;
+uniform float u_paletteSpeed;
+uniform float u_audioReact;
+uniform float u_beatKick;
+uniform float u_fractalScale;
+uniform int u_steps;
 
-varying vec2 vUv;
+out vec4 fragColor;
 
-const int MAX_STEPS = 120;
 const float FAR = 24.0;
 const float EPS = 0.001;
 
@@ -100,10 +89,10 @@ float mandelbox(vec3 p) {
 }
 
 float sceneSdf(vec3 p) {
-  float scale = max(0.2, uFractalScale + uBass * 0.4 * uAudioReact);
+  float scale = max(0.2, u_fractalScale + u_bass * 0.4 * u_audioReact);
   vec3 fp = p * scale;
-  float fractal = (uMode == 0 ? mandelbulb(fp) : mandelbox(fp)) / scale;
-  float ground = p.y + 1.1 + sin(p.x * 0.4 + uTime * 0.5) * 0.05;
+  float fractal = (u_mode == 0 ? mandelbulb(fp) : mandelbox(fp)) / scale;
+  float ground = p.y + 1.1 + sin(p.x * 0.4 + u_time * 0.5) * 0.05;
   float bubble = sdSphere(p - vec3(0.0, 0.2, 0.0), 0.3);
   float base = min(fractal, ground);
   return min(base, bubble);
@@ -123,14 +112,14 @@ vec3 palette(float t) {
 }
 
 void main() {
-  vec2 uv = vUv * 2.0 - 1.0;
-  float aspect = uResolution.x / uResolution.y;
+  vec2 uv = (gl_FragCoord.xy / u_resolution) * 2.0 - 1.0;
+  float aspect = u_resolution.x / u_resolution.y;
   uv.x *= aspect;
 
-  float orbit = uTime * uCameraOrbitSpeed;
-  float beatPulse = uBeat * uBeatKick;
-  float radius = uCameraRadius + uBass * 0.8 * uAudioReact + beatPulse * 0.25;
-  float height = uCameraHeight + sin(uTime * 0.6) * 0.35 * uAudioReact;
+  float orbit = u_time * u_cameraOrbitSpeed;
+  float beatPulse = u_beat * u_beatKick;
+  float radius = u_cameraRadius + u_bass * 0.8 * u_audioReact + beatPulse * 0.25;
+  float height = u_cameraHeight + sin(u_time * 0.6) * 0.35 * u_audioReact;
 
   vec3 ro = vec3(sin(orbit) * radius, height, cos(orbit) * radius);
   vec3 target = vec3(0.0, 0.0, 0.0);
@@ -141,11 +130,10 @@ void main() {
 
   float totalDist = 0.0;
   float hit = 0.0;
-  int steps = int(float(MAX_STEPS) * clamp(uQuality, 0.5, 1.5));
   int stepIndex = 0;
 
-  for (int i = 0; i < MAX_STEPS; i += 1) {
-    if (i >= steps) {
+  for (int i = 0; i < 160; i += 1) {
+    if (i >= u_steps) {
       break;
     }
     vec3 pos = ro + rd * totalDist;
@@ -161,8 +149,8 @@ void main() {
     }
   }
 
-  vec3 color = vec3(0.02, 0.03, 0.05);
-  vec3 bg = mix(vec3(0.02, 0.02, 0.04), vec3(0.1, 0.1, 0.2), vUv.y);
+  vec3 bg = mix(vec3(0.02, 0.02, 0.04), vec3(0.1, 0.1, 0.2), gl_FragCoord.y / u_resolution.y);
+  vec3 color = bg;
 
   if (hit > 0.5) {
     vec3 pos = ro + rd * totalDist;
@@ -174,18 +162,16 @@ void main() {
     float spec = pow(max(dot(normal, halfDir), 0.0), 32.0);
     float rim = pow(1.0 - max(dot(normal, -rd), 0.0), 3.0);
 
-    float t = float(stepIndex) / float(max(steps, 1));
-    float palettePhase = t + uTime * uPaletteSpeed + beatPulse * 0.2;
+    float t = float(stepIndex) / float(max(u_steps, 1));
+    float palettePhase = t + u_time * u_paletteSpeed + beatPulse * 0.2;
     vec3 baseColor = palette(palettePhase);
     color = baseColor * (diffuse + ambient) + spec * 0.8 + rim * 0.35;
 
     float fog = exp(-0.08 * totalDist * totalDist);
     color = mix(bg, color, fog);
-  } else {
-    color = bg;
   }
 
-  gl_FragColor = vec4(color, 1.0);
+  fragColor = vec4(color, 1.0);
 }
 `;
 
@@ -206,25 +192,15 @@ const FRACTAL_MODES = {
   mandelbox: 1
 } as const;
 
+const QUALITY_STEPS: Record<number, number> = {
+  1: 72,
+  2: 96,
+  3: 128
+};
+
 export type RaymarchFractalParams = {
   quality: number;
   fractal: keyof typeof FRACTAL_MODES;
-  cameraRadius: number;
-  cameraHeight: number;
-  cameraOrbitSpeed: number;
-  paletteSpeed: number;
-  audioReact: number;
-  beatKick: number;
-  fractalScale: number;
-};
-
-export type RaymarchFractalUniforms = {
-  time: number;
-  resolution: [number, number];
-  bass: number;
-  beat: number;
-  mode: number;
-  quality: number;
   cameraRadius: number;
   cameraHeight: number;
   cameraOrbitSpeed: number;
@@ -278,225 +254,71 @@ export const buildRaymarchFractalUniforms = (
   height: number,
   audio: EffectRenderContext["audio"],
   params: RaymarchFractalParams
-): RaymarchFractalUniforms => ({
-  time,
-  resolution: [width, height],
-  bass: clamp(audio.bass, 0, 1),
-  beat: audio.beat ? 1 : 0,
-  mode: FRACTAL_MODES[params.fractal],
-  quality: params.quality,
-  cameraRadius: params.cameraRadius,
-  cameraHeight: params.cameraHeight,
-  cameraOrbitSpeed: params.cameraOrbitSpeed,
-  paletteSpeed: params.paletteSpeed,
-  audioReact: params.audioReact,
-  beatKick: params.beatKick,
-  fractalScale: params.fractalScale
-});
+): WebGLUniformPayload => {
+  const qualityIndex = clamp(Math.round(params.quality * 2), 1, 3);
+  const steps = QUALITY_STEPS[qualityIndex] ?? QUALITY_STEPS[2];
 
-type UniformLocations = {
-  uResolution: WebGLUniformLocation | null;
-  uTime: WebGLUniformLocation | null;
-  uBass: WebGLUniformLocation | null;
-  uBeat: WebGLUniformLocation | null;
-  uMode: WebGLUniformLocation | null;
-  uQuality: WebGLUniformLocation | null;
-  uCameraRadius: WebGLUniformLocation | null;
-  uCameraHeight: WebGLUniformLocation | null;
-  uCameraOrbitSpeed: WebGLUniformLocation | null;
-  uPaletteSpeed: WebGLUniformLocation | null;
-  uAudioReact: WebGLUniformLocation | null;
-  uBeatKick: WebGLUniformLocation | null;
-  uFractalScale: WebGLUniformLocation | null;
+  return {
+    time,
+    resolution: [width, height],
+    rms: clamp(audio.rms, 0, 1),
+    bass: clamp(audio.bass, 0, 1),
+    mid: clamp(audio.mid, 0, 1),
+    treble: clamp(audio.treble, 0, 1),
+    beat: audio.beat ? 1 : 0,
+    beatStrength: clamp(audio.beatStrength, 0, 1),
+    warp: 0,
+    hueShift: 0,
+    exposure: 1,
+    seed: 0,
+    steps,
+    quality: params.quality,
+    mode: FRACTAL_MODES[params.fractal],
+    cameraRadius: params.cameraRadius,
+    cameraHeight: params.cameraHeight,
+    cameraOrbitSpeed: params.cameraOrbitSpeed,
+    paletteSpeed: params.paletteSpeed,
+    audioReact: params.audioReact,
+    beatKick: params.beatKick,
+    fractalScale: params.fractalScale
+  };
 };
 
 export class RaymarchFractalEffect implements Effect {
-  private canvas: HTMLCanvasElement | null = null;
-  private gl: WebGLRenderingContext | null = null;
-  private program: WebGLProgram | null = null;
-  private buffer: WebGLBuffer | null = null;
-  private uniformLocations: UniformLocations | null = null;
-  private positionLocation = -1;
-  private warned = false;
+  private webgl: WebGLEffectBase | null = null;
   private fallback = new FractalEffect();
+  private warned = false;
+
+  constructor() {
+    this.webgl = new WebGLEffectBase(FRAGMENT_SHADER_SOURCE, "raymarch_fractal");
+  }
 
   render(context: EffectRenderContext): void {
     const params = normalizeRaymarchFractalParams(context.params as Record<string, unknown>);
-    if (!this.ensureInitialized()) {
-      this.fallback.render(context);
+    const uniforms = buildRaymarchFractalUniforms(context.time, context.width, context.height, context.audio, params);
+    const qualityIndex = clamp(Math.round(params.quality * 2), 1, 3);
+
+    const rendered = this.webgl?.renderToCanvas2D(
+      context.ctx,
+      context.width,
+      context.height,
+      uniforms,
+      qualityIndex
+    );
+
+    if (rendered) {
+      this.warned = false;
       return;
     }
 
-    const gl = this.gl;
-    const program = this.program;
-    if (!gl || !program || !this.canvas || !this.uniformLocations || !this.buffer) {
-      this.fallback.render(context);
-      return;
+    if (!this.warned) {
+      console.warn("[raymarch_fractal] WebGL2 unavailable or failed, falling back to fractal effect.");
+      this.warned = true;
     }
-
-    const { width, height, time, audio } = context;
-    const uniforms = buildRaymarchFractalUniforms(time, width, height, audio, params);
-
-    if (this.canvas.width !== width || this.canvas.height !== height) {
-      this.canvas.width = width;
-      this.canvas.height = height;
-    }
-
-    gl.viewport(0, 0, width, height);
-    gl.useProgram(program);
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
-    gl.enableVertexAttribArray(this.positionLocation);
-    gl.vertexAttribPointer(this.positionLocation, 2, gl.FLOAT, false, 0, 0);
-
-    const set1f = (location: WebGLUniformLocation | null, value: number): void => {
-      if (location) {
-        gl.uniform1f(location, value);
-      }
-    };
-    const set1i = (location: WebGLUniformLocation | null, value: number): void => {
-      if (location) {
-        gl.uniform1i(location, value);
-      }
-    };
-    if (this.uniformLocations.uResolution) {
-      gl.uniform2f(this.uniformLocations.uResolution, uniforms.resolution[0], uniforms.resolution[1]);
-    }
-    set1f(this.uniformLocations.uTime, uniforms.time);
-    set1f(this.uniformLocations.uBass, uniforms.bass);
-    set1f(this.uniformLocations.uBeat, uniforms.beat);
-    set1i(this.uniformLocations.uMode, uniforms.mode);
-    set1f(this.uniformLocations.uQuality, uniforms.quality);
-    set1f(this.uniformLocations.uCameraRadius, uniforms.cameraRadius);
-    set1f(this.uniformLocations.uCameraHeight, uniforms.cameraHeight);
-    set1f(this.uniformLocations.uCameraOrbitSpeed, uniforms.cameraOrbitSpeed);
-    set1f(this.uniformLocations.uPaletteSpeed, uniforms.paletteSpeed);
-    set1f(this.uniformLocations.uAudioReact, uniforms.audioReact);
-    set1f(this.uniformLocations.uBeatKick, uniforms.beatKick);
-    set1f(this.uniformLocations.uFractalScale, uniforms.fractalScale);
-
-    gl.drawArrays(gl.TRIANGLES, 0, 6);
-    context.ctx.drawImage(this.canvas, 0, 0, width, height);
-    setWebGLStatus({ mode: "ok" });
+    this.fallback.render(context);
   }
 
   reset(): void {
     this.warned = false;
-  }
-
-  private ensureInitialized(): boolean {
-    if (this.gl && this.program && this.buffer && this.uniformLocations) {
-      return true;
-    }
-
-    this.canvas = document.createElement("canvas");
-    const gl = this.canvas.getContext("webgl", { antialias: false, preserveDrawingBuffer: false });
-    if (!gl) {
-      this.reportFallback("WebGL unavailable");
-      return false;
-    }
-
-    const program = this.createProgram(gl, VERTEX_SHADER_SOURCE, FRAGMENT_SHADER_SOURCE);
-    if (!program) {
-      this.reportFallback("WebGL shader compile failed");
-      return false;
-    }
-
-    const buffer = gl.createBuffer();
-    if (!buffer) {
-      this.reportFallback("WebGL buffer allocation failed");
-      return false;
-    }
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.bufferData(
-      gl.ARRAY_BUFFER,
-      new Float32Array([
-        -1, -1,
-        1, -1,
-        -1, 1,
-        -1, 1,
-        1, -1,
-        1, 1
-      ]),
-      gl.STATIC_DRAW
-    );
-
-    this.positionLocation = gl.getAttribLocation(program, "aPosition");
-    this.uniformLocations = {
-      uResolution: gl.getUniformLocation(program, "uResolution"),
-      uTime: gl.getUniformLocation(program, "uTime"),
-      uBass: gl.getUniformLocation(program, "uBass"),
-      uBeat: gl.getUniformLocation(program, "uBeat"),
-      uMode: gl.getUniformLocation(program, "uMode"),
-      uQuality: gl.getUniformLocation(program, "uQuality"),
-      uCameraRadius: gl.getUniformLocation(program, "uCameraRadius"),
-      uCameraHeight: gl.getUniformLocation(program, "uCameraHeight"),
-      uCameraOrbitSpeed: gl.getUniformLocation(program, "uCameraOrbitSpeed"),
-      uPaletteSpeed: gl.getUniformLocation(program, "uPaletteSpeed"),
-      uAudioReact: gl.getUniformLocation(program, "uAudioReact"),
-      uBeatKick: gl.getUniformLocation(program, "uBeatKick"),
-      uFractalScale: gl.getUniformLocation(program, "uFractalScale")
-    };
-
-    gl.disable(gl.DEPTH_TEST);
-    gl.disable(gl.BLEND);
-
-    this.gl = gl;
-    this.program = program;
-    this.buffer = buffer;
-
-    return true;
-  }
-
-  private createProgram(
-    gl: WebGLRenderingContext,
-    vertexSource: string,
-    fragmentSource: string
-  ): WebGLProgram | null {
-    const vertexShader = this.compileShader(gl, gl.VERTEX_SHADER, vertexSource);
-    const fragmentShader = this.compileShader(gl, gl.FRAGMENT_SHADER, fragmentSource);
-    if (!vertexShader || !fragmentShader) {
-      return null;
-    }
-    const program = gl.createProgram();
-    if (!program) {
-      return null;
-    }
-    gl.attachShader(program, vertexShader);
-    gl.attachShader(program, fragmentShader);
-    gl.linkProgram(program);
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-      const info = gl.getProgramInfoLog(program) ?? "Unknown program link error";
-      this.reportFallback(`WebGL program link failed: ${info}`);
-      gl.deleteProgram(program);
-      return null;
-    }
-    gl.deleteShader(vertexShader);
-    gl.deleteShader(fragmentShader);
-    return program;
-  }
-
-  private compileShader(gl: WebGLRenderingContext, type: number, source: string): WebGLShader | null {
-    const shader = gl.createShader(type);
-    if (!shader) {
-      return null;
-    }
-    gl.shaderSource(shader, source);
-    gl.compileShader(shader);
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-      const info = gl.getShaderInfoLog(shader) ?? "Unknown shader compile error";
-      this.reportFallback(`WebGL shader compile failed: ${info}`);
-      gl.deleteShader(shader);
-      return null;
-    }
-    return shader;
-  }
-
-  private reportFallback(reason: string): void {
-    if (!this.warned) {
-      console.warn(`[raymarch_fractal] ${reason}`);
-      this.warned = true;
-    }
-    setWebGLStatus({ mode: "fallback", reason });
   }
 }

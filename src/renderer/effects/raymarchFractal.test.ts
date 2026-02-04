@@ -8,12 +8,12 @@ import {
 const audio = {
   timeDomain: new Uint8Array(0),
   frequency: new Uint8Array(0),
-  rms: 0,
+  rms: 0.2,
   bass: 0.9,
-  mid: 0,
-  treble: 0,
+  mid: 0.1,
+  treble: 0.05,
   beat: true,
-  beatStrength: 0,
+  beatStrength: 0.4,
   impactStrength: 0
 };
 
@@ -43,7 +43,7 @@ describe("raymarchFractal params", () => {
   });
 
   it("builds uniforms with audio mapping", () => {
-    const params = normalizeRaymarchFractalParams({ fractal: "mandelbox" });
+    const params = normalizeRaymarchFractalParams({ fractal: "mandelbox", quality: 1.0 });
     const uniforms = buildRaymarchFractalUniforms(12, 640, 480, audio, params);
 
     expect(uniforms.time).toBe(12);
@@ -51,5 +51,6 @@ describe("raymarchFractal params", () => {
     expect(uniforms.bass).toBe(0.9);
     expect(uniforms.beat).toBe(1);
     expect(uniforms.mode).toBe(1);
+    expect(uniforms.steps).toBeGreaterThan(0);
   });
 });
