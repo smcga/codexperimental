@@ -18,6 +18,14 @@ export type WebGLUniformPayload = {
   aspect?: number;
   speed?: number;
   camOffset?: [number, number];
+  mode?: number;
+  cameraRadius?: number;
+  cameraHeight?: number;
+  cameraOrbitSpeed?: number;
+  paletteSpeed?: number;
+  audioReact?: number;
+  beatKick?: number;
+  fractalScale?: number;
 };
 
 const VERTEX_SHADER_SOURCE = `#version 300 es
@@ -168,7 +176,15 @@ export class WebGLEffectBase {
       u_seed: gl.getUniformLocation(program, "u_seed"),
       u_steps: gl.getUniformLocation(program, "u_steps"),
       u_quality: gl.getUniformLocation(program, "u_quality"),
-      u_aspect: gl.getUniformLocation(program, "u_aspect")
+      u_aspect: gl.getUniformLocation(program, "u_aspect"),
+      u_mode: gl.getUniformLocation(program, "u_mode"),
+      u_cameraRadius: gl.getUniformLocation(program, "u_cameraRadius"),
+      u_cameraHeight: gl.getUniformLocation(program, "u_cameraHeight"),
+      u_cameraOrbitSpeed: gl.getUniformLocation(program, "u_cameraOrbitSpeed"),
+      u_paletteSpeed: gl.getUniformLocation(program, "u_paletteSpeed"),
+      u_audioReact: gl.getUniformLocation(program, "u_audioReact"),
+      u_beatKick: gl.getUniformLocation(program, "u_beatKick"),
+      u_fractalScale: gl.getUniformLocation(program, "u_fractalScale")
     };
 
     gl.disable(gl.BLEND);
@@ -234,6 +250,18 @@ export class WebGLEffectBase {
     set1f("u_seed", payload.seed);
     set1f("u_quality", payload.quality);
     set1f("u_aspect", payload.aspect);
+    set1f("u_cameraRadius", payload.cameraRadius);
+    set1f("u_cameraHeight", payload.cameraHeight);
+    set1f("u_cameraOrbitSpeed", payload.cameraOrbitSpeed);
+    set1f("u_paletteSpeed", payload.paletteSpeed);
+    set1f("u_audioReact", payload.audioReact);
+    set1f("u_beatKick", payload.beatKick);
+    set1f("u_fractalScale", payload.fractalScale);
+
+    const modeLocation = this.uniformLocations.u_mode;
+    if (modeLocation && Number.isFinite(payload.mode)) {
+      gl.uniform1i(modeLocation, payload.mode ?? 0);
+    }
 
     const camOffsetLocation = this.uniformLocations.u_camOffset;
     if (camOffsetLocation && payload.camOffset) {
