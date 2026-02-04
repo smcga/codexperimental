@@ -1142,6 +1142,22 @@
       }
     },
     {
+      "id": "dev-poly-morph-showcase",
+      "start": "05:50.0",
+      "end": "05:55.0",
+      "effect": "poly_morph_showcase",
+      "era": "16bit",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.3 },
+      "params": {
+        "style": "auto",
+        "lat": 16,
+        "lon": 24,
+        "morphSpeed": 0.09,
+        "styleSpeed": 0.12,
+        "edge": true
+      }
+    },
+    {
       "id": "copper-gradient-splits",
       "start": "05:55.0",
       "end": "06:05.0",
