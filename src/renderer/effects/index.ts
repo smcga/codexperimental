@@ -41,6 +41,7 @@ import { SineScrollerLogoEffect } from "./sineScrollerLogo";
 import { BorderMultiplexEffect } from "./borderMultiplexEffect";
 import { RasterBarsEffect } from "./rasterBars";
 import { CopperGradientSplitsEffect } from "./copperGradientSplits";
+import { GlenzVectorsEffect } from "./glenzVectors";
 
 export const effectRegistry: Record<string, Effect> = {
   starfield: new StarfieldEffect(),
@@ -84,7 +85,8 @@ export const effectRegistry: Record<string, Effect> = {
   sine_scroller_logo: new SineScrollerLogoEffect(),
   border_multiplex: new BorderMultiplexEffect(),
   raster_bars: new RasterBarsEffect(),
-  copper_gradient_splits: new CopperGradientSplitsEffect()
+  copper_gradient_splits: new CopperGradientSplitsEffect(),
+  glenz_vectors: new GlenzVectorsEffect()
 };
 
 export function resetEffects(): void {
