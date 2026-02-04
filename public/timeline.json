@@ -1142,6 +1142,23 @@
       }
     },
     {
+      "id": "twister-05500",
+      "start": "05:50.0",
+      "end": "05:55.0",
+      "effect": "twister",
+      "era": "16bit",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
+      "params": {
+        "baseWidth": 240,
+        "amplitude": 110,
+        "turns": 3.5,
+        "sliceH": 2,
+        "texture": "solid",
+        "background": "fade",
+        "trailFade": 0.1
+      }
+    },
+    {
       "id": "copper-gradient-splits",
       "start": "05:55.0",
       "end": "06:05.0",

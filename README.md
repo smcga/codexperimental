@@ -100,6 +100,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `effect_evolution` | `density`, `motion`, `warp`, `trail`, `seed` | Reinterprets the same lattice across eras. |
 | `treegrowth` | `speed`, `levels`, `trunkHeight`, `branchScale`, `branchAngle`, `trunkWidth`, `sway`, `leafSize`, `jitter`, `seed`, `growth` | `growth` overrides the automatic growth cycle (0-1). |
 | `amiga_showcase` | `barCount`, `barSpeed`, `barWaveAmp`, `barWaveFreq`, `barSaturation`, `bobCount`, `bobRadius`, `bobTrail`, `bobIntensity`, `twistWidth`, `twistAmp`, `twistSpeed`, `twistSlices`, `twistHueSpeed`, `twistX`, `glenz`, `audioReact` |  |
+| `twister` | `x`, `baseWidth`, `amplitude`, `turns`, `speed`, `sliceH`, `sat`, `hueSpeed`, `minWidthScale`, `maxWidthScale`, `minAlpha`, `maxAlpha`, `edgeShade`, `background`, `trailFade`, `texture`, `audioReact`, `beatKick` | `background` supports `clear` or `fade`; `texture` supports `solid` or `pattern`. |
 | `sine_scroller_logo` | `message`, `fontSize`, `speed`, `waveAmp`, `waveSpeed`, `wavePhaseStep`, `scrollerY`, `scrollerX`, `layer2`, `layer2Speed`, `layer2FontSize`, `layer2Y`, `logoText`, `logoFontSize`, `logoY`, `scanlineStep`, `logoWaveAmp`, `logoWaveSpeed`, `logoWaveFreq`, `audioReact`, `beatBoost` | Scroll + sine wave + scanline logo wobble. |
 
 ## Run
