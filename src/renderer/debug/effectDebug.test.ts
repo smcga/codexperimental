@@ -81,6 +81,27 @@ describe("effect debug params", () => {
     });
   });
 
+  it("provides defaults for texture tunnel controls", () => {
+    expect(getEffectDebugDefaults("texture_tunnel")).toEqual({
+      bufW: 240,
+      bufH: 150,
+      speed: 1,
+      angScroll: 30,
+      depthScroll: 55,
+      invRScale: 512,
+      wobbleAmp: 0.8,
+      wobbleAng: 6,
+      wobbleDepth: 10,
+      wobbleSpeedX: 0.7,
+      wobbleSpeedY: 0.9,
+      lighting: 1,
+      beatKick: 0.7,
+      audioReact: 0.7,
+      scanlines: 0,
+      seed: 0
+    });
+  });
+
   it("clamps equalizer params within control bounds", () => {
     const params = coerceEffectParams("equalizer", {
       bars: 200,

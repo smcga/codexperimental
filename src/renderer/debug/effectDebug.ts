@@ -76,6 +76,27 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
     title: "Tunnel Controls",
     controls: [numberControl("speed", "Speed", 1.1, { min: 0, step: 0.05 })]
   },
+  texture_tunnel: {
+    title: "Texture Tunnel Controls",
+    controls: [
+      numberControl("bufW", "Buffer Width", 240, { min: 64, max: 480, step: 1 }),
+      numberControl("bufH", "Buffer Height", 150, { min: 64, max: 360, step: 1 }),
+      numberControl("speed", "Speed", 1.0, { min: 0, max: 3, step: 0.05 }),
+      numberControl("angScroll", "Angle Scroll", 30, { min: 0, max: 120, step: 1 }),
+      numberControl("depthScroll", "Depth Scroll", 55, { min: 0, max: 160, step: 1 }),
+      numberControl("invRScale", "Inv Radius Scale", 512, { min: 64, max: 1024, step: 1 }),
+      numberControl("wobbleAmp", "Wobble Amp", 0.8, { min: 0, max: 2, step: 0.05 }),
+      numberControl("wobbleAng", "Wobble Angle", 6, { min: 0, max: 20, step: 0.5 }),
+      numberControl("wobbleDepth", "Wobble Depth", 10, { min: 0, max: 30, step: 0.5 }),
+      numberControl("wobbleSpeedX", "Wobble Speed X", 0.7, { min: 0, max: 3, step: 0.05 }),
+      numberControl("wobbleSpeedY", "Wobble Speed Y", 0.9, { min: 0, max: 3, step: 0.05 }),
+      numberControl("lighting", "Lighting", 1, { min: 0, max: 1, step: 0.05 }),
+      numberControl("beatKick", "Beat Kick", 0.7, { min: 0, max: 1, step: 0.05 }),
+      numberControl("audioReact", "Audio React", 0.7, { min: 0, max: 1, step: 0.05 }),
+      toggleControl("scanlines", "Scanlines", false),
+      numberControl("seed", "Seed", 0, { min: 0, max: 10, step: 0.1 })
+    ]
+  },
   rotozoom: {
     title: "Rotozoom Controls",
     controls: [numberControl("speed", "Speed", 1.0, { min: 0, step: 0.05 })]

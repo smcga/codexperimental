@@ -1142,6 +1142,15 @@
       }
     },
     {
+      "id": "pcdemo-texture-tunnel",
+      "start": "05:50.0",
+      "end": "05:55.0",
+      "effect": "texture_tunnel",
+      "era": "pcdemo",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
+      "params": { "bufW": 256, "bufH": 160, "speed": 1.1, "wobbleAng": 7, "wobbleDepth": 12, "scanlines": true }
+    },
+    {
       "id": "copper-gradient-splits",
       "start": "05:55.0",
       "end": "06:05.0",

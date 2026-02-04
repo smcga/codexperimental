@@ -64,6 +64,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `raster_bars` | `orientation`, `barCount`, `barThickness`, `speed`, `waveAmp`, `waveFreq`, `splitStrength`, `scanlineStep`, `border`, `borderSize`, `palette`, `audioReact`, `beatThump` | `orientation` supports `horizontal` or `vertical`; `palette` supports `c64`, `atari`, `spectrum`, or `rainbow`. |
 | `copper_gradient_splits` | `scanStep`, `gradientRowStep`, `barCount`, `speed`, `barWobble`, `barHueStep`, `hueWobble`, `saturation`, `lightnessBase`, `lightnessPeak`, `splits`, `hamish`, `hamishStrength`, `paletteClamp`, `paletteClampSteps`, `audioReact`, `beatKick` | Copper bar gradients with optional pseudo-high-colour splits. |
 | `tunnel` | `speed` |  |
+| `texture_tunnel` | `bufW`, `bufH`, `speed`, `angScroll`, `depthScroll`, `invRScale`, `wobbleAmp`, `wobbleAng`, `wobbleDepth`, `wobbleSpeedX`, `wobbleSpeedY`, `lighting`, `beatKick`, `audioReact`, `scanlines`, `seed` | Texture-mapped CPU tunnel with procedural texture. |
 | `rotozoom` | `speed` |  |
 | `blobs` | `count`, `radius`, `orbit`, `speed`, `glow` |  |
 | `ribbons` | `count`, `speed`, `amplitude`, `audioBoost`, `offset`, `spacing`, `thickness` |  |
