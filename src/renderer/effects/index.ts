@@ -40,6 +40,7 @@ import { AmigaShowcaseEffect } from "./amigaShowcase";
 import { SineScrollerLogoEffect } from "./sineScrollerLogo";
 import { BorderMultiplexEffect } from "./borderMultiplexEffect";
 import { RasterBarsEffect } from "./rasterBars";
+import { CopperGradientSplitsEffect } from "./copperGradientSplits";
 
 export const effectRegistry: Record<string, Effect> = {
   starfield: new StarfieldEffect(),
@@ -82,7 +83,8 @@ export const effectRegistry: Record<string, Effect> = {
   amiga_showcase: new AmigaShowcaseEffect(),
   sine_scroller_logo: new SineScrollerLogoEffect(),
   border_multiplex: new BorderMultiplexEffect(),
-  raster_bars: new RasterBarsEffect()
+  raster_bars: new RasterBarsEffect(),
+  copper_gradient_splits: new CopperGradientSplitsEffect()
 };
 
 export function resetEffects(): void {
