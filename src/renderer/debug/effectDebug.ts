@@ -3,6 +3,7 @@ import { NEON_ALLEY_DEFAULTS } from "../effects/gl/neonAlleyEffect";
 import { SPACE_HANGAR_DEFAULTS } from "../effects/gl/spaceHangarEffect";
 import { DEFAULT_FLYOVER_PARAMS, coerceFlyoverParams } from "./flyoverDebug";
 import { WIREFRAME_RIDE_DEFAULTS } from "../effects/wireframeRide";
+import { BORDER_MULTIPLEX_DEFAULTS } from "../effects/borderMultiplexEffect";
 
 export type EffectParamValue = number | string;
 
@@ -195,6 +196,20 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("burstAudio", "Burst Audio", 20, { min: 0, max: 60, step: 1 }),
       numberControl("force", "Force", 1, { min: 0.2, max: 4, step: 0.1 }),
       numberControl("forceAudio", "Force Audio", 2, { min: 0, max: 6, step: 0.1 })
+    ]
+  },
+  border_multiplex: {
+    title: "Border Multiplex Controls",
+    controls: [
+      numberControl("hwSprites", "HW Sprites", BORDER_MULTIPLEX_DEFAULTS.hwSprites, { min: 4, max: 16, step: 1 }),
+      numberControl("totalSprites", "Total Sprites", BORDER_MULTIPLEX_DEFAULTS.totalSprites, { min: 16, max: 160, step: 1 }),
+      numberControl("bandHeight", "Band Height", BORDER_MULTIPLEX_DEFAULTS.bandHeight, { min: 12, max: 64, step: 1 }),
+      numberControl("spriteSize", "Sprite Size", BORDER_MULTIPLEX_DEFAULTS.spriteSize, { min: 6, max: 24, step: 1 }),
+      numberControl("speed", "Speed", BORDER_MULTIPLEX_DEFAULTS.speed, { min: 20, max: 200, step: 1 }),
+      numberControl("rasterJitter", "Raster Jitter", BORDER_MULTIPLEX_DEFAULTS.rasterJitter, { min: 0, max: 6, step: 0.1 }),
+      numberControl("borderMaskStrength", "Border Mask", BORDER_MULTIPLEX_DEFAULTS.borderMaskStrength, { min: 0, max: 1, step: 0.05 }),
+      numberControl("audioReact", "Audio React", BORDER_MULTIPLEX_DEFAULTS.audioReact, { min: 0, max: 1, step: 0.05 }),
+      numberControl("seed", "Seed", BORDER_MULTIPLEX_DEFAULTS.seed, { min: 0, max: 999, step: 1 })
     ]
   },
   fluid: {
