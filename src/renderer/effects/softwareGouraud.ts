@@ -432,7 +432,7 @@ export class SoftwareGouraudEffect implements Effect {
       const x2 = this.screenX[i2];
       const y2 = this.screenY[i2];
       const area = (x1 - x0) * (y2 - y0) - (y1 - y0) * (x2 - x0);
-      if (area <= 0) {
+      if (area >= 0) {
         continue;
       }
 

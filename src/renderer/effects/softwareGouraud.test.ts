@@ -43,4 +43,14 @@ describe("SoftwareGouraudEffect params", () => {
     expect(params.audioReact).toBe(0);
     expect(params.beatKick).toBe(1);
   });
+
+  it("falls back to defaults for invalid enum values", () => {
+    const params = normalizeSoftwareGouraudParams({
+      model: "cube",
+      shading: "flat"
+    });
+
+    expect(params.model).toBe("torus");
+    expect(params.shading).toBe("gouraud");
+  });
 });
