@@ -81,6 +81,30 @@ describe("effect debug params", () => {
     });
   });
 
+  it("provides defaults for voxel landscape controls", () => {
+    expect(getEffectDebugDefaults("voxel_landscape")).toEqual({
+      bufW: 320,
+      bufH: 200,
+      speed: 70,
+      turnRate: 0.15,
+      turnWobble: 0.1,
+      camH: 110,
+      heightBob: 6,
+      beatBump: 10,
+      fov: 1,
+      horizon: 90,
+      scale: 120,
+      maxDist: 900,
+      stepBase: 2,
+      stepGrow: 80,
+      fogStrength: 0.75,
+      audioReact: 0.7,
+      beatKick: 0.7,
+      scanlines: 0,
+      seed: 1337
+    });
+  });
+
   it("clamps equalizer params within control bounds", () => {
     const params = coerceEffectParams("equalizer", {
       bars: 200,

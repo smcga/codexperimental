@@ -1149,6 +1149,15 @@
       "era": "16bit",
       "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
       "params": { "barCount": 12, "splits": 3, "hamish": true, "barWobble": 34 }
+    },
+    {
+      "id": "voxel-landscape-demo",
+      "start": "06:05.0",
+      "end": "06:15.0",
+      "effect": "voxel_landscape",
+      "era": "pcdemo",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.25 },
+      "params": { "bufW": 320, "bufH": 200, "speed": 80, "fogStrength": 0.8, "scanlines": true }
     }
   ],
   "textCues": [
