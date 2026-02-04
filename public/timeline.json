@@ -1138,6 +1138,15 @@
         "message": "    THIS IS A CANVAS2D DEMOSCENE ENGINE — SMOOTH SCROLLERS FOREVER —    ",
         "layer2": true
       }
+    },
+    {
+      "id": "copper-gradient-splits",
+      "start": "05:55.0",
+      "end": "06:05.0",
+      "effect": "copper_gradient_splits",
+      "era": "16bit",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
+      "params": { "barCount": 12, "splits": 3, "hamish": true, "barWobble": 34 }
     }
   ],
   "textCues": [
