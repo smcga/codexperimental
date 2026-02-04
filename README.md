@@ -32,6 +32,7 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 - The `gl_impossible_corridor` effect renders a WebGL2 raymarched impossible corridor with bass-driven breathing, beat kicks, and treble shimmer; tune `params` like `quality`, `warp`, `hueShift`, `exposure`, `seed`, and `speed`. It falls back to the `tunnel` effect when WebGL2 is unavailable.
 - The `neon_alley` effect renders a WebGL2 raymarched neon alley with audio-reactive shimmer; tune `params` like `quality`, `speed`, `exposure`, `hueShift`, and `seed`. It falls back to the `neon` effect when WebGL2 is unavailable.
 - The `space_hangar` effect renders a WebGL2 raymarched sci-fi hangar flythrough with bass-driven camera shake; tune `params` like `quality`, `speed`, `exposure`, `hueShift`, and `seed`. It falls back to the `tunnel` effect when WebGL2 is unavailable.
+- The `raymarch_fractal` effect renders a WebGL2 raymarched fractal emerging from a ground plane with audio-reactive palette shifts; tune `params` like `quality`, `fractal`, `cameraRadius`, `cameraHeight`, `cameraOrbitSpeed`, `paletteSpeed`, `audioReact`, `beatKick`, and `fractalScale`. It falls back to the `fractal` effect when WebGL2 is unavailable.
 - The `wireframeRide` effect renders a WebGL2 wireframe terrain flythrough with neon gradients, fog, and audio-reactive pulses; tune `params` like `speed`, `gridWidth`, `gridDepth`, `gridResX`, `gridResZ`, `amplitude`, `noiseFreq`, `cameraHeight`, `fov`, `fog`, `neon`, `bassReactive`, `rmsReactive`, and `sun`. It falls back to the `isogrid` effect when WebGL2 is unavailable.
 - The `portrait` effect pulls in `img/94B53814-80C3-4851-A6D3-A590FBB6022F.png` for a full-frame image glow; replace that file if you want a different portrait.
 - The `intro` block controls the terminal presentation from `t=0` until `intro.end`; the first section must start exactly at the same time so the colour pipeline can take over. Script events are time-coded, so you can align story lines with audio or prior text cue timings.
@@ -63,9 +64,12 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `plasma` | `speed` |  |
 | `raster_bars` | `orientation`, `barCount`, `barThickness`, `speed`, `waveAmp`, `waveFreq`, `splitStrength`, `scanlineStep`, `border`, `borderSize`, `palette`, `audioReact`, `beatThump` | `orientation` supports `horizontal` or `vertical`; `palette` supports `c64`, `atari`, `spectrum`, or `rainbow`. |
 | `copper_gradient_splits` | `scanStep`, `gradientRowStep`, `barCount`, `speed`, `barWobble`, `barHueStep`, `hueWobble`, `saturation`, `lightnessBase`, `lightnessPeak`, `splits`, `hamish`, `hamishStrength`, `paletteClamp`, `paletteClampSteps`, `audioReact`, `beatKick` | Copper bar gradients with optional pseudo-high-colour splits. |
+| `bumpmap_plane` | `bufW`, `bufH`, `bumpStrength`, `ambient`, `diffuseStrength`, `specStrength`, `shininess`, `lightZ`, `lightSpeed`, `embossText`, `embossStrength`, `animateBumps`, `waveAmp`, `waveFreqX`, `waveFreqY`, `baseHue`, `paletteMode`, `scanlines`, `audioReact`, `beatKick`, `seed` | CPU bump-mapped plane with moving light and optional embossed text. |
+| `vga_fire` | `fireW`, `fireH`, `stepsPerFrame`, `baseHeat`, `sparkChance`, `decay`, `wind`, `windWave`, `turbulence`, `gustOnBeat`, `logoText`, `logoSize`, `logoY`, `audioReact`, `scanlines`, `glowStrength` | Classic VGA/DOS fire with optional logo mask. |
 | `tunnel` | `speed` |  |
 | `rotozoom` | `speed` |  |
 | `blobs` | `count`, `radius`, `orbit`, `speed`, `glow` |  |
+| `metaballs` | `bufW`, `bufH`, `count`, `baseRadius`, `radiusVar`, `baseThreshold`, `edgeSoftness`, `normalZ`, `ambient`, `diffuse`, `specStrength`, `shininess`, `rimStrength`, `palette`, `hueSpeed`, `smoothing`, `glow`, `audioReact`, `beatKick`, `seed` | Implicit surface metaballs with chrome/neon lighting; `palette` supports `chrome` or `neon`. |
 | `ribbons` | `count`, `speed`, `amplitude`, `audioBoost`, `offset`, `spacing`, `thickness` |  |
 | `lissajous` | `points`, `speed`, `a`, `b`, `radius`, `lineWidth` |  |
 | `glitch` | `sparkles`, `sparkleSize`, `sliceCount`, `sliceBoost`, `sliceHeight`, `sliceVariance`, `offset`, `shake`, `maxShake` |  |
@@ -85,6 +89,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `sphere3d` | `speed` |  |
 | `spherecloud` | `speed` |  |
 | `infinitycloud` | `speed` |  |
+| `raytrace_spheres` | `bufW`, `bufH`, `sphereCount`, `maxDepth`, `floorReflect`, `shininess`, `diffuseStrength`, `specStrength`, `ambient`, `fov`, `cellSize`, `adaptive`, `refineThreshold`, `audioReact`, `beatKick`, `scanlines`, `seed` | Low-res software raytraced spheres with reflections. |
 | `chess` | `speed`, `showHighlights`, `startTime` |  |
 | `flyover` | `speed`, `horizon`, `seaDetail`, `waveSpeed`, `waveIntensity`, `islandCount`, `islandSeed`, `fog`, `palette`, `audioReactive` | `palette` supports `day`, `sunset`, `night`. |
 | `gl_fractal_tunnel` | `quality`, `warp`, `hueShift`, `exposure`, `seed` | Falls back to `tunnel` when WebGL2 is unavailable. |
@@ -94,6 +99,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `space_hangar` | `quality`, `speed`, `exposure`, `hueShift`, `seed` | Falls back to `tunnel` when WebGL2 is unavailable. |
 | `wireframeRide` | `speed`, `gridWidth`, `gridDepth`, `gridResX`, `gridResZ`, `amplitude`, `noiseFreq`, `cameraHeight`, `fov`, `fog`, `neon`, `bassReactive`, `rmsReactive`, `sun` | Falls back to `isogrid` when WebGL2 is unavailable. |
 | `vector3d_balls` | `model`, `pointCount`, `wireframe`, `roundDots`, `baseDotSize`, `dotDepthScale`, `lineWidth`, `camDist`, `rotXSpeed`, `rotYSpeed`, `rotZSpeed`, `trail`, `stripeFreq`, `stripeSpeed`, `stripeStrength`, `palette`, `audioReact`, `beatKick`, `seed` | `model` supports `cube`, `sphere`, `torus`. `palette` supports `c64`, `spectrum`, `rainbow`. |
+| `glenz_vectors` | `model`, `instances`, `camDist`, `focal`, `rotXSpeed`, `rotYSpeed`, `rotZSpeed`, `baseHue`, `hueSpeed`, `sat`, `lightness`, `faceAlpha`, `edge`, `edgeAlpha`, `lineWidth`, `trailFade`, `sortFaces`, `audioReact`, `beatKick`, `seed` | `model` supports `cube`, `octa`, `icosa`; `sortFaces` supports `none` or `backToFront`. |
 | `synthwaveSunset` | `horizon`, `sunRadius`, `stripeHeight`, `stripeGap`, `seaSpeed`, `starCount`, `glow`, `scanlines`, `audioReactive` |  |
 | `rain` | `intensity`, `wind`, `speed`, `streakLength`, `splash`, `hue`, `seed` |  |
 | `lightning` | `trigger`, `chancePerSecond`, `cooldown`, `flashDuration`, `bolt`, `branches`, `seed` | `trigger` supports `beat`, `random`, `both`. |
@@ -102,6 +108,34 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `amiga_showcase` | `barCount`, `barSpeed`, `barWaveAmp`, `barWaveFreq`, `barSaturation`, `bobCount`, `bobRadius`, `bobTrail`, `bobIntensity`, `twistWidth`, `twistAmp`, `twistSpeed`, `twistSlices`, `twistHueSpeed`, `twistX`, `glenz`, `audioReact` |  |
 | `sine_scroller_logo` | `message`, `fontSize`, `speed`, `waveAmp`, `waveSpeed`, `wavePhaseStep`, `scrollerY`, `scrollerX`, `layer2`, `layer2Speed`, `layer2FontSize`, `layer2Y`, `logoText`, `logoFontSize`, `logoY`, `scanlineStep`, `logoWaveAmp`, `logoWaveSpeed`, `logoWaveFreq`, `audioReact`, `beatBoost` | Scroll + sine wave + scanline logo wobble. |
 | `shadebobs_bobs` | `mode`, `shadeCount`, `bobCount`, `shadeScale`, `blobRadius`, `trailFade`, `blend`, `hueSpeed`, `steer`, `maxSpeed`, `spriteSize`, `boingCheckers`, `bobAlpha`, `fastBlob`, `audioReact`, `beatPulseStrength`, `dirtyRects`, `seed` | Amiga-style bobs mixed with shadebobs interference. |
+| `sine_distorter` | `mode`, `amp`, `freq`, `speed`, `slice`, `phase`, `sourceScale`, `edges`, `source`, `logoText`, `audioReact`, `beatBoost`, `glow` | Wavy glass distorter (scanline or column sine shifts). |
+| `raymarch_fractal` | `quality`, `fractal`, `cameraRadius`, `cameraHeight`, `cameraOrbitSpeed`, `paletteSpeed`, `audioReact`, `beatKick`, `fractalScale` | `fractal` supports `mandelbulb` or `mandelbox`. |
+
+#### bumpmap_plane parameters
+
+Defaults shown are from the built-in effect configuration:
+
+- `bufW` (default `240`): internal buffer width (lower = faster).
+- `bufH` (default `180`): internal buffer height (lower = faster).
+- `bumpStrength` (default `0.035`): height gradient scale for normals.
+- `ambient` (default `0.2`): base ambient light contribution.
+- `diffuseStrength` (default `1.05`): Lambertian diffuse multiplier.
+- `specStrength` (default `0.35`): specular highlight multiplier.
+- `shininess` (default `24`): specular exponent (higher = tighter highlight).
+- `lightZ` (default `120`): light height above the plane.
+- `lightSpeed` (default `1.0`): time scale for light motion.
+- `embossText` (default `"BUMP"`): text to emboss; set to `""` to disable.
+- `embossStrength` (default `70`): added height for embossed text.
+- `animateBumps` (default `true`): enable animated wave component.
+- `waveAmp` (default `18`): animated wave amplitude.
+- `waveFreqX` (default `0.08`): animated wave frequency along X.
+- `waveFreqY` (default `0.06`): animated wave frequency along Y.
+- `baseHue` (default `200`): base hue when `paletteMode` is `hsl`.
+- `paletteMode` (default `"ramp"`): `ramp` or `hsl`.
+- `scanlines` (default `false`): draw scanline overlay.
+- `audioReact` (default `0.7`): audio reaction strength.
+- `beatKick` (default `0.7`): beat pulse intensity.
+- `seed` (default `0`): procedural height map seed.
 
 ## Run
 

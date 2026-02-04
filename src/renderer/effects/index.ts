@@ -42,6 +42,13 @@ import { BorderMultiplexEffect } from "./borderMultiplexEffect";
 import { RasterBarsEffect } from "./rasterBars";
 import { CopperGradientSplitsEffect } from "./copperGradientSplits";
 import { ShadebobsBobsEffect } from "./shadebobsBobs";
+import { SineDistorterEffect } from "./sineDistorter";
+import { GlenzVectorsEffect } from "./glenzVectors";
+import { RaymarchFractalEffect } from "./raymarchFractal";
+import { MetaballsEffect } from "./metaballs";
+import { BumpmapPlaneEffect } from "./bumpmapPlane";
+import { RaytraceSpheresEffect } from "./raytraceSpheres";
+import { VgaFireEffect } from "./vgaFire";
 
 export const effectRegistry: Record<string, Effect> = {
   starfield: new StarfieldEffect(),
@@ -86,7 +93,14 @@ export const effectRegistry: Record<string, Effect> = {
   border_multiplex: new BorderMultiplexEffect(),
   raster_bars: new RasterBarsEffect(),
   copper_gradient_splits: new CopperGradientSplitsEffect(),
-  shadebobs_bobs: new ShadebobsBobsEffect()
+  shadebobs_bobs: new ShadebobsBobsEffect(),
+  sine_distorter: new SineDistorterEffect(),
+  glenz_vectors: new GlenzVectorsEffect(),
+  raymarch_fractal: new RaymarchFractalEffect(),
+  metaballs: new MetaballsEffect(),
+  bumpmap_plane: new BumpmapPlaneEffect(),
+  raytrace_spheres: new RaytraceSpheresEffect(),
+  vga_fire: new VgaFireEffect()
 };
 
 export function resetEffects(): void {
