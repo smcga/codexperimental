@@ -32,6 +32,7 @@ import { LightningEffect } from "./lightningEffect";
 import { NeonAlleyEffect } from "./gl/neonAlleyEffect";
 import { SpaceHangarEffect } from "./gl/spaceHangarEffect";
 import { WireframeRideEffect } from "./wireframeRide";
+import { FluidSimEffect } from "./fluidSimEffect";
 import { TreeGrowthEffect } from "./treeGrowthEffect";
 
 export const effectRegistry: Record<string, Effect> = {
@@ -68,6 +69,7 @@ export const effectRegistry: Record<string, Effect> = {
   neon_alley: new NeonAlleyEffect(),
   space_hangar: new SpaceHangarEffect(),
   wireframeRide: new WireframeRideEffect(),
+  fluid: new FluidSimEffect(),
   treegrowth: new TreeGrowthEffect()
 };
 
