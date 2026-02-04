@@ -174,7 +174,8 @@ export class Renderer {
       audio,
       sectionParams,
       this.sceneCanvas.width,
-      this.sceneCanvas.height
+      this.sceneCanvas.height,
+      section.era
     );
 
     if (section.layers.length > 0) {
@@ -189,7 +190,8 @@ export class Renderer {
           audio,
           layerParams,
           this.layerCanvas.width,
-          this.layerCanvas.height
+          this.layerCanvas.height,
+          section.era
         );
         this.sceneCtx.save();
         this.sceneCtx.globalCompositeOperation = layer.blend;
@@ -220,7 +222,8 @@ export class Renderer {
     audio: AudioFeatures,
     params: Record<string, number>,
     width: number,
-    height: number
+    height: number,
+    era: string
   ): void {
     const effect = effectRegistry[effectName];
     if (!effect) {
@@ -237,7 +240,8 @@ export class Renderer {
       time,
       delta,
       audio,
-      params
+      params,
+      era
     });
   }
 

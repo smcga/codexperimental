@@ -32,6 +32,7 @@ import { LightningEffect } from "./lightningEffect";
 import { NeonAlleyEffect } from "./gl/neonAlleyEffect";
 import { SpaceHangarEffect } from "./gl/spaceHangarEffect";
 import { WireframeRideEffect } from "./wireframeRide";
+import { EffectEvolution } from "./effectEvolution";
 
 export const effectRegistry: Record<string, Effect> = {
   starfield: new StarfieldEffect(),
@@ -66,7 +67,8 @@ export const effectRegistry: Record<string, Effect> = {
   lightning: new LightningEffect(),
   neon_alley: new NeonAlleyEffect(),
   space_hangar: new SpaceHangarEffect(),
-  wireframeRide: new WireframeRideEffect()
+  wireframeRide: new WireframeRideEffect(),
+  effect_evolution: new EffectEvolution()
 };
 
 export function resetEffects(): void {
