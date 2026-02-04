@@ -1155,6 +1155,86 @@
         "morphSpeed": 0.09,
         "styleSpeed": 0.12,
         "edge": true
+              }
+    },
+    {
+      "id": "dev-textured-cube",
+      "start": "05:50.0",
+      "end": "05:55.0",
+      "effect": "textured_cube",
+      "era": "pcdemo",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
+      "params": {
+        "scale": 3,
+        "backfaceCull": true,
+        "edge": true,
+        "perspectiveCorrect": false
+              }
+    },
+    {
+      "id": "twister-05500",
+      "start": "05:50.0",
+      "end": "05:55.0",
+      "effect": "twister",
+      "era": "16bit",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
+      "params": {
+        "baseWidth": 240,
+        "amplitude": 110,
+        "turns": 3.5,
+        "sliceH": 2,
+        "texture": "solid",
+        "background": "fade",
+        "trailFade": 0.1
+              }
+    },
+    {
+      "id": "dev-shadebobs-bobs",
+      "start": "05:50.0",
+      "end": "05:55.0",
+      "effect": "shadebobs_bobs",
+      "era": "16bit",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.25 },
+      "params": {
+        "mode": "hybrid",
+        "shadeCount": 32,
+        "bobCount": 60,
+        "shadeScale": 2,
+        "blobRadius": 78,
+        "trailFade": 0.1,
+        "boingCheckers": true
+              }
+    },
+    {
+      "id": "dev-sine-distorter",
+      "start": "05:50.0",
+      "end": "05:55.0",
+      "effect": "sine_distorter",
+      "era": "16bit",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
+      "params": {
+        "logoText": "WAVE",
+        "mode": "horizontal",
+        "amp": 34,
+        "freq": 0.07,
+        "slice": 2,
+        "edges": "wrap"
+              }
+    },
+    {
+      "id": "raytrace-spheres",
+      "start": "05:50.0",
+      "end": "05:55.0",
+      "effect": "raytrace_spheres",
+      "era": "pcdemo",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
+      "params": {
+        "bufW": 200,
+        "bufH": 150,
+        "adaptive": true,
+        "cellSize": 2,
+        "maxDepth": 2,
+        "floorReflect": 0.6
       }
     },
     {
@@ -1165,6 +1245,22 @@
       "era": "16bit",
       "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
       "params": { "barCount": 12, "splits": 3, "hamish": true, "barWobble": 34 }
+    },
+    {
+      "id": "dev-glenz-vectors",
+      "start": "06:05.0",
+      "end": "06:15.0",
+      "effect": "glenz_vectors",
+      "era": "16bit",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
+      "params": {
+        "model": "octa",
+        "instances": 3,
+        "faceAlpha": 0.12,
+        "edge": true,
+        "trailFade": 0.08,
+        "sortFaces": "none"
+      }
     }
   ],
   "textCues": [
