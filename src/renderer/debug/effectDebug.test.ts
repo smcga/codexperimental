@@ -81,6 +81,20 @@ describe("effect debug params", () => {
     });
   });
 
+  it("provides defaults for raymarch fractal controls", () => {
+    expect(getEffectDebugDefaults("raymarch_fractal")).toEqual({
+      quality: 1,
+      fractal: "mandelbulb",
+      cameraRadius: 4,
+      cameraHeight: 0,
+      cameraOrbitSpeed: 0.2,
+      paletteSpeed: 0.15,
+      audioReact: 0.6,
+      beatKick: 0.5,
+      fractalScale: 1
+    });
+  });
+
   it("clamps equalizer params within control bounds", () => {
     const params = coerceEffectParams("equalizer", {
       bars: 200,
