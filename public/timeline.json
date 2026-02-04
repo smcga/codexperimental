@@ -1142,6 +1142,20 @@
       }
     },
     {
+      "id": "dev-textured-cube",
+      "start": "05:50.0",
+      "end": "05:55.0",
+      "effect": "textured_cube",
+      "era": "pcdemo",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
+      "params": {
+        "scale": 3,
+        "backfaceCull": true,
+        "edge": true,
+        "perspectiveCorrect": false
+              }
+    },
+    {
       "id": "twister-05500",
       "start": "05:50.0",
       "end": "05:55.0",
