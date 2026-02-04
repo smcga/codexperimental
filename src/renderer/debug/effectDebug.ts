@@ -4,6 +4,7 @@ import { SPACE_HANGAR_DEFAULTS } from "../effects/gl/spaceHangarEffect";
 import { DEFAULT_FLYOVER_PARAMS, coerceFlyoverParams } from "./flyoverDebug";
 import { WIREFRAME_RIDE_DEFAULTS } from "../effects/wireframeRide";
 import { BORDER_MULTIPLEX_DEFAULTS } from "../effects/borderMultiplexEffect";
+import { SINE_DISTORTER_DEFAULTS } from "../effects/sineDistorter";
 import { GLENZ_VECTORS_DEFAULTS } from "../effects/glenzVectors";
 import { BUMPMAP_PLANE_DEFAULTS } from "../effects/bumpmapPlane";
 
@@ -453,6 +454,38 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("seed", "Seed", 0, { min: 0, max: 10, step: 0.1 }),
       numberControl("growth", "Growth Override", 1, { min: 0, max: 1, step: 0.01 })
     ]
+  },
+  sine_distorter: {
+    title: "Sine Distorter Controls",
+    controls: [
+      selectControl("mode", "Mode", SINE_DISTORTER_DEFAULTS.mode, [
+        { label: "Horizontal", value: "horizontal" },
+        { label: "Vertical", value: "vertical" },
+        { label: "Both", value: "both" }
+      ]),
+      numberControl("amp", "Amplitude", SINE_DISTORTER_DEFAULTS.amp, { min: 0, max: 80, step: 1 }),
+      numberControl("freq", "Frequency", SINE_DISTORTER_DEFAULTS.freq, { min: 0, max: 0.2, step: 0.005 }),
+      numberControl("speed", "Speed", SINE_DISTORTER_DEFAULTS.speed, { min: 0, max: 6, step: 0.05 }),
+      numberControl("slice", "Slice Size", SINE_DISTORTER_DEFAULTS.slice, { min: 1, max: 8, step: 1 }),
+      numberControl("phase", "Phase", SINE_DISTORTER_DEFAULTS.phase, { min: -6.28, max: 6.28, step: 0.05 }),
+      numberControl("sourceScale", "Source Scale", SINE_DISTORTER_DEFAULTS.sourceScale, { min: 1, max: 3, step: 0.1 }),
+      selectControl("edges", "Edges", SINE_DISTORTER_DEFAULTS.edges, [
+        { label: "Wrap", value: "wrap" },
+        { label: "Clamp", value: "clamp" }
+      ]),
+      selectControl("source", "Source", "logo", [
+        { label: "Logo", value: "logo" },
+        { label: "Scene", value: "scene" }
+      ]),
+      selectControl("logoText", "Logo Text", SINE_DISTORTER_DEFAULTS.logoText, [
+        { label: "DISTORT", value: "DISTORT" },
+        { label: "WAVE", value: "WAVE" },
+        { label: "GLASS", value: "GLASS" }
+      ]),
+      numberControl("audioReact", "Audio React", SINE_DISTORTER_DEFAULTS.audioReact, { min: 0, max: 1, step: 0.05 }),
+      numberControl("beatBoost", "Beat Boost", SINE_DISTORTER_DEFAULTS.beatBoost, { min: 0, max: 1, step: 0.05 }),
+      numberControl("glow", "Glow", SINE_DISTORTER_DEFAULTS.glow, { min: 0, max: 0.3, step: 0.01 })
+          ]
   },
   bumpmap_plane: {
     title: "Bumpmap Plane Controls",
