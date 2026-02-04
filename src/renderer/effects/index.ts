@@ -41,6 +41,7 @@ import { SineScrollerLogoEffect } from "./sineScrollerLogo";
 import { BorderMultiplexEffect } from "./borderMultiplexEffect";
 import { RasterBarsEffect } from "./rasterBars";
 import { CopperGradientSplitsEffect } from "./copperGradientSplits";
+import { TwisterEffect } from "./twister";
 import { ShadebobsBobsEffect } from "./shadebobsBobs";
 import { SineDistorterEffect } from "./sineDistorter";
 import { GlenzVectorsEffect } from "./glenzVectors";
@@ -93,6 +94,7 @@ export const effectRegistry: Record<string, Effect> = {
   border_multiplex: new BorderMultiplexEffect(),
   raster_bars: new RasterBarsEffect(),
   copper_gradient_splits: new CopperGradientSplitsEffect(),
+  twister: new TwisterEffect(),
   shadebobs_bobs: new ShadebobsBobsEffect(),
   sine_distorter: new SineDistorterEffect(),
   glenz_vectors: new GlenzVectorsEffect(),
