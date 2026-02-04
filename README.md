@@ -21,6 +21,7 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 - The `infinitycloud` effect renders a glowing point-cloud infinity loop with audio-reactive pulses and lighting.
 - The `flyover` effect renders a sky/sea flythrough with distant islands; tune `params` like `speed`, `horizon`, `seaDetail`, `islandSeed`, and `palette`.
 - The `synthwaveSunset` effect renders an outrun sunset with a striped sun, neon sky, and reflective sea; tune `params` like `horizon`, `sunRadius`, `stripeHeight`, `stripeGap`, and `seaSpeed`.
+- The `border_multiplex` effect fakes border-breaking sprites and multiplexed raster reuse; tune `params` like `hwSprites`, `totalSprites`, `bandHeight`, `spriteSize`, `speed`, `rasterJitter`, `borderMaskStrength`, `audioReact`, and `seed`.
 - The `rain` effect renders layered rain streaks with wind drift and optional splashes, with denser, smaller, faster defaults; tune `params` like `intensity`, `wind`, `speed`, `streakLength`, `splash`, `hue`, and `seed`.
 - The `lightning` effect renders brief flash overlays with optional bolt branches; tune `params` like `trigger`, `chancePerSecond`, `cooldown`, `flashDuration`, `bolt`, `branches`, and `seed`.
 - The `treegrowth` effect renders a stylized, audio-reactive tree that grows branches outward; tune `params` like `speed`, `levels`, `trunkHeight`, `branchScale`, `branchAngle`, `trunkWidth`, `sway`, `leafSize`, `jitter`, `seed`, and `growth`.
@@ -60,6 +61,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | --- | --- | --- |
 | `starfield` | `speed`, `warp`, `turnRate`, `turnStrength` | Warp/turn adjust the starfield flight feel. |
 | `plasma` | `speed` |  |
+| `raster_bars` | `orientation`, `barCount`, `barThickness`, `speed`, `waveAmp`, `waveFreq`, `splitStrength`, `scanlineStep`, `border`, `borderSize`, `palette`, `audioReact`, `beatThump` | `orientation` supports `horizontal` or `vertical`; `palette` supports `c64`, `atari`, `spectrum`, or `rainbow`. |
 | `tunnel` | `speed` |  |
 | `rotozoom` | `speed` |  |
 | `blobs` | `count`, `radius`, `orbit`, `speed`, `glow` |  |
@@ -73,6 +75,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `isogrid` | `opacity`, `lineWidth`, `spacing`, `wave`, `speed` |  |
 | `neon` | `shapes`, `radius`, `radiusStep`, `speed`, `glow`, `lineWidth` |  |
 | `particles` | `trail`, `burst`, `burstAudio`, `force`, `forceAudio` |  |
+| `border_multiplex` | `hwSprites`, `totalSprites`, `bandHeight`, `spriteSize`, `speed`, `rasterJitter`, `borderMaskStrength`, `audioReact`, `seed` |  |
 | `fluid` | `speed`, `dissipation`, `splatCount`, `splatSize`, `turbulence`, `hueShift`, `seed` |  |
 | `finale` | `trail`, `starSpeed`, `starWarp`, `starTurn`, `particleCount`, `particleForce`, `bars`, `barHeight` |  |
 | `proper3d` | `speed` |  |
@@ -95,6 +98,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `effect_evolution` | `density`, `motion`, `warp`, `trail`, `seed` | Reinterprets the same lattice across eras. |
 | `treegrowth` | `speed`, `levels`, `trunkHeight`, `branchScale`, `branchAngle`, `trunkWidth`, `sway`, `leafSize`, `jitter`, `seed`, `growth` | `growth` overrides the automatic growth cycle (0-1). |
 | `amiga_showcase` | `barCount`, `barSpeed`, `barWaveAmp`, `barWaveFreq`, `barSaturation`, `bobCount`, `bobRadius`, `bobTrail`, `bobIntensity`, `twistWidth`, `twistAmp`, `twistSpeed`, `twistSlices`, `twistHueSpeed`, `twistX`, `glenz`, `audioReact` |  |
+| `sine_scroller_logo` | `message`, `fontSize`, `speed`, `waveAmp`, `waveSpeed`, `wavePhaseStep`, `scrollerY`, `scrollerX`, `layer2`, `layer2Speed`, `layer2FontSize`, `layer2Y`, `logoText`, `logoFontSize`, `logoY`, `scanlineStep`, `logoWaveAmp`, `logoWaveSpeed`, `logoWaveFreq`, `audioReact`, `beatBoost` | Scroll + sine wave + scanline logo wobble. |
 
 ## Run
 
