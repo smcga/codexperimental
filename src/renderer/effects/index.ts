@@ -41,6 +41,7 @@ import { SineScrollerLogoEffect } from "./sineScrollerLogo";
 import { BorderMultiplexEffect } from "./borderMultiplexEffect";
 import { RasterBarsEffect } from "./rasterBars";
 import { CopperGradientSplitsEffect } from "./copperGradientSplits";
+import { BumpmapPlaneEffect } from "./bumpmapPlane";
 import { RaytraceSpheresEffect } from "./raytraceSpheres";
 import { VgaFireEffect } from "./vgaFire";
 
@@ -87,6 +88,7 @@ export const effectRegistry: Record<string, Effect> = {
   border_multiplex: new BorderMultiplexEffect(),
   raster_bars: new RasterBarsEffect(),
   copper_gradient_splits: new CopperGradientSplitsEffect(),
+  bumpmap_plane: new BumpmapPlaneEffect(),
   raytrace_spheres: new RaytraceSpheresEffect(),
   vga_fire: new VgaFireEffect()
 };

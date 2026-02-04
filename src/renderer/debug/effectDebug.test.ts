@@ -97,4 +97,30 @@ describe("effect debug params", () => {
       alpha: 1
     });
   });
+
+  it("provides defaults for bumpmap plane controls", () => {
+    expect(getEffectDebugDefaults("bumpmap_plane")).toEqual({
+      bufW: 240,
+      bufH: 180,
+      bumpStrength: 0.035,
+      ambient: 0.2,
+      diffuseStrength: 1.05,
+      specStrength: 0.35,
+      shininess: 24,
+      lightZ: 120,
+      lightSpeed: 1,
+      embossText: "BUMP",
+      embossStrength: 70,
+      animateBumps: 1,
+      waveAmp: 18,
+      waveFreqX: 0.08,
+      waveFreqY: 0.06,
+      baseHue: 200,
+      paletteMode: "ramp",
+      scanlines: 0,
+      audioReact: 0.7,
+      beatKick: 0.7,
+      seed: 0
+    });
+  });
 });
