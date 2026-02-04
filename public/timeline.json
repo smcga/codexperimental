@@ -1126,6 +1126,20 @@
       "era": "future",
       "transition": { "in": "wipe", "out": "fade", "duration": 0.2 },
       "params": { "density": 1.1, "motion": 0.75, "warp": 0.55, "trail": 0.2, "seed": 7 }
+    },
+    {
+      "id": "dev-amiga-showcase",
+      "start": "05:40.0",
+      "end": "05:50.0",
+      "effect": "amiga_showcase",
+      "era": "16bit",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.3 },
+      "params": {
+        "barCount": 10,
+        "bobCount": 6,
+        "twistWidth": 200,
+        "glenz": true
+      }
     }
   ],
   "textCues": [
