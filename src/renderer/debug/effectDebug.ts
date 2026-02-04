@@ -197,6 +197,18 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("forceAudio", "Force Audio", 2, { min: 0, max: 6, step: 0.1 })
     ]
   },
+  fluid: {
+    title: "Fluid Simulation Controls",
+    controls: [
+      numberControl("speed", "Speed", 1, { min: 0, max: 3, step: 0.05 }),
+      numberControl("dissipation", "Dissipation", 0.985, { min: 0.9, max: 0.999, step: 0.001 }),
+      numberControl("splatCount", "Splat Count", 3, { min: 0, max: 8, step: 1 }),
+      numberControl("splatSize", "Splat Size", 6, { min: 2, max: 12, step: 0.5 }),
+      numberControl("turbulence", "Turbulence", 1.1, { min: 0, max: 3, step: 0.05 }),
+      numberControl("hueShift", "Hue Shift", 0, { min: -180, max: 180, step: 5 }),
+      numberControl("seed", "Seed", 0, { min: 0, max: 999, step: 1 })
+    ]
+  },
   finale: {
     title: "Finale Controls",
     controls: [
@@ -329,6 +341,22 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("bassReactive", "Bass Reactive", WIREFRAME_RIDE_DEFAULTS.bassReactive, { min: 0, max: 1.5, step: 0.05 }),
       numberControl("rmsReactive", "RMS Reactive", WIREFRAME_RIDE_DEFAULTS.rmsReactive, { min: 0, max: 1.5, step: 0.05 }),
       toggleControl("sun", "Sun", WIREFRAME_RIDE_DEFAULTS.sun === 1)
+    ]
+  },
+  treegrowth: {
+    title: "Tree Growth Controls",
+    controls: [
+      numberControl("speed", "Speed", 0.18, { min: 0, max: 1, step: 0.01 }),
+      numberControl("levels", "Levels", 6, { min: 3, max: 9, step: 1 }),
+      numberControl("trunkHeight", "Trunk Height", 0.45, { min: 0.25, max: 0.65, step: 0.01 }),
+      numberControl("branchScale", "Branch Scale", 0.72, { min: 0.5, max: 0.85, step: 0.01 }),
+      numberControl("branchAngle", "Branch Angle", 28, { min: 10, max: 60, step: 1 }),
+      numberControl("trunkWidth", "Trunk Width", 10, { min: 4, max: 24, step: 0.5 }),
+      numberControl("sway", "Sway", 0.35, { min: 0, max: 1.2, step: 0.01 }),
+      numberControl("leafSize", "Leaf Size", 3, { min: 0, max: 10, step: 0.5 }),
+      numberControl("jitter", "Jitter", 0.25, { min: 0, max: 0.6, step: 0.01 }),
+      numberControl("seed", "Seed", 0, { min: 0, max: 10, step: 0.1 }),
+      numberControl("growth", "Growth Override", 1, { min: 0, max: 1, step: 0.01 })
     ]
   }
 };
