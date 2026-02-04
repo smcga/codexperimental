@@ -89,6 +89,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `synthwaveSunset` | `horizon`, `sunRadius`, `stripeHeight`, `stripeGap`, `seaSpeed`, `starCount`, `glow`, `scanlines`, `audioReactive` |  |
 | `rain` | `intensity`, `wind`, `speed`, `streakLength`, `splash`, `hue`, `seed` |  |
 | `lightning` | `trigger`, `chancePerSecond`, `cooldown`, `flashDuration`, `bolt`, `branches`, `seed` | `trigger` supports `beat`, `random`, `both`. |
+| `treeGrowth` | `growthSpeed`, `branchLevels`, `spread`, `sway`, `leafSize`, `leafHue`, `seed` |  |
 
 ## Run
 
