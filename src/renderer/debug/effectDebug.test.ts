@@ -44,6 +44,28 @@ describe("effect debug params", () => {
       speed: 0.6,
       glow: 0.8
     });
+    expect(getEffectDebugDefaults("metaballs")).toEqual({
+      bufW: 240,
+      bufH: 180,
+      count: 6,
+      baseRadius: 34,
+      radiusVar: 10,
+      baseThreshold: 1.2,
+      edgeSoftness: 0.08,
+      normalZ: 220,
+      ambient: 0.15,
+      diffuse: 1,
+      specStrength: 0.35,
+      shininess: 24,
+      rimStrength: 0.25,
+      palette: "chrome",
+      hueSpeed: 22,
+      smoothing: 1,
+      glow: 0.25,
+      audioReact: 0.7,
+      beatKick: 0.7,
+      seed: 1
+    });
   });
 
   it("provides defaults for wireframe ride controls", () => {
@@ -101,6 +123,84 @@ describe("effect debug params", () => {
       texture: "solid",
       audioReact: 0.7,
       beatKick: 0.7
+          });
+  });
+  it("provides defaults for shadebobs + bobs controls", () => {
+    expect(getEffectDebugDefaults("shadebobs_bobs")).toEqual({
+      mode: "hybrid",
+      shadeCount: 28,
+      bobCount: 40,
+      shadeScale: 2,
+      blobRadius: 70,
+      trailFade: 0.12,
+      blend: "lighter",
+      hueSpeed: 40,
+      steer: 40,
+      maxSpeed: 220,
+      spriteSize: 48,
+      boingCheckers: 1,
+      bobAlpha: 0.95,
+      fastBlob: 0,
+      audioReact: 0.7,
+      beatPulseStrength: 0.7,
+      dirtyRects: 0,
+      seed: 0
+    });
+  });
+  it("provides defaults for sine distorter controls", () => {
+    expect(getEffectDebugDefaults("sine_distorter")).toEqual({
+      mode: "horizontal",
+      amp: 28,
+      freq: 0.06,
+      speed: 2,
+      slice: 2,
+      phase: 0,
+      sourceScale: 1,
+      edges: "wrap",
+      source: "logo",
+      logoText: "DISTORT",
+      audioReact: 0.7,
+      beatBoost: 0.55,
+      glow: 0.08
+          });
+  });
+  
+  it("provides defaults for glenz vectors controls", () => {
+    expect(getEffectDebugDefaults("glenz_vectors")).toEqual({
+      model: "octa",
+      instances: 2,
+      camDist: 3,
+      focal: 0,
+      rotXSpeed: 0.6,
+      rotYSpeed: 0.85,
+      rotZSpeed: 0.25,
+      baseHue: 200,
+      hueSpeed: 35,
+      sat: 85,
+      lightness: 55,
+      faceAlpha: 0.1,
+      edge: 1,
+      edgeAlpha: 0.22,
+      lineWidth: 2,
+      trailFade: 0,
+      sortFaces: "none",
+      audioReact: 0.7,
+      beatKick: 0.7,
+      seed: 0
+    });
+  });
+  
+  it("provides defaults for raymarch fractal controls", () => {
+    expect(getEffectDebugDefaults("raymarch_fractal")).toEqual({
+      quality: 1,
+      fractal: "mandelbulb",
+      cameraRadius: 4,
+      cameraHeight: 0,
+      cameraOrbitSpeed: 0.2,
+      paletteSpeed: 0.15,
+      audioReact: 0.6,
+      beatKick: 0.5,
+      fractalScale: 1
     });
   });
 
@@ -118,6 +218,32 @@ describe("effect debug params", () => {
       height: 0.2,
       bassBoost: 0,
       alpha: 1
+    });
+  });
+
+  it("provides defaults for bumpmap plane controls", () => {
+    expect(getEffectDebugDefaults("bumpmap_plane")).toEqual({
+      bufW: 240,
+      bufH: 180,
+      bumpStrength: 0.035,
+      ambient: 0.2,
+      diffuseStrength: 1.05,
+      specStrength: 0.35,
+      shininess: 24,
+      lightZ: 120,
+      lightSpeed: 1,
+      embossText: "BUMP",
+      embossStrength: 70,
+      animateBumps: 1,
+      waveAmp: 18,
+      waveFreqX: 0.08,
+      waveFreqY: 0.06,
+      baseHue: 200,
+      paletteMode: "ramp",
+      scanlines: 0,
+      audioReact: 0.7,
+      beatKick: 0.7,
+      seed: 0
     });
   });
 });

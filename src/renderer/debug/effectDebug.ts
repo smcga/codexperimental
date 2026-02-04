@@ -4,6 +4,9 @@ import { SPACE_HANGAR_DEFAULTS } from "../effects/gl/spaceHangarEffect";
 import { DEFAULT_FLYOVER_PARAMS, coerceFlyoverParams } from "./flyoverDebug";
 import { WIREFRAME_RIDE_DEFAULTS } from "../effects/wireframeRide";
 import { BORDER_MULTIPLEX_DEFAULTS } from "../effects/borderMultiplexEffect";
+import { SINE_DISTORTER_DEFAULTS } from "../effects/sineDistorter";
+import { GLENZ_VECTORS_DEFAULTS } from "../effects/glenzVectors";
+import { BUMPMAP_PLANE_DEFAULTS } from "../effects/bumpmapPlane";
 
 export type EffectParamValue = number | string;
 
@@ -88,6 +91,34 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("orbit", "Orbit", 0.25, { min: 0, max: 0.6, step: 0.01 }),
       numberControl("speed", "Speed", 0.6, { min: 0, step: 0.05 }),
       numberControl("glow", "Glow", 0.8, { min: 0, max: 1.5, step: 0.05 })
+    ]
+  },
+  metaballs: {
+    title: "Metaballs Controls",
+    controls: [
+      numberControl("bufW", "Buffer Width", 240, { min: 120, max: 480, step: 10 }),
+      numberControl("bufH", "Buffer Height", 180, { min: 90, max: 360, step: 10 }),
+      numberControl("count", "Ball Count", 6, { min: 2, max: 12, step: 1 }),
+      numberControl("baseRadius", "Base Radius", 34, { min: 8, max: 80, step: 1 }),
+      numberControl("radiusVar", "Radius Variance", 10, { min: 0, max: 30, step: 1 }),
+      numberControl("baseThreshold", "Base Threshold", 1.2, { min: 0.5, max: 2, step: 0.02 }),
+      numberControl("edgeSoftness", "Edge Softness", 0.08, { min: 0.01, max: 0.2, step: 0.01 }),
+      numberControl("normalZ", "Normal Z", 220, { min: 40, max: 400, step: 5 }),
+      numberControl("ambient", "Ambient", 0.15, { min: 0, max: 1, step: 0.05 }),
+      numberControl("diffuse", "Diffuse", 1, { min: 0, max: 2, step: 0.05 }),
+      numberControl("specStrength", "Specular Strength", 0.35, { min: 0, max: 1.5, step: 0.05 }),
+      numberControl("shininess", "Shininess", 24, { min: 1, max: 64, step: 1 }),
+      numberControl("rimStrength", "Rim Strength", 0.25, { min: 0, max: 1.5, step: 0.05 }),
+      selectControl("palette", "Palette", "chrome", [
+        { label: "Chrome", value: "chrome" },
+        { label: "Neon", value: "neon" }
+      ]),
+      numberControl("hueSpeed", "Hue Speed", 22, { min: 0, max: 60, step: 1 }),
+      toggleControl("smoothing", "Smoothing", true),
+      numberControl("glow", "Glow", 0.25, { min: 0, max: 1, step: 0.05 }),
+      numberControl("audioReact", "Audio React", 0.7, { min: 0, max: 1, step: 0.05 }),
+      numberControl("beatKick", "Beat Kick", 0.7, { min: 0, max: 1, step: 0.05 }),
+      numberControl("seed", "Seed", 1, { min: 0, max: 999, step: 1 })
     ]
   },
   ribbons: {
@@ -358,6 +389,86 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       toggleControl("sun", "Sun", WIREFRAME_RIDE_DEFAULTS.sun === 1)
     ]
   },
+  shadebobs_bobs: {
+    title: "Shadebobs + Bobs Controls",
+    controls: [
+      selectControl("mode", "Mode", "hybrid", [
+        { label: "Hybrid", value: "hybrid" },
+        { label: "Shadebobs", value: "shadebobs" },
+        { label: "Bobs", value: "bobs" }
+      ]),
+      numberControl("shadeCount", "Shade Count", 28, { min: 4, max: 80, step: 1 }),
+      numberControl("bobCount", "Bob Count", 40, { min: 4, max: 140, step: 1 }),
+      numberControl("shadeScale", "Shade Scale", 2, { min: 1, max: 3, step: 1 }),
+      numberControl("blobRadius", "Blob Radius", 70, { min: 20, max: 160, step: 1 }),
+      numberControl("trailFade", "Trail Fade", 0.12, { min: 0, max: 0.5, step: 0.01 }),
+      selectControl("blend", "Blend Mode", "lighter", [
+        { label: "Lighter", value: "lighter" },
+        { label: "Screen", value: "screen" }
+      ]),
+      numberControl("hueSpeed", "Hue Speed", 40, { min: 0, max: 120, step: 1 }),
+      numberControl("steer", "Steer", 40, { min: 0, max: 120, step: 1 }),
+      numberControl("maxSpeed", "Max Speed", 220, { min: 60, max: 400, step: 5 }),
+      numberControl("spriteSize", "Sprite Size", 48, { min: 16, max: 96, step: 1 }),
+      toggleControl("boingCheckers", "Boing Checkers", true),
+      numberControl("bobAlpha", "Bob Alpha", 0.95, { min: 0.1, max: 1, step: 0.01 }),
+      toggleControl("fastBlob", "Fast Blob", false),
+      numberControl("audioReact", "Audio React", 0.7, { min: 0, max: 1, step: 0.05 }),
+      numberControl("beatPulseStrength", "Beat Pulse", 0.7, { min: 0, max: 1, step: 0.05 }),
+      toggleControl("dirtyRects", "Dirty Rects", false),
+      numberControl("seed", "Seed", 0, { min: 0, max: 20, step: 0.1 })
+          ]
+  },
+  glenz_vectors: {
+    title: "Glenz Vectors Controls",
+    controls: [
+      selectControl("model", "Model", GLENZ_VECTORS_DEFAULTS.model, [
+        { label: "Cube", value: "cube" },
+        { label: "Octa", value: "octa" },
+        { label: "Icosa", value: "icosa" }
+      ]),
+      numberControl("instances", "Instances", GLENZ_VECTORS_DEFAULTS.instances, { min: 1, max: 6, step: 1 }),
+      numberControl("camDist", "Camera Distance", GLENZ_VECTORS_DEFAULTS.camDist, { min: 2.2, max: 6.5, step: 0.1 }),
+      numberControl("focal", "Focal Length", 0, { min: 0, max: 1200, step: 10 }),
+      numberControl("rotXSpeed", "Rotate X Speed", GLENZ_VECTORS_DEFAULTS.rotXSpeed, { min: 0, max: 2.5, step: 0.05 }),
+      numberControl("rotYSpeed", "Rotate Y Speed", GLENZ_VECTORS_DEFAULTS.rotYSpeed, { min: 0, max: 2.5, step: 0.05 }),
+      numberControl("rotZSpeed", "Rotate Z Speed", GLENZ_VECTORS_DEFAULTS.rotZSpeed, { min: 0, max: 2.0, step: 0.05 }),
+      numberControl("baseHue", "Base Hue", GLENZ_VECTORS_DEFAULTS.baseHue, { min: 0, max: 360, step: 5 }),
+      numberControl("hueSpeed", "Hue Speed", GLENZ_VECTORS_DEFAULTS.hueSpeed, { min: -120, max: 120, step: 1 }),
+      numberControl("sat", "Saturation", GLENZ_VECTORS_DEFAULTS.sat, { min: 0, max: 100, step: 1 }),
+      numberControl("lightness", "Lightness", GLENZ_VECTORS_DEFAULTS.lightness, { min: 0, max: 100, step: 1 }),
+      numberControl("faceAlpha", "Face Alpha", GLENZ_VECTORS_DEFAULTS.faceAlpha, { min: 0, max: 0.6, step: 0.01 }),
+      toggleControl("edge", "Edges", GLENZ_VECTORS_DEFAULTS.edge),
+      numberControl("edgeAlpha", "Edge Alpha", GLENZ_VECTORS_DEFAULTS.edgeAlpha, { min: 0, max: 1, step: 0.01 }),
+      numberControl("lineWidth", "Line Width", GLENZ_VECTORS_DEFAULTS.lineWidth, { min: 0.5, max: 6, step: 0.1 }),
+      numberControl("trailFade", "Trail Fade", GLENZ_VECTORS_DEFAULTS.trailFade, { min: 0, max: 1, step: 0.02 }),
+      selectControl("sortFaces", "Sort Faces", GLENZ_VECTORS_DEFAULTS.sortFaces, [
+        { label: "None", value: "none" },
+        { label: "Back to Front", value: "backToFront" }
+      ]),
+      numberControl("audioReact", "Audio React", GLENZ_VECTORS_DEFAULTS.audioReact, { min: 0, max: 1, step: 0.05 }),
+      numberControl("beatKick", "Beat Kick", GLENZ_VECTORS_DEFAULTS.beatKick, { min: 0, max: 1, step: 0.05 }),
+      numberControl("seed", "Seed", GLENZ_VECTORS_DEFAULTS.seed, { min: 0, max: 999, step: 1 })
+          ]
+  },
+  
+  raymarch_fractal: {
+    title: "Raymarch Fractal (WebGL) Controls",
+    controls: [
+      numberControl("quality", "Quality", 1.0, { min: 0.5, max: 1.5, step: 0.05 }),
+      selectControl("fractal", "Fractal", "mandelbulb", [
+        { label: "Mandelbulb", value: "mandelbulb" },
+        { label: "Mandelbox", value: "mandelbox" }
+      ]),
+      numberControl("cameraRadius", "Camera Radius", 4.0, { min: 2, max: 8, step: 0.05 }),
+      numberControl("cameraHeight", "Camera Height", 0.0, { min: -2, max: 2, step: 0.05 }),
+      numberControl("cameraOrbitSpeed", "Camera Orbit Speed", 0.2, { min: 0, max: 1, step: 0.01 }),
+      numberControl("paletteSpeed", "Palette Speed", 0.15, { min: 0, max: 0.6, step: 0.01 }),
+      numberControl("audioReact", "Audio React", 0.6, { min: 0, max: 1, step: 0.05 }),
+      numberControl("beatKick", "Beat Kick", 0.5, { min: 0, max: 1, step: 0.05 }),
+      numberControl("fractalScale", "Fractal Scale", 1.0, { min: 0.4, max: 2.2, step: 0.05 })
+    ]
+  },
   treegrowth: {
     title: "Tree Growth Controls",
     controls: [
@@ -401,6 +512,71 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       ]),
       numberControl("audioReact", "Audio React", 0.7, { min: 0, max: 1, step: 0.05 }),
       numberControl("beatKick", "Beat Kick", 0.7, { min: 0, max: 1, step: 0.05 })
+          ]
+  },
+  sine_distorter: {
+    title: "Sine Distorter Controls",
+    controls: [
+      selectControl("mode", "Mode", SINE_DISTORTER_DEFAULTS.mode, [
+        { label: "Horizontal", value: "horizontal" },
+        { label: "Vertical", value: "vertical" },
+        { label: "Both", value: "both" }
+      ]),
+      numberControl("amp", "Amplitude", SINE_DISTORTER_DEFAULTS.amp, { min: 0, max: 80, step: 1 }),
+      numberControl("freq", "Frequency", SINE_DISTORTER_DEFAULTS.freq, { min: 0, max: 0.2, step: 0.005 }),
+      numberControl("speed", "Speed", SINE_DISTORTER_DEFAULTS.speed, { min: 0, max: 6, step: 0.05 }),
+      numberControl("slice", "Slice Size", SINE_DISTORTER_DEFAULTS.slice, { min: 1, max: 8, step: 1 }),
+      numberControl("phase", "Phase", SINE_DISTORTER_DEFAULTS.phase, { min: -6.28, max: 6.28, step: 0.05 }),
+      numberControl("sourceScale", "Source Scale", SINE_DISTORTER_DEFAULTS.sourceScale, { min: 1, max: 3, step: 0.1 }),
+      selectControl("edges", "Edges", SINE_DISTORTER_DEFAULTS.edges, [
+        { label: "Wrap", value: "wrap" },
+        { label: "Clamp", value: "clamp" }
+      ]),
+      selectControl("source", "Source", "logo", [
+        { label: "Logo", value: "logo" },
+        { label: "Scene", value: "scene" }
+      ]),
+      selectControl("logoText", "Logo Text", SINE_DISTORTER_DEFAULTS.logoText, [
+        { label: "DISTORT", value: "DISTORT" },
+        { label: "WAVE", value: "WAVE" },
+        { label: "GLASS", value: "GLASS" }
+      ]),
+      numberControl("audioReact", "Audio React", SINE_DISTORTER_DEFAULTS.audioReact, { min: 0, max: 1, step: 0.05 }),
+      numberControl("beatBoost", "Beat Boost", SINE_DISTORTER_DEFAULTS.beatBoost, { min: 0, max: 1, step: 0.05 }),
+      numberControl("glow", "Glow", SINE_DISTORTER_DEFAULTS.glow, { min: 0, max: 0.3, step: 0.01 })
+          ]
+  },
+  bumpmap_plane: {
+    title: "Bumpmap Plane Controls",
+    controls: [
+      numberControl("bufW", "Buffer Width", BUMPMAP_PLANE_DEFAULTS.bufW, { min: 120, max: 480, step: 10 }),
+      numberControl("bufH", "Buffer Height", BUMPMAP_PLANE_DEFAULTS.bufH, { min: 90, max: 360, step: 10 }),
+      numberControl("bumpStrength", "Bump Strength", BUMPMAP_PLANE_DEFAULTS.bumpStrength, { min: 0, max: 0.1, step: 0.005 }),
+      numberControl("ambient", "Ambient", BUMPMAP_PLANE_DEFAULTS.ambient, { min: 0, max: 1, step: 0.05 }),
+      numberControl("diffuseStrength", "Diffuse Strength", BUMPMAP_PLANE_DEFAULTS.diffuseStrength, { min: 0, max: 2, step: 0.05 }),
+      numberControl("specStrength", "Spec Strength", BUMPMAP_PLANE_DEFAULTS.specStrength, { min: 0, max: 1.5, step: 0.05 }),
+      numberControl("shininess", "Shininess", BUMPMAP_PLANE_DEFAULTS.shininess, { min: 2, max: 80, step: 1 }),
+      numberControl("lightZ", "Light Height", BUMPMAP_PLANE_DEFAULTS.lightZ, { min: 40, max: 240, step: 5 }),
+      numberControl("lightSpeed", "Light Speed", BUMPMAP_PLANE_DEFAULTS.lightSpeed, { min: 0, max: 3, step: 0.05 }),
+      selectControl("embossText", "Emboss Text", BUMPMAP_PLANE_DEFAULTS.embossText, [
+        { label: "BUMP", value: "BUMP" },
+        { label: "SMCGA", value: "SMCGA" },
+        { label: "Off", value: "" }
+      ]),
+      numberControl("embossStrength", "Emboss Strength", BUMPMAP_PLANE_DEFAULTS.embossStrength, { min: 0, max: 200, step: 5 }),
+      toggleControl("animateBumps", "Animate Bumps", BUMPMAP_PLANE_DEFAULTS.animateBumps),
+      numberControl("waveAmp", "Wave Amp", BUMPMAP_PLANE_DEFAULTS.waveAmp, { min: 0, max: 40, step: 1 }),
+      numberControl("waveFreqX", "Wave Freq X", BUMPMAP_PLANE_DEFAULTS.waveFreqX, { min: 0, max: 0.3, step: 0.01 }),
+      numberControl("waveFreqY", "Wave Freq Y", BUMPMAP_PLANE_DEFAULTS.waveFreqY, { min: 0, max: 0.3, step: 0.01 }),
+      numberControl("baseHue", "Base Hue", BUMPMAP_PLANE_DEFAULTS.baseHue, { min: 0, max: 360, step: 5 }),
+      selectControl("paletteMode", "Palette Mode", BUMPMAP_PLANE_DEFAULTS.paletteMode, [
+        { label: "Ramp", value: "ramp" },
+        { label: "HSL", value: "hsl" }
+      ]),
+      toggleControl("scanlines", "Scanlines", BUMPMAP_PLANE_DEFAULTS.scanlines),
+      numberControl("audioReact", "Audio React", BUMPMAP_PLANE_DEFAULTS.audioReact, { min: 0, max: 1, step: 0.05 }),
+      numberControl("beatKick", "Beat Kick", BUMPMAP_PLANE_DEFAULTS.beatKick, { min: 0, max: 1, step: 0.05 }),
+      numberControl("seed", "Seed", BUMPMAP_PLANE_DEFAULTS.seed, { min: 0, max: 999, step: 1 })
     ]
   }
 };
