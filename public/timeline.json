@@ -1142,19 +1142,19 @@
       }
     },
     {
-      "id": "bumpmap-plane",
+      "id": "raytrace-spheres",
       "start": "05:50.0",
       "end": "05:55.0",
-      "effect": "bumpmap_plane",
+      "effect": "raytrace_spheres",
       "era": "pcdemo",
       "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
       "params": {
-        "bufW": 240,
-        "bufH": 180,
-        "embossText": "SMCGA",
-        "specStrength": 0.45,
-        "bumpStrength": 0.04,
-        "scanlines": true
+        "bufW": 200,
+        "bufH": 150,
+        "adaptive": true,
+        "cellSize": 2,
+        "maxDepth": 2,
+        "floorReflect": 0.6
       }
     },
     {
@@ -1165,6 +1165,22 @@
       "era": "16bit",
       "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
       "params": { "barCount": 12, "splits": 3, "hamish": true, "barWobble": 34 }
+    },
+    {
+      "id": "pcdemo-vga-fire",
+      "start": "06:05.0",
+      "end": "06:15.0",
+      "effect": "vga_fire",
+      "era": "pcdemo",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
+      "params": {
+        "fireW": 200,
+        "fireH": 140,
+        "decay": 3,
+        "wind": 0.2,
+        "logoText": "SMCGA",
+        "scanlines": true
+      }
     }
   ],
   "textCues": [

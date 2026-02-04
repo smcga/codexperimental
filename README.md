@@ -64,6 +64,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `raster_bars` | `orientation`, `barCount`, `barThickness`, `speed`, `waveAmp`, `waveFreq`, `splitStrength`, `scanlineStep`, `border`, `borderSize`, `palette`, `audioReact`, `beatThump` | `orientation` supports `horizontal` or `vertical`; `palette` supports `c64`, `atari`, `spectrum`, or `rainbow`. |
 | `copper_gradient_splits` | `scanStep`, `gradientRowStep`, `barCount`, `speed`, `barWobble`, `barHueStep`, `hueWobble`, `saturation`, `lightnessBase`, `lightnessPeak`, `splits`, `hamish`, `hamishStrength`, `paletteClamp`, `paletteClampSteps`, `audioReact`, `beatKick` | Copper bar gradients with optional pseudo-high-colour splits. |
 | `bumpmap_plane` | `bufW`, `bufH`, `bumpStrength`, `ambient`, `diffuseStrength`, `specStrength`, `shininess`, `lightZ`, `lightSpeed`, `embossText`, `embossStrength`, `animateBumps`, `waveAmp`, `waveFreqX`, `waveFreqY`, `baseHue`, `paletteMode`, `scanlines`, `audioReact`, `beatKick`, `seed` | CPU bump-mapped plane with moving light and optional embossed text. |
+| `vga_fire` | `fireW`, `fireH`, `stepsPerFrame`, `baseHeat`, `sparkChance`, `decay`, `wind`, `windWave`, `turbulence`, `gustOnBeat`, `logoText`, `logoSize`, `logoY`, `audioReact`, `scanlines`, `glowStrength` | Classic VGA/DOS fire with optional logo mask. |
 | `tunnel` | `speed` |  |
 | `rotozoom` | `speed` |  |
 | `blobs` | `count`, `radius`, `orbit`, `speed`, `glow` |  |
@@ -86,6 +87,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `sphere3d` | `speed` |  |
 | `spherecloud` | `speed` |  |
 | `infinitycloud` | `speed` |  |
+| `raytrace_spheres` | `bufW`, `bufH`, `sphereCount`, `maxDepth`, `floorReflect`, `shininess`, `diffuseStrength`, `specStrength`, `ambient`, `fov`, `cellSize`, `adaptive`, `refineThreshold`, `audioReact`, `beatKick`, `scanlines`, `seed` | Low-res software raytraced spheres with reflections. |
 | `chess` | `speed`, `showHighlights`, `startTime` |  |
 | `flyover` | `speed`, `horizon`, `seaDetail`, `waveSpeed`, `waveIntensity`, `islandCount`, `islandSeed`, `fog`, `palette`, `audioReactive` | `palette` supports `day`, `sunset`, `night`. |
 | `gl_fractal_tunnel` | `quality`, `warp`, `hueShift`, `exposure`, `seed` | Falls back to `tunnel` when WebGL2 is unavailable. |
