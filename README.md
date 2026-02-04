@@ -103,6 +103,32 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `amiga_showcase` | `barCount`, `barSpeed`, `barWaveAmp`, `barWaveFreq`, `barSaturation`, `bobCount`, `bobRadius`, `bobTrail`, `bobIntensity`, `twistWidth`, `twistAmp`, `twistSpeed`, `twistSlices`, `twistHueSpeed`, `twistX`, `glenz`, `audioReact` |  |
 | `sine_scroller_logo` | `message`, `fontSize`, `speed`, `waveAmp`, `waveSpeed`, `wavePhaseStep`, `scrollerY`, `scrollerX`, `layer2`, `layer2Speed`, `layer2FontSize`, `layer2Y`, `logoText`, `logoFontSize`, `logoY`, `scanlineStep`, `logoWaveAmp`, `logoWaveSpeed`, `logoWaveFreq`, `audioReact`, `beatBoost` | Scroll + sine wave + scanline logo wobble. |
 
+#### bumpmap_plane parameters
+
+Defaults shown are from the built-in effect configuration:
+
+- `bufW` (default `240`): internal buffer width (lower = faster).
+- `bufH` (default `180`): internal buffer height (lower = faster).
+- `bumpStrength` (default `0.035`): height gradient scale for normals.
+- `ambient` (default `0.2`): base ambient light contribution.
+- `diffuseStrength` (default `1.05`): Lambertian diffuse multiplier.
+- `specStrength` (default `0.35`): specular highlight multiplier.
+- `shininess` (default `24`): specular exponent (higher = tighter highlight).
+- `lightZ` (default `120`): light height above the plane.
+- `lightSpeed` (default `1.0`): time scale for light motion.
+- `embossText` (default `"BUMP"`): text to emboss; set to `""` to disable.
+- `embossStrength` (default `70`): added height for embossed text.
+- `animateBumps` (default `true`): enable animated wave component.
+- `waveAmp` (default `18`): animated wave amplitude.
+- `waveFreqX` (default `0.08`): animated wave frequency along X.
+- `waveFreqY` (default `0.06`): animated wave frequency along Y.
+- `baseHue` (default `200`): base hue when `paletteMode` is `hsl`.
+- `paletteMode` (default `"ramp"`): `ramp` or `hsl`.
+- `scanlines` (default `false`): draw scanline overlay.
+- `audioReact` (default `0.7`): audio reaction strength.
+- `beatKick` (default `0.7`): beat pulse intensity.
+- `seed` (default `0`): procedural height map seed.
+
 ## Run
 
 ```bash

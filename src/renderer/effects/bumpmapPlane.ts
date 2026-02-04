@@ -11,7 +11,7 @@ type HeightMapOptions = {
   embossStrength: number;
 };
 
-const DEFAULTS = {
+export const BUMPMAP_PLANE_DEFAULTS = {
   bufW: 240,
   bufH: 180,
   bumpStrength: 0.035,
@@ -166,15 +166,15 @@ export class BumpmapPlaneEffect implements Effect {
 
   render({ ctx, width, height, time, audio, params }: EffectRenderContext): void {
     const rawParams = params as Record<string, unknown>;
-    const bufW = Math.max(64, Math.floor(resolveNumberParam(rawParams.bufW, DEFAULTS.bufW)));
-    const bufH = Math.max(64, Math.floor(resolveNumberParam(rawParams.bufH, DEFAULTS.bufH)));
-    const seed = resolveNumberParam(rawParams.seed, DEFAULTS.seed);
+    const bufW = Math.max(64, Math.floor(resolveNumberParam(rawParams.bufW, BUMPMAP_PLANE_DEFAULTS.bufW)));
+    const bufH = Math.max(64, Math.floor(resolveNumberParam(rawParams.bufH, BUMPMAP_PLANE_DEFAULTS.bufH)));
+    const seed = resolveNumberParam(rawParams.seed, BUMPMAP_PLANE_DEFAULTS.seed);
     const embossOverride = rawParams.embossText;
     const embossText =
       embossOverride === null || embossOverride === false || embossOverride === ""
         ? undefined
-        : resolveStringParam(embossOverride, DEFAULTS.embossText);
-    const embossStrength = resolveNumberParam(rawParams.embossStrength, DEFAULTS.embossStrength);
+        : resolveStringParam(embossOverride, BUMPMAP_PLANE_DEFAULTS.embossText);
+    const embossStrength = resolveNumberParam(rawParams.embossStrength, BUMPMAP_PLANE_DEFAULTS.embossStrength);
 
     this.ensureBuffers(bufW, bufH, { width: bufW, height: bufH, seed, embossText, embossStrength });
 
@@ -191,26 +191,28 @@ export class BumpmapPlaneEffect implements Effect {
     }
     const beatPulse = clamp(1 - (time - this.lastBeatTime) / BEAT_PULSE_DURATION, 0, 1);
 
-    const audioReact = clamp(resolveNumberParam(rawParams.audioReact, DEFAULTS.audioReact), 0, 1);
-    const beatKick = clamp(resolveNumberParam(rawParams.beatKick, DEFAULTS.beatKick), 0, 1);
+    const audioReact = clamp(resolveNumberParam(rawParams.audioReact, BUMPMAP_PLANE_DEFAULTS.audioReact), 0, 1);
+    const beatKick = clamp(resolveNumberParam(rawParams.beatKick, BUMPMAP_PLANE_DEFAULTS.beatKick), 0, 1);
     const beatBoost = beatPulse * beatKick * audioReact;
 
-    const animateBumps = resolveBooleanParam(rawParams.animateBumps, DEFAULTS.animateBumps);
-    const waveAmp = resolveNumberParam(rawParams.waveAmp, DEFAULTS.waveAmp);
-    const waveFreqX = resolveNumberParam(rawParams.waveFreqX, DEFAULTS.waveFreqX);
-    const waveFreqY = resolveNumberParam(rawParams.waveFreqY, DEFAULTS.waveFreqY);
+    const animateBumps = resolveBooleanParam(rawParams.animateBumps, BUMPMAP_PLANE_DEFAULTS.animateBumps);
+    const waveAmp = resolveNumberParam(rawParams.waveAmp, BUMPMAP_PLANE_DEFAULTS.waveAmp);
+    const waveFreqX = resolveNumberParam(rawParams.waveFreqX, BUMPMAP_PLANE_DEFAULTS.waveFreqX);
+    const waveFreqY = resolveNumberParam(rawParams.waveFreqY, BUMPMAP_PLANE_DEFAULTS.waveFreqY);
 
-    const bumpStrength = resolveNumberParam(rawParams.bumpStrength, DEFAULTS.bumpStrength);
+    const bumpStrength = resolveNumberParam(rawParams.bumpStrength, BUMPMAP_PLANE_DEFAULTS.bumpStrength);
     const bumpBoosted = bumpStrength * (1 + beatBoost * 0.35 + audio.bass * 0.4 * audioReact);
-    const ambient = resolveNumberParam(rawParams.ambient, DEFAULTS.ambient);
-    const diffuseStrength = resolveNumberParam(rawParams.diffuseStrength, DEFAULTS.diffuseStrength);
-    const specStrength = resolveNumberParam(rawParams.specStrength, DEFAULTS.specStrength);
-    const shininess = resolveNumberParam(rawParams.shininess, DEFAULTS.shininess);
-    const lightZ = resolveNumberParam(rawParams.lightZ, DEFAULTS.lightZ);
-    const lightSpeed = resolveNumberParam(rawParams.lightSpeed, DEFAULTS.lightSpeed) * (1 + audio.bass * 0.25 * audioReact);
-    const baseHue = resolveNumberParam(rawParams.baseHue, DEFAULTS.baseHue);
-    const paletteMode = resolvePaletteMode(rawParams.paletteMode, DEFAULTS.paletteMode);
-    const scanlines = resolveBooleanParam(rawParams.scanlines, DEFAULTS.scanlines);
+    const ambient = resolveNumberParam(rawParams.ambient, BUMPMAP_PLANE_DEFAULTS.ambient);
+    const diffuseStrength = resolveNumberParam(rawParams.diffuseStrength, BUMPMAP_PLANE_DEFAULTS.diffuseStrength);
+    const specStrength = resolveNumberParam(rawParams.specStrength, BUMPMAP_PLANE_DEFAULTS.specStrength);
+    const shininess = resolveNumberParam(rawParams.shininess, BUMPMAP_PLANE_DEFAULTS.shininess);
+    const lightZ = resolveNumberParam(rawParams.lightZ, BUMPMAP_PLANE_DEFAULTS.lightZ);
+    const lightSpeed =
+      resolveNumberParam(rawParams.lightSpeed, BUMPMAP_PLANE_DEFAULTS.lightSpeed) *
+      (1 + audio.bass * 0.25 * audioReact);
+    const baseHue = resolveNumberParam(rawParams.baseHue, BUMPMAP_PLANE_DEFAULTS.baseHue);
+    const paletteMode = resolvePaletteMode(rawParams.paletteMode, BUMPMAP_PLANE_DEFAULTS.paletteMode);
+    const scanlines = resolveBooleanParam(rawParams.scanlines, BUMPMAP_PLANE_DEFAULTS.scanlines);
 
     const cx = bufW * 0.5;
     const cy = bufH * 0.5;
