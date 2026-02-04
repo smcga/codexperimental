@@ -1142,6 +1142,21 @@
       }
     },
     {
+      "id": "dev-software-gouraud",
+      "start": "05:50.0",
+      "end": "05:55.0",
+      "effect": "software_gouraud",
+      "era": "pcdemo",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.25 },
+      "params": {
+        "bufW": 240,
+        "bufH": 180,
+        "model": "torus",
+        "shading": "gouraud",
+        "wireframeOverlay": false
+      }
+    },
+    {
       "id": "copper-gradient-splits",
       "start": "05:55.0",
       "end": "06:05.0",

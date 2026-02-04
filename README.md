@@ -81,6 +81,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `finale` | `trail`, `starSpeed`, `starWarp`, `starTurn`, `particleCount`, `particleForce`, `bars`, `barHeight` |  |
 | `proper3d` | `speed` |  |
 | `fake3d` | `speed` |  |
+| `software_gouraud` | `bufW`, `bufH`, `model`, `segmentsU`, `segmentsV`, `camDist`, `focalMul`, `rotXSpeed`, `rotYSpeed`, `rotZSpeed`, `shading`, `ambient`, `diffuse`, `specStrength`, `shininess`, `hueSpeed`, `rimStrength`, `wireframeOverlay`, `audioReact`, `beatKick`, `seed` | `model` supports `torus`, `sphere`. `shading` supports `gouraud`, `phong` (lower buffer sizes recommended). |
 | `portrait` | `zoom`, `drift` |  |
 | `sphere3d` | `speed` |  |
 | `spherecloud` | `speed` |  |

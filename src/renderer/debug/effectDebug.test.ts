@@ -81,6 +81,32 @@ describe("effect debug params", () => {
     });
   });
 
+  it("provides defaults for software gouraud controls", () => {
+    expect(getEffectDebugDefaults("software_gouraud")).toEqual({
+      bufW: 240,
+      bufH: 180,
+      model: "torus",
+      segmentsU: 48,
+      segmentsV: 24,
+      camDist: 3.2,
+      focalMul: 1.2,
+      rotXSpeed: 0.4,
+      rotYSpeed: 0.7,
+      rotZSpeed: 0.2,
+      shading: "gouraud",
+      ambient: 0.2,
+      diffuse: 0.95,
+      specStrength: 0.35,
+      shininess: 24,
+      hueSpeed: 18,
+      rimStrength: 0.2,
+      wireframeOverlay: 0,
+      audioReact: 0.7,
+      beatKick: 0.7,
+      seed: 0
+    });
+  });
+
   it("clamps equalizer params within control bounds", () => {
     const params = coerceEffectParams("equalizer", {
       bars: 200,

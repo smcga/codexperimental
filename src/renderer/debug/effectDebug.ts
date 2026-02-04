@@ -4,6 +4,7 @@ import { SPACE_HANGAR_DEFAULTS } from "../effects/gl/spaceHangarEffect";
 import { DEFAULT_FLYOVER_PARAMS, coerceFlyoverParams } from "./flyoverDebug";
 import { WIREFRAME_RIDE_DEFAULTS } from "../effects/wireframeRide";
 import { BORDER_MULTIPLEX_DEFAULTS } from "../effects/borderMultiplexEffect";
+import { SOFTWARE_GOURAUD_DEFAULTS } from "../effects/softwareGouraud";
 
 export type EffectParamValue = number | string;
 
@@ -244,6 +245,38 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
   fake3d: {
     title: "Fake 3D Controls",
     controls: [numberControl("speed", "Speed", 1.0, { min: 0, step: 0.05 })]
+  },
+  software_gouraud: {
+    title: "Software Gouraud Controls",
+    controls: [
+      numberControl("bufW", "Buffer Width", SOFTWARE_GOURAUD_DEFAULTS.bufW, { min: 100, max: 480, step: 1 }),
+      numberControl("bufH", "Buffer Height", SOFTWARE_GOURAUD_DEFAULTS.bufH, { min: 80, max: 360, step: 1 }),
+      selectControl("model", "Model", SOFTWARE_GOURAUD_DEFAULTS.model, [
+        { label: "Torus", value: "torus" },
+        { label: "Sphere", value: "sphere" }
+      ]),
+      numberControl("segmentsU", "Segments U", SOFTWARE_GOURAUD_DEFAULTS.segmentsU, { min: 12, max: 128, step: 1 }),
+      numberControl("segmentsV", "Segments V", SOFTWARE_GOURAUD_DEFAULTS.segmentsV, { min: 8, max: 96, step: 1 }),
+      numberControl("camDist", "Camera Distance", SOFTWARE_GOURAUD_DEFAULTS.camDist, { min: 2, max: 6.5, step: 0.05 }),
+      numberControl("focalMul", "Focal Mult", SOFTWARE_GOURAUD_DEFAULTS.focalMul, { min: 0.6, max: 2.2, step: 0.05 }),
+      numberControl("rotXSpeed", "Rot X Speed", SOFTWARE_GOURAUD_DEFAULTS.rotXSpeed, { min: 0, max: 2.5, step: 0.05 }),
+      numberControl("rotYSpeed", "Rot Y Speed", SOFTWARE_GOURAUD_DEFAULTS.rotYSpeed, { min: 0, max: 2.5, step: 0.05 }),
+      numberControl("rotZSpeed", "Rot Z Speed", SOFTWARE_GOURAUD_DEFAULTS.rotZSpeed, { min: 0, max: 2.5, step: 0.05 }),
+      selectControl("shading", "Shading", SOFTWARE_GOURAUD_DEFAULTS.shading, [
+        { label: "Gouraud", value: "gouraud" },
+        { label: "Phong-ish", value: "phong" }
+      ]),
+      numberControl("ambient", "Ambient", SOFTWARE_GOURAUD_DEFAULTS.ambient, { min: 0, max: 1, step: 0.01 }),
+      numberControl("diffuse", "Diffuse", SOFTWARE_GOURAUD_DEFAULTS.diffuse, { min: 0, max: 1.5, step: 0.05 }),
+      numberControl("specStrength", "Spec Strength", SOFTWARE_GOURAUD_DEFAULTS.specStrength, { min: 0, max: 1, step: 0.05 }),
+      numberControl("shininess", "Shininess", SOFTWARE_GOURAUD_DEFAULTS.shininess, { min: 2, max: 64, step: 1 }),
+      numberControl("hueSpeed", "Hue Speed", SOFTWARE_GOURAUD_DEFAULTS.hueSpeed, { min: 0, max: 80, step: 1 }),
+      numberControl("rimStrength", "Rim Strength", SOFTWARE_GOURAUD_DEFAULTS.rimStrength, { min: 0, max: 1, step: 0.05 }),
+      toggleControl("wireframeOverlay", "Wireframe Overlay", SOFTWARE_GOURAUD_DEFAULTS.wireframeOverlay),
+      numberControl("audioReact", "Audio React", SOFTWARE_GOURAUD_DEFAULTS.audioReact, { min: 0, max: 1, step: 0.05 }),
+      numberControl("beatKick", "Beat Kick", SOFTWARE_GOURAUD_DEFAULTS.beatKick, { min: 0, max: 1, step: 0.05 }),
+      numberControl("seed", "Seed", SOFTWARE_GOURAUD_DEFAULTS.seed, { min: 0, max: 999, step: 1 })
+    ]
   },
   portrait: {
     title: "Portrait Controls",
