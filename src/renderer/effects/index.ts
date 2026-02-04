@@ -42,6 +42,9 @@ import { BorderMultiplexEffect } from "./borderMultiplexEffect";
 import { RasterBarsEffect } from "./rasterBars";
 import { CopperGradientSplitsEffect } from "./copperGradientSplits";
 import { MetaballsEffect } from "./metaballs";
+import { BumpmapPlaneEffect } from "./bumpmapPlane";
+import { RaytraceSpheresEffect } from "./raytraceSpheres";
+import { VgaFireEffect } from "./vgaFire";
 
 export const effectRegistry: Record<string, Effect> = {
   starfield: new StarfieldEffect(),
@@ -86,7 +89,10 @@ export const effectRegistry: Record<string, Effect> = {
   border_multiplex: new BorderMultiplexEffect(),
   raster_bars: new RasterBarsEffect(),
   copper_gradient_splits: new CopperGradientSplitsEffect(),
-  metaballs: new MetaballsEffect()
+  metaballs: new MetaballsEffect(),
+  bumpmap_plane: new BumpmapPlaneEffect(),
+  raytrace_spheres: new RaytraceSpheresEffect(),
+  vga_fire: new VgaFireEffect()
 };
 
 export function resetEffects(): void {
