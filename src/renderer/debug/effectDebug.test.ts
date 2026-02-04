@@ -81,6 +81,29 @@ describe("effect debug params", () => {
     });
   });
 
+  it("provides defaults for shadebobs + bobs controls", () => {
+    expect(getEffectDebugDefaults("shadebobs_bobs")).toEqual({
+      mode: "hybrid",
+      shadeCount: 28,
+      bobCount: 40,
+      shadeScale: 2,
+      blobRadius: 70,
+      trailFade: 0.12,
+      blend: "lighter",
+      hueSpeed: 40,
+      steer: 40,
+      maxSpeed: 220,
+      spriteSize: 48,
+      boingCheckers: 1,
+      bobAlpha: 0.95,
+      fastBlob: 0,
+      audioReact: 0.7,
+      beatPulseStrength: 0.7,
+      dirtyRects: 0,
+      seed: 0
+    });
+  });
+
   it("clamps equalizer params within control bounds", () => {
     const params = coerceEffectParams("equalizer", {
       bars: 200,
