@@ -8,7 +8,7 @@ type CanvasCache = {
   height: number;
 };
 
-const DEFAULTS = {
+export const SINE_DISTORTER_DEFAULTS = {
   mode: "horizontal",
   amp: 28,
   freq: 0.06,
@@ -136,19 +136,19 @@ export class SineDistorterEffect implements Effect {
 
   render({ ctx, width, height, time, delta, audio, params }: EffectRenderContext): void {
     const dt = clamp(delta, 0, 0.05);
-    const mode = getStringParam(params.mode, DEFAULTS.mode);
-    const edges = getStringParam(params.edges, DEFAULTS.edges);
+    const mode = getStringParam(params.mode, SINE_DISTORTER_DEFAULTS.mode);
+    const edges = getStringParam(params.edges, SINE_DISTORTER_DEFAULTS.edges);
     const sourceMode = getStringParam(params.source, "logo");
-    const logoText = getStringParam(params.logoText, DEFAULTS.logoText);
-    const amp = getNumberParam(params.amp, DEFAULTS.amp);
-    const freq = getNumberParam(params.freq, DEFAULTS.freq);
-    const speed = getNumberParam(params.speed, DEFAULTS.speed);
-    const phase = getNumberParam(params.phase, DEFAULTS.phase);
-    const slice = clamp(Math.round(getNumberParam(params.slice, DEFAULTS.slice)), 1, 8);
-    const sourceScale = clamp(getNumberParam(params.sourceScale, DEFAULTS.sourceScale), 1, 3);
-    const audioReact = clamp(getNumberParam(params.audioReact, DEFAULTS.audioReact), 0, 1);
-    const beatBoost = clamp(getNumberParam(params.beatBoost, DEFAULTS.beatBoost), 0, 1);
-    const glow = clamp(getNumberParam(params.glow, DEFAULTS.glow), 0, 0.3);
+    const logoText = getStringParam(params.logoText, SINE_DISTORTER_DEFAULTS.logoText);
+    const amp = getNumberParam(params.amp, SINE_DISTORTER_DEFAULTS.amp);
+    const freq = getNumberParam(params.freq, SINE_DISTORTER_DEFAULTS.freq);
+    const speed = getNumberParam(params.speed, SINE_DISTORTER_DEFAULTS.speed);
+    const phase = getNumberParam(params.phase, SINE_DISTORTER_DEFAULTS.phase);
+    const slice = clamp(Math.round(getNumberParam(params.slice, SINE_DISTORTER_DEFAULTS.slice)), 1, 8);
+    const sourceScale = clamp(getNumberParam(params.sourceScale, SINE_DISTORTER_DEFAULTS.sourceScale), 1, 3);
+    const audioReact = clamp(getNumberParam(params.audioReact, SINE_DISTORTER_DEFAULTS.audioReact), 0, 1);
+    const beatBoost = clamp(getNumberParam(params.beatBoost, SINE_DISTORTER_DEFAULTS.beatBoost), 0, 1);
+    const glow = clamp(getNumberParam(params.glow, SINE_DISTORTER_DEFAULTS.glow), 0, 0.3);
 
     if (audio.beat) {
       this.beatPulse = 1;

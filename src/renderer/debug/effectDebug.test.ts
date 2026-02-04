@@ -81,6 +81,24 @@ describe("effect debug params", () => {
     });
   });
 
+  it("provides defaults for sine distorter controls", () => {
+    expect(getEffectDebugDefaults("sine_distorter")).toEqual({
+      mode: "horizontal",
+      amp: 28,
+      freq: 0.06,
+      speed: 2,
+      slice: 2,
+      phase: 0,
+      sourceScale: 1,
+      edges: "wrap",
+      source: "logo",
+      logoText: "DISTORT",
+      audioReact: 0.7,
+      beatBoost: 0.55,
+      glow: 0.08
+    });
+  });
+
   it("clamps equalizer params within control bounds", () => {
     const params = coerceEffectParams("equalizer", {
       bars: 200,
