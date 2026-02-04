@@ -41,6 +41,7 @@ import { SineScrollerLogoEffect } from "./sineScrollerLogo";
 import { BorderMultiplexEffect } from "./borderMultiplexEffect";
 import { RasterBarsEffect } from "./rasterBars";
 import { CopperGradientSplitsEffect } from "./copperGradientSplits";
+import { EnvmapDonutEffect } from "./envmapDonut";
 import { VoxelLandscapeEffect } from "./voxelLandscape";
 import { LensWobblerEffect } from "./lensWobbler";
 import { PolyMorphShowcaseEffect } from "./polyMorphShowcase";
@@ -98,6 +99,7 @@ export const effectRegistry: Record<string, Effect> = {
   border_multiplex: new BorderMultiplexEffect(),
   raster_bars: new RasterBarsEffect(),
   copper_gradient_splits: new CopperGradientSplitsEffect(),
+  envmap_donut: new EnvmapDonutEffect(),
   voxel_landscape: new VoxelLandscapeEffect(),
   lens_wobbler: new LensWobblerEffect(),
   poly_morph_showcase: new PolyMorphShowcaseEffect(),
