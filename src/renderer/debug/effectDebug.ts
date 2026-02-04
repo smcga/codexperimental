@@ -3,6 +3,7 @@ import { NEON_ALLEY_DEFAULTS } from "../effects/gl/neonAlleyEffect";
 import { SPACE_HANGAR_DEFAULTS } from "../effects/gl/spaceHangarEffect";
 import { DEFAULT_FLYOVER_PARAMS, coerceFlyoverParams } from "./flyoverDebug";
 import { WIREFRAME_RIDE_DEFAULTS } from "../effects/wireframeRide";
+import { TREE_GROWTH_DEFAULTS } from "../effects/treeGrowthEffect";
 
 export type EffectParamValue = number | string;
 
@@ -195,6 +196,26 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("burstAudio", "Burst Audio", 20, { min: 0, max: 60, step: 1 }),
       numberControl("force", "Force", 1, { min: 0.2, max: 4, step: 0.1 }),
       numberControl("forceAudio", "Force Audio", 2, { min: 0, max: 6, step: 0.1 })
+    ]
+  },
+  treeGrowth: {
+    title: "Tree Growth Controls",
+    controls: [
+      numberControl("growthSpeed", "Growth Speed", TREE_GROWTH_DEFAULTS.growthSpeed, {
+        min: 0.05,
+        max: 1,
+        step: 0.01
+      }),
+      numberControl("branchLevels", "Branch Levels", TREE_GROWTH_DEFAULTS.branchLevels, {
+        min: 0,
+        max: 6,
+        step: 1
+      }),
+      numberControl("spread", "Branch Spread", TREE_GROWTH_DEFAULTS.spread, { min: 0.1, max: 1.2, step: 0.01 }),
+      numberControl("sway", "Sway", TREE_GROWTH_DEFAULTS.sway, { min: 0, max: 0.8, step: 0.01 }),
+      numberControl("leafSize", "Leaf Size", TREE_GROWTH_DEFAULTS.leafSize, { min: 1, max: 16, step: 0.5 }),
+      numberControl("leafHue", "Leaf Hue", TREE_GROWTH_DEFAULTS.leafHue, { min: 0, max: 180, step: 1 }),
+      numberControl("seed", "Seed", TREE_GROWTH_DEFAULTS.seed, { step: 1 })
     ]
   },
   finale: {
