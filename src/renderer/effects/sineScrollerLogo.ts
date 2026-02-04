@@ -11,7 +11,7 @@ type LogoCache = {
 };
 
 const DEFAULTS = {
-  message: "    GREETZ TO EVERYONE WATCHING THIS RUN LIVE...    ",
+  message: "   SOOOOOOO COOOOOOOL   ",
   fontSize: 22,
   speed: 90,
   waveAmp: 10,
@@ -23,7 +23,7 @@ const DEFAULTS = {
   layer2Speed: -45,
   layer2FontSize: 16,
   layer2Y: null as number | null,
-  logoText: "SMCGA",
+  logoText: "VIBES",
   logoFontSize: 96,
   logoY: 52,
   scanlineStep: 2,
