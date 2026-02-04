@@ -93,6 +93,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `lightning` | `trigger`, `chancePerSecond`, `cooldown`, `flashDuration`, `bolt`, `branches`, `seed` | `trigger` supports `beat`, `random`, `both`. |
 | `effect_evolution` | `density`, `motion`, `warp`, `trail`, `seed` | Reinterprets the same lattice across eras. |
 | `treegrowth` | `speed`, `levels`, `trunkHeight`, `branchScale`, `branchAngle`, `trunkWidth`, `sway`, `leafSize`, `jitter`, `seed`, `growth` | `growth` overrides the automatic growth cycle (0-1). |
+| `sine_scroller_logo` | `message`, `fontSize`, `speed`, `waveAmp`, `waveSpeed`, `wavePhaseStep`, `scrollerY`, `scrollerX`, `layer2`, `layer2Speed`, `layer2FontSize`, `layer2Y`, `logoText`, `logoFontSize`, `logoY`, `scanlineStep`, `logoWaveAmp`, `logoWaveSpeed`, `logoWaveFreq`, `audioReact`, `beatBoost` | Scroll + sine wave + scanline logo wobble. |
 
 ## Run
 
