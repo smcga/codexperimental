@@ -1142,6 +1142,16 @@
       }
     },
     {
+      "id": "pcdemo-lens-wobbler",
+      "start": "05:50.0",
+      "end": "05:55.0",
+      "effect": "lens_wobbler",
+      "era": "pcdemo",
+      "transition": { "in": "fade", "out": "fade", "duration": 0.25 },
+      "params": { "bufW": 256, "bufH": 160, "lensStrength": 0.85, "invertRing": true, "wobble": true }
+            }
+    },
+    {
       "id": "dev-poly-morph-showcase",
       "start": "05:50.0",
       "end": "05:55.0",
