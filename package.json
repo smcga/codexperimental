@@ -7,9 +7,12 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "docs:effects": "tsx scripts/generateEffectsDocs.ts",
+    "docs:check": "vitest run src/renderer/effects/effectsDocs.test.ts"
   },
   "devDependencies": {
+    "tsx": "^4.19.0",
     "typescript": "^5.5.4",
     "vite": "^5.4.0",
     "vitest": "^2.0.5"
