@@ -1149,11 +1149,10 @@
       "era": "pcdemo",
       "transition": { "in": "fade", "out": "fade", "duration": 0.25 },
       "params": { "bufW": 256, "bufH": 160, "lensStrength": 0.85, "invertRing": true, "wobble": true }
-            }
     },
     {
       "id": "dev-poly-morph-showcase",
-      "start": "05:50.0",
+      "start": "05:50.1",
       "end": "05:55.0",
       "effect": "poly_morph_showcase",
       "era": "16bit",
@@ -1169,7 +1168,7 @@
     },
     {
       "id": "dev-textured-cube",
-      "start": "05:50.0",
+      "start": "05:50.2",
       "end": "05:55.0",
       "effect": "textured_cube",
       "era": "pcdemo",
@@ -1183,7 +1182,7 @@
     },
     {
       "id": "twister-05500",
-      "start": "05:50.0",
+      "start": "05:50.3",
       "end": "05:55.0",
       "effect": "twister",
       "era": "16bit",
@@ -1200,7 +1199,7 @@
     },
     {
       "id": "dev-shadebobs-bobs",
-      "start": "05:50.0",
+      "start": "05:50.4",
       "end": "05:55.0",
       "effect": "shadebobs_bobs",
       "era": "16bit",
@@ -1217,7 +1216,7 @@
     },
     {
       "id": "dev-sine-distorter",
-      "start": "05:50.0",
+      "start": "05:50.5",
       "end": "05:55.0",
       "effect": "sine_distorter",
       "era": "16bit",
@@ -1233,7 +1232,7 @@
     },
     {
       "id": "raytrace-spheres",
-      "start": "05:50.0",
+      "start": "05:50.6",
       "end": "05:55.0",
       "effect": "raytrace_spheres",
       "era": "pcdemo",
@@ -1270,19 +1269,20 @@
         "segmentsV": 32,
         "specStrength": 0.5,
         "fresnelStrength": 0.35
-            },
+      }
+    },
     {
       "id": "voxel-landscape-demo",
-      "start": "06:05.0",
+      "start": "06:05.1",
       "end": "06:15.0",
       "effect": "voxel_landscape",
       "era": "pcdemo",
       "transition": { "in": "fade", "out": "fade", "duration": 0.25 },
       "params": { "bufW": 320, "bufH": 200, "speed": 80, "fogStrength": 0.8, "scanlines": true }
-          },
+    },
     {
       "id": "dev-glenz-vectors",
-      "start": "06:05.0",
+      "start": "06:05.2",
       "end": "06:15.0",
       "effect": "glenz_vectors",
       "era": "16bit",

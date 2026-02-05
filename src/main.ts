@@ -14,6 +14,8 @@ import { Renderer } from "./renderer/renderer";
 import { effectRegistry } from "./renderer/effects";
 import { coerceEffectParams, getEffectDebugConfig, getEffectDebugDefaults, EffectParamControl } from "./renderer/debug/effectDebug";
 import { getWebGLStatusLabel } from "./renderer/effects/gl/webglStatus";
+import { createEditorRoot, EditorApplyResult } from "./editor/EditorRoot";
+import { loadDraft } from "./editor/serialization";
 import { TerminalIntroRenderer } from "./renderer/intro/terminalIntro";
 import { createExplosionState, getExplosionShake, renderExplosion } from "./renderer/overlays/explosion";
 import {
@@ -51,6 +53,8 @@ const debugTimelineError = document.querySelector<HTMLDivElement>("#debug-timeli
 const mobileControls = document.querySelector<HTMLDivElement>("#mobile-controls");
 const mobileDebugButton = document.querySelector<HTMLButtonElement>("#mobile-debug");
 const mobileFullscreenButton = document.querySelector<HTMLButtonElement>("#mobile-fullscreen");
+const editorRoot = document.querySelector<HTMLDivElement>("#editor-root");
+const editorToggleButton = document.querySelector<HTMLButtonElement>("#editor-toggle");
 
 const releaseMode = new URLSearchParams(window.location.search).get("release") === "1";
 
@@ -74,6 +78,8 @@ let lastDemoTime = 0;
 let isRunning = false;
 let pendingConfig: TimelineConfig | null = null;
 let currentAudioSrc = "";
+let editorLoopRange: { start: number; end: number } | null = null;
+let editorModeActive = false;
 const debugState = {
   enabled: false,
   forcedEffect: null as string | null,
@@ -172,27 +178,11 @@ async function applyTimelineEdits(): Promise<void> {
   }
   try {
     const raw = JSON.parse(debugTimelineEditor.value) as RawTimelineConfig;
-    const config = normalizeTimelineConfig(raw);
+    const result = await applyTimelineConfig(raw);
+    if (!result.ok) {
+      throw new Error(result.error ?? "Invalid timeline JSON");
+    }
     setTimelineEditorError(null);
-    if (!audioPlayer) {
-      pendingConfig = config;
-      return;
-    }
-
-    introConfig = config.intro;
-    const shouldReloadAudio = config.audio.src !== currentAudioSrc;
-    if (shouldReloadAudio) {
-      audioPlayer.destroy();
-      audioPlayer = new AudioPlayer(config.audio.src);
-      await audioPlayer.load();
-      await audioPlayer.play();
-      currentAudioSrc = config.audio.src;
-    }
-    timeline = new Timeline(config);
-    timeline.setAudioDuration(audioPlayer.duration);
-    lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
-    updateDebugSkipButtonState(lastDemoTime);
-    setOverlay("", false);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Invalid timeline JSON";
     setTimelineEditorError(message);
@@ -482,6 +472,9 @@ if (!releaseMode) {
   if (mobileDebugButton) {
     mobileDebugButton.style.display = "none";
   }
+  if (editorToggleButton) {
+    editorToggleButton.style.display = "none";
+  }
 }
 
 async function startDemo(): Promise<void> {
@@ -615,6 +608,11 @@ function loop(): void {
     updateDebugSkipButtonState(demoTime);
   }
 
+  if (editorLoopRange && demoTime >= editorLoopRange.end) {
+    audioPlayer.seek(editorLoopRange.start - timeline.getAudioOffset());
+    lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+  }
+
   if (audioPlayer.ended) {
     isRunning = false;
     setOverlay("THE END (press R to restart)", true);
@@ -651,3 +649,110 @@ if (mobileControls && mobileFullscreenButton) {
     toggleFullscreen();
   });
 }
+
+async function applyTimelineConfig(raw: RawTimelineConfig): Promise<EditorApplyResult> {
+  try {
+    const config = normalizeTimelineConfig(raw);
+    pendingConfig = config;
+    if (!audioPlayer) {
+      return { ok: true };
+    }
+    const wasPlaying = !audioPlayer.paused;
+    const resumeTime = audioPlayer.currentTime;
+
+    introConfig = config.intro;
+    const shouldReloadAudio = config.audio.src !== currentAudioSrc;
+    if (shouldReloadAudio) {
+      audioPlayer.destroy();
+      audioPlayer = new AudioPlayer(config.audio.src);
+      await audioPlayer.load();
+      currentAudioSrc = config.audio.src;
+      audioPlayer.seek(resumeTime);
+      if (wasPlaying) {
+        await audioPlayer.play();
+      }
+    }
+    timeline = new Timeline(config);
+    timeline.setAudioDuration(audioPlayer.duration);
+    lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+    updateDebugSkipButtonState(lastDemoTime);
+    setOverlay("", false);
+    return { ok: true };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Invalid timeline JSON";
+    return { ok: false, error: message };
+  }
+}
+
+async function loadRawTimeline(path: string): Promise<RawTimelineConfig> {
+  const response = await fetch(path, { cache: "no-cache" });
+  if (!response.ok) {
+    throw new Error(`Failed to load timeline JSON (${response.status})`);
+  }
+  return (await response.json()) as RawTimelineConfig;
+}
+
+async function initEditor(): Promise<void> {
+  if (releaseMode || !editorRoot || !editorToggleButton) {
+    return;
+  }
+  const initial = await loadRawTimeline("/timeline.json");
+  const draft = loadDraft();
+  const startTimeline = draft ?? initial;
+  const editor = createEditorRoot({
+    root: editorRoot,
+    timeline: startTimeline,
+    effects: Object.keys(effectRegistry),
+    onRevert: async () => loadRawTimeline("/timeline.json"),
+    callbacks: {
+      applyTimeline: (next) => {
+        try {
+          normalizeTimelineConfig(next);
+          void applyTimelineConfig(next);
+          return { ok: true };
+        } catch (error) {
+          const message = error instanceof Error ? error.message : "Invalid timeline JSON";
+          return { ok: false, error: message };
+        }
+      },
+      onSeek: (time) => {
+        if (!audioPlayer || !timeline) {
+          void startDemo().then(() => {
+            audioPlayer?.seek(time - (timeline?.getAudioOffset() ?? 0));
+          });
+          return;
+        }
+        audioPlayer.seek(time - timeline.getAudioOffset());
+      },
+      onPlay: () => {
+        if (!audioPlayer) {
+          void startDemo();
+          return;
+        }
+        void audioPlayer.play();
+      },
+      onPause: () => {
+        audioPlayer?.pause();
+      },
+      onLoopChange: (range) => {
+        editorLoopRange = range;
+      },
+      getIsPlaying: () => Boolean(audioPlayer && !audioPlayer.paused)
+    }
+  });
+
+  editorModeActive = new URLSearchParams(window.location.search).get("editor") === "1";
+  editor.setVisible(editorModeActive);
+  editorToggleButton.classList.toggle("active", editorModeActive);
+  editorToggleButton.addEventListener("click", () => {
+    editorModeActive = !editorModeActive;
+    editor.setVisible(editorModeActive);
+    editorToggleButton.classList.toggle("active", editorModeActive);
+  });
+
+  if (draft) {
+    void applyTimelineConfig(draft);
+  }
+}
+
+void initEditor();
