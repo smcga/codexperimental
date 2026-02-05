@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   addLayer,
   createLayer,
+  createAutomationEntry,
   createScene,
   deleteScene,
   parseAdvancedParamsJSON,
@@ -45,6 +46,16 @@ describe("timelineStore", () => {
     expect(scene.start).toBe(0);
     expect(scene.end).toBe(5);
     expect(scene.effect).toBe("starfield");
+  });
+
+  it("createAutomationEntry applies overrides", () => {
+    const entry = createAutomationEntry({ param: "glow", t0: 2.5, t1: 7.5, ease: undefined });
+    expect(entry.param).toBe("glow");
+    expect(entry.t0).toBe(2.5);
+    expect(entry.t1).toBe(7.5);
+    expect(entry.from).toBe(0);
+    expect(entry.to).toBe(1);
+    expect(entry.ease).toBeUndefined();
   });
 
   it("deleteScene removes by id and preserves remaining order", () => {

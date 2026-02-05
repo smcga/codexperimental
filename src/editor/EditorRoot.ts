@@ -21,6 +21,7 @@ import {
   reorderScenes
 } from "./state/timelineStore";
 import { clearTimelineDraft, downloadTimeline, loadTimelineDraft, saveTimelineDraft } from "./serialization";
+import { getEffectDebugConfig } from "../renderer/debug/effectDebug";
 
 const ERA_PRESETS: EraPreset[] = ["8bit", "16bit", "ps1", "pcdemo", "future"];
 const BLEND_MODES: BlendMode[] = [
@@ -112,6 +113,19 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   let previewCanvas: HTMLCanvasElement | null = null;
   let previewContext: CanvasRenderingContext2D | null = null;
   let editorVisible = false;
+
+  const getEffectParamOptions = (effectName: string | null | undefined): string[] => {
+    const config = getEffectDebugConfig(effectName ?? null);
+    if (!config) {
+      return [];
+    }
+    const keys = config.controls.map((control) => control.key);
+    return Array.from(new Set(keys)).sort();
+  };
+
+  const createParamListId = (seed: string): string => {
+    return `param-options-${seed.replace(/[^a-z0-9_-]/gi, "_")}`;
+  };
 
   const setState = (partial: Partial<EditorState>): void => {
     Object.assign(state, partial);
@@ -223,6 +237,11 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       return;
     }
 
+    const previousInspector = init.container.querySelector<HTMLDivElement>(".editor-inspector-body");
+    const inspectorScrollState = previousInspector
+      ? { sceneId: previousInspector.dataset.sceneId ?? null, scrollTop: previousInspector.scrollTop }
+      : null;
+
     init.container.innerHTML = `
       <div class="editor-header">
         <div class="editor-title">Scene + Timeline Editor</div>
@@ -270,6 +289,11 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     renderTransport();
     bindHeaderActions();
     refreshPreviewCanvas();
+
+    const nextInspector = init.container.querySelector<HTMLDivElement>(".editor-inspector-body");
+    if (nextInspector && inspectorScrollState && inspectorScrollState.sceneId === state.selectedSceneId) {
+      nextInspector.scrollTop = inspectorScrollState.scrollTop;
+    }
   };
 
   const renderSceneList = (): void => {
@@ -409,6 +433,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       return;
     }
 
+    inspector.dataset.sceneId = scene.id;
     inspector.innerHTML = `
       <div class="editor-group">
         <div class="editor-group-title">Basic</div>
@@ -479,15 +504,22 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     `;
 
     bindInspectorInputs(scene, inspector);
-    renderParamsEditor(scene.params ?? {}, inspector.querySelector("[data-region='scene-params']"), (params) => {
-      updateTimeline((draft) => {
-        const target = draft.sections.find((section) => section.id === scene.id);
-        if (target) {
-          target.params = params;
-        }
-      });
-    }, `scene:${scene.id}:params`);
+    renderParamsEditor(
+      scene.effect,
+      scene.params ?? {},
+      inspector.querySelector("[data-region='scene-params']"),
+      (params) => {
+        updateTimeline((draft) => {
+          const target = draft.sections.find((section) => section.id === scene.id);
+          if (target) {
+            target.params = params;
+          }
+        });
+      },
+      `scene:${scene.id}:params`
+    );
     renderAutomationEditor(
+      scene.effect,
       scene.automation ?? [],
       inspector.querySelector("[data-region='scene-automation']"),
       (automation) => {
@@ -497,7 +529,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
             target.automation = automation;
           }
         });
-      }
+      },
+      parseTimelineTimeValue(scene.start),
+      getSceneEnd(scene)
     );
     renderLayers(scene, inspector.querySelector("[data-region='layers']"));
     renderTextCues(scene, inspector.querySelector("[data-region='text-cues']"));
@@ -562,6 +596,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   };
 
   const renderParamsEditor = (
+    effectName: string,
     params: Record<string, number>,
     container: Element | null,
     onChange: (nextParams: Record<string, number>) => void,
@@ -570,21 +605,49 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     if (!container) {
       return;
     }
+    const paramOptions = getEffectParamOptions(effectName);
+    const listId = createParamListId(errorKey);
+    const existingKeys = new Set(Object.keys(params));
+    const availableOptions = paramOptions.filter((option) => !existingKeys.has(option));
     const error = state.fieldErrors[errorKey];
     container.innerHTML = `
+      <datalist id="${listId}">
+        ${paramOptions.map((option) => `<option value="${option}"></option>`).join("")}
+      </datalist>
       <div class="editor-param-list">
         ${Object.entries(params)
           .map(
             ([key, value]) => `
             <div class="editor-param-row">
-              <input type="text" data-param-key value="${key}" />
+              <input type="text" data-param-key list="${listId}" value="${key}" />
               <input type="number" step="0.1" data-param-value value="${value}" />
               <button type="button" data-action="remove-param">Remove</button>
             </div>`
           )
           .join("")}
       </div>
-      <button type="button" class="editor-add" data-action="add-param">+ Param</button>
+      <div class="editor-param-add">
+        ${
+          availableOptions.length > 0
+            ? `
+              <label>
+                <span>Available params</span>
+                <select data-action="add-param-select">
+                  ${availableOptions.map((option) => `<option value="${option}">${option}</option>`).join("")}
+                </select>
+              </label>
+              <button type="button" class="editor-add" data-action="add-param">+ Param</button>
+            `
+            : `
+              <div class="editor-note">All known params are already added.</div>
+            `
+        }
+        <label>
+          <span>Custom param</span>
+          <input type="text" data-action="add-param-custom" placeholder="paramName" />
+        </label>
+        <button type="button" class="editor-add" data-action="add-param-custom-submit">+ Custom Param</button>
+      </div>
       <label class="editor-advanced">
         <span>Advanced JSON</span>
         <textarea data-action="advanced-json" spellcheck="false">${JSON.stringify(params, null, 2)}</textarea>
@@ -623,10 +686,22 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
 
     const addParam = container.querySelector<HTMLButtonElement>("[data-action='add-param']");
     addParam?.addEventListener("click", () => {
-      const key = window.prompt("Param name?");
+      const select = container.querySelector<HTMLSelectElement>("[data-action='add-param-select']");
+      const key = select?.value ?? "";
       if (!key) {
         return;
       }
+      onChange({ ...params, [key]: 0 });
+    });
+
+    const customParamSubmit = container.querySelector<HTMLButtonElement>("[data-action='add-param-custom-submit']");
+    customParamSubmit?.addEventListener("click", () => {
+      const input = container.querySelector<HTMLInputElement>("[data-action='add-param-custom']");
+      const key = input?.value.trim() ?? "";
+      if (!key) {
+        return;
+      }
+      input.value = "";
       onChange({ ...params, [key]: 0 });
     });
 
@@ -645,24 +720,41 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   };
 
   const renderAutomationEditor = (
+    effectName: string,
     automation: RawParamAutomation[],
     container: Element | null,
-    onChange: (next: RawParamAutomation[]) => void
+    onChange: (next: RawParamAutomation[]) => void,
+    sceneStart: number,
+    sceneEnd: number
   ): void => {
     if (!container) {
       return;
     }
+    const paramOptions = getEffectParamOptions(effectName);
+    const listId = createParamListId(`automation-${effectName}`);
     container.innerHTML = `
+      <datalist id="${listId}">
+        ${paramOptions.map((option) => `<option value="${option}"></option>`).join("")}
+      </datalist>
+      <div class="editor-automation-header">
+        <span>Param</span>
+        <span>From</span>
+        <span>To</span>
+        <span>Start</span>
+        <span>End</span>
+        <span>Ease</span>
+        <span class="editor-automation-actions-label">Actions</span>
+      </div>
       <div class="editor-automation-list">
         ${automation
           .map(
             (entry, index) => `
             <div class="editor-automation-row" data-index="${index}">
-              <input type="text" data-field="param" value="${entry.param}" />
+              <input type="text" list="${listId}" data-field="param" value="${entry.param}" />
               <input type="number" step="0.1" data-field="from" value="${entry.from}" />
               <input type="number" step="0.1" data-field="to" value="${entry.to}" />
-              <input type="number" step="0.1" data-field="t0" value="${entry.t0}" />
-              <input type="number" step="0.1" data-field="t1" value="${entry.t1}" />
+              <input type="number" step="0.1" data-field="t0" value="${formatEditableTime(entry.t0)}" />
+              <input type="number" step="0.1" data-field="t1" value="${formatEditableTime(entry.t1)}" />
               <select data-field="ease">
                 <option value="">(none)</option>
                 ${EASE_NAMES.map((name) => `<option value="${name}" ${name === entry.ease ? "selected" : ""}>${name}</option>`).join("")}
@@ -723,7 +815,15 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     });
 
     container.querySelector<HTMLButtonElement>("[data-action='add-automation']")?.addEventListener("click", () => {
-      onChange([...automation, createAutomationEntry()]);
+      const defaultParam = paramOptions[0] ?? "speed";
+      onChange([
+        ...automation,
+        createAutomationEntry({
+          param: defaultParam,
+          t0: sceneStart,
+          t1: sceneEnd
+        })
+      ]);
     });
   };
 
@@ -813,6 +913,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
 
     layers.forEach((layer, index) => {
       renderParamsEditor(
+        layer.effect,
         layer.params ?? {},
         container.querySelector(`[data-layer-params='${index}']`),
         (params) => {
@@ -830,6 +931,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         `layer:${scene.id}:${index}:params`
       );
       renderAutomationEditor(
+        layer.effect,
         layer.automation ?? [],
         container.querySelector(`[data-layer-automation='${index}']`),
         (automation) => {
@@ -843,7 +945,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
               targetLayer.automation = automation;
             }
           });
-        }
+        },
+        parseTimelineTimeValue(scene.start),
+        getSceneEnd(scene)
       );
     });
   };

@@ -99,14 +99,15 @@ export function reorderLayers(
   return next;
 }
 
-export function createAutomationEntry(): RawParamAutomation {
+export function createAutomationEntry(overrides: Partial<RawParamAutomation> = {}): RawParamAutomation {
   return {
     param: "speed",
     from: 0,
     to: 1,
     t0: 0,
     t1: 1,
-    ease: "linear"
+    ease: "linear",
+    ...overrides
   };
 }
 
