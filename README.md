@@ -39,6 +39,7 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 - Visuals include subtle camera zoom and panning that respond to audio energy.
 - Post-intro effects render on a 16:9 base canvas; landscape uses letterboxing, while portrait screens scale to fill the height and crop the sides.
 - Append `?release=1` to the URL to load the release timeline and disable the debug overlay/keybinds.
+- Append `?editor=1` (dev build only) or click the “Editor Mode” button to open the Scene + Timeline Editor. Changes apply live, auto-save to localStorage, and can be imported/exported as JSON.
 
 Automation example:
 
@@ -172,4 +173,5 @@ npm run preview
 - The debug overlay shows WebGL status as `OK` or `FALLBACK` when available.
 - When the debug overlay is visible, selecting an effect reveals a secondary panel with effect-specific controls (or a note when none are available).
 - The debug overlay includes 10-second skip buttons plus a timeline JSON editor; click "Apply changes" (or press Ctrl/Cmd+Enter inside the editor) to hot-reload the timeline while the demo runs.
+- Editor Mode opens an in-app scene/timeline editor with scene list, inspector, loop playback, and import/export tooling (dev build only).
 - On touch devices, two floating buttons appear in the lower-right corner: `DBG` toggles the debug overlay and `⛶` toggles fullscreen.
