@@ -25,6 +25,7 @@ import {
 } from "./controls";
 import { shouldShowEffectPanel } from "./debug/debugPanel";
 import { applyEraOverride, applyEraOverrideToTransition } from "./debug/eraOverride";
+import { createEditorRoot, EditorController } from "./editor/EditorRoot";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
@@ -44,15 +45,14 @@ const debugSkipIntroButton = document.querySelector<HTMLButtonElement>("#debug-s
 const debugSkipSecondHalfButton = document.querySelector<HTMLButtonElement>("#debug-skip-second-half");
 const debugSkipBackButton = document.querySelector<HTMLButtonElement>("#debug-skip-back");
 const debugSkipForwardButton = document.querySelector<HTMLButtonElement>("#debug-skip-forward");
-const debugTimelineEditor = document.querySelector<HTMLTextAreaElement>("#debug-timeline-editor");
-const debugTimelineApplyButton = document.querySelector<HTMLButtonElement>("#debug-timeline-apply");
-const debugTimelineReloadButton = document.querySelector<HTMLButtonElement>("#debug-timeline-reload");
-const debugTimelineError = document.querySelector<HTMLDivElement>("#debug-timeline-error");
+const debugEditorToggle = document.querySelector<HTMLInputElement>("#debug-editor-toggle");
+const editorRoot = document.querySelector<HTMLDivElement>("#editor-root");
 const mobileControls = document.querySelector<HTMLDivElement>("#mobile-controls");
 const mobileDebugButton = document.querySelector<HTMLButtonElement>("#mobile-debug");
 const mobileFullscreenButton = document.querySelector<HTMLButtonElement>("#mobile-fullscreen");
 
 const releaseMode = new URLSearchParams(window.location.search).get("release") === "1";
+const editorModeFromQuery = new URLSearchParams(window.location.search).get("editor") === "1";
 
 if (!canvas || !overlay || !overlayText || !debugOverlay || !debugTimestamp || !debugTransitionSelect || !debugEraSelect) {
   throw new Error("Missing canvas or overlay element");
@@ -74,6 +74,7 @@ let lastDemoTime = 0;
 let isRunning = false;
 let pendingConfig: TimelineConfig | null = null;
 let currentAudioSrc = "";
+let editorController: EditorController | null = null;
 const debugState = {
   enabled: false,
   forcedEffect: null as string | null,
@@ -135,67 +136,39 @@ function toggleFullscreen(): void {
   }
 }
 
-function setTimelineEditorError(message: string | null): void {
-  if (!debugTimelineError) {
+async function applyTimelineConfig(config: TimelineConfig): Promise<void> {
+  if (!audioPlayer) {
+    pendingConfig = config;
     return;
   }
-  if (message) {
-    debugTimelineError.textContent = message;
-    debugTimelineError.classList.remove("hidden");
-  } else {
-    debugTimelineError.textContent = "";
-    debugTimelineError.classList.add("hidden");
+  const currentTime = audioPlayer.currentTime;
+  const wasPaused = audioPlayer.paused;
+  introConfig = config.intro;
+  const shouldReloadAudio = config.audio.src !== currentAudioSrc;
+  if (shouldReloadAudio) {
+    audioPlayer.destroy();
+    audioPlayer = new AudioPlayer(config.audio.src);
+    await audioPlayer.load();
+    currentAudioSrc = config.audio.src;
+  }
+  timeline = new Timeline(config);
+  timeline.setAudioDuration(audioPlayer.duration);
+  audioPlayer.seek(currentTime);
+  lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+  updateDebugSkipButtonState(lastDemoTime);
+  setOverlay("", false);
+  if (!wasPaused) {
+    await audioPlayer.play();
   }
 }
 
-async function loadTimelineEditorFromFile(): Promise<void> {
-  if (!debugTimelineEditor) {
-    return;
-  }
+async function applyRawTimeline(raw: RawTimelineConfig): Promise<string | null> {
   try {
-    const response = await fetch("/timeline.json", { cache: "no-cache" });
-    if (!response.ok) {
-      throw new Error(`Failed to load timeline JSON (${response.status})`);
-    }
-    const raw = (await response.json()) as RawTimelineConfig;
-    debugTimelineEditor.value = JSON.stringify(raw, null, 2);
-    setTimelineEditorError(null);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Unable to load timeline JSON";
-    setTimelineEditorError(message);
-  }
-}
-
-async function applyTimelineEdits(): Promise<void> {
-  if (!debugTimelineEditor) {
-    return;
-  }
-  try {
-    const raw = JSON.parse(debugTimelineEditor.value) as RawTimelineConfig;
     const config = normalizeTimelineConfig(raw);
-    setTimelineEditorError(null);
-    if (!audioPlayer) {
-      pendingConfig = config;
-      return;
-    }
-
-    introConfig = config.intro;
-    const shouldReloadAudio = config.audio.src !== currentAudioSrc;
-    if (shouldReloadAudio) {
-      audioPlayer.destroy();
-      audioPlayer = new AudioPlayer(config.audio.src);
-      await audioPlayer.load();
-      await audioPlayer.play();
-      currentAudioSrc = config.audio.src;
-    }
-    timeline = new Timeline(config);
-    timeline.setAudioDuration(audioPlayer.duration);
-    lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
-    updateDebugSkipButtonState(lastDemoTime);
-    setOverlay("", false);
+    await applyTimelineConfig(config);
+    return null;
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Invalid timeline JSON";
-    setTimelineEditorError(message);
+    return error instanceof Error ? error.message : "Invalid timeline JSON";
   }
 }
 
@@ -452,31 +425,41 @@ if (!releaseMode && debugSkipForwardButton) {
   });
 }
 
-if (!releaseMode && debugTimelineApplyButton) {
-  debugTimelineApplyButton.addEventListener("click", () => {
-    applyTimelineEdits();
-  });
-}
-
-if (!releaseMode && debugTimelineReloadButton) {
-  debugTimelineReloadButton.addEventListener("click", () => {
-    loadTimelineEditorFromFile();
-  });
-}
-
-if (!releaseMode && debugTimelineEditor) {
-  debugTimelineEditor.addEventListener("keydown", (event) => {
-    if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
-      applyTimelineEdits();
-    }
-  });
-}
-
 if (!releaseMode) {
   createEffectButtons();
   setDebugOverlayVisible(false);
   updateDebugSkipButtonState(null);
-  loadTimelineEditorFromFile();
+  if (editorRoot) {
+    createEditorRoot({
+      container: editorRoot,
+      effectNames: Object.keys(effectRegistry),
+      applyTimeline: applyRawTimeline,
+      play: async () => {
+        if (!audioPlayer) {
+          await startDemo();
+          return;
+        }
+        await audioPlayer.play();
+      },
+      pause: () => {
+        audioPlayer?.pause();
+      },
+      seek: (time: number) => {
+        audioPlayer?.seek(time);
+      },
+      getAudioOffset: () => timeline?.getAudioOffset() ?? 0,
+      getAudioDuration: () => audioPlayer?.duration ?? 0
+    }).then((controller) => {
+      editorController = controller;
+      if (debugEditorToggle) {
+        debugEditorToggle.checked = editorModeFromQuery;
+        debugEditorToggle.addEventListener("change", () => {
+          controller.setVisible(debugEditorToggle.checked);
+        });
+      }
+      controller.setVisible(debugEditorToggle?.checked ?? editorModeFromQuery);
+    });
+  }
 } else {
   setDebugOverlayVisible(false);
   if (mobileDebugButton) {
@@ -546,7 +529,13 @@ function loop(): void {
     return;
   }
 
-  const demoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+  let demoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+  const loopState = editorController?.getLoopState();
+  if (loopState && !audioPlayer.paused && demoTime >= loopState.end) {
+    audioPlayer.seek(loopState.start - timeline.getAudioOffset());
+    demoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+    lastDemoTime = demoTime;
+  }
   const delta = Math.max(0, demoTime - lastDemoTime);
   lastDemoTime = demoTime;
 
@@ -614,6 +603,8 @@ function loop(): void {
   if (!releaseMode) {
     updateDebugSkipButtonState(demoTime);
   }
+  editorController?.updatePlayback(demoTime, !audioPlayer.paused);
+  editorController?.updatePreview(canvas);
 
   if (audioPlayer.ended) {
     isRunning = false;

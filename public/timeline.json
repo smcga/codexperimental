@@ -1144,17 +1144,16 @@
     {
       "id": "pcdemo-lens-wobbler",
       "start": "05:50.0",
-      "end": "05:55.0",
+      "end": "05:50.7",
       "effect": "lens_wobbler",
       "era": "pcdemo",
       "transition": { "in": "fade", "out": "fade", "duration": 0.25 },
       "params": { "bufW": 256, "bufH": 160, "lensStrength": 0.85, "invertRing": true, "wobble": true }
-            }
     },
     {
       "id": "dev-poly-morph-showcase",
-      "start": "05:50.0",
-      "end": "05:55.0",
+      "start": "05:50.7",
+      "end": "05:51.4",
       "effect": "poly_morph_showcase",
       "era": "16bit",
       "transition": { "in": "fade", "out": "fade", "duration": 0.3 },
@@ -1165,12 +1164,12 @@
         "morphSpeed": 0.09,
         "styleSpeed": 0.12,
         "edge": true
-              }
+      }
     },
     {
       "id": "dev-textured-cube",
-      "start": "05:50.0",
-      "end": "05:55.0",
+      "start": "05:51.4",
+      "end": "05:52.1",
       "effect": "textured_cube",
       "era": "pcdemo",
       "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
@@ -1179,12 +1178,12 @@
         "backfaceCull": true,
         "edge": true,
         "perspectiveCorrect": false
-              }
+      }
     },
     {
       "id": "twister-05500",
-      "start": "05:50.0",
-      "end": "05:55.0",
+      "start": "05:52.1",
+      "end": "05:52.8",
       "effect": "twister",
       "era": "16bit",
       "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
@@ -1196,12 +1195,12 @@
         "texture": "solid",
         "background": "fade",
         "trailFade": 0.1
-              }
+      }
     },
     {
       "id": "dev-shadebobs-bobs",
-      "start": "05:50.0",
-      "end": "05:55.0",
+      "start": "05:52.8",
+      "end": "05:53.5",
       "effect": "shadebobs_bobs",
       "era": "16bit",
       "transition": { "in": "fade", "out": "fade", "duration": 0.25 },
@@ -1213,12 +1212,12 @@
         "blobRadius": 78,
         "trailFade": 0.1,
         "boingCheckers": true
-              }
+      }
     },
     {
       "id": "dev-sine-distorter",
-      "start": "05:50.0",
-      "end": "05:55.0",
+      "start": "05:53.5",
+      "end": "05:54.2",
       "effect": "sine_distorter",
       "era": "16bit",
       "transition": { "in": "fade", "out": "fade", "duration": 0.2 },
@@ -1229,11 +1228,11 @@
         "freq": 0.07,
         "slice": 2,
         "edges": "wrap"
-              }
+      }
     },
     {
       "id": "raytrace-spheres",
-      "start": "05:50.0",
+      "start": "05:54.2",
       "end": "05:55.0",
       "effect": "raytrace_spheres",
       "era": "pcdemo",
@@ -1259,7 +1258,7 @@
     {
       "id": "envmap-donut",
       "start": "06:05.0",
-      "end": "06:15.0",
+      "end": "06:08.3",
       "effect": "envmap_donut",
       "era": "pcdemo",
       "transition": { "in": "fade", "out": "fade", "duration": 0.3 },
@@ -1270,19 +1269,20 @@
         "segmentsV": 32,
         "specStrength": 0.5,
         "fresnelStrength": 0.35
-            },
+      }
+    },
     {
       "id": "voxel-landscape-demo",
-      "start": "06:05.0",
-      "end": "06:15.0",
+      "start": "06:08.3",
+      "end": "06:11.6",
       "effect": "voxel_landscape",
       "era": "pcdemo",
       "transition": { "in": "fade", "out": "fade", "duration": 0.25 },
       "params": { "bufW": 320, "bufH": 200, "speed": 80, "fogStrength": 0.8, "scanlines": true }
-          },
+    },
     {
       "id": "dev-glenz-vectors",
-      "start": "06:05.0",
+      "start": "06:11.6",
       "end": "06:15.0",
       "effect": "glenz_vectors",
       "era": "16bit",
