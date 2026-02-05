@@ -123,7 +123,10 @@ describe("effect debug params", () => {
       backfaceCull: 1,
       scanlines: 0,
       edge: 0,
-          });
+      audioReact: 0.7,
+      beatKick: 0.7,
+      seed: 0
+    });
   });
   it("provides defaults for voxel landscape controls", () => {
     expect(getEffectDebugDefaults("voxel_landscape")).toEqual({
@@ -332,7 +335,10 @@ describe("effect debug params", () => {
       sortSolid: 1,
       sortShaded: 1,
       sortGlenz: 0,
-          });
+      audioReact: 0.7,
+      beatKick: 0.7,
+      seed: 0
+    });
   });
   it("provides defaults for bumpmap plane controls", () => {
     expect(getEffectDebugDefaults("bumpmap_plane")).toEqual({

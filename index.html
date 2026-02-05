@@ -62,18 +62,13 @@
               <option value="future">Future</option>
             </select>
           </label>
+          <label class="debug-row debug-toggle">
+            <input type="checkbox" id="debug-editor-toggle" />
+            <span>Editor mode</span>
+          </label>
           <div class="debug-section">
             <div class="debug-section-title">Effects</div>
             <div id="debug-effects"></div>
-          </div>
-          <div class="debug-section">
-            <div class="debug-section-title">Timeline JSON</div>
-            <div class="debug-row debug-row-actions">
-              <button id="debug-timeline-reload" type="button">Reload from file</button>
-              <button id="debug-timeline-apply" type="button">Apply changes</button>
-            </div>
-            <textarea id="debug-timeline-editor" class="debug-textarea" spellcheck="false"></textarea>
-            <div id="debug-timeline-error" class="debug-error hidden" role="alert"></div>
           </div>
           <label class="debug-row debug-toggle">
             <input type="checkbox" id="debug-monochrome" />
@@ -86,6 +81,7 @@
           <div id="debug-effect-empty" class="debug-empty hidden">No debug controls available for this effect.</div>
         </div>
       </div>
+      <div id="editor-root" class="editor hidden"></div>
       <div id="mobile-controls" aria-label="Mobile controls">
         <button id="mobile-debug" type="button" aria-label="Toggle debug panel">
           DBG
