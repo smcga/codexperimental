@@ -78,6 +78,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `feedback` | `scale`, `wobble`, `rotation`, `trail`, `glow` |  |
 | `equalizer` | `bars`, `barWidth`, `height`, `bassBoost`, `alpha` |  |
 | `isogrid` | `opacity`, `lineWidth`, `spacing`, `wave`, `speed` |  |
+| `escher_staircase` | `stepsPerSide`, `stepSize`, `stepRise`, `speed`, `hue`, `hueSpread`, `glow`, `audioReact` | Impossible looping staircase in isometric tiles. |
 | `neon` | `shapes`, `radius`, `radiusStep`, `speed`, `glow`, `lineWidth` |  |
 | `particles` | `trail`, `burst`, `burstAudio`, `force`, `forceAudio` |  |
 | `border_multiplex` | `hwSprites`, `totalSprites`, `bandHeight`, `spriteSize`, `speed`, `rasterJitter`, `borderMaskStrength`, `audioReact`, `seed` |  |

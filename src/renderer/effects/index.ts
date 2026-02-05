@@ -55,6 +55,7 @@ import { MetaballsEffect } from "./metaballs";
 import { BumpmapPlaneEffect } from "./bumpmapPlane";
 import { RaytraceSpheresEffect } from "./raytraceSpheres";
 import { VgaFireEffect } from "./vgaFire";
+import { EscherStaircaseEffect } from "./escherStaircaseEffect";
 
 export const effectRegistry: Record<string, Effect> = {
   starfield: new StarfieldEffect(),
@@ -112,7 +113,8 @@ export const effectRegistry: Record<string, Effect> = {
   metaballs: new MetaballsEffect(),
   bumpmap_plane: new BumpmapPlaneEffect(),
   raytrace_spheres: new RaytraceSpheresEffect(),
-  vga_fire: new VgaFireEffect()
+  vga_fire: new VgaFireEffect(),
+  escher_staircase: new EscherStaircaseEffect()
 };
 
 export function resetEffects(): void {

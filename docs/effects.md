@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/index.ts`.
 
-Total effects: **56**.
+Total effects: **57**.
 
 ## Table of contents
 
@@ -62,6 +62,7 @@ Total effects: **56**.
 - [Effect: bumpmap_plane](#effect-bumpmap-plane)
 - [Effect: raytrace_spheres](#effect-raytrace-spheres)
 - [Effect: vga_fire](#effect-vga-fire)
+- [Effect: escher_staircase](#effect-escher-staircase)
 
 ## Cross-reference
 
@@ -81,11 +82,11 @@ Total effects: **56**.
 
 ### Common parameter patterns
 
-- `speed` (used in 32 effects)
+- `speed` (used in 33 effects)
 - `seed` (used in 21 effects)
-- `audioReact` (used in 20 effects)
+- `audioReact` (used in 21 effects)
 - `beatKick` (used in 13 effects)
-- `glow` (used in 6 effects)
+- `glow` (used in 7 effects)
 - `hueShift` (used in 6 effects)
 - `trail` (used in 6 effects)
 - `scanlines` (used in 6 effects)
@@ -2041,6 +2042,39 @@ Total effects: **56**.
 ```json
 {
   "effect": "vga_fire",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: escher_staircase
+
+- **Registry key:** `escher_staircase`
+- **Implementation:** `src/renderer/effects/escherStaircaseEffect.ts` (class `EscherStaircaseEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Escher staircase: an impossible looping stairwell rendered in isometric tiles.
+- **Audio features:** bass, rms
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReact` | number | 0.6 | min 0, max 1 | Audio React | yes |
+| `params.glow` | number | 0.2 | min 0, max 1 | Glow | yes |
+| `params.hue` | number | 210 | min 0, max 360 | Hue | yes |
+| `params.hueSpread` | number | 40 | min 0, max 120 | Hue Spread | yes |
+| `params.speed` | number | 0.25 | min 0, max 1.5 | Speed | yes |
+| `params.stepRise` | number | 6 | min 2, max 16 | Step Rise | yes |
+| `params.stepSize` | number | 24 | min 12, max 48 | Step Size | yes |
+| `params.stepsPerSide` | number | 8 | min 4, max 20 | Steps Per Side | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "escher_staircase",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
