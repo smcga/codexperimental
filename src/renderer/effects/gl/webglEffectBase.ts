@@ -43,9 +43,9 @@ void main() {
 `;
 
 const QUALITY_SCALES: Record<number, number> = {
-  1: 0.7,
-  2: 1.0,
-  3: 1.3
+  1: 0.85,
+  2: 1.1,
+  3: 1.4
 };
 
 export class WebGLEffectBase {

@@ -24,9 +24,9 @@ const QUALITY_STEPS: Record<number, number> = {
 };
 
 const QUALITY_SCALES: Record<number, number> = {
-  1: 0.6,
-  2: 0.8,
-  3: 1.0
+  1: 0.8,
+  2: 1.0,
+  3: 1.2
 };
 
 export type ImpossibleCorridorParams = {
