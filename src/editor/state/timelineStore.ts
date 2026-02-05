@@ -130,6 +130,30 @@ export function createTextCue(options?: { id?: string; start?: number; end?: num
   };
 }
 
+export function parseTimelineTimeValue(value: number | string | undefined | null): number {
+  if (value === undefined || value === null) {
+    return 0;
+  }
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : 0;
+  }
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    const match = trimmed.match(/^(\d{2}):(\d{2})(?:\.(\d+))?$/);
+    if (!match) {
+      const numeric = Number(trimmed);
+      return Number.isFinite(numeric) ? numeric : 0;
+    }
+    const minutes = Number(match[1]);
+    const seconds = Number(match[2] + (match[3] ? `.${match[3]}` : ""));
+    if (!Number.isFinite(minutes) || !Number.isFinite(seconds) || seconds >= 60) {
+      return 0;
+    }
+    return minutes * 60 + seconds;
+  }
+  return 0;
+}
+
 export function parseAdvancedParamsJSON(
   value: string,
   previous: Record<string, number>

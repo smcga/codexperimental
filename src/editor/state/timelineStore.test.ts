@@ -5,6 +5,7 @@ import {
   createScene,
   deleteScene,
   parseAdvancedParamsJSON,
+  parseTimelineTimeValue,
   removeLayer,
   reorderLayers,
   reorderScenes,
@@ -81,6 +82,12 @@ describe("timelineStore", () => {
     const invalid = parseAdvancedParamsJSON("{", previous);
     expect(invalid.nextParams).toEqual(previous);
     expect(invalid.error).toBe("Invalid JSON.");
+  });
+
+  it("parseTimelineTimeValue handles numbers and mm:ss strings", () => {
+    expect(parseTimelineTimeValue(12.5)).toBe(12.5);
+    expect(parseTimelineTimeValue("01:02.5")).toBeCloseTo(62.5);
+    expect(parseTimelineTimeValue("03:00")).toBeCloseTo(180);
   });
 
   it("serializeTimeline produces JSON with no editor-only keys", () => {

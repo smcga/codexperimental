@@ -15,6 +15,7 @@ import {
   deleteScene,
   duplicateScene,
   ensureTimelineShape,
+  parseTimelineTimeValue,
   parseAdvancedParamsJSON,
   reorderLayers,
   reorderScenes
@@ -93,6 +94,7 @@ export type EditorController = {
   setVisible: (visible: boolean) => void;
   isVisible: () => boolean;
   updatePlayback: (demoTime: number, playing: boolean) => void;
+  updatePreview: (source: HTMLCanvasElement) => void;
   getLoopState: () => { enabled: boolean; start: number; end: number } | null;
 };
 
@@ -107,6 +109,8 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   };
   let playbackLabel: HTMLSpanElement | null = null;
   let playbackButton: HTMLButtonElement | null = null;
+  let previewCanvas: HTMLCanvasElement | null = null;
+  let previewContext: CanvasRenderingContext2D | null = null;
   let editorVisible = false;
 
   const setState = (partial: Partial<EditorState>): void => {
@@ -175,26 +179,42 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     if (!state.timeline) {
       return [];
     }
-    return [...state.timeline.sections].sort((a, b) => Number(a.start) - Number(b.start));
+    return [...state.timeline.sections].sort(
+      (a, b) => parseTimelineTimeValue(a.start) - parseTimelineTimeValue(b.start)
+    );
   };
 
   const getSceneEnd = (scene: RawSectionConfig): number => {
     const scenes = getScenesByTime();
     const index = scenes.findIndex((entry) => entry.id === scene.id);
     if (scene.end !== undefined && scene.end !== null) {
-      return Number(scene.end);
+      return parseTimelineTimeValue(scene.end);
     }
     if (index >= 0 && index < scenes.length - 1) {
-      return Number(scenes[index + 1].start);
+      return parseTimelineTimeValue(scenes[index + 1].start);
     }
     const audioDuration = init.getAudioDuration();
-    return audioDuration > 0 ? audioDuration : Number(scene.start) + 5;
+    const fallbackStart = parseTimelineTimeValue(scene.start);
+    return audioDuration > 0 ? audioDuration : fallbackStart + 5;
   };
 
   const formatTime = (value: number): string => {
     const minutes = Math.floor(value / 60);
     const seconds = Math.max(0, value - minutes * 60);
     return `${minutes.toString().padStart(2, "0")}:${seconds.toFixed(1).padStart(4, "0")}`;
+  };
+
+  const formatEditableTime = (value: number | string | undefined | null, allowEmpty = false): string => {
+    if (allowEmpty && (value === undefined || value === null || value === "")) {
+      return "";
+    }
+    const parsed = parseTimelineTimeValue(value ?? 0);
+    return parsed.toFixed(1);
+  };
+
+  const refreshPreviewCanvas = (): void => {
+    previewCanvas = init.container.querySelector<HTMLCanvasElement>("[data-region='preview-canvas']");
+    previewContext = previewCanvas?.getContext("2d") ?? null;
   };
 
   const render = (): void => {
@@ -221,6 +241,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         </section>
         <section class="editor-column editor-timeline">
           <div class="editor-section-title">Timeline</div>
+          <div class="editor-preview">
+            <canvas data-region="preview-canvas" width="640" height="360"></canvas>
+          </div>
           <div class="editor-timeline-view" data-region="timeline-view"></div>
         </section>
         <section class="editor-column editor-inspector">
@@ -246,6 +269,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     renderInspector();
     renderTransport();
     bindHeaderActions();
+    refreshPreviewCanvas();
   };
 
   const renderSceneList = (): void => {
@@ -268,7 +292,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       item.innerHTML = `
         <button type="button" class="editor-scene-select">${scene.id}</button>
         <div class="editor-scene-meta">
-          <span>${formatTime(Number(scene.start))}</span>
+          <span>${formatTime(parseTimelineTimeValue(scene.start))}</span>
           <span>→</span>
           <span>${formatTime(getSceneEnd(scene))}</span>
         </div>
@@ -351,7 +375,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     }
 
     scenes.forEach((scene) => {
-      const start = Number(scene.start);
+      const start = parseTimelineTimeValue(scene.start);
       const end = getSceneEnd(scene);
       const left = duration ? (start / duration) * 100 : 0;
       const width = duration ? ((end - start) / duration) * 100 : 0;
@@ -361,6 +385,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       block.style.left = `${left}%`;
       block.style.width = `${Math.max(2, width)}%`;
       block.textContent = scene.id;
+      block.title = `${scene.id} (${formatTime(start)} → ${formatTime(end)})`;
       if (scene.id === state.selectedSceneId) {
         block.classList.add("is-selected");
       }
@@ -401,11 +426,11 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         </label>
         <label>
           <span>Start (s)</span>
-          <input type="number" step="0.1" data-field="start" value="${scene.start}" />
+          <input type="number" step="0.1" data-field="start" value="${formatEditableTime(scene.start)}" />
         </label>
         <label>
           <span>End (s)</span>
-          <input type="number" step="0.1" data-field="end" value="${scene.end ?? ""}" />
+          <input type="number" step="0.1" data-field="end" value="${formatEditableTime(scene.end, true)}" />
         </label>
         <label>
           <span>Era preset</span>
@@ -528,7 +553,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
 
     const addCueButton = inspector.querySelector<HTMLButtonElement>("[data-action='add-cue']");
     addCueButton?.addEventListener("click", () => {
-      const start = Number(scene.start);
+      const start = parseTimelineTimeValue(scene.start);
       const end = Math.min(getSceneEnd(scene), start + 3);
       updateTimeline((draft) => {
         draft.textCues = [...(draft.textCues ?? []), createTextCue({ start, end })];
@@ -828,8 +853,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       return;
     }
     const cues = (state.timeline.textCues ?? []).filter((cue) => {
-      const start = Number(cue.start);
-      return start >= Number(scene.start) && start <= getSceneEnd(scene);
+      const start = parseTimelineTimeValue(cue.start);
+      const sceneStart = parseTimelineTimeValue(scene.start);
+      return start >= sceneStart && start <= getSceneEnd(scene);
     });
 
     container.innerHTML = cues
@@ -842,11 +868,11 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           </label>
           <label>
             <span>Start (s)</span>
-            <input type="number" step="0.1" data-cue-field="start" value="${cue.start}" />
+            <input type="number" step="0.1" data-cue-field="start" value="${formatEditableTime(cue.start)}" />
           </label>
           <label>
             <span>End (s)</span>
-            <input type="number" step="0.1" data-cue-field="end" value="${cue.end ?? ""}" />
+            <input type="number" step="0.1" data-cue-field="end" value="${formatEditableTime(cue.end, true)}" />
           </label>
           <label>
             <span>Text</span>
@@ -980,8 +1006,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     init.container.querySelector<HTMLButtonElement>("[data-action='add-scene']")?.addEventListener("click", () => {
       const maxEnd =
         state.timeline?.sections.reduce((max, section) => {
-          const end = section.end ?? (section.start ? Number(section.start) + 5 : 5);
-          return Math.max(max, Number(end));
+          const start = parseTimelineTimeValue(section.start);
+          const end = section.end ?? start + 5;
+          return Math.max(max, parseTimelineTimeValue(end));
         }, 0) ?? 0;
       const newScene = createScene({
         start: maxEnd,
@@ -1014,6 +1041,25 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         playbackButton.dataset.state = playing ? "playing" : "paused";
       }
     },
+    updatePreview: (source: HTMLCanvasElement) => {
+      if (!previewCanvas || !previewContext || !editorVisible) {
+        return;
+      }
+      const { width, height } = previewCanvas;
+      const sourceRatio = source.width / source.height;
+      const targetRatio = width / height;
+      let drawWidth = width;
+      let drawHeight = height;
+      if (sourceRatio > targetRatio) {
+        drawHeight = width / sourceRatio;
+      } else {
+        drawWidth = height * sourceRatio;
+      }
+      const offsetX = (width - drawWidth) / 2;
+      const offsetY = (height - drawHeight) / 2;
+      previewContext.clearRect(0, 0, width, height);
+      previewContext.drawImage(source, offsetX, offsetY, drawWidth, drawHeight);
+    },
     getLoopState: () => {
       if (!state.loopEnabled || !state.selectedSceneId || !state.timeline) {
         return null;
@@ -1024,7 +1070,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       }
       return {
         enabled: true,
-        start: Number(scene.start),
+        start: parseTimelineTimeValue(scene.start),
         end: getSceneEnd(scene)
       };
     }

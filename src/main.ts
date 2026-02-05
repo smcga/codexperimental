@@ -604,6 +604,7 @@ function loop(): void {
     updateDebugSkipButtonState(demoTime);
   }
   editorController?.updatePlayback(demoTime, !audioPlayer.paused);
+  editorController?.updatePreview(canvas);
 
   if (audioPlayer.ended) {
     isRunning = false;
