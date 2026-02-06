@@ -15,7 +15,6 @@ export const PLATFORMER_SCROLL_DEFAULTS = {
   platformMaxSteps: 5
 };
 
-
 type PlatformInfo = {
   exists: boolean;
   ySteps: number;
@@ -25,7 +24,10 @@ type PlatformInfo = {
 const asFinite = (value: unknown, fallback: number): number =>
   typeof value === "number" && Number.isFinite(value) ? value : fallback;
 
-const quantize = (value: number, step: number): number => Math.floor(value / step) * step;
+const smoothstep = (t: number): number => {
+  const x = clamp(t, 0, 1);
+  return x * x * (3 - 2 * x);
+};
 
 export function hash1(index: number, seed: number): number {
   const x = Math.sin((index + seed * 0.101) * 127.1 + seed * 311.7) * 43758.5453123;
@@ -53,6 +55,35 @@ export function platformAt(worldCol: number, seed: number, platformRate: number,
   }
 
   return { exists: true, ySteps, lengthCols };
+}
+
+export function supportTopY(
+  worldCol: number,
+  seed: number,
+  platformRate: number,
+  maxSteps: number,
+  basePlatformY: number,
+  tileSize: number,
+  groundTop: number,
+  frontPulse: number
+): number {
+  const platform = platformAt(worldCol, seed, platformRate, maxSteps);
+  if (!platform.exists) {
+    return groundTop - frontPulse;
+  }
+  const platformY = basePlatformY - platform.ySteps * tileSize - frontPulse;
+  return Math.min(groundTop - frontPulse, platformY);
+}
+
+export function runnerJumpOffset(prevSupportY: number, currentSupportY: number, colProgress: number, audioAmount: number): number {
+  if (currentSupportY >= prevSupportY) {
+    return 0;
+  }
+  const lift = prevSupportY - currentSupportY;
+  const phase = smoothstep(colProgress);
+  const arc = Math.sin(phase * Math.PI);
+  const extra = 1 + Math.floor(audioAmount * 2);
+  return Math.floor(arc * (lift * 0.85 + extra));
 }
 
 const drawHillLayer = (
@@ -189,11 +220,40 @@ export class PlatformerScrollEffect implements Effect {
     }
 
     const runnerBaseX = Math.floor(width * 0.28);
-    const legPhase = Math.sin(time * 18);
-    const bob = Math.floor((Math.sin(time * 10) * 2 + audioAmount * 3) * 0.5);
-    const runnerFootY = groundTop - frontPulse - 1 - bob;
+    const runnerWorldX = fgScroll + runnerBaseX;
+    const currentCol = Math.floor(runnerWorldX / tileSize);
+    const prevCol = currentCol - 1;
+    const colProgress = ((runnerWorldX % tileSize) + tileSize) % tileSize / tileSize;
+
+    const prevSupportY = supportTopY(
+      prevCol,
+      seed,
+      platformRate,
+      platformMaxSteps,
+      basePlatformY,
+      tileSize,
+      groundTop,
+      frontPulse
+    );
+    const currentSupportY = supportTopY(
+      currentCol,
+      seed,
+      platformRate,
+      platformMaxSteps,
+      basePlatformY,
+      tileSize,
+      groundTop,
+      frontPulse
+    );
+
+    const supportY = Math.floor(prevSupportY + (currentSupportY - prevSupportY) * smoothstep(colProgress));
+    const hop = runnerJumpOffset(prevSupportY, currentSupportY, colProgress, audioAmount);
+    const runBob = Math.floor((Math.sin(time * 14) * 1.5 + audioAmount * 1.5) * 0.5);
+    const runnerFootY = supportY - hop - runBob - 1;
+
     const bodyW = Math.max(8, Math.floor(tileSize * 0.7));
     const bodyH = Math.max(10, Math.floor(tileSize * 0.95));
+    const legPhase = Math.sin(time * 18);
 
     ctx.fillStyle = "#111317";
     ctx.fillRect(runnerBaseX, runnerFootY - bodyH, bodyW, bodyH);
@@ -206,8 +266,7 @@ export class PlatformerScrollEffect implements Effect {
     ctx.fillRect(runnerBaseX - 2, runnerFootY - bodyH + 2, 2, 4);
     ctx.fillRect(runnerBaseX + bodyW, runnerFootY - bodyH + 2, 2, 4);
 
-    const shadowY = quantize(runnerFootY + 6, 1);
     ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
-    ctx.fillRect(runnerBaseX - 2, shadowY, bodyW + 4, 2);
+    ctx.fillRect(runnerBaseX - 2, supportY + 5, bodyW + 4, 2);
   }
 }

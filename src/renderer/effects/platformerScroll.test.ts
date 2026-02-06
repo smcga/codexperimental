@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { hash1, platformAt } from "./platformerScroll";
+import { hash1, platformAt, runnerJumpOffset, supportTopY } from "./platformerScroll";
 
 describe("platformerScroll helpers", () => {
   it("hash1 is deterministic for the same index/seed", () => {
@@ -32,5 +32,22 @@ describe("platformerScroll helpers", () => {
       expect(platform.lengthCols).toBeGreaterThanOrEqual(0);
       expect(platform.lengthCols).toBeLessThanOrEqual(5);
     }
+  });
+
+  it("supportTopY falls back to ground and never sinks below it", () => {
+    const groundTop = 260;
+    const result = supportTopY(12, 1234, 0.5, 5, 200, 16, groundTop, 2);
+
+    expect(result).toBeLessThanOrEqual(groundTop - 2);
+  });
+
+  it("runnerJumpOffset creates an arc only when stepping up", () => {
+    const upAtMid = runnerJumpOffset(220, 180, 0.5, 0.3);
+    const flat = runnerJumpOffset(200, 200, 0.5, 0.3);
+    const down = runnerJumpOffset(180, 220, 0.5, 0.3);
+
+    expect(upAtMid).toBeGreaterThan(0);
+    expect(flat).toBe(0);
+    expect(down).toBe(0);
   });
 });
