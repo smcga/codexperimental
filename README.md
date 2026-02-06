@@ -39,6 +39,12 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 - Visuals include subtle camera zoom and panning that respond to audio energy.
 - Post-intro effects render on a 16:9 base canvas; landscape uses letterboxing, while portrait screens scale to fill the height and crop the sides.
 - Append `?release=1` to the URL to load the release timeline and disable the debug overlay/keybinds.
+- Rendering quality can be tuned via URL query params:
+  - `?baseScale=2` multiplies the base canvas size (default `1`, clamped to `1`-`4`).
+  - `?baseW=640&baseH=360` overrides the base canvas dimensions (must be 16:9 and between `320×180` and `1920×1080`).
+  - `?quality=0.85` scales the effective base resolution for performance (default `1.0`, clamped to `0.65`-`1.0`).
+  - `?autoQuality=1` enables dynamic quality scaling based on frame time (adjusts by `0.05` at most once per second).
+  - Recommended: `baseScale=2` for 1080p-class displays, `baseScale=3` for 1440p+ if your GPU/CPU allows.
 
 Automation example:
 

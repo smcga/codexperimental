@@ -80,6 +80,18 @@ export class Renderer {
     this.layerCtx = layerCtx;
   }
 
+  setBaseSize(baseWidth: number, baseHeight: number): void {
+    if (this.baseWidth === baseWidth && this.baseHeight === baseHeight) {
+      return;
+    }
+    this.baseWidth = baseWidth;
+    this.baseHeight = baseHeight;
+    this.baseCanvas.width = baseWidth;
+    this.baseCanvas.height = baseHeight;
+    this.transitionCanvas.width = baseWidth;
+    this.transitionCanvas.height = baseHeight;
+  }
+
   reset(): void {
     resetEffects();
     this.baseCtx.clearRect(0, 0, this.baseWidth, this.baseHeight);
