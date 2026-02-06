@@ -11,6 +11,9 @@
     "docs:effects": "tsx scripts/generateEffectsDocs.ts",
     "docs:check": "vitest run src/renderer/effects/effectsDocs.test.ts"
   },
+  "dependencies": {
+    "@upstash/redis": "^1.34.0"
+  },
   "devDependencies": {
     "tsx": "^4.19.0",
     "typescript": "^5.5.4",
