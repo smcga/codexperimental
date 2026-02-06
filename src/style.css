@@ -209,24 +209,12 @@ body,
   accent-color: #8ef9ff;
 }
 
-#debug-effects {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-}
-
-#debug-effects button {
-  background: rgba(255, 255, 255, 0.08);
+#debug-effect-select {
+  width: 100%;
+  background: #0b0b0b;
   color: inherit;
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 0.2rem 0.4rem;
-  font-size: 0.75rem;
-  cursor: pointer;
-}
-
-#debug-effects button.active {
-  border-color: #8ef9ff;
-  color: #8ef9ff;
 }
 
 .debug-toggle {
