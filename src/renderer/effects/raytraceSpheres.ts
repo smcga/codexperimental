@@ -4,6 +4,25 @@ import { Effect, EffectRenderContext } from "./types";
 const MAX_SPHERES = 10;
 const EPSILON = 0.001;
 
+export const RAYTRACE_SPHERES_DEFAULTS = {
+  bufW: 240,
+  bufH: 180,
+  sphereCount: 6,
+  seed: 1337,
+  fov: 60,
+  cellSize: 1,
+  adaptive: 1,
+  refineThreshold: 80,
+  audioReact: 0.6,
+  beatKick: 0.7,
+  maxDepth: 2,
+  ambient: 0.12,
+  diffuseStrength: 1.0,
+  specStrength: 0.45,
+  shininess: 48,
+  floorReflect: 0.55
+};
+
 const LIGHT_DIR = (() => {
   const x = 0.5;
   const y = 0.8;
@@ -98,6 +117,46 @@ export const rayPlaneIntersection = (
   return null;
 };
 
+export type RaytraceSpheresParams = {
+  bufW: number;
+  bufH: number;
+  sphereCount: number;
+  seed: number;
+  fov: number;
+  cellSize: number;
+  adaptive: number;
+  refineThreshold: number;
+  audioReact: number;
+  beatKick: number;
+  maxDepth: number;
+  ambient: number;
+  diffuseStrength: number;
+  specStrength: number;
+  shininess: number;
+  floorReflect: number;
+};
+
+export function normalizeRaytraceSpheresParams(params: Record<string, number>): RaytraceSpheresParams {
+  return {
+    bufW: clamp(Math.round(params.bufW ?? RAYTRACE_SPHERES_DEFAULTS.bufW), 100, 360),
+    bufH: clamp(Math.round(params.bufH ?? RAYTRACE_SPHERES_DEFAULTS.bufH), 75, 270),
+    sphereCount: clamp(Math.round(params.sphereCount ?? RAYTRACE_SPHERES_DEFAULTS.sphereCount), 2, MAX_SPHERES),
+    seed: Math.round(params.seed ?? RAYTRACE_SPHERES_DEFAULTS.seed),
+    fov: clamp(params.fov ?? RAYTRACE_SPHERES_DEFAULTS.fov, 35, 90),
+    cellSize: clamp(Math.round(params.cellSize ?? RAYTRACE_SPHERES_DEFAULTS.cellSize), 1, 6),
+    adaptive: params.adaptive ?? RAYTRACE_SPHERES_DEFAULTS.adaptive,
+    refineThreshold: clamp(params.refineThreshold ?? RAYTRACE_SPHERES_DEFAULTS.refineThreshold, 20, 255),
+    audioReact: clamp(params.audioReact ?? RAYTRACE_SPHERES_DEFAULTS.audioReact, 0, 1),
+    beatKick: clamp(params.beatKick ?? RAYTRACE_SPHERES_DEFAULTS.beatKick, 0, 1),
+    maxDepth: clamp(Math.round(params.maxDepth ?? RAYTRACE_SPHERES_DEFAULTS.maxDepth), 1, 3),
+    ambient: clamp(params.ambient ?? RAYTRACE_SPHERES_DEFAULTS.ambient, 0.05, 0.4),
+    diffuseStrength: clamp(params.diffuseStrength ?? RAYTRACE_SPHERES_DEFAULTS.diffuseStrength, 0.2, 2.0),
+    specStrength: clamp(params.specStrength ?? RAYTRACE_SPHERES_DEFAULTS.specStrength, 0, 2.0),
+    shininess: clamp(params.shininess ?? RAYTRACE_SPHERES_DEFAULTS.shininess, 8, 96),
+    floorReflect: clamp(params.floorReflect ?? RAYTRACE_SPHERES_DEFAULTS.floorReflect, 0, 0.9)
+  };
+}
+
 export class RaytraceSpheresEffect implements Effect {
   private bufferCanvas: HTMLCanvasElement | null = null;
   private bufferCtx: CanvasRenderingContext2D | null = null;
@@ -151,27 +210,28 @@ export class RaytraceSpheresEffect implements Effect {
   }
 
   render({ ctx, width, height, time, audio, params }: EffectRenderContext): void {
-    const bufW = clamp(Math.round(params.bufW ?? 200), 80, 320);
-    const bufH = clamp(Math.round(params.bufH ?? 150), 60, 240);
-    const sphereCount = clamp(Math.round(params.sphereCount ?? 6), 2, MAX_SPHERES);
-    const seed = Math.round(params.seed ?? 1337);
-    const fov = clamp(params.fov ?? 60, 35, 90);
-    const cellSize = clamp(Math.round(params.cellSize ?? 2), 1, 6);
-    const adaptive = Boolean(params.adaptive ?? 1);
-    const refineThreshold = clamp(params.refineThreshold ?? 80, 20, 255);
+    const normalized = normalizeRaytraceSpheresParams(params);
+    const bufW = normalized.bufW;
+    const bufH = normalized.bufH;
+    const sphereCount = normalized.sphereCount;
+    const seed = normalized.seed;
+    const fov = normalized.fov;
+    const cellSize = normalized.cellSize;
+    const adaptive = Boolean(normalized.adaptive);
+    const refineThreshold = normalized.refineThreshold;
 
-    const audioReact = clamp(params.audioReact ?? 0.6, 0, 1);
-    const beatKick = clamp(params.beatKick ?? 0.7, 0, 1);
+    const audioReact = normalized.audioReact;
+    const beatKick = normalized.beatKick;
     const bassBoost = audio.bass * audioReact;
     const beatBoost = audio.beatStrength * beatKick;
 
-    this.maxDepth = clamp(Math.round(params.maxDepth ?? 2), 1, 3);
-    this.ambient = clamp(params.ambient ?? 0.12, 0.05, 0.4);
-    this.diffuseStrength = clamp(params.diffuseStrength ?? 1.0, 0.2, 2.0);
-    const baseSpecStrength = clamp(params.specStrength ?? 0.45, 0, 2.0);
+    this.maxDepth = normalized.maxDepth;
+    this.ambient = normalized.ambient;
+    this.diffuseStrength = normalized.diffuseStrength;
+    const baseSpecStrength = normalized.specStrength;
     this.specStrength = clamp(baseSpecStrength * (1 + beatBoost * 0.8), 0, 2.5);
-    this.shininess = clamp(params.shininess ?? 48, 8, 96);
-    const baseFloorReflect = clamp(params.floorReflect ?? 0.55, 0, 0.9);
+    this.shininess = normalized.shininess;
+    const baseFloorReflect = normalized.floorReflect;
 
     this.floorReflect = clamp(baseFloorReflect + bassBoost * 0.1, 0, 0.95);
     this.pointLightIntensity = 0.35 + beatBoost * 0.25;

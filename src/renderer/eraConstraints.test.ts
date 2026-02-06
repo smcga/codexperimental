@@ -8,17 +8,30 @@ const BASE_HEIGHT = 180;
 describe("getEraConstraints", () => {
   it("returns low-resolution settings for 8bit", () => {
     const constraints = getEraConstraints("8bit", BASE_WIDTH, BASE_HEIGHT);
-    expect(constraints.renderWidth).toBe(240);
-    expect(constraints.renderHeight).toBe(135);
+    expect(constraints.renderWidth).toBe(288);
+    expect(constraints.renderHeight).toBe(162);
     expect(constraints.palette).toBe(C64_PALETTE);
     expect(constraints.smoothing).toBe(false);
   });
 
   it("uses a higher internal resolution for 16bit", () => {
     const constraints = getEraConstraints("16bit", BASE_WIDTH, BASE_HEIGHT);
-    expect(constraints.renderWidth).toBe(480);
-    expect(constraints.renderHeight).toBe(270);
+    expect(constraints.renderWidth).toBe(560);
+    expect(constraints.renderHeight).toBe(315);
     expect(constraints.smoothing).toBe(false);
+  });
+
+  it("upscales later eras for extra clarity", () => {
+    const ps1 = getEraConstraints("ps1", BASE_WIDTH, BASE_HEIGHT);
+    const pcdemo = getEraConstraints("pcdemo", BASE_WIDTH, BASE_HEIGHT);
+    const future = getEraConstraints("future", BASE_WIDTH, BASE_HEIGHT);
+
+    expect(ps1.renderWidth).toBe(400);
+    expect(ps1.renderHeight).toBe(225);
+    expect(pcdemo.renderWidth).toBe(432);
+    expect(pcdemo.renderHeight).toBe(243);
+    expect(future.renderWidth).toBe(480);
+    expect(future.renderHeight).toBe(270);
   });
 });
 

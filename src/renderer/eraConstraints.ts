@@ -36,8 +36,8 @@ export function getEraConstraints(era: EraPreset, baseWidth: number, baseHeight:
   switch (era) {
     case "8bit":
       return {
-        renderWidth: 240,
-        renderHeight: 135,
+        renderWidth: Math.round(baseWidth * 0.9),
+        renderHeight: Math.round(baseHeight * 0.9),
         smoothing: false,
         palette: C64_PALETTE,
         overlayScanline: 0.2,
@@ -48,8 +48,8 @@ export function getEraConstraints(era: EraPreset, baseWidth: number, baseHeight:
       };
     case "16bit":
       return {
-        renderWidth: Math.round(baseWidth * 1.5),
-        renderHeight: Math.round(baseHeight * 1.5),
+        renderWidth: Math.round(baseWidth * 1.75),
+        renderHeight: Math.round(baseHeight * 1.75),
         smoothing: false,
         overlayScanline: 0.45,
         overlayVignette: 0.25,
@@ -59,8 +59,8 @@ export function getEraConstraints(era: EraPreset, baseWidth: number, baseHeight:
       };
     case "ps1":
       return {
-        renderWidth: baseWidth,
-        renderHeight: baseHeight,
+        renderWidth: Math.round(baseWidth * 1.25),
+        renderHeight: Math.round(baseHeight * 1.25),
         smoothing: true,
         overlayScanline: 0.6,
         overlayVignette: 0.45,
@@ -70,8 +70,8 @@ export function getEraConstraints(era: EraPreset, baseWidth: number, baseHeight:
       };
     case "pcdemo":
       return {
-        renderWidth: baseWidth,
-        renderHeight: baseHeight,
+        renderWidth: Math.round(baseWidth * 1.35),
+        renderHeight: Math.round(baseHeight * 1.35),
         smoothing: true,
         overlayScanline: 1,
         overlayVignette: 0.9,
@@ -81,8 +81,8 @@ export function getEraConstraints(era: EraPreset, baseWidth: number, baseHeight:
       };
     case "future":
       return {
-        renderWidth: baseWidth,
-        renderHeight: baseHeight,
+        renderWidth: Math.round(baseWidth * 1.5),
+        renderHeight: Math.round(baseHeight * 1.5),
         smoothing: true,
         overlayScanline: 1.2,
         overlayVignette: 1.05,

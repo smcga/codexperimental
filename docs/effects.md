@@ -1981,9 +1981,9 @@ Total effects: **56**.
 | `params.ambient` | number | 0.12 | unspecified | Used in effect render logic. | yes |
 | `params.audioReact` | number | 0.6 | unspecified | Used in effect render logic. | yes |
 | `params.beatKick` | number | 0.7 | unspecified | Used in effect render logic. | yes |
-| `params.bufH` | number | 150 | unspecified | Used in effect render logic. | yes |
-| `params.bufW` | number | 200 | unspecified | Used in effect render logic. | yes |
-| `params.cellSize` | number | 2 | unspecified | Used in effect render logic. | yes |
+| `params.bufH` | number | 180 | unspecified | Used in effect render logic. | yes |
+| `params.bufW` | number | 240 | unspecified | Used in effect render logic. | yes |
+| `params.cellSize` | number | 1 | unspecified | Used in effect render logic. | yes |
 | `params.diffuseStrength` | number | 1 | unspecified | Used in effect render logic. | yes |
 | `params.floorReflect` | number | 0.55 | unspecified | Used in effect render logic. | yes |
 | `params.fov` | number | 60 | unspecified | Used in effect render logic. | yes |
