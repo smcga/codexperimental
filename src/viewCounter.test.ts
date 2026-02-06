@@ -53,25 +53,36 @@ describe("viewCounter", () => {
     await expect(fetchViews()).resolves.toBe(0);
   });
 
-  it("registerViewOncePerSession posts and caches the count", async () => {
-    globalThis.fetch = vi.fn(async () => ({
-      ok: true,
-      json: async () => ({ count: 7 })
-    })) as typeof fetch;
+  it("registerViewOncePerSession does not set the flag when POST fails and retries on subsequent calls", async () => {
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: false,
+        json: async () => ({ count: 5 })
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ count: 7 })
+      }) as typeof fetch;
+
+    await expect(registerViewOncePerSession()).resolves.toBeNull();
+    expect(globalThis.sessionStorage.getItem("viewCounted")).toBeNull();
 
     await expect(registerViewOncePerSession()).resolves.toBe(7);
     expect(globalThis.sessionStorage.getItem("viewCounted")).toBe("1");
-    expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+    expect(globalThis.fetch).toHaveBeenCalledTimes(2);
   });
 
-  it("registerViewOncePerSession skips when already counted", async () => {
-    globalThis.sessionStorage.setItem("viewCounted", "1");
+  it("registerViewOncePerSession sets the flag after successful POST and skips further calls", async () => {
     globalThis.fetch = vi.fn(async () => ({
       ok: true,
       json: async () => ({ count: 9 })
     })) as typeof fetch;
 
+    await expect(registerViewOncePerSession()).resolves.toBe(9);
     await expect(registerViewOncePerSession()).resolves.toBeNull();
-    expect(globalThis.fetch).not.toHaveBeenCalled();
+
+    expect(globalThis.sessionStorage.getItem("viewCounted")).toBe("1");
+    expect(globalThis.fetch).toHaveBeenCalledTimes(1);
   });
 });

@@ -29,7 +29,6 @@ export async function registerViewOncePerSession(): Promise<number | null> {
     if (sessionStorage.getItem("viewCounted") === "1") {
       return null;
     }
-    sessionStorage.setItem("viewCounted", "1");
   } catch {
     // Ignore storage errors and continue with best-effort registration.
   }
@@ -45,7 +44,17 @@ export async function registerViewOncePerSession(): Promise<number | null> {
       return null;
     }
     const data = (await response.json()) as ViewsResponse;
-    return isValidCount(data.count) ? data.count : null;
+    if (!isValidCount(data.count)) {
+      return null;
+    }
+
+    try {
+      sessionStorage.setItem("viewCounted", "1");
+    } catch {
+      // Ignore storage errors and continue with best-effort registration.
+    }
+
+    return data.count;
   } catch {
     return null;
   }
