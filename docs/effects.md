@@ -88,11 +88,11 @@ Total effects: **56**.
 - `glow` (used in 6 effects)
 - `hueShift` (used in 6 effects)
 - `trail` (used in 6 effects)
+- `quality` (used in 6 effects)
 - `scanlines` (used in 6 effects)
 - `bufH` (used in 6 effects)
 - `bufW` (used in 6 effects)
 - `count` (used in 5 effects)
-- `lineWidth` (used in 5 effects)
 
 ## Effects
 
@@ -1977,23 +1977,30 @@ Total effects: **56**.
 
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
 | --- | --- | --- | --- | --- | --- |
+| `params` | number | no explicit default | unspecified | Used in effect render logic. | yes |
+| `params.aa` | number | no explicit default | unspecified | Used in effect render logic. | yes |
+| `params.aaMode` | number | no explicit default | unspecified | Used in effect render logic. | yes |
 | `params.adaptive` | number | 1 | unspecified | Used in effect render logic. | yes |
 | `params.ambient` | number | 0.12 | unspecified | Used in effect render logic. | yes |
 | `params.audioReact` | number | 0.6 | unspecified | Used in effect render logic. | yes |
 | `params.beatKick` | number | 0.7 | unspecified | Used in effect render logic. | yes |
-| `params.bufH` | number | 150 | unspecified | Used in effect render logic. | yes |
-| `params.bufW` | number | 200 | unspecified | Used in effect render logic. | yes |
-| `params.cellSize` | number | 2 | unspecified | Used in effect render logic. | yes |
+| `params.bufH` | number | no explicit default | unspecified | Used in effect render logic. | yes |
+| `params.bufW` | number | no explicit default | unspecified | Used in effect render logic. | yes |
+| `params.cellSize` | number | no explicit default | unspecified | Used in effect render logic. | yes |
 | `params.diffuseStrength` | number | 1 | unspecified | Used in effect render logic. | yes |
 | `params.floorReflect` | number | 0.55 | unspecified | Used in effect render logic. | yes |
+| `params.forceAA` | boolean | false | unspecified | Used in effect render logic. | unknown |
 | `params.fov` | number | 60 | unspecified | Used in effect render logic. | yes |
 | `params.maxDepth` | number | 2 | unspecified | Used in effect render logic. | yes |
-| `params.refineThreshold` | number | 80 | unspecified | Used in effect render logic. | yes |
+| `params.outputSmoothing` | boolean | false | unspecified | Used in effect render logic. | unknown |
+| `params.quality` | number | no explicit default | unspecified | Used in effect render logic. | yes |
+| `params.refineGrow` | number | no explicit default | unspecified | Used in effect render logic. | yes |
+| `params.refineThreshold` | number | no explicit default | unspecified | Used in effect render logic. | yes |
 | `params.scanlines` | number | no explicit default | unspecified | Used in effect render logic. | yes |
 | `params.seed` | number | 1337 | unspecified | Used in effect render logic. | yes |
 | `params.shininess` | number | 48 | unspecified | Used in effect render logic. | yes |
 | `params.specStrength` | number | 0.45 | unspecified | Used in effect render logic. | yes |
-| `params.sphereCount` | number | 6 | unspecified | Used in effect render logic. | yes |
+| `params.sphereCount` | number | no explicit default | unspecified | Used in effect render logic. | yes |
 
 ### Minimal layer usage
 
