@@ -1,9 +1,11 @@
 import { Redis } from "@upstash/redis";
 
-const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
-const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+const redisUrl = process.env.KV_REST_API_URL ?? process.env.KV_URL ?? process.env.REDIS_URL;
+const redisWriteToken = process.env.KV_REST_API_TOKEN;
+const redisReadToken = process.env.KV_REST_API_READ_ONLY_TOKEN ?? redisWriteToken;
 
-const redis = redisUrl && redisToken ? new Redis({ url: redisUrl, token: redisToken }) : null;
+const readClient = redisUrl && redisReadToken ? new Redis({ url: redisUrl, token: redisReadToken }) : null;
+const writeClient = redisUrl && redisWriteToken ? new Redis({ url: redisUrl, token: redisWriteToken }) : null;
 
 type JsonResponse = {
   count: number;
@@ -21,12 +23,12 @@ export default async function handler(
   res: { statusCode: number; setHeader: (key: string, value: string) => void; end: (body?: string) => void }
 ): Promise<void> {
   if (req.method === "GET") {
-    if (!redis) {
+    if (!readClient) {
       sendJson(res, 200, { count: 0 });
       return;
     }
     try {
-      const count = (await redis.get<number>("views:total")) ?? 0;
+      const count = (await readClient.get<number>("views:total")) ?? 0;
       sendJson(res, 200, { count });
     } catch {
       sendJson(res, 200, { count: 0 });
@@ -35,12 +37,12 @@ export default async function handler(
   }
 
   if (req.method === "POST") {
-    if (!redis) {
+    if (!writeClient) {
       sendJson(res, 503, { count: 0 });
       return;
     }
     try {
-      const count = await redis.incr("views:total");
+      const count = await writeClient.incr("views:total");
       sendJson(res, 200, { count });
     } catch {
       sendJson(res, 503, { count: 0 });
