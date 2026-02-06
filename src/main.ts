@@ -28,6 +28,7 @@ import {
 import { shouldShowEffectPanel } from "./debug/debugPanel";
 import { applyEraOverride, applyEraOverrideToTransition } from "./debug/eraOverride";
 import { createEditorRoot, EditorController } from "./editor/EditorRoot";
+import { fetchViews, registerViewOncePerSession } from "./viewCounter";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
@@ -52,6 +53,7 @@ const editorRoot = document.querySelector<HTMLDivElement>("#editor-root");
 const mobileControls = document.querySelector<HTMLDivElement>("#mobile-controls");
 const mobileDebugButton = document.querySelector<HTMLButtonElement>("#mobile-debug");
 const mobileFullscreenButton = document.querySelector<HTMLButtonElement>("#mobile-fullscreen");
+const viewCounter = document.querySelector<HTMLDivElement>("#view-counter");
 
 const queryParams = new URLSearchParams(window.location.search);
 const releaseMode = queryParams.get("release") === "1";
@@ -87,6 +89,7 @@ let pendingConfig: TimelineConfig | null = null;
 let currentAudioSrc = "";
 let editorController: EditorController | null = null;
 let lastFrameTimestamp = performance.now();
+let currentViewCount = 0;
 const debugState = {
   enabled: false,
   forcedEffect: null as string | null,
@@ -97,6 +100,26 @@ const debugState = {
     Object.keys(effectRegistry).map((effectName) => [effectName, getEffectDebugDefaults(effectName)])
   )
 };
+
+function updateViewCounter(count: number): void {
+  currentViewCount = count;
+  if (viewCounter) {
+    viewCounter.textContent = `Views: ${count}`;
+  }
+}
+
+async function handlePlaybackStarted(): Promise<void> {
+  const count = await registerViewOncePerSession();
+  if (count !== null) {
+    updateViewCounter(count);
+  }
+}
+
+function attachAudioPlayerHandlers(player: AudioPlayer): void {
+  player.onStarted = () => {
+    void handlePlaybackStarted();
+  };
+}
 
 function applyQualityScale(): void {
   const effectiveSize = getEffectiveBaseSize();
@@ -115,6 +138,10 @@ function resize(): void {
 
 resize();
 window.addEventListener("resize", resize);
+
+void fetchViews().then((count) => {
+  updateViewCounter(count);
+});
 
 function setOverlay(text: string, show = true, isError = false): void {
   overlayText.textContent = text;
@@ -170,6 +197,7 @@ async function applyTimelineConfig(config: TimelineConfig): Promise<void> {
   if (shouldReloadAudio) {
     audioPlayer.destroy();
     audioPlayer = new AudioPlayer(config.audio.src);
+    attachAudioPlayerHandlers(audioPlayer);
     await audioPlayer.load();
     currentAudioSrc = config.audio.src;
   }
@@ -503,6 +531,7 @@ async function startDemo(): Promise<void> {
       audioPlayer.destroy();
     }
     audioPlayer = new AudioPlayer(config.audio.src);
+    attachAudioPlayerHandlers(audioPlayer);
     await audioPlayer.load();
     currentAudioSrc = config.audio.src;
 

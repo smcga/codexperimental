@@ -28,6 +28,8 @@ export class AudioPlayer {
   private bassRange: [number, number] = [0, 0];
   private midRange: [number, number] = [0, 0];
   private trebleRange: [number, number] = [0, 0];
+  private hasStarted = false;
+  onStarted?: () => void;
 
   constructor(src: string) {
     this.audio = new Audio();
@@ -81,6 +83,10 @@ export class AudioPlayer {
   async play(): Promise<void> {
     await this.context.resume();
     await this.audio.play();
+    if (!this.hasStarted) {
+      this.hasStarted = true;
+      this.onStarted?.();
+    }
   }
 
   pause(): void {
