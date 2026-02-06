@@ -10,6 +10,7 @@ import { TEXTURED_CUBE_DEFAULTS } from "../effects/texturedCube";
 import { SINE_DISTORTER_DEFAULTS } from "../effects/sineDistorter";
 import { GLENZ_VECTORS_DEFAULTS } from "../effects/glenzVectors";
 import { BUMPMAP_PLANE_DEFAULTS } from "../effects/bumpmapPlane";
+import { ESCHER_STAIRCASE_DEFAULTS } from "../effects/escherStaircaseEffect";
 
 export type EffectParamValue = number | string;
 
@@ -209,6 +210,23 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("spacing", "Spacing", 18, { min: 8, max: 40, step: 1 }),
       numberControl("wave", "Wave", 8, { min: 0, max: 20, step: 1 }),
       numberControl("speed", "Speed", 0.8, { min: 0, max: 3, step: 0.05 })
+    ]
+  },
+  escher_staircase: {
+    title: "Escher Staircase Controls",
+    controls: [
+      numberControl("stepsPerSide", "Steps Per Side", ESCHER_STAIRCASE_DEFAULTS.stepsPerSide, {
+        min: 4,
+        max: 20,
+        step: 1
+      }),
+      numberControl("stepSize", "Step Size", ESCHER_STAIRCASE_DEFAULTS.stepSize, { min: 12, max: 48, step: 1 }),
+      numberControl("stepRise", "Step Rise", ESCHER_STAIRCASE_DEFAULTS.stepRise, { min: 2, max: 16, step: 1 }),
+      numberControl("speed", "Speed", ESCHER_STAIRCASE_DEFAULTS.speed, { min: 0, max: 1.5, step: 0.05 }),
+      numberControl("hue", "Hue", ESCHER_STAIRCASE_DEFAULTS.hue, { min: 0, max: 360, step: 1 }),
+      numberControl("hueSpread", "Hue Spread", ESCHER_STAIRCASE_DEFAULTS.hueSpread, { min: 0, max: 120, step: 1 }),
+      numberControl("glow", "Glow", ESCHER_STAIRCASE_DEFAULTS.glow, { min: 0, max: 1, step: 0.05 }),
+      numberControl("audioReact", "Audio React", ESCHER_STAIRCASE_DEFAULTS.audioReact, { min: 0, max: 1, step: 0.05 })
     ]
   },
   neon: {
