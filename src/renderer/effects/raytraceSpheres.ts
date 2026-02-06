@@ -3,6 +3,29 @@ import { Effect, EffectRenderContext } from "./types";
 
 const MAX_SPHERES = 10;
 const EPSILON = 0.001;
+const QUALITY_SCALE: Record<number, number> = {
+  1: 0.75,
+  2: 1.0,
+  3: 1.5,
+};
+const AA_OFFSETS_2 = [0.25, 0.25, -0.25, -0.25];
+const AA_OFFSETS_4 = [0.25, 0.25, 0.25, -0.25, -0.25, 0.25, -0.25, -0.25];
+
+export type RaytraceQualitySettings = {
+  quality: number;
+  internalScale: number;
+  bufW: number;
+  bufH: number;
+  sphereCount: number;
+  cellSize: number;
+  adaptive: boolean;
+  refineThreshold: number;
+  refineGrow: boolean;
+  aa: number;
+  aaMode: "full" | "refinedOnly";
+  outputSmoothing: boolean;
+  forceAA: boolean;
+};
 
 const LIGHT_DIR = (() => {
   const x = 0.5;
@@ -42,6 +65,64 @@ const mulberry32 = (seed: number): (() => number) => {
     t = Math.imul(t ^ (t >>> 15), t | 1);
     t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+};
+
+const coerceAA = (value: number): number => {
+  if (value >= 4) {
+    return 4;
+  }
+  if (value >= 2) {
+    return 2;
+  }
+  return 0;
+};
+
+export const resolveRaytraceQualitySettings = (
+  params: Record<string, unknown>,
+  width: number,
+  height: number
+): RaytraceQualitySettings => {
+  const quality = clamp(Math.round((params.quality as number) ?? 2), 1, 3);
+  const internalScale = clamp(QUALITY_SCALE[quality] ?? 1.0, 0.5, 2.0);
+  const hasBufW = params.bufW !== undefined && params.bufW !== null;
+  const hasBufH = params.bufH !== undefined && params.bufH !== null;
+  const baseBufW = hasBufW ? Number(params.bufW) : Math.round(width * internalScale);
+  const baseBufH = hasBufH ? Number(params.bufH) : Math.round(height * internalScale);
+  const minBufW = hasBufW ? 80 : 160;
+  const minBufH = hasBufH ? 60 : 120;
+  const bufW = clamp(Math.round(baseBufW), minBufW, 1280);
+  const bufH = clamp(Math.round(baseBufH), minBufH, 960);
+  const sphereCount = clamp(Math.round((params.sphereCount as number) ?? 3), 1, MAX_SPHERES);
+  const cellSizeDefault = quality >= 3 ? 2 : 3;
+  const cellSize = clamp(Math.round((params.cellSize as number) ?? cellSizeDefault), 1, 6);
+  const adaptive = Boolean(params.adaptive ?? 1);
+  const refineDefault = quality >= 3 ? 50 : 80;
+  const refineThreshold = clamp((params.refineThreshold as number) ?? refineDefault, 20, 255);
+  const refineGrowDefault = quality >= 3;
+  const refineGrow = Boolean(params.refineGrow ?? refineGrowDefault);
+  const aaDefault = quality >= 3 ? 2 : 0;
+  const aa = coerceAA(Math.round((params.aa as number) ?? aaDefault));
+  const aaMode = params.aaMode === "full" ? "full" : "refinedOnly";
+  const outputSmoothing = Boolean(params.outputSmoothing ?? false);
+  const forceAA = Boolean(params.forceAA ?? false);
+  const pixelCount = bufW * bufH;
+  const finalAA = aa === 4 && pixelCount > 600_000 && !forceAA ? 2 : aa;
+
+  return {
+    quality,
+    internalScale,
+    bufW,
+    bufH,
+    sphereCount,
+    cellSize,
+    adaptive,
+    refineThreshold,
+    refineGrow,
+    aa: finalAA,
+    aaMode,
+    outputSmoothing,
+    forceAA,
   };
 };
 
@@ -110,6 +191,8 @@ export class RaytraceSpheresEffect implements Effect {
   private cellH = 0;
   private cellRGB = new Uint8ClampedArray(0);
   private refineMask = new Uint8Array(0);
+  private refineMask2 = new Uint8Array(0);
+  private cellHit = new Uint8Array(0);
 
   private sphereCount = 0;
   private sphereSeed = 0;
@@ -121,6 +204,7 @@ export class RaytraceSpheresEffect implements Effect {
   private sphereRadius = new Float32Array(MAX_SPHERES);
 
   private colorStack: Float32Array[] = [];
+  private aaScratch = new Float32Array(3);
 
   private maxDepth = 2;
   private ambient = 0.12;
@@ -148,17 +232,24 @@ export class RaytraceSpheresEffect implements Effect {
     this.cellH = 0;
     this.cellRGB = new Uint8ClampedArray(0);
     this.refineMask = new Uint8Array(0);
+    this.refineMask2 = new Uint8Array(0);
+    this.cellHit = new Uint8Array(0);
   }
 
   render({ ctx, width, height, time, audio, params }: EffectRenderContext): void {
-    const bufW = clamp(Math.round(params.bufW ?? 200), 80, 320);
-    const bufH = clamp(Math.round(params.bufH ?? 150), 60, 240);
-    const sphereCount = clamp(Math.round(params.sphereCount ?? 6), 2, MAX_SPHERES);
+    const qualitySettings = resolveRaytraceQualitySettings(params, width, height);
+    const bufW = qualitySettings.bufW;
+    const bufH = qualitySettings.bufH;
+    const sphereCount = qualitySettings.sphereCount;
     const seed = Math.round(params.seed ?? 1337);
     const fov = clamp(params.fov ?? 60, 35, 90);
-    const cellSize = clamp(Math.round(params.cellSize ?? 2), 1, 6);
-    const adaptive = Boolean(params.adaptive ?? 1);
-    const refineThreshold = clamp(params.refineThreshold ?? 80, 20, 255);
+    const cellSize = qualitySettings.cellSize;
+    const adaptive = qualitySettings.adaptive;
+    const refineThreshold = qualitySettings.refineThreshold;
+    const refineGrow = qualitySettings.refineGrow;
+    const aa = qualitySettings.aa;
+    const aaMode = qualitySettings.aaMode;
+    const outputSmoothing = qualitySettings.outputSmoothing;
 
     const audioReact = clamp(params.audioReact ?? 0.6, 0, 1);
     const beatKick = clamp(params.beatKick ?? 0.7, 0, 1);
@@ -199,9 +290,22 @@ export class RaytraceSpheresEffect implements Effect {
     }
 
     if (adaptive && cellSize > 1) {
-      this.renderAdaptive(bufW, bufH, aspect, fovScale, this.camera, this.forward, this.right, this.up, refineThreshold);
+      this.renderAdaptive(
+        bufW,
+        bufH,
+        aspect,
+        fovScale,
+        this.camera,
+        this.forward,
+        this.right,
+        this.up,
+        refineThreshold,
+        refineGrow,
+        aa,
+        aaMode
+      );
     } else {
-      this.renderFull(bufW, bufH, aspect, fovScale, this.camera, this.forward, this.right, this.up);
+      this.renderFull(bufW, bufH, aspect, fovScale, this.camera, this.forward, this.right, this.up, aa);
     }
 
     const bufferCtx = this.bufferCtx;
@@ -212,7 +316,7 @@ export class RaytraceSpheresEffect implements Effect {
     bufferCtx.putImageData(imageData, 0, 0);
 
     ctx.save();
-    ctx.imageSmoothingEnabled = false;
+    ctx.imageSmoothingEnabled = outputSmoothing;
     ctx.drawImage(this.bufferCanvas as HTMLCanvasElement, 0, 0, bufW, bufH, 0, 0, width, height);
     if (params.scanlines) {
       ctx.globalAlpha = 0.12;
@@ -246,6 +350,8 @@ export class RaytraceSpheresEffect implements Effect {
       this.cellH = Math.ceil(bufH / cellSize);
       this.cellRGB = new Uint8ClampedArray(this.cellW * this.cellH * 3);
       this.refineMask = new Uint8Array(this.cellW * this.cellH);
+      this.refineMask2 = new Uint8Array(this.cellW * this.cellH);
+      this.cellHit = new Uint8Array(this.cellW * this.cellH);
     }
   }
 
@@ -353,13 +459,17 @@ export class RaytraceSpheresEffect implements Effect {
     forward: { x: number; y: number; z: number },
     right: { x: number; y: number; z: number },
     up: { x: number; y: number; z: number },
-    refineThreshold: number
+    refineThreshold: number,
+    refineGrow: boolean,
+    aa: number,
+    aaMode: "full" | "refinedOnly"
   ): void {
     const cellW = this.cellW;
     const cellH = this.cellH;
     const cellSize = this.cellSize;
     const cellRGB = this.cellRGB;
     const refineMask = this.refineMask;
+    const cellHit = this.cellHit;
 
     refineMask.fill(0);
 
@@ -368,7 +478,8 @@ export class RaytraceSpheresEffect implements Effect {
       for (let cx = 0; cx < cellW; cx += 1) {
         const px = Math.min(bufW - 1, cx * cellSize + Math.floor(cellSize * 0.5));
         const color = this.colorStack[0];
-        this.samplePixel(px, py, bufW, bufH, aspect, fovScale, camera, forward, right, up, color);
+        const hitIndex = cy * cellW + cx;
+        this.samplePixel(px, py, bufW, bufH, aspect, fovScale, camera, forward, right, up, color, 0, 0, cellHit, hitIndex);
         const baseIndex = (cy * cellW + cx) * 3;
         cellRGB[baseIndex] = clamp(Math.round(color[0] * 255), 0, 255);
         cellRGB[baseIndex + 1] = clamp(Math.round(color[1] * 255), 0, 255);
@@ -384,18 +495,47 @@ export class RaytraceSpheresEffect implements Effect {
         const b = cellRGB[idx + 2];
         if (cx + 1 < cellW) {
           const next = idx + 3;
+          const cellIndex = cy * cellW + cx;
+          const cellNext = cellIndex + 1;
           const diff = Math.abs(r - cellRGB[next]) + Math.abs(g - cellRGB[next + 1]) + Math.abs(b - cellRGB[next + 2]);
-          if (diff > refineThreshold) {
-            refineMask[cy * cellW + cx] = 1;
-            refineMask[cy * cellW + cx + 1] = 1;
+          if (cellHit[cellIndex] !== cellHit[cellNext] || diff > refineThreshold) {
+            refineMask[cellIndex] = 1;
+            refineMask[cellNext] = 1;
           }
         }
         if (cy + 1 < cellH) {
           const next = idx + cellW * 3;
+          const cellIndex = cy * cellW + cx;
+          const cellNext = cellIndex + cellW;
           const diff = Math.abs(r - cellRGB[next]) + Math.abs(g - cellRGB[next + 1]) + Math.abs(b - cellRGB[next + 2]);
-          if (diff > refineThreshold) {
-            refineMask[cy * cellW + cx] = 1;
-            refineMask[(cy + 1) * cellW + cx] = 1;
+          if (cellHit[cellIndex] !== cellHit[cellNext] || diff > refineThreshold) {
+            refineMask[cellIndex] = 1;
+            refineMask[cellNext] = 1;
+          }
+        }
+      }
+    }
+
+    if (refineGrow) {
+      const refineMask2 = this.refineMask2;
+      refineMask2.set(refineMask);
+      for (let cy = 0; cy < cellH; cy += 1) {
+        for (let cx = 0; cx < cellW; cx += 1) {
+          const cellIndex = cy * cellW + cx;
+          if (!refineMask2[cellIndex]) {
+            continue;
+          }
+          if (cx > 0) {
+            refineMask[cellIndex - 1] = 1;
+          }
+          if (cx + 1 < cellW) {
+            refineMask[cellIndex + 1] = 1;
+          }
+          if (cy > 0) {
+            refineMask[cellIndex - cellW] = 1;
+          }
+          if (cy + 1 < cellH) {
+            refineMask[cellIndex + cellW] = 1;
           }
         }
       }
@@ -428,6 +568,11 @@ export class RaytraceSpheresEffect implements Effect {
       }
     }
 
+    const applyAA = aa > 0 && (aaMode === "full" || aaMode === "refinedOnly");
+    const aaOffsets = aa === 4 ? AA_OFFSETS_4 : AA_OFFSETS_2;
+    const aaSampleCount = aa > 0 ? aaOffsets.length / 2 : 1;
+    const aaScratch = this.aaScratch;
+
     for (let cy = 0; cy < cellH; cy += 1) {
       for (let cx = 0; cx < cellW; cx += 1) {
         if (!refineMask[cy * cellW + cx]) {
@@ -439,12 +584,45 @@ export class RaytraceSpheresEffect implements Effect {
         const endY = Math.min(bufH, startY + cellSize);
         for (let py = startY; py < endY; py += 1) {
           for (let px = startX; px < endX; px += 1) {
-            const color = this.colorStack[0];
-            this.samplePixel(px, py, bufW, bufH, aspect, fovScale, camera, forward, right, up, color);
+            let colorR = 0;
+            let colorG = 0;
+            let colorB = 0;
+            if (applyAA && aa > 0) {
+              for (let i = 0; i < aaOffsets.length; i += 2) {
+                this.samplePixel(
+                  px,
+                  py,
+                  bufW,
+                  bufH,
+                  aspect,
+                  fovScale,
+                  camera,
+                  forward,
+                  right,
+                  up,
+                  aaScratch,
+                  aaOffsets[i],
+                  aaOffsets[i + 1]
+                );
+                colorR += aaScratch[0];
+                colorG += aaScratch[1];
+                colorB += aaScratch[2];
+              }
+              const invSamples = 1 / aaSampleCount;
+              colorR *= invSamples;
+              colorG *= invSamples;
+              colorB *= invSamples;
+            } else {
+              const color = this.colorStack[0];
+              this.samplePixel(px, py, bufW, bufH, aspect, fovScale, camera, forward, right, up, color);
+              colorR = color[0];
+              colorG = color[1];
+              colorB = color[2];
+            }
             const base = (py * bufW + px) * 4;
-            data[base] = clamp(Math.round(color[0] * 255), 0, 255);
-            data[base + 1] = clamp(Math.round(color[1] * 255), 0, 255);
-            data[base + 2] = clamp(Math.round(color[2] * 255), 0, 255);
+            data[base] = clamp(Math.round(colorR * 255), 0, 255);
+            data[base + 1] = clamp(Math.round(colorG * 255), 0, 255);
+            data[base + 2] = clamp(Math.round(colorB * 255), 0, 255);
             data[base + 3] = 255;
           }
         }
@@ -460,20 +638,57 @@ export class RaytraceSpheresEffect implements Effect {
     camera: { x: number; y: number; z: number },
     forward: { x: number; y: number; z: number },
     right: { x: number; y: number; z: number },
-    up: { x: number; y: number; z: number }
+    up: { x: number; y: number; z: number },
+    aa: number
   ): void {
     const data = this.data;
     if (!data) {
       return;
     }
+    const aaOffsets = aa === 4 ? AA_OFFSETS_4 : AA_OFFSETS_2;
+    const aaSampleCount = aa > 0 ? aaOffsets.length / 2 : 1;
+    const aaScratch = this.aaScratch;
     for (let py = 0; py < bufH; py += 1) {
       for (let px = 0; px < bufW; px += 1) {
-        const color = this.colorStack[0];
-        this.samplePixel(px, py, bufW, bufH, aspect, fovScale, camera, forward, right, up, color);
+        let colorR = 0;
+        let colorG = 0;
+        let colorB = 0;
+        if (aa > 0) {
+          for (let i = 0; i < aaOffsets.length; i += 2) {
+            this.samplePixel(
+              px,
+              py,
+              bufW,
+              bufH,
+              aspect,
+              fovScale,
+              camera,
+              forward,
+              right,
+              up,
+              aaScratch,
+              aaOffsets[i],
+              aaOffsets[i + 1]
+            );
+            colorR += aaScratch[0];
+            colorG += aaScratch[1];
+            colorB += aaScratch[2];
+          }
+          const invSamples = 1 / aaSampleCount;
+          colorR *= invSamples;
+          colorG *= invSamples;
+          colorB *= invSamples;
+        } else {
+          const color = this.colorStack[0];
+          this.samplePixel(px, py, bufW, bufH, aspect, fovScale, camera, forward, right, up, color);
+          colorR = color[0];
+          colorG = color[1];
+          colorB = color[2];
+        }
         const base = (py * bufW + px) * 4;
-        data[base] = clamp(Math.round(color[0] * 255), 0, 255);
-        data[base + 1] = clamp(Math.round(color[1] * 255), 0, 255);
-        data[base + 2] = clamp(Math.round(color[2] * 255), 0, 255);
+        data[base] = clamp(Math.round(colorR * 255), 0, 255);
+        data[base + 1] = clamp(Math.round(colorG * 255), 0, 255);
+        data[base + 2] = clamp(Math.round(colorB * 255), 0, 255);
         data[base + 3] = 255;
       }
     }
@@ -490,10 +705,14 @@ export class RaytraceSpheresEffect implements Effect {
     forward: { x: number; y: number; z: number },
     right: { x: number; y: number; z: number },
     up: { x: number; y: number; z: number },
-    out: Float32Array
+    out: Float32Array,
+    offsetX = 0,
+    offsetY = 0,
+    hitOut?: Uint8Array,
+    hitIndex?: number
   ): void {
-    const ndcX = ((px + 0.5) / bufW) * 2 - 1;
-    const ndcY = 1 - ((py + 0.5) / bufH) * 2;
+    const ndcX = ((px + 0.5 + offsetX) / bufW) * 2 - 1;
+    const ndcY = 1 - ((py + 0.5 + offsetY) / bufH) * 2;
     const rayX = ndcX * aspect * fovScale;
     const rayY = ndcY * fovScale;
     let dirX = forward.x + rayX * right.x + rayY * up.x;
@@ -504,7 +723,7 @@ export class RaytraceSpheresEffect implements Effect {
     dirY /= len;
     dirZ /= len;
 
-    this.traceRay(camera.x, camera.y, camera.z, dirX, dirY, dirZ, 0, out);
+    this.traceRay(camera.x, camera.y, camera.z, dirX, dirY, dirZ, 0, out, hitOut, hitIndex);
   }
 
   private traceRay(
@@ -515,11 +734,13 @@ export class RaytraceSpheresEffect implements Effect {
     dy: number,
     dz: number,
     depth: number,
-    out: Float32Array
+    out: Float32Array,
+    hitOut?: Uint8Array,
+    hitIndex?: number
   ): void {
     let hitT = Infinity;
     let hitType = -1;
-    let hitIndex = -1;
+    let hitSphereIndex = -1;
 
     for (let i = 0; i < this.sphereCount; i += 1) {
       const cx = this.spherePos[i * 3];
@@ -530,7 +751,7 @@ export class RaytraceSpheresEffect implements Effect {
       if (t !== null && t < hitT) {
         hitT = t;
         hitType = 0;
-        hitIndex = i;
+        hitSphereIndex = i;
       }
     }
 
@@ -538,7 +759,11 @@ export class RaytraceSpheresEffect implements Effect {
     if (planeT !== null && planeT < hitT) {
       hitT = planeT;
       hitType = 1;
-      hitIndex = -1;
+      hitSphereIndex = -1;
+    }
+
+    if (hitOut && hitIndex !== undefined && depth === 0) {
+      hitOut[hitIndex] = hitType === -1 ? 0 : 1;
     }
 
     if (hitType === -1) {
@@ -561,18 +786,18 @@ export class RaytraceSpheresEffect implements Effect {
     let baseB = 0.23;
     let reflectivity = this.floorReflect;
 
-    if (hitType === 0 && hitIndex >= 0) {
-      const cx = this.spherePos[hitIndex * 3];
-      const cy = this.spherePos[hitIndex * 3 + 1];
-      const cz = this.spherePos[hitIndex * 3 + 2];
-      const invRadius = 1 / this.sphereRadius[hitIndex];
+    if (hitType === 0 && hitSphereIndex >= 0) {
+      const cx = this.spherePos[hitSphereIndex * 3];
+      const cy = this.spherePos[hitSphereIndex * 3 + 1];
+      const cz = this.spherePos[hitSphereIndex * 3 + 2];
+      const invRadius = 1 / this.sphereRadius[hitSphereIndex];
       normalX = (hitX - cx) * invRadius;
       normalY = (hitY - cy) * invRadius;
       normalZ = (hitZ - cz) * invRadius;
-      baseR = this.sphereColors[hitIndex * 3];
-      baseG = this.sphereColors[hitIndex * 3 + 1];
-      baseB = this.sphereColors[hitIndex * 3 + 2];
-      reflectivity = this.sphereReflect[hitIndex];
+      baseR = this.sphereColors[hitSphereIndex * 3];
+      baseG = this.sphereColors[hitSphereIndex * 3 + 1];
+      baseB = this.sphereColors[hitSphereIndex * 3 + 2];
+      reflectivity = this.sphereReflect[hitSphereIndex];
     } else {
       const checker = (Math.floor(hitX * 1.6) + Math.floor(hitZ * 1.6)) & 1;
       const shade = checker ? 0.23 : 0.17;
@@ -594,7 +819,7 @@ export class RaytraceSpheresEffect implements Effect {
         lightX,
         lightY,
         lightZ,
-        hitIndex
+        hitSphereIndex
       )
         ? 1
         : 0;

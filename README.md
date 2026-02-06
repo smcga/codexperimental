@@ -96,7 +96,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `sphere3d` | `speed` |  |
 | `spherecloud` | `speed` |  |
 | `infinitycloud` | `speed` |  |
-| `raytrace_spheres` | `bufW`, `bufH`, `sphereCount`, `maxDepth`, `floorReflect`, `shininess`, `diffuseStrength`, `specStrength`, `ambient`, `fov`, `cellSize`, `adaptive`, `refineThreshold`, `audioReact`, `beatKick`, `scanlines`, `seed` | Low-res software raytraced spheres with reflections. |
+| `raytrace_spheres` | `quality`, `bufW`, `bufH`, `sphereCount`, `maxDepth`, `floorReflect`, `shininess`, `diffuseStrength`, `specStrength`, `ambient`, `fov`, `cellSize`, `adaptive`, `refineThreshold`, `refineGrow`, `aa`, `aaMode`, `outputSmoothing`, `forceAA`, `audioReact`, `beatKick`, `scanlines`, `seed` | Low-res software raytraced spheres with reflections. |
 | `chess` | `speed`, `showHighlights`, `startTime` |  |
 | `flyover` | `speed`, `horizon`, `seaDetail`, `waveSpeed`, `waveIntensity`, `islandCount`, `islandSeed`, `fog`, `palette`, `audioReactive` | `palette` supports `day`, `sunset`, `night`. |
 | `voxel_landscape` | `bufW`, `bufH`, `speed`, `turnRate`, `turnWobble`, `camH`, `heightBob`, `beatBump`, `fov`, `horizon`, `scale`, `maxDist`, `stepBase`, `stepGrow`, `fogStrength`, `audioReact`, `beatKick`, `scanlines`, `seed` | Heightfield voxel landscape flyover. |
