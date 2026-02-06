@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/index.ts`.
 
-Total effects: **56**.
+Total effects: **57**.
 
 ## Table of contents
 
@@ -39,6 +39,7 @@ Total effects: **56**.
 - [Effect: neon_alley](#effect-neon-alley)
 - [Effect: space_hangar](#effect-space-hangar)
 - [Effect: wireframeRide](#effect-wireframeRide)
+- [Effect: roadDrive](#effect-roadDrive)
 - [Effect: effect_evolution](#effect-effect-evolution)
 - [Effect: fluid](#effect-fluid)
 - [Effect: treegrowth](#effect-treegrowth)
@@ -81,11 +82,11 @@ Total effects: **56**.
 
 ### Common parameter patterns
 
-- `speed` (used in 32 effects)
+- `speed` (used in 33 effects)
 - `seed` (used in 21 effects)
 - `audioReact` (used in 20 effects)
 - `beatKick` (used in 13 effects)
-- `glow` (used in 6 effects)
+- `glow` (used in 7 effects)
 - `hueShift` (used in 6 effects)
 - `trail` (used in 6 effects)
 - `quality` (used in 6 effects)
@@ -1096,6 +1097,40 @@ Total effects: **56**.
 ```json
 {
   "effect": "wireframeRide",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: roadDrive
+
+- **Registry key:** `roadDrive`
+- **Implementation:** `src/renderer/effects/roadDrive.ts` (class `RoadDriveEffect`)
+- **Renderer:** hybrid
+- **Description:** Implemented by RoadDriveEffect (src/renderer/effects/roadDrive.ts).
+- **Audio features:** bass, rms
+- **Performance notes:** Hybrid WebGL2 rendering with Canvas2D blitting.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.bassReactive` | number | 0.85 | min 0, max 2 | Bass Reactive | yes |
+| `params.cameraBob` | number | 0.22 | min 0, max 1.5 | Camera Bob | yes |
+| `params.fog` | number | 0.68 | min 0, max 1 | Fog | yes |
+| `params.glow` | number | 1 | min 0.1, max 2.5 | Glow | yes |
+| `params.laneDashLength` | number | 2.8 | min 0.4, max 10 | Lane Dash Length | yes |
+| `params.laneGap` | number | 2.2 | min 0.2, max 10 | Lane Gap | yes |
+| `params.rmsReactive` | number | 0.45 | min 0, max 2 | RMS Reactive | yes |
+| `params.roadWidth` | number | 8 | min 4, max 20 | Road Width | yes |
+| `params.speed` | number | 1 | min 0.2, max 3.2 | Speed | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "roadDrive",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
