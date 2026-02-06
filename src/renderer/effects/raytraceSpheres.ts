@@ -151,8 +151,8 @@ export class RaytraceSpheresEffect implements Effect {
   }
 
   render({ ctx, width, height, time, audio, params }: EffectRenderContext): void {
-    const bufW = clamp(Math.round(params.bufW ?? 200), 80, 320);
-    const bufH = clamp(Math.round(params.bufH ?? 150), 60, 240);
+    const bufW = clamp(Math.round(params.bufW ?? 640), 80, 1024);
+    const bufH = clamp(Math.round(params.bufH ?? 480), 60, 768);
     const sphereCount = clamp(Math.round(params.sphereCount ?? 6), 2, MAX_SPHERES);
     const seed = Math.round(params.seed ?? 1337);
     const fov = clamp(params.fov ?? 60, 35, 90);
