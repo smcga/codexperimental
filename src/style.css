@@ -467,8 +467,40 @@ body,
   align-items: center;
 }
 
+.editor-param-add {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+}
+
+.editor-note {
+  font-size: 0.7rem;
+  color: rgba(215, 247, 255, 0.7);
+}
+
+.editor-automation-header {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) minmax(140px, 1fr) auto;
+  gap: 0.4rem;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: rgba(215, 247, 255, 0.7);
+  padding-bottom: 0.2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.editor-automation-actions-label {
+  text-align: right;
+}
+
 .editor-automation-row {
-  grid-template-columns: repeat(5, minmax(0, 1fr)) minmax(120px, 1fr) auto auto auto;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) minmax(140px, 1fr) auto auto auto;
+}
+
+.editor-automation-row input,
+.editor-automation-row select {
+  font-variant-numeric: tabular-nums;
 }
 
 .editor-layer {
