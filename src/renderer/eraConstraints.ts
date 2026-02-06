@@ -36,8 +36,8 @@ export function getEraConstraints(era: EraPreset, baseWidth: number, baseHeight:
   switch (era) {
     case "8bit":
       return {
-        renderWidth: 240,
-        renderHeight: 135,
+        renderWidth: Math.round(baseWidth * 0.75),
+        renderHeight: Math.round(baseHeight * 0.75),
         smoothing: false,
         palette: C64_PALETTE,
         overlayScanline: 0.2,

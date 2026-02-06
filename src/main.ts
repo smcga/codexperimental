@@ -16,6 +16,8 @@ import { coerceEffectParams, getEffectDebugConfig, getEffectDebugDefaults, Effec
 import { getWebGLStatusLabel } from "./renderer/effects/gl/webglStatus";
 import { TerminalIntroRenderer } from "./renderer/intro/terminalIntro";
 import { createExplosionState, getExplosionShake, renderExplosion } from "./renderer/overlays/explosion";
+import { createQualityState, updateQualityState } from "./renderer/qualityController";
+import { getRenderSettings } from "./renderer/renderSettings";
 import {
   getFullscreenAction,
   getIntroSkipTime,
@@ -51,8 +53,11 @@ const mobileControls = document.querySelector<HTMLDivElement>("#mobile-controls"
 const mobileDebugButton = document.querySelector<HTMLButtonElement>("#mobile-debug");
 const mobileFullscreenButton = document.querySelector<HTMLButtonElement>("#mobile-fullscreen");
 
-const releaseMode = new URLSearchParams(window.location.search).get("release") === "1";
-const editorModeFromQuery = new URLSearchParams(window.location.search).get("editor") === "1";
+const queryParams = new URLSearchParams(window.location.search);
+const releaseMode = queryParams.get("release") === "1";
+const editorModeFromQuery = queryParams.get("editor") === "1";
+const renderSettings = getRenderSettings(queryParams);
+const qualityState = createQualityState(renderSettings.qualityScale, renderSettings.autoQuality);
 
 if (!canvas || !overlay || !overlayText || !debugOverlay || !debugTimestamp || !debugTransitionSelect || !debugEraSelect) {
   throw new Error("Missing canvas or overlay element");
@@ -63,7 +68,13 @@ if (!ctx) {
   throw new Error("Unable to create 2D context");
 }
 
-const renderer = new Renderer();
+const getEffectiveBaseSize = (): { width: number; height: number } => ({
+  width: Math.max(1, Math.round(renderSettings.baseWidth * qualityState.qualityScale)),
+  height: Math.max(1, Math.round(renderSettings.baseHeight * qualityState.qualityScale))
+});
+
+let { width: effectiveBaseWidth, height: effectiveBaseHeight } = getEffectiveBaseSize();
+const renderer = new Renderer(effectiveBaseWidth, effectiveBaseHeight);
 const introRenderer = new TerminalIntroRenderer();
 const explosionState = createExplosionState();
 let audioPlayer: AudioPlayer | null = null;
@@ -75,6 +86,7 @@ let isRunning = false;
 let pendingConfig: TimelineConfig | null = null;
 let currentAudioSrc = "";
 let editorController: EditorController | null = null;
+let lastFrameTimestamp = performance.now();
 const debugState = {
   enabled: false,
   forcedEffect: null as string | null,
@@ -85,6 +97,16 @@ const debugState = {
     Object.keys(effectRegistry).map((effectName) => [effectName, getEffectDebugDefaults(effectName)])
   )
 };
+
+function applyQualityScale(): void {
+  const effectiveSize = getEffectiveBaseSize();
+  if (effectiveSize.width === effectiveBaseWidth && effectiveSize.height === effectiveBaseHeight) {
+    return;
+  }
+  effectiveBaseWidth = effectiveSize.width;
+  effectiveBaseHeight = effectiveSize.height;
+  renderer.setBaseSize(effectiveBaseWidth, effectiveBaseHeight);
+}
 
 function resize(): void {
   canvas.width = window.innerWidth;
@@ -491,6 +513,7 @@ async function startDemo(): Promise<void> {
     renderer.reset();
     isRunning = true;
     lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+    lastFrameTimestamp = performance.now();
     setOverlay("", false);
     if (!releaseMode) {
       updateDebugSkipButtonState(lastDemoTime);
@@ -512,6 +535,7 @@ async function restartDemo(): Promise<void> {
   await audioPlayer.restart();
   renderer.reset();
   lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+  lastFrameTimestamp = performance.now();
   if (!releaseMode) {
     updateDebugSkipButtonState(lastDemoTime);
   }
@@ -527,6 +551,13 @@ function loop(): void {
     isRunning = false;
     updateDebugSkipButtonState(null);
     return;
+  }
+
+  const now = performance.now();
+  const frameMs = now - lastFrameTimestamp;
+  lastFrameTimestamp = now;
+  if (updateQualityState(qualityState, frameMs, now)) {
+    applyQualityScale();
   }
 
   let demoTime = audioPlayer.currentTime + timeline.getAudioOffset();
