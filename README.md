@@ -190,6 +190,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `lens_wobbler` | `bufW`, `bufH`, `rotSpeed`, `baseScale`, `zoomAmp`, `zoomSpeed`, `scrollU`, `scrollV`, `lensRadius`, `lensStrength`, `invertRing`, `wobble`, `wobbleAmp`, `wobbleFreq`, `wobbleSpeed`, `wobbleSlice`, `audioReact`, `beatKick`, `seed`, `lensPath` | Bubble lens warp with optional jelly wobble. |
 | `shadebobs_bobs` | `mode`, `shadeCount`, `bobCount`, `shadeScale`, `blobRadius`, `trailFade`, `blend`, `hueSpeed`, `steer`, `maxSpeed`, `spriteSize`, `boingCheckers`, `bobAlpha`, `fastBlob`, `audioReact`, `beatPulseStrength`, `dirtyRects`, `seed` | Amiga-style bobs mixed with shadebobs interference. |
 | `sine_distorter` | `mode`, `amp`, `freq`, `speed`, `slice`, `phase`, `sourceScale`, `edges`, `source`, `logoText`, `audioReact`, `beatBoost`, `glow` | Wavy glass distorter (scanline or column sine shifts). |
+| `fractal_zoomer` | `setType`, `zoom`, `centerX`, `centerY`, `iterations`, `paletteSpeed`, `audioReact` | `setType` supports `mandelbrot`, `julia`, or `burningShip`. |
 | `raymarch_fractal` | `quality`, `fractal`, `cameraRadius`, `cameraHeight`, `cameraOrbitSpeed`, `paletteSpeed`, `audioReact`, `beatKick`, `fractalScale` | `fractal` supports `mandelbulb` or `mandelbox`. |
 
 #### bumpmap_plane parameters

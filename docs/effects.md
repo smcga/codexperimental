@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/index.ts`.
 
-Total effects: **57**.
+Total effects: **59**.
 
 ## Table of contents
 
@@ -64,6 +64,7 @@ Total effects: **57**.
 - [Effect: raytrace_spheres](#effect-raytrace-spheres)
 - [Effect: vga_fire](#effect-vga-fire)
 - [Effect: platformerScroll](#effect-platformerScroll)
+- [Effect: fractal_zoomer](#effect-fractal-zoomer)
 
 ## Cross-reference
 
@@ -83,11 +84,11 @@ Total effects: **57**.
 
 ### Common parameter patterns
 
-- `speed` (used in 33 effects)
+- `speed` (used in 34 effects)
 - `seed` (used in 22 effects)
-- `audioReact` (used in 21 effects)
+- `audioReact` (used in 22 effects)
 - `beatKick` (used in 14 effects)
-- `glow` (used in 6 effects)
+- `glow` (used in 7 effects)
 - `hueShift` (used in 6 effects)
 - `trail` (used in 6 effects)
 - `quality` (used in 6 effects)
@@ -2120,6 +2121,38 @@ Total effects: **57**.
 ```json
 {
   "effect": "platformerScroll",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: fractal_zoomer
+
+- **Registry key:** `fractal_zoomer`
+- **Implementation:** `src/renderer/effects/fractalZoomer.ts` (class `FractalZoomerEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by FractalZoomerEffect (src/renderer/effects/fractalZoomer.ts).
+- **Audio features:** bass, beat, beatStrength, rms
+- **Performance notes:** Uses ImageData per frame; CPU cost scales with resolution.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReact` | number | 0.55 | min 0, max 1 | Audio React | yes |
+| `params.centerX` | number | -0.72 | min -2.5, max 1.5 | Center X | yes |
+| `params.centerY` | number | 0 | min -1.8, max 1.8 | Center Y | yes |
+| `params.iterations` | number | 140 | min 24, max 600 | Iterations | yes |
+| `params.paletteSpeed` | number | 0.18 | min 0, max 2 | Palette Speed | yes |
+| `params.setType` | string | "mandelbrot" | options: mandelbrot, julia, burningShip | Set | no |
+| `params.zoom` | number | 1.6 | min 0.4, max 8 | Zoom | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "fractal_zoomer",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
