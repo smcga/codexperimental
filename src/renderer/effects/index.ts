@@ -57,6 +57,7 @@ import { BumpmapPlaneEffect } from "./bumpmapPlane";
 import { RaytraceSpheresEffect } from "./raytraceSpheres";
 import { VgaFireEffect } from "./vgaFire";
 import { PlatformerScrollEffect } from "./platformerScroll";
+import { GreetsWallEffect } from "./greetsWall";
 
 export const effectRegistry: Record<string, Effect> = {
   starfield: new StarfieldEffect(),
@@ -116,7 +117,8 @@ export const effectRegistry: Record<string, Effect> = {
   bumpmap_plane: new BumpmapPlaneEffect(),
   raytrace_spheres: new RaytraceSpheresEffect(),
   vga_fire: new VgaFireEffect(),
-  platformerScroll: new PlatformerScrollEffect()
+  platformerScroll: new PlatformerScrollEffect(),
+  greets_wall: new GreetsWallEffect()
 };
 
 export function resetEffects(): void {

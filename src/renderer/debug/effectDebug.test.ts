@@ -379,4 +379,17 @@ describe("effect debug params", () => {
       seed: 0
     });
   });
+  it("provides defaults for greets wall controls", () => {
+    expect(getEffectDebugDefaults("greets_wall")).toEqual({
+      layout: "grid",
+      transitionStyle: "slide",
+      cycleSeconds: 1.5,
+      columns: 3,
+      padding: 0.08,
+      highlightPulse: 0.65,
+      beatPulseDecay: 2.2,
+      audioReact: 0.45
+    });
+  });
+
 });

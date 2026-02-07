@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/index.ts`.
 
-Total effects: **57**.
+Total effects: **59**.
 
 ## Table of contents
 
@@ -64,6 +64,7 @@ Total effects: **57**.
 - [Effect: raytrace_spheres](#effect-raytrace-spheres)
 - [Effect: vga_fire](#effect-vga-fire)
 - [Effect: platformerScroll](#effect-platformerScroll)
+- [Effect: greets_wall](#effect-greets-wall)
 
 ## Cross-reference
 
@@ -83,11 +84,11 @@ Total effects: **57**.
 
 ### Common parameter patterns
 
-- `speed` (used in 33 effects)
+- `speed` (used in 34 effects)
 - `seed` (used in 22 effects)
-- `audioReact` (used in 21 effects)
+- `audioReact` (used in 22 effects)
 - `beatKick` (used in 14 effects)
-- `glow` (used in 6 effects)
+- `glow` (used in 7 effects)
 - `hueShift` (used in 6 effects)
 - `trail` (used in 6 effects)
 - `quality` (used in 6 effects)
@@ -2120,6 +2121,41 @@ Total effects: **57**.
 ```json
 {
   "effect": "platformerScroll",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: greets_wall
+
+- **Registry key:** `greets_wall`
+- **Implementation:** `src/renderer/effects/greetsWall.ts` (class `GreetsWallEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by GreetsWallEffect (src/renderer/effects/greetsWall.ts).
+- **Audio features:** beat, impactStrength, rms
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReact` | number | 0.45 | min 0, max 1 | Audio React | yes |
+| `params.beatPulseDecay` | number | 2.2 | min 0.2, max 8 | Beat Decay | yes |
+| `params.columns` | number | 3 | min 1, max 8 | Columns | yes |
+| `params.cycleSeconds` | number | 1.5 | min 0.35, max 6 | Cycle Seconds | yes |
+| `params.highlightPulse` | number | 0.65 | min 0, max 1.5 | Highlight Pulse | yes |
+| `params.layout` | string | "grid" | options: grid, carousel | Layout | no |
+| `params.names` | string | "Fairlight|TRSI|Spaceballs|CNCD|Mercury|TBL" | unspecified | Used in effect render logic. | no |
+| `params.padding` | number | 0.08 | min 0.02, max 0.18 | Padding | yes |
+| `params.title` | string | "GREETS" | unspecified | Used in effect render logic. | no |
+| `params.transitionStyle` | string | "slide" | options: slide, fade, pop | Transition | no |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "greets_wall",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
