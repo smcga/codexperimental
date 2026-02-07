@@ -11,6 +11,7 @@ import { TEXTURED_CUBE_DEFAULTS } from "../effects/texturedCube";
 import { SINE_DISTORTER_DEFAULTS } from "../effects/sineDistorter";
 import { GLENZ_VECTORS_DEFAULTS } from "../effects/glenzVectors";
 import { BUMPMAP_PLANE_DEFAULTS } from "../effects/bumpmapPlane";
+import { TEXTMODE_CHARSET_DEFAULTS } from "../effects/textmodeCharset";
 
 export type EffectParamValue = number | string;
 
@@ -694,6 +695,32 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("beatBoost", "Beat Boost", SINE_DISTORTER_DEFAULTS.beatBoost, { min: 0, max: 1, step: 0.05 }),
       numberControl("glow", "Glow", SINE_DISTORTER_DEFAULTS.glow, { min: 0, max: 0.3, step: 0.01 })
           ]
+  },
+  textmode_charset: {
+    title: "Textmode Charset Controls",
+    controls: [
+      numberControl("cols", "Columns", TEXTMODE_CHARSET_DEFAULTS.cols, { min: 8, max: 240, step: 1 }),
+      numberControl("rows", "Rows", TEXTMODE_CHARSET_DEFAULTS.rows, { min: 6, max: 160, step: 1 }),
+      selectControl("glyphSet", "Glyph Set", TEXTMODE_CHARSET_DEFAULTS.glyphSet, [
+        { label: "Classic", value: "classic" },
+        { label: "Dense", value: "dense" },
+        { label: "Blocks", value: "blocks" },
+        { label: "Minimal", value: " .:-=+*#%@" }
+      ]),
+      selectControl("mode", "Mode", TEXTMODE_CHARSET_DEFAULTS.mode, [
+        { label: "Plasma", value: "plasma" },
+        { label: "Noise", value: "noise" },
+        { label: "Ripple", value: "ripple" }
+      ]),
+      numberControl("speed", "Speed", TEXTMODE_CHARSET_DEFAULTS.speed, { min: 0, max: 4, step: 0.05 }),
+      selectControl("palette", "Palette", TEXTMODE_CHARSET_DEFAULTS.palette, [
+        { label: "Green", value: "green" },
+        { label: "Amber", value: "amber" },
+        { label: "Ice", value: "ice" }
+      ]),
+      toggleControl("scanlines", "Scanlines", TEXTMODE_CHARSET_DEFAULTS.scanlines),
+      numberControl("seed", "Seed", TEXTMODE_CHARSET_DEFAULTS.seed, { min: 0, max: 9999, step: 1 })
+    ]
   },
   bumpmap_plane: {
     title: "Bumpmap Plane Controls",

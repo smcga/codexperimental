@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/index.ts`.
 
-Total effects: **57**.
+Total effects: **59**.
 
 ## Table of contents
 
@@ -64,6 +64,7 @@ Total effects: **57**.
 - [Effect: raytrace_spheres](#effect-raytrace-spheres)
 - [Effect: vga_fire](#effect-vga-fire)
 - [Effect: platformerScroll](#effect-platformerScroll)
+- [Effect: textmode_charset](#effect-textmode-charset)
 
 ## Cross-reference
 
@@ -83,15 +84,15 @@ Total effects: **57**.
 
 ### Common parameter patterns
 
-- `speed` (used in 33 effects)
-- `seed` (used in 22 effects)
+- `speed` (used in 35 effects)
+- `seed` (used in 23 effects)
 - `audioReact` (used in 21 effects)
 - `beatKick` (used in 14 effects)
-- `glow` (used in 6 effects)
+- `glow` (used in 7 effects)
+- `scanlines` (used in 7 effects)
 - `hueShift` (used in 6 effects)
 - `trail` (used in 6 effects)
 - `quality` (used in 6 effects)
-- `scanlines` (used in 6 effects)
 - `bufH` (used in 6 effects)
 - `bufW` (used in 6 effects)
 - `count` (used in 5 effects)
@@ -2120,6 +2121,39 @@ Total effects: **57**.
 ```json
 {
   "effect": "platformerScroll",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: textmode_charset
+
+- **Registry key:** `textmode_charset`
+- **Implementation:** `src/renderer/effects/textmodeCharset.ts` (class `TextmodeCharsetEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by TextmodeCharsetEffect (src/renderer/effects/textmodeCharset.ts).
+- **Audio features:** bass, rms
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.cols` | number | 72 | min 8, max 240 | Columns | yes |
+| `params.glyphSet` | string | "classic" | options: classic, dense, blocks,  .:-=+*#%@ | Glyph Set | no |
+| `params.mode` | string | "plasma" | options: plasma, noise, ripple | Mode | no |
+| `params.palette` | string | "green" | options: green, amber, ice | Palette | no |
+| `params.rows` | number | 40 | min 6, max 160 | Rows | yes |
+| `params.scanlines` | boolean | true | unspecified | Scanlines | unknown |
+| `params.seed` | number | 1 | min 0, max 9999 | Seed | yes |
+| `params.speed` | number | 1 | min 0, max 4 | Speed | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "textmode_charset",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
