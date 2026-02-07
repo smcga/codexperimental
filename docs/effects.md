@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/index.ts`.
 
-Total effects: **57**.
+Total effects: **59**.
 
 ## Table of contents
 
@@ -64,6 +64,7 @@ Total effects: **57**.
 - [Effect: raytrace_spheres](#effect-raytrace-spheres)
 - [Effect: vga_fire](#effect-vga-fire)
 - [Effect: platformerScroll](#effect-platformerScroll)
+- [Effect: dotTunnel](#effect-dotTunnel)
 
 ## Cross-reference
 
@@ -83,11 +84,11 @@ Total effects: **57**.
 
 ### Common parameter patterns
 
-- `speed` (used in 33 effects)
-- `seed` (used in 22 effects)
+- `speed` (used in 35 effects)
+- `seed` (used in 23 effects)
 - `audioReact` (used in 21 effects)
 - `beatKick` (used in 14 effects)
-- `glow` (used in 6 effects)
+- `glow` (used in 8 effects)
 - `hueShift` (used in 6 effects)
 - `trail` (used in 6 effects)
 - `quality` (used in 6 effects)
@@ -2120,6 +2121,39 @@ Total effects: **57**.
 ```json
 {
   "effect": "platformerScroll",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: dotTunnel
+
+- **Registry key:** `dotTunnel`
+- **Implementation:** `src/renderer/effects/dotTunnel.ts` (class `DotTunnelEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by DotTunnelEffect (src/renderer/effects/dotTunnel.ts).
+- **Audio features:** bass, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.dotsPerRing` | number | 40 | unspecified | Used in effect render logic. | yes |
+| `params.fov` | number | 72 | unspecified | Used in effect render logic. | yes |
+| `params.glow` | number | 0.7 | unspecified | Used in effect render logic. | yes |
+| `params.palette` | number | 0 | unspecified | Used in effect render logic. | yes |
+| `params.ringCount` | number | 52 | unspecified | Used in effect render logic. | yes |
+| `params.seed` | number | 1 | unspecified | Used in effect render logic. | yes |
+| `params.speed` | number | 1 | unspecified | Used in effect render logic. | yes |
+| `params.twist` | number | 0.9 | unspecified | Used in effect render logic. | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "dotTunnel",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
