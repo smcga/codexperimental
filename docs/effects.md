@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/index.ts`.
 
-Total effects: **57**.
+Total effects: **59**.
 
 ## Table of contents
 
@@ -64,6 +64,7 @@ Total effects: **57**.
 - [Effect: raytrace_spheres](#effect-raytrace-spheres)
 - [Effect: vga_fire](#effect-vga-fire)
 - [Effect: platformerScroll](#effect-platformerScroll)
+- [Effect: kefrens_bars](#effect-kefrens-bars)
 
 ## Cross-reference
 
@@ -83,11 +84,11 @@ Total effects: **57**.
 
 ### Common parameter patterns
 
-- `speed` (used in 33 effects)
+- `speed` (used in 35 effects)
 - `seed` (used in 22 effects)
 - `audioReact` (used in 21 effects)
 - `beatKick` (used in 14 effects)
-- `glow` (used in 6 effects)
+- `glow` (used in 7 effects)
 - `hueShift` (used in 6 effects)
 - `trail` (used in 6 effects)
 - `quality` (used in 6 effects)
@@ -2120,6 +2121,38 @@ Total effects: **57**.
 ```json
 {
   "effect": "platformerScroll",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: kefrens_bars
+
+- **Registry key:** `kefrens_bars`
+- **Implementation:** `src/renderer/effects/kefrensBars.ts` (class `KefrensBarsEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by KefrensBarsEffect (src/renderer/effects/kefrensBars.ts).
+- **Audio features:** None detected
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.amp` | number | 64 | min 0, max 480 | Amplitude | yes |
+| `params.barCount` | number | 18 | min 1, max 128 | Bar Count | yes |
+| `params.barWidth` | number | 12 | min 1, max 160 | Bar Width | yes |
+| `params.freq` | number | 2.2 | min 0, max 20 | Frequency | yes |
+| `params.palette` | string | "rainbow" | options: rainbow, c64, amiga | Palette | no |
+| `params.phaseOffset` | number | 0.55 | min -6.28, max 6.28 | Phase Offset | yes |
+| `params.speed` | number | 1.4 | min -10, max 10 | Speed | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "kefrens_bars",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
