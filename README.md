@@ -61,6 +61,72 @@ Automation example:
 
 Automation supports numeric params only; non-numeric values fall back to the base params.
 
+### Timeline data schema
+
+`public/timeline.json` and `public/timeline.release.json` follow this top-level shape:
+
+```json
+{
+  "audio": { "src": "song.mp3", "offset": 0 },
+  "intro": {
+    "mode": "terminal",
+    "end": "00:54.15",
+    "theme": {
+      "bg": "#000000",
+      "fg": "#d0ffd0",
+      "accent": "#66ff66",
+      "dim": "#4c7f4c",
+      "fontFamily": "'IBM Plex Mono', monospace",
+      "fontSize": 20,
+      "lineHeight": 1.4,
+      "padding": 24,
+      "window": { "title": "boot", "chrome": true }
+    },
+    "script": [
+      { "t": "00:00", "type": "prompt", "text": "boot sequence" },
+      { "t": "00:02", "type": "type", "text": "loading...", "cps": 28 }
+    ]
+  },
+  "sections": [
+    {
+      "id": "intro-neon",
+      "start": "00:54.15",
+      "end": "01:10.00",
+      "effect": "neon",
+      "era": "future",
+      "transition": { "in": "fade", "out": "flash", "duration": 0.8 },
+      "params": { "speed": 1.2 },
+      "automation": [
+        { "param": "speed", "from": 0.8, "to": 1.4, "t0": "00:54.15", "t1": "01:10.00", "ease": "linear" }
+      ],
+      "layers": [
+        { "effect": "rain", "opacity": 0.5, "blend": "screen", "params": { "intensity": 0.9 } }
+      ]
+    }
+  ],
+  "textCues": [
+    {
+      "id": "cue-1",
+      "start": "01:02.0",
+      "end": "01:06.0",
+      "text": "HELLO WORLD",
+      "x": 0.5,
+      "y": 0.72,
+      "align": "center",
+      "size": 42,
+      "color": "#ffffff",
+      "effects": { "glitchIn": true, "shadow": true }
+    }
+  ]
+}
+```
+
+- `audio`: soundtrack path and optional timeline offset in seconds.
+- `intro`: terminal intro mode, end timestamp, visual theme, and scripted terminal events (`prompt`, `type`, `enter`, `output`, `ascii`, `clear`).
+- `sections`: ordered effect schedule with IDs, timing, effect key, optional era preset (`8bit`, `16bit`, `ps1`, `pcdemo`, `future`), transitions, parameter overrides, optional automations, and optional layered effects.
+- `textCues`: optional overlay callouts with timing, position, typography, and optional per-cue visual effects (glitch, shadow, scanline mask, and typewriter speed).
+- Time fields accept either seconds (`number`) or timeline strings (`mm:ss` / `mm:ss.s`).
+
 ### Effect catalog
 
 Each timeline section `effect` maps to one of the entries below. Include any of the parameters in a section `params` object; omit or set to defaults to use the built-in values.
@@ -114,6 +180,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `glenz_vectors` | `model`, `instances`, `camDist`, `focal`, `rotXSpeed`, `rotYSpeed`, `rotZSpeed`, `baseHue`, `hueSpeed`, `sat`, `lightness`, `faceAlpha`, `edge`, `edgeAlpha`, `lineWidth`, `trailFade`, `sortFaces`, `audioReact`, `beatKick`, `seed` | `model` supports `cube`, `octa`, `icosa`; `sortFaces` supports `none` or `backToFront`. |
 | `synthwaveSunset` | `horizon`, `sunRadius`, `stripeHeight`, `stripeGap`, `seaSpeed`, `starCount`, `glow`, `scanlines`, `audioReactive` |  |
 | `rain` | `intensity`, `wind`, `speed`, `streakLength`, `splash`, `hue`, `seed` |  |
+| `platformerScroll` | `speed`, `seed`, `tileSize`, `groundRatio`, `parallaxFar`, `parallaxMid`, `parallaxFront`, `audioReact`, `beatKick`, `platformRate`, `platformMaxSteps` | Deterministic side-scrolling platformer parallax scene with looping platforms and runner silhouette. |
 | `lightning` | `trigger`, `chancePerSecond`, `cooldown`, `flashDuration`, `bolt`, `branches`, `seed` | `trigger` supports `beat`, `random`, `both`. |
 | `effect_evolution` | `density`, `motion`, `warp`, `trail`, `seed` | Reinterprets the same lattice across eras. |
 | `treegrowth` | `speed`, `levels`, `trunkHeight`, `branchScale`, `branchAngle`, `trunkWidth`, `sway`, `leafSize`, `jitter`, `seed`, `growth` | `growth` overrides the automatic growth cycle (0-1). |

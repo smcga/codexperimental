@@ -72,5 +72,10 @@ describe("README effect catalog", () => {
     const section = readAudioTimelineSection();
     expect(section).toContain("`neon_alley`");
     expect(section).toContain("`space_hangar`");
+    expect(section).toContain("### Timeline data schema");
+    expect(section).toContain('"audio"');
+    expect(section).toContain('"intro"');
+    expect(section).toContain('"sections"');
+    expect(section).toContain('"textCues"');
   });
 });

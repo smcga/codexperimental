@@ -63,6 +63,7 @@ Total effects: **57**.
 - [Effect: bumpmap_plane](#effect-bumpmap-plane)
 - [Effect: raytrace_spheres](#effect-raytrace-spheres)
 - [Effect: vga_fire](#effect-vga-fire)
+- [Effect: platformerScroll](#effect-platformerScroll)
 
 ## Cross-reference
 
@@ -83,10 +84,10 @@ Total effects: **57**.
 ### Common parameter patterns
 
 - `speed` (used in 33 effects)
-- `seed` (used in 21 effects)
-- `audioReact` (used in 20 effects)
-- `beatKick` (used in 13 effects)
-- `glow` (used in 7 effects)
+- `seed` (used in 22 effects)
+- `audioReact` (used in 21 effects)
+- `beatKick` (used in 14 effects)
+- `glow` (used in 6 effects)
 - `hueShift` (used in 6 effects)
 - `trail` (used in 6 effects)
 - `quality` (used in 6 effects)
@@ -2083,6 +2084,42 @@ Total effects: **57**.
 ```json
 {
   "effect": "vga_fire",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: platformerScroll
+
+- **Registry key:** `platformerScroll`
+- **Implementation:** `src/renderer/effects/platformerScroll.ts` (class `PlatformerScrollEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by PlatformerScrollEffect (src/renderer/effects/platformerScroll.ts).
+- **Audio features:** beat, rms
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReact` | number | 0.35 | unspecified | Used in effect render logic. | yes |
+| `params.beatKick` | number | 0.35 | unspecified | Used in effect render logic. | yes |
+| `params.groundRatio` | number | 0.24 | unspecified | Used in effect render logic. | yes |
+| `params.parallaxFar` | number | 0.2 | unspecified | Used in effect render logic. | yes |
+| `params.parallaxFront` | number | 1 | unspecified | Used in effect render logic. | yes |
+| `params.parallaxMid` | number | 0.5 | unspecified | Used in effect render logic. | yes |
+| `params.platformMaxSteps` | number | 5 | unspecified | Used in effect render logic. | yes |
+| `params.platformRate` | number | 0.55 | unspecified | Used in effect render logic. | yes |
+| `params.seed` | number | 1337 | unspecified | Used in effect render logic. | yes |
+| `params.speed` | number | 140 | unspecified | Used in effect render logic. | yes |
+| `params.tileSize` | number | 16 | unspecified | Used in effect render logic. | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "platformerScroll",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
