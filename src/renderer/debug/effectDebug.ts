@@ -3,6 +3,7 @@ import { NEON_ALLEY_DEFAULTS } from "../effects/gl/neonAlleyEffect";
 import { SPACE_HANGAR_DEFAULTS } from "../effects/gl/spaceHangarEffect";
 import { DEFAULT_FLYOVER_PARAMS, coerceFlyoverParams } from "./flyoverDebug";
 import { WIREFRAME_RIDE_DEFAULTS } from "../effects/wireframeRide";
+import { ROAD_DRIVE_DEFAULTS } from "../effects/roadDrive";
 import { BORDER_MULTIPLEX_DEFAULTS } from "../effects/borderMultiplexEffect";
 import { ENVMAP_DONUT_DEFAULTS } from "../effects/envmapDonut";
 import { VOXEL_LANDSCAPE_DEFAULTS } from "../effects/voxelLandscape";
@@ -433,6 +434,20 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("bassReactive", "Bass Reactive", WIREFRAME_RIDE_DEFAULTS.bassReactive, { min: 0, max: 1.5, step: 0.05 }),
       numberControl("rmsReactive", "RMS Reactive", WIREFRAME_RIDE_DEFAULTS.rmsReactive, { min: 0, max: 1.5, step: 0.05 }),
       toggleControl("sun", "Sun", WIREFRAME_RIDE_DEFAULTS.sun === 1)
+    ]
+  },
+  roadDrive: {
+    title: "Road Drive (WebGL) Controls",
+    controls: [
+      numberControl("speed", "Speed", ROAD_DRIVE_DEFAULTS.speed, { min: 0.2, max: 3.2, step: 0.05 }),
+      numberControl("roadWidth", "Road Width", ROAD_DRIVE_DEFAULTS.roadWidth, { min: 4, max: 20, step: 0.25 }),
+      numberControl("laneDashLength", "Lane Dash Length", ROAD_DRIVE_DEFAULTS.laneDashLength, { min: 0.4, max: 10, step: 0.1 }),
+      numberControl("laneGap", "Lane Gap", ROAD_DRIVE_DEFAULTS.laneGap, { min: 0.2, max: 10, step: 0.1 }),
+      numberControl("fog", "Fog", ROAD_DRIVE_DEFAULTS.fog, { min: 0, max: 1, step: 0.01 }),
+      numberControl("glow", "Glow", ROAD_DRIVE_DEFAULTS.glow, { min: 0.1, max: 2.5, step: 0.05 }),
+      numberControl("cameraBob", "Camera Bob", ROAD_DRIVE_DEFAULTS.cameraBob, { min: 0, max: 1.5, step: 0.01 }),
+      numberControl("bassReactive", "Bass Reactive", ROAD_DRIVE_DEFAULTS.bassReactive, { min: 0, max: 2, step: 0.05 }),
+      numberControl("rmsReactive", "RMS Reactive", ROAD_DRIVE_DEFAULTS.rmsReactive, { min: 0, max: 2, step: 0.05 })
     ]
   },
   shadebobs_bobs: {

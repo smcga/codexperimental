@@ -25,7 +25,11 @@ import {
   getRelativeSeekTime,
   getSecondHalfSkipTime
 } from "./controls";
-import { shouldShowEffectPanel } from "./debug/debugPanel";
+import {
+  getDebugEffectSelectorOptions,
+  getDebugEffectSelectorValue,
+  shouldShowEffectPanel
+} from "./debug/debugPanel";
 import { applyEraOverride, applyEraOverrideToTransition } from "./debug/eraOverride";
 import { createEditorRoot, EditorController } from "./editor/EditorRoot";
 import { fetchViews, registerViewOncePerSession } from "./viewCounter";
@@ -38,7 +42,7 @@ const debugTimestamp = document.querySelector<HTMLSpanElement>("#debug-timestamp
 const debugWebglStatus = document.querySelector<HTMLSpanElement>("#debug-webgl-status");
 const debugTransitionSelect = document.querySelector<HTMLSelectElement>("#debug-transition");
 const debugEraSelect = document.querySelector<HTMLSelectElement>("#debug-era");
-const debugEffectsContainer = document.querySelector<HTMLDivElement>("#debug-effects");
+const debugEffectSelect = document.querySelector<HTMLSelectElement>("#debug-effect-select");
 const debugEffectPanel = document.querySelector<HTMLDivElement>("#debug-effect-panel");
 const debugEffectTitle = document.querySelector<HTMLDivElement>("#debug-effect-title");
 const debugEffectControls = document.querySelector<HTMLDivElement>("#debug-effect-controls");
@@ -253,31 +257,26 @@ function updateDebugSkipButtonState(demoTime: number | null): void {
   }
 }
 
-function createEffectButtons(): void {
-  if (!debugEffectsContainer) {
+function createEffectSelector(): void {
+  if (!debugEffectSelect) {
     return;
   }
-  debugEffectsContainer.innerHTML = "";
-  const timelineButton = document.createElement("button");
-  timelineButton.type = "button";
-  timelineButton.textContent = "timeline";
-  timelineButton.addEventListener("click", () => {
-    debugState.forcedEffect = null;
-    updateEffectButtonStates();
-  });
-  debugEffectsContainer.appendChild(timelineButton);
 
-  Object.keys(effectRegistry).forEach((effectName) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.textContent = effectName;
-    button.addEventListener("click", () => {
-      debugState.forcedEffect = effectName;
-      updateEffectButtonStates();
-    });
-    debugEffectsContainer.appendChild(button);
+  debugEffectSelect.innerHTML = "";
+
+  getDebugEffectSelectorOptions(Object.keys(effectRegistry)).forEach((effectName) => {
+    const option = document.createElement("option");
+    option.value = effectName;
+    option.textContent = effectName;
+    debugEffectSelect.appendChild(option);
   });
-  updateEffectButtonStates();
+
+  debugEffectSelect.addEventListener("change", () => {
+    debugState.forcedEffect = debugEffectSelect.value === "timeline" ? null : debugEffectSelect.value;
+    updateEffectSelectorState();
+  });
+
+  updateEffectSelectorState();
 }
 
 function syncEffectInputs(effectName: string, controls: EffectParamControl[]): void {
@@ -401,17 +400,10 @@ function updateEffectPanelVisibility(): void {
   }
 }
 
-function updateEffectButtonStates(): void {
-  if (!debugEffectsContainer) {
-    return;
+function updateEffectSelectorState(): void {
+  if (debugEffectSelect) {
+    debugEffectSelect.value = getDebugEffectSelectorValue(debugState.forcedEffect);
   }
-  const buttons = Array.from(debugEffectsContainer.querySelectorAll<HTMLButtonElement>("button"));
-  buttons.forEach((button) => {
-    const isActive =
-      (button.textContent === "timeline" && debugState.forcedEffect === null) ||
-      button.textContent === debugState.forcedEffect;
-    button.classList.toggle("active", isActive);
-  });
   updateEffectPanelVisibility();
 }
 
@@ -476,7 +468,7 @@ if (!releaseMode && debugSkipForwardButton) {
 }
 
 if (!releaseMode) {
-  createEffectButtons();
+  createEffectSelector();
   setDebugOverlayVisible(false);
   updateDebugSkipButtonState(null);
   if (editorRoot) {

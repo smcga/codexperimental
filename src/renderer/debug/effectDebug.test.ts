@@ -87,6 +87,20 @@ describe("effect debug params", () => {
     });
   });
 
+  it("provides defaults for road drive controls", () => {
+    expect(getEffectDebugDefaults("roadDrive")).toEqual({
+      speed: 1,
+      roadWidth: 8,
+      laneDashLength: 2.8,
+      laneGap: 2.2,
+      fog: 0.68,
+      glow: 1,
+      cameraBob: 0.22,
+      bassReactive: 0.85,
+      rmsReactive: 0.45
+    });
+  });
+
   it("provides defaults for tree growth controls", () => {
     expect(getEffectDebugDefaults("treegrowth")).toEqual({
       speed: 0.18,
