@@ -64,6 +64,7 @@ Total effects: **59**.
 - [Effect: raytrace_spheres](#effect-raytrace-spheres)
 - [Effect: vga_fire](#effect-vga-fire)
 - [Effect: platformerScroll](#effect-platformerScroll)
+- [Effect: kefrens_bars](#effect-kefrens-bars)
 - [Effect: dotTunnel](#effect-dotTunnel)
 
 ## Cross-reference
@@ -2149,14 +2150,25 @@ Total effects: **59**.
 | `params.speed` | number | 1 | unspecified | Used in effect render logic. | yes |
 | `params.twist` | number | 0.9 | unspecified | Used in effect render logic. | yes |
 
-### Minimal layer usage
+## Effect: kefrens_bars
 
-```json
-{
-  "effect": "dotTunnel",
-  "opacity": 1,
-  "blend": "source-over",
-  "params": {}
-}
-```
+- **Registry key:** `kefrens_bars`
+- **Implementation:** `src/renderer/effects/kefrensBars.ts` (class `KefrensBarsEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by KefrensBarsEffect (src/renderer/effects/kefrensBars.ts).
+- **Audio features:** None detected
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.amp` | number | 64 | min 0, max 480 | Amplitude | yes |
+| `params.barCount` | number | 18 | min 1, max 128 | Bar Count | yes |
+| `params.barWidth` | number | 12 | min 1, max 160 | Bar Width | yes |
+| `params.freq` | number | 2.2 | min 0, max 20 | Frequency | yes |
+| `params.palette` | string | "rainbow" | options: rainbow, c64, amiga | Palette | no |
+| `params.phaseOffset` | number | 0.55 | min -6.28, max 6.28 | Phase Offset | yes |
+| `params.speed` | number | 1.4 | min -10, max 10 | Speed | yes |
+
+
 
