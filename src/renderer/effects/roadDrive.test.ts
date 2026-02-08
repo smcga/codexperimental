@@ -20,6 +20,9 @@ describe("roadDrive helpers", () => {
         fog: 1.5,
         glow: 0,
         cameraBob: -2,
+        curveStrength: 99,
+        curveFrequency: 0,
+        curveSpeed: -3,
         bassReactive: 5,
         rmsReactive: -3
       })
@@ -31,6 +34,9 @@ describe("roadDrive helpers", () => {
       fog: 1,
       glow: 0.1,
       cameraBob: 0,
+      curveStrength: 6,
+      curveFrequency: 0.01,
+      curveSpeed: 0,
       bassReactive: 2,
       rmsReactive: 0
     });

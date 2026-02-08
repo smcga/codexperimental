@@ -1124,6 +1124,9 @@ Total effects: **63**.
 | --- | --- | --- | --- | --- | --- |
 | `params.bassReactive` | number | 0.85 | min 0, max 2 | Bass Reactive | yes |
 | `params.cameraBob` | number | 0.22 | min 0, max 1.5 | Camera Bob | yes |
+| `params.curveFrequency` | number | 0.06 | min 0.01, max 0.2 | Curve Frequency | yes |
+| `params.curveSpeed` | number | 1.25 | min 0, max 4 | Curve Speed | yes |
+| `params.curveStrength` | number | 1.4 | min 0, max 6 | Curve Strength | yes |
 | `params.fog` | number | 0.68 | min 0, max 1 | Fog | yes |
 | `params.glow` | number | 1 | min 0.1, max 2.5 | Glow | yes |
 | `params.laneDashLength` | number | 2.8 | min 0.4, max 10 | Lane Dash Length | yes |
