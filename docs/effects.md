@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/index.ts`.
 
-Total effects: **63**.
+Total effects: **64**.
 
 ## Table of contents
 
@@ -69,6 +69,7 @@ Total effects: **63**.
 - [Effect: greets_wall](#effect-greets-wall)
 - [Effect: dotTunnel](#effect-dotTunnel)
 - [Effect: textmode_charset](#effect-textmode-charset)
+- [Effect: moire_grid](#effect-moire-grid)
 
 ## Cross-reference
 
@@ -88,18 +89,18 @@ Total effects: **63**.
 
 ### Common parameter patterns
 
-- `speed` (used in 37 effects)
+- `speed` (used in 38 effects)
 - `seed` (used in 24 effects)
-- `audioReact` (used in 23 effects)
+- `audioReact` (used in 24 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 8 effects)
-- `palette` (used in 7 effects)
+- `palette` (used in 8 effects)
 - `scanlines` (used in 7 effects)
+- `lineWidth` (used in 6 effects)
 - `hueShift` (used in 6 effects)
 - `trail` (used in 6 effects)
 - `quality` (used in 6 effects)
 - `bufH` (used in 6 effects)
-- `bufW` (used in 6 effects)
 
 ## Effects
 
@@ -2298,6 +2299,38 @@ Total effects: **63**.
 ```json
 {
   "effect": "textmode_charset",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: moire_grid
+
+- **Registry key:** `moire_grid`
+- **Implementation:** `src/renderer/effects/moireGridEffect.ts` (class `MoireGridEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by MoireGridEffect (src/renderer/effects/moireGridEffect.ts).
+- **Audio features:** bass, beat, rms
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReact` | number | 0.35 | min 0, max 1 | Audio React | yes |
+| `params.intensity` | number | 0.7 | min 0.1, max 1 | Intensity | yes |
+| `params.lineWidth` | number | 1.5 | min 0.5, max 12 | Line Width | yes |
+| `params.palette` | string | "cyan" | options: cyan, magenta, amber | Palette | no |
+| `params.spacing` | number | 18 | min 6, max 80 | Spacing | yes |
+| `params.speed` | number | 1 | min -6, max 6 | Speed | yes |
+| `params.warp` | number | 14 | min 0, max 120 | Warp | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "moire_grid",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
