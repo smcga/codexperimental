@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { getDebugEffectSelectorOptions, getDebugEffectSelectorValue, shouldShowEffectPanel } from "./debugPanel";
+import fs from "node:fs";
+import path from "node:path";
 
 describe("shouldShowEffectPanel", () => {
   it("shows the panel only when debug is enabled and an effect is selected", () => {
@@ -18,5 +20,13 @@ describe("debug effect selector helpers", () => {
 
   it("prepends timeline to effect options", () => {
     expect(getDebugEffectSelectorOptions(["starfield", "roadDrive"])).toEqual(["timeline", "starfield", "roadDrive"]);
+  });
+
+  it("includes greets_wall from the effect registry source", () => {
+    const registryPath = path.resolve(process.cwd(), "src/renderer/effects/index.ts");
+    const registrySource = fs.readFileSync(registryPath, "utf-8");
+    const keys = [...registrySource.matchAll(/^\s*([a-zA-Z0-9_]+)\s*:/gm)].map((match) => match[1]);
+    const options = getDebugEffectSelectorOptions(keys);
+    expect(options).toContain("greets_wall");
   });
 });

@@ -11,6 +11,7 @@ import { TEXTURED_CUBE_DEFAULTS } from "../effects/texturedCube";
 import { SINE_DISTORTER_DEFAULTS } from "../effects/sineDistorter";
 import { GLENZ_VECTORS_DEFAULTS } from "../effects/glenzVectors";
 import { BUMPMAP_PLANE_DEFAULTS } from "../effects/bumpmapPlane";
+import { GREETS_WALL_DEFAULTS } from "../effects/greetsWall";
 
 export type EffectParamValue = number | string;
 
@@ -528,6 +529,26 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("audioReact", "Audio React", 0.6, { min: 0, max: 1, step: 0.05 }),
       numberControl("beatKick", "Beat Kick", 0.5, { min: 0, max: 1, step: 0.05 }),
       numberControl("fractalScale", "Fractal Scale", 1.0, { min: 0.4, max: 2.2, step: 0.05 })
+    ]
+  },
+  greets_wall: {
+    title: "Greets Wall Controls",
+    controls: [
+      selectControl("layout", "Layout", GREETS_WALL_DEFAULTS.layout, [
+        { label: "Grid", value: "grid" },
+        { label: "Carousel", value: "carousel" }
+      ]),
+      selectControl("transitionStyle", "Transition", GREETS_WALL_DEFAULTS.transitionStyle, [
+        { label: "Slide", value: "slide" },
+        { label: "Fade", value: "fade" },
+        { label: "Pop", value: "pop" }
+      ]),
+      numberControl("cycleSeconds", "Cycle Seconds", GREETS_WALL_DEFAULTS.cycleSeconds, { min: 0.35, max: 6, step: 0.05 }),
+      numberControl("columns", "Columns", GREETS_WALL_DEFAULTS.columns, { min: 1, max: 8, step: 1 }),
+      numberControl("padding", "Padding", GREETS_WALL_DEFAULTS.padding, { min: 0.02, max: 0.18, step: 0.01 }),
+      numberControl("highlightPulse", "Highlight Pulse", GREETS_WALL_DEFAULTS.highlightPulse, { min: 0, max: 1.5, step: 0.05 }),
+      numberControl("beatPulseDecay", "Beat Decay", GREETS_WALL_DEFAULTS.beatPulseDecay, { min: 0.2, max: 8, step: 0.1 }),
+      numberControl("audioReact", "Audio React", GREETS_WALL_DEFAULTS.audioReact, { min: 0, max: 1, step: 0.05 })
     ]
   },
   treegrowth: {

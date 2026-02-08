@@ -227,6 +227,28 @@
       ]
     },
     {
+      "id": "greets-wall-showcase",
+      "start": "01:13.0",
+      "end": "01:15.0",
+      "effect": "greets_wall",
+      "era": "16bit",
+      "transition": {
+        "in": "fade",
+        "out": "flash",
+        "duration": 0.18
+      },
+      "params": {
+        "layout": "grid",
+        "transitionStyle": "pop",
+        "names": ["Fairlight", "TRSI", "Spaceballs", "CNCD", "Mercury", "TBL", "Abyss", "Scoopex"],
+        "columns": 4,
+        "cycleSeconds": 0.5,
+        "highlightPulse": 0.9,
+        "audioReact": 0.5,
+        "title": "GREETS WALL"
+      }
+    },
+    {
       "id": "era8bit-equalizer-a",
       "start": "01:15.0",
       "end": "01:16.0",
