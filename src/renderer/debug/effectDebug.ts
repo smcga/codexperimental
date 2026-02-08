@@ -451,7 +451,14 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("glow", "Glow", ROAD_DRIVE_DEFAULTS.glow, { min: 0.1, max: 2.5, step: 0.05 }),
       numberControl("cameraBob", "Camera Bob", ROAD_DRIVE_DEFAULTS.cameraBob, { min: 0, max: 1.5, step: 0.01 }),
       numberControl("bassReactive", "Bass Reactive", ROAD_DRIVE_DEFAULTS.bassReactive, { min: 0, max: 2, step: 0.05 }),
-      numberControl("rmsReactive", "RMS Reactive", ROAD_DRIVE_DEFAULTS.rmsReactive, { min: 0, max: 2, step: 0.05 })
+      numberControl("rmsReactive", "RMS Reactive", ROAD_DRIVE_DEFAULTS.rmsReactive, { min: 0, max: 2, step: 0.05 }),
+      numberControl("curveAmount", "Curve Amount", ROAD_DRIVE_DEFAULTS.curveAmount, { min: 0, max: 3, step: 0.01 }),
+      numberControl("curveFreq", "Curve Freq", ROAD_DRIVE_DEFAULTS.curveFreq, { min: 0.005, max: 0.12, step: 0.001 }),
+      numberControl("curveTimeSpeed", "Curve Time Speed", ROAD_DRIVE_DEFAULTS.curveTimeSpeed, { min: 0, max: 1, step: 0.01 }),
+      numberControl("curveDampenNear", "Curve Dampen Near", ROAD_DRIVE_DEFAULTS.curveDampenNear, { min: 0, max: 1, step: 0.01 }),
+      numberControl("lampSpacing", "Lamp Spacing", ROAD_DRIVE_DEFAULTS.lampSpacing, { min: 3, max: 30, step: 0.1 }),
+      numberControl("lampIntensity", "Lamp Intensity", ROAD_DRIVE_DEFAULTS.lampIntensity, { min: 0, max: 3, step: 0.01 }),
+      numberControl("lampReactive", "Lamp Reactive", ROAD_DRIVE_DEFAULTS.lampReactive, { min: 0, max: 2, step: 0.01 })
     ]
   },
   shadebobs_bobs: {

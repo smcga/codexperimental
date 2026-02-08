@@ -16,6 +16,10 @@ uniform float u_fov;
 uniform float u_aspect;
 uniform float u_rms;
 uniform float u_rmsReactive;
+uniform float u_curveAmount;
+uniform float u_curveFreq;
+uniform float u_curveTimeSpeed;
+uniform float u_curveDampenNear;
 
 out float v_depth;
 out float v_trackZ;
@@ -23,10 +27,32 @@ out float v_trackX;
 
 void main() {
   float zOffset = u_time * u_speed * 30.0;
-  float wrappedZ = mod(a_position.y + zOffset, u_trackDepth);
-  float bob = sin(u_time * 2.4) * u_cameraBob * (0.5 + 0.5 * u_rms * u_rmsReactive);
+  float z = mod(a_position.y + zOffset, u_trackDepth);
+  float depth = z / max(u_trackDepth, 0.001);
+  float bendFactor = smoothstep(0.0, 1.0, depth);
+  bendFactor *= smoothstep(0.10, 0.40, depth);
+  bendFactor = mix(bendFactor * u_curveDampenNear, bendFactor, smoothstep(0.12, 0.45, depth));
 
-  vec3 pos = vec3(a_position.x, -0.35 - bob, -(wrappedZ + 0.6));
+  float phase = u_time * u_curveTimeSpeed + z * u_curveFreq;
+  float centerX = u_curveAmount * (sin(phase) + 0.35 * sin(phase * 0.47 + 1.7));
+  centerX *= bendFactor;
+
+  float dXdz = u_curveAmount * (
+    cos(phase) * u_curveFreq
+    + 0.35 * cos(phase * 0.47 + 1.7) * (u_curveFreq * 0.47)
+  );
+  dXdz *= bendFactor;
+  float yaw = atan(dXdz);
+  float c = cos(yaw);
+  float s = sin(yaw);
+
+  float xLocal = a_position.x;
+  float zLocal = z;
+  float xWorld = centerX + xLocal * c;
+  float zWorld = zLocal - xLocal * s;
+
+  float bob = sin(u_time * 2.4) * u_cameraBob * (0.5 + 0.5 * u_rms * u_rmsReactive);
+  vec3 pos = vec3(xWorld, -0.30 - bob, -(zWorld + 0.6));
 
   float nearPlane = 0.1;
   float farPlane = u_trackDepth * 2.4;
@@ -38,9 +64,9 @@ void main() {
 
   gl_Position = vec4(pos.x * f / u_aspect, pos.y * f, clipZ, clipW);
 
-  v_depth = wrappedZ / max(u_trackDepth, 0.001);
-  v_trackZ = wrappedZ;
-  v_trackX = a_position.x;
+  v_depth = depth;
+  v_trackZ = zWorld;
+  v_trackX = xWorld;
 }
 `;
 
@@ -62,6 +88,9 @@ uniform float u_bass;
 uniform float u_rms;
 uniform float u_bassReactive;
 uniform float u_rmsReactive;
+uniform float u_lampSpacing;
+uniform float u_lampIntensity;
+uniform float u_lampReactive;
 
 out vec4 outColor;
 
@@ -80,13 +109,11 @@ void main() {
   float dashPhase = mod(v_trackZ + u_time * u_speed * 12.0, cycle);
   float dashMask = 1.0 - step(u_laneDashLength, dashPhase);
   vec3 laneColor = vec3(1.0, 0.95, 0.75);
-  color = mix(color, laneColor, centerMask * dashMask);
 
   float edgeBand = 0.03 + roadHalf * 0.03;
   float edgeDistance = abs(absX - roadHalf);
   float edgeLine = 1.0 - smoothstep(edgeBand, edgeBand * 4.0, edgeDistance);
   vec3 edgeColor = vec3(0.8, 0.9, 1.0) * (0.7 + 0.8 * u_glow);
-  color += edgeColor * edgeLine;
 
   float railDistance = abs(absX - (roadHalf + 0.8));
   float rail = 1.0 - smoothstep(0.06, 0.45, railDistance);
@@ -95,12 +122,38 @@ void main() {
   vec3 railColor = vec3(0.2, 0.65, 1.0) * (0.5 + u_glow) * bassLight * lightPulse;
   color += railColor * rail;
 
+  float lampOffset = 1.6;
+  float lampCycle = max(3.0, u_lampSpacing);
+  float lampPhase = mod(v_trackZ + u_time * u_speed * 12.0, lampCycle);
+  float lampOn = 1.0 - smoothstep(0.0, lampCycle * 0.15, lampPhase);
+  float postMask = 1.0 - smoothstep(0.06, 0.22, abs(absX - (roadHalf + lampOffset)));
+  float lampDepth = 1.0 - smoothstep(0.15, 1.0, depth);
+  float lampBoost = 1.0 + clamp(u_bass * u_lampReactive, 0.0, 2.0);
+  float lampStrength = u_lampIntensity * lampBoost * lampDepth;
+  vec3 lampColor = vec3(1.0, 0.88, 0.62);
+
+  float post = postMask * lampOn * lampStrength;
+  color += lampColor * post * 0.36;
+
+  float lampHead = postMask * exp(-pow(lampPhase / max(0.001, lampCycle * 0.10), 2.0)) * lampStrength;
+  color += lampColor * lampHead * (0.55 + 0.35 * u_glow);
+
+  float roadPoolX = exp(-pow((absX - (roadHalf - 0.2)) * 2.8, 2.0));
+  float roadPool = roadPoolX * exp(-pow(lampPhase / max(0.001, lampCycle * 0.16), 2.0)) * lampStrength;
+  color += lampColor * roadPool * 0.2;
+
   float horizon = smoothstep(0.55, 1.0, depth);
   color += vec3(0.32, 0.12, 0.45) * horizon * (0.4 + 0.6 * u_glow);
 
   float fogPulse = 0.85 + u_rms * u_rmsReactive * 0.5;
   float fog = smoothstep(0.22, 1.0, depth) * u_fog * fogPulse;
   color = mix(color, vec3(0.09, 0.04, 0.12), fog);
+
+  float nearMask = smoothstep(0.0, 0.05, depth);
+  float laneContribution = centerMask * dashMask * nearMask;
+  color = mix(color, laneColor, laneContribution);
+  color += edgeColor * edgeLine * mix(0.4, 1.0, nearMask);
+  color *= mix(0.84, 1.0, nearMask);
 
   float vignette = smoothstep(0.0, roadHalf + 3.4, absX);
   color *= mix(1.0, 0.45, vignette * 0.35);
@@ -118,7 +171,14 @@ export const ROAD_DRIVE_DEFAULTS = {
   glow: 1.0,
   cameraBob: 0.22,
   bassReactive: 0.85,
-  rmsReactive: 0.45
+  rmsReactive: 0.45,
+  curveAmount: 1.2,
+  curveFreq: 0.035,
+  curveTimeSpeed: 0.18,
+  curveDampenNear: 0.35,
+  lampSpacing: 9.0,
+  lampIntensity: 1.0,
+  lampReactive: 0.45
 };
 
 export type RoadDriveParams = {
@@ -131,6 +191,13 @@ export type RoadDriveParams = {
   cameraBob: number;
   bassReactive: number;
   rmsReactive: number;
+  curveAmount: number;
+  curveFreq: number;
+  curveTimeSpeed: number;
+  curveDampenNear: number;
+  lampSpacing: number;
+  lampIntensity: number;
+  lampReactive: number;
 };
 
 const toFiniteNumber = (value: unknown, fallback: number): number => {
@@ -150,7 +217,14 @@ export function normalizeRoadDriveParams(params: Record<string, number>): RoadDr
     glow: clamp(toFiniteNumber(params.glow, ROAD_DRIVE_DEFAULTS.glow), 0.1, 2.5),
     cameraBob: clamp(toFiniteNumber(params.cameraBob, ROAD_DRIVE_DEFAULTS.cameraBob), 0, 1.5),
     bassReactive: clamp(toFiniteNumber(params.bassReactive, ROAD_DRIVE_DEFAULTS.bassReactive), 0, 2),
-    rmsReactive: clamp(toFiniteNumber(params.rmsReactive, ROAD_DRIVE_DEFAULTS.rmsReactive), 0, 2)
+    rmsReactive: clamp(toFiniteNumber(params.rmsReactive, ROAD_DRIVE_DEFAULTS.rmsReactive), 0, 2),
+    curveAmount: clamp(toFiniteNumber(params.curveAmount, ROAD_DRIVE_DEFAULTS.curveAmount), 0, 3),
+    curveFreq: clamp(toFiniteNumber(params.curveFreq, ROAD_DRIVE_DEFAULTS.curveFreq), 0.005, 0.12),
+    curveTimeSpeed: clamp(toFiniteNumber(params.curveTimeSpeed, ROAD_DRIVE_DEFAULTS.curveTimeSpeed), 0, 1),
+    curveDampenNear: clamp(toFiniteNumber(params.curveDampenNear, ROAD_DRIVE_DEFAULTS.curveDampenNear), 0, 1),
+    lampSpacing: clamp(toFiniteNumber(params.lampSpacing, ROAD_DRIVE_DEFAULTS.lampSpacing), 3, 30),
+    lampIntensity: clamp(toFiniteNumber(params.lampIntensity, ROAD_DRIVE_DEFAULTS.lampIntensity), 0, 3),
+    lampReactive: clamp(toFiniteNumber(params.lampReactive, ROAD_DRIVE_DEFAULTS.lampReactive), 0, 2)
   };
 }
 
@@ -267,7 +341,14 @@ class RoadDriveGLRenderer {
       u_fog: params.fog,
       u_glow: params.glow,
       u_bass: bass,
-      u_bassReactive: params.bassReactive
+      u_bassReactive: params.bassReactive,
+      u_curveAmount: params.curveAmount,
+      u_curveFreq: params.curveFreq,
+      u_curveTimeSpeed: params.curveTimeSpeed,
+      u_curveDampenNear: params.curveDampenNear,
+      u_lampSpacing: params.lampSpacing,
+      u_lampIntensity: params.lampIntensity,
+      u_lampReactive: params.lampReactive
     });
 
     gl.drawElements(gl.TRIANGLES, this.indexCount, this.indexType, 0);
@@ -321,7 +402,14 @@ class RoadDriveGLRenderer {
       u_fog: gl.getUniformLocation(program, "u_fog"),
       u_glow: gl.getUniformLocation(program, "u_glow"),
       u_bass: gl.getUniformLocation(program, "u_bass"),
-      u_bassReactive: gl.getUniformLocation(program, "u_bassReactive")
+      u_bassReactive: gl.getUniformLocation(program, "u_bassReactive"),
+      u_curveAmount: gl.getUniformLocation(program, "u_curveAmount"),
+      u_curveFreq: gl.getUniformLocation(program, "u_curveFreq"),
+      u_curveTimeSpeed: gl.getUniformLocation(program, "u_curveTimeSpeed"),
+      u_curveDampenNear: gl.getUniformLocation(program, "u_curveDampenNear"),
+      u_lampSpacing: gl.getUniformLocation(program, "u_lampSpacing"),
+      u_lampIntensity: gl.getUniformLocation(program, "u_lampIntensity"),
+      u_lampReactive: gl.getUniformLocation(program, "u_lampReactive")
     };
 
     gl.enable(gl.DEPTH_TEST);
