@@ -65,6 +65,7 @@ Total effects: **59**.
 - [Effect: vga_fire](#effect-vga-fire)
 - [Effect: platformerScroll](#effect-platformerScroll)
 - [Effect: kefrens_bars](#effect-kefrens-bars)
+- [Effect: dotTunnel](#effect-dotTunnel)
 
 ## Cross-reference
 
@@ -85,10 +86,10 @@ Total effects: **59**.
 ### Common parameter patterns
 
 - `speed` (used in 35 effects)
-- `seed` (used in 22 effects)
+- `seed` (used in 23 effects)
 - `audioReact` (used in 21 effects)
 - `beatKick` (used in 14 effects)
-- `glow` (used in 7 effects)
+- `glow` (used in 8 effects)
 - `hueShift` (used in 6 effects)
 - `trail` (used in 6 effects)
 - `quality` (used in 6 effects)
@@ -2127,6 +2128,28 @@ Total effects: **59**.
 }
 ```
 
+## Effect: dotTunnel
+
+- **Registry key:** `dotTunnel`
+- **Implementation:** `src/renderer/effects/dotTunnel.ts` (class `DotTunnelEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by DotTunnelEffect (src/renderer/effects/dotTunnel.ts).
+- **Audio features:** bass, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.dotsPerRing` | number | 40 | unspecified | Used in effect render logic. | yes |
+| `params.fov` | number | 72 | unspecified | Used in effect render logic. | yes |
+| `params.glow` | number | 0.7 | unspecified | Used in effect render logic. | yes |
+| `params.palette` | number | 0 | unspecified | Used in effect render logic. | yes |
+| `params.ringCount` | number | 52 | unspecified | Used in effect render logic. | yes |
+| `params.seed` | number | 1 | unspecified | Used in effect render logic. | yes |
+| `params.speed` | number | 1 | unspecified | Used in effect render logic. | yes |
+| `params.twist` | number | 0.9 | unspecified | Used in effect render logic. | yes |
+
 ## Effect: kefrens_bars
 
 - **Registry key:** `kefrens_bars`
@@ -2134,7 +2157,6 @@ Total effects: **59**.
 - **Renderer:** Canvas2D
 - **Description:** Implemented by KefrensBarsEffect (src/renderer/effects/kefrensBars.ts).
 - **Audio features:** None detected
-- **Performance notes:** None noted.
 
 ### Parameters
 
@@ -2148,14 +2170,5 @@ Total effects: **59**.
 | `params.phaseOffset` | number | 0.55 | min -6.28, max 6.28 | Phase Offset | yes |
 | `params.speed` | number | 1.4 | min -10, max 10 | Speed | yes |
 
-### Minimal layer usage
 
-```json
-{
-  "effect": "kefrens_bars",
-  "opacity": 1,
-  "blend": "source-over",
-  "params": {}
-}
-```
 
