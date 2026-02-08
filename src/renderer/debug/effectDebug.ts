@@ -76,7 +76,10 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("speed", "Speed", 1.0, { min: 0, step: 0.05 }),
       numberControl("warp", "Warp", 0.3, { min: 0, max: 1, step: 0.05 }),
       numberControl("turnRate", "Turn Rate", 0.7, { min: 0, step: 0.05 }),
-      numberControl("turnStrength", "Turn Strength", 0.35, { min: 0, max: 1, step: 0.05 })
+      numberControl("turnStrength", "Turn Strength", 0.35, { min: 0, max: 1, step: 0.05 }),
+      numberControl("drift", "Drift", 0.14, { min: 0, max: 1, step: 0.01 }),
+      numberControl("sparkle", "Sparkle", 0.55, { min: 0, max: 2, step: 0.05 }),
+      numberControl("colorShift", "Color Shift", 0, { min: -1, max: 1, step: 0.05 })
     ]
   },
   plasma: {

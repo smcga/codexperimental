@@ -10,17 +10,23 @@ export class StarfieldEffect implements Effect {
     const warp = params.warp ?? 0.3;
     const turnRate = params.turnRate ?? 0.7;
     const turnStrength = params.turnStrength ?? 0.35;
+    const drift = params.drift ?? 0.14;
+    const sparkle = params.sparkle ?? 0.55;
+    const colorShift = params.colorShift ?? 0.0;
     const intensity = clamp(audio.bass + audio.rms, 0, 1);
     ctx.clearRect(0, 0, width, height);
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, width, height);
-    this.starfield.update(
-      delta,
-      0.6 + speed + audio.bass * 2.2,
-      turnRate + audio.beatStrength * 0.5,
-      turnStrength + audio.rms * 0.25
-    );
-    this.starfield.render(ctx, width, height, intensity, warp + audio.beatStrength * 0.6);
+    this.starfield.update(delta, 0.6 + speed + audio.bass * 2.2, {
+      turnRate: turnRate + audio.beatStrength * 0.5,
+      turnStrength: turnStrength + audio.rms * 0.25,
+      drift: drift + audio.treble * 0.1
+    });
+    this.starfield.render(ctx, width, height, intensity, {
+      warp: warp + audio.beatStrength * 0.6,
+      sparkle: sparkle + audio.treble * 0.45,
+      colorShift: colorShift + audio.mid * 0.18
+    });
   }
 
   reset(): void {
