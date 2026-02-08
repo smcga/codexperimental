@@ -962,16 +962,16 @@ Total effects: **63**.
 
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
 | --- | --- | --- | --- | --- | --- |
-| `params.hue` | number | 205 | unspecified | Used in effect render logic. | yes |
-| `params.intensity` | number | 0.5 | unspecified | Used in effect render logic. | yes |
-| `params.mist` | number | 0.35 | unspecified | Used in effect render logic. | yes |
-| `params.seed` | number | 0 | unspecified | Used in effect render logic. | yes |
-| `params.speed` | number | 1 | unspecified | Used in effect render logic. | yes |
-| `params.splash` | boolean | false | unspecified | Used in effect render logic. | unknown |
-| `params.storm` | number | 0.5 | unspecified | Used in effect render logic. | yes |
-| `params.streakLength` | number | 1 | unspecified | Used in effect render logic. | yes |
-| `params.turbulence` | number | 0.35 | unspecified | Used in effect render logic. | yes |
-| `params.wind` | number | 0.1 | unspecified | Used in effect render logic. | yes |
+| `params.hue` | number | 205 | min 0, max 360 | Hue | yes |
+| `params.intensity` | number | 0.5 | min 0, max 1 | Intensity | yes |
+| `params.mist` | number | 0.35 | min 0, max 1 | Mist | yes |
+| `params.seed` | number | 0 | min 0, max 999 | Seed | yes |
+| `params.speed` | number | 1 | min 0, max 3 | Speed | yes |
+| `params.splash` | boolean | false | unspecified | Splash | unknown |
+| `params.storm` | number | 0.5 | min 0, max 1 | Storm | yes |
+| `params.streakLength` | number | 1 | min 0.25, max 2.5 | Streak Length | yes |
+| `params.turbulence` | number | 0.35 | min 0, max 1 | Turbulence | yes |
+| `params.wind` | number | 0.1 | min -1, max 1 | Wind | yes |
 
 ### Minimal layer usage
 
