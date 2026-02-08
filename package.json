@@ -4,12 +4,15 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "predev": "npm run gen:explicitpixels",
     "dev": "vite",
+    "prebuild": "npm run gen:explicitpixels",
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
     "docs:effects": "tsx scripts/generateEffectsDocs.ts",
-    "docs:check": "vitest run src/renderer/effects/effectsDocs.test.ts"
+    "docs:check": "vitest run src/renderer/effects/effectsDocs.test.ts",
+    "gen:explicitpixels": "tsx scripts/generateExplicitPixels.ts"
   },
   "dependencies": {
     "@upstash/redis": "^1.34.0"
