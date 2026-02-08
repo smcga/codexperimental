@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { coerceEffectParams, getEffectDebugDefaults } from "./effectDebug";
+import { coerceEffectParams, getEffectDebugConfig, getEffectDebugDefaults } from "./effectDebug";
+import { getRegistryEffectNames } from "../effects/effectsDocGenerator";
 
 describe("effect debug params", () => {
   it("provides defaults for known effects", () => {
@@ -442,7 +443,9 @@ describe("effect debug params", () => {
       padding: 0.08,
       highlightPulse: 0.65,
       beatPulseDecay: 2.2,
-      audioReact: 0.45
+      audioReact: 0.45,
+      title: "GREETS",
+      names: "Fairlight|TRSI|Spaceballs|CNCD|Mercury|TBL"
     });
   });
 
@@ -481,6 +484,15 @@ describe("effect debug params", () => {
       scanlines: 0,
       seed: 0
     });
+  });
+
+  it("exposes at least one debug control for every registered effect", () => {
+    const missing = getRegistryEffectNames().filter((effectName) => {
+      const config = getEffectDebugConfig(effectName);
+      return !config || config.controls.length === 0;
+    });
+
+    expect(missing).toEqual([]);
   });
 
 });

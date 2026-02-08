@@ -535,7 +535,7 @@ const renderEffectSection = (entry: EffectDocEntry): string => {
   ].join("\n");
 };
 
-const buildEffectDocs = (): EffectDocEntry[] => {
+export const buildEffectDocs = (): EffectDocEntry[] => {
   const registryEntries = parseRegistry();
   return registryEntries.map((entry) => {
     const modulePath = entry.modulePath === "unknown" ? "unknown" : resolveModulePath(entry.modulePath);

@@ -847,30 +847,30 @@ Total effects: **63**.
 
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
 | --- | --- | --- | --- | --- | --- |
-| `params.beatImpulse` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.count` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.friction` | number | 0.6 | unspecified | Used in effect render logic. | yes |
-| `params.gravity` | number | 900 | unspecified | Used in effect render logic. | yes |
-| `params.kickImpulse` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.kickOriginY` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.kickRadius` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.kickTorque` | number | 35 | unspecified | Used in effect render logic. | yes |
-| `params.kickUpBias` | number | 0.35 | unspecified | Used in effect render logic. | yes |
-| `params.loosenDuration` | number | 0.18 | unspecified | Used in effect render logic. | yes |
-| `params.loosenExtraSlop` | number | 1.5 | unspecified | Used in effect render logic. | yes |
-| `params.loosenFrictionMult` | number | 0.25 | unspecified | Used in effect render logic. | yes |
-| `params.loosenPosCorrMult` | number | 0.35 | unspecified | Used in effect render logic. | yes |
-| `params.loosenRestitutionAdd` | number | 0.35 | unspecified | Used in effect render logic. | yes |
-| `params.maxAngVel` | number | 18 | unspecified | Used in effect render logic. | yes |
-| `params.maxLinVel` | number | 1800 | unspecified | Used in effect render logic. | yes |
-| `params.restitution` | number | 0.25 | unspecified | Used in effect render logic. | yes |
-| `params.scatterAngleDeg` | number | 25 | unspecified | Used in effect render logic. | yes |
-| `params.scatterJitter` | number | 0.35 | unspecified | Used in effect render logic. | yes |
-| `params.seed` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.sepBiasDeg` | number | 10 | unspecified | Used in effect render logic. | yes |
-| `params.shatter` | number | 0 | unspecified | Used in effect render logic. | yes |
-| `params.trail` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.wreckingCue` | number | 0 | unspecified | Used in effect render logic. | yes |
+| `params.beatImpulse` | number | 250 | min 0, max 3000 | Beat Impulse | yes |
+| `params.count` | number | 18 | min 5, max 120 | Count | yes |
+| `params.friction` | number | 0.6 | min 0, max 1 | Friction | yes |
+| `params.gravity` | number | 900 | min 0, max 2400 | Gravity | yes |
+| `params.kickImpulse` | number | 250 | min 0, max 3000 | Kick Impulse | yes |
+| `params.kickOriginY` | number | 0 | unspecified | Kick Origin Y | yes |
+| `params.kickRadius` | number | 240 | min 1, max 1000 | Kick Radius | yes |
+| `params.kickTorque` | number | 35 | min 0, max 360 | Kick Torque | yes |
+| `params.kickUpBias` | number | 0.35 | min 0, max 1 | Kick Up Bias | yes |
+| `params.loosenDuration` | number | 0.18 | min 0, max 5 | Loosen Duration | yes |
+| `params.loosenExtraSlop` | number | 1.5 | min 0, max 10 | Loosen Extra Slop | yes |
+| `params.loosenFrictionMult` | number | 0.25 | min 0, max 1 | Loosen Friction Mult | yes |
+| `params.loosenPosCorrMult` | number | 0.35 | min 0, max 1 | Loosen Position Correction Mult | yes |
+| `params.loosenRestitutionAdd` | number | 0.35 | min 0, max 1 | Loosen Restitution Add | yes |
+| `params.maxAngVel` | number | 18 | min 0, max 360 | Max Angular Velocity | yes |
+| `params.maxLinVel` | number | 1800 | min 0, max 5000 | Max Linear Velocity | yes |
+| `params.restitution` | number | 0.25 | min 0, max 1 | Restitution | yes |
+| `params.scatterAngleDeg` | number | 25 | min 0, max 180 | Scatter Angle | yes |
+| `params.scatterJitter` | number | 0.35 | min 0, max 1 | Scatter Jitter | yes |
+| `params.seed` | number | 0 | min 0, max 9999 | Seed | yes |
+| `params.sepBiasDeg` | number | 10 | min 0, max 180 | Separation Bias | yes |
+| `params.shatter` | number | 0 | min 0, max 1 | Shatter | yes |
+| `params.trail` | number | 0.2 | min 0, max 1 | Trail | yes |
+| `params.wreckingCue` | number | 0 | min 0, max 1 | Wrecking Cue | yes |
 
 ### Minimal layer usage
 
@@ -896,13 +896,13 @@ Total effects: **63**.
 
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
 | --- | --- | --- | --- | --- | --- |
-| `params.exposure` | number | 1.15 | unspecified | Used in effect render logic. | yes |
-| `params.hueShift` | number | 0.12 | unspecified | Used in effect render logic. | yes |
-| `params.internalScale` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.quality` | number | 2 | unspecified | Used in effect render logic. | yes |
-| `params.seed` | number | 7 | unspecified | Used in effect render logic. | yes |
-| `params.speed` | number | 0.6 | unspecified | Used in effect render logic. | yes |
-| `params.warp` | number | 1.15 | unspecified | Used in effect render logic. | yes |
+| `params.exposure` | number | 1.15 | min 0.5, max 2 | Exposure | yes |
+| `params.hueShift` | number | 0.12 | min 0, max 1 | Hue Shift | yes |
+| `params.internalScale` | number | 0.8 | min 0.4, max 1.2 | Internal Scale | yes |
+| `params.quality` | number | 2 | min 1, max 3 | Quality | yes |
+| `params.seed` | number | 7 | min 0, max 9999 | Seed | yes |
+| `params.speed` | number | 0.6 | min 0.1, max 2 | Speed | yes |
+| `params.warp` | number | 1.15 | min 0, max 2 | Warp | yes |
 
 ### Minimal layer usage
 
@@ -997,13 +997,13 @@ Total effects: **63**.
 
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
 | --- | --- | --- | --- | --- | --- |
-| `params.bolt` | boolean | true | unspecified | Used in effect render logic. | unknown |
-| `params.branches` | number | 1 | unspecified | Used in effect render logic. | yes |
-| `params.chancePerSecond` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.cooldown` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.flashDuration` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.seed` | number | 0 | unspecified | Used in effect render logic. | yes |
-| `params.trigger` | number | no explicit default | unspecified | Used in effect render logic. | yes |
+| `params.bolt` | boolean | true | unspecified | Bolt | unknown |
+| `params.branches` | number | 1 | min 1, max 8 | Branches | yes |
+| `params.chancePerSecond` | number | 0.25 | min 0, max 3 | Chance / second | yes |
+| `params.cooldown` | number | 1.5 | min 0, max 5 | Cooldown | yes |
+| `params.flashDuration` | number | 0.12 | min 0.05, max 2 | Flash Duration | yes |
+| `params.seed` | number | 0 | min 0, max 9999 | Seed | yes |
+| `params.trigger` | number | 0 | min 0, max 1 | Trigger | yes |
 
 ### Minimal layer usage
 
@@ -1164,11 +1164,11 @@ Total effects: **63**.
 
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
 | --- | --- | --- | --- | --- | --- |
-| `params.density` | number | 1 | unspecified | Used in effect render logic. | yes |
-| `params.motion` | number | 0.6 | unspecified | Used in effect render logic. | yes |
-| `params.seed` | number | 13 | unspecified | Used in effect render logic. | yes |
-| `params.trail` | number | 0.15 | unspecified | Used in effect render logic. | yes |
-| `params.warp` | number | 0.4 | unspecified | Used in effect render logic. | yes |
+| `params.density` | number | 1 | min 0.4, max 2.5 | Density | yes |
+| `params.motion` | number | 0.6 | min 0, max 1 | Motion | yes |
+| `params.seed` | number | 13 | min 0, max 9999 | Seed | yes |
+| `params.trail` | number | 0.15 | min 0, max 0.92 | Trail | yes |
+| `params.warp` | number | 0.4 | min 0, max 1 | Warp | yes |
 
 ### Minimal layer usage
 
@@ -1262,25 +1262,25 @@ Total effects: **63**.
 
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
 | --- | --- | --- | --- | --- | --- |
-| `params.audioReact` | number | 0.45 | unspecified | Used in effect render logic. | yes |
-| `params.baseDotSize` | number | 1.8 | unspecified | Used in effect render logic. | yes |
-| `params.beatKick` | number | 0.45 | unspecified | Used in effect render logic. | yes |
-| `params.camDist` | number | 3.2 | unspecified | Used in effect render logic. | yes |
-| `params.dotDepthScale` | number | 2 | unspecified | Used in effect render logic. | yes |
-| `params.lineWidth` | number | 1.6 | unspecified | Used in effect render logic. | yes |
-| `params.model` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.palette` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.pointCount` | number | 420 | unspecified | Used in effect render logic. | yes |
-| `params.rotXSpeed` | number | 0.35 | unspecified | Used in effect render logic. | yes |
-| `params.rotYSpeed` | number | 0.5 | unspecified | Used in effect render logic. | yes |
-| `params.rotZSpeed` | number | 0.08 | unspecified | Used in effect render logic. | yes |
-| `params.roundDots` | number | 0 | unspecified | Used in effect render logic. | yes |
-| `params.seed` | number | 11 | unspecified | Used in effect render logic. | yes |
-| `params.stripeFreq` | number | 5 | unspecified | Used in effect render logic. | yes |
-| `params.stripeSpeed` | number | 0.18 | unspecified | Used in effect render logic. | yes |
-| `params.stripeStrength` | number | 0.75 | unspecified | Used in effect render logic. | yes |
-| `params.trail` | number | 0 | unspecified | Used in effect render logic. | yes |
-| `params.wireframe` | number | 1 | unspecified | Used in effect render logic. | yes |
+| `params.audioReact` | number | 0.45 | min 0, max 1 | Audio React | yes |
+| `params.baseDotSize` | number | 1.8 | min 0.5, max 6 | Base Dot Size | yes |
+| `params.beatKick` | number | 0.45 | min 0, max 1 | Beat Kick | yes |
+| `params.camDist` | number | 3.2 | min 2.4, max 6 | Camera Distance | yes |
+| `params.dotDepthScale` | number | 2 | min 0, max 6 | Dot Depth Scale | yes |
+| `params.lineWidth` | number | 1.6 | min 0.5, max 6 | Line Width | yes |
+| `params.model` | string | "cube" | options: cube, sphere, torus | Model | no |
+| `params.palette` | string | "c64" | options: c64, spectrum, rainbow | Palette | no |
+| `params.pointCount` | number | 420 | min 80, max 2000 | Point Count | yes |
+| `params.rotXSpeed` | number | 0.35 | min 0, max 2.5 | Rot X Speed | yes |
+| `params.rotYSpeed` | number | 0.5 | min 0, max 2.5 | Rot Y Speed | yes |
+| `params.rotZSpeed` | number | 0.08 | min 0, max 1.5 | Rot Z Speed | yes |
+| `params.roundDots` | boolean | 0 | unspecified | Round Dots | unknown |
+| `params.seed` | number | 11 | min 0, max 9999 | Seed | yes |
+| `params.stripeFreq` | number | 5 | min 1, max 14 | Stripe Freq | yes |
+| `params.stripeSpeed` | number | 0.18 | min -2, max 2 | Stripe Speed | yes |
+| `params.stripeStrength` | number | 0.75 | min 0, max 1 | Stripe Strength | yes |
+| `params.trail` | number | 0 | min 0, max 0.85 | Trail | yes |
+| `params.wireframe` | boolean | 1 | unspecified | Wireframe | unknown |
 
 ### Minimal layer usage
 
@@ -1306,23 +1306,23 @@ Total effects: **63**.
 
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
 | --- | --- | --- | --- | --- | --- |
-| `params.audioReact` | number | 0.7 | unspecified | Used in effect render logic. | yes |
-| `params.barCount` | number | 8 | unspecified | Used in effect render logic. | yes |
-| `params.barSaturation` | number | 0.85 | unspecified | Used in effect render logic. | yes |
-| `params.barSpeed` | number | 0.9 | unspecified | Used in effect render logic. | yes |
-| `params.barWaveAmp` | number | 18 | unspecified | Used in effect render logic. | yes |
-| `params.barWaveFreq` | number | 1.2 | unspecified | Used in effect render logic. | yes |
-| `params.bobCount` | number | 6 | unspecified | Used in effect render logic. | yes |
-| `params.bobIntensity` | number | 1 | unspecified | Used in effect render logic. | yes |
-| `params.bobRadius` | number | 0.12 | unspecified | Used in effect render logic. | yes |
-| `params.bobTrail` | number | 0.18 | unspecified | Used in effect render logic. | yes |
-| `params.glenz` | boolean | true | unspecified | Used in effect render logic. | unknown |
-| `params.twistAmp` | number | 70 | unspecified | Used in effect render logic. | yes |
-| `params.twistHueSpeed` | number | 55 | unspecified | Used in effect render logic. | yes |
-| `params.twistSlices` | number | 120 | unspecified | Used in effect render logic. | yes |
-| `params.twistSpeed` | number | 1.1 | unspecified | Used in effect render logic. | yes |
-| `params.twistWidth` | number | 180 | unspecified | Used in effect render logic. | yes |
-| `params.twistX` | number | no explicit default | unspecified | Used in effect render logic. | yes |
+| `params.audioReact` | number | 0.7 | min 0, max 1 | Audio React | yes |
+| `params.barCount` | number | 8 | min 1, max 12 | Bar Count | yes |
+| `params.barSaturation` | number | 0.85 | min 0, max 1 | Bar Saturation | yes |
+| `params.barSpeed` | number | 0.9 | min 0, max 4 | Bar Speed | yes |
+| `params.barWaveAmp` | number | 18 | min 0, max 120 | Bar Wave Amp | yes |
+| `params.barWaveFreq` | number | 1.2 | min 0, max 12 | Bar Wave Freq | yes |
+| `params.bobCount` | number | 6 | min 1, max 64 | Bob Count | yes |
+| `params.bobIntensity` | number | 1 | min 0, max 1 | Bob Intensity | yes |
+| `params.bobRadius` | number | 0.12 | min 1, max 160 | Bob Radius | yes |
+| `params.bobTrail` | number | 0.18 | min 0, max 1 | Bob Trail | yes |
+| `params.glenz` | boolean | true | unspecified | Glenz | unknown |
+| `params.twistAmp` | number | 70 | min 0, max 5 | Twist Amp | yes |
+| `params.twistHueSpeed` | number | 55 | min 0, max 180 | Twist Hue Speed | yes |
+| `params.twistSlices` | number | 120 | min 1, max 96 | Twist Slices | yes |
+| `params.twistSpeed` | number | 1.1 | min 0, max 4 | Twist Speed | yes |
+| `params.twistWidth` | number | 180 | min 0.05, max 0.8 | Twist Width | yes |
+| `params.twistX` | number | 0.5 | min 0, max 1 | Twist X | yes |
 
 ### Minimal layer usage
 
@@ -1348,27 +1348,27 @@ Total effects: **63**.
 
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
 | --- | --- | --- | --- | --- | --- |
-| `params.audioReact` | number | 0.7 | unspecified | Used in effect render logic. | yes |
-| `params.beatBoost` | number | 0.6 | unspecified | Used in effect render logic. | yes |
-| `params.fontSize` | number | 22 | unspecified | Used in effect render logic. | yes |
-| `params.layer2` | boolean | false | unspecified | Used in effect render logic. | unknown |
-| `params.layer2FontSize` | number | 16 | unspecified | Used in effect render logic. | yes |
-| `params.layer2Speed` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.layer2Y` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.logoFontSize` | number | 96 | unspecified | Used in effect render logic. | yes |
-| `params.logoText` | string | "VIBES" | unspecified | Used in effect render logic. | no |
-| `params.logoWaveAmp` | number | 18 | unspecified | Used in effect render logic. | yes |
-| `params.logoWaveFreq` | number | 0.06 | unspecified | Used in effect render logic. | yes |
-| `params.logoWaveSpeed` | number | 2 | unspecified | Used in effect render logic. | yes |
-| `params.logoY` | number | 52 | unspecified | Used in effect render logic. | yes |
-| `params.message` | string | "   SOOOOOOO COOOOOOOL   " | unspecified | Used in effect render logic. | no |
-| `params.scanlineStep` | number | 2 | unspecified | Used in effect render logic. | yes |
-| `params.scrollerX` | number | 0 | unspecified | Used in effect render logic. | yes |
-| `params.scrollerY` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.speed` | number | 90 | unspecified | Used in effect render logic. | yes |
-| `params.waveAmp` | number | 10 | unspecified | Used in effect render logic. | yes |
-| `params.wavePhaseStep` | number | 0.55 | unspecified | Used in effect render logic. | yes |
-| `params.waveSpeed` | number | 2.2 | unspecified | Used in effect render logic. | yes |
+| `params.audioReact` | number | 0.7 | min 0, max 1 | Audio React | yes |
+| `params.beatBoost` | number | 0.6 | min 0, max 1 | Beat Boost | yes |
+| `params.fontSize` | number | 22 | min 8, max 160 | Font Size | yes |
+| `params.layer2` | boolean | false | unspecified | Layer 2 | unknown |
+| `params.layer2FontSize` | number | 16 | min 8, max 120 | Layer2 Font Size | yes |
+| `params.layer2Speed` | number | 175 | min 0, max 600 | Layer2 Speed | yes |
+| `params.layer2Y` | number | 0 | unspecified | Layer2 Y | yes |
+| `params.logoFontSize` | number | 96 | min 8, max 240 | Logo Font Size | yes |
+| `params.logoText` | string | "VIBES" | options: SMCGA, CODEX | Logo Text | no |
+| `params.logoWaveAmp` | number | 18 | min 0, max 80 | Logo Wave Amp | yes |
+| `params.logoWaveFreq` | number | 0.06 | min 0, max 1 | Logo Wave Freq | yes |
+| `params.logoWaveSpeed` | number | 2 | min 0, max 20 | Logo Wave Speed | yes |
+| `params.logoY` | number | 52 | min 0, max 600 | Logo Y | yes |
+| `params.message` | string | "   SOOOOOOO COOOOOOOL   " | options:   CODEX CREW :: 68000 INSIDE :: STAY TUNED   ,   OPENAI PRESENTS :: RETRO FUTURE :: GREETS!    | Message | no |
+| `params.scanlineStep` | number | 2 | min 1, max 6 | Scanline Step | yes |
+| `params.scrollerX` | number | 0 | unspecified | Scroller X | yes |
+| `params.scrollerY` | number | 0 | unspecified | Scroller Y | yes |
+| `params.speed` | number | 90 | min 0, max 600 | Speed | yes |
+| `params.waveAmp` | number | 10 | min 0, max 120 | Wave Amp | yes |
+| `params.wavePhaseStep` | number | 0.55 | min 0, max 2 | Wave Phase Step | yes |
+| `params.waveSpeed` | number | 2.2 | min 0, max 20 | Wave Speed | yes |
 
 ### Minimal layer usage
 
@@ -1428,19 +1428,19 @@ Total effects: **63**.
 
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
 | --- | --- | --- | --- | --- | --- |
-| `params.audioReact` | number | 0.7 | unspecified | Used in effect render logic. | yes |
-| `params.barCount` | number | 10 | unspecified | Used in effect render logic. | yes |
-| `params.barThickness` | number | 18 | unspecified | Used in effect render logic. | yes |
-| `params.beatThump` | number | 0.6 | unspecified | Used in effect render logic. | yes |
-| `params.border` | boolean | false | unspecified | Used in effect render logic. | unknown |
-| `params.borderSize` | number | 48 | unspecified | Used in effect render logic. | yes |
-| `params.orientation` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.palette` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.scanlineStep` | number | 2 | unspecified | Used in effect render logic. | yes |
-| `params.speed` | number | 0.8 | unspecified | Used in effect render logic. | yes |
-| `params.splitStrength` | number | 0.65 | unspecified | Used in effect render logic. | yes |
-| `params.waveAmp` | number | 22 | unspecified | Used in effect render logic. | yes |
-| `params.waveFreq` | number | 1.2 | unspecified | Used in effect render logic. | yes |
+| `params.audioReact` | number | 0.7 | min 0, max 1 | Audio React | yes |
+| `params.barCount` | number | 10 | min 1, max 24 | Bar Count | yes |
+| `params.barThickness` | number | 18 | min 1, max 120 | Bar Thickness | yes |
+| `params.beatThump` | number | 0.6 | min 0, max 1 | Beat Thump | yes |
+| `params.border` | boolean | false | min 0, max 1 | Border | unknown |
+| `params.borderSize` | number | 48 | min 0, max 0.5 | Border Size | yes |
+| `params.orientation` | number | 0 | min 0, max 1 | Orientation | yes |
+| `params.palette` | number | 0 | min 0, max 8 | Palette | yes |
+| `params.scanlineStep` | number | 2 | min 1, max 6 | Scanline Step | yes |
+| `params.speed` | number | 0.8 | min 0, max 4 | Speed | yes |
+| `params.splitStrength` | number | 0.65 | min 0, max 1 | Split Strength | yes |
+| `params.waveAmp` | number | 22 | min 0, max 120 | Wave Amp | yes |
+| `params.waveFreq` | number | 1.2 | min 0, max 16 | Wave Freq | yes |
 
 ### Minimal layer usage
 
@@ -1466,24 +1466,24 @@ Total effects: **63**.
 
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
 | --- | --- | --- | --- | --- | --- |
-| `params.audioReact` | number | 0.7 | unspecified | Used in effect render logic. | yes |
-| `params.barCount` | number | 10 | unspecified | Used in effect render logic. | yes |
-| `params.barHueStep` | number | 22 | unspecified | Used in effect render logic. | yes |
-| `params.barWobble` | number | 28 | unspecified | Used in effect render logic. | yes |
-| `params.beatKick` | number | 0.7 | unspecified | Used in effect render logic. | yes |
-| `params.gradientRowStep` | number | 16 | unspecified | Used in effect render logic. | yes |
-| `params.hamish` | boolean | true | unspecified | Used in effect render logic. | unknown |
-| `params.hamishStrength` | number | 0.35 | unspecified | Used in effect render logic. | yes |
-| `params.hueWobble` | number | 18 | unspecified | Used in effect render logic. | yes |
-| `params.lightnessBase` | number | 0.35 | unspecified | Used in effect render logic. | yes |
-| `params.lightnessPeak` | number | 0.68 | unspecified | Used in effect render logic. | yes |
-| `params.paletteClamp` | boolean | false | unspecified | Used in effect render logic. | unknown |
-| `params.paletteClampSteps` | number | 32 | unspecified | Used in effect render logic. | yes |
-| `params.regions` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.saturation` | number | 0.9 | unspecified | Used in effect render logic. | yes |
-| `params.scanStep` | number | 2 | unspecified | Used in effect render logic. | yes |
-| `params.speed` | number | 0.7 | unspecified | Used in effect render logic. | yes |
-| `params.splits` | number | 3 | unspecified | Used in effect render logic. | yes |
+| `params.audioReact` | number | 0.7 | min 0, max 1 | Audio React | yes |
+| `params.barCount` | number | 10 | min 4, max 24 | Bar Count | yes |
+| `params.barHueStep` | number | 22 | min 0, max 120 | Bar Hue Step | yes |
+| `params.barWobble` | number | 28 | min 0, max 80 | Bar Wobble | yes |
+| `params.beatKick` | number | 0.7 | min 0, max 1 | Beat Kick | yes |
+| `params.gradientRowStep` | number | 16 | min 4, max 64 | Gradient Row Step | yes |
+| `params.hamish` | boolean | true | unspecified | Hamish | unknown |
+| `params.hamishStrength` | number | 0.35 | min 0, max 1 | Hamish Strength | yes |
+| `params.hueWobble` | number | 18 | min 0, max 120 | Hue Wobble | yes |
+| `params.lightnessBase` | number | 0.35 | min 0, max 1 | Lightness Base | yes |
+| `params.lightnessPeak` | number | 0.68 | min 0, max 1 | Lightness Peak | yes |
+| `params.paletteClamp` | boolean | false | unspecified | Palette Clamp | unknown |
+| `params.paletteClampSteps` | number | 32 | min 2, max 64 | Palette Clamp Steps | yes |
+| `params.regions` | number | 0 | unspecified | Regions Override (advanced) | yes |
+| `params.saturation` | number | 0.9 | min 0, max 1 | Saturation | yes |
+| `params.scanStep` | number | 2 | min 1, max 6 | Scan Step | yes |
+| `params.speed` | number | 0.7 | min 0, max 3 | Speed | yes |
+| `params.splits` | number | 3 | min 1, max 6 | Splits | yes |
 
 ### Minimal layer usage
 
@@ -2027,29 +2027,29 @@ Total effects: **63**.
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
 | --- | --- | --- | --- | --- | --- |
 | `params` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.aa` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.aaMode` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.adaptive` | number | 1 | unspecified | Used in effect render logic. | yes |
-| `params.ambient` | number | 0.12 | unspecified | Used in effect render logic. | yes |
-| `params.audioReact` | number | 0.6 | unspecified | Used in effect render logic. | yes |
-| `params.beatKick` | number | 0.7 | unspecified | Used in effect render logic. | yes |
-| `params.bufH` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.bufW` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.cellSize` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.diffuseStrength` | number | 1 | unspecified | Used in effect render logic. | yes |
-| `params.floorReflect` | number | 0.55 | unspecified | Used in effect render logic. | yes |
-| `params.forceAA` | boolean | false | unspecified | Used in effect render logic. | unknown |
-| `params.fov` | number | 60 | unspecified | Used in effect render logic. | yes |
-| `params.maxDepth` | number | 2 | unspecified | Used in effect render logic. | yes |
-| `params.outputSmoothing` | boolean | false | unspecified | Used in effect render logic. | unknown |
-| `params.quality` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.refineGrow` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.refineThreshold` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.scanlines` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.seed` | number | 1337 | unspecified | Used in effect render logic. | yes |
-| `params.shininess` | number | 48 | unspecified | Used in effect render logic. | yes |
-| `params.specStrength` | number | 0.45 | unspecified | Used in effect render logic. | yes |
-| `params.sphereCount` | number | no explicit default | unspecified | Used in effect render logic. | yes |
+| `params.aa` | number | 1 | min 0, max 2 | Antialiasing | yes |
+| `params.aaMode` | string | "refinedOnly" | options: refinedOnly, full | AA Mode | no |
+| `params.adaptive` | boolean | 1 | unspecified | Adaptive | unknown |
+| `params.ambient` | number | 0.12 | min 0.05, max 0.4 | Ambient | yes |
+| `params.audioReact` | number | 0.6 | min 0, max 1 | Audio React | yes |
+| `params.beatKick` | number | 0.7 | min 0, max 1 | Beat Kick | yes |
+| `params.bufH` | number | 0 | unspecified | Buffer Height | yes |
+| `params.bufW` | number | 0 | unspecified | Buffer Width | yes |
+| `params.cellSize` | number | 2 | min 1, max 6 | Cell Size | yes |
+| `params.diffuseStrength` | number | 1 | min 0.2, max 2 | Diffuse Strength | yes |
+| `params.floorReflect` | number | 0.55 | min 0, max 0.9 | Floor Reflect | yes |
+| `params.forceAA` | boolean | false | unspecified | Force AA | unknown |
+| `params.fov` | number | 60 | min 35, max 90 | FOV | yes |
+| `params.maxDepth` | number | 2 | min 1, max 3 | Max Depth | yes |
+| `params.outputSmoothing` | boolean | false | unspecified | Output Smoothing | unknown |
+| `params.quality` | number | 2 | min 1, max 3 | Quality | yes |
+| `params.refineGrow` | boolean | 1 | unspecified | Refine Grow | unknown |
+| `params.refineThreshold` | number | 120 | min 20, max 255 | Refine Threshold | yes |
+| `params.scanlines` | boolean | 0 | unspecified | Scanlines | unknown |
+| `params.seed` | number | 1337 | min 0, max 9999 | Seed | yes |
+| `params.shininess` | number | 48 | min 8, max 96 | Shininess | yes |
+| `params.specStrength` | number | 0.45 | min 0, max 2 | Spec Strength | yes |
+| `params.sphereCount` | number | 3 | min 1, max 8 | Sphere Count | yes |
 
 ### Minimal layer usage
 
@@ -2075,22 +2075,22 @@ Total effects: **63**.
 
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
 | --- | --- | --- | --- | --- | --- |
-| `params.audioReact` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.baseHeat` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.decay` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.fireH` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.fireW` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.glowStrength` | number | 0 | unspecified | Used in effect render logic. | yes |
-| `params.gustOnBeat` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.logoSize` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.logoText` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.logoY` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.scanlines` | boolean | false | unspecified | Used in effect render logic. | unknown |
-| `params.sparkChance` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.stepsPerFrame` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.turbulence` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.wind` | number | no explicit default | unspecified | Used in effect render logic. | yes |
-| `params.windWave` | number | no explicit default | unspecified | Used in effect render logic. | yes |
+| `params.audioReact` | number | 0.7 | min 0, max 1 | Audio React | yes |
+| `params.baseHeat` | number | 160 | min 0, max 255 | Base Heat | yes |
+| `params.decay` | number | 3 | min 1, max 8 | Decay | yes |
+| `params.fireH` | number | 120 | min 40, max 300 | Fire Height | yes |
+| `params.fireW` | number | 160 | min 40, max 400 | Fire Width | yes |
+| `params.glowStrength` | number | 0 | min 0, max 2 | Glow Strength | yes |
+| `params.gustOnBeat` | number | 0.8 | min 0, max 1 | Gust on Beat | yes |
+| `params.logoSize` | number | 48 | min 10, max 160 | Logo Size | yes |
+| `params.logoText` | string | "SMCGA" | options: SMCGA, FIRE,  | Logo Text | no |
+| `params.logoY` | number | 0 | unspecified | Logo Y | yes |
+| `params.scanlines` | boolean | false | min 0, max 1 | Scanlines | unknown |
+| `params.sparkChance` | number | 0.55 | min 0, max 1 | Spark Chance | yes |
+| `params.stepsPerFrame` | number | 1 | min 1, max 4 | Steps / frame | yes |
+| `params.turbulence` | number | 1.2 | min 0, max 3 | Turbulence | yes |
+| `params.wind` | number | 0 | min -1, max 1 | Wind | yes |
+| `params.windWave` | number | 0.6 | min 0, max 2 | Wind Wave | yes |
 
 ### Minimal layer usage
 
@@ -2116,17 +2116,17 @@ Total effects: **63**.
 
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
 | --- | --- | --- | --- | --- | --- |
-| `params.audioReact` | number | 0.35 | unspecified | Used in effect render logic. | yes |
-| `params.beatKick` | number | 0.35 | unspecified | Used in effect render logic. | yes |
-| `params.groundRatio` | number | 0.24 | unspecified | Used in effect render logic. | yes |
-| `params.parallaxFar` | number | 0.2 | unspecified | Used in effect render logic. | yes |
-| `params.parallaxFront` | number | 1 | unspecified | Used in effect render logic. | yes |
-| `params.parallaxMid` | number | 0.5 | unspecified | Used in effect render logic. | yes |
-| `params.platformMaxSteps` | number | 5 | unspecified | Used in effect render logic. | yes |
-| `params.platformRate` | number | 0.55 | unspecified | Used in effect render logic. | yes |
-| `params.seed` | number | 1337 | unspecified | Used in effect render logic. | yes |
-| `params.speed` | number | 140 | unspecified | Used in effect render logic. | yes |
-| `params.tileSize` | number | 16 | unspecified | Used in effect render logic. | yes |
+| `params.audioReact` | number | 0.35 | min 0, max 1 | Audio React | yes |
+| `params.beatKick` | number | 0.35 | min 0, max 1 | Beat Kick | yes |
+| `params.groundRatio` | number | 0.24 | min 0.2, max 0.3 | Ground Ratio | yes |
+| `params.parallaxFar` | number | 0.2 | min 0.05, max 0.6 | Parallax Far | yes |
+| `params.parallaxFront` | number | 1 | min 0.7, max 1.4 | Parallax Front | yes |
+| `params.parallaxMid` | number | 0.5 | min 0.15, max 0.9 | Parallax Mid | yes |
+| `params.platformMaxSteps` | number | 5 | min 1, max 12 | Platform Max Steps | yes |
+| `params.platformRate` | number | 0.55 | min 0, max 1 | Platform Rate | yes |
+| `params.seed` | number | 1337 | min 0, max 9999 | Seed | yes |
+| `params.speed` | number | 140 | min 0, max 8 | Speed | yes |
+| `params.tileSize` | number | 16 | min 8, max 64 | Tile Size | yes |
 
 ### Minimal layer usage
 
@@ -2222,9 +2222,9 @@ Total effects: **63**.
 | `params.cycleSeconds` | number | 1.5 | min 0.35, max 6 | Cycle Seconds | yes |
 | `params.highlightPulse` | number | 0.65 | min 0, max 1.5 | Highlight Pulse | yes |
 | `params.layout` | string | "grid" | options: grid, carousel | Layout | no |
-| `params.names` | string | "Fairlight|TRSI|Spaceballs|CNCD|Mercury|TBL" | unspecified | Used in effect render logic. | no |
+| `params.names` | string | "Fairlight|TRSI|Spaceballs|CNCD|Mercury|TBL" | options: Fairlight|TRSI|Spaceballs|CNCD|Mercury|TBL | Names | no |
 | `params.padding` | number | 0.08 | min 0.02, max 0.18 | Padding | yes |
-| `params.title` | string | "GREETS" | unspecified | Used in effect render logic. | no |
+| `params.title` | string | "GREETS" | options: GREETS | Title | no |
 | `params.transitionStyle` | string | "slide" | options: slide, fade, pop | Transition | no |
 
 ### Minimal layer usage
@@ -2251,14 +2251,14 @@ Total effects: **63**.
 
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
 | --- | --- | --- | --- | --- | --- |
-| `params.dotsPerRing` | number | 40 | unspecified | Used in effect render logic. | yes |
-| `params.fov` | number | 72 | unspecified | Used in effect render logic. | yes |
-| `params.glow` | number | 0.7 | unspecified | Used in effect render logic. | yes |
-| `params.palette` | number | 0 | unspecified | Used in effect render logic. | yes |
-| `params.ringCount` | number | 52 | unspecified | Used in effect render logic. | yes |
-| `params.seed` | number | 1 | unspecified | Used in effect render logic. | yes |
-| `params.speed` | number | 1 | unspecified | Used in effect render logic. | yes |
-| `params.twist` | number | 0.9 | unspecified | Used in effect render logic. | yes |
+| `params.dotsPerRing` | number | 40 | min 6, max 160 | Dots Per Ring | yes |
+| `params.fov` | number | 72 | min 40, max 125 | FOV | yes |
+| `params.glow` | number | 0.7 | min 0, max 1.5 | Glow | yes |
+| `params.palette` | number | 0 | min 0, max 12 | Palette | yes |
+| `params.ringCount` | number | 52 | min 8, max 180 | Ring Count | yes |
+| `params.seed` | number | 1 | min 0, max 9999 | Seed | yes |
+| `params.speed` | number | 1 | min 0.05, max 3.5 | Speed | yes |
+| `params.twist` | number | 0.9 | min -4, max 4 | Twist | yes |
 
 ### Minimal layer usage
 

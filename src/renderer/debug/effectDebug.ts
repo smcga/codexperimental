@@ -15,6 +15,10 @@ import { FRACTAL_ZOOMER_DEFAULTS } from "../effects/fractalZoomer";
 import { KEFRENS_BARS_DEFAULTS } from "../effects/kefrensBars";
 import { GREETS_WALL_DEFAULTS } from "../effects/greetsWall";
 import { TEXTMODE_CHARSET_DEFAULTS } from "../effects/textmodeCharset";
+import { DOT_TUNNEL_DEFAULTS } from "../effects/dotTunnel";
+import { PLATFORMER_SCROLL_DEFAULTS } from "../effects/platformerScroll";
+import { VECTOR3D_BALLS_DEFAULTS } from "../effects/vector3dBalls";
+import { IMPOSSIBLE_CORRIDOR_DEFAULTS } from "../effects/gl/impossibleCorridorEffect";
 
 export type EffectParamValue = number | string;
 
@@ -587,7 +591,11 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("padding", "Padding", GREETS_WALL_DEFAULTS.padding, { min: 0.02, max: 0.18, step: 0.01 }),
       numberControl("highlightPulse", "Highlight Pulse", GREETS_WALL_DEFAULTS.highlightPulse, { min: 0, max: 1.5, step: 0.05 }),
       numberControl("beatPulseDecay", "Beat Decay", GREETS_WALL_DEFAULTS.beatPulseDecay, { min: 0.2, max: 8, step: 0.1 }),
-      numberControl("audioReact", "Audio React", GREETS_WALL_DEFAULTS.audioReact, { min: 0, max: 1, step: 0.05 })
+      numberControl("audioReact", "Audio React", GREETS_WALL_DEFAULTS.audioReact, { min: 0, max: 1, step: 0.05 }),
+      selectControl("title", "Title", "GREETS", [{ label: "GREETS", value: "GREETS" }]),
+      selectControl("names", "Names", "Fairlight|TRSI|Spaceballs|CNCD|Mercury|TBL", [
+        { label: "Default Names", value: "Fairlight|TRSI|Spaceballs|CNCD|Mercury|TBL" }
+      ])
     ]
   },
   treegrowth: {
@@ -770,6 +778,281 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("beatBoost", "Beat Boost", SINE_DISTORTER_DEFAULTS.beatBoost, { min: 0, max: 1, step: 0.05 }),
       numberControl("glow", "Glow", SINE_DISTORTER_DEFAULTS.glow, { min: 0, max: 0.3, step: 0.01 })
           ]
+  },
+  amiga_showcase: {
+    title: "Amiga Showcase Controls",
+    controls: [
+      numberControl("audioReact", "Audio React", 0.6, { min: 0, max: 1, step: 0.05 }),
+      numberControl("barCount", "Bar Count", 4, { min: 1, max: 12, step: 1 }),
+      numberControl("barSaturation", "Bar Saturation", 0.85, { min: 0, max: 1, step: 0.05 }),
+      numberControl("barSpeed", "Bar Speed", 1.3, { min: 0, max: 4, step: 0.05 }),
+      numberControl("barWaveAmp", "Bar Wave Amp", 28, { min: 0, max: 120, step: 1 }),
+      numberControl("barWaveFreq", "Bar Wave Freq", 4.5, { min: 0, max: 12, step: 0.1 }),
+      numberControl("bobCount", "Bob Count", 9, { min: 1, max: 64, step: 1 }),
+      numberControl("bobIntensity", "Bob Intensity", 0.45, { min: 0, max: 1, step: 0.05 }),
+      numberControl("bobRadius", "Bob Radius", 42, { min: 1, max: 160, step: 1 }),
+      numberControl("bobTrail", "Bob Trail", 0.12, { min: 0, max: 1, step: 0.01 }),
+      toggleControl("glenz", "Glenz", true),
+      numberControl("twistAmp", "Twist Amp", 1.8, { min: 0, max: 5, step: 0.05 }),
+      numberControl("twistHueSpeed", "Twist Hue Speed", 65, { min: 0, max: 180, step: 1 }),
+      numberControl("twistSlices", "Twist Slices", 24, { min: 1, max: 96, step: 1 }),
+      numberControl("twistSpeed", "Twist Speed", 0.85, { min: 0, max: 4, step: 0.05 }),
+      numberControl("twistWidth", "Twist Width", 0.28, { min: 0.05, max: 0.8, step: 0.01 }),
+      numberControl("twistX", "Twist X", 0.5, { min: 0, max: 1, step: 0.01 })
+    ]
+  },
+  copper_gradient_splits: {
+    title: "Copper Gradient Splits Controls",
+    controls: [
+      numberControl("scanStep", "Scan Step", 2, { min: 1, max: 6, step: 1 }),
+      numberControl("gradientRowStep", "Gradient Row Step", 16, { min: 4, max: 64, step: 1 }),
+      numberControl("barCount", "Bar Count", 10, { min: 4, max: 24, step: 1 }),
+      numberControl("speed", "Speed", 0.7, { min: 0, max: 3, step: 0.05 }),
+      numberControl("barWobble", "Bar Wobble", 28, { min: 0, max: 80, step: 1 }),
+      numberControl("barHueStep", "Bar Hue Step", 22, { min: 0, max: 120, step: 1 }),
+      numberControl("hueWobble", "Hue Wobble", 18, { min: 0, max: 120, step: 1 }),
+      numberControl("saturation", "Saturation", 0.9, { min: 0, max: 1, step: 0.05 }),
+      numberControl("lightnessBase", "Lightness Base", 0.35, { min: 0, max: 1, step: 0.05 }),
+      numberControl("lightnessPeak", "Lightness Peak", 0.68, { min: 0, max: 1, step: 0.05 }),
+      numberControl("splits", "Splits", 3, { min: 1, max: 6, step: 1 }),
+      toggleControl("hamish", "Hamish", true),
+      numberControl("hamishStrength", "Hamish Strength", 0.35, { min: 0, max: 1, step: 0.05 }),
+      toggleControl("paletteClamp", "Palette Clamp", false),
+      numberControl("paletteClampSteps", "Palette Clamp Steps", 32, { min: 2, max: 64, step: 1 }),
+      numberControl("audioReact", "Audio React", 0.7, { min: 0, max: 1, step: 0.05 }),
+      numberControl("beatKick", "Beat Kick", 0.7, { min: 0, max: 1, step: 0.05 }),
+      numberControl("regions", "Regions Override (advanced)", 0)
+    ]
+  },
+  dotTunnel: {
+    title: "Dot Tunnel Controls",
+    controls: [
+      numberControl("ringCount", "Ring Count", DOT_TUNNEL_DEFAULTS.ringCount, { min: 8, max: 180, step: 1 }),
+      numberControl("dotsPerRing", "Dots Per Ring", DOT_TUNNEL_DEFAULTS.dotsPerRing, { min: 6, max: 160, step: 1 }),
+      numberControl("fov", "FOV", DOT_TUNNEL_DEFAULTS.fov, { min: 40, max: 125, step: 1 }),
+      numberControl("speed", "Speed", DOT_TUNNEL_DEFAULTS.speed, { min: 0.05, max: 3.5, step: 0.05 }),
+      numberControl("twist", "Twist", DOT_TUNNEL_DEFAULTS.twist, { min: -4, max: 4, step: 0.05 }),
+      numberControl("palette", "Palette", DOT_TUNNEL_DEFAULTS.palette, { min: 0, max: 12, step: 1 }),
+      numberControl("glow", "Glow", DOT_TUNNEL_DEFAULTS.glow, { min: 0, max: 1.5, step: 0.05 }),
+      numberControl("seed", "Seed", DOT_TUNNEL_DEFAULTS.seed, { min: 0, max: 9999, step: 1 })
+    ]
+  },
+  effect_evolution: {
+    title: "Effect Evolution Controls",
+    controls: [
+      numberControl("density", "Density", 1, { min: 0.4, max: 2.5, step: 0.05 }),
+      numberControl("motion", "Motion", 0.6, { min: 0, max: 1, step: 0.05 }),
+      numberControl("warp", "Warp", 0.4, { min: 0, max: 1, step: 0.05 }),
+      numberControl("trail", "Trail", 0.15, { min: 0, max: 0.92, step: 0.01 }),
+      numberControl("seed", "Seed", 13, { min: 0, max: 9999, step: 1 })
+    ]
+  },
+  gl_impossible_corridor: {
+    title: "Impossible Corridor Controls",
+    controls: [
+      numberControl("quality", "Quality", IMPOSSIBLE_CORRIDOR_DEFAULTS.quality, { min: 1, max: 3, step: 1 }),
+      numberControl("warp", "Warp", IMPOSSIBLE_CORRIDOR_DEFAULTS.warp, { min: 0, max: 2, step: 0.05 }),
+      numberControl("hueShift", "Hue Shift", IMPOSSIBLE_CORRIDOR_DEFAULTS.hueShift, { min: 0, max: 1, step: 0.01 }),
+      numberControl("exposure", "Exposure", IMPOSSIBLE_CORRIDOR_DEFAULTS.exposure, { min: 0.5, max: 2, step: 0.05 }),
+      numberControl("seed", "Seed", IMPOSSIBLE_CORRIDOR_DEFAULTS.seed, { min: 0, max: 9999, step: 1 }),
+      numberControl("speed", "Speed", IMPOSSIBLE_CORRIDOR_DEFAULTS.speed, { min: 0.1, max: 2, step: 0.05 }),
+      numberControl("internalScale", "Internal Scale", 0.8, { min: 0.4, max: 1.2, step: 0.05 })
+    ]
+  },
+  lightning: {
+    title: "Lightning Controls",
+    controls: [
+      numberControl("chancePerSecond", "Chance / second", 0.25, { min: 0, max: 3, step: 0.05 }),
+      numberControl("cooldown", "Cooldown", 1.5, { min: 0, max: 5, step: 0.05 }),
+      numberControl("flashDuration", "Flash Duration", 0.12, { min: 0.05, max: 2, step: 0.01 }),
+      numberControl("branches", "Branches", 1, { min: 1, max: 8, step: 1 }),
+      toggleControl("bolt", "Bolt", true),
+      numberControl("trigger", "Trigger", 0, { min: 0, max: 1, step: 1 }),
+      numberControl("seed", "Seed", 0, { min: 0, max: 9999, step: 1 })
+    ]
+  },
+  physics_pile: {
+    title: "Physics Pile Controls",
+    controls: [
+      numberControl("count", "Count", 18, { min: 5, max: 120, step: 1 }),
+      numberControl("restitution", "Restitution", 0.25, { min: 0, max: 1, step: 0.01 }),
+      numberControl("friction", "Friction", 0.6, { min: 0, max: 1, step: 0.01 }),
+      numberControl("gravity", "Gravity", 900, { min: 0, max: 2400, step: 10 }),
+      numberControl("kickImpulse", "Kick Impulse", 250, { min: 0, max: 3000, step: 10 }),
+      numberControl("beatImpulse", "Beat Impulse", 250, { min: 0, max: 3000, step: 10 }),
+      numberControl("kickRadius", "Kick Radius", 240, { min: 1, max: 1000, step: 1 }),
+      numberControl("scatterAngleDeg", "Scatter Angle", 25, { min: 0, max: 180, step: 1 }),
+      numberControl("scatterJitter", "Scatter Jitter", 0.35, { min: 0, max: 1, step: 0.01 }),
+      numberControl("kickUpBias", "Kick Up Bias", 0.35, { min: 0, max: 1, step: 0.01 }),
+      numberControl("kickTorque", "Kick Torque", 35, { min: 0, max: 360, step: 1 }),
+      numberControl("loosenDuration", "Loosen Duration", 0.18, { min: 0, max: 5, step: 0.01 }),
+      numberControl("loosenFrictionMult", "Loosen Friction Mult", 0.25, { min: 0, max: 1, step: 0.01 }),
+      numberControl("loosenRestitutionAdd", "Loosen Restitution Add", 0.35, { min: 0, max: 1, step: 0.01 }),
+      numberControl("loosenPosCorrMult", "Loosen Position Correction Mult", 0.35, { min: 0, max: 1, step: 0.01 }),
+      numberControl("loosenExtraSlop", "Loosen Extra Slop", 1.5, { min: 0, max: 10, step: 0.1 }),
+      numberControl("maxLinVel", "Max Linear Velocity", 1800, { min: 0, max: 5000, step: 10 }),
+      numberControl("maxAngVel", "Max Angular Velocity", 18, { min: 0, max: 360, step: 1 }),
+      numberControl("kickOriginY", "Kick Origin Y", 0),
+      numberControl("sepBiasDeg", "Separation Bias", 10, { min: 0, max: 180, step: 1 }),
+      numberControl("seed", "Seed", 0, { min: 0, max: 9999, step: 1 }),
+      numberControl("trail", "Trail", 0.2, { min: 0, max: 1, step: 0.01 }),
+      numberControl("shatter", "Shatter", 0, { min: 0, max: 1, step: 0.01 }),
+      numberControl("wreckingCue", "Wrecking Cue", 0, { min: 0, max: 1, step: 0.01 })
+    ]
+  },
+  platformerScroll: {
+    title: "Platformer Scroll Controls",
+    controls: [
+      numberControl("speed", "Speed", PLATFORMER_SCROLL_DEFAULTS.speed, { min: 0, max: 8, step: 0.05 }),
+      numberControl("seed", "Seed", PLATFORMER_SCROLL_DEFAULTS.seed, { min: 0, max: 9999, step: 1 }),
+      numberControl("tileSize", "Tile Size", PLATFORMER_SCROLL_DEFAULTS.tileSize, { min: 8, max: 64, step: 1 }),
+      numberControl("groundRatio", "Ground Ratio", PLATFORMER_SCROLL_DEFAULTS.groundRatio, { min: 0.2, max: 0.3, step: 0.01 }),
+      numberControl("parallaxFar", "Parallax Far", PLATFORMER_SCROLL_DEFAULTS.parallaxFar, { min: 0.05, max: 0.6, step: 0.01 }),
+      numberControl("parallaxMid", "Parallax Mid", PLATFORMER_SCROLL_DEFAULTS.parallaxMid, { min: 0.15, max: 0.9, step: 0.01 }),
+      numberControl("parallaxFront", "Parallax Front", PLATFORMER_SCROLL_DEFAULTS.parallaxFront, { min: 0.7, max: 1.4, step: 0.01 }),
+      numberControl("audioReact", "Audio React", PLATFORMER_SCROLL_DEFAULTS.audioReact, { min: 0, max: 1, step: 0.05 }),
+      numberControl("beatKick", "Beat Kick", PLATFORMER_SCROLL_DEFAULTS.beatKick, { min: 0, max: 1, step: 0.05 }),
+      numberControl("platformRate", "Platform Rate", PLATFORMER_SCROLL_DEFAULTS.platformRate, { min: 0, max: 1, step: 0.01 }),
+      numberControl("platformMaxSteps", "Platform Max Steps", PLATFORMER_SCROLL_DEFAULTS.platformMaxSteps, { min: 1, max: 12, step: 1 })
+    ]
+  },
+  raster_bars: {
+    title: "Raster Bars Controls",
+    controls: [
+      numberControl("barCount", "Bar Count", 6, { min: 1, max: 24, step: 1 }),
+      numberControl("barThickness", "Bar Thickness", 26, { min: 1, max: 120, step: 1 }),
+      numberControl("speed", "Speed", 0.9, { min: 0, max: 4, step: 0.05 }),
+      numberControl("waveAmp", "Wave Amp", 16, { min: 0, max: 120, step: 1 }),
+      numberControl("waveFreq", "Wave Freq", 2.5, { min: 0, max: 16, step: 0.1 }),
+      numberControl("splitStrength", "Split Strength", 0.65, { min: 0, max: 1, step: 0.05 }),
+      numberControl("scanlineStep", "Scanline Step", 2, { min: 1, max: 6, step: 1 }),
+      numberControl("audioReact", "Audio React", 0.7, { min: 0, max: 1, step: 0.05 }),
+      numberControl("beatThump", "Beat Thump", 0.6, { min: 0, max: 1, step: 0.05 }),
+      numberControl("border", "Border", 0, { min: 0, max: 1, step: 1 }),
+      numberControl("borderSize", "Border Size", 0.08, { min: 0, max: 0.5, step: 0.01 }),
+      numberControl("orientation", "Orientation", 0, { min: 0, max: 1, step: 1 }),
+      numberControl("palette", "Palette", 0, { min: 0, max: 8, step: 1 })
+    ]
+  },
+  raytrace_spheres: {
+    title: "Raytrace Spheres Controls",
+    controls: [
+      numberControl("quality", "Quality", 2, { min: 1, max: 3, step: 1 }),
+      numberControl("bufW", "Buffer Width", 0),
+      numberControl("bufH", "Buffer Height", 0),
+      numberControl("sphereCount", "Sphere Count", 3, { min: 1, max: 8, step: 1 }),
+      numberControl("cellSize", "Cell Size", 2, { min: 1, max: 6, step: 1 }),
+      toggleControl("adaptive", "Adaptive", true),
+      numberControl("refineThreshold", "Refine Threshold", 120, { min: 20, max: 255, step: 1 }),
+      toggleControl("refineGrow", "Refine Grow", true),
+      numberControl("aa", "Antialiasing", 1, { min: 0, max: 2, step: 1 }),
+      selectControl("aaMode", "AA Mode", "refinedOnly", [
+        { label: "Refined only", value: "refinedOnly" },
+        { label: "Full", value: "full" }
+      ]),
+      toggleControl("outputSmoothing", "Output Smoothing", false),
+      toggleControl("forceAA", "Force AA", false),
+      numberControl("seed", "Seed", 1337, { min: 0, max: 9999, step: 1 }),
+      numberControl("fov", "FOV", 60, { min: 35, max: 90, step: 1 }),
+      numberControl("audioReact", "Audio React", 0.6, { min: 0, max: 1, step: 0.05 }),
+      numberControl("beatKick", "Beat Kick", 0.7, { min: 0, max: 1, step: 0.05 }),
+      numberControl("maxDepth", "Max Depth", 2, { min: 1, max: 3, step: 1 }),
+      numberControl("ambient", "Ambient", 0.12, { min: 0.05, max: 0.4, step: 0.01 }),
+      numberControl("diffuseStrength", "Diffuse Strength", 1, { min: 0.2, max: 2, step: 0.05 }),
+      numberControl("specStrength", "Spec Strength", 0.45, { min: 0, max: 2, step: 0.05 }),
+      numberControl("shininess", "Shininess", 48, { min: 8, max: 96, step: 1 }),
+      numberControl("floorReflect", "Floor Reflect", 0.55, { min: 0, max: 0.9, step: 0.01 }),
+      toggleControl("scanlines", "Scanlines", false)
+    ]
+  },
+  sine_scroller_logo: {
+    title: "Sine Scroller Logo Controls",
+    controls: [
+      numberControl("audioReact", "Audio React", 0.72, { min: 0, max: 1, step: 0.05 }),
+      numberControl("beatBoost", "Beat Boost", 0.58, { min: 0, max: 1, step: 0.05 }),
+      selectControl("message", "Message", "  CODEX CREW :: 68000 INSIDE :: STAY TUNED   ", [
+        { label: "Default", value: "  CODEX CREW :: 68000 INSIDE :: STAY TUNED   " },
+        { label: "ALT", value: "  OPENAI PRESENTS :: RETRO FUTURE :: GREETS!   " }
+      ]),
+      numberControl("fontSize", "Font Size", 42, { min: 8, max: 160, step: 1 }),
+      numberControl("speed", "Speed", 140, { min: 0, max: 600, step: 1 }),
+      numberControl("waveAmp", "Wave Amp", 24, { min: 0, max: 120, step: 1 }),
+      numberControl("waveSpeed", "Wave Speed", 5.2, { min: 0, max: 20, step: 0.1 }),
+      numberControl("wavePhaseStep", "Wave Phase Step", 0.32, { min: 0, max: 2, step: 0.01 }),
+      numberControl("scrollerX", "Scroller X", 0),
+      numberControl("scrollerY", "Scroller Y", 0),
+      selectControl("logoText", "Logo Text", "SMCGA", [
+        { label: "SMCGA", value: "SMCGA" },
+        { label: "CODEX", value: "CODEX" }
+      ]),
+      numberControl("logoFontSize", "Logo Font Size", 86, { min: 8, max: 240, step: 1 }),
+      numberControl("logoY", "Logo Y", 136, { min: 0, max: 600, step: 1 }),
+      numberControl("scanlineStep", "Scanline Step", 2, { min: 1, max: 6, step: 1 }),
+      numberControl("logoWaveAmp", "Logo Wave Amp", 7, { min: 0, max: 80, step: 1 }),
+      numberControl("logoWaveSpeed", "Logo Wave Speed", 2.4, { min: 0, max: 20, step: 0.1 }),
+      numberControl("logoWaveFreq", "Logo Wave Freq", 0.036, { min: 0, max: 1, step: 0.001 }),
+      toggleControl("layer2", "Layer 2", true),
+      numberControl("layer2FontSize", "Layer2 Font Size", 24, { min: 8, max: 120, step: 1 }),
+      numberControl("layer2Speed", "Layer2 Speed", 175, { min: 0, max: 600, step: 1 }),
+      numberControl("layer2Y", "Layer2 Y", 0)
+    ]
+  },
+  vector3d_balls: {
+    title: "Vector 3D Balls Controls",
+    controls: [
+      selectControl("model", "Model", VECTOR3D_BALLS_DEFAULTS.model, [
+        { label: "Cube", value: "cube" },
+        { label: "Sphere", value: "sphere" },
+        { label: "Torus", value: "torus" }
+      ]),
+      numberControl("pointCount", "Point Count", VECTOR3D_BALLS_DEFAULTS.pointCount, { min: 80, max: 2000, step: 1 }),
+      toggleControl("wireframe", "Wireframe", VECTOR3D_BALLS_DEFAULTS.wireframe > 0),
+      toggleControl("roundDots", "Round Dots", VECTOR3D_BALLS_DEFAULTS.roundDots > 0),
+      numberControl("baseDotSize", "Base Dot Size", VECTOR3D_BALLS_DEFAULTS.baseDotSize, { min: 0.5, max: 6, step: 0.1 }),
+      numberControl("dotDepthScale", "Dot Depth Scale", VECTOR3D_BALLS_DEFAULTS.dotDepthScale, { min: 0, max: 6, step: 0.1 }),
+      numberControl("lineWidth", "Line Width", VECTOR3D_BALLS_DEFAULTS.lineWidth, { min: 0.5, max: 6, step: 0.1 }),
+      numberControl("camDist", "Camera Distance", VECTOR3D_BALLS_DEFAULTS.camDist, { min: 2.4, max: 6, step: 0.05 }),
+      numberControl("rotXSpeed", "Rot X Speed", VECTOR3D_BALLS_DEFAULTS.rotXSpeed, { min: 0, max: 2.5, step: 0.05 }),
+      numberControl("rotYSpeed", "Rot Y Speed", VECTOR3D_BALLS_DEFAULTS.rotYSpeed, { min: 0, max: 2.5, step: 0.05 }),
+      numberControl("rotZSpeed", "Rot Z Speed", VECTOR3D_BALLS_DEFAULTS.rotZSpeed, { min: 0, max: 1.5, step: 0.05 }),
+      numberControl("trail", "Trail", VECTOR3D_BALLS_DEFAULTS.trail, { min: 0, max: 0.85, step: 0.01 }),
+      numberControl("stripeFreq", "Stripe Freq", VECTOR3D_BALLS_DEFAULTS.stripeFreq, { min: 1, max: 14, step: 0.1 }),
+      numberControl("stripeSpeed", "Stripe Speed", VECTOR3D_BALLS_DEFAULTS.stripeSpeed, { min: -2, max: 2, step: 0.05 }),
+      numberControl("stripeStrength", "Stripe Strength", VECTOR3D_BALLS_DEFAULTS.stripeStrength, { min: 0, max: 1, step: 0.05 }),
+      selectControl("palette", "Palette", VECTOR3D_BALLS_DEFAULTS.palette, [
+        { label: "C64", value: "c64" },
+        { label: "Spectrum", value: "spectrum" },
+        { label: "Rainbow", value: "rainbow" }
+      ]),
+      numberControl("audioReact", "Audio React", VECTOR3D_BALLS_DEFAULTS.audioReact, { min: 0, max: 1, step: 0.05 }),
+      numberControl("beatKick", "Beat Kick", VECTOR3D_BALLS_DEFAULTS.beatKick, { min: 0, max: 1, step: 0.05 }),
+      numberControl("seed", "Seed", VECTOR3D_BALLS_DEFAULTS.seed, { min: 0, max: 9999, step: 1 })
+    ]
+  },
+  vga_fire: {
+    title: "VGA Fire Controls",
+    controls: [
+      numberControl("fireW", "Fire Width", 160, { min: 40, max: 400, step: 1 }),
+      numberControl("fireH", "Fire Height", 120, { min: 40, max: 300, step: 1 }),
+      numberControl("stepsPerFrame", "Steps / frame", 1, { min: 1, max: 4, step: 1 }),
+      numberControl("baseHeat", "Base Heat", 160, { min: 0, max: 255, step: 1 }),
+      numberControl("sparkChance", "Spark Chance", 0.55, { min: 0, max: 1, step: 0.01 }),
+      numberControl("decay", "Decay", 3, { min: 1, max: 8, step: 1 }),
+      numberControl("wind", "Wind", 0, { min: -1, max: 1, step: 0.01 }),
+      numberControl("windWave", "Wind Wave", 0.6, { min: 0, max: 2, step: 0.01 }),
+      numberControl("turbulence", "Turbulence", 1.2, { min: 0, max: 3, step: 0.01 }),
+      numberControl("gustOnBeat", "Gust on Beat", 0.8, { min: 0, max: 1, step: 0.01 }),
+      numberControl("audioReact", "Audio React", 0.7, { min: 0, max: 1, step: 0.05 }),
+      selectControl("logoText", "Logo Text", "SMCGA", [
+        { label: "SMCGA", value: "SMCGA" },
+        { label: "FIRE", value: "FIRE" },
+        { label: "OFF", value: "" }
+      ]),
+      numberControl("logoSize", "Logo Size", 48, { min: 10, max: 160, step: 1 }),
+      numberControl("logoY", "Logo Y", 0),
+      numberControl("scanlines", "Scanlines", 0.25, { min: 0, max: 1, step: 0.01 }),
+      numberControl("glowStrength", "Glow Strength", 0.3, { min: 0, max: 2, step: 0.01 })
+    ]
   },
   textmode_charset: {
     title: "Textmode Charset Controls",
