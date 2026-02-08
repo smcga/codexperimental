@@ -133,7 +133,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 
 | Effect | Parameters | Notes |
 | --- | --- | --- |
-| `starfield` | `speed`, `warp`, `turnRate`, `turnStrength` | Warp/turn adjust the starfield flight feel. |
+| `starfield` | `speed`, `warp`, `turnRate`, `turnStrength`, `drift`, `sparkle`, `colorShift` | Warp/turn adjust flight feel; drift/sparkle/colorShift add richer motion and chroma variation. |
 | `plasma` | `speed` |  |
 | `raster_bars` | `orientation`, `barCount`, `barThickness`, `speed`, `waveAmp`, `waveFreq`, `splitStrength`, `scanlineStep`, `border`, `borderSize`, `palette`, `audioReact`, `beatThump` | `orientation` supports `horizontal` or `vertical`; `palette` supports `c64`, `atari`, `spectrum`, or `rainbow`. |
 | `kefrens_bars` | `barCount`, `barWidth`, `amp`, `freq`, `speed`, `phaseOffset`, `palette` | `palette` supports `rainbow`, `c64`, or `amiga`. |

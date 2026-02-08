@@ -7,7 +7,10 @@ describe("effect debug params", () => {
       speed: 1,
       warp: 0.3,
       turnRate: 0.7,
-      turnStrength: 0.35
+      turnStrength: 0.35,
+      drift: 0.14,
+      sparkle: 0.55,
+      colorShift: 0
     });
   });
 
@@ -16,13 +19,19 @@ describe("effect debug params", () => {
       speed: -1,
       warp: 2,
       turnRate: 1.5,
-      turnStrength: -0.5
+      turnStrength: -0.5,
+      drift: -1,
+      sparkle: 3,
+      colorShift: 2
     });
     expect(params).toEqual({
       speed: 0,
       warp: 1,
       turnRate: 1.5,
-      turnStrength: 0
+      turnStrength: 0,
+      drift: 0,
+      sparkle: 2,
+      colorShift: 1
     });
   });
 

@@ -109,13 +109,16 @@ Total effects: **63**.
 - **Implementation:** `src/renderer/effects/starfieldEffect.ts` (class `StarfieldEffect`)
 - **Renderer:** Canvas2D
 - **Description:** Implemented by StarfieldEffect (src/renderer/effects/starfieldEffect.ts).
-- **Audio features:** bass, beatStrength, rms
+- **Audio features:** bass, beatStrength, mid, rms, treble
 - **Performance notes:** None noted.
 
 ### Parameters
 
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
 | --- | --- | --- | --- | --- | --- |
+| `params.colorShift` | number | 0 | min -1, max 1 | Color Shift | yes |
+| `params.drift` | number | 0.14 | min 0, max 1 | Drift | yes |
+| `params.sparkle` | number | 0.55 | min 0, max 2 | Sparkle | yes |
 | `params.speed` | number | 1 | min 0, max ? | Speed | yes |
 | `params.turnRate` | number | 0.7 | min 0, max ? | Turn Rate | yes |
 | `params.turnStrength` | number | 0.35 | min 0, max 1 | Turn Strength | yes |
@@ -554,7 +557,7 @@ Total effects: **63**.
 - **Implementation:** `src/renderer/effects/finaleEffect.ts` (class `FinaleEffect`)
 - **Renderer:** Canvas2D
 - **Description:** Implemented by FinaleEffect (src/renderer/effects/finaleEffect.ts).
-- **Audio features:** bass, beat, beatStrength, frequency, rms
+- **Audio features:** bass, beat, beatStrength, frequency, mid, rms, treble
 - **Performance notes:** None noted.
 
 ### Parameters

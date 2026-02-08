@@ -15,13 +15,16 @@ export class FinaleEffect implements Effect {
     const starSpeed = clamp(params.starSpeed ?? 1.2, 0, 4);
     const starWarp = clamp(params.starWarp ?? 0.9, 0, 2);
     const starTurn = clamp(params.starTurn ?? 0.35, 0, 1.5);
-    this.starfield.update(
-      delta,
-      starSpeed + audio.bass * 3,
-      starWarp + audio.beatStrength * 0.6,
-      starTurn + audio.rms * 0.3
-    );
-    this.starfield.render(ctx, width, height, audio.rms + audio.bass, 0.6 + audio.beatStrength);
+    this.starfield.update(delta, starSpeed + audio.bass * 3, {
+      turnRate: starWarp + audio.beatStrength * 0.6,
+      turnStrength: starTurn + audio.rms * 0.3,
+      drift: 0.12 + audio.treble * 0.08
+    });
+    this.starfield.render(ctx, width, height, audio.rms + audio.bass, {
+      warp: 0.6 + audio.beatStrength,
+      sparkle: 0.8 + audio.treble * 0.35,
+      colorShift: audio.mid * 0.2
+    });
 
     const particleCount = clamp(Math.round(params.particleCount ?? 40), 10, 120);
     const particleForce = clamp(params.particleForce ?? 3, 0.5, 6);
