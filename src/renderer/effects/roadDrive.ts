@@ -27,10 +27,13 @@ void main() {
   float zOffset = u_time * u_speed * 30.0;
   float wrappedZ = mod(a_position.y + zOffset, u_trackDepth);
   float bob = sin(u_time * 2.4) * u_cameraBob * (0.5 + 0.5 * u_rms * u_rmsReactive);
-  float driveZ = wrappedZ + u_time * u_speed * 18.0;
-  float longBend = sin(driveZ * u_curveFrequency) * u_curveStrength;
-  float shortBend = sin(driveZ * (u_curveFrequency * 2.7) + 0.9) * u_curveStrength * 0.45;
-  float curveOffset = (longBend + shortBend) * (0.35 + 0.65 * clamp(wrappedZ / u_trackDepth, 0.0, 1.0));
+  float depthNorm = wrappedZ / max(u_trackDepth, 0.001);
+  float curvePhase = depthNorm * 6.28318530718;
+  float curveDensity = mix(1.0, 4.5, clamp((u_curveFrequency - 0.015) / 0.185, 0.0, 1.0));
+  float travelPhase = u_time * u_speed * (0.55 + u_curveFrequency * 8.0);
+  float longBend = sin(curvePhase * curveDensity - travelPhase) * u_curveStrength;
+  float shortBend = sin(curvePhase * (curveDensity * 2.0) + travelPhase * 1.7 + 0.9) * u_curveStrength * 0.35;
+  float curveOffset = (longBend + shortBend) * (0.35 + 0.65 * depthNorm);
 
   vec3 pos = vec3(a_position.x + curveOffset, -0.35 - bob, -(wrappedZ + 0.6));
 

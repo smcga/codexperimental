@@ -40,6 +40,11 @@ describe("roadDrive helpers", () => {
     });
   });
 
+
+  it("clamps curve frequency to the supported max", () => {
+    expect(normalizeRoadDriveParams({ curveFrequency: 99 }).curveFrequency).toBe(0.2);
+  });
+
   it("builds deterministic road vertices", () => {
     const first = buildRoadDriveVertices(5, 4, 12, 40);
     const second = buildRoadDriveVertices(5, 4, 12, 40);
