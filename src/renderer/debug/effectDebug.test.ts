@@ -96,6 +96,8 @@ describe("effect debug params", () => {
       fog: 0.68,
       glow: 1,
       cameraBob: 0.22,
+      curveStrength: 1.6,
+      curveFrequency: 0.06,
       bassReactive: 0.85,
       rmsReactive: 0.45
     });
