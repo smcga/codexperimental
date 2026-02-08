@@ -12,6 +12,8 @@ import { SINE_DISTORTER_DEFAULTS } from "../effects/sineDistorter";
 import { GLENZ_VECTORS_DEFAULTS } from "../effects/glenzVectors";
 import { BUMPMAP_PLANE_DEFAULTS } from "../effects/bumpmapPlane";
 import { FRACTAL_ZOOMER_DEFAULTS } from "../effects/fractalZoomer";
+import { KEFRENS_BARS_DEFAULTS } from "../effects/kefrensBars";
+import { GREETS_WALL_DEFAULTS } from "../effects/greetsWall";
 
 export type EffectParamValue = number | string;
 
@@ -547,6 +549,26 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("fractalScale", "Fractal Scale", 1.0, { min: 0.4, max: 2.2, step: 0.05 })
     ]
   },
+  greets_wall: {
+    title: "Greets Wall Controls",
+    controls: [
+      selectControl("layout", "Layout", GREETS_WALL_DEFAULTS.layout, [
+        { label: "Grid", value: "grid" },
+        { label: "Carousel", value: "carousel" }
+      ]),
+      selectControl("transitionStyle", "Transition", GREETS_WALL_DEFAULTS.transitionStyle, [
+        { label: "Slide", value: "slide" },
+        { label: "Fade", value: "fade" },
+        { label: "Pop", value: "pop" }
+      ]),
+      numberControl("cycleSeconds", "Cycle Seconds", GREETS_WALL_DEFAULTS.cycleSeconds, { min: 0.35, max: 6, step: 0.05 }),
+      numberControl("columns", "Columns", GREETS_WALL_DEFAULTS.columns, { min: 1, max: 8, step: 1 }),
+      numberControl("padding", "Padding", GREETS_WALL_DEFAULTS.padding, { min: 0.02, max: 0.18, step: 0.01 }),
+      numberControl("highlightPulse", "Highlight Pulse", GREETS_WALL_DEFAULTS.highlightPulse, { min: 0, max: 1.5, step: 0.05 }),
+      numberControl("beatPulseDecay", "Beat Decay", GREETS_WALL_DEFAULTS.beatPulseDecay, { min: 0.2, max: 8, step: 0.1 }),
+      numberControl("audioReact", "Audio React", GREETS_WALL_DEFAULTS.audioReact, { min: 0, max: 1, step: 0.05 })
+    ]
+  },
   treegrowth: {
     title: "Tree Growth Controls",
     controls: [
@@ -649,6 +671,22 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("audioReact", "Audio React", 0.7, { min: 0, max: 1, step: 0.05 }),
       numberControl("beatKick", "Beat Kick", 0.7, { min: 0, max: 1, step: 0.05 }),
       numberControl("seed", "Seed", 0, { min: 0, max: 999, step: 1 })
+          ]
+  },
+  kefrens_bars: {
+    title: "Kefrens Bars Controls",
+    controls: [
+      numberControl("barCount", "Bar Count", KEFRENS_BARS_DEFAULTS.barCount, { min: 1, max: 128, step: 1 }),
+      numberControl("barWidth", "Bar Width", KEFRENS_BARS_DEFAULTS.barWidth, { min: 1, max: 160, step: 1 }),
+      numberControl("amp", "Amplitude", KEFRENS_BARS_DEFAULTS.amp, { min: 0, max: 480, step: 1 }),
+      numberControl("freq", "Frequency", KEFRENS_BARS_DEFAULTS.freq, { min: 0, max: 20, step: 0.1 }),
+      numberControl("speed", "Speed", KEFRENS_BARS_DEFAULTS.speed, { min: -10, max: 10, step: 0.05 }),
+      numberControl("phaseOffset", "Phase Offset", KEFRENS_BARS_DEFAULTS.phaseOffset, { min: -6.28, max: 6.28, step: 0.01 }),
+      selectControl("palette", "Palette", KEFRENS_BARS_DEFAULTS.palette, [
+        { label: "Rainbow", value: "rainbow" },
+        { label: "Commodore 64", value: "c64" },
+        { label: "Amiga", value: "amiga" }
+      ])
           ]
   },
   twister: {

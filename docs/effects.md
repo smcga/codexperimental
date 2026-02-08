@@ -65,6 +65,8 @@ Total effects: **59**.
 - [Effect: vga_fire](#effect-vga-fire)
 - [Effect: platformerScroll](#effect-platformerScroll)
 - [Effect: fractal_zoomer](#effect-fractal-zoomer)
+- [Effect: kefrens_bars](#effect-kefrens-bars)
+- [Effect: dotTunnel](#effect-dotTunnel)
 
 ## Cross-reference
 
@@ -84,11 +86,11 @@ Total effects: **59**.
 
 ### Common parameter patterns
 
-- `speed` (used in 34 effects)
-- `seed` (used in 22 effects)
-- `audioReact` (used in 22 effects)
+- `speed` (used in 35 effects)
+- `seed` (used in 23 effects)
+- `audioReact` (used in 21 effects)
 - `beatKick` (used in 14 effects)
-- `glow` (used in 7 effects)
+- `glow` (used in 8 effects)
 - `hueShift` (used in 6 effects)
 - `trail` (used in 6 effects)
 - `quality` (used in 6 effects)
@@ -2127,6 +2129,50 @@ Total effects: **59**.
 }
 ```
 
+## Effect: dotTunnel
+
+- **Registry key:** `dotTunnel`
+- **Implementation:** `src/renderer/effects/dotTunnel.ts` (class `DotTunnelEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by DotTunnelEffect (src/renderer/effects/dotTunnel.ts).
+- **Audio features:** bass, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.dotsPerRing` | number | 40 | unspecified | Used in effect render logic. | yes |
+| `params.fov` | number | 72 | unspecified | Used in effect render logic. | yes |
+| `params.glow` | number | 0.7 | unspecified | Used in effect render logic. | yes |
+| `params.palette` | number | 0 | unspecified | Used in effect render logic. | yes |
+| `params.ringCount` | number | 52 | unspecified | Used in effect render logic. | yes |
+| `params.seed` | number | 1 | unspecified | Used in effect render logic. | yes |
+| `params.speed` | number | 1 | unspecified | Used in effect render logic. | yes |
+| `params.twist` | number | 0.9 | unspecified | Used in effect render logic. | yes |
+
+## Effect: kefrens_bars
+
+- **Registry key:** `kefrens_bars`
+- **Implementation:** `src/renderer/effects/kefrensBars.ts` (class `KefrensBarsEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by KefrensBarsEffect (src/renderer/effects/kefrensBars.ts).
+- **Audio features:** None detected
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.amp` | number | 64 | min 0, max 480 | Amplitude | yes |
+| `params.barCount` | number | 18 | min 1, max 128 | Bar Count | yes |
+| `params.barWidth` | number | 12 | min 1, max 160 | Bar Width | yes |
+| `params.freq` | number | 2.2 | min 0, max 20 | Frequency | yes |
+| `params.palette` | string | "rainbow" | options: rainbow, c64, amiga | Palette | no |
+| `params.phaseOffset` | number | 0.55 | min -6.28, max 6.28 | Phase Offset | yes |
+| `params.speed` | number | 1.4 | min -10, max 10 | Speed | yes |
+
+
+
 ## Effect: fractal_zoomer
 
 - **Registry key:** `fractal_zoomer`
@@ -2135,7 +2181,7 @@ Total effects: **59**.
 - **Description:** Implemented by FractalZoomerEffect (src/renderer/effects/fractalZoomer.ts).
 - **Audio features:** bass, beat, beatStrength, rms
 - **Performance notes:** Uses ImageData per frame; CPU cost scales with resolution.
-
+- 
 ### Parameters
 
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
@@ -2158,4 +2204,3 @@ Total effects: **59**.
   "params": {}
 }
 ```
-
