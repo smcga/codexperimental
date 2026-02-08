@@ -167,6 +167,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `sphere3d` | `speed` |  |
 | `spherecloud` | `speed` |  |
 | `infinitycloud` | `speed` |  |
+| `torus_orbit_3d` | `ringCount`, `pointsPerRing`, `majorRadius`, `minorRadius`, `spinSpeed`, `wobbleSpeed`, `depth`, `glow`, `palette`, `audioReact` | Orbiting 3D torus points; `palette` supports `teal`, `violet`, or `amber`. |
 | `raytrace_spheres` | `quality`, `bufW`, `bufH`, `sphereCount`, `maxDepth`, `floorReflect`, `shininess`, `diffuseStrength`, `specStrength`, `ambient`, `fov`, `cellSize`, `adaptive`, `refineThreshold`, `refineGrow`, `aa`, `aaMode`, `outputSmoothing`, `forceAA`, `audioReact`, `beatKick`, `scanlines`, `seed` | Low-res software raytraced spheres with reflections. |
 | `chess` | `speed`, `showHighlights`, `startTime` |  |
 | `flyover` | `speed`, `horizon`, `seaDetail`, `waveSpeed`, `waveIntensity`, `islandCount`, `islandSeed`, `fog`, `palette`, `audioReactive` | `palette` supports `day`, `sunset`, `night`. |

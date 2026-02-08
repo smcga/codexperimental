@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/index.ts`.
 
-Total effects: **64**.
+Total effects: **65**.
 
 ## Table of contents
 
@@ -70,6 +70,7 @@ Total effects: **64**.
 - [Effect: dotTunnel](#effect-dotTunnel)
 - [Effect: textmode_charset](#effect-textmode-charset)
 - [Effect: moire_grid](#effect-moire-grid)
+- [Effect: torus_orbit_3d](#effect-torus-orbit-3d)
 
 ## Cross-reference
 
@@ -90,11 +91,11 @@ Total effects: **64**.
 ### Common parameter patterns
 
 - `speed` (used in 38 effects)
+- `audioReact` (used in 25 effects)
 - `seed` (used in 24 effects)
-- `audioReact` (used in 24 effects)
 - `beatKick` (used in 14 effects)
-- `glow` (used in 8 effects)
-- `palette` (used in 8 effects)
+- `glow` (used in 9 effects)
+- `palette` (used in 9 effects)
 - `scanlines` (used in 7 effects)
 - `lineWidth` (used in 6 effects)
 - `hueShift` (used in 6 effects)
@@ -2331,6 +2332,41 @@ Total effects: **64**.
 ```json
 {
   "effect": "moire_grid",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: torus_orbit_3d
+
+- **Registry key:** `torus_orbit_3d`
+- **Implementation:** `src/renderer/effects/torusOrbit3d.ts` (class `TorusOrbit3dEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by TorusOrbit3dEffect (src/renderer/effects/torusOrbit3d.ts).
+- **Audio features:** bass, beat, rms
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReact` | number | 0.5 | min 0, max 1 | Audio React | yes |
+| `params.depth` | number | 3.4 | min 2, max 8 | Depth | yes |
+| `params.glow` | number | 0.65 | min 0, max 1 | Glow | yes |
+| `params.majorRadius` | number | 0.9 | min 0.2, max 1.8 | Major Radius | yes |
+| `params.minorRadius` | number | 0.34 | min 0.05, max 1.2 | Minor Radius | yes |
+| `params.palette` | string | "teal" | options: teal, violet, amber | Palette | no |
+| `params.pointsPerRing` | number | 48 | min 8, max 240 | Points Per Ring | yes |
+| `params.ringCount` | number | 9 | min 3, max 24 | Ring Count | yes |
+| `params.spinSpeed` | number | 0.85 | min -4, max 4 | Spin Speed | yes |
+| `params.wobbleSpeed` | number | 0.55 | min -3, max 3 | Wobble Speed | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "torus_orbit_3d",
   "opacity": 1,
   "blend": "source-over",
   "params": {}

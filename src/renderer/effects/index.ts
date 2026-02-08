@@ -63,6 +63,7 @@ import { GreetsWallEffect } from "./greetsWall";
 import { DotTunnelEffect } from "./dotTunnel";
 import { TextmodeCharsetEffect } from "./textmodeCharset";
 import { MoireGridEffect } from "./moireGridEffect";
+import { TorusOrbit3dEffect } from "./torusOrbit3d";
 
 export const effectRegistry: Record<string, Effect> = {
   starfield: new StarfieldEffect(),
@@ -129,6 +130,7 @@ export const effectRegistry: Record<string, Effect> = {
   dotTunnel: new DotTunnelEffect(),
   textmode_charset: new TextmodeCharsetEffect(),
   moire_grid: new MoireGridEffect(),
+  torus_orbit_3d: new TorusOrbit3dEffect(),
 };
 
 export function resetEffects(): void {

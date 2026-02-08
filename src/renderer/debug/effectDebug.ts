@@ -20,6 +20,7 @@ import { PLATFORMER_SCROLL_DEFAULTS } from "../effects/platformerScroll";
 import { VECTOR3D_BALLS_DEFAULTS } from "../effects/vector3dBalls";
 import { IMPOSSIBLE_CORRIDOR_DEFAULTS } from "../effects/gl/impossibleCorridorEffect";
 import { MOIRE_GRID_DEFAULTS } from "../effects/moireGridEffect";
+import { TORUS_ORBIT_3D_DEFAULTS } from "../effects/torusOrbit3d";
 
 export type EffectParamValue = number | string;
 
@@ -852,6 +853,25 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
         { label: "Amber", value: "amber" }
       ]),
       numberControl("audioReact", "Audio React", MOIRE_GRID_DEFAULTS.audioReact, { min: 0, max: 1, step: 0.05 })
+    ]
+  },
+  torus_orbit_3d: {
+    title: "Torus Orbit 3D Controls",
+    controls: [
+      numberControl("ringCount", "Ring Count", TORUS_ORBIT_3D_DEFAULTS.ringCount, { min: 3, max: 24, step: 1 }),
+      numberControl("pointsPerRing", "Points Per Ring", TORUS_ORBIT_3D_DEFAULTS.pointsPerRing, { min: 8, max: 240, step: 1 }),
+      numberControl("majorRadius", "Major Radius", TORUS_ORBIT_3D_DEFAULTS.majorRadius, { min: 0.2, max: 1.8, step: 0.01 }),
+      numberControl("minorRadius", "Minor Radius", TORUS_ORBIT_3D_DEFAULTS.minorRadius, { min: 0.05, max: 1.2, step: 0.01 }),
+      numberControl("spinSpeed", "Spin Speed", TORUS_ORBIT_3D_DEFAULTS.spinSpeed, { min: -4, max: 4, step: 0.05 }),
+      numberControl("wobbleSpeed", "Wobble Speed", TORUS_ORBIT_3D_DEFAULTS.wobbleSpeed, { min: -3, max: 3, step: 0.05 }),
+      numberControl("depth", "Depth", TORUS_ORBIT_3D_DEFAULTS.depth, { min: 2, max: 8, step: 0.05 }),
+      numberControl("glow", "Glow", TORUS_ORBIT_3D_DEFAULTS.glow, { min: 0, max: 1, step: 0.05 }),
+      selectControl("palette", "Palette", TORUS_ORBIT_3D_DEFAULTS.palette, [
+        { label: "Teal", value: "teal" },
+        { label: "Violet", value: "violet" },
+        { label: "Amber", value: "amber" }
+      ]),
+      numberControl("audioReact", "Audio React", TORUS_ORBIT_3D_DEFAULTS.audioReact, { min: 0, max: 1, step: 0.05 })
     ]
   },
   effect_evolution: {
