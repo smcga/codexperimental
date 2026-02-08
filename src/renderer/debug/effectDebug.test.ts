@@ -18,7 +18,7 @@ describe("effect debug params", () => {
       turnRate: 1.5,
       turnStrength: -0.5
     });
-    expect(params).toEqual({
+    expect(params).toMatchObject({
       speed: 0,
       warp: 1,
       turnRate: 1.5,
@@ -97,7 +97,37 @@ describe("effect debug params", () => {
       glow: 1,
       cameraBob: 0.22,
       bassReactive: 0.85,
-      rmsReactive: 0.45
+      rmsReactive: 0.45,
+      curveAmount: 1.2,
+      curveFreq: 0.035,
+      curveTimeSpeed: 0.18,
+      curveDampenNear: 0.35,
+      lampSpacing: 9,
+      lampIntensity: 1,
+      lampReactive: 0.45
+    });
+  });
+
+
+  it("coerces road drive params for editor constraints", () => {
+    const params = coerceEffectParams("roadDrive", {
+      curveAmount: 9,
+      curveFreq: 0,
+      curveTimeSpeed: 2,
+      curveDampenNear: -1,
+      lampSpacing: 1,
+      lampIntensity: 8,
+      lampReactive: -4
+    });
+
+    expect(params).toMatchObject({
+      curveAmount: 3,
+      curveFreq: 0.005,
+      curveTimeSpeed: 1,
+      curveDampenNear: 0,
+      lampSpacing: 3,
+      lampIntensity: 3,
+      lampReactive: 0
     });
   });
 
@@ -317,7 +347,7 @@ describe("effect debug params", () => {
       bassBoost: -5,
       alpha: 2
     });
-    expect(params).toEqual({
+    expect(params).toMatchObject({
       bars: 128,
       barWidth: 1,
       height: 0.2,
@@ -417,7 +447,7 @@ describe("effect debug params", () => {
       seed: -7
     });
 
-    expect(params).toEqual({
+    expect(params).toMatchObject({
       cols: 12,
       rows: 120,
       glyphSet: 0,

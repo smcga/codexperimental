@@ -1124,15 +1124,15 @@ Total effects: **63**.
 | --- | --- | --- | --- | --- | --- |
 | `params.bassReactive` | number | 0.85 | min 0, max 2 | Bass Reactive | yes |
 | `params.cameraBob` | number | 0.22 | min 0, max 1.5 | Camera Bob | yes |
-| `params.curveAmount` | number | 1.2 | unspecified | Used in effect render logic. | yes |
-| `params.curveDampenNear` | number | 0.35 | unspecified | Used in effect render logic. | yes |
-| `params.curveFreq` | number | 0.035 | unspecified | Used in effect render logic. | yes |
-| `params.curveTimeSpeed` | number | 0.18 | unspecified | Used in effect render logic. | yes |
+| `params.curveAmount` | number | 1.2 | min 0, max 3 | Curve Amount | yes |
+| `params.curveDampenNear` | number | 0.35 | min 0, max 1 | Curve Dampen Near | yes |
+| `params.curveFreq` | number | 0.035 | min 0.005, max 0.12 | Curve Freq | yes |
+| `params.curveTimeSpeed` | number | 0.18 | min 0, max 1 | Curve Time Speed | yes |
 | `params.fog` | number | 0.68 | min 0, max 1 | Fog | yes |
 | `params.glow` | number | 1 | min 0.1, max 2.5 | Glow | yes |
-| `params.lampIntensity` | number | 1 | unspecified | Used in effect render logic. | yes |
-| `params.lampReactive` | number | 0.45 | unspecified | Used in effect render logic. | yes |
-| `params.lampSpacing` | number | 9 | unspecified | Used in effect render logic. | yes |
+| `params.lampIntensity` | number | 1 | min 0, max 3 | Lamp Intensity | yes |
+| `params.lampReactive` | number | 0.45 | min 0, max 2 | Lamp Reactive | yes |
+| `params.lampSpacing` | number | 9 | min 3, max 30 | Lamp Spacing | yes |
 | `params.laneDashLength` | number | 2.8 | min 0.4, max 10 | Lane Dash Length | yes |
 | `params.laneGap` | number | 2.2 | min 0.2, max 10 | Lane Gap | yes |
 | `params.rmsReactive` | number | 0.45 | min 0, max 2 | RMS Reactive | yes |
