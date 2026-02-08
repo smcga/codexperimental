@@ -964,10 +964,13 @@ Total effects: **63**.
 | --- | --- | --- | --- | --- | --- |
 | `params.hue` | number | 205 | unspecified | Used in effect render logic. | yes |
 | `params.intensity` | number | 0.5 | unspecified | Used in effect render logic. | yes |
+| `params.mist` | number | 0.35 | unspecified | Used in effect render logic. | yes |
 | `params.seed` | number | 0 | unspecified | Used in effect render logic. | yes |
 | `params.speed` | number | 1 | unspecified | Used in effect render logic. | yes |
 | `params.splash` | boolean | false | unspecified | Used in effect render logic. | unknown |
+| `params.storm` | number | 0.5 | unspecified | Used in effect render logic. | yes |
 | `params.streakLength` | number | 1 | unspecified | Used in effect render logic. | yes |
+| `params.turbulence` | number | 0.35 | unspecified | Used in effect render logic. | yes |
 | `params.wind` | number | 0.1 | unspecified | Used in effect render logic. | yes |
 
 ### Minimal layer usage
