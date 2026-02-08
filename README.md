@@ -142,6 +142,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `vga_fire` | `fireW`, `fireH`, `stepsPerFrame`, `baseHeat`, `sparkChance`, `decay`, `wind`, `windWave`, `turbulence`, `gustOnBeat`, `logoText`, `logoSize`, `logoY`, `audioReact`, `scanlines`, `glowStrength` | Classic VGA/DOS fire with optional logo mask. |
 | `tunnel` | `speed` |  |
 | `dotTunnel` | `ringCount`, `dotsPerRing`, `fov`, `speed`, `twist`, `palette`, `glow`, `seed` | Depth-sorted sprite/ring tunnel; `palette` selects built-in color ramps. |
+| `textmode_charset` | `cols`, `rows`, `glyphSet`, `mode`, `speed`, `palette`, `scanlines`, `seed` | Coarse character-grid renderer with glyph ramps (` .:-=+*#%@`) and palette-indexed tinting. |
 | `rotozoom` | `speed` |  |
 | `blobs` | `count`, `radius`, `orbit`, `speed`, `glow` |  |
 | `metaballs` | `bufW`, `bufH`, `count`, `baseRadius`, `radiusVar`, `baseThreshold`, `edgeSoftness`, `normalZ`, `ambient`, `diffuse`, `specStrength`, `shininess`, `rimStrength`, `palette`, `hueSpeed`, `smoothing`, `glow`, `audioReact`, `beatKick`, `seed` | Implicit surface metaballs with chrome/neon lighting; `palette` supports `chrome` or `neon`. |

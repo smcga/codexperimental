@@ -61,6 +61,7 @@ import { FractalZoomerEffect } from "./fractalZoomer";
 import { KefrensBarsEffect } from "./kefrensBars";
 import { GreetsWallEffect } from "./greetsWall";
 import { DotTunnelEffect } from "./dotTunnel";
+import { TextmodeCharsetEffect } from "./textmodeCharset";
 
 export const effectRegistry: Record<string, Effect> = {
   starfield: new StarfieldEffect(),
@@ -124,7 +125,8 @@ export const effectRegistry: Record<string, Effect> = {
   fractal_zoomer: new FractalZoomerEffect(),
   kefrens_bars: new KefrensBarsEffect(),
   greets_wall: new GreetsWallEffect(),
-  dotTunnel: new DotTunnelEffect()
+  dotTunnel: new DotTunnelEffect(),
+  textmode_charset: new TextmodeCharsetEffect()
 };
 
 export function resetEffects(): void {
