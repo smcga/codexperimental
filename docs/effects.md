@@ -2276,14 +2276,14 @@ Total effects: **63**.
 
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
 | --- | --- | --- | --- | --- | --- |
-| `params.cols` | number | 64 | unspecified | Used in effect render logic. | yes |
-| `params.glyphSet` | number | 0 | unspecified | Used in effect render logic. | yes |
-| `params.mode` | number | 0 | unspecified | Used in effect render logic. | yes |
-| `params.palette` | number | 0 | unspecified | Used in effect render logic. | yes |
-| `params.rows` | number | 36 | unspecified | Used in effect render logic. | yes |
-| `params.scanlines` | number | 0.2 | unspecified | Used in effect render logic. | yes |
-| `params.seed` | number | 1 | unspecified | Used in effect render logic. | yes |
-| `params.speed` | number | 1 | unspecified | Used in effect render logic. | yes |
+| `params.cols` | number | 64 | min 12, max 180 | Columns | yes |
+| `params.glyphSet` | number | 0 | min 0, max 8 | Glyph Set | yes |
+| `params.mode` | number | 0 | min 0, max 8 | Mode | yes |
+| `params.palette` | number | 0 | min 0, max 8 | Palette | yes |
+| `params.rows` | number | 36 | min 8, max 120 | Rows | yes |
+| `params.scanlines` | number | 0.2 | min 0, max 1 | Scanlines | yes |
+| `params.seed` | number | 1 | min 0, max 999 | Seed | yes |
+| `params.speed` | number | 1 | min 0, max 6 | Speed | yes |
 
 ### Minimal layer usage
 

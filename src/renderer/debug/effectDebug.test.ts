@@ -392,4 +392,41 @@ describe("effect debug params", () => {
     });
   });
 
+  it("provides defaults for textmode charset controls", () => {
+    expect(getEffectDebugDefaults("textmode_charset")).toEqual({
+      cols: 64,
+      rows: 36,
+      glyphSet: 0,
+      mode: 0,
+      speed: 1,
+      palette: 0,
+      scanlines: 0.2,
+      seed: 1
+    });
+  });
+
+  it("clamps textmode charset controls to editor bounds", () => {
+    const params = coerceEffectParams("textmode_charset", {
+      cols: 1,
+      rows: 999,
+      glyphSet: -2,
+      mode: 99,
+      speed: -4,
+      palette: 40,
+      scanlines: -3,
+      seed: -7
+    });
+
+    expect(params).toEqual({
+      cols: 12,
+      rows: 120,
+      glyphSet: 0,
+      mode: 8,
+      speed: 0,
+      palette: 8,
+      scanlines: 0,
+      seed: 0
+    });
+  });
+
 });
