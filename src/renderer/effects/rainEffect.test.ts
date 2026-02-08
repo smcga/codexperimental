@@ -26,7 +26,8 @@ const createContext = () => {
     fillRect: vi.fn(),
     set lineCap(_value: CanvasLineCap) {},
     set lineWidth(_value: number) {},
-    set strokeStyle(_value: string) {}
+    set strokeStyle(_value: string) {},
+    set fillStyle(_value: string) {}
   } as unknown as CanvasRenderingContext2D;
 
   return ctx;
@@ -37,6 +38,7 @@ describe("RainEffect", () => {
     expect(hashFloat(12.5)).toBeCloseTo(0.8502, 4);
     expect(hashFloat(42.25)).toBeCloseTo(0.8819, 4);
   });
+
 
   it("skips rendering when intensity is zero", () => {
     const effect = new RainEffect();
@@ -53,9 +55,10 @@ describe("RainEffect", () => {
     });
 
     expect(ctx.stroke).not.toHaveBeenCalled();
+    expect(ctx.fillRect).not.toHaveBeenCalled();
   });
 
-  it("renders a denser set of streaks for deterministic inputs", () => {
+  it("renders layered streaks for deterministic inputs", () => {
     const effect = new RainEffect();
     const ctx = createContext();
 
@@ -69,7 +72,52 @@ describe("RainEffect", () => {
       params: { intensity: 1, seed: 0 }
     });
 
-    expect(ctx.moveTo).toHaveBeenCalledTimes(31);
-    expect(ctx.lineTo).toHaveBeenCalledTimes(31);
+    expect(ctx.moveTo).toHaveBeenCalledTimes(51);
+    expect(ctx.lineTo).toHaveBeenCalledTimes(51);
+  });
+
+  it("adds atmospheric mist bands when mist is enabled", () => {
+    const effect = new RainEffect();
+    const ctx = createContext();
+
+    effect.render({
+      ctx,
+      width: 320,
+      height: 180,
+      time: 0.5,
+      delta: 0.016,
+      audio: createAudio(),
+      params: { intensity: 0.8, mist: 1 }
+    });
+
+    expect(ctx.fillRect).toHaveBeenCalledTimes(3);
+  });
+
+  it("increases rain density with higher storm values", () => {
+    const effect = new RainEffect();
+    const calmCtx = createContext();
+    const stormCtx = createContext();
+
+    effect.render({
+      ctx: calmCtx,
+      width: 320,
+      height: 180,
+      time: 1,
+      delta: 0.016,
+      audio: createAudio(),
+      params: { intensity: 1, storm: 0 }
+    });
+
+    effect.render({
+      ctx: stormCtx,
+      width: 320,
+      height: 180,
+      time: 1,
+      delta: 0.016,
+      audio: createAudio(),
+      params: { intensity: 1, storm: 1 }
+    });
+
+    expect(stormCtx.moveTo.mock.calls.length).toBeGreaterThan(calmCtx.moveTo.mock.calls.length);
   });
 });
