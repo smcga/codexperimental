@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/index.ts`.
 
-Total effects: **59**.
+Total effects: **63**.
 
 ## Table of contents
 
@@ -66,7 +66,9 @@ Total effects: **59**.
 - [Effect: platformerScroll](#effect-platformerScroll)
 - [Effect: fractal_zoomer](#effect-fractal-zoomer)
 - [Effect: kefrens_bars](#effect-kefrens-bars)
+- [Effect: greets_wall](#effect-greets-wall)
 - [Effect: dotTunnel](#effect-dotTunnel)
+- [Effect: textmode_charset](#effect-textmode-charset)
 
 ## Cross-reference
 
@@ -86,18 +88,18 @@ Total effects: **59**.
 
 ### Common parameter patterns
 
-- `speed` (used in 35 effects)
-- `seed` (used in 23 effects)
-- `audioReact` (used in 21 effects)
+- `speed` (used in 37 effects)
+- `seed` (used in 24 effects)
+- `audioReact` (used in 23 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 8 effects)
+- `palette` (used in 7 effects)
+- `scanlines` (used in 7 effects)
 - `hueShift` (used in 6 effects)
 - `trail` (used in 6 effects)
 - `quality` (used in 6 effects)
-- `scanlines` (used in 6 effects)
 - `bufH` (used in 6 effects)
 - `bufW` (used in 6 effects)
-- `count` (used in 5 effects)
 
 ## Effects
 
@@ -2129,50 +2131,6 @@ Total effects: **59**.
 }
 ```
 
-## Effect: dotTunnel
-
-- **Registry key:** `dotTunnel`
-- **Implementation:** `src/renderer/effects/dotTunnel.ts` (class `DotTunnelEffect`)
-- **Renderer:** Canvas2D
-- **Description:** Implemented by DotTunnelEffect (src/renderer/effects/dotTunnel.ts).
-- **Audio features:** bass, treble
-- **Performance notes:** None noted.
-
-### Parameters
-
-| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
-| --- | --- | --- | --- | --- | --- |
-| `params.dotsPerRing` | number | 40 | unspecified | Used in effect render logic. | yes |
-| `params.fov` | number | 72 | unspecified | Used in effect render logic. | yes |
-| `params.glow` | number | 0.7 | unspecified | Used in effect render logic. | yes |
-| `params.palette` | number | 0 | unspecified | Used in effect render logic. | yes |
-| `params.ringCount` | number | 52 | unspecified | Used in effect render logic. | yes |
-| `params.seed` | number | 1 | unspecified | Used in effect render logic. | yes |
-| `params.speed` | number | 1 | unspecified | Used in effect render logic. | yes |
-| `params.twist` | number | 0.9 | unspecified | Used in effect render logic. | yes |
-
-## Effect: kefrens_bars
-
-- **Registry key:** `kefrens_bars`
-- **Implementation:** `src/renderer/effects/kefrensBars.ts` (class `KefrensBarsEffect`)
-- **Renderer:** Canvas2D
-- **Description:** Implemented by KefrensBarsEffect (src/renderer/effects/kefrensBars.ts).
-- **Audio features:** None detected
-
-### Parameters
-
-| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
-| --- | --- | --- | --- | --- | --- |
-| `params.amp` | number | 64 | min 0, max 480 | Amplitude | yes |
-| `params.barCount` | number | 18 | min 1, max 128 | Bar Count | yes |
-| `params.barWidth` | number | 12 | min 1, max 160 | Bar Width | yes |
-| `params.freq` | number | 2.2 | min 0, max 20 | Frequency | yes |
-| `params.palette` | string | "rainbow" | options: rainbow, c64, amiga | Palette | no |
-| `params.phaseOffset` | number | 0.55 | min -6.28, max 6.28 | Phase Offset | yes |
-| `params.speed` | number | 1.4 | min -10, max 10 | Speed | yes |
-
-
-
 ## Effect: fractal_zoomer
 
 - **Registry key:** `fractal_zoomer`
@@ -2181,7 +2139,7 @@ Total effects: **59**.
 - **Description:** Implemented by FractalZoomerEffect (src/renderer/effects/fractalZoomer.ts).
 - **Audio features:** bass, beat, beatStrength, rms
 - **Performance notes:** Uses ImageData per frame; CPU cost scales with resolution.
-- 
+
 ### Parameters
 
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
@@ -2204,3 +2162,137 @@ Total effects: **59**.
   "params": {}
 }
 ```
+
+## Effect: kefrens_bars
+
+- **Registry key:** `kefrens_bars`
+- **Implementation:** `src/renderer/effects/kefrensBars.ts` (class `KefrensBarsEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by KefrensBarsEffect (src/renderer/effects/kefrensBars.ts).
+- **Audio features:** None detected
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.amp` | number | 64 | min 0, max 480 | Amplitude | yes |
+| `params.barCount` | number | 18 | min 1, max 128 | Bar Count | yes |
+| `params.barWidth` | number | 12 | min 1, max 160 | Bar Width | yes |
+| `params.freq` | number | 2.2 | min 0, max 20 | Frequency | yes |
+| `params.palette` | string | "rainbow" | options: rainbow, c64, amiga | Palette | no |
+| `params.phaseOffset` | number | 0.55 | min -6.28, max 6.28 | Phase Offset | yes |
+| `params.speed` | number | 1.4 | min -10, max 10 | Speed | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "kefrens_bars",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: greets_wall
+
+- **Registry key:** `greets_wall`
+- **Implementation:** `src/renderer/effects/greetsWall.ts` (class `GreetsWallEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by GreetsWallEffect (src/renderer/effects/greetsWall.ts).
+- **Audio features:** beat, impactStrength, rms
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReact` | number | 0.45 | min 0, max 1 | Audio React | yes |
+| `params.beatPulseDecay` | number | 2.2 | min 0.2, max 8 | Beat Decay | yes |
+| `params.columns` | number | 3 | min 1, max 8 | Columns | yes |
+| `params.cycleSeconds` | number | 1.5 | min 0.35, max 6 | Cycle Seconds | yes |
+| `params.highlightPulse` | number | 0.65 | min 0, max 1.5 | Highlight Pulse | yes |
+| `params.layout` | string | "grid" | options: grid, carousel | Layout | no |
+| `params.names` | string | "Fairlight|TRSI|Spaceballs|CNCD|Mercury|TBL" | unspecified | Used in effect render logic. | no |
+| `params.padding` | number | 0.08 | min 0.02, max 0.18 | Padding | yes |
+| `params.title` | string | "GREETS" | unspecified | Used in effect render logic. | no |
+| `params.transitionStyle` | string | "slide" | options: slide, fade, pop | Transition | no |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "greets_wall",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: dotTunnel
+
+- **Registry key:** `dotTunnel`
+- **Implementation:** `src/renderer/effects/dotTunnel.ts` (class `DotTunnelEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by DotTunnelEffect (src/renderer/effects/dotTunnel.ts).
+- **Audio features:** bass, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.dotsPerRing` | number | 40 | unspecified | Used in effect render logic. | yes |
+| `params.fov` | number | 72 | unspecified | Used in effect render logic. | yes |
+| `params.glow` | number | 0.7 | unspecified | Used in effect render logic. | yes |
+| `params.palette` | number | 0 | unspecified | Used in effect render logic. | yes |
+| `params.ringCount` | number | 52 | unspecified | Used in effect render logic. | yes |
+| `params.seed` | number | 1 | unspecified | Used in effect render logic. | yes |
+| `params.speed` | number | 1 | unspecified | Used in effect render logic. | yes |
+| `params.twist` | number | 0.9 | unspecified | Used in effect render logic. | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "dotTunnel",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: textmode_charset
+
+- **Registry key:** `textmode_charset`
+- **Implementation:** `src/renderer/effects/textmodeCharset.ts` (class `TextmodeCharsetEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by TextmodeCharsetEffect (src/renderer/effects/textmodeCharset.ts).
+- **Audio features:** bass, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.cols` | number | 64 | unspecified | Used in effect render logic. | yes |
+| `params.glyphSet` | number | 0 | unspecified | Used in effect render logic. | yes |
+| `params.mode` | number | 0 | unspecified | Used in effect render logic. | yes |
+| `params.palette` | number | 0 | unspecified | Used in effect render logic. | yes |
+| `params.rows` | number | 36 | unspecified | Used in effect render logic. | yes |
+| `params.scanlines` | number | 0.2 | unspecified | Used in effect render logic. | yes |
+| `params.seed` | number | 1 | unspecified | Used in effect render logic. | yes |
+| `params.speed` | number | 1 | unspecified | Used in effect render logic. | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "textmode_charset",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
