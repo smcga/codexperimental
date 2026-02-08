@@ -64,6 +64,7 @@ Total effects: **59**.
 - [Effect: raytrace_spheres](#effect-raytrace-spheres)
 - [Effect: vga_fire](#effect-vga-fire)
 - [Effect: platformerScroll](#effect-platformerScroll)
+- [Effect: fractal_zoomer](#effect-fractal-zoomer)
 - [Effect: kefrens_bars](#effect-kefrens-bars)
 - [Effect: dotTunnel](#effect-dotTunnel)
 
@@ -2172,3 +2173,34 @@ Total effects: **59**.
 
 
 
+## Effect: fractal_zoomer
+
+- **Registry key:** `fractal_zoomer`
+- **Implementation:** `src/renderer/effects/fractalZoomer.ts` (class `FractalZoomerEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by FractalZoomerEffect (src/renderer/effects/fractalZoomer.ts).
+- **Audio features:** bass, beat, beatStrength, rms
+- **Performance notes:** Uses ImageData per frame; CPU cost scales with resolution.
+- 
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReact` | number | 0.55 | min 0, max 1 | Audio React | yes |
+| `params.centerX` | number | -0.72 | min -2.5, max 1.5 | Center X | yes |
+| `params.centerY` | number | 0 | min -1.8, max 1.8 | Center Y | yes |
+| `params.iterations` | number | 140 | min 24, max 600 | Iterations | yes |
+| `params.paletteSpeed` | number | 0.18 | min 0, max 2 | Palette Speed | yes |
+| `params.setType` | string | "mandelbrot" | options: mandelbrot, julia, burningShip | Set | no |
+| `params.zoom` | number | 1.6 | min 0.4, max 8 | Zoom | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "fractal_zoomer",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```

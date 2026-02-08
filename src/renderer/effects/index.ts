@@ -57,6 +57,7 @@ import { BumpmapPlaneEffect } from "./bumpmapPlane";
 import { RaytraceSpheresEffect } from "./raytraceSpheres";
 import { VgaFireEffect } from "./vgaFire";
 import { PlatformerScrollEffect } from "./platformerScroll";
+import { FractalZoomerEffect } from "./fractalZoomer";
 import { KefrensBarsEffect } from "./kefrensBars";
 import { GreetsWallEffect } from "./greetsWall";
 import { DotTunnelEffect } from "./dotTunnel";
@@ -120,6 +121,7 @@ export const effectRegistry: Record<string, Effect> = {
   raytrace_spheres: new RaytraceSpheresEffect(),
   vga_fire: new VgaFireEffect(),
   platformerScroll: new PlatformerScrollEffect(),
+  fractal_zoomer: new FractalZoomerEffect(),
   kefrens_bars: new KefrensBarsEffect(),
   greets_wall: new GreetsWallEffect(),
   dotTunnel: new DotTunnelEffect()
