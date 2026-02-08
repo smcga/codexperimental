@@ -2,6 +2,7 @@ import { IntroConfig, IntroScriptEvent } from "../../config/loadConfig";
 import { clamp } from "../../util/math";
 
 export const DEFAULT_TYPING_CPS = 28;
+export const INTRO_EXPLOSION_DURATION = 0.9;
 
 export type TypingCursor = {
   line: number;
@@ -18,6 +19,29 @@ export function getTypingReveal(text: string, cps: number, elapsed: number): num
     return 0;
   }
   return clamp(Math.floor(elapsed * cps), 0, text.length);
+}
+
+export function getIntroExplosionProgress(time: number, introEnd: number, duration = INTRO_EXPLOSION_DURATION): number {
+  if (duration <= 0) {
+    return 0;
+  }
+  return clamp((time - (introEnd - duration)) / duration, 0, 1);
+}
+
+function hashUnit(seed: number): number {
+  const value = Math.sin(seed * 12.9898 + 78.233) * 43758.5453;
+  return value - Math.floor(value);
+}
+
+function getExplosionVector(seed: number, progress: number, speed: number): { x: number; y: number; rotation: number } {
+  const angle = hashUnit(seed) * Math.PI * 2;
+  const lift = 0.35 + hashUnit(seed + 1) * 0.65;
+  const distance = speed * (0.25 + progress * progress * 2.2) * lift;
+  return {
+    x: Math.cos(angle) * distance,
+    y: Math.sin(angle) * distance - progress * progress * speed * 0.25,
+    rotation: (hashUnit(seed + 2) - 0.5) * progress * 1.8
+  };
 }
 
 function appendText(buffer: TerminalBuffer, text: string): void {
@@ -116,6 +140,26 @@ function drawRoundedRect(ctx: CanvasRenderingContext2D, x: number, y: number, w:
 }
 
 export class TerminalIntroRenderer {
+  private sceneCanvas: HTMLCanvasElement | null = null;
+
+  private sceneCtx: CanvasRenderingContext2D | null = null;
+
+  private ensureSceneCanvas(width: number, height: number): CanvasRenderingContext2D {
+    if (!this.sceneCanvas || !this.sceneCtx) {
+      this.sceneCanvas = document.createElement("canvas");
+      const sceneCtx = this.sceneCanvas.getContext("2d");
+      if (!sceneCtx) {
+        throw new Error("Unable to create terminal intro scene canvas");
+      }
+      this.sceneCtx = sceneCtx;
+    }
+    if (this.sceneCanvas.width !== width || this.sceneCanvas.height !== height) {
+      this.sceneCanvas.width = width;
+      this.sceneCanvas.height = height;
+    }
+    return this.sceneCtx;
+  }
+
   render({
     ctx,
     width,
@@ -130,9 +174,12 @@ export class TerminalIntroRenderer {
     config: IntroConfig;
   }): void {
     const { theme, script } = config;
-    ctx.clearRect(0, 0, width, height);
-    ctx.fillStyle = theme.bg;
-    ctx.fillRect(0, 0, width, height);
+    const explosionProgress = getIntroExplosionProgress(time, config.end);
+    const targetCtx = explosionProgress > 0 ? this.ensureSceneCanvas(width, height) : ctx;
+
+    targetCtx.clearRect(0, 0, width, height);
+    targetCtx.fillStyle = theme.bg;
+    targetCtx.fillRect(0, 0, width, height);
 
     const windowWidth = Math.min(width * 0.85, 920);
     const windowHeight = Math.min(height * 0.72, 520);
@@ -141,73 +188,13 @@ export class TerminalIntroRenderer {
     const radius = 8;
     const titleBarHeight = theme.window.chrome ? theme.lineHeight + 20 : 0;
 
-    ctx.save();
-    ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
-    ctx.shadowBlur = 18;
-    drawRoundedRect(ctx, windowX, windowY, windowWidth, windowHeight, radius);
-    ctx.fillStyle = "#0f141b";
-    ctx.fill();
-    ctx.restore();
-
-    ctx.save();
-    drawRoundedRect(ctx, windowX, windowY, windowWidth, windowHeight, radius);
-    ctx.clip();
-    ctx.fillStyle = theme.bg;
-    ctx.fillRect(windowX, windowY, windowWidth, windowHeight);
-
-    if (theme.window.chrome) {
-      const titleGradient = ctx.createLinearGradient(0, windowY, 0, windowY + titleBarHeight);
-      titleGradient.addColorStop(0, "rgba(30, 36, 46, 0.96)");
-      titleGradient.addColorStop(1, "rgba(18, 23, 31, 0.96)");
-      ctx.fillStyle = titleGradient;
-      ctx.fillRect(windowX, windowY, windowWidth, titleBarHeight);
-
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(windowX, windowY + titleBarHeight + 0.5);
-      ctx.lineTo(windowX + windowWidth, windowY + titleBarHeight + 0.5);
-      ctx.stroke();
-
-      ctx.fillStyle = theme.dim;
-      ctx.font = `600 ${theme.fontSize - 2}px ${theme.fontFamily}`;
-      ctx.textBaseline = "middle";
-      ctx.fillText(theme.window.title, windowX + 42, windowY + titleBarHeight / 2);
-
-      const controlY = windowY + titleBarHeight / 2;
-      const controlX = windowX + windowWidth - 56;
-      const controlGap = 16;
-      const controlSize = 10;
-      ["#f7768e", "#e0af68", "#9ece6a"].forEach((color, index) => {
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.rect(controlX + index * controlGap, controlY - controlSize / 2, controlSize, controlSize);
-        ctx.stroke();
-      });
-
-      ctx.fillStyle = theme.accent;
-      ctx.fillRect(windowX + 16, windowY + titleBarHeight / 2 - 4, 8, 8);
-    }
-
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
-    ctx.lineWidth = 1;
-    drawRoundedRect(ctx, windowX, windowY, windowWidth, windowHeight, radius);
-    ctx.stroke();
-
-    ctx.font = `${theme.fontSize}px ${theme.fontFamily}`;
-    ctx.textBaseline = "alphabetic";
-    ctx.fillStyle = theme.fg;
-    ctx.shadowColor = theme.accent;
-    ctx.shadowBlur = 6;
-
     const contentX = windowX + theme.padding;
     const contentY = windowY + theme.padding + titleBarHeight;
     const contentWidth = windowWidth - theme.padding * 2;
     const contentHeight = windowHeight - theme.padding * 2 - titleBarHeight;
 
     const buffer = buildTerminalBuffer(script, time);
-    const charWidth = Math.max(1, ctx.measureText("M").width);
+    const charWidth = Math.max(1, targetCtx.measureText("M").width);
     const maxChars = Math.max(1, Math.floor(contentWidth / charWidth));
     const wrapped = wrapLines(buffer.lines, buffer.cursor, maxChars);
 
@@ -218,22 +205,131 @@ export class TerminalIntroRenderer {
     const cursorLine = wrapped.cursor.line - startIndex;
     const cursorColumn = wrapped.cursor.column;
 
+    targetCtx.save();
+    targetCtx.shadowColor = "rgba(0, 0, 0, 0.5)";
+    targetCtx.shadowBlur = 18;
+    drawRoundedRect(targetCtx, windowX, windowY, windowWidth, windowHeight, radius);
+    targetCtx.fillStyle = "#0f141b";
+    targetCtx.fill();
+    targetCtx.restore();
+
+    targetCtx.save();
+    drawRoundedRect(targetCtx, windowX, windowY, windowWidth, windowHeight, radius);
+    targetCtx.clip();
+    targetCtx.fillStyle = theme.bg;
+    targetCtx.fillRect(windowX, windowY, windowWidth, windowHeight);
+
+    if (theme.window.chrome) {
+      const titleGradient = targetCtx.createLinearGradient(0, windowY, 0, windowY + titleBarHeight);
+      titleGradient.addColorStop(0, "rgba(30, 36, 46, 0.96)");
+      titleGradient.addColorStop(1, "rgba(18, 23, 31, 0.96)");
+      targetCtx.fillStyle = titleGradient;
+      targetCtx.fillRect(windowX, windowY, windowWidth, titleBarHeight);
+
+      targetCtx.strokeStyle = "rgba(255, 255, 255, 0.08)";
+      targetCtx.lineWidth = 1;
+      targetCtx.beginPath();
+      targetCtx.moveTo(windowX, windowY + titleBarHeight + 0.5);
+      targetCtx.lineTo(windowX + windowWidth, windowY + titleBarHeight + 0.5);
+      targetCtx.stroke();
+
+      targetCtx.fillStyle = theme.dim;
+      targetCtx.font = `600 ${theme.fontSize - 2}px ${theme.fontFamily}`;
+      targetCtx.textBaseline = "middle";
+      targetCtx.fillText(theme.window.title, windowX + 42, windowY + titleBarHeight / 2);
+
+      const controlY = windowY + titleBarHeight / 2;
+      const controlX = windowX + windowWidth - 56;
+      const controlGap = 16;
+      const controlSize = 10;
+      ["#f7768e", "#e0af68", "#9ece6a"].forEach((color, index) => {
+        targetCtx.strokeStyle = color;
+        targetCtx.lineWidth = 2;
+        targetCtx.beginPath();
+        targetCtx.rect(controlX + index * controlGap, controlY - controlSize / 2, controlSize, controlSize);
+        targetCtx.stroke();
+      });
+
+      targetCtx.fillStyle = theme.accent;
+      targetCtx.fillRect(windowX + 16, windowY + titleBarHeight / 2 - 4, 8, 8);
+    }
+
+    targetCtx.strokeStyle = "rgba(255, 255, 255, 0.08)";
+    targetCtx.lineWidth = 1;
+    drawRoundedRect(targetCtx, windowX, windowY, windowWidth, windowHeight, radius);
+    targetCtx.stroke();
+
+    targetCtx.font = `${theme.fontSize}px ${theme.fontFamily}`;
+    targetCtx.textBaseline = "alphabetic";
+    targetCtx.fillStyle = theme.fg;
+    targetCtx.shadowColor = theme.accent;
+    targetCtx.shadowBlur = 6;
+
     visibleLines.forEach((line, index) => {
       const x = contentX;
       const y = contentY + (index + 1) * theme.lineHeight;
-      ctx.fillText(line, x, y);
+      targetCtx.fillText(line, x, y);
     });
 
     const cursorVisible = Math.floor(time * 2) % 2 === 0;
     if (cursorVisible && cursorLine >= 0 && cursorLine < visibleLines.length) {
       const cursorX = contentX + cursorColumn * charWidth;
       const cursorY = contentY + cursorLine * theme.lineHeight;
-      ctx.fillStyle = theme.accent;
-      ctx.shadowColor = theme.accent;
-      ctx.shadowBlur = 8;
-      ctx.fillRect(cursorX, cursorY + 4, charWidth * 0.9, theme.lineHeight - 6);
+      targetCtx.fillStyle = theme.accent;
+      targetCtx.shadowColor = theme.accent;
+      targetCtx.shadowBlur = 8;
+      targetCtx.fillRect(cursorX, cursorY + 4, charWidth * 0.9, theme.lineHeight - 6);
     }
 
+    targetCtx.restore();
+
+    if (explosionProgress <= 0 || !this.sceneCanvas) {
+      return;
+    }
+
+    ctx.clearRect(0, 0, width, height);
+    ctx.fillStyle = theme.bg;
+    ctx.fillRect(0, 0, width, height);
+
+    const cols = 12;
+    const rows = 9;
+    const shardW = windowWidth / cols;
+    const shardH = windowHeight / rows;
+    for (let row = 0; row < rows; row += 1) {
+      for (let col = 0; col < cols; col += 1) {
+        const index = row * cols + col;
+        const sx = windowX + col * shardW;
+        const sy = windowY + row * shardH;
+        const vector = getExplosionVector(index + 1, explosionProgress, Math.min(width, height) * 0.45);
+        const centerX = sx + shardW / 2;
+        const centerY = sy + shardH / 2;
+        ctx.save();
+        ctx.globalAlpha = 1 - explosionProgress * 0.55;
+        ctx.translate(centerX + vector.x, centerY + vector.y);
+        ctx.rotate(vector.rotation);
+        ctx.drawImage(this.sceneCanvas, sx, sy, shardW, shardH, -shardW / 2, -shardH / 2, shardW, shardH);
+        ctx.restore();
+      }
+    }
+
+    ctx.save();
+    ctx.font = `${theme.fontSize}px ${theme.fontFamily}`;
+    ctx.textBaseline = "alphabetic";
+    visibleLines.forEach((line, lineIndex) => {
+      for (let charIndex = 0; charIndex < line.length; charIndex += 1) {
+        const char = line[charIndex];
+        if (char === " ") {
+          continue;
+        }
+        const particleSeed = lineIndex * 997 + charIndex * 37 + 11;
+        const vector = getExplosionVector(particleSeed, explosionProgress, Math.min(width, height) * 0.32);
+        const x = contentX + charIndex * charWidth + vector.x;
+        const y = contentY + (lineIndex + 1) * theme.lineHeight + vector.y;
+        ctx.fillStyle = theme.accent;
+        ctx.globalAlpha = Math.max(0, 1 - explosionProgress * 1.25);
+        ctx.fillText(char, x, y);
+      }
+    });
     ctx.restore();
   }
 }
