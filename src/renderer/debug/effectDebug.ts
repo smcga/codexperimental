@@ -19,6 +19,7 @@ import { DOT_TUNNEL_DEFAULTS } from "../effects/dotTunnel";
 import { PLATFORMER_SCROLL_DEFAULTS } from "../effects/platformerScroll";
 import { VECTOR3D_BALLS_DEFAULTS } from "../effects/vector3dBalls";
 import { IMPOSSIBLE_CORRIDOR_DEFAULTS } from "../effects/gl/impossibleCorridorEffect";
+import { MOIRE_GRID_DEFAULTS } from "../effects/moireGridEffect";
 
 export type EffectParamValue = number | string;
 
@@ -835,6 +836,22 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("palette", "Palette", DOT_TUNNEL_DEFAULTS.palette, { min: 0, max: 12, step: 1 }),
       numberControl("glow", "Glow", DOT_TUNNEL_DEFAULTS.glow, { min: 0, max: 1.5, step: 0.05 }),
       numberControl("seed", "Seed", DOT_TUNNEL_DEFAULTS.seed, { min: 0, max: 9999, step: 1 })
+    ]
+  },
+  moire_grid: {
+    title: "Moire Grid Controls",
+    controls: [
+      numberControl("spacing", "Spacing", MOIRE_GRID_DEFAULTS.spacing, { min: 6, max: 80, step: 1 }),
+      numberControl("lineWidth", "Line Width", MOIRE_GRID_DEFAULTS.lineWidth, { min: 0.5, max: 12, step: 0.1 }),
+      numberControl("speed", "Speed", MOIRE_GRID_DEFAULTS.speed, { min: -6, max: 6, step: 0.05 }),
+      numberControl("warp", "Warp", MOIRE_GRID_DEFAULTS.warp, { min: 0, max: 120, step: 1 }),
+      numberControl("intensity", "Intensity", MOIRE_GRID_DEFAULTS.intensity, { min: 0.1, max: 1, step: 0.05 }),
+      selectControl("palette", "Palette", MOIRE_GRID_DEFAULTS.palette, [
+        { label: "Cyan", value: "cyan" },
+        { label: "Magenta", value: "magenta" },
+        { label: "Amber", value: "amber" }
+      ]),
+      numberControl("audioReact", "Audio React", MOIRE_GRID_DEFAULTS.audioReact, { min: 0, max: 1, step: 0.05 })
     ]
   },
   effect_evolution: {

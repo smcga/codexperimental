@@ -62,6 +62,7 @@ import { KefrensBarsEffect } from "./kefrensBars";
 import { GreetsWallEffect } from "./greetsWall";
 import { DotTunnelEffect } from "./dotTunnel";
 import { TextmodeCharsetEffect } from "./textmodeCharset";
+import { MoireGridEffect } from "./moireGridEffect";
 
 export const effectRegistry: Record<string, Effect> = {
   starfield: new StarfieldEffect(),
@@ -126,7 +127,8 @@ export const effectRegistry: Record<string, Effect> = {
   kefrens_bars: new KefrensBarsEffect(),
   greets_wall: new GreetsWallEffect(),
   dotTunnel: new DotTunnelEffect(),
-  textmode_charset: new TextmodeCharsetEffect()
+  textmode_charset: new TextmodeCharsetEffect(),
+  moire_grid: new MoireGridEffect(),
 };
 
 export function resetEffects(): void {
