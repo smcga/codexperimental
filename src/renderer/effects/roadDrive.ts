@@ -16,6 +16,9 @@ uniform float u_fov;
 uniform float u_aspect;
 uniform float u_rms;
 uniform float u_rmsReactive;
+uniform float u_curveStrength;
+uniform float u_curveFrequency;
+uniform float u_curveSpeed;
 
 out float v_depth;
 out float v_trackZ;
@@ -25,8 +28,12 @@ void main() {
   float zOffset = u_time * u_speed * 30.0;
   float wrappedZ = mod(a_position.y + zOffset, u_trackDepth);
   float bob = sin(u_time * 2.4) * u_cameraBob * (0.5 + 0.5 * u_rms * u_rmsReactive);
+  float curvePhase = wrappedZ * u_curveFrequency + u_time * u_curveSpeed;
+  float baseCurve = sin(curvePhase);
+  float secondaryCurve = sin(curvePhase * 0.47 + 1.2);
+  float curveOffset = (baseCurve + secondaryCurve * 0.45) * u_curveStrength;
 
-  vec3 pos = vec3(a_position.x, -0.35 - bob, -(wrappedZ + 0.6));
+  vec3 pos = vec3(a_position.x + curveOffset, -0.35 - bob, -(wrappedZ + 0.6));
 
   float nearPlane = 0.1;
   float farPlane = u_trackDepth * 2.4;
@@ -117,6 +124,9 @@ export const ROAD_DRIVE_DEFAULTS = {
   fog: 0.68,
   glow: 1.0,
   cameraBob: 0.22,
+  curveStrength: 1.4,
+  curveFrequency: 0.06,
+  curveSpeed: 1.25,
   bassReactive: 0.85,
   rmsReactive: 0.45
 };
@@ -129,6 +139,9 @@ export type RoadDriveParams = {
   fog: number;
   glow: number;
   cameraBob: number;
+  curveStrength: number;
+  curveFrequency: number;
+  curveSpeed: number;
   bassReactive: number;
   rmsReactive: number;
 };
@@ -149,6 +162,9 @@ export function normalizeRoadDriveParams(params: Record<string, number>): RoadDr
     fog: clamp(toFiniteNumber(params.fog, ROAD_DRIVE_DEFAULTS.fog), 0, 1),
     glow: clamp(toFiniteNumber(params.glow, ROAD_DRIVE_DEFAULTS.glow), 0.1, 2.5),
     cameraBob: clamp(toFiniteNumber(params.cameraBob, ROAD_DRIVE_DEFAULTS.cameraBob), 0, 1.5),
+    curveStrength: clamp(toFiniteNumber(params.curveStrength, ROAD_DRIVE_DEFAULTS.curveStrength), 0, 6),
+    curveFrequency: clamp(toFiniteNumber(params.curveFrequency, ROAD_DRIVE_DEFAULTS.curveFrequency), 0.01, 0.2),
+    curveSpeed: clamp(toFiniteNumber(params.curveSpeed, ROAD_DRIVE_DEFAULTS.curveSpeed), 0, 4),
     bassReactive: clamp(toFiniteNumber(params.bassReactive, ROAD_DRIVE_DEFAULTS.bassReactive), 0, 2),
     rmsReactive: clamp(toFiniteNumber(params.rmsReactive, ROAD_DRIVE_DEFAULTS.rmsReactive), 0, 2)
   };
@@ -261,6 +277,9 @@ class RoadDriveGLRenderer {
       u_aspect: this.size.width / Math.max(1, this.size.height),
       u_rms: rms,
       u_rmsReactive: params.rmsReactive,
+      u_curveStrength: params.curveStrength,
+      u_curveFrequency: params.curveFrequency,
+      u_curveSpeed: params.curveSpeed,
       u_roadWidth: params.roadWidth,
       u_laneDashLength: params.laneDashLength,
       u_laneGap: params.laneGap,
@@ -315,6 +334,9 @@ class RoadDriveGLRenderer {
       u_aspect: gl.getUniformLocation(program, "u_aspect"),
       u_rms: gl.getUniformLocation(program, "u_rms"),
       u_rmsReactive: gl.getUniformLocation(program, "u_rmsReactive"),
+      u_curveStrength: gl.getUniformLocation(program, "u_curveStrength"),
+      u_curveFrequency: gl.getUniformLocation(program, "u_curveFrequency"),
+      u_curveSpeed: gl.getUniformLocation(program, "u_curveSpeed"),
       u_roadWidth: gl.getUniformLocation(program, "u_roadWidth"),
       u_laneDashLength: gl.getUniformLocation(program, "u_laneDashLength"),
       u_laneGap: gl.getUniformLocation(program, "u_laneGap"),

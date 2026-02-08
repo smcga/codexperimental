@@ -450,6 +450,9 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("fog", "Fog", ROAD_DRIVE_DEFAULTS.fog, { min: 0, max: 1, step: 0.01 }),
       numberControl("glow", "Glow", ROAD_DRIVE_DEFAULTS.glow, { min: 0.1, max: 2.5, step: 0.05 }),
       numberControl("cameraBob", "Camera Bob", ROAD_DRIVE_DEFAULTS.cameraBob, { min: 0, max: 1.5, step: 0.01 }),
+      numberControl("curveStrength", "Curve Strength", ROAD_DRIVE_DEFAULTS.curveStrength, { min: 0, max: 6, step: 0.05 }),
+      numberControl("curveFrequency", "Curve Frequency", ROAD_DRIVE_DEFAULTS.curveFrequency, { min: 0.01, max: 0.2, step: 0.005 }),
+      numberControl("curveSpeed", "Curve Speed", ROAD_DRIVE_DEFAULTS.curveSpeed, { min: 0, max: 4, step: 0.05 }),
       numberControl("bassReactive", "Bass Reactive", ROAD_DRIVE_DEFAULTS.bassReactive, { min: 0, max: 2, step: 0.05 }),
       numberControl("rmsReactive", "RMS Reactive", ROAD_DRIVE_DEFAULTS.rmsReactive, { min: 0, max: 2, step: 0.05 })
     ]
