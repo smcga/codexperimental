@@ -112,6 +112,49 @@ describe("effect debug params", () => {
     });
   });
 
+  it("provides defaults for rain controls", () => {
+    expect(getEffectDebugDefaults("rain")).toEqual({
+      intensity: 0.5,
+      wind: 0.1,
+      speed: 1,
+      streakLength: 1,
+      splash: 0,
+      hue: 205,
+      storm: 0.5,
+      turbulence: 0.35,
+      mist: 0.35,
+      seed: 0
+    });
+  });
+
+  it("coerces rain params based on control constraints", () => {
+    const params = coerceEffectParams("rain", {
+      intensity: -1,
+      wind: 2,
+      speed: -2,
+      streakLength: 99,
+      splash: true,
+      hue: 500,
+      storm: -0.4,
+      turbulence: 2,
+      mist: -0.2,
+      seed: 1000
+    });
+
+    expect(params).toEqual({
+      intensity: 0,
+      wind: 1,
+      speed: 0,
+      streakLength: 2.5,
+      splash: 1,
+      hue: 360,
+      storm: 0,
+      turbulence: 1,
+      mist: 0,
+      seed: 999
+    });
+  });
+
   it("provides defaults for tree growth controls", () => {
     expect(getEffectDebugDefaults("treegrowth")).toEqual({
       speed: 0.18,
