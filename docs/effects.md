@@ -1124,9 +1124,10 @@ Total effects: **63**.
 | --- | --- | --- | --- | --- | --- |
 | `params.bassReactive` | number | 0.85 | min 0, max 2 | Bass Reactive | yes |
 | `params.cameraBob` | number | 0.22 | min 0, max 1.5 | Camera Bob | yes |
-| `params.curveAmount` | number | 0.9 | unspecified | Used in effect render logic. | yes |
-| `params.curveSpeed` | number | 0.12 | unspecified | Used in effect render logic. | yes |
-| `params.curveWobble` | number | 0.35 | unspecified | Used in effect render logic. | yes |
+| `params.curveAmount` | number | 1.2 | unspecified | Used in effect render logic. | yes |
+| `params.curveDampenNear` | number | 0.35 | unspecified | Used in effect render logic. | yes |
+| `params.curveFreq` | number | 0.035 | unspecified | Used in effect render logic. | yes |
+| `params.curveTimeSpeed` | number | 0.18 | unspecified | Used in effect render logic. | yes |
 | `params.fog` | number | 0.68 | min 0, max 1 | Fog | yes |
 | `params.glow` | number | 1 | min 0.1, max 2.5 | Glow | yes |
 | `params.lampIntensity` | number | 1 | unspecified | Used in effect render logic. | yes |
