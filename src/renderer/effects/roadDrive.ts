@@ -16,6 +16,9 @@ uniform float u_fov;
 uniform float u_aspect;
 uniform float u_rms;
 uniform float u_rmsReactive;
+uniform float u_curveAmount;
+uniform float u_curveSpeed;
+uniform float u_curveWobble;
 
 out float v_depth;
 out float v_trackZ;
@@ -24,9 +27,25 @@ out float v_trackX;
 void main() {
   float zOffset = u_time * u_speed * 30.0;
   float wrappedZ = mod(a_position.y + zOffset, u_trackDepth);
+  wrappedZ = max(wrappedZ, 0.35);
   float bob = sin(u_time * 2.4) * u_cameraBob * (0.5 + 0.5 * u_rms * u_rmsReactive);
 
-  vec3 pos = vec3(a_position.x, -0.35 - bob, -(wrappedZ + 0.6));
+  float depth = wrappedZ / max(u_trackDepth, 0.001);
+  float curveTime = u_time * (0.25 + u_curveSpeed * 0.75);
+  float curveLow = sin(wrappedZ * 0.018 + curveTime * 0.8);
+  float curveMid = sin(wrappedZ * 0.033 - curveTime * 1.2);
+  float curveWobble = sin(wrappedZ * 0.072 + curveTime * 2.6);
+  float centerX = u_curveAmount * (curveLow * 1.8 + curveMid * 1.2 + curveWobble * u_curveWobble * 0.7);
+  float bendFactor = smoothstep(0.05, 0.85, depth);
+  float slope = u_curveAmount * (0.018 * 1.8 * cos(wrappedZ * 0.018 + curveTime * 0.8)
+    + 0.033 * 1.2 * cos(wrappedZ * 0.033 - curveTime * 1.2)
+    + 0.072 * u_curveWobble * 0.7 * cos(wrappedZ * 0.072 + curveTime * 2.6));
+  float yawStrength = clamp(slope * 0.3, -0.22, 0.22) * bendFactor;
+
+  float bentX = a_position.x + centerX * bendFactor;
+  bentX += yawStrength * (wrappedZ - u_trackDepth * 0.45);
+
+  vec3 pos = vec3(bentX, -0.22 - bob, -(wrappedZ + 0.32));
 
   float nearPlane = 0.1;
   float farPlane = u_trackDepth * 2.4;
@@ -38,9 +57,9 @@ void main() {
 
   gl_Position = vec4(pos.x * f / u_aspect, pos.y * f, clipZ, clipW);
 
-  v_depth = wrappedZ / max(u_trackDepth, 0.001);
+  v_depth = depth;
   v_trackZ = wrappedZ;
-  v_trackX = a_position.x;
+  v_trackX = bentX;
 }
 `;
 
@@ -62,6 +81,9 @@ uniform float u_bass;
 uniform float u_rms;
 uniform float u_bassReactive;
 uniform float u_rmsReactive;
+uniform float u_lampSpacing;
+uniform float u_lampIntensity;
+uniform float u_lampReactive;
 
 out vec4 outColor;
 
@@ -95,12 +117,36 @@ void main() {
   vec3 railColor = vec3(0.2, 0.65, 1.0) * (0.5 + u_glow) * bassLight * lightPulse;
   color += railColor * rail;
 
+  float lampOffset = 1.6;
+  float lampTrack = (v_trackZ + u_time * u_speed * 30.0) / max(0.001, u_lampSpacing);
+  float withinCell = fract(lampTrack);
+  float cellPulse = exp(-pow(min(withinCell, 1.0 - withinCell) * 10.0, 2.0));
+  float postMask = 1.0 - smoothstep(0.05, 0.2, abs(absX - (roadHalf + lampOffset)));
+  float lampDepth = 1.0 - smoothstep(0.2, 1.0, depth);
+  float lampBoost = 1.0 + clamp(u_bass * u_lampReactive, 0.0, 2.0);
+  float lampStrength = u_lampIntensity * lampBoost * lampDepth;
+  float post = postMask * (0.25 + 0.75 * cellPulse) * lampStrength;
+  vec3 lampColor = vec3(1.0, 0.88, 0.62);
+  color += lampColor * post * 0.35;
+
+  float lampHead = postMask * exp(-pow(withinCell * 13.0, 2.0)) * lampStrength;
+  color += lampColor * lampHead * (0.6 + 0.35 * u_glow);
+
+  float roadPoolX = exp(-pow((absX - (roadHalf - 0.18)) * 2.7, 2.0));
+  float roadPool = roadPoolX * exp(-pow(withinCell * 8.5, 2.0)) * lampStrength;
+  color += lampColor * roadPool * 0.22;
+
   float horizon = smoothstep(0.55, 1.0, depth);
   color += vec3(0.32, 0.12, 0.45) * horizon * (0.4 + 0.6 * u_glow);
 
   float fogPulse = 0.85 + u_rms * u_rmsReactive * 0.5;
   float fog = smoothstep(0.22, 1.0, depth) * u_fog * fogPulse;
   color = mix(color, vec3(0.09, 0.04, 0.12), fog);
+
+  float nearFade = smoothstep(0.0, 0.08, depth);
+  float nearSoftness = mix(0.78, 1.0, nearFade);
+  color *= nearSoftness;
+  color = mix(color, color * 0.86, (1.0 - nearFade) * (0.18 + 0.12 * edgeLine + 0.08 * centerMask));
 
   float vignette = smoothstep(0.0, roadHalf + 3.4, absX);
   color *= mix(1.0, 0.45, vignette * 0.35);
@@ -118,7 +164,13 @@ export const ROAD_DRIVE_DEFAULTS = {
   glow: 1.0,
   cameraBob: 0.22,
   bassReactive: 0.85,
-  rmsReactive: 0.45
+  rmsReactive: 0.45,
+  curveAmount: 0.9,
+  curveSpeed: 0.12,
+  curveWobble: 0.35,
+  lampSpacing: 9.0,
+  lampIntensity: 1.0,
+  lampReactive: 0.45
 };
 
 export type RoadDriveParams = {
@@ -131,6 +183,12 @@ export type RoadDriveParams = {
   cameraBob: number;
   bassReactive: number;
   rmsReactive: number;
+  curveAmount: number;
+  curveSpeed: number;
+  curveWobble: number;
+  lampSpacing: number;
+  lampIntensity: number;
+  lampReactive: number;
 };
 
 const toFiniteNumber = (value: unknown, fallback: number): number => {
@@ -150,7 +208,13 @@ export function normalizeRoadDriveParams(params: Record<string, number>): RoadDr
     glow: clamp(toFiniteNumber(params.glow, ROAD_DRIVE_DEFAULTS.glow), 0.1, 2.5),
     cameraBob: clamp(toFiniteNumber(params.cameraBob, ROAD_DRIVE_DEFAULTS.cameraBob), 0, 1.5),
     bassReactive: clamp(toFiniteNumber(params.bassReactive, ROAD_DRIVE_DEFAULTS.bassReactive), 0, 2),
-    rmsReactive: clamp(toFiniteNumber(params.rmsReactive, ROAD_DRIVE_DEFAULTS.rmsReactive), 0, 2)
+    rmsReactive: clamp(toFiniteNumber(params.rmsReactive, ROAD_DRIVE_DEFAULTS.rmsReactive), 0, 2),
+    curveAmount: clamp(toFiniteNumber(params.curveAmount, ROAD_DRIVE_DEFAULTS.curveAmount), 0, 2),
+    curveSpeed: clamp(toFiniteNumber(params.curveSpeed, ROAD_DRIVE_DEFAULTS.curveSpeed), 0, 1),
+    curveWobble: clamp(toFiniteNumber(params.curveWobble, ROAD_DRIVE_DEFAULTS.curveWobble), 0, 1),
+    lampSpacing: clamp(toFiniteNumber(params.lampSpacing, ROAD_DRIVE_DEFAULTS.lampSpacing), 3, 30),
+    lampIntensity: clamp(toFiniteNumber(params.lampIntensity, ROAD_DRIVE_DEFAULTS.lampIntensity), 0, 3),
+    lampReactive: clamp(toFiniteNumber(params.lampReactive, ROAD_DRIVE_DEFAULTS.lampReactive), 0, 2)
   };
 }
 
@@ -267,7 +331,13 @@ class RoadDriveGLRenderer {
       u_fog: params.fog,
       u_glow: params.glow,
       u_bass: bass,
-      u_bassReactive: params.bassReactive
+      u_bassReactive: params.bassReactive,
+      u_curveAmount: params.curveAmount,
+      u_curveSpeed: params.curveSpeed,
+      u_curveWobble: params.curveWobble,
+      u_lampSpacing: params.lampSpacing,
+      u_lampIntensity: params.lampIntensity,
+      u_lampReactive: params.lampReactive
     });
 
     gl.drawElements(gl.TRIANGLES, this.indexCount, this.indexType, 0);
@@ -321,7 +391,13 @@ class RoadDriveGLRenderer {
       u_fog: gl.getUniformLocation(program, "u_fog"),
       u_glow: gl.getUniformLocation(program, "u_glow"),
       u_bass: gl.getUniformLocation(program, "u_bass"),
-      u_bassReactive: gl.getUniformLocation(program, "u_bassReactive")
+      u_bassReactive: gl.getUniformLocation(program, "u_bassReactive"),
+      u_curveAmount: gl.getUniformLocation(program, "u_curveAmount"),
+      u_curveSpeed: gl.getUniformLocation(program, "u_curveSpeed"),
+      u_curveWobble: gl.getUniformLocation(program, "u_curveWobble"),
+      u_lampSpacing: gl.getUniformLocation(program, "u_lampSpacing"),
+      u_lampIntensity: gl.getUniformLocation(program, "u_lampIntensity"),
+      u_lampReactive: gl.getUniformLocation(program, "u_lampReactive")
     };
 
     gl.enable(gl.DEPTH_TEST);

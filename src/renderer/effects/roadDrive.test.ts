@@ -21,7 +21,13 @@ describe("roadDrive helpers", () => {
         glow: 0,
         cameraBob: -2,
         bassReactive: 5,
-        rmsReactive: -3
+        rmsReactive: -3,
+        curveAmount: 9,
+        curveSpeed: 3,
+        curveWobble: -1,
+        lampSpacing: 1,
+        lampIntensity: 8,
+        lampReactive: -4
       })
     ).toEqual({
       speed: 0.2,
@@ -32,7 +38,13 @@ describe("roadDrive helpers", () => {
       glow: 0.1,
       cameraBob: 0,
       bassReactive: 2,
-      rmsReactive: 0
+      rmsReactive: 0,
+      curveAmount: 2,
+      curveSpeed: 1,
+      curveWobble: 0,
+      lampSpacing: 3,
+      lampIntensity: 3,
+      lampReactive: 0
     });
   });
 
