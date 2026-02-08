@@ -205,6 +205,17 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("glow", "Glow", 0.2, { min: 0.05, max: 0.6, step: 0.05 })
     ]
   },
+  explicitpixels: {
+    title: "Explicit Pixels Controls",
+    controls: [
+      selectControl("mode", "Mode", "explicit", [
+        { label: "Explicit", value: "explicit" },
+        { label: "Procedural", value: "procedural" }
+      ]),
+      numberControl("speed", "Speed", 1, { min: 0, max: 3, step: 0.05 }),
+      numberControl("audioReact", "Audio React", 0.7, { min: 0, max: 2, step: 0.05 })
+    ]
+  },
   equalizer: {
     title: "Equalizer Controls",
     controls: [

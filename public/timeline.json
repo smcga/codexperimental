@@ -240,7 +240,16 @@
       "params": {
         "layout": "grid",
         "transitionStyle": "pop",
-        "names": ["Fairlight", "TRSI", "Spaceballs", "CNCD", "Mercury", "TBL", "Abyss", "Scoopex"],
+        "names": [
+          "Fairlight",
+          "TRSI",
+          "Spaceballs",
+          "CNCD",
+          "Mercury",
+          "TBL",
+          "Abyss",
+          "Scoopex"
+        ],
         "columns": 4,
         "cycleSeconds": 0.5,
         "highlightPulse": 0.9,
@@ -3441,6 +3450,38 @@
         "trailFade": 0.08,
         "sortFaces": "none"
       }
+    },
+    {
+      "id": "explicitpixels-explicit",
+      "start": "06:15.0",
+      "end": "06:20.0",
+      "effect": "explicitpixels",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "flash",
+        "duration": 0.35
+      },
+      "params": {
+        "mode": "explicit"
+      }
+    },
+    {
+      "id": "explicitpixels-procedural",
+      "start": "06:20.0",
+      "end": "06:28.0",
+      "effect": "explicitpixels",
+      "era": "pcdemo",
+      "transition": {
+        "in": "flash",
+        "out": "fade",
+        "duration": 0.3
+      },
+      "params": {
+        "mode": "procedural",
+        "speed": 1.1,
+        "audioReact": 0.9
+      }
     }
   ],
   "textCues": [
@@ -3769,6 +3810,36 @@
         "glitchIn": true,
         "shadow": true,
         "scanlineMask": 0.14
+      }
+    },
+    {
+      "id": "explicitpixels-cue-explicit",
+      "start": "06:15.2",
+      "end": "06:19.8",
+      "text": "No loops. No functions. Just assignments.",
+      "x": 0.5,
+      "y": 0.82,
+      "align": "center",
+      "size": 26,
+      "color": "#9ce7ff",
+      "effects": {
+        "shadow": true,
+        "glitchIn": false
+      }
+    },
+    {
+      "id": "explicitpixels-cue-procedural",
+      "start": "06:20.2",
+      "end": "06:27.6",
+      "text": "Rules > results.",
+      "x": 0.5,
+      "y": 0.82,
+      "align": "center",
+      "size": 30,
+      "color": "#ffd35a",
+      "effects": {
+        "shadow": true,
+        "glitchIn": false
       }
     }
   ]

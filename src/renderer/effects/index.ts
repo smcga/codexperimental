@@ -64,6 +64,7 @@ import { DotTunnelEffect } from "./dotTunnel";
 import { TextmodeCharsetEffect } from "./textmodeCharset";
 import { MoireGridEffect } from "./moireGridEffect";
 import { TorusOrbit3dEffect } from "./torusOrbit3d";
+import { ExplicitPixelsEffect } from "./explicitPixelsEffect";
 
 export const effectRegistry: Record<string, Effect> = {
   starfield: new StarfieldEffect(),
@@ -131,6 +132,7 @@ export const effectRegistry: Record<string, Effect> = {
   textmode_charset: new TextmodeCharsetEffect(),
   moire_grid: new MoireGridEffect(),
   torus_orbit_3d: new TorusOrbit3dEffect(),
+  explicitpixels: new ExplicitPixelsEffect(),
 };
 
 export function resetEffects(): void {

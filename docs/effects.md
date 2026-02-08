@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/index.ts`.
 
-Total effects: **65**.
+Total effects: **66**.
 
 ## Table of contents
 
@@ -71,6 +71,7 @@ Total effects: **65**.
 - [Effect: textmode_charset](#effect-textmode-charset)
 - [Effect: moire_grid](#effect-moire-grid)
 - [Effect: torus_orbit_3d](#effect-torus-orbit-3d)
+- [Effect: explicitpixels](#effect-explicitpixels)
 
 ## Cross-reference
 
@@ -90,8 +91,8 @@ Total effects: **65**.
 
 ### Common parameter patterns
 
-- `speed` (used in 38 effects)
-- `audioReact` (used in 25 effects)
+- `speed` (used in 39 effects)
+- `audioReact` (used in 26 effects)
 - `seed` (used in 24 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 9 effects)
@@ -2367,6 +2368,34 @@ Total effects: **65**.
 ```json
 {
   "effect": "torus_orbit_3d",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: explicitpixels
+
+- **Registry key:** `explicitpixels`
+- **Implementation:** `src/renderer/effects/explicitPixelsEffect.ts` (class `ExplicitPixelsEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by ExplicitPixelsEffect (src/renderer/effects/explicitPixelsEffect.ts).
+- **Audio features:** bass, beatStrength, energy, rms
+- **Performance notes:** Uses ImageData per frame; CPU cost scales with resolution.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReact` | number | 0.7 | min 0, max 2 | Audio React | yes |
+| `params.mode` | string | "explicit" | options: explicit, procedural | Mode | no |
+| `params.speed` | number | 1 | min 0, max 3 | Speed | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "explicitpixels",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
