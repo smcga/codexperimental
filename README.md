@@ -34,6 +34,7 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 - The `space_hangar` effect renders a WebGL2 raymarched sci-fi hangar flythrough with bass-driven camera shake; tune `params` like `quality`, `speed`, `exposure`, `hueShift`, and `seed`. It falls back to the `tunnel` effect when WebGL2 is unavailable.
 - The `raymarch_fractal` effect renders a WebGL2 raymarched fractal emerging from a ground plane with audio-reactive palette shifts; tune `params` like `quality`, `fractal`, `cameraRadius`, `cameraHeight`, `cameraOrbitSpeed`, `paletteSpeed`, `audioReact`, `beatKick`, and `fractalScale`. It falls back to the `fractal` effect when WebGL2 is unavailable.
 - The `explicitpixels` effect can switch between a generated assignment-only static frame (`mode: "explicit"`) and an audio-reactive procedural animation (`mode: "procedural"`).
+- The `tpi` effect (Temporal Parallax Inversion) renders a pseudo-3D sphere field where depth maps to time offsets, creating near-leading/far-lagging highlights with optional folded/reversed local time pockets.
 - The `wireframeRide` effect renders a WebGL2 wireframe terrain flythrough with neon gradients, fog, and audio-reactive pulses; tune `params` like `speed`, `gridWidth`, `gridDepth`, `gridResX`, `gridResZ`, `amplitude`, `noiseFreq`, `cameraHeight`, `fov`, `fog`, `neon`, `bassReactive`, `rmsReactive`, and `sun`. It falls back to the `isogrid` effect when WebGL2 is unavailable.
 - The `roadDrive` effect renders a WebGL2 night highway drive with dashed lane markers, guardrail glow, and horizon fog; tune `params` like `speed`, `roadWidth`, `laneDashLength`, `laneGap`, `fog`, `glow`, `cameraBob`, `curveStrength`, `curveFrequency`, `bassReactive`, and `rmsReactive`. It falls back to the `isogrid` effect when WebGL2 is unavailable.
 - The `portrait` effect pulls in `img/94B53814-80C3-4851-A6D3-A590FBB6022F.png` for a full-frame image glow; replace that file if you want a different portrait.
@@ -200,6 +201,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `fractal_zoomer` | `setType`, `zoom`, `centerX`, `centerY`, `iterations`, `paletteSpeed`, `audioReact` | `setType` supports `mandelbrot`, `julia`, or `burningShip`. |
 | `explicitpixels` | `mode`, `speed`, `audioReact` | `mode` supports `explicit` (generated wall of byte assignments) or `procedural` (loop-driven animation). |
 | `raymarch_fractal` | `quality`, `fractal`, `cameraRadius`, `cameraHeight`, `cameraOrbitSpeed`, `paletteSpeed`, `audioReact`, `beatKick`, `fractalScale` | `fractal` supports `mandelbulb` or `mandelbox`. |
+| `tpi` | `pixelSize`, `sphereCount`, `depthRange`, `timeScale`, `depthGamma`, `allowLead`, `foldAmount`, `foldFreq`, `foldSpeed`, `bassReverse`, `audioReact`, `palette` | Temporal Parallax Inversion: depth-indexed local time offsets with optional fold and bass-driven reversal pocket. |
 
 #### bumpmap_plane parameters
 

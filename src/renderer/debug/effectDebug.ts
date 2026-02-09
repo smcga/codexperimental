@@ -21,6 +21,7 @@ import { VECTOR3D_BALLS_DEFAULTS } from "../effects/vector3dBalls";
 import { IMPOSSIBLE_CORRIDOR_DEFAULTS } from "../effects/gl/impossibleCorridorEffect";
 import { MOIRE_GRID_DEFAULTS } from "../effects/moireGridEffect";
 import { TORUS_ORBIT_3D_DEFAULTS } from "../effects/torusOrbit3d";
+import { TEMPORAL_PARALLAX_INVERSION_DEFAULTS } from "../effects/temporalParallaxInversion";
 
 export type EffectParamValue = number | string;
 
@@ -203,6 +204,23 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("rotation", "Rotation", 0.02, { min: 0, max: 0.1, step: 0.005 }),
       numberControl("trail", "Trail", 0.96, { min: 0.85, max: 0.99, step: 0.01 }),
       numberControl("glow", "Glow", 0.2, { min: 0.05, max: 0.6, step: 0.05 })
+    ]
+  },
+  tpi: {
+    title: "Temporal Parallax Inversion Controls",
+    controls: [
+      numberControl("pixelSize", "Pixel Size", TEMPORAL_PARALLAX_INVERSION_DEFAULTS.pixelSize, { min: 2, max: 8, step: 1 }),
+      numberControl("sphereCount", "Sphere Count", TEMPORAL_PARALLAX_INVERSION_DEFAULTS.sphereCount, { min: 4, max: 24, step: 1 }),
+      numberControl("depthRange", "Depth Range", TEMPORAL_PARALLAX_INVERSION_DEFAULTS.depthRange, { min: 8, max: 40, step: 0.5 }),
+      numberControl("timeScale", "Time Scale", TEMPORAL_PARALLAX_INVERSION_DEFAULTS.timeScale, { min: 0, max: 3, step: 0.05 }),
+      numberControl("depthGamma", "Depth Gamma", TEMPORAL_PARALLAX_INVERSION_DEFAULTS.depthGamma, { min: 0.5, max: 3, step: 0.05 }),
+      toggleControl("allowLead", "Allow Lead", TEMPORAL_PARALLAX_INVERSION_DEFAULTS.allowLead > 0),
+      numberControl("foldAmount", "Fold Amount", TEMPORAL_PARALLAX_INVERSION_DEFAULTS.foldAmount, { min: 0, max: 1, step: 0.01 }),
+      numberControl("foldFreq", "Fold Frequency", TEMPORAL_PARALLAX_INVERSION_DEFAULTS.foldFreq, { min: 0, max: 4, step: 0.05 }),
+      numberControl("foldSpeed", "Fold Speed", TEMPORAL_PARALLAX_INVERSION_DEFAULTS.foldSpeed, { min: 0, max: 2, step: 0.05 }),
+      numberControl("bassReverse", "Bass Reverse", TEMPORAL_PARALLAX_INVERSION_DEFAULTS.bassReverse, { min: 0, max: 1, step: 0.01 }),
+      numberControl("audioReact", "Audio React", TEMPORAL_PARALLAX_INVERSION_DEFAULTS.audioReact, { min: 0, max: 1, step: 0.01 }),
+      numberControl("palette", "Palette", TEMPORAL_PARALLAX_INVERSION_DEFAULTS.palette, { min: 0, max: 2, step: 1 })
     ]
   },
   explicitpixels: {
