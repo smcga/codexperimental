@@ -150,4 +150,14 @@ describe("normalizeTimelineConfig", () => {
     expect(rainSections[0]?.start ?? Number.POSITIVE_INFINITY).toBeLessThan(180);
     expect(lightningSections[0]?.start ?? Number.POSITIVE_INFINITY).toBeLessThan(180);
   });
+
+  it("keeps the debug timeline in sync with the release timeline", () => {
+    const debugPath = new URL("../../public/timeline.json", import.meta.url);
+    const releasePath = new URL("../../public/timeline.release.json", import.meta.url);
+
+    const debugTimeline = JSON.parse(readFileSync(debugPath, "utf-8")) as RawTimelineConfig;
+    const releaseTimeline = JSON.parse(readFileSync(releasePath, "utf-8")) as RawTimelineConfig;
+
+    expect(debugTimeline).toEqual(releaseTimeline);
+  });
 });
