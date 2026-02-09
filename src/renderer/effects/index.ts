@@ -65,6 +65,7 @@ import { TextmodeCharsetEffect } from "./textmodeCharset";
 import { MoireGridEffect } from "./moireGridEffect";
 import { TorusOrbit3dEffect } from "./torusOrbit3d";
 import { ExplicitPixelsEffect } from "./explicitPixelsEffect";
+import { VolumetricCloudsEffect } from "./volumetricCloudsEffect";
 
 export const effectRegistry: Record<string, Effect> = {
   starfield: new StarfieldEffect(),
@@ -133,6 +134,7 @@ export const effectRegistry: Record<string, Effect> = {
   moire_grid: new MoireGridEffect(),
   torus_orbit_3d: new TorusOrbit3dEffect(),
   explicitpixels: new ExplicitPixelsEffect(),
+  volumetric_clouds: new VolumetricCloudsEffect(),
 };
 
 export function resetEffects(): void {

@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/index.ts`.
 
-Total effects: **66**.
+Total effects: **67**.
 
 ## Table of contents
 
@@ -72,6 +72,7 @@ Total effects: **66**.
 - [Effect: moire_grid](#effect-moire-grid)
 - [Effect: torus_orbit_3d](#effect-torus-orbit-3d)
 - [Effect: explicitpixels](#effect-explicitpixels)
+- [Effect: volumetric_clouds](#effect-volumetric-clouds)
 
 ## Cross-reference
 
@@ -92,7 +93,7 @@ Total effects: **66**.
 ### Common parameter patterns
 
 - `speed` (used in 39 effects)
-- `audioReact` (used in 26 effects)
+- `audioReact` (used in 27 effects)
 - `seed` (used in 24 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 9 effects)
@@ -2396,6 +2397,39 @@ Total effects: **66**.
 ```json
 {
   "effect": "explicitpixels",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: volumetric_clouds
+
+- **Registry key:** `volumetric_clouds`
+- **Implementation:** `src/renderer/effects/volumetricCloudsEffect.ts` (class `VolumetricCloudsEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by VolumetricCloudsEffect (src/renderer/effects/volumetricCloudsEffect.ts).
+- **Audio features:** bass, beat, rms
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReact` | number | 0.4 | min 0, max 1 | Audio React | yes |
+| `params.cloudScale` | number | 1 | min 0.4, max 2.5 | Cloud Scale | yes |
+| `params.density` | number | 0.62 | min 0.15, max 1 | Density | yes |
+| `params.detail` | number | 0.7 | min 0.1, max 1 | Detail | yes |
+| `params.haze` | number | 0.24 | min 0, max 0.8 | Haze | yes |
+| `params.layers` | number | 4 | min 2, max 8 | Layers | yes |
+| `params.sunlight` | number | 0.55 | min 0, max 1 | Sunlight | yes |
+| `params.windSpeed` | number | 0.35 | min -2, max 2 | Wind Speed | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "volumetric_clouds",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
