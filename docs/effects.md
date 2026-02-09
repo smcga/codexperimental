@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/index.ts`.
 
-Total effects: **66**.
+Total effects: **67**.
 
 ## Table of contents
 
@@ -72,6 +72,7 @@ Total effects: **66**.
 - [Effect: moire_grid](#effect-moire-grid)
 - [Effect: torus_orbit_3d](#effect-torus-orbit-3d)
 - [Effect: explicitpixels](#effect-explicitpixels)
+- [Effect: tpi](#effect-tpi)
 
 ## Cross-reference
 
@@ -92,11 +93,11 @@ Total effects: **66**.
 ### Common parameter patterns
 
 - `speed` (used in 39 effects)
-- `audioReact` (used in 26 effects)
+- `audioReact` (used in 27 effects)
 - `seed` (used in 24 effects)
 - `beatKick` (used in 14 effects)
+- `palette` (used in 10 effects)
 - `glow` (used in 9 effects)
-- `palette` (used in 9 effects)
 - `scanlines` (used in 7 effects)
 - `lineWidth` (used in 6 effects)
 - `hueShift` (used in 6 effects)
@@ -2396,6 +2397,43 @@ Total effects: **66**.
 ```json
 {
   "effect": "explicitpixels",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: tpi
+
+- **Registry key:** `tpi`
+- **Implementation:** `src/renderer/effects/temporalParallaxInversion.ts` (class `TemporalParallaxInversionEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by TemporalParallaxInversionEffect (src/renderer/effects/temporalParallaxInversion.ts).
+- **Audio features:** bass, rms
+- **Performance notes:** Uses ImageData per frame; CPU cost scales with resolution.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.allowLead` | boolean | 1 | unspecified | Allow Lead | unknown |
+| `params.audioReact` | number | 0.5 | min 0, max 1 | Audio React | yes |
+| `params.bassReverse` | number | 0.45 | min 0, max 1 | Bass Reverse | yes |
+| `params.depthGamma` | number | 1.35 | min 0.5, max 3 | Depth Gamma | yes |
+| `params.depthRange` | number | 24 | min 8, max 40 | Depth Range | yes |
+| `params.foldAmount` | number | 0.35 | min 0, max 1 | Fold Amount | yes |
+| `params.foldFreq` | number | 1.8 | min 0, max 4 | Fold Frequency | yes |
+| `params.foldSpeed` | number | 0.35 | min 0, max 2 | Fold Speed | yes |
+| `params.palette` | number | 0 | min 0, max 2 | Palette | yes |
+| `params.pixelSize` | number | 3 | min 2, max 8 | Pixel Size | yes |
+| `params.sphereCount` | number | 14 | min 4, max 24 | Sphere Count | yes |
+| `params.timeScale` | number | 1.2 | min 0, max 3 | Time Scale | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "tpi",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
