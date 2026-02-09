@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/index.ts`.
 
-Total effects: **67**.
+Total effects: **68**.
 
 ## Table of contents
 
@@ -73,6 +73,7 @@ Total effects: **67**.
 - [Effect: torus_orbit_3d](#effect-torus-orbit-3d)
 - [Effect: explicitpixels](#effect-explicitpixels)
 - [Effect: volumetric_clouds](#effect-volumetric-clouds)
+- [Effect: boids_simulation](#effect-boids-simulation)
 
 ## Cross-reference
 
@@ -92,18 +93,18 @@ Total effects: **67**.
 
 ### Common parameter patterns
 
-- `speed` (used in 39 effects)
+- `speed` (used in 40 effects)
 - `audioReact` (used in 27 effects)
-- `seed` (used in 24 effects)
+- `seed` (used in 25 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 9 effects)
 - `palette` (used in 9 effects)
+- `trail` (used in 7 effects)
 - `scanlines` (used in 7 effects)
+- `count` (used in 6 effects)
 - `lineWidth` (used in 6 effects)
 - `hueShift` (used in 6 effects)
-- `trail` (used in 6 effects)
 - `quality` (used in 6 effects)
-- `bufH` (used in 6 effects)
 
 ## Effects
 
@@ -2430,6 +2431,41 @@ Total effects: **67**.
 ```json
 {
   "effect": "volumetric_clouds",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: boids_simulation
+
+- **Registry key:** `boids_simulation`
+- **Implementation:** `src/renderer/effects/boidsSimulationEffect.ts` (class `BoidsSimulationEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by BoidsSimulationEffect (src/renderer/effects/boidsSimulationEffect.ts).
+- **Audio features:** bass, beat, beatStrength, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.alignment` | number | 0.2 | min 0, max 1.2 | Alignment | yes |
+| `params.cohesion` | number | 0.22 | min 0, max 1.2 | Cohesion | yes |
+| `params.count` | number | 90 | min 8, max 240 | Count | yes |
+| `params.neighborRadius` | number | 54 | min 8, max 160 | Neighbor Radius | yes |
+| `params.seed` | number | 0 | min 0, max 999 | Seed | yes |
+| `params.separation` | number | 0.45 | min 0, max 1.6 | Separation | yes |
+| `params.separationRadius` | number | 18 | min 4, max 120 | Separation Radius | yes |
+| `params.size` | number | 2 | min 1, max 5 | Size | yes |
+| `params.speed` | number | 1 | min 0.1, max 3 | Speed | yes |
+| `params.trail` | number | 0.18 | min 0.02, max 0.5 | Trail | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "boids_simulation",
   "opacity": 1,
   "blend": "source-over",
   "params": {}

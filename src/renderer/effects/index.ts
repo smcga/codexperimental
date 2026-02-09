@@ -66,6 +66,7 @@ import { MoireGridEffect } from "./moireGridEffect";
 import { TorusOrbit3dEffect } from "./torusOrbit3d";
 import { ExplicitPixelsEffect } from "./explicitPixelsEffect";
 import { VolumetricCloudsEffect } from "./volumetricCloudsEffect";
+import { BoidsSimulationEffect } from "./boidsSimulationEffect";
 
 export const effectRegistry: Record<string, Effect> = {
   starfield: new StarfieldEffect(),
@@ -135,6 +136,7 @@ export const effectRegistry: Record<string, Effect> = {
   torus_orbit_3d: new TorusOrbit3dEffect(),
   explicitpixels: new ExplicitPixelsEffect(),
   volumetric_clouds: new VolumetricCloudsEffect(),
+  boids_simulation: new BoidsSimulationEffect(),
 };
 
 export function resetEffects(): void {
