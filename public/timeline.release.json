@@ -585,9 +585,9 @@
       "effect": "chess",
       "era": "future",
       "transition": { "in": "fade", "out": "flash", "duration": 0.18 },
-      "params": { "speed": 3.0, "showHighlights": 1, "startTime": "03:37.6" },
+      "params": { "speed": 6.2, "showHighlights": 1, "startTime": "03:37.6" },
       "automation": [
-        { "param": "speed", "from": 2.2, "to": 3.0, "t0": "03:43.0", "t1": "03:47.0", "ease": "easeInOutQuad" },
+        { "param": "speed", "from": 4.5, "to": 7.0, "t0": "03:43.0", "t1": "03:47.0", "ease": "easeInOutQuad" },
         { "param": "showHighlights", "from": 0.6, "to": 1, "t0": "03:43.0", "t1": "03:47.0", "ease": "easeInOutQuad" }
       ],
       "layers": [
@@ -890,7 +890,7 @@
       "effect": "chess",
       "era": "future",
       "transition": { "in": "wipe", "out": "wipe", "duration": 0.05 },
-      "params": { "speed": 1.25, "showHighlights": 1, "startTime": "03:37.6" },
+      "params": { "speed": 4.2, "showHighlights": 1, "startTime": "03:37.6" },
       "layers": [
         { "effect": "glitch", "blend": "overlay", "opacity": 0.16, "params": { "sparkles": 0.65, "sliceCount": 14, "sliceBoost": 1.2, "shake": 0.55, "maxShake": 11 } },
         { "effect": "feedback", "blend": "screen", "opacity": 0.19, "params": { "scale": 1.048, "wobble": 0.38, "rotation": 0.15, "trail": 0.905, "glow": 0.62 } }
@@ -1153,7 +1153,7 @@
         { "effect": "glitch", "blend": "screen", "opacity": 0.28 },
         { "effect": "particles", "blend": "lighter", "opacity": 0.25, "params": { "speed": 1.28 } },
         { "effect": "starfield", "blend": "screen", "opacity": 0.2, "params": { "speed": 1.22, "warp": 0.55, "turnRate": 0.12, "turnStrength": 0.36 } },
-        { "effect": "chess", "blend": "overlay", "opacity": 0.12, "params": { "speed": 0.9, "showHighlights": 0, "startTime": "03:37.6" } },
+        { "effect": "chess", "blend": "overlay", "opacity": 0.12, "params": { "speed": 2.8, "showHighlights": 0, "startTime": "03:37.6" } },
         { "effect": "rain", "blend": "screen", "opacity": 0.18, "params": { "intensity": 0.7, "wind": 0.22, "speed": 1.05, "streakLength": 0.9, "splash": 0.28, "seed": 22 } },
         { "effect": "lightning", "blend": "screen", "opacity": 0.18, "params": { "trigger": "both", "chancePerSecond": 0.12, "cooldown": 1.6, "flashDuration": 0.08, "bolt": 0.55, "branches": 0.35, "seed": 23 } },
         { "effect": "neon_alley", "blend": "soft-light", "opacity": 0.12, "params": { "quality": 1, "speed": 0.9, "exposure": 1.15, "hueShift": 0.18, "seed": 24 } }
