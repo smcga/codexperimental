@@ -62,68 +62,69 @@ describe("normalizeTimelineConfig", () => {
     const normalized = normalizeTimelineConfig(raw);
     const last = normalized.sections[normalized.sections.length - 1];
 
+    expect(normalized.intro.end).toBeCloseTo(54.2);
     expect(normalized.sections[0].start).toBeCloseTo(normalized.intro.end);
-    expect(last.end).toBeCloseTo(365);
+    expect(last.end).toBeCloseTo(382.87);
   });
 
-  it("includes hook hit sections and text cues in the release timeline", () => {
+  it("includes THIS hit sections and text cues in the release timeline", () => {
     const releasePath = new URL("../../public/timeline.release.json", import.meta.url);
     const raw = JSON.parse(readFileSync(releasePath, "utf-8")) as RawTimelineConfig;
     const normalized = normalizeTimelineConfig(raw);
 
-    const hookSection = normalized.sections.find((section) => section.id === "hook-hit-01160");
-    const lateHookSection = normalized.sections.find((section) => section.id === "rap-hook-hit-03520");
-    const hookText = normalized.textCues?.find((cue) => cue.id === "this-hit-01160");
-    const lateHookText = normalized.textCues?.find((cue) => cue.id === "rap-cue-04120");
+    const firstThisHit = normalized.sections.find((section) => section.id === "hook-hit-01662-flash");
+    const majorDropHit = normalized.sections.find((section) => section.id === "drop-044073-flash");
+    const firstThisText = normalized.textCues?.find((cue) => cue.id === "this-hit-techno");
+    const majorDropText = normalized.textCues?.find((cue) => cue.id === "this-hit-megadrop");
 
-    expect(hookSection?.start).toBeCloseTo(76);
-    expect(hookSection?.end).toBeCloseTo(76.5);
-    expect(lateHookSection?.start).toBeCloseTo(232);
-    expect(lateHookSection?.end).toBeCloseTo(236);
-    expect(hookText?.start).toBeCloseTo(76);
-    expect(lateHookText?.start).toBeCloseTo(255.5);
+    expect(firstThisHit?.start).toBeCloseTo(76.62);
+    expect(firstThisHit?.end).toBeCloseTo(76.72);
+    expect(majorDropHit?.start).toBeCloseTo(280.73);
+    expect(majorDropHit?.end).toBeCloseTo(280.83);
+    expect(firstThisText?.start).toBeCloseTo(76.62);
+    expect(majorDropText?.start).toBeCloseTo(280.73);
   });
 
-  it("features the wireframe ride and mutation sections in the release timeline", () => {
+  it("keeps favorite showcase motifs: sunset growth, chess/physics, voxel/raytrace, and vga fire", () => {
     const releasePath = new URL("../../public/timeline.release.json", import.meta.url);
     const raw = JSON.parse(readFileSync(releasePath, "utf-8")) as RawTimelineConfig;
     const normalized = normalizeTimelineConfig(raw);
 
-    const wireframeRide = normalized.sections.find((section) => section.id === "rap-switch-a-03560");
-    const mutation = normalized.sections.find((section) => section.id === "mega-drop-mutation");
+    const sunset = normalized.sections.find((section) => section.id === "calm-sunset-a");
+    expect(sunset?.effect).toBe("synthwaveSunset");
+    expect(sunset?.automation?.some((automation) => automation.param === "sunSize")).toBe(true);
 
-    expect(wireframeRide?.effect).toBe("wireframeRide");
-    expect(wireframeRide?.start).toBeCloseTo(236);
-    expect(wireframeRide?.end).toBeCloseTo(243);
+    const chessPhysics = normalized.sections.find((section) => section.id === "drop-body-b");
+    expect(chessPhysics?.layers.map((layer) => layer.effect)).toContain("chess");
+    expect(chessPhysics?.layers.map((layer) => layer.effect)).toContain("physics_pile");
 
-    expect(mutation?.effect).toBe("neon_alley");
-    expect(mutation?.start).toBeCloseTo(295.8);
-    expect(mutation?.end).toBeCloseTo(297.5);
-    expect(mutation?.automation?.some((automation) => automation.param === "seed" && automation.from === 5)).toBe(
-      true
+    const voxelRaytrace = normalized.sections.find((section) => section.id === "mega-drop-plateau");
+    expect(voxelRaytrace?.layers.map((layer) => layer.effect)).toContain("voxel_landscape");
+    expect(voxelRaytrace?.layers.map((layer) => layer.effect)).toContain("raytrace_spheres");
+
+    const withVgaFire = normalized.sections.filter((section) =>
+      section.layers.some((layer) => layer.effect === "vga_fire")
     );
+    expect(withVgaFire.length).toBeGreaterThanOrEqual(3);
   });
 
-  it("captures the machine-trance rush ramp in the release timeline", () => {
+  it("captures both rush windows with feedback glue layers", () => {
     const releasePath = new URL("../../public/timeline.release.json", import.meta.url);
     const raw = JSON.parse(readFileSync(releasePath, "utf-8")) as RawTimelineConfig;
     const normalized = normalizeTimelineConfig(raw);
 
-    const rampStart = normalized.sections.find((section) => section.id === "rap-stab-04080");
-    const rampMid = normalized.sections.find((section) => section.id === "rap-stab-04100");
-    const rampEnd = normalized.sections.find((section) => section.id === "rap-stab-04110");
+    const rushOne = normalized.sections.filter((section) => section.id.startsWith("era16bit-rush1-"));
+    const rushTwo = normalized.sections.filter((section) => section.id.startsWith("drop-rush2-"));
 
-    expect(rampStart?.effect).toBe("glitch");
-    expect(rampStart?.layers[0]?.effect).toBe("feedback");
-    expect(rampStart?.layers[0]?.opacity).toBeCloseTo(0.1);
+    expect(rushOne).toHaveLength(16);
+    expect(rushTwo).toHaveLength(16);
+    expect(rushOne.every((section) => section.layers.some((layer) => layer.effect === "feedback"))).toBe(true);
+    expect(rushTwo.every((section) => section.layers.some((layer) => layer.effect === "feedback"))).toBe(true);
 
-    expect(rampMid?.effect).toBe("plasma");
-    expect(rampMid?.layers.map((layer) => layer.effect)).toEqual(["feedback"]);
-    expect(rampMid?.layers[0]?.opacity).toBeCloseTo(0.1);
-
-    expect(rampEnd?.effect).toBe("isogrid");
-    expect(rampEnd?.layers.map((layer) => layer.effect)).toEqual(["feedback"]);
-    expect(rampEnd?.layers[0]?.opacity).toBeCloseTo(0.1);
+    expect(rushOne[0]?.start).toBeCloseTo(106.27);
+    expect(rushOne.at(-1)?.end).toBeCloseTo(108.56);
+    expect(rushTwo[0]?.start).toBeCloseTo(171.1);
+    expect(rushTwo.at(-1)?.end).toBeCloseTo(173.8);
   });
 
   it("uses rain and lightning as layered effects in the main timeline", () => {
