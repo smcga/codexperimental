@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import effectsDocs from "../../docs/effects.md?raw";
 import timeline from "../../public/timeline.release.json";
 
 const toSeconds = (value: string | number): number => {
@@ -9,6 +10,8 @@ const toSeconds = (value: string | number): number => {
   const [minutes, seconds] = value.split(":");
   return Number(minutes) * 60 + Number(seconds);
 };
+
+const allEffects = [...effectsDocs.matchAll(/^- \[Effect: ([^\]]+)\]/gm)].map((match) => match[1]);
 
 describe("release timeline", () => {
   it("covers continuously from intro end through 06:22.87", () => {
@@ -30,26 +33,8 @@ describe("release timeline", () => {
 
   it("pins all sacred structural timestamps as section boundaries", () => {
     const sacredTimestamps = [
-      54.2,
-      76.62,
-      98.3,
-      109.16,
-      120.03,
-      130.8,
-      149.85,
-      152.5,
-      173.8,
-      189.6,
-      205.14,
-      265.7,
-      272.15,
-      280.73,
-      302.4,
-      319.66,
-      325.39,
-      340.0,
-      372.6,
-      382.87
+      54.2, 76.62, 98.3, 109.16, 120.03, 130.8, 149.85, 152.5, 173.8, 189.6, 205.14, 265.7, 272.15, 280.73,
+      302.4, 319.66, 325.39, 340.0, 372.6, 382.87
     ];
 
     const boundaries = new Set<number>();
@@ -59,14 +44,12 @@ describe("release timeline", () => {
     });
 
     sacredTimestamps.forEach((timestamp) => {
-      const hasBoundary = Array.from(boundaries).some(
-        (boundary) => Math.abs(boundary - timestamp) < 1e-6
-      );
+      const hasBoundary = Array.from(boundaries).some((boundary) => Math.abs(boundary - timestamp) < 1e-6);
       expect(hasBoundary).toBe(true);
     });
   });
 
-  it("builds the rap chapter from 03:25.14 to 04:25.7 with focused text cues", () => {
+  it("keeps rap section dynamic with switches every <= 5 seconds", () => {
     const rapStart = 3 * 60 + 25.14;
     const rapEnd = 4 * 60 + 25.7;
 
@@ -78,7 +61,12 @@ describe("release timeline", () => {
 
     expect(toSeconds(rapSections[0]?.start ?? 0)).toBeCloseTo(rapStart, 5);
     expect(toSeconds(rapSections.at(-1)?.end ?? 0)).toBeCloseTo(rapEnd, 5);
-    expect(rapSections.length).toBeGreaterThanOrEqual(7);
+
+    rapSections.forEach((section) => {
+      expect(toSeconds(section.end) - toSeconds(section.start)).toBeLessThanOrEqual(5);
+    });
+
+    expect(rapSections.length).toBeGreaterThanOrEqual(12);
 
     const rapTextCues = timeline.textCues.filter((cue) => {
       const start = toSeconds(cue.start);
@@ -90,15 +78,16 @@ describe("release timeline", () => {
     expect(rapTextCues.length).toBeLessThanOrEqual(4);
   });
 
-  it("uses a high-impact WebGL base at the 04:40.73 drop", () => {
-    const dropStart = 4 * 60 + 40.73;
-    const section = timeline.sections.find(
-      (candidate) =>
-        toSeconds(candidate.start) >= dropStart &&
-        toSeconds(candidate.start) <= dropStart + 0.2 &&
-        candidate.effect === "raymarch_fractal"
-    );
+  it("uses every catalogued effect at least once across sections and layers", () => {
+    const usedEffects = new Set<string>();
 
-    expect(section).toBeDefined();
+    timeline.sections.forEach((section) => {
+      usedEffects.add(section.effect);
+      section.layers?.forEach((layer) => usedEffects.add(layer.effect));
+    });
+
+    allEffects.forEach((effect) => {
+      expect(usedEffects.has(effect)).toBe(true);
+    });
   });
 });

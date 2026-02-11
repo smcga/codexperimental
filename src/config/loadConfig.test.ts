@@ -85,22 +85,27 @@ describe("normalizeTimelineConfig", () => {
     expect(majorDropText?.start).toBeCloseTo(280.73);
   });
 
-  it("features the rap minimalism and triumphant mega drop sections", () => {
+  it("keeps favorite showcase motifs: sunset growth, chess/physics, voxel/raytrace, and vga fire", () => {
     const releasePath = new URL("../../public/timeline.release.json", import.meta.url);
     const raw = JSON.parse(readFileSync(releasePath, "utf-8")) as RawTimelineConfig;
     const normalized = normalizeTimelineConfig(raw);
 
-    const rapMinimal = normalized.sections.find((section) => section.id === "rap-wheres-the-soul");
-    const megaDrop = normalized.sections.find((section) => section.id === "mega-drop");
+    const sunset = normalized.sections.find((section) => section.id === "calm-sunset-a");
+    expect(sunset?.effect).toBe("synthwaveSunset");
+    expect(sunset?.automation?.some((automation) => automation.param === "sunSize")).toBe(true);
 
-    expect(rapMinimal?.effect).toBe("wireframeRide");
-    expect(rapMinimal?.start).toBeCloseTo(258.8);
-    expect(rapMinimal?.end).toBeCloseTo(261.9);
+    const chessPhysics = normalized.sections.find((section) => section.id === "drop-body-b");
+    expect(chessPhysics?.layers.map((layer) => layer.effect)).toContain("chess");
+    expect(chessPhysics?.layers.map((layer) => layer.effect)).toContain("physics_pile");
 
-    expect(megaDrop?.effect).toBe("raymarch_fractal");
-    expect(megaDrop?.start).toBeCloseTo(280.83);
-    expect(megaDrop?.layers?.some((layer) => layer.effect === "particles")).toBe(true);
-    expect(megaDrop?.automation?.some((automation) => automation.param === "glow")).toBe(true);
+    const voxelRaytrace = normalized.sections.find((section) => section.id === "mega-drop-plateau");
+    expect(voxelRaytrace?.layers.map((layer) => layer.effect)).toContain("voxel_landscape");
+    expect(voxelRaytrace?.layers.map((layer) => layer.effect)).toContain("raytrace_spheres");
+
+    const withVgaFire = normalized.sections.filter((section) =>
+      section.layers.some((layer) => layer.effect === "vga_fire")
+    );
+    expect(withVgaFire.length).toBeGreaterThanOrEqual(3);
   });
 
   it("captures both rush windows with feedback glue layers", () => {
