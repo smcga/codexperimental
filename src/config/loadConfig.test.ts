@@ -63,7 +63,7 @@ describe("normalizeTimelineConfig", () => {
     const last = normalized.sections[normalized.sections.length - 1];
 
     expect(normalized.sections[0].start).toBeCloseTo(normalized.intro.end);
-    expect(last.end).toBeCloseTo(365);
+    expect(last.end).toBeCloseTo(382.87);
   });
 
   it("includes hook hit sections and text cues in the release timeline", () => {
@@ -71,59 +71,55 @@ describe("normalizeTimelineConfig", () => {
     const raw = JSON.parse(readFileSync(releasePath, "utf-8")) as RawTimelineConfig;
     const normalized = normalizeTimelineConfig(raw);
 
-    const hookSection = normalized.sections.find((section) => section.id === "hook-hit-01160");
-    const lateHookSection = normalized.sections.find((section) => section.id === "rap-hook-hit-03520");
-    const hookText = normalized.textCues?.find((cue) => cue.id === "this-hit-01160");
-    const lateHookText = normalized.textCues?.find((cue) => cue.id === "rap-cue-04120");
+    const hookSection = normalized.sections.find((section) => section.start === 76.62);
+    const lateHookSection = normalized.sections.find((section) => section.start === 157.6);
+    const hookText = normalized.textCues?.find((cue) => cue.id === "hit-011662");
+    const lateHookText = normalized.textCues?.find((cue) => cue.id === "hit-023760");
 
-    expect(hookSection?.start).toBeCloseTo(76);
-    expect(hookSection?.end).toBeCloseTo(76.5);
-    expect(lateHookSection?.start).toBeCloseTo(232);
-    expect(lateHookSection?.end).toBeCloseTo(236);
-    expect(hookText?.start).toBeCloseTo(76);
-    expect(lateHookText?.start).toBeCloseTo(255.5);
+    expect(hookSection?.start).toBeCloseTo(76.62);
+    expect(hookSection?.end).toBeCloseTo(82.07);
+    expect(lateHookSection?.start).toBeCloseTo(157.6);
+    expect(lateHookSection?.end).toBeCloseTo(157.99);
+    expect(hookText?.start).toBeCloseTo(76.62);
+    expect(lateHookText?.start).toBeCloseTo(157.6);
   });
 
-  it("features the wireframe ride and mutation sections in the release timeline", () => {
+  it("features the big drop stack in the release timeline", () => {
     const releasePath = new URL("../../public/timeline.release.json", import.meta.url);
     const raw = JSON.parse(readFileSync(releasePath, "utf-8")) as RawTimelineConfig;
     const normalized = normalizeTimelineConfig(raw);
 
-    const wireframeRide = normalized.sections.find((section) => section.id === "rap-switch-a-03560");
-    const mutation = normalized.sections.find((section) => section.id === "mega-drop-mutation");
+    const wireframeRide = normalized.sections.find((section) => section.id === "big-drop-044073");
 
     expect(wireframeRide?.effect).toBe("wireframeRide");
-    expect(wireframeRide?.start).toBeCloseTo(236);
-    expect(wireframeRide?.end).toBeCloseTo(243);
-
-    expect(mutation?.effect).toBe("neon_alley");
-    expect(mutation?.start).toBeCloseTo(295.8);
-    expect(mutation?.end).toBeCloseTo(297.5);
-    expect(mutation?.automation?.some((automation) => automation.param === "seed" && automation.from === 5)).toBe(
-      true
-    );
+    expect(wireframeRide?.start).toBeCloseTo(280.73);
+    expect(wireframeRide?.end).toBeCloseTo(302.4);
+    expect(wireframeRide?.layers?.map((layer) => layer.effect)).toEqual(["feedback", "glitch"]);
   });
 
-  it("captures the machine-trance rush ramp in the release timeline", () => {
+  it("captures both machine-trance rush ramps in the release timeline", () => {
     const releasePath = new URL("../../public/timeline.release.json", import.meta.url);
     const raw = JSON.parse(readFileSync(releasePath, "utf-8")) as RawTimelineConfig;
     const normalized = normalizeTimelineConfig(raw);
 
-    const rampStart = normalized.sections.find((section) => section.id === "rap-stab-04080");
-    const rampMid = normalized.sections.find((section) => section.id === "rap-stab-04100");
-    const rampEnd = normalized.sections.find((section) => section.id === "rap-stab-04110");
+    const rush1Sections = normalized.sections.filter((section) => section.id.startsWith("rush1-"));
+    const rush2Sections = normalized.sections.filter((section) => section.id.startsWith("rush2-"));
 
-    expect(rampStart?.effect).toBe("glitch");
-    expect(rampStart?.layers[0]?.effect).toBe("feedback");
-    expect(rampStart?.layers[0]?.opacity).toBeCloseTo(0.1);
+    expect(rush1Sections.length).toBe(17);
+    expect(rush1Sections[0]?.start).toBeCloseTo(106.27);
+    expect(rush1Sections.at(-1)?.end).toBeCloseTo(108.56);
+    rush1Sections.forEach((section) => {
+      expect(section.layers?.[0]?.effect).toBe("feedback");
+      expect(section.layers?.[0]?.blend).toBe("screen");
+    });
 
-    expect(rampMid?.effect).toBe("plasma");
-    expect(rampMid?.layers.map((layer) => layer.effect)).toEqual(["feedback"]);
-    expect(rampMid?.layers[0]?.opacity).toBeCloseTo(0.1);
-
-    expect(rampEnd?.effect).toBe("isogrid");
-    expect(rampEnd?.layers.map((layer) => layer.effect)).toEqual(["feedback"]);
-    expect(rampEnd?.layers[0]?.opacity).toBeCloseTo(0.1);
+    expect(rush2Sections.length).toBe(17);
+    expect(rush2Sections[0]?.start).toBeCloseTo(171.1);
+    expect(rush2Sections.at(-1)?.end).toBeCloseTo(173.8);
+    rush2Sections.forEach((section) => {
+      expect(section.layers?.[0]?.effect).toBe("feedback");
+      expect(section.layers?.[0]?.blend).toBe("screen");
+    });
   });
 
   it("uses rain and lightning as layered effects in the main timeline", () => {
