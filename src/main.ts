@@ -666,7 +666,12 @@ function loop(): void {
   if (debugFramingState) {
     const framing = renderer.getCurrentFramingState();
     if (framing) {
-      debugFramingState.textContent = `${framing.mode} s=${framing.present.scale.toFixed(2)} safe=[${Math.round(framing.safe.x)},${Math.round(framing.safe.y)},${Math.round(framing.safe.w)},${Math.round(framing.safe.h)}]`;
+      const fitAlignDebug = renderer.getCurrentFitAlignDebug();
+      const layerSummary = fitAlignDebug ? ` layers=${fitAlignDebug.layerFitAligns.length}` : "";
+      const alignSummary = fitAlignDebug
+        ? ` base=${fitAlignDebug.sectionFitAlign}${fitAlignDebug.layerFitAligns.length > 0 ? ` [${fitAlignDebug.layerFitAligns.join(",")}]` : ""}`
+        : "";
+      debugFramingState.textContent = `${framing.mode} s=${framing.present.scale.toFixed(2)} safe=[${Math.round(framing.safe.x)},${Math.round(framing.safe.y)},${Math.round(framing.safe.w)},${Math.round(framing.safe.h)}]${layerSummary}${alignSummary ? ` ${alignSummary}` : ""}`;
     }
   }
   if (!releaseMode) {

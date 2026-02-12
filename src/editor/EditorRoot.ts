@@ -4,7 +4,8 @@ import {
   RawParamAutomation,
   RawSectionConfig,
   RawTimelineConfig,
-  TransitionType
+  TransitionType,
+  FitAlign
 } from "../config/loadConfig";
 import {
   addLayer,
@@ -37,6 +38,13 @@ const BLEND_MODES: BlendMode[] = [
   "exclusion",
   "xor"
 ];
+const FIT_ALIGN_OPTIONS: Array<{ label: string; value: FitAlign }> = [
+  { label: "Top", value: "top" },
+  { label: "Centre", value: "centre" },
+  { label: "Bottom", value: "bottom" },
+  { label: "Stretch/Fill", value: "fill" }
+];
+
 const TRANSITION_TYPES: TransitionType[] = [
   "fade",
   "wipe",
@@ -463,6 +471,12 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
             ${ERA_PRESETS.map((preset) => `<option value="${preset}" ${preset === scene.era ? "selected" : ""}>${preset}</option>`).join("")}
           </select>
         </label>
+        <label>
+          <span>Alignment/Fit</span>
+          <select data-field="fitAlign">
+            ${FIT_ALIGN_OPTIONS.map((option) => `<option value="${option.value}" ${option.value === (scene.fitAlign ?? "fill") ? "selected" : ""}>${option.label}</option>`).join("")}
+          </select>
+        </label>
       </div>
       <div class="editor-group">
         <div class="editor-group-title">Transition</div>
@@ -564,6 +578,8 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         } else if (field === "transition-duration") {
           target.transition = target.transition ?? { in: "fade", out: "fade", duration: 0.8 };
           target.transition.duration = Number(value);
+        } else if (field === "fitAlign") {
+          target.fitAlign = value as FitAlign;
         }
       });
     };
@@ -855,6 +871,12 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
               ${BLEND_MODES.map((mode) => `<option value="${mode}" ${mode === layer.blend ? "selected" : ""}>${mode}</option>`).join("")}
             </select>
           </label>
+          <label>
+            <span>Alignment/Fit</span>
+            <select data-layer-field="fitAlign" data-layer-index="${index}">
+              ${FIT_ALIGN_OPTIONS.map((option) => `<option value="${option.value}" ${option.value === (layer.fitAlign ?? "fill") ? "selected" : ""}>${option.label}</option>`).join("")}
+            </select>
+          </label>
           <div data-layer-params="${index}"></div>
           <div class="editor-layer-actions">
             <button type="button" data-layer-action="move-up" data-layer-index="${index}">Move up</button>
@@ -886,6 +908,8 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
             layer.opacity = Number(input.value);
           } else if (field === "blend") {
             layer.blend = input.value as BlendMode;
+          } else if (field === "fitAlign") {
+            layer.fitAlign = input.value as FitAlign;
           }
         });
       });

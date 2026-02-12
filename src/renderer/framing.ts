@@ -1,3 +1,5 @@
+import { computeDesktopCinematicTransform, computePresentTransform } from "./present";
+
 export type FramingMode = "desktopCinematic" | "mobileFit";
 
 export type FramingOverride = "auto" | FramingMode;
@@ -88,22 +90,18 @@ function computeDesktopPresentation(
   internalW: number,
   internalH: number
 ): FramingState["present"] {
-  const targetAspect = internalW / internalH;
-  const screenAspect = screenW / screenH;
-  const scale = screenAspect < targetAspect ? screenH / internalH : Math.min(screenW / internalW, screenH / internalH);
+  const { scale, dx, dy } = computeDesktopCinematicTransform(screenW, screenH, internalW, internalH);
   const drawW = internalW * scale;
   const drawH = internalH * scale;
-  const offsetX = (screenW - drawW) / 2;
-  const offsetY = (screenH - drawH) / 2;
   return {
     scale,
-    offsetX,
-    offsetY,
+    offsetX: dx,
+    offsetY: dy,
     letterbox: {
-      left: Math.max(0, offsetX),
-      right: Math.max(0, screenW - (offsetX + drawW)),
-      top: Math.max(0, offsetY),
-      bottom: Math.max(0, screenH - (offsetY + drawH))
+      left: Math.max(0, dx),
+      right: Math.max(0, screenW - (dx + drawW)),
+      top: Math.max(0, dy),
+      bottom: Math.max(0, screenH - (dy + drawH))
     }
   };
 }
@@ -114,20 +112,19 @@ function computeContainPresentation(
   internalW: number,
   internalH: number
 ): FramingState["present"] {
-  const scale = Math.min(screenW / internalW, screenH / internalH);
+  const { scale, dx, dy } = computePresentTransform(screenW, screenH, internalW, internalH, "centre", "containAlign");
   const drawW = internalW * scale;
   const drawH = internalH * scale;
-  const offsetX = (screenW - drawW) / 2;
-  const offsetY = (screenH - drawH) / 2;
   return {
     scale,
-    offsetX,
-    offsetY,
+    offsetX: dx,
+    offsetY: dy,
     letterbox: {
-      left: Math.max(0, offsetX),
-      right: Math.max(0, screenW - (offsetX + drawW)),
-      top: Math.max(0, offsetY),
-      bottom: Math.max(0, screenH - (offsetY + drawH))
+      left: Math.max(0, dx),
+      right: Math.max(0, screenW - (dx + drawW)),
+      top: Math.max(0, dy),
+      bottom: Math.max(0, screenH - (dy + drawH))
     }
   };
 }
+

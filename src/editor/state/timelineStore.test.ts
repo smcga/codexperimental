@@ -46,6 +46,7 @@ describe("timelineStore", () => {
     expect(scene.start).toBe(0);
     expect(scene.end).toBe(5);
     expect(scene.effect).toBe("starfield");
+    expect(scene.fitAlign).toBe("fill");
   });
 
   it("createAutomationEntry applies overrides", () => {
@@ -80,6 +81,7 @@ describe("timelineStore", () => {
 
   it("addLayer/removeLayer/reorderLayers behave correctly", () => {
     const layers = [createLayer("starfield"), createLayer("plasma")];
+    expect(layers[0].fitAlign).toBe("fill");
     const added = addLayer(layers, createLayer("tunnel"));
     expect(added).toHaveLength(3);
     const reordered = reorderLayers(added, 2, 0);

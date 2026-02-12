@@ -1,5 +1,5 @@
 import { AudioFeatures } from "../audio/audioPlayer";
-import { SectionConfig, TextCue, TransitionType } from "../config/loadConfig";
+import { FitAlign, SectionConfig, TextCue, TransitionType } from "../config/loadConfig";
 import { resolveAutomatedParams } from "../timeline/automation";
 import { clamp } from "../util/math";
 import { CameraState, computeDynamicCamera } from "./camera";
@@ -7,6 +7,7 @@ import { EraConstraints, getEraConstraints, quantizeToPalette } from "./eraConst
 import { effectRegistry, resetEffects } from "./effects";
 import { computeFraming, FramingOverride, FramingState } from "./framing";
 import { resolveMonochrome } from "./monochrome";
+import { computePresentTransform, computeScreenSafeRect } from "./present";
 import { renderTextCues } from "./text/textRenderer";
 
 export type RenderState = {
@@ -29,6 +30,11 @@ export type RenderState = {
   framingOverride?: FramingOverride;
 };
 
+type FitAlignDebug = {
+  sectionFitAlign: FitAlign;
+  layerFitAligns: FitAlign[];
+};
+
 export class Renderer {
   private baseCanvas: HTMLCanvasElement;
   private baseCtx: CanvasRenderingContext2D;
@@ -38,9 +44,16 @@ export class Renderer {
   private sceneCtx: CanvasRenderingContext2D;
   private layerCanvas: HTMLCanvasElement;
   private layerCtx: CanvasRenderingContext2D;
+  private passCanvas: HTMLCanvasElement;
+  private passCtx: CanvasRenderingContext2D;
+  private mobileFromCanvas: HTMLCanvasElement;
+  private mobileFromCtx: CanvasRenderingContext2D;
+  private mobileToCanvas: HTMLCanvasElement;
+  private mobileToCtx: CanvasRenderingContext2D;
   private baseWidth: number;
   private baseHeight: number;
   private lastFramingState: FramingState | null = null;
+  private lastFitAlignDebug: FitAlignDebug | null = null;
 
   constructor(baseWidth = 320, baseHeight = 180) {
     this.baseWidth = baseWidth;
@@ -80,11 +93,41 @@ export class Renderer {
       throw new Error("Unable to create layer canvas");
     }
     this.layerCtx = layerCtx;
-  }
 
+    this.passCanvas = document.createElement("canvas");
+    this.passCanvas.width = baseWidth;
+    this.passCanvas.height = baseHeight;
+    const passCtx = this.passCanvas.getContext("2d");
+    if (!passCtx) {
+      throw new Error("Unable to create pass canvas");
+    }
+    this.passCtx = passCtx;
+
+    this.mobileFromCanvas = document.createElement("canvas");
+    this.mobileFromCanvas.width = baseWidth;
+    this.mobileFromCanvas.height = baseHeight;
+    const mobileFromCtx = this.mobileFromCanvas.getContext("2d");
+    if (!mobileFromCtx) {
+      throw new Error("Unable to create mobile from canvas");
+    }
+    this.mobileFromCtx = mobileFromCtx;
+
+    this.mobileToCanvas = document.createElement("canvas");
+    this.mobileToCanvas.width = baseWidth;
+    this.mobileToCanvas.height = baseHeight;
+    const mobileToCtx = this.mobileToCanvas.getContext("2d");
+    if (!mobileToCtx) {
+      throw new Error("Unable to create mobile to canvas");
+    }
+    this.mobileToCtx = mobileToCtx;
+  }
 
   getCurrentFramingState(): FramingState | null {
     return this.lastFramingState;
+  }
+
+  getCurrentFitAlignDebug(): FitAlignDebug | null {
+    return this.lastFitAlignDebug;
   }
 
   setBaseSize(baseWidth: number, baseHeight: number): void {
@@ -97,6 +140,8 @@ export class Renderer {
     this.baseCanvas.height = baseHeight;
     this.transitionCanvas.width = baseWidth;
     this.transitionCanvas.height = baseHeight;
+    this.passCanvas.width = baseWidth;
+    this.passCanvas.height = baseHeight;
   }
 
   reset(): void {
@@ -132,6 +177,10 @@ export class Renderer {
       activeSection.framing === "auto" ? (framingOverride ?? "auto") : activeSection.framing
     );
     this.lastFramingState = framing;
+    this.lastFitAlignDebug = {
+      sectionFitAlign: activeSection.fitAlign,
+      layerFitAligns: activeSection.layers.map((layer) => layer.fitAlign)
+    };
     const baseShake = audio.beatStrength * 6;
     const shakeX = (baseShake + (screenShake?.x ?? 0)) * eraConstraints.cameraShake * framing.camera.shakeMul;
     const shakeY = (baseShake + (screenShake?.y ?? 0)) * eraConstraints.cameraShake * framing.camera.shakeMul;
@@ -152,40 +201,206 @@ export class Renderer {
       ctx.filter = "grayscale(1)";
     }
 
-    if (transition) {
-      this.renderSectionTo(this.transitionCtx, transition.from, time, delta, audio, framing);
-      this.renderSectionTo(this.baseCtx, transition.to, time, delta, audio, framing);
-      this.drawTransition(ctx, transition, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints);
+    if (framing.mode === "mobileFit") {
+      this.renderMobileFrame(ctx, width, height, section, transition, time, delta, audio, shakeX, shakeY, camera, framing);
+      this.renderOverlays(ctx, width, height, audio, eraConstraints);
+      renderTextCues(ctx, width, height, textCues, time, {
+        framingMode: framing.mode,
+        safeRect: computeScreenSafeRect(width, height)
+      });
     } else {
-      this.renderSectionTo(this.baseCtx, section, time, delta, audio, framing);
-      this.drawScaled(
-        ctx,
-        this.baseCanvas,
-        scale,
-        offsetX,
-        offsetY,
-        shakeX,
-        shakeY,
-        1,
-        camera,
-        eraConstraints.smoothing
-      );
+      if (transition) {
+        this.renderSectionTo(this.transitionCtx, transition.from, time, delta, audio, framing);
+        this.renderSectionTo(this.baseCtx, transition.to, time, delta, audio, framing);
+        this.drawTransition(ctx, transition, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints);
+      } else {
+        this.renderSectionTo(this.baseCtx, section, time, delta, audio, framing);
+        this.drawScaled(
+          ctx,
+          this.baseCanvas,
+          scale,
+          offsetX,
+          offsetY,
+          shakeX,
+          shakeY,
+          1,
+          camera,
+          eraConstraints.smoothing
+        );
+      }
+
+      ctx.save();
+      ctx.translate(offsetX + shakeX, offsetY + shakeY);
+      ctx.scale(scale, scale);
+      this.applyCameraTransform(ctx, camera);
+      this.renderOverlays(ctx, this.baseWidth, this.baseHeight, audio, eraConstraints);
+      renderTextCues(ctx, this.baseWidth, this.baseHeight, textCues, time, {
+        framingMode: framing.mode,
+        safeRect: framing.safe
+      });
+      ctx.restore();
     }
 
     if (monochrome) {
       ctx.restore();
     }
+  }
 
-    ctx.save();
-    ctx.translate(offsetX + shakeX, offsetY + shakeY);
-    ctx.scale(scale, scale);
-    this.applyCameraTransform(ctx, camera);
-    this.renderOverlays(ctx, this.baseWidth, this.baseHeight, audio, eraConstraints);
-    renderTextCues(ctx, this.baseWidth, this.baseHeight, textCues, time, {
-      framingMode: framing.mode,
-      safeRect: framing.safe
+  private renderMobileFrame(
+    targetCtx: CanvasRenderingContext2D,
+    width: number,
+    height: number,
+    section: SectionConfig,
+    transition: RenderState["transition"] | undefined,
+    time: number,
+    delta: number,
+    audio: AudioFeatures,
+    shakeX: number,
+    shakeY: number,
+    camera: CameraState,
+    framing: FramingState
+  ): void {
+    this.ensureMobileCanvasSize(width, height);
+    if (transition) {
+      this.mobileFromCtx.clearRect(0, 0, width, height);
+      this.mobileToCtx.clearRect(0, 0, width, height);
+      this.mobileFromCtx.fillStyle = "black";
+      this.mobileFromCtx.fillRect(0, 0, width, height);
+      this.mobileToCtx.fillStyle = "black";
+      this.mobileToCtx.fillRect(0, 0, width, height);
+      this.renderSectionToMobileScreen(this.mobileFromCtx, transition.from, time, delta, audio, shakeX, shakeY, camera, framing);
+      this.renderSectionToMobileScreen(this.mobileToCtx, transition.to, time, delta, audio, shakeX, shakeY, camera, framing);
+      targetCtx.save();
+      targetCtx.globalAlpha = 1 - clamp(transition.progress, 0, 1);
+      targetCtx.drawImage(this.mobileFromCanvas, 0, 0, width, height);
+      targetCtx.globalAlpha = clamp(transition.progress, 0, 1);
+      targetCtx.drawImage(this.mobileToCanvas, 0, 0, width, height);
+      targetCtx.restore();
+      return;
+    }
+
+    this.renderSectionToMobileScreen(targetCtx, section, time, delta, audio, shakeX, shakeY, camera, framing);
+  }
+
+  private renderSectionToMobileScreen(
+    targetCtx: CanvasRenderingContext2D,
+    section: SectionConfig,
+    time: number,
+    delta: number,
+    audio: AudioFeatures,
+    shakeX: number,
+    shakeY: number,
+    camera: CameraState,
+    framing: FramingState
+  ): void {
+    const eraConstraints = getEraConstraints(section.era, this.baseWidth, this.baseHeight);
+    this.ensureSceneSize(eraConstraints.renderWidth, eraConstraints.renderHeight);
+
+    this.sceneCtx.clearRect(0, 0, this.sceneCanvas.width, this.sceneCanvas.height);
+    const sectionParams = resolveAutomatedParams(time, section.params, section.automation);
+    this.renderEffectTo(
+      this.sceneCtx,
+      section.effect,
+      time,
+      delta,
+      audio,
+      sectionParams,
+      this.sceneCanvas.width,
+      this.sceneCanvas.height,
+      section.era,
+      framing
+    );
+    this.copyRenderToPass(this.sceneCanvas, eraConstraints);
+    this.presentPassToScreen(
+      targetCtx,
+      section.fitAlign,
+      sectionParams,
+      1,
+      "source-over",
+      shakeX,
+      shakeY,
+      camera,
+      eraConstraints.smoothing,
+      framing
+    );
+
+    section.layers.forEach((layer) => {
+      this.layerCtx.clearRect(0, 0, this.layerCanvas.width, this.layerCanvas.height);
+      const layerParams = resolveAutomatedParams(time, layer.params, layer.automation);
+      this.renderEffectTo(
+        this.layerCtx,
+        layer.effect,
+        time,
+        delta,
+        audio,
+        layerParams,
+        this.layerCanvas.width,
+        this.layerCanvas.height,
+        section.era,
+        framing
+      );
+      this.copyRenderToPass(this.layerCanvas, eraConstraints);
+      this.presentPassToScreen(
+        targetCtx,
+        layer.fitAlign,
+        layerParams,
+        layer.opacity,
+        layer.blend,
+        shakeX,
+        shakeY,
+        camera,
+        eraConstraints.smoothing,
+        framing
+      );
     });
-    ctx.restore();
+  }
+
+  private copyRenderToPass(source: HTMLCanvasElement, eraConstraints: EraConstraints): void {
+    this.passCtx.save();
+    this.passCtx.clearRect(0, 0, this.baseWidth, this.baseHeight);
+    this.passCtx.imageSmoothingEnabled = eraConstraints.smoothing;
+    this.passCtx.drawImage(source, 0, 0, this.baseWidth, this.baseHeight);
+    if (eraConstraints.palette) {
+      const imageData = this.passCtx.getImageData(0, 0, this.baseWidth, this.baseHeight);
+      quantizeToPalette(imageData.data, eraConstraints.palette);
+      this.passCtx.putImageData(imageData, 0, 0);
+    }
+    this.passCtx.restore();
+  }
+
+  private presentPassToScreen(
+    targetCtx: CanvasRenderingContext2D,
+    fitAlign: FitAlign,
+    _params: Record<string, number>,
+    alpha: number,
+    blend: GlobalCompositeOperation,
+    shakeX: number,
+    shakeY: number,
+    camera: CameraState,
+    smoothing: boolean,
+    framing: FramingState
+  ): void {
+    const transform = computePresentTransform(
+      framing.screenW,
+      framing.screenH,
+      this.baseWidth,
+      this.baseHeight,
+      fitAlign,
+      fitAlign === "fill" ? "desktopCinematic" : "containAlign"
+    );
+    targetCtx.save();
+    targetCtx.globalAlpha = clamp(alpha, 0, 1);
+    targetCtx.globalCompositeOperation = blend;
+    targetCtx.imageSmoothingEnabled = smoothing;
+    targetCtx.translate(transform.dx + shakeX, transform.dy + shakeY);
+    targetCtx.translate((this.baseWidth * transform.scale) / 2, (this.baseHeight * transform.scale) / 2);
+    targetCtx.scale(camera.zoom, camera.zoom);
+    targetCtx.translate(
+      -(this.baseWidth * transform.scale) / 2 + camera.panX * transform.scale,
+      -(this.baseHeight * transform.scale) / 2 + camera.panY * transform.scale
+    );
+    targetCtx.drawImage(this.passCanvas, 0, 0, this.baseWidth * transform.scale, this.baseHeight * transform.scale);
+    targetCtx.restore();
   }
 
   private renderSectionTo(
@@ -298,136 +513,36 @@ export class Renderer {
     const progress = transition.progress;
     switch (transition.type) {
       case "wipe": {
-        this.drawScaled(
-          ctx,
-          this.transitionCanvas,
-          scale,
-          offsetX,
-          offsetY,
-          shakeX,
-          shakeY,
-          1,
-          camera,
-          eraConstraints.smoothing
-        );
+        this.drawScaled(ctx, this.transitionCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1, camera, eraConstraints.smoothing);
         ctx.save();
         ctx.beginPath();
         const wipeX = offsetX + (this.baseWidth * scale + shakeX) * progress;
         ctx.rect(offsetX, offsetY, wipeX - offsetX, this.baseHeight * scale + shakeY * 2);
         ctx.clip();
-        this.drawScaled(
-          ctx,
-          this.baseCanvas,
-          scale,
-          offsetX,
-          offsetY,
-          shakeX,
-          shakeY,
-          1,
-          camera,
-          eraConstraints.smoothing
-        );
+        this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1, camera, eraConstraints.smoothing);
         ctx.restore();
         return;
       }
       case "slide-left":
-        this.drawSlideTransition(
-          ctx,
-          progress,
-          -1,
-          0,
-          scale,
-          offsetX,
-          offsetY,
-          shakeX,
-          shakeY,
-          camera,
-          eraConstraints.smoothing
-        );
+        this.drawSlideTransition(ctx, progress, -1, 0, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
         return;
       case "slide-right":
-        this.drawSlideTransition(
-          ctx,
-          progress,
-          1,
-          0,
-          scale,
-          offsetX,
-          offsetY,
-          shakeX,
-          shakeY,
-          camera,
-          eraConstraints.smoothing
-        );
+        this.drawSlideTransition(ctx, progress, 1, 0, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
         return;
       case "slide-up":
-        this.drawSlideTransition(
-          ctx,
-          progress,
-          0,
-          -1,
-          scale,
-          offsetX,
-          offsetY,
-          shakeX,
-          shakeY,
-          camera,
-          eraConstraints.smoothing
-        );
+        this.drawSlideTransition(ctx, progress, 0, -1, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
         return;
       case "slide-down":
-        this.drawSlideTransition(
-          ctx,
-          progress,
-          0,
-          1,
-          scale,
-          offsetX,
-          offsetY,
-          shakeX,
-          shakeY,
-          camera,
-          eraConstraints.smoothing
-        );
+        this.drawSlideTransition(ctx, progress, 0, 1, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
         return;
       case "iris":
-        this.drawIrisTransition(
-          ctx,
-          progress,
-          scale,
-          offsetX,
-          offsetY,
-          shakeX,
-          shakeY,
-          camera,
-          eraConstraints.smoothing
-        );
+        this.drawIrisTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
         return;
       case "flash":
-        this.drawFlashTransition(
-          ctx,
-          progress,
-          scale,
-          offsetX,
-          offsetY,
-          shakeX,
-          shakeY,
-          camera,
-          eraConstraints.smoothing
-        );
+        this.drawFlashTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
         return;
       case "fade":
-        this.drawFadeTransition(
-          ctx,
-          progress,
-          scale,
-          offsetX,
-          offsetY,
-          shakeX,
-          shakeY,
-          camera,
-          eraConstraints.smoothing
-        );
+        this.drawFadeTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
         return;
       default: {
         const _exhaustiveCheck: never = transition.type;
@@ -447,18 +562,7 @@ export class Renderer {
     camera: CameraState,
     smoothing: boolean
   ): void {
-    this.drawScaled(
-      ctx,
-      this.transitionCanvas,
-      scale,
-      offsetX,
-      offsetY,
-      shakeX,
-      shakeY,
-      1 - progress,
-      camera,
-      smoothing
-    );
+    this.drawScaled(ctx, this.transitionCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1 - progress, camera, smoothing);
     this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shakeX, shakeY, progress, camera, smoothing);
   }
 
@@ -527,12 +631,7 @@ export class Renderer {
     ctx.save();
     ctx.globalAlpha = flashStrength * 0.65;
     ctx.fillStyle = "#ffffff";
-    ctx.fillRect(
-      offsetX + shakeX,
-      offsetY + shakeY,
-      this.baseWidth * scale,
-      this.baseHeight * scale
-    );
+    ctx.fillRect(offsetX + shakeX, offsetY + shakeY, this.baseWidth * scale, this.baseHeight * scale);
     ctx.restore();
   }
 
@@ -616,8 +715,6 @@ export class Renderer {
     };
   }
 
-
-
   private mapSafeRectToRenderSpace(
     safeRect: FramingState["safe"],
     framing: FramingState,
@@ -640,6 +737,17 @@ export class Renderer {
     if (this.layerCanvas.width !== width || this.layerCanvas.height !== height) {
       this.layerCanvas.width = width;
       this.layerCanvas.height = height;
+    }
+  }
+
+  private ensureMobileCanvasSize(width: number, height: number): void {
+    if (this.mobileFromCanvas.width !== width || this.mobileFromCanvas.height !== height) {
+      this.mobileFromCanvas.width = width;
+      this.mobileFromCanvas.height = height;
+    }
+    if (this.mobileToCanvas.width !== width || this.mobileToCanvas.height !== height) {
+      this.mobileToCanvas.width = width;
+      this.mobileToCanvas.height = height;
     }
   }
 }

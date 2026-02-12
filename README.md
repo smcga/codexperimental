@@ -97,12 +97,13 @@ Automation supports numeric params only; non-numeric values fall back to the bas
       "effect": "neon",
       "era": "future",
       "transition": { "in": "fade", "out": "flash", "duration": 0.8 },
+      "fitAlign": "fill",
       "params": { "speed": 1.2 },
       "automation": [
         { "param": "speed", "from": 0.8, "to": 1.4, "t0": "00:54.15", "t1": "01:10.00", "ease": "linear" }
       ],
       "layers": [
-        { "effect": "rain", "opacity": 0.5, "blend": "screen", "params": { "intensity": 0.9 } }
+        { "effect": "rain", "opacity": 0.5, "blend": "screen", "fitAlign": "centre", "params": { "intensity": 0.9 } }
       ]
     }
   ],
@@ -125,7 +126,7 @@ Automation supports numeric params only; non-numeric values fall back to the bas
 
 - `audio`: soundtrack path and optional timeline offset in seconds.
 - `intro`: terminal intro mode, end timestamp, visual theme, and scripted terminal events (`prompt`, `type`, `enter`, `output`, `ascii`, `clear`).
-- `sections`: ordered effect schedule with IDs, timing, effect key, optional era preset (`8bit`, `16bit`, `ps1`, `pcdemo`, `future`), transitions, parameter overrides, optional automations, and optional layered effects.
+- `sections`: ordered effect schedule with IDs, timing, effect key, optional era preset (`8bit`, `16bit`, `ps1`, `pcdemo`, `future`), transitions, `fitAlign` (`top`/`centre`/`bottom`/`fill`), parameter overrides, optional automations, and optional layered effects.
 - `textCues`: optional overlay callouts with timing, position, typography, and optional per-cue visual effects (glitch, shadow, scanline mask, and typewriter speed).
 - Time fields accept either seconds (`number`) or timeline strings (`mm:ss` / `mm:ss.s`).
 
