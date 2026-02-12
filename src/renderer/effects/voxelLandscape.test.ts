@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { generateVoxelLandscapeMaps } from "./voxelLandscape";
+import { computeVoxelLandscapeViewSettings, generateVoxelLandscapeMaps } from "./voxelLandscape";
 
 describe("voxelLandscape maps", () => {
   it("generates deterministic heightmaps for the same seed", () => {
@@ -23,5 +23,37 @@ describe("voxelLandscape maps", () => {
 
     expect(maps.height.length).toBe(32 * 32);
     expect(maps.color.length).toBe(32 * 32 * 3);
+  });
+
+  it("keeps base framing values on landscape viewports", () => {
+    const settings = {
+      fov: 1,
+      scale: 120,
+      camBase: 110,
+      horizon: 90,
+      maxDist: 900
+    };
+
+    const adjusted = computeVoxelLandscapeViewSettings(1920, 1080, settings);
+
+    expect(adjusted).toEqual(settings);
+  });
+
+  it("widens framing and raises the camera on portrait viewports", () => {
+    const settings = {
+      fov: 1,
+      scale: 120,
+      camBase: 110,
+      horizon: 90,
+      maxDist: 900
+    };
+
+    const adjusted = computeVoxelLandscapeViewSettings(390, 844, settings);
+
+    expect(adjusted.fov).toBeGreaterThan(settings.fov);
+    expect(adjusted.scale).toBeLessThan(settings.scale);
+    expect(adjusted.camBase).toBeGreaterThan(settings.camBase);
+    expect(adjusted.horizon).toBeGreaterThan(settings.horizon);
+    expect(adjusted.maxDist).toBeGreaterThan(settings.maxDist);
   });
 });
