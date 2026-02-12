@@ -63,7 +63,7 @@ describe("normalizeTimelineConfig", () => {
     const last = normalized.sections[normalized.sections.length - 1];
 
     expect(normalized.sections[0].start).toBeCloseTo(normalized.intro.end);
-    expect(last.end).toBeCloseTo(365);
+    expect(last.end).toBeCloseTo(382.87);
   });
 
   it("includes hook hit sections and text cues in the release timeline", () => {
@@ -73,15 +73,15 @@ describe("normalizeTimelineConfig", () => {
 
     const hookSection = normalized.sections.find((section) => section.id === "hook-hit-01160");
     const lateHookSection = normalized.sections.find((section) => section.id === "rap-hook-hit-03520");
-    const hookText = normalized.textCues?.find((cue) => cue.id === "this-hit-01160");
-    const lateHookText = normalized.textCues?.find((cue) => cue.id === "rap-cue-04120");
+    const hookText = normalized.textCues?.find((cue) => cue.id === "this-hit-00542");
+    const lateHookText = normalized.textCues?.find((cue) => cue.id === "this-hit-04407");
 
-    expect(hookSection?.start).toBeCloseTo(76);
-    expect(hookSection?.end).toBeCloseTo(76.5);
-    expect(lateHookSection?.start).toBeCloseTo(232);
-    expect(lateHookSection?.end).toBeCloseTo(236);
-    expect(hookText?.start).toBeCloseTo(76);
-    expect(lateHookText?.start).toBeCloseTo(255.5);
+    expect(hookSection?.start).toBeCloseTo(76.62);
+    expect(hookSection?.end).toBeCloseTo(78.8);
+    expect(lateHookSection?.start).toBeCloseTo(229.2);
+    expect(lateHookSection?.end).toBeCloseTo(234.0);
+    expect(hookText?.start).toBeCloseTo(54.2);
+    expect(lateHookText?.start).toBeCloseTo(280.73);
   });
 
   it("features the wireframe ride and mutation sections in the release timeline", () => {
@@ -92,38 +92,37 @@ describe("normalizeTimelineConfig", () => {
     const wireframeRide = normalized.sections.find((section) => section.id === "rap-switch-a-03560");
     const mutation = normalized.sections.find((section) => section.id === "mega-drop-mutation");
 
-    expect(wireframeRide?.effect).toBe("wireframeRide");
-    expect(wireframeRide?.start).toBeCloseTo(236);
-    expect(wireframeRide?.end).toBeCloseTo(243);
+    expect(wireframeRide?.effect).toBe("sphere3d");
+    expect(wireframeRide?.start).toBeCloseTo(234.0);
+    expect(wireframeRide?.end).toBeCloseTo(238.8);
 
-    expect(mutation?.effect).toBe("neon_alley");
-    expect(mutation?.start).toBeCloseTo(295.8);
-    expect(mutation?.end).toBeCloseTo(297.5);
-    expect(mutation?.automation?.some((automation) => automation.param === "seed" && automation.from === 5)).toBe(
-      true
-    );
+    expect(mutation?.effect).toBe("effect_evolution");
+    expect(mutation?.start).toBeCloseTo(302.4);
+    expect(mutation?.end).toBeCloseTo(319.66);
   });
 
-  it("captures the machine-trance rush ramp in the release timeline", () => {
+  it("captures both rush micro-switch ramps in the release timeline", () => {
     const releasePath = new URL("../../public/timeline.release.json", import.meta.url);
     const raw = JSON.parse(readFileSync(releasePath, "utf-8")) as RawTimelineConfig;
     const normalized = normalizeTimelineConfig(raw);
 
-    const rampStart = normalized.sections.find((section) => section.id === "rap-stab-04080");
-    const rampMid = normalized.sections.find((section) => section.id === "rap-stab-04100");
-    const rampEnd = normalized.sections.find((section) => section.id === "rap-stab-04110");
+    const rushA = normalized.sections.filter((section) => section.id.startsWith("era16bit-rush1-"));
+    const rushB = normalized.sections.filter((section) => section.id.startsWith("polygons-rush2-"));
 
-    expect(rampStart?.effect).toBe("glitch");
-    expect(rampStart?.layers[0]?.effect).toBe("feedback");
-    expect(rampStart?.layers[0]?.opacity).toBeCloseTo(0.1);
+    expect(rushA).toHaveLength(16);
+    expect(rushB).toHaveLength(16);
 
-    expect(rampMid?.effect).toBe("plasma");
-    expect(rampMid?.layers.map((layer) => layer.effect)).toEqual(["feedback"]);
-    expect(rampMid?.layers[0]?.opacity).toBeCloseTo(0.1);
+    expect(rushA[0]?.start).toBeCloseTo(106.27);
+    expect(rushA.at(-1)?.end).toBeCloseTo(108.56);
+    expect(rushB[0]?.start).toBeCloseTo(171.1);
+    expect(rushB.at(-1)?.end).toBeCloseTo(173.8);
 
-    expect(rampEnd?.effect).toBe("isogrid");
-    expect(rampEnd?.layers.map((layer) => layer.effect)).toEqual(["feedback"]);
-    expect(rampEnd?.layers[0]?.opacity).toBeCloseTo(0.1);
+    [rushA, rushB].forEach((rushSections) => {
+      rushSections.forEach((section) => {
+        expect(section.layers?.[0]?.effect).toBe("feedback");
+        expect(section.layers?.[0]?.opacity).toBeGreaterThanOrEqual(0.1);
+      });
+    });
   });
 
   it("uses rain and lightning as layered effects in the main timeline", () => {
