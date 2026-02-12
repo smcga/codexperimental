@@ -1,4 +1,5 @@
 import { clamp, lerp } from "../../util/math";
+import { fitCircleToSafe } from "./framingFit";
 import { Effect, EffectRenderContext } from "./types";
 
 const TAU = Math.PI * 2;
@@ -253,7 +254,7 @@ export class EnvmapDonutEffect implements Effect {
     this.meshConfig = { segmentsU, segmentsV, R, r };
   }
 
-  render({ ctx, width, height, time, delta, audio, params }: EffectRenderContext): void {
+  render({ ctx, width, height, time, delta, audio, params, framing, safeRect }: EffectRenderContext): void {
     const bufW = Math.max(64, Math.floor(toNumber(params.bufW, ENVMAP_DONUT_DEFAULTS.bufW)));
     const bufH = Math.max(64, Math.floor(toNumber(params.bufH, ENVMAP_DONUT_DEFAULTS.bufH)));
     const segmentsU = clamp(Math.round(toNumber(params.segmentsU, ENVMAP_DONUT_DEFAULTS.segmentsU)), 16, 128);
@@ -301,7 +302,16 @@ export class EnvmapDonutEffect implements Effect {
     const zbuf = this.zbuf;
     const centerX = bufW * 0.5;
     const centerY = bufH * 0.5;
-    const focal = Math.min(bufW, bufH) * focalMul;
+    const focalBase = Math.min(bufW, bufH) * focalMul;
+    let focal = focalBase;
+    if (framing?.mode === "mobileFit") {
+      const activeSafeRect = safeRect ?? { x: 0, y: 0, w: width, h: height };
+      const targetRadius = fitCircleToSafe(Math.min(activeSafeRect.w, activeSafeRect.h) * 0.5, activeSafeRect);
+      const worldRadius = Math.max(0.001, R + r);
+      const depthRange = Math.max(0.001, camDist - worldRadius);
+      const maxFocal = (targetRadius * depthRange) / worldRadius;
+      focal = Math.min(focalBase, maxFocal * (bufW / Math.max(1, width)));
+    }
 
     zbuf.fill(Number.POSITIVE_INFINITY);
     for (let i = 0; i < color.length; i += 4) {

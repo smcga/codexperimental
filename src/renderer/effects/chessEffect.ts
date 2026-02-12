@@ -1,3 +1,4 @@
+import { fitSquareToSafe } from "./framingFit";
 import { Effect, EffectRenderContext } from "./types";
 
 type PieceCode = "P" | "R" | "N" | "B" | "Q" | "K" | "p" | "r" | "n" | "b" | "q" | "k";
@@ -246,7 +247,7 @@ function drawPiece(ctx: CanvasRenderingContext2D, piece: PieceCode, x: number, y
 }
 
 export class ChessEffect implements Effect {
-  render({ ctx, width, height, time, audio, params }: EffectRenderContext): void {
+  render({ ctx, width, height, time, audio, params, framing, safeRect }: EffectRenderContext): void {
     const speed = typeof params.speed === "number" && params.speed > 0 ? params.speed : 1;
     const showHighlights = params.showHighlights === undefined ? true : params.showHighlights !== 0;
     const moveInterval = BASE_MOVE_INTERVAL * speed;
@@ -258,10 +259,15 @@ export class ChessEffect implements Effect {
     ctx.fillStyle = "#0b0f14";
     ctx.fillRect(0, 0, width, height);
 
-    const boardSize = Math.min(width, height) * 0.72;
+    const preferredBoardSize = Math.min(width, height) * 0.72;
+    const isMobileFit = framing?.mode === "mobileFit";
+    const activeSafeRect = safeRect ?? { x: 0, y: 0, w: width, h: height };
+    const boardSize = isMobileFit ? fitSquareToSafe(preferredBoardSize, activeSafeRect) : preferredBoardSize;
     const squareSize = boardSize / 8;
-    const boardLeft = width / 2 - boardSize / 2;
-    const boardTop = height / 2 - boardSize / 2;
+    const boardCenterX = isMobileFit ? activeSafeRect.x + activeSafeRect.w / 2 : width / 2;
+    const boardCenterY = isMobileFit ? activeSafeRect.y + activeSafeRect.h / 2 : height / 2;
+    const boardLeft = boardCenterX - boardSize / 2;
+    const boardTop = boardCenterY - boardSize / 2;
 
     ctx.save();
     ctx.translate(boardLeft, boardTop);

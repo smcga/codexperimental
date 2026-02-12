@@ -1,4 +1,5 @@
 import { AudioFeatures } from "../../audio/audioPlayer";
+import { FramingState } from "../framing";
 
 export type EffectRenderContext = {
   ctx: CanvasRenderingContext2D;
@@ -9,6 +10,8 @@ export type EffectRenderContext = {
   audio: AudioFeatures;
   params: Record<string, number>;
   era?: string;
+  framing?: FramingState;
+  safeRect?: { x: number; y: number; w: number; h: number };
 };
 
 export type Effect = {

@@ -1,8 +1,16 @@
 import { TextCue, TextSpan } from "../../config/loadConfig";
+import { FramingMode } from "../framing";
 import { clamp } from "../../util/math";
 import { layoutSpans } from "./layout";
 
 const DEFAULT_FADE = 0.4;
+
+type Rect = { x: number; y: number; w: number; h: number };
+
+type TextRenderOptions = {
+  framingMode?: FramingMode;
+  safeRect?: Rect;
+};
 
 function sliceSpansByChars(spans: TextSpan[], charCount: number): TextSpan[] {
   if (charCount <= 0) {
@@ -26,13 +34,90 @@ function measureText(ctx: CanvasRenderingContext2D, text: string, span: TextSpan
   return ctx.measureText(text).width;
 }
 
+function clampToSafe(value: number, min: number, max: number): number {
+  return clamp(value, min, max);
+}
+
+export function resolveTextPosition(
+  anchor: "left" | "center" | "right",
+  x: number,
+  y: number,
+  safeRect: Rect,
+  internalW: number,
+  internalH: number
+): { px: number; py: number } {
+  const px = clampToSafe(x, safeRect.x, safeRect.x + safeRect.w);
+  const py = clampToSafe(y, safeRect.y, safeRect.y + safeRect.h);
+  if (anchor === "left") {
+    return { px: clampToSafe(px, safeRect.x, internalW), py };
+  }
+  if (anchor === "right") {
+    return { px: clampToSafe(px, 0, safeRect.x + safeRect.w), py };
+  }
+  return { px, py };
+}
+
+function wrapSpans(
+  ctx: CanvasRenderingContext2D,
+  spans: TextSpan[],
+  maxWidth: number
+): Array<{ spans: TextSpan[]; layout: ReturnType<typeof layoutSpans> }> {
+  if (!Number.isFinite(maxWidth) || maxWidth <= 0) {
+    return [{ spans, layout: layoutSpans(spans, "left", (text, span) => measureText(ctx, text, span)) }];
+  }
+
+  const lines: TextSpan[][] = [];
+  let current: TextSpan[] = [];
+  let currentWidth = 0;
+
+  const pushCurrent = (): void => {
+    if (current.length > 0) {
+      lines.push(current);
+      current = [];
+      currentWidth = 0;
+    }
+  };
+
+  spans.forEach((span) => {
+    const parts = span.text.split(/(\s+)/);
+    parts.forEach((part) => {
+      if (part.length === 0) {
+        return;
+      }
+      const partWidth = measureText(ctx, part, span);
+      if (currentWidth + partWidth > maxWidth && current.length > 0 && !/^\s+$/.test(part)) {
+        pushCurrent();
+      }
+      if (/^\s+$/.test(part) && current.length === 0) {
+        return;
+      }
+      current.push({ ...span, text: part });
+      currentWidth += partWidth;
+    });
+  });
+  pushCurrent();
+
+  if (lines.length === 0) {
+    return [{ spans, layout: layoutSpans(spans, "left", (text, span) => measureText(ctx, text, span)) }];
+  }
+
+  return lines.map((line) => ({
+    spans: line,
+    layout: layoutSpans(line, "left", (text, span) => measureText(ctx, text, span))
+  }));
+}
+
 export function renderTextCues(
   ctx: CanvasRenderingContext2D,
   width: number,
   height: number,
   cues: TextCue[],
-  time: number
+  time: number,
+  options: TextRenderOptions = {}
 ): void {
+  const safeRect = options.safeRect ?? { x: 0, y: 0, w: width, h: height };
+  const mobileFit = options.framingMode === "mobileFit";
+
   cues.forEach((cue) => {
     const fadeIn = clamp((time - cue.start) / DEFAULT_FADE, 0, 1);
     const fadeOut = clamp((cue.end - time) / DEFAULT_FADE, 0, 1);
@@ -52,13 +137,21 @@ export function renderTextCues(
       }
     }
 
-    const layout = layoutSpans(spans, cue.align, (text, span) => measureText(ctx, text, span));
-    const x = cue.units === "px" ? cue.x : cue.x * width;
-    const y = cue.units === "px" ? cue.y : cue.y * height;
+    const initialX = cue.units === "px" ? cue.x : cue.x * width;
+    const initialY = cue.units === "px" ? cue.y : cue.y * height;
+    const shouldUseSafe = cue.safe ?? mobileFit;
+    const { px: x, py: y } = shouldUseSafe
+      ? resolveTextPosition(cue.align, initialX, initialY, safeRect, width, height)
+      : { px: initialX, py: initialY };
+
+    const maxWidth = cue.maxWidth ?? (mobileFit && shouldUseSafe ? safeRect.w : Number.POSITIVE_INFINITY);
+    const lines = wrapSpans(ctx, spans, maxWidth);
+    const lineHeight = Math.max(...spans.map((span) => span.size), cue.size) * 1.2;
+    const blockHeight = lineHeight * lines.length;
     const glitchAmount = cue.effects.glitchIn ? 1 - fadeIn : 0;
 
     ctx.save();
-    ctx.translate(x, y);
+    ctx.translate(x, y - blockHeight / 2 + lineHeight / 2);
     ctx.textBaseline = "middle";
 
     if (cue.effects.shadow) {
@@ -66,29 +159,33 @@ export function renderTextCues(
       ctx.shadowBlur = 12;
     }
 
-    if (glitchAmount > 0.01) {
-      const jitter = glitchAmount * 6;
-      ctx.globalAlpha = opacity * 0.6;
-      ctx.fillStyle = "rgba(255, 80, 80, 0.8)";
-      drawSpans(ctx, layout, jitter, -jitter);
-      ctx.fillStyle = "rgba(80, 200, 255, 0.8)";
-      drawSpans(ctx, layout, -jitter, jitter);
-    }
-
-    ctx.globalAlpha = opacity;
-    drawSpans(ctx, layout, 0, 0);
-
-    if (cue.effects.scanlineMask > 0) {
-      ctx.globalCompositeOperation = "source-atop";
-      ctx.globalAlpha = opacity * cue.effects.scanlineMask;
-      const scanHeight = Math.max(2, cue.size * 0.1);
-      const top = -cue.size * 0.6;
-      const areaHeight = cue.size * 1.2;
-      for (let line = top; line < top + areaHeight; line += scanHeight * 2) {
-        ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
-        ctx.fillRect(layout.startX, line, layout.totalWidth, scanHeight);
+    lines.forEach((line, lineIndex) => {
+      const yOffset = lineIndex * lineHeight;
+      const lineLayout = layoutSpans(line.spans, cue.align, (text, span) => measureText(ctx, text, span));
+      if (glitchAmount > 0.01) {
+        const jitter = glitchAmount * 6;
+        ctx.globalAlpha = opacity * 0.6;
+        ctx.fillStyle = "rgba(255, 80, 80, 0.8)";
+        drawSpans(ctx, lineLayout, jitter, -jitter + yOffset);
+        ctx.fillStyle = "rgba(80, 200, 255, 0.8)";
+        drawSpans(ctx, lineLayout, -jitter, jitter + yOffset);
       }
-    }
+
+      ctx.globalAlpha = opacity;
+      drawSpans(ctx, lineLayout, 0, yOffset);
+
+      if (cue.effects.scanlineMask > 0) {
+        ctx.globalCompositeOperation = "source-atop";
+        ctx.globalAlpha = opacity * cue.effects.scanlineMask;
+        const scanHeight = Math.max(2, cue.size * 0.1);
+        const top = -cue.size * 0.6 + yOffset;
+        const areaHeight = cue.size * 1.2;
+        for (let lineY = top; lineY < top + areaHeight; lineY += scanHeight * 2) {
+          ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+          ctx.fillRect(lineLayout.startX, lineY, lineLayout.totalWidth, scanHeight);
+        }
+      }
+    });
 
     ctx.restore();
   });

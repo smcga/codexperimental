@@ -11,6 +11,7 @@ import {
 import { AudioPlayer, AudioFeatures } from "./audio/audioPlayer";
 import { Timeline } from "./timeline/timeline";
 import { Renderer } from "./renderer/renderer";
+import { FramingOverride } from "./renderer/framing";
 import { effectRegistry } from "./renderer/effects";
 import { coerceEffectParams, getEffectDebugConfig, getEffectDebugDefaults, EffectParamControl } from "./renderer/debug/effectDebug";
 import { getWebGLStatusLabel } from "./renderer/effects/gl/webglStatus";
@@ -40,8 +41,10 @@ const overlayText = overlay?.querySelector<HTMLDivElement>(".start-text");
 const debugOverlay = document.querySelector<HTMLDivElement>("#debug-overlay");
 const debugTimestamp = document.querySelector<HTMLSpanElement>("#debug-timestamp");
 const debugWebglStatus = document.querySelector<HTMLSpanElement>("#debug-webgl-status");
+const debugFramingState = document.querySelector<HTMLSpanElement>("#debug-framing-state");
 const debugTransitionSelect = document.querySelector<HTMLSelectElement>("#debug-transition");
 const debugEraSelect = document.querySelector<HTMLSelectElement>("#debug-era");
+const debugFramingSelect = document.querySelector<HTMLSelectElement>("#debug-framing");
 const debugEffectSelect = document.querySelector<HTMLSelectElement>("#debug-effect-select");
 const debugEffectPanel = document.querySelector<HTMLDivElement>("#debug-effect-panel");
 const debugEffectTitle = document.querySelector<HTMLDivElement>("#debug-effect-title");
@@ -102,7 +105,8 @@ const debugState = {
   monochromeOverride: null as boolean | null,
   effectParams: Object.fromEntries(
     Object.keys(effectRegistry).map((effectName) => [effectName, getEffectDebugDefaults(effectName)])
-  )
+  ),
+  framingOverride: "auto" as FramingOverride
 };
 
 function updateViewCounter(count: number): void {
@@ -407,6 +411,12 @@ function updateEffectSelectorState(): void {
   updateEffectPanelVisibility();
 }
 
+if (!releaseMode && debugFramingSelect) {
+  debugFramingSelect.addEventListener("change", () => {
+    debugState.framingOverride = (debugFramingSelect.value as FramingOverride) ?? "auto";
+  });
+}
+
 if (!releaseMode && debugTransitionSelect) {
   debugTransitionSelect.addEventListener("change", () => {
     const value = debugTransitionSelect.value;
@@ -643,7 +653,8 @@ function loop(): void {
       textCues: state.activeTextCues,
       audio: audioFeatures,
       monochromeOverride: debugState.monochromeOverride,
-      screenShake: explosionShake
+      screenShake: explosionShake,
+      framingOverride: debugState.framingOverride
     });
     renderExplosion(ctx, canvas.width, canvas.height, explosionTime, explosionState, explosionShake);
   }
@@ -651,6 +662,12 @@ function loop(): void {
   debugTimestamp.textContent = formatTimestamp(demoTime);
   if (debugWebglStatus) {
     debugWebglStatus.textContent = getWebGLStatusLabel();
+  }
+  if (debugFramingState) {
+    const framing = renderer.getCurrentFramingState();
+    if (framing) {
+      debugFramingState.textContent = `${framing.mode} s=${framing.present.scale.toFixed(2)} safe=[${Math.round(framing.safe.x)},${Math.round(framing.safe.y)},${Math.round(framing.safe.w)},${Math.round(framing.safe.h)}]`;
+    }
   }
   if (!releaseMode) {
     updateDebugSkipButtonState(demoTime);
