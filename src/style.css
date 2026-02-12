@@ -375,14 +375,35 @@ body,
   border: 1px solid rgba(255, 255, 255, 0.15);
   background: rgba(0, 0, 0, 0.5);
   padding: 0.5rem;
-  aspect-ratio: 16 / 9;
+  display: grid;
+  gap: 0.5rem;
+  justify-items: center;
+}
+
+.editor-preview-toolbar {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.editor-preview-toolbar label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+}
+
+.editor-preview-frame {
+  width: 100%;
+  height: 360px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.35);
   display: grid;
   place-items: center;
 }
 
 .editor-preview canvas {
-  width: 100%;
-  height: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   display: block;
 }
 

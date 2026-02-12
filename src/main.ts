@@ -84,8 +84,11 @@ const getEffectiveBaseSize = (): { width: number; height: number } => ({
 
 let { width: effectiveBaseWidth, height: effectiveBaseHeight } = getEffectiveBaseSize();
 const renderer = new Renderer(effectiveBaseWidth, effectiveBaseHeight);
+const editorPreviewRenderer = new Renderer(effectiveBaseWidth, effectiveBaseHeight);
 const introRenderer = new TerminalIntroRenderer();
 const explosionState = createExplosionState();
+const editorPreviewCanvas = document.createElement("canvas");
+const editorPreviewCtx = editorPreviewCanvas.getContext("2d");
 let audioPlayer: AudioPlayer | null = null;
 let timeline: Timeline | null = null;
 let introConfig: IntroConfig | null = null;
@@ -137,6 +140,7 @@ function applyQualityScale(): void {
   effectiveBaseWidth = effectiveSize.width;
   effectiveBaseHeight = effectiveSize.height;
   renderer.setBaseSize(effectiveBaseWidth, effectiveBaseHeight);
+  editorPreviewRenderer.setBaseSize(effectiveBaseWidth, effectiveBaseHeight);
 }
 
 function resize(): void {
@@ -603,6 +607,36 @@ function loop(): void {
 
   const audioFeatures: AudioFeatures = audioPlayer.updateFeatures();
   const state = timeline.getState(demoTime);
+  const effectParamOverrides = debugState.forcedEffect ? debugState.effectParams[debugState.forcedEffect] : null;
+  const effectParamOverridesRecord = effectParamOverrides as Record<string, number> | null;
+  const hasEffectOverrides = effectParamOverrides && Object.keys(effectParamOverrides).length > 0;
+  const eraOverride = debugState.eraOverride;
+  let sectionOverride = debugState.forcedEffect
+    ? { ...state.section, effect: debugState.forcedEffect }
+    : state.section;
+  sectionOverride = applyEraOverride(sectionOverride, eraOverride);
+  if (hasEffectOverrides && effectParamOverridesRecord) {
+    sectionOverride = { ...sectionOverride, params: { ...sectionOverride.params, ...effectParamOverridesRecord } };
+  }
+  const transitionOverride = state.transition
+    ? {
+        ...state.transition,
+        to: debugState.forcedEffect
+          ? {
+              ...state.transition.to,
+              effect: debugState.forcedEffect,
+              params: hasEffectOverrides && effectParamOverridesRecord
+                ? { ...state.transition.to.params, ...effectParamOverridesRecord }
+                : state.transition.to.params
+            }
+          : state.transition.to,
+        type: debugState.transitionOverride ?? state.transition.type
+      }
+    : undefined;
+  const transitionOverrideWithEra = applyEraOverrideToTransition(transitionOverride, eraOverride);
+  const explosionTime = sectionOverride.era === "future" ? demoTime - sectionOverride.start : -1;
+  const explosionShake = getExplosionShake(explosionTime);
+
   if (state.mode === "intro") {
     introRenderer.render({
       ctx,
@@ -611,37 +645,22 @@ function loop(): void {
       time: demoTime,
       config: introConfig
     });
-  } else {
-    const effectParamOverrides = debugState.forcedEffect ? debugState.effectParams[debugState.forcedEffect] : null;
-    const effectParamOverridesRecord = effectParamOverrides as Record<string, number> | null;
-    const hasEffectOverrides = effectParamOverrides && Object.keys(effectParamOverrides).length > 0;
-    const eraOverride = debugState.eraOverride;
-    let sectionOverride = debugState.forcedEffect
-      ? { ...state.section, effect: debugState.forcedEffect }
-      : state.section;
-    sectionOverride = applyEraOverride(sectionOverride, eraOverride);
-    if (hasEffectOverrides && effectParamOverridesRecord) {
-      sectionOverride = { ...sectionOverride, params: { ...sectionOverride.params, ...effectParamOverridesRecord } };
+    const previewViewport = editorController?.getPreviewViewport();
+    if (previewViewport && editorPreviewCtx) {
+      editorPreviewCanvas.width = previewViewport.width;
+      editorPreviewCanvas.height = previewViewport.height;
+      introRenderer.render({
+        ctx: editorPreviewCtx,
+        width: previewViewport.width,
+        height: previewViewport.height,
+        time: demoTime,
+        config: introConfig
+      });
+      editorController?.updatePreview(editorPreviewCanvas);
+    } else {
+      editorController?.updatePreview(canvas);
     }
-    const transitionOverride = state.transition
-      ? {
-          ...state.transition,
-          to: debugState.forcedEffect
-            ? {
-                ...state.transition.to,
-                effect: debugState.forcedEffect,
-                params: hasEffectOverrides && effectParamOverridesRecord
-                  ? { ...state.transition.to.params, ...effectParamOverridesRecord }
-                  : state.transition.to.params
-              }
-            : state.transition.to,
-          type: debugState.transitionOverride ?? state.transition.type
-        }
-      : undefined;
-    const transitionOverrideWithEra = applyEraOverrideToTransition(transitionOverride, eraOverride);
-    const explosionTime = sectionOverride.era === "future" ? demoTime - sectionOverride.start : -1;
-    const explosionShake = getExplosionShake(explosionTime);
-
+  } else {
     renderer.render({
       ctx,
       width: canvas.width,
@@ -657,6 +676,37 @@ function loop(): void {
       framingOverride: debugState.framingOverride
     });
     renderExplosion(ctx, canvas.width, canvas.height, explosionTime, explosionState, explosionShake);
+
+    const previewViewport = editorController?.getPreviewViewport();
+    if (previewViewport && editorPreviewCtx) {
+      editorPreviewCanvas.width = previewViewport.width;
+      editorPreviewCanvas.height = previewViewport.height;
+      editorPreviewRenderer.render({
+        ctx: editorPreviewCtx,
+        width: previewViewport.width,
+        height: previewViewport.height,
+        time: demoTime,
+        delta,
+        section: sectionOverride,
+        transition: transitionOverrideWithEra,
+        textCues: state.activeTextCues,
+        audio: audioFeatures,
+        monochromeOverride: debugState.monochromeOverride,
+        screenShake: explosionShake,
+        framingOverride: debugState.framingOverride
+      });
+      renderExplosion(
+        editorPreviewCtx,
+        previewViewport.width,
+        previewViewport.height,
+        explosionTime,
+        explosionState,
+        explosionShake
+      );
+      editorController?.updatePreview(editorPreviewCanvas);
+    } else {
+      editorController?.updatePreview(canvas);
+    }
   }
 
   debugTimestamp.textContent = formatTimestamp(demoTime);
@@ -673,7 +723,7 @@ function loop(): void {
     updateDebugSkipButtonState(demoTime);
   }
   editorController?.updatePlayback(demoTime, !audioPlayer.paused);
-  editorController?.updatePreview(canvas);
+
 
   if (audioPlayer.ended) {
     isRunning = false;
