@@ -5,7 +5,7 @@ import { clamp } from "../util/math";
 import { CameraState, computeDynamicCamera } from "./camera";
 import { EraConstraints, getEraConstraints, quantizeToPalette } from "./eraConstraints";
 import { effectRegistry, resetEffects } from "./effects";
-import { computeLetterbox } from "./letterbox";
+import { computeFraming, FramingOverride, FramingState } from "./framing";
 import { resolveMonochrome } from "./monochrome";
 import { renderTextCues } from "./text/textRenderer";
 
@@ -26,6 +26,7 @@ export type RenderState = {
   textCues: TextCue[];
   audio: AudioFeatures;
   screenShake?: { x: number; y: number };
+  framingOverride?: FramingOverride;
 };
 
 export class Renderer {
@@ -39,6 +40,7 @@ export class Renderer {
   private layerCtx: CanvasRenderingContext2D;
   private baseWidth: number;
   private baseHeight: number;
+  private lastFramingState: FramingState | null = null;
 
   constructor(baseWidth = 320, baseHeight = 180) {
     this.baseWidth = baseWidth;
@@ -80,6 +82,11 @@ export class Renderer {
     this.layerCtx = layerCtx;
   }
 
+
+  getCurrentFramingState(): FramingState | null {
+    return this.lastFramingState;
+  }
+
   setBaseSize(baseWidth: number, baseHeight: number): void {
     if (this.baseWidth === baseWidth && this.baseHeight === baseHeight) {
       return;
@@ -111,18 +118,29 @@ export class Renderer {
     textCues,
     audio,
     monochromeOverride,
-    screenShake
+    screenShake,
+    framingOverride
   }: RenderState): void {
     const activeSection = transition?.to ?? section;
     const eraConstraints = getEraConstraints(activeSection.era, this.baseWidth, this.baseHeight);
+    const framing = computeFraming(
+      width,
+      height,
+      this.baseWidth,
+      this.baseHeight,
+      activeSection.era,
+      activeSection.framing === "auto" ? (framingOverride ?? "auto") : activeSection.framing
+    );
+    this.lastFramingState = framing;
     const baseShake = audio.beatStrength * 6;
-    const shakeX = (baseShake + (screenShake?.x ?? 0)) * eraConstraints.cameraShake;
-    const shakeY = (baseShake + (screenShake?.y ?? 0)) * eraConstraints.cameraShake;
-    const { scale, offsetX, offsetY } = computeLetterbox(width, height, this.baseWidth, this.baseHeight);
+    const shakeX = (baseShake + (screenShake?.x ?? 0)) * eraConstraints.cameraShake * framing.camera.shakeMul;
+    const shakeY = (baseShake + (screenShake?.y ?? 0)) * eraConstraints.cameraShake * framing.camera.shakeMul;
+    const { scale, offsetX, offsetY } = framing.present;
     const monochrome = resolveMonochrome(time, monochromeOverride);
     const camera = this.applyCameraConstraints(
       computeDynamicCamera(time, audio, this.baseWidth, this.baseHeight),
-      eraConstraints
+      eraConstraints,
+      framing
     );
 
     ctx.clearRect(0, 0, width, height);
@@ -135,11 +153,11 @@ export class Renderer {
     }
 
     if (transition) {
-      this.renderSectionTo(this.transitionCtx, transition.from, time, delta, audio);
-      this.renderSectionTo(this.baseCtx, transition.to, time, delta, audio);
+      this.renderSectionTo(this.transitionCtx, transition.from, time, delta, audio, framing);
+      this.renderSectionTo(this.baseCtx, transition.to, time, delta, audio, framing);
       this.drawTransition(ctx, transition, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints);
     } else {
-      this.renderSectionTo(this.baseCtx, section, time, delta, audio);
+      this.renderSectionTo(this.baseCtx, section, time, delta, audio, framing);
       this.drawScaled(
         ctx,
         this.baseCanvas,
@@ -163,7 +181,10 @@ export class Renderer {
     ctx.scale(scale, scale);
     this.applyCameraTransform(ctx, camera);
     this.renderOverlays(ctx, this.baseWidth, this.baseHeight, audio, eraConstraints);
-    renderTextCues(ctx, this.baseWidth, this.baseHeight, textCues, time);
+    renderTextCues(ctx, this.baseWidth, this.baseHeight, textCues, time, {
+      framingMode: framing.mode,
+      safeRect: framing.safe
+    });
     ctx.restore();
   }
 
@@ -172,7 +193,8 @@ export class Renderer {
     section: SectionConfig,
     time: number,
     delta: number,
-    audio: AudioFeatures
+    audio: AudioFeatures,
+    framing: FramingState
   ): void {
     const eraConstraints = getEraConstraints(section.era, this.baseWidth, this.baseHeight);
     this.ensureSceneSize(eraConstraints.renderWidth, eraConstraints.renderHeight);
@@ -187,7 +209,8 @@ export class Renderer {
       sectionParams,
       this.sceneCanvas.width,
       this.sceneCanvas.height,
-      section.era
+      section.era,
+      framing
     );
 
     if (section.layers.length > 0) {
@@ -203,7 +226,8 @@ export class Renderer {
           layerParams,
           this.layerCanvas.width,
           this.layerCanvas.height,
-          section.era
+          section.era,
+          framing
         );
         this.sceneCtx.save();
         this.sceneCtx.globalCompositeOperation = layer.blend;
@@ -235,7 +259,8 @@ export class Renderer {
     params: Record<string, number>,
     width: number,
     height: number,
-    era: string
+    era: string,
+    framing: FramingState
   ): void {
     const effect = effectRegistry[effectName];
     if (!effect) {
@@ -253,7 +278,9 @@ export class Renderer {
       delta,
       audio,
       params,
-      era
+      era,
+      framing,
+      safeRect: this.mapSafeRectToRenderSpace(framing.safe, framing, width, height)
     });
   }
 
@@ -580,12 +607,28 @@ export class Renderer {
     ctx.translate(-this.baseWidth / 2 + camera.panX, -this.baseHeight / 2 + camera.panY);
   }
 
-  private applyCameraConstraints(camera: CameraState, eraConstraints: EraConstraints): CameraState {
+  private applyCameraConstraints(camera: CameraState, eraConstraints: EraConstraints, framing: FramingState): CameraState {
     const zoomDelta = camera.zoom - 1;
     return {
-      zoom: 1 + zoomDelta * eraConstraints.cameraZoom,
-      panX: camera.panX * eraConstraints.cameraPan,
-      panY: camera.panY * eraConstraints.cameraPan
+      zoom: 1 + zoomDelta * eraConstraints.cameraZoom * framing.camera.zoomMul,
+      panX: camera.panX * eraConstraints.cameraPan * framing.camera.panMul,
+      panY: camera.panY * eraConstraints.cameraPan * framing.camera.panMul
+    };
+  }
+
+
+
+  private mapSafeRectToRenderSpace(
+    safeRect: FramingState["safe"],
+    framing: FramingState,
+    width: number,
+    height: number
+  ): FramingState["safe"] {
+    return {
+      x: (safeRect.x / framing.internalW) * width,
+      y: (safeRect.y / framing.internalH) * height,
+      w: (safeRect.w / framing.internalW) * width,
+      h: (safeRect.h / framing.internalH) * height
     };
   }
 

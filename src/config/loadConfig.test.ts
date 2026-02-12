@@ -150,3 +150,31 @@ describe("normalizeTimelineConfig", () => {
     expect(lightningSections[0]?.start ?? Number.POSITIVE_INFINITY).toBeLessThan(180);
   });
 });
+
+it("defaults section framing to auto and accepts explicit override", () => {
+  const base = createBaseConfig();
+  base.sections[0].framing = "mobileFit";
+  const normalized = normalizeTimelineConfig(base);
+
+  expect(normalized.sections[0].framing).toBe("mobileFit");
+
+  const autoNormalized = normalizeTimelineConfig(createBaseConfig());
+  expect(autoNormalized.sections[0].framing).toBe("auto");
+});
+
+it("preserves optional text safe settings", () => {
+  const base = createBaseConfig();
+  base.textCues = [
+    {
+      id: "cue-safe",
+      start: 1.2,
+      text: "hello world",
+      safe: true,
+      maxWidth: 123
+    }
+  ];
+  const normalized = normalizeTimelineConfig(base);
+
+  expect(normalized.textCues[0].safe).toBe(true);
+  expect(normalized.textCues[0].maxWidth).toBe(123);
+});

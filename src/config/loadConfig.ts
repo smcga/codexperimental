@@ -81,6 +81,7 @@ export type RawSectionConfig = {
     duration?: number;
   };
   params?: Record<string, number>;
+  framing?: "auto" | "desktopCinematic" | "mobileFit";
 };
 
 export type RawSectionLayerConfig = {
@@ -119,6 +120,8 @@ export type RawTextCue = {
       speed: number;
     };
   };
+  safe?: boolean;
+  maxWidth?: number;
 };
 
 export type RawTimelineConfig = {
@@ -170,6 +173,7 @@ export type SectionConfig = {
   automation: ParamAutomation[];
   layers: SectionLayerConfig[];
   endFromAudio: boolean;
+  framing: "auto" | "desktopCinematic" | "mobileFit";
 };
 
 export type SectionLayerConfig = {
@@ -202,6 +206,8 @@ export type TextCue = {
       speed: number;
     };
   };
+  safe?: boolean;
+  maxWidth?: number;
 };
 
 export type TimelineConfig = {
@@ -265,6 +271,16 @@ function normalizeLayerParams(value: unknown, label: string): Record<string, num
     throw new Error(`${label} must be an object`);
   }
   return value as Record<string, number>;
+}
+
+function normalizeSectionFraming(value: unknown, label: string): "auto" | "desktopCinematic" | "mobileFit" {
+  if (value === undefined) {
+    return "auto";
+  }
+  if (value === "auto" || value === "desktopCinematic" || value === "mobileFit") {
+    return value;
+  }
+  throw new Error(`${label} must be one of "auto", "desktopCinematic", or "mobileFit"`);
 }
 
 const EASE_NAMES: EaseName[] = [
@@ -529,7 +545,8 @@ export function normalizeTimelineConfig(raw: RawTimelineConfig): TimelineConfig 
       params,
       automation: normalizeParamAutomation(section.automation, `sections[${index}].automation`),
       layers: normalizeSectionLayers(section.layers, `sections[${index}]`),
-      endFromAudio: end === null
+      endFromAudio: end === null,
+      framing: normalizeSectionFraming(section.framing, `sections[${index}].framing`)
     };
   });
 
@@ -587,7 +604,9 @@ export function normalizeTimelineConfig(raw: RawTimelineConfig): TimelineConfig 
         shadow: cue.effects?.shadow ?? false,
         scanlineMask: cue.effects?.scanlineMask ?? 0,
         typewriter: cue.effects?.typewriter
-      }
+      },
+      safe: cue.safe,
+      maxWidth: cue.maxWidth
     };
   });
 
