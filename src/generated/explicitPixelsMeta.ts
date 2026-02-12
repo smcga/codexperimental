@@ -1,2 +1,2 @@
-export const assignmentCount = 36864;
-export const generatedFileBytes = 741057;
+export const assignmentCount = 175104;
+export const generatedFileBytes = 3362687;

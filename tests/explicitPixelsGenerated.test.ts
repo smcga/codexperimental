@@ -9,14 +9,14 @@ describe("explicit pixels generated frame", () => {
     const framePath = path.resolve(process.cwd(), "src/generated/explicitPixelsFrame.ts");
     const frameSource = fs.readFileSync(framePath, "utf8");
 
-    expect(frameSource).toContain("export function applyExplicit(data: Uint8ClampedArray): void");
+    expect(frameSource).toContain("export function applyExplicit_frameBytes(dst: Uint8ClampedArray): void");
     expect(frameSource).not.toContain("for (");
     expect(frameSource).not.toContain("while (");
     expect(frameSource).not.toContain(".map(");
     expect(frameSource).not.toContain(".forEach(");
 
-    const matches = frameSource.match(/data\[/g) ?? [];
-    expect(matches.length).toBeGreaterThanOrEqual(W * H * 4);
+    const matches = frameSource.match(/(?:data|dst)\[/g) ?? [];
+    expect(matches.length).toBe(W * H * 4);
     expect(assignmentCount).toBe(matches.length);
     expect(generatedFileBytes).toBeGreaterThan(10_000);
     expect(generatedFileBytes).toBe(Buffer.byteLength(frameSource, "utf8"));
