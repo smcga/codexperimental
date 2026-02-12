@@ -22,6 +22,7 @@ import {
 } from "./state/timelineStore";
 import { clearTimelineDraft, downloadTimeline, loadTimelineDraft, saveTimelineDraft } from "./serialization";
 import { getEffectDebugConfig } from "../renderer/debug/effectDebug";
+import { getPreviewViewport, PREVIEW_VIEWPORTS, PreviewViewportMode } from "./previewViewport";
 
 const ERA_PRESETS: EraPreset[] = ["8bit", "16bit", "ps1", "pcdemo", "future"];
 const BLEND_MODES: BlendMode[] = [
@@ -78,6 +79,7 @@ type EditorState = {
   loopEnabled: boolean;
   error: string | null;
   fieldErrors: Record<string, string>;
+  previewMode: PreviewViewportMode;
 };
 
 type EditorInit = {
@@ -96,6 +98,7 @@ export type EditorController = {
   isVisible: () => boolean;
   updatePlayback: (demoTime: number, playing: boolean) => void;
   updatePreview: (source: HTMLCanvasElement) => void;
+  getPreviewViewport: () => { width: number; height: number };
   getLoopState: () => { enabled: boolean; start: number; end: number } | null;
 };
 
@@ -106,7 +109,8 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     selectedSceneId: null,
     loopEnabled: false,
     error: null,
-    fieldErrors: {}
+    fieldErrors: {},
+    previewMode: "desktop"
   };
   let playbackLabel: HTMLSpanElement | null = null;
   let playbackButton: HTMLButtonElement | null = null;
@@ -229,6 +233,11 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   const refreshPreviewCanvas = (): void => {
     previewCanvas = init.container.querySelector<HTMLCanvasElement>("[data-region='preview-canvas']");
     previewContext = previewCanvas?.getContext("2d") ?? null;
+    if (previewCanvas) {
+      const viewport = getPreviewViewport(state.previewMode);
+      previewCanvas.width = viewport.width;
+      previewCanvas.height = viewport.height;
+    }
   };
 
   const render = (): void => {
@@ -261,7 +270,25 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         <section class="editor-column editor-timeline">
           <div class="editor-section-title">Timeline</div>
           <div class="editor-preview">
-            <canvas data-region="preview-canvas" width="640" height="360"></canvas>
+            <div class="editor-preview-toolbar">
+              <label>
+                <span>Preview viewport</span>
+                <select data-action="preview-mode">
+                  ${(Object.keys(PREVIEW_VIEWPORTS) as PreviewViewportMode[])
+                    .map((mode) => {
+                      const selected = mode === state.previewMode ? "selected" : "";
+                      return `<option value="${mode}" ${selected}>${PREVIEW_VIEWPORTS[mode].label}</option>`;
+                    })
+                    .join("")}
+                </select>
+              </label>
+            </div>
+            <canvas
+              data-region="preview-canvas"
+              data-preview-mode="${state.previewMode}"
+              width="${getPreviewViewport(state.previewMode).width}"
+              height="${getPreviewViewport(state.previewMode).height}"
+            ></canvas>
           </div>
           <div class="editor-timeline-view" data-region="timeline-view"></div>
         </section>
@@ -288,6 +315,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     renderInspector();
     renderTransport();
     bindHeaderActions();
+    bindPreviewControls();
     refreshPreviewCanvas();
 
     const nextInspector = init.container.querySelector<HTMLDivElement>(".editor-inspector-body");
@@ -1128,6 +1156,14 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     });
   };
 
+  const bindPreviewControls = (): void => {
+    const modeSelect = init.container.querySelector<HTMLSelectElement>("[data-action='preview-mode']");
+    modeSelect?.addEventListener("change", () => {
+      const nextMode = modeSelect.value === "mobile" ? "mobile" : "desktop";
+      setState({ previewMode: nextMode });
+    });
+  };
+
   await loadFromFile();
 
   return {
@@ -1163,6 +1199,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       const offsetY = (height - drawHeight) / 2;
       previewContext.clearRect(0, 0, width, height);
       previewContext.drawImage(source, offsetX, offsetY, drawWidth, drawHeight);
+    },
+    getPreviewViewport: () => {
+      const { width, height } = getPreviewViewport(state.previewMode);
+      return { width, height };
     },
     getLoopState: () => {
       if (!state.loopEnabled || !state.selectedSceneId || !state.timeline) {
