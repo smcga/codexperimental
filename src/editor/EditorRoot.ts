@@ -22,7 +22,12 @@ import {
 } from "./state/timelineStore";
 import { clearTimelineDraft, downloadTimeline, loadTimelineDraft, saveTimelineDraft } from "./serialization";
 import { getEffectDebugConfig } from "../renderer/debug/effectDebug";
-import { getPreviewViewport, PREVIEW_VIEWPORTS, PreviewViewportMode } from "./previewViewport";
+import {
+  fitPreviewViewport,
+  getPreviewViewport,
+  PREVIEW_VIEWPORTS,
+  PreviewViewportMode
+} from "./previewViewport";
 
 const ERA_PRESETS: EraPreset[] = ["8bit", "16bit", "ps1", "pcdemo", "future"];
 const BLEND_MODES: BlendMode[] = [
@@ -115,6 +120,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   let playbackLabel: HTMLSpanElement | null = null;
   let playbackButton: HTMLButtonElement | null = null;
   let previewCanvas: HTMLCanvasElement | null = null;
+  let previewFrame: HTMLDivElement | null = null;
   let previewContext: CanvasRenderingContext2D | null = null;
   let editorVisible = false;
 
@@ -230,13 +236,25 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     return parsed.toFixed(1);
   };
 
+  const updatePreviewCanvasDisplaySize = (): void => {
+    if (!previewCanvas || !previewFrame) {
+      return;
+    }
+    const viewport = getPreviewViewport(state.previewMode);
+    const fitted = fitPreviewViewport(viewport.width, viewport.height, previewFrame.clientWidth, previewFrame.clientHeight);
+    previewCanvas.style.width = `${fitted.width}px`;
+    previewCanvas.style.height = `${fitted.height}px`;
+  };
+
   const refreshPreviewCanvas = (): void => {
     previewCanvas = init.container.querySelector<HTMLCanvasElement>("[data-region='preview-canvas']");
+    previewFrame = init.container.querySelector<HTMLDivElement>("[data-region='preview-frame']");
     previewContext = previewCanvas?.getContext("2d") ?? null;
     if (previewCanvas) {
       const viewport = getPreviewViewport(state.previewMode);
       previewCanvas.width = viewport.width;
       previewCanvas.height = viewport.height;
+      updatePreviewCanvasDisplaySize();
     }
   };
 
@@ -283,12 +301,14 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
                 </select>
               </label>
             </div>
-            <canvas
-              data-region="preview-canvas"
-              data-preview-mode="${state.previewMode}"
-              width="${getPreviewViewport(state.previewMode).width}"
-              height="${getPreviewViewport(state.previewMode).height}"
-            ></canvas>
+            <div class="editor-preview-frame" data-region="preview-frame">
+              <canvas
+                data-region="preview-canvas"
+                data-preview-mode="${state.previewMode}"
+                width="${getPreviewViewport(state.previewMode).width}"
+                height="${getPreviewViewport(state.previewMode).height}"
+              ></canvas>
+            </div>
           </div>
           <div class="editor-timeline-view" data-region="timeline-view"></div>
         </section>
@@ -1185,6 +1205,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       if (!previewCanvas || !previewContext || !editorVisible) {
         return;
       }
+      updatePreviewCanvasDisplaySize();
       const { width, height } = previewCanvas;
       const sourceRatio = source.width / source.height;
       const targetRatio = width / height;

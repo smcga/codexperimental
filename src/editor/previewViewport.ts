@@ -1,6 +1,6 @@
 export type PreviewViewportMode = "desktop" | "mobile";
 
-type PreviewViewport = {
+export type PreviewViewport = {
   label: string;
   width: number;
   height: number;
@@ -23,3 +23,21 @@ export function getPreviewViewport(mode: PreviewViewportMode): PreviewViewport {
   return PREVIEW_VIEWPORTS[mode];
 }
 
+export function fitPreviewViewport(
+  viewportWidth: number,
+  viewportHeight: number,
+  maxWidth: number,
+  maxHeight: number
+): { width: number; height: number } {
+  if (viewportWidth <= 0 || viewportHeight <= 0) {
+    return { width: 1, height: 1 };
+  }
+  if (maxWidth <= 0 || maxHeight <= 0) {
+    return { width: viewportWidth, height: viewportHeight };
+  }
+  const scale = Math.min(maxWidth / viewportWidth, maxHeight / viewportHeight);
+  return {
+    width: Math.max(1, Math.round(viewportWidth * scale)),
+    height: Math.max(1, Math.round(viewportHeight * scale))
+  };
+}
