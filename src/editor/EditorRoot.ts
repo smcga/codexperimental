@@ -23,6 +23,7 @@ import {
 } from "./state/timelineStore";
 import { clearTimelineDraft, downloadTimeline, loadTimelineDraft, saveTimelineDraft } from "./serialization";
 import { getEffectDebugConfig } from "../renderer/debug/effectDebug";
+import { getEditorPreviewViewport, PreviewViewportMode } from "./previewViewport";
 
 const ERA_PRESETS: EraPreset[] = ["8bit", "16bit", "ps1", "pcdemo", "future"];
 const BLEND_MODES: BlendMode[] = [
@@ -86,6 +87,7 @@ type EditorState = {
   loopEnabled: boolean;
   error: string | null;
   fieldErrors: Record<string, string>;
+  previewMode: PreviewViewportMode;
 };
 
 type EditorInit = {
@@ -114,7 +116,8 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     selectedSceneId: null,
     loopEnabled: false,
     error: null,
-    fieldErrors: {}
+    fieldErrors: {},
+    previewMode: "desktop"
   };
   let playbackLabel: HTMLSpanElement | null = null;
   let playbackButton: HTMLButtonElement | null = null;
@@ -268,8 +271,12 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         </section>
         <section class="editor-column editor-timeline">
           <div class="editor-section-title">Timeline</div>
-          <div class="editor-preview">
-            <canvas data-region="preview-canvas" width="640" height="360"></canvas>
+          <div class="editor-preview-controls" role="group" aria-label="Preview viewport">
+            <button type="button" data-action="preview-mode" data-preview-mode="desktop" aria-pressed="${state.previewMode === "desktop" ? "true" : "false"}">Desktop</button>
+            <button type="button" data-action="preview-mode" data-preview-mode="mobile" aria-pressed="${state.previewMode === "mobile" ? "true" : "false"}">Mobile</button>
+          </div>
+          <div class="editor-preview editor-preview--${state.previewMode}" style="--editor-preview-aspect:${getEditorPreviewViewport(state.previewMode).aspectRatio};">
+            <canvas data-region="preview-canvas" width="${getEditorPreviewViewport(state.previewMode).width}" height="${getEditorPreviewViewport(state.previewMode).height}"></canvas>
           </div>
           <div class="editor-timeline-view" data-region="timeline-view"></div>
         </section>
@@ -1129,6 +1136,19 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         error: null
       });
       void applyTimelineIfValid(state.originalTimeline);
+    });
+
+    init.container.querySelectorAll<HTMLButtonElement>("[data-action='preview-mode']").forEach((button) => {
+      button.addEventListener("click", () => {
+        const nextMode = button.dataset.previewMode;
+        if (nextMode !== "desktop" && nextMode !== "mobile") {
+          return;
+        }
+        if (state.previewMode === nextMode) {
+          return;
+        }
+        setState({ previewMode: nextMode });
+      });
     });
 
     init.container.querySelector<HTMLButtonElement>("[data-action='add-scene']")?.addEventListener("click", () => {

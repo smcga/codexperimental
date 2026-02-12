@@ -371,13 +371,38 @@ body,
   min-height: 120px;
 }
 
+.editor-preview-controls {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.editor-preview-controls button {
+  background: rgba(255, 255, 255, 0.08);
+  color: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.25rem 0.6rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.editor-preview-controls button[aria-pressed="true"] {
+  border-color: rgba(142, 249, 255, 0.8);
+  background: rgba(142, 249, 255, 0.2);
+}
+
 .editor-preview {
   border: 1px solid rgba(255, 255, 255, 0.15);
   background: rgba(0, 0, 0, 0.5);
   padding: 0.5rem;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: var(--editor-preview-aspect, 16 / 9);
   display: grid;
   place-items: center;
+}
+
+.editor-preview--mobile {
+  max-width: min(280px, 100%);
 }
 
 .editor-preview canvas {
