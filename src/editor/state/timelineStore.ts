@@ -35,7 +35,8 @@ export function createScene(options?: {
     },
     params: {},
     automation: [],
-    layers: []
+    layers: [],
+    fitAlign: "fill"
   };
 }
 
@@ -70,7 +71,8 @@ export function createLayer(effect = "starfield"): RawSectionLayerConfig {
     opacity: DEFAULT_LAYER_OPACITY,
     blend: "screen",
     params: {},
-    automation: []
+    automation: [],
+    fitAlign: "fill"
   };
 }
 

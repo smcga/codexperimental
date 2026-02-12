@@ -16,7 +16,8 @@ const baseSection: SectionConfig = {
   params: {},
   layers: [],
   endFromAudio: false,
-  framing: "auto"
+  framing: "auto",
+  fitAlign: "fill"
 };
 
 describe("era override helpers", () => {

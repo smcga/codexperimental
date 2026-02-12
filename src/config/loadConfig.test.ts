@@ -162,6 +162,21 @@ it("defaults section framing to auto and accepts explicit override", () => {
   expect(autoNormalized.sections[0].framing).toBe("auto");
 });
 
+
+it("normalizes fitAlign values and defaults to fill", () => {
+  const base = createBaseConfig();
+  base.sections[0].fitAlign = "center";
+  base.sections[0].layers = [{ effect: "chess", fitAlign: "top" }];
+
+  const normalized = normalizeTimelineConfig(base);
+
+  expect(normalized.sections[0].fitAlign).toBe("centre");
+  expect(normalized.sections[0].layers[0]?.fitAlign).toBe("top");
+
+  const defaults = normalizeTimelineConfig(createBaseConfig());
+  expect(defaults.sections[0].fitAlign).toBe("fill");
+});
+
 it("preserves optional text safe settings", () => {
   const base = createBaseConfig();
   base.textCues = [

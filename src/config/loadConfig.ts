@@ -33,6 +33,8 @@ const BLEND_MODES = [
 
 export type BlendMode = (typeof BLEND_MODES)[number];
 
+export type FitAlign = "top" | "centre" | "bottom" | "fill";
+
 export type RawAudioConfig = {
   src: string;
   offset?: number;
@@ -82,6 +84,7 @@ export type RawSectionConfig = {
   };
   params?: Record<string, number>;
   framing?: "auto" | "desktopCinematic" | "mobileFit";
+  fitAlign?: FitAlign | "center";
 };
 
 export type RawSectionLayerConfig = {
@@ -90,6 +93,7 @@ export type RawSectionLayerConfig = {
   blend?: BlendMode;
   params?: Record<string, number>;
   automation?: RawParamAutomation[];
+  fitAlign?: FitAlign | "center";
 };
 
 export type RawTextSpan = {
@@ -174,6 +178,7 @@ export type SectionConfig = {
   layers: SectionLayerConfig[];
   endFromAudio: boolean;
   framing: "auto" | "desktopCinematic" | "mobileFit";
+  fitAlign: FitAlign;
 };
 
 export type SectionLayerConfig = {
@@ -182,6 +187,7 @@ export type SectionLayerConfig = {
   blend: BlendMode;
   params: Record<string, number>;
   automation: ParamAutomation[];
+  fitAlign: FitAlign;
 };
 
 export type TextSpan = RawTextSpan & { size: number; color: string; weight: string; font: string };
@@ -281,6 +287,19 @@ function normalizeSectionFraming(value: unknown, label: string): "auto" | "deskt
     return value;
   }
   throw new Error(`${label} must be one of "auto", "desktopCinematic", or "mobileFit"`);
+}
+
+function normalizeFitAlign(value: unknown, label: string): FitAlign {
+  if (value === undefined) {
+    return "fill";
+  }
+  if (value === "center") {
+    return "centre";
+  }
+  if (value === "top" || value === "centre" || value === "bottom" || value === "fill") {
+    return value;
+  }
+  throw new Error(`${label} must be one of "top", "centre", "bottom", or "fill"`);
 }
 
 const EASE_NAMES: EaseName[] = [
@@ -499,7 +518,8 @@ function normalizeSectionLayers(layers: RawSectionLayerConfig[] | undefined, lab
       opacity: normalizeOpacity(layer.opacity, `${label}.layers[${index}].opacity`),
       blend: normalizeBlendMode(layer.blend, `${label}.layers[${index}].blend`),
       params: normalizeLayerParams(layer.params, `${label}.layers[${index}].params`),
-      automation: normalizeParamAutomation(layer.automation, `${label}.layers[${index}].automation`)
+      automation: normalizeParamAutomation(layer.automation, `${label}.layers[${index}].automation`),
+      fitAlign: normalizeFitAlign(layer.fitAlign, `${label}.layers[${index}].fitAlign`)
     };
   });
 }
@@ -546,7 +566,8 @@ export function normalizeTimelineConfig(raw: RawTimelineConfig): TimelineConfig 
       automation: normalizeParamAutomation(section.automation, `sections[${index}].automation`),
       layers: normalizeSectionLayers(section.layers, `sections[${index}]`),
       endFromAudio: end === null,
-      framing: normalizeSectionFraming(section.framing, `sections[${index}].framing`)
+      framing: normalizeSectionFraming(section.framing, `sections[${index}].framing`),
+      fitAlign: normalizeFitAlign(section.fitAlign, `sections[${index}].fitAlign`)
     };
   });
 
