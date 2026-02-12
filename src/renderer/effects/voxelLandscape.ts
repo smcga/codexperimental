@@ -36,6 +36,7 @@ export const VOXEL_LANDSCAPE_DEFAULTS = {
 };
 
 const MAP_SIZE = 256;
+const LANDSCAPE_REFERENCE_ASPECT = 16 / 9;
 
 const clamp01 = (value: number): number => clamp(value, 0, 1);
 
@@ -90,6 +91,23 @@ const lerpColor = (a: MapColor, b: MapColor, t: number): MapColor => ({
   g: lerp(a.g, b.g, t),
   b: lerp(a.b, b.b, t)
 });
+
+export const computeLandscapeViewportTuning = (
+  width: number,
+  height: number
+): {
+  fovMultiplier: number;
+  scaleMultiplier: number;
+  cameraHeightOffset: number;
+} => {
+  const aspect = Math.max(0.1, width / Math.max(1, height));
+  const portraitAmount = clamp01((LANDSCAPE_REFERENCE_ASPECT - aspect) / (LANDSCAPE_REFERENCE_ASPECT - 9 / 16));
+  return {
+    fovMultiplier: lerp(1, 1.45, portraitAmount),
+    scaleMultiplier: lerp(1, 0.6, portraitAmount),
+    cameraHeightOffset: lerp(0, 26, portraitAmount)
+  };
+};
 
 export const generateVoxelLandscapeMaps = (seed: number, mapSize = MAP_SIZE): VoxelLandscapeMaps => {
   const heightField = new Float32Array(mapSize * mapSize);
@@ -231,6 +249,11 @@ export class VoxelLandscapeEffect implements Effect {
       this.bufferHeight = bufH;
     }
 
+    const viewportTuning = computeLandscapeViewportTuning(width, height);
+    const effectiveFov = fov * viewportTuning.fovMultiplier;
+    const effectiveScale = scale * viewportTuning.scaleMultiplier;
+    const effectiveCamBase = camBase + viewportTuning.cameraHeightOffset;
+
     const dt = clamp(time - this.lastTime, 0, 0.05);
     this.lastTime = time;
 
@@ -244,7 +267,8 @@ export class VoxelLandscapeEffect implements Effect {
     this.camX += Math.cos(this.camAng) * speedEff * dt;
     this.camY += Math.sin(this.camAng) * speedEff * dt;
     this.camAng += turnRate * dt + Math.sin(time * 0.3) * turnWobble * dt;
-    this.camH = camBase + Math.sin(time * 0.6) * heightBob + this.beatPulse * beatBump + bass * audioReact * 6;
+    this.camH =
+      effectiveCamBase + Math.sin(time * 0.6) * heightBob + this.beatPulse * beatBump + bass * audioReact * 6;
 
     const imageData = this.buffer.imageData;
     const data = imageData.data;
@@ -270,7 +294,7 @@ export class VoxelLandscapeEffect implements Effect {
     const heightMap = this.maps.height;
     const colorMap = this.maps.color;
     const mapMask = this.maps.size - 1;
-    const halfFov = fov * 0.5;
+    const halfFov = effectiveFov * 0.5;
 
     for (let x = 0; x < bufW; x += 1) {
       const u = (x / (bufW - 1)) * 2 - 1;
@@ -287,7 +311,7 @@ export class VoxelLandscapeEffect implements Effect {
         const iy = Math.floor(worldY) & mapMask;
         const mapIndex = iy * this.maps.size + ix;
         const h = heightMap[mapIndex];
-        const projected = horizon - ((h - this.camH) * scale) / z;
+        const projected = horizon - ((h - this.camH) * effectiveScale) / z;
         if (projected < maxY) {
           const y0 = Math.max(0, Math.floor(projected));
           const y1 = Math.min(bufH, maxY);
