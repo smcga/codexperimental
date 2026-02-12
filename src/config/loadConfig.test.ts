@@ -78,8 +78,8 @@ describe("normalizeTimelineConfig", () => {
 
     expect(hookSection?.start).toBeCloseTo(76.62);
     expect(hookSection?.end).toBeCloseTo(78.8);
-    expect(lateHookSection?.start).toBeCloseTo(255.4);
-    expect(lateHookSection?.end).toBeCloseTo(260.0);
+    expect(lateHookSection?.start).toBeCloseTo(229.2);
+    expect(lateHookSection?.end).toBeCloseTo(234.0);
     expect(hookText?.start).toBeCloseTo(54.2);
     expect(lateHookText?.start).toBeCloseTo(280.73);
   });
@@ -92,11 +92,11 @@ describe("normalizeTimelineConfig", () => {
     const wireframeRide = normalized.sections.find((section) => section.id === "rap-switch-a-03560");
     const mutation = normalized.sections.find((section) => section.id === "mega-drop-mutation");
 
-    expect(wireframeRide?.effect).toBe("space_hangar");
-    expect(wireframeRide?.start).toBeCloseTo(260.0);
-    expect(wireframeRide?.end).toBeCloseTo(262.8);
+    expect(wireframeRide?.effect).toBe("sphere3d");
+    expect(wireframeRide?.start).toBeCloseTo(234.0);
+    expect(wireframeRide?.end).toBeCloseTo(238.8);
 
-    expect(mutation?.effect).toBe("synthwaveSunset");
+    expect(mutation?.effect).toBe("effect_evolution");
     expect(mutation?.start).toBeCloseTo(302.4);
     expect(mutation?.end).toBeCloseTo(319.66);
   });

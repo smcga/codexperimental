@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 
+import { readFileSync } from "node:fs";
+
 import timeline from "../../public/timeline.release.json";
 
 const toSeconds = (value: string | number): number => {
@@ -60,7 +62,7 @@ describe("release timeline", () => {
     expect(rushB).toHaveLength(16);
   });
 
-  it("defines an ideological rap chapter from 03:25.14 to 04:25.7", () => {
+  it("defines an ideological rap chapter from 03:25.14 to 04:25.7 with <=5s switches", () => {
     const rapStart = 3 * 60 + 25.14;
     const rapEnd = 4 * 60 + 25.7;
     const rapSections = timeline.sections.filter((section) => {
@@ -71,6 +73,11 @@ describe("release timeline", () => {
 
     expect(rapSections[0]?.start).toBe("03:25.14");
     expect(rapSections.at(-1)?.end).toBe("04:25.7");
+
+    rapSections.forEach((section) => {
+      const duration = toSeconds(section.end) - toSeconds(section.start);
+      expect(duration).toBeLessThanOrEqual(5);
+    });
 
     const rapEffects = new Set(rapSections.map((section) => section.effect));
     expect(rapEffects.has("sphere3d")).toBe(true);
@@ -84,5 +91,24 @@ describe("release timeline", () => {
     });
     expect(rapTextCues.length).toBeGreaterThanOrEqual(2);
     expect(rapTextCues.length).toBeLessThanOrEqual(4);
+  });
+
+  it("uses every registered effect at least once as base or layer", () => {
+    const usedEffects = new Set<string>();
+
+    timeline.sections.forEach((section) => {
+      usedEffects.add(section.effect);
+      section.layers?.forEach((layer) => {
+        usedEffects.add(layer.effect);
+      });
+    });
+
+    const docsPath = new URL("../../docs/effects.md", import.meta.url);
+    const docs = readFileSync(docsPath, "utf-8");
+    const documentedEffects = Array.from(docs.matchAll(/^## Effect: (.+)$/gm), (match) => match[1]);
+
+    documentedEffects.forEach((effectId) => {
+      expect(usedEffects.has(effectId)).toBe(true);
+    });
   });
 });
