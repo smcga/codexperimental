@@ -35,6 +35,14 @@ export const VOXEL_LANDSCAPE_DEFAULTS = {
   seed: 1337
 };
 
+type VoxelLandscapeViewSettings = {
+  fov: number;
+  scale: number;
+  camBase: number;
+  horizon: number;
+  maxDist: number;
+};
+
 const MAP_SIZE = 256;
 
 const clamp01 = (value: number): number => clamp(value, 0, 1);
@@ -90,6 +98,36 @@ const lerpColor = (a: MapColor, b: MapColor, t: number): MapColor => ({
   g: lerp(a.g, b.g, t),
   b: lerp(a.b, b.b, t)
 });
+
+export const computeVoxelLandscapeViewSettings = (
+  viewportWidth: number,
+  viewportHeight: number,
+  settings: VoxelLandscapeViewSettings
+): VoxelLandscapeViewSettings => {
+  if (viewportWidth <= 0 || viewportHeight <= 0) {
+    return settings;
+  }
+
+  const aspect = viewportWidth / viewportHeight;
+  const portraitStrength = clamp01((1 - aspect) / 0.6);
+  if (portraitStrength <= 0) {
+    return settings;
+  }
+
+  const adjustedScale = settings.scale * (1 - portraitStrength * 0.35);
+  const adjustedFov = settings.fov * (1 + portraitStrength * 0.45);
+  const adjustedCamBase = settings.camBase + portraitStrength * 22;
+  const adjustedHorizon = settings.horizon + viewportHeight * portraitStrength * 0.08;
+  const adjustedMaxDist = settings.maxDist * (1 + portraitStrength * 0.18);
+
+  return {
+    scale: adjustedScale,
+    fov: adjustedFov,
+    camBase: adjustedCamBase,
+    horizon: adjustedHorizon,
+    maxDist: adjustedMaxDist
+  };
+};
 
 export const generateVoxelLandscapeMaps = (seed: number, mapSize = MAP_SIZE): VoxelLandscapeMaps => {
   const heightField = new Float32Array(mapSize * mapSize);
@@ -216,6 +254,14 @@ export class VoxelLandscapeEffect implements Effect {
     const scanlines = Boolean(params.scanlines);
     const seed = Math.round(params.seed ?? VOXEL_LANDSCAPE_DEFAULTS.seed);
 
+    const viewSettings = computeVoxelLandscapeViewSettings(width, height, {
+      fov,
+      scale,
+      camBase,
+      horizon,
+      maxDist
+    });
+
     if (!this.maps || this.maps.seed !== seed) {
       this.maps = generateVoxelLandscapeMaps(seed, MAP_SIZE);
       this.camX = this.maps.size * 0.5;
@@ -244,7 +290,11 @@ export class VoxelLandscapeEffect implements Effect {
     this.camX += Math.cos(this.camAng) * speedEff * dt;
     this.camY += Math.sin(this.camAng) * speedEff * dt;
     this.camAng += turnRate * dt + Math.sin(time * 0.3) * turnWobble * dt;
-    this.camH = camBase + Math.sin(time * 0.6) * heightBob + this.beatPulse * beatBump + bass * audioReact * 6;
+    this.camH =
+      viewSettings.camBase +
+      Math.sin(time * 0.6) * heightBob +
+      this.beatPulse * beatBump +
+      bass * audioReact * 6;
 
     const imageData = this.buffer.imageData;
     const data = imageData.data;
@@ -270,7 +320,7 @@ export class VoxelLandscapeEffect implements Effect {
     const heightMap = this.maps.height;
     const colorMap = this.maps.color;
     const mapMask = this.maps.size - 1;
-    const halfFov = fov * 0.5;
+    const halfFov = viewSettings.fov * 0.5;
 
     for (let x = 0; x < bufW; x += 1) {
       const u = (x / (bufW - 1)) * 2 - 1;
@@ -279,7 +329,7 @@ export class VoxelLandscapeEffect implements Effect {
       const dirY = Math.sin(ang);
       let maxY = bufH;
 
-      for (let z = 1; z < maxDist && maxY > 0; ) {
+      for (let z = 1; z < viewSettings.maxDist && maxY > 0; ) {
         const step = stepBase + Math.floor(z / stepGrow);
         const worldX = this.camX + dirX * z;
         const worldY = this.camY + dirY * z;
@@ -287,7 +337,7 @@ export class VoxelLandscapeEffect implements Effect {
         const iy = Math.floor(worldY) & mapMask;
         const mapIndex = iy * this.maps.size + ix;
         const h = heightMap[mapIndex];
-        const projected = horizon - ((h - this.camH) * scale) / z;
+        const projected = viewSettings.horizon - ((h - this.camH) * viewSettings.scale) / z;
         if (projected < maxY) {
           const y0 = Math.max(0, Math.floor(projected));
           const y1 = Math.min(bufH, maxY);
@@ -298,7 +348,7 @@ export class VoxelLandscapeEffect implements Effect {
             const hY = heightMap[iy1 * this.maps.size + ix];
             const slope = h - hX + (h - hY);
             const light = clamp(0.72 + slope * 0.012, 0.35, 1.2);
-            const fog = Math.min(1, z / maxDist);
+            const fog = Math.min(1, z / viewSettings.maxDist);
             const fogAmt = fogStrength * fog;
             const lit = light * (1 - fogAmt);
             const colorIndex = mapIndex * 3;
