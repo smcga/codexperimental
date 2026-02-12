@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { generateVoxelLandscapeMaps } from "./voxelLandscape";
+import { computeLandscapeViewportTuning, generateVoxelLandscapeMaps } from "./voxelLandscape";
 
 describe("voxelLandscape maps", () => {
   it("generates deterministic heightmaps for the same seed", () => {
@@ -23,5 +23,23 @@ describe("voxelLandscape maps", () => {
 
     expect(maps.height.length).toBe(32 * 32);
     expect(maps.color.length).toBe(32 * 32 * 3);
+  });
+});
+
+describe("computeLandscapeViewportTuning", () => {
+  it("keeps the baseline camera settings for 16:9 viewports", () => {
+    expect(computeLandscapeViewportTuning(1600, 900)).toEqual({
+      fovMultiplier: 1,
+      scaleMultiplier: 1,
+      cameraHeightOffset: 0
+    });
+  });
+
+  it("widens and lifts the camera on tall portrait viewports", () => {
+    expect(computeLandscapeViewportTuning(900, 1600)).toEqual({
+      fovMultiplier: 1.45,
+      scaleMultiplier: 0.6,
+      cameraHeightOffset: 26
+    });
   });
 });
