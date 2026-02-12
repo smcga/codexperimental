@@ -20,7 +20,13 @@ export function syncExplicitPixelsArtifacts(cwd = process.cwd()): void {
     );
   }
 
-  const assignmentCount = (frameSource.match(/(?:data|dst)\[/g) ?? []).length;
+  const widthMatch = frameSource.match(/export const W = (\d+)/);
+  const heightMatch = frameSource.match(/export const H = (\d+)/);
+  if (!widthMatch || !heightMatch) {
+    throw new Error(`Expected ${path.relative(cwd, framePath)} to export numeric W and H constants.`);
+  }
+
+  const assignmentCount = Number(widthMatch[1]) * Number(heightMatch[1]) * 4;
   const generatedFileBytes = Buffer.byteLength(frameSource, "utf8");
 
   const metaSource = `export const assignmentCount = ${assignmentCount};\nexport const generatedFileBytes = ${generatedFileBytes};\n`;
