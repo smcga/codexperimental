@@ -22,6 +22,8 @@ import {
 } from "./state/timelineStore";
 import { clearTimelineDraft, downloadTimeline, loadTimelineDraft, saveTimelineDraft } from "./serialization";
 import { getEffectDebugConfig } from "../renderer/debug/effectDebug";
+import { FramingState } from "../renderer/framing";
+import { RenderOverrides } from "../renderer/renderer";
 
 const ERA_PRESETS: EraPreset[] = ["8bit", "16bit", "ps1", "pcdemo", "future"];
 const BLEND_MODES: BlendMode[] = [
@@ -71,11 +73,28 @@ const EASE_NAMES = [
   "easeInOutCirc"
 ];
 
+type MobilePreviewPreset = {
+  id: string;
+  label: string;
+  w: number;
+  h: number;
+};
+
+const MOBILE_PREVIEW_PRESETS: MobilePreviewPreset[] = [
+  { id: "iphone", label: "iPhone-ish (390×844)", w: 390, h: 844 },
+  { id: "android-small", label: "Small Android (360×800)", w: 360, h: 800 },
+  { id: "tablet-portrait", label: "Tablet portrait (768×1024)", w: 768, h: 1024 }
+];
+
 type EditorState = {
   timeline: RawTimelineConfig | null;
   originalTimeline: RawTimelineConfig | null;
   selectedSceneId: string | null;
   loopEnabled: boolean;
+  mobilePreviewEnabled: boolean;
+  mobilePreviewPresetId: string;
+  mobilePreviewScale: number;
+  showSafeGuides: boolean;
   error: string | null;
   fieldErrors: Record<string, string>;
 };
@@ -91,11 +110,20 @@ type EditorInit = {
   getAudioDuration: () => number;
 };
 
+export type MobilePreviewState = {
+  canvas: HTMLCanvasElement;
+  viewport: { w: number; h: number };
+  overrides: RenderOverrides;
+  showSafeGuides: boolean;
+};
+
 export type EditorController = {
   setVisible: (visible: boolean) => void;
   isVisible: () => boolean;
   updatePlayback: (demoTime: number, playing: boolean) => void;
   updatePreview: (source: HTMLCanvasElement) => void;
+  getMobilePreviewState: () => MobilePreviewState | null;
+  updateMobilePreviewGuides: (framing: FramingState | null) => void;
   getLoopState: () => { enabled: boolean; start: number; end: number } | null;
 };
 
@@ -105,13 +133,20 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     originalTimeline: null,
     selectedSceneId: null,
     loopEnabled: false,
+    mobilePreviewEnabled: false,
+    mobilePreviewPresetId: MOBILE_PREVIEW_PRESETS[0]?.id ?? "iphone",
+    mobilePreviewScale: 0.6,
+    showSafeGuides: true,
     error: null,
     fieldErrors: {}
   };
   let playbackLabel: HTMLSpanElement | null = null;
   let playbackButton: HTMLButtonElement | null = null;
-  let previewCanvas: HTMLCanvasElement | null = null;
-  let previewContext: CanvasRenderingContext2D | null = null;
+  let desktopPreviewCanvas: HTMLCanvasElement | null = null;
+  let desktopPreviewContext: CanvasRenderingContext2D | null = null;
+  let mobilePreviewCanvas: HTMLCanvasElement | null = null;
+  let mobilePreviewOverlayCanvas: HTMLCanvasElement | null = null;
+  let mobilePreviewOverlayContext: CanvasRenderingContext2D | null = null;
   let editorVisible = false;
 
   const getEffectParamOptions = (effectName: string | null | undefined): string[] => {
@@ -226,9 +261,24 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     return parsed.toFixed(1);
   };
 
+  const getMobilePreviewPreset = (): MobilePreviewPreset =>
+    MOBILE_PREVIEW_PRESETS.find((preset) => preset.id === state.mobilePreviewPresetId) ?? MOBILE_PREVIEW_PRESETS[0];
+
   const refreshPreviewCanvas = (): void => {
-    previewCanvas = init.container.querySelector<HTMLCanvasElement>("[data-region='preview-canvas']");
-    previewContext = previewCanvas?.getContext("2d") ?? null;
+    desktopPreviewCanvas = init.container.querySelector<HTMLCanvasElement>("[data-region='desktop-preview-canvas']");
+    desktopPreviewContext = desktopPreviewCanvas?.getContext("2d") ?? null;
+    mobilePreviewCanvas = init.container.querySelector<HTMLCanvasElement>("[data-region='mobile-preview-canvas']");
+    mobilePreviewOverlayCanvas = init.container.querySelector<HTMLCanvasElement>("[data-region='mobile-preview-guides']");
+    mobilePreviewOverlayContext = mobilePreviewOverlayCanvas?.getContext("2d") ?? null;
+    const preset = getMobilePreviewPreset();
+    if (mobilePreviewCanvas) {
+      mobilePreviewCanvas.width = preset.w;
+      mobilePreviewCanvas.height = preset.h;
+    }
+    if (mobilePreviewOverlayCanvas) {
+      mobilePreviewOverlayCanvas.width = preset.w;
+      mobilePreviewOverlayCanvas.height = preset.h;
+    }
   };
 
   const render = (): void => {
@@ -260,8 +310,32 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         </section>
         <section class="editor-column editor-timeline">
           <div class="editor-section-title">Timeline</div>
-          <div class="editor-preview">
-            <canvas data-region="preview-canvas" width="640" height="360"></canvas>
+          <div class="editor-preview-controls">
+            <label class="editor-toggle">
+              <input type="checkbox" data-action="mobile-preview-toggle" ${state.mobilePreviewEnabled ? "checked" : ""} />
+              <span>Mobile Preview</span>
+            </label>
+            <label>
+              <span>Preset</span>
+              <select data-action="mobile-preview-preset" ${state.mobilePreviewEnabled ? "" : "disabled"}>
+                ${MOBILE_PREVIEW_PRESETS.map((preset) => `<option value="${preset.id}" ${preset.id === state.mobilePreviewPresetId ? "selected" : ""}>${preset.label}</option>`).join("")}
+              </select>
+            </label>
+            <label>
+              <span>Scale</span>
+              <input type="range" min="0.35" max="1" step="0.05" value="${state.mobilePreviewScale}" data-action="mobile-preview-scale" ${state.mobilePreviewEnabled ? "" : "disabled"} />
+            </label>
+            <label class="editor-toggle">
+              <input type="checkbox" data-action="mobile-safe-guides-toggle" ${state.showSafeGuides ? "checked" : ""} ${state.mobilePreviewEnabled ? "" : "disabled"} />
+              <span>Show Safe Guides</span>
+            </label>
+          </div>
+          <div class="editor-preview ${state.mobilePreviewEnabled ? "is-mobile" : ""}" data-region="preview-shell" style="--mobile-preview-scale:${state.mobilePreviewScale};">
+            <canvas data-region="desktop-preview-canvas" width="640" height="360" class="editor-preview-canvas editor-preview-canvas-desktop ${state.mobilePreviewEnabled ? "hidden" : ""}"></canvas>
+            <div class="editor-mobile-preview ${state.mobilePreviewEnabled ? "" : "hidden"}">
+              <canvas data-region="mobile-preview-canvas" class="editor-preview-canvas editor-preview-canvas-mobile"></canvas>
+              <canvas data-region="mobile-preview-guides" class="editor-preview-guides"></canvas>
+            </div>
           </div>
           <div class="editor-timeline-view" data-region="timeline-view"></div>
         </section>
@@ -288,12 +362,44 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     renderInspector();
     renderTransport();
     bindHeaderActions();
+    bindPreviewControls();
     refreshPreviewCanvas();
 
     const nextInspector = init.container.querySelector<HTMLDivElement>(".editor-inspector-body");
     if (nextInspector && inspectorScrollState && inspectorScrollState.sceneId === state.selectedSceneId) {
       nextInspector.scrollTop = inspectorScrollState.scrollTop;
     }
+  };
+
+
+  const bindPreviewControls = (): void => {
+    init.container
+      .querySelector<HTMLInputElement>("[data-action='mobile-preview-toggle']")
+      ?.addEventListener("change", (event) => {
+        const target = event.target as HTMLInputElement;
+        setState({ mobilePreviewEnabled: target.checked });
+      });
+
+    init.container
+      .querySelector<HTMLSelectElement>("[data-action='mobile-preview-preset']")
+      ?.addEventListener("change", (event) => {
+        const target = event.target as HTMLSelectElement;
+        setState({ mobilePreviewPresetId: target.value });
+      });
+
+    init.container
+      .querySelector<HTMLInputElement>("[data-action='mobile-preview-scale']")
+      ?.addEventListener("input", (event) => {
+        const target = event.target as HTMLInputElement;
+        setState({ mobilePreviewScale: Number(target.value) });
+      });
+
+    init.container
+      .querySelector<HTMLInputElement>("[data-action='mobile-safe-guides-toggle']")
+      ?.addEventListener("change", (event) => {
+        const target = event.target as HTMLInputElement;
+        setState({ showSafeGuides: target.checked });
+      });
   };
 
   const renderSceneList = (): void => {
@@ -1146,10 +1252,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       }
     },
     updatePreview: (source: HTMLCanvasElement) => {
-      if (!previewCanvas || !previewContext || !editorVisible) {
+      if (!desktopPreviewCanvas || !desktopPreviewContext || !editorVisible) {
         return;
       }
-      const { width, height } = previewCanvas;
+      const { width, height } = desktopPreviewCanvas;
       const sourceRatio = source.width / source.height;
       const targetRatio = width / height;
       let drawWidth = width;
@@ -1161,8 +1267,39 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       }
       const offsetX = (width - drawWidth) / 2;
       const offsetY = (height - drawHeight) / 2;
-      previewContext.clearRect(0, 0, width, height);
-      previewContext.drawImage(source, offsetX, offsetY, drawWidth, drawHeight);
+      desktopPreviewContext.clearRect(0, 0, width, height);
+      desktopPreviewContext.drawImage(source, offsetX, offsetY, drawWidth, drawHeight);
+    },
+    getMobilePreviewState: () => {
+      if (!editorVisible || !state.mobilePreviewEnabled || !mobilePreviewCanvas) {
+        return null;
+      }
+      const preset = getMobilePreviewPreset();
+      return {
+        canvas: mobilePreviewCanvas,
+        viewport: { w: preset.w, h: preset.h },
+        overrides: { forceMobile: true, previewViewport: { w: preset.w, h: preset.h } },
+        showSafeGuides: state.showSafeGuides
+      };
+    },
+    updateMobilePreviewGuides: (framing: FramingState | null) => {
+      if (!mobilePreviewOverlayCanvas || !mobilePreviewOverlayContext) {
+        return;
+      }
+      const { width, height } = mobilePreviewOverlayCanvas;
+      mobilePreviewOverlayContext.clearRect(0, 0, width, height);
+      if (!state.mobilePreviewEnabled || !state.showSafeGuides || !framing) {
+        return;
+      }
+      const safeX = framing.present.offsetX + framing.safe.x * framing.present.scale;
+      const safeY = framing.present.offsetY + framing.safe.y * framing.present.scale;
+      const safeW = framing.safe.w * framing.present.scale;
+      const safeH = framing.safe.h * framing.present.scale;
+      mobilePreviewOverlayContext.strokeStyle = "rgba(142, 249, 255, 0.95)";
+      mobilePreviewOverlayContext.setLineDash([10, 6]);
+      mobilePreviewOverlayContext.lineWidth = 2;
+      mobilePreviewOverlayContext.strokeRect(safeX, safeY, safeW, safeH);
+      mobilePreviewOverlayContext.setLineDash([]);
     },
     getLoopState: () => {
       if (!state.loopEnabled || !state.selectedSceneId || !state.timeline) {
