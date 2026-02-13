@@ -9,6 +9,11 @@ import { computeFraming, FramingOverride, FramingState } from "./framing";
 import { resolveMonochrome } from "./monochrome";
 import { renderTextCues } from "./text/textRenderer";
 
+export type RenderOverrides = {
+  forceMobile?: boolean;
+  previewViewport?: { w: number; h: number };
+};
+
 export type RenderState = {
   ctx: CanvasRenderingContext2D;
   width: number;
@@ -27,6 +32,7 @@ export type RenderState = {
   audio: AudioFeatures;
   screenShake?: { x: number; y: number };
   framingOverride?: FramingOverride;
+  overrides?: RenderOverrides;
 };
 
 export class Renderer {
@@ -119,17 +125,21 @@ export class Renderer {
     audio,
     monochromeOverride,
     screenShake,
-    framingOverride
+    framingOverride,
+    overrides
   }: RenderState): void {
+    const framingScreenW = overrides?.previewViewport?.w ?? width;
+    const framingScreenH = overrides?.previewViewport?.h ?? height;
     const activeSection = transition?.to ?? section;
     const eraConstraints = getEraConstraints(activeSection.era, this.baseWidth, this.baseHeight);
     const framing = computeFraming(
-      width,
-      height,
+      framingScreenW,
+      framingScreenH,
       this.baseWidth,
       this.baseHeight,
       activeSection.era,
-      activeSection.framing === "auto" ? (framingOverride ?? "auto") : activeSection.framing
+      activeSection.framing === "auto" ? (framingOverride ?? "auto") : activeSection.framing,
+      { forceMobile: overrides?.forceMobile }
     );
     this.lastFramingState = framing;
     const baseShake = audio.beatStrength * 6;

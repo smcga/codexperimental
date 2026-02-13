@@ -2,6 +2,10 @@ export type FramingMode = "desktopCinematic" | "mobileFit";
 
 export type FramingOverride = "auto" | FramingMode;
 
+export type FramingComputationOverrides = {
+  forceMobile?: boolean;
+};
+
 export type FramingState = {
   mode: FramingMode;
   screenW: number;
@@ -46,11 +50,13 @@ export function computeFraming(
   internalW: number,
   internalH: number,
   _era: string,
-  debugOverride: FramingOverride = "auto"
+  debugOverride: FramingOverride = "auto",
+  overrides: FramingComputationOverrides = {}
 ): FramingState {
   const aspect = screenW / screenH;
   const isPortrait = aspect < 1;
   const shouldUseMobileFit =
+    overrides.forceMobile === true ||
     debugOverride === "mobileFit" ||
     (debugOverride === "auto" && (isPortrait || screenW < MOBILE_WIDTH_THRESHOLD));
   const mode: FramingMode = debugOverride === "desktopCinematic" ? "desktopCinematic" : shouldUseMobileFit ? "mobileFit" : "desktopCinematic";

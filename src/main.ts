@@ -84,6 +84,7 @@ const getEffectiveBaseSize = (): { width: number; height: number } => ({
 
 let { width: effectiveBaseWidth, height: effectiveBaseHeight } = getEffectiveBaseSize();
 const renderer = new Renderer(effectiveBaseWidth, effectiveBaseHeight);
+const editorPreviewRenderer = new Renderer(effectiveBaseWidth, effectiveBaseHeight);
 const introRenderer = new TerminalIntroRenderer();
 const explosionState = createExplosionState();
 let audioPlayer: AudioPlayer | null = null;
@@ -137,6 +138,7 @@ function applyQualityScale(): void {
   effectiveBaseWidth = effectiveSize.width;
   effectiveBaseHeight = effectiveSize.height;
   renderer.setBaseSize(effectiveBaseWidth, effectiveBaseHeight);
+  editorPreviewRenderer.setBaseSize(effectiveBaseWidth, effectiveBaseHeight);
 }
 
 function resize(): void {
@@ -542,6 +544,8 @@ async function startDemo(): Promise<void> {
 
     await audioPlayer.play();
     renderer.reset();
+  editorPreviewRenderer.reset();
+    editorPreviewRenderer.reset();
     isRunning = true;
     lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
     lastFrameTimestamp = performance.now();
@@ -603,6 +607,9 @@ function loop(): void {
 
   const audioFeatures: AudioFeatures = audioPlayer.updateFeatures();
   const state = timeline.getState(demoTime);
+  let sectionOverride = state.mode === "intro" ? null : state.section;
+  let transitionOverrideWithEra = state.mode === "intro" ? undefined : state.transition;
+  let explosionShake = { x: 0, y: 0 };
   if (state.mode === "intro") {
     introRenderer.render({
       ctx,
@@ -616,7 +623,7 @@ function loop(): void {
     const effectParamOverridesRecord = effectParamOverrides as Record<string, number> | null;
     const hasEffectOverrides = effectParamOverrides && Object.keys(effectParamOverrides).length > 0;
     const eraOverride = debugState.eraOverride;
-    let sectionOverride = debugState.forcedEffect
+    sectionOverride = debugState.forcedEffect
       ? { ...state.section, effect: debugState.forcedEffect }
       : state.section;
     sectionOverride = applyEraOverride(sectionOverride, eraOverride);
@@ -638,9 +645,9 @@ function loop(): void {
           type: debugState.transitionOverride ?? state.transition.type
         }
       : undefined;
-    const transitionOverrideWithEra = applyEraOverrideToTransition(transitionOverride, eraOverride);
+    transitionOverrideWithEra = applyEraOverrideToTransition(transitionOverride, eraOverride);
     const explosionTime = sectionOverride.era === "future" ? demoTime - sectionOverride.start : -1;
-    const explosionShake = getExplosionShake(explosionTime);
+    explosionShake = getExplosionShake(explosionTime);
 
     renderer.render({
       ctx,
@@ -674,6 +681,44 @@ function loop(): void {
   }
   editorController?.updatePlayback(demoTime, !audioPlayer.paused);
   editorController?.updatePreview(canvas);
+
+  const mobilePreviewState = editorController?.getMobilePreviewState();
+  if (mobilePreviewState) {
+    const mobilePreviewCtx = mobilePreviewState.canvas.getContext("2d");
+    if (mobilePreviewCtx) {
+      if (state.mode === "intro") {
+        introRenderer.render({
+          ctx: mobilePreviewCtx,
+          width: mobilePreviewState.viewport.w,
+          height: mobilePreviewState.viewport.h,
+          time: demoTime,
+          config: introConfig
+        });
+        editorController?.updateMobilePreviewGuides(null);
+      } else {
+        editorPreviewRenderer.render({
+          ctx: mobilePreviewCtx,
+          width: mobilePreviewState.viewport.w,
+          height: mobilePreviewState.viewport.h,
+          time: demoTime,
+          delta,
+          section: sectionOverride ?? state.section,
+          transition: transitionOverrideWithEra,
+          textCues: state.activeTextCues,
+          audio: audioFeatures,
+          monochromeOverride: debugState.monochromeOverride,
+          screenShake: explosionShake,
+          framingOverride: debugState.framingOverride,
+          overrides: mobilePreviewState.overrides
+        });
+        editorController?.updateMobilePreviewGuides(
+          mobilePreviewState.showSafeGuides ? editorPreviewRenderer.getCurrentFramingState() : null
+        );
+      }
+    }
+  } else {
+    editorController?.updateMobilePreviewGuides(null);
+  }
 
   if (audioPlayer.ended) {
     isRunning = false;

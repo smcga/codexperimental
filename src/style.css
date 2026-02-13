@@ -371,6 +371,18 @@ body,
   min-height: 120px;
 }
 
+.editor-preview-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.editor-preview-controls label {
+  display: grid;
+  gap: 0.25rem;
+}
+
 .editor-preview {
   border: 1px solid rgba(255, 255, 255, 0.15);
   background: rgba(0, 0, 0, 0.5);
@@ -380,10 +392,38 @@ body,
   place-items: center;
 }
 
-.editor-preview canvas {
+.editor-preview.is-mobile {
+  aspect-ratio: auto;
+  min-height: 360px;
+}
+
+.editor-preview-canvas {
   width: 100%;
   height: 100%;
   display: block;
+}
+
+.editor-mobile-preview {
+  position: relative;
+  width: calc(var(--mobile-preview-scale, 0.6) * 390px);
+  max-width: 100%;
+  aspect-ratio: 390 / 844;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+  overflow: hidden;
+  background: black;
+}
+
+.editor-preview-canvas-mobile,
+.editor-preview-guides {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.editor-preview-guides {
+  pointer-events: none;
 }
 
 .editor-ruler {
