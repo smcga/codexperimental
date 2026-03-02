@@ -721,7 +721,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
             ([key, value]) => `
             <div class="editor-param-row">
               <input type="text" data-param-key list="${listId}" value="${key}" />
-              <input type="number" step="0.1" data-param-value value="${value}" />
+              <input type="text" data-param-value value="${String(value)}" />
               <button type="button" data-action="remove-param">Remove</button>
             </div>`
           )
@@ -757,6 +757,28 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     `;
 
     const rows = container.querySelectorAll<HTMLDivElement>(".editor-param-row");
+
+    const parseParamInputValue = (input: string): number => {
+      const trimmed = input.trim();
+      if (!trimmed) {
+        return 0;
+      }
+      const numeric = Number(trimmed);
+      if (Number.isFinite(numeric)) {
+        return numeric;
+      }
+      if (trimmed === "true" || trimmed === "false" || trimmed === "null") {
+        return JSON.parse(trimmed) as unknown as number;
+      }
+      if (
+        (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+        (trimmed.startsWith("'") && trimmed.endsWith("'"))
+      ) {
+        return trimmed.slice(1, -1) as unknown as number;
+      }
+      return trimmed as unknown as number;
+    };
+
     rows.forEach((row, index) => {
       const keyInput = row.querySelector<HTMLInputElement>("[data-param-key]");
       const valueInput = row.querySelector<HTMLInputElement>("[data-param-value]");
@@ -765,7 +787,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       const updateParams = (): void => {
         const entries = Array.from(container.querySelectorAll<HTMLDivElement>(".editor-param-row")).map((item) => {
           const key = item.querySelector<HTMLInputElement>("[data-param-key]")?.value ?? "";
-          const value = Number(item.querySelector<HTMLInputElement>("[data-param-value]")?.value ?? 0);
+          const value = parseParamInputValue(
+            item.querySelector<HTMLInputElement>("[data-param-value]")?.value ?? ""
+          );
           return [key, value] as const;
         });
         const nextParams: Record<string, number> = {};
