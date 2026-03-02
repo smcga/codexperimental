@@ -997,7 +997,7 @@
       "effect": "gl_fractal_tunnel",
       "params": {
         "speed": 1.06,
-        "intensity": 0.52
+        "intensity": 0.5
       },
       "automation": [
         {
@@ -1010,38 +1010,28 @@
         },
         {
           "param": "speed",
-          "from": 0,
-          "to": 2.1,
+          "from": 0.35,
+          "to": 1.8,
           "t0": 152.5,
           "t1": 163.5,
-          "ease": "linear"
+          "ease": "easeInOutCubic"
         }
       ],
       "layers": [
         {
           "effect": "starfield",
           "blend": "screen",
-          "opacity": 0.15
+          "opacity": 0.12
         },
         {
           "effect": "vga_fire",
           "blend": "source-over",
-          "opacity": 0.16
+          "opacity": 0.12
         },
         {
           "effect": "space_hangar",
           "blend": "screen",
-          "opacity": 0.12
-        },
-        {
-          "effect": "fractal_zoomer",
-          "opacity": 0.6,
-          "blend": "color-dodge",
-          "params": {
-            "message": 0
-          },
-          "automation": [],
-          "fitAlign": "fill"
+          "opacity": 0.1
         }
       ]
     },
@@ -1581,7 +1571,7 @@
         {
           "effect": "vga_fire",
           "blend": "screen",
-          "opacity": 0.35
+          "opacity": 0.2
         },
         {
           "effect": "plasma",
@@ -1612,9 +1602,9 @@
         {
           "effect": "feedback",
           "blend": "screen",
-          "opacity": 0.09,
+          "opacity": 0.07,
           "params": {
-            "alpha": 0.18
+            "alpha": 0.14
           }
         }
       ]
@@ -1919,17 +1909,17 @@
         {
           "effect": "boids_simulation",
           "blend": "screen",
-          "opacity": 0.09
+          "opacity": 0.07
         }
       ],
       "automation": [
         {
           "param": "cameraHeight",
           "from": 0,
-          "to": 15,
-          "t0": 265.7,
-          "t1": 272.1,
-          "ease": "linear"
+          "to": 18,
+          "t0": "04:25.7",
+          "t1": "04:32.15",
+          "ease": "easeInOutQuad"
         }
       ]
     },
@@ -1954,8 +1944,16 @@
       "automation": [
         {
           "param": "speed",
-          "from": 0.86,
-          "to": 1.3,
+          "from": 0.82,
+          "to": 1.34,
+          "t0": "04:32.15",
+          "t1": "04:40.73",
+          "ease": "easeInQuad"
+        },
+        {
+          "param": "cameraOrbitSpeed",
+          "from": 0.07,
+          "to": 0.14,
           "t0": "04:32.15",
           "t1": "04:40.73",
           "ease": "easeInOutQuad"
@@ -1984,44 +1982,42 @@
       "effect": "gl_impossible_corridor",
       "params": {
         "speed": 1.12,
-        "glow": 0.48,
-        "intensity": 0.6
+        "glow": 0.54,
+        "intensity": 0.68
       },
       "automation": [
         {
           "param": "intensity",
-          "from": 0.6,
-          "to": 0.9,
+          "from": 0.68,
+          "to": 1,
           "t0": "04:40.73",
-          "t1": "04:46.2",
-          "ease": "easeInOutQuad"
+          "t1": "04:49.6",
+          "ease": "easeInOutCubic"
+        },
+        {
+          "param": "speed",
+          "from": 1.08,
+          "to": 1.42,
+          "t0": "04:40.73",
+          "t1": "05:02.4",
+          "ease": "easeInQuad"
         }
       ],
       "layers": [
         {
           "effect": "starfield",
           "blend": "screen",
-          "opacity": 0.2
+          "opacity": 0.16
         },
         {
           "effect": "particles",
           "blend": "lighter",
-          "opacity": 0.22
-        },
-        {
-          "effect": "ribbons",
-          "blend": "screen",
-          "opacity": 0.18
+          "opacity": 0.2
         },
         {
           "effect": "vga_fire",
           "blend": "screen",
-          "opacity": 0.14
-        },
-        {
-          "effect": "metaballs",
-          "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.12
         }
       ]
     },
@@ -2038,20 +2034,10 @@
         {
           "effect": "poly_morph_showcase",
           "blend": "screen",
-          "opacity": 0.12
-        },
-        {
-          "effect": "fluid",
-          "blend": "screen",
-          "opacity": 0.11
-        },
-        {
-          "effect": "treegrowth",
-          "blend": "screen",
           "opacity": 0.1
         },
         {
-          "effect": "fractal_zoomer",
+          "effect": "treegrowth",
           "blend": "screen",
           "opacity": 0.1
         }
@@ -2080,7 +2066,7 @@
         {
           "effect": "bumpmap_plane",
           "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.08
         }
       ]
     },
@@ -2090,34 +2076,34 @@
       "end": "05:40",
       "effect": "finale",
       "params": {
-        "energy": 0.62,
+        "energy": 0.56,
         "glow": 0.4
       },
       "automation": [
         {
           "param": "energy",
-          "from": 0.62,
-          "to": 0.84,
+          "from": 0.56,
+          "to": 0.74,
           "t0": "05:25.39",
           "t1": "05:36.8",
-          "ease": "easeInOutQuad"
+          "ease": "easeOutQuad"
         }
       ],
       "layers": [
         {
           "effect": "neon_alley",
           "blend": "screen",
-          "opacity": 0.16
+          "opacity": 0.12
         },
         {
           "effect": "explicitpixels",
           "blend": "screen",
-          "opacity": 0.11
+          "opacity": 0.08
         },
         {
           "effect": "amiga_showcase",
           "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.09
         }
       ]
     },
@@ -2127,18 +2113,13 @@
       "end": "05:56.3",
       "effect": "greets_wall",
       "params": {
-        "speed": 0.52,
+        "speed": 0.44,
         "glow": 0.24
       },
       "layers": [
         {
           "effect": "sine_scroller_logo",
           "blend": "screen",
-          "opacity": 0.12
-        },
-        {
-          "effect": "border_multiplex",
-          "blend": "overlay",
           "opacity": 0.1
         },
         {
@@ -2147,14 +2128,9 @@
           "opacity": 0.1
         },
         {
-          "effect": "roadDrive",
-          "blend": "screen",
-          "opacity": 0.1
-        },
-        {
           "effect": "flyover",
           "blend": "screen",
-          "opacity": 0.09
+          "opacity": 0.06
         }
       ]
     },
@@ -2164,7 +2140,7 @@
       "end": "06:12.6",
       "effect": "textured_cube",
       "params": {
-        "speed": 0.56
+        "speed": 0.42
       },
       "layers": [
         {
@@ -2178,19 +2154,9 @@
           "opacity": 0.1
         },
         {
-          "effect": "blobs",
-          "blend": "screen",
-          "opacity": 0.1
-        },
-        {
-          "effect": "fractal",
-          "blend": "screen",
-          "opacity": 0.1
-        },
-        {
           "effect": "volumetric_clouds",
           "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.08
         }
       ]
     },
@@ -2200,15 +2166,25 @@
       "end": "06:22.87",
       "effect": "infinitycloud",
       "params": {
-        "density": 0.16,
-        "speed": 0.18,
+        "density": 0.14,
+        "speed": 0.12,
         "glow": 0.12
       },
       "layers": [
         {
           "effect": "spherecloud",
           "blend": "screen",
-          "opacity": 0.08
+          "opacity": 0.05
+        }
+      ],
+      "automation": [
+        {
+          "param": "glow",
+          "from": 0.1,
+          "to": 0.04,
+          "t0": "06:12.6",
+          "t1": "06:22.87",
+          "ease": "easeOutQuad"
         }
       ]
     },
@@ -5334,7 +5310,7 @@
     {
       "id": "New Section 112",
       "start": 357.761492,
-      "end": 372.6,
+      "end": 369.6,
       "effect": "spherecloud",
       "era": "pcdemo",
       "transition": {
@@ -5343,7 +5319,7 @@
         "duration": 0.8
       },
       "params": {
-        "speed": 1.35
+        "speed": 0.45
       },
       "automation": [],
       "layers": [],
@@ -5352,7 +5328,7 @@
     {
       "id": "New Section 113",
       "start": 358.498787,
-      "end": 372.6,
+      "end": 369.6,
       "effect": "textmode_charset",
       "era": "pcdemo",
       "transition": {
@@ -5365,7 +5341,7 @@
         "rows": 91,
         "glyphSet": 5,
         "mode": 4,
-        "speed": 2.45,
+        "speed": 0.45,
         "palette": 7,
         "scanlines": 0.9,
         "seed": 921
@@ -5377,7 +5353,7 @@
     {
       "id": "New Section 114",
       "start": 359.167745,
-      "end": 372.6,
+      "end": 369.6,
       "effect": "starfield",
       "era": "pcdemo",
       "transition": {
@@ -5386,7 +5362,7 @@
         "duration": 0.8
       },
       "params": {
-        "speed": 1.85,
+        "speed": 0.45,
         "warp": 0.6,
         "turnRate": 0.8,
         "turnStrength": 0,
@@ -5401,7 +5377,7 @@
     {
       "id": "New Section 115",
       "start": 359.828841,
-      "end": 372.6,
+      "end": 369.6,
       "effect": "gl_fractal_tunnel",
       "era": "pcdemo",
       "transition": {
@@ -5423,7 +5399,7 @@
     {
       "id": "New Section 116",
       "start": 362.216213,
-      "end": 372.6,
+      "end": 369.6,
       "effect": "vga_fire",
       "era": "pcdemo",
       "transition": {
@@ -5456,7 +5432,7 @@
     {
       "id": "New Section 117",
       "start": 364.9066,
-      "end": 372.6,
+      "end": 369.6,
       "effect": "rain",
       "era": "pcdemo",
       "transition": {
@@ -5465,9 +5441,9 @@
         "duration": 0.8
       },
       "params": {
-        "intensity": 0.5,
+        "intensity": 0.35,
         "wind": -0.75,
-        "speed": 0.75,
+        "speed": 0.45,
         "streakLength": 2.1,
         "splash": 1,
         "hue": 136,
@@ -5483,7 +5459,7 @@
     {
       "id": "New Section 118",
       "start": 366.575689,
-      "end": 372.6,
+      "end": 369.6,
       "effect": "spherecloud",
       "era": "pcdemo",
       "transition": {
@@ -5492,7 +5468,7 @@
         "duration": 0.8
       },
       "params": {
-        "speed": 1.5
+        "speed": 0.45
       },
       "automation": [],
       "layers": [],
@@ -5501,7 +5477,7 @@
     {
       "id": "New Section 119",
       "start": 367.446449,
-      "end": 372.6,
+      "end": 369.6,
       "effect": "fractal",
       "era": "pcdemo",
       "transition": {
@@ -5512,7 +5488,7 @@
       "params": {
         "iterations": 1100,
         "trebleBoost": 150,
-        "speed": 1.65,
+        "speed": 0.45,
         "scale": 0.11,
         "alpha": 0.2
       },
@@ -5523,7 +5499,7 @@
     {
       "id": "New Section 120",
       "start": 368.337448,
-      "end": 372.6,
+      "end": 369.6,
       "effect": "torus_orbit_3d",
       "era": "pcdemo",
       "transition": {
@@ -5539,7 +5515,7 @@
         "spinSpeed": -0.6,
         "wobbleSpeed": -1.5,
         "depth": 2.8,
-        "glow": 0.25,
+        "glow": 0.22,
         "palette": "teal",
         "audioReact": 0.65
       },
@@ -5550,7 +5526,7 @@
     {
       "id": "New Section 121",
       "start": 368.967591,
-      "end": 372.6,
+      "end": 369.6,
       "effect": "lissajous",
       "era": "pcdemo",
       "transition": {
@@ -5560,7 +5536,7 @@
       },
       "params": {
         "points": 470,
-        "speed": 0.9,
+        "speed": 0.45,
         "a": 1.4,
         "b": 5.3,
         "radius": 0.16,
@@ -5573,7 +5549,7 @@
     {
       "id": "New Section 122",
       "start": 369.624158,
-      "end": 372.6,
+      "end": 369.6,
       "effect": "explicitpixels",
       "era": "pcdemo",
       "transition": {
@@ -5583,7 +5559,7 @@
       },
       "params": {
         "mode": "procedural",
-        "speed": 2.8,
+        "speed": 0.45,
         "audioReact": 0.05
       },
       "automation": [],
@@ -5593,7 +5569,7 @@
     {
       "id": "New Section 123",
       "start": 370.344228,
-      "end": 372.6,
+      "end": 369.6,
       "effect": "portrait",
       "era": "pcdemo",
       "transition": {
@@ -5612,7 +5588,7 @@
     {
       "id": "New Section 124",
       "start": 370.974063,
-      "end": 372.6,
+      "end": 369.6,
       "effect": "voxel_landscape",
       "era": "pcdemo",
       "transition": {
@@ -5623,7 +5599,7 @@
       "params": {
         "bufW": 272,
         "bufH": 240,
-        "speed": 109,
+        "speed": 0.45,
         "turnRate": 0.21,
         "turnWobble": 0.14,
         "camH": 163,
@@ -5648,7 +5624,7 @@
     {
       "id": "New Section 125",
       "start": 371.684907,
-      "end": 372.6,
+      "end": 372.2,
       "effect": "space_hangar",
       "era": "pcdemo",
       "transition": {
@@ -5658,7 +5634,7 @@
       },
       "params": {
         "quality": 2,
-        "speed": 1.6,
+        "speed": 0.45,
         "exposure": 1.15,
         "hueShift": 0.5,
         "seed": 11
@@ -5692,17 +5668,17 @@
     {
       "id": "New Section 127",
       "start": 372.923267,
-      "end": 382.923267,
+      "end": 382.87,
       "effect": "starfield",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
         "out": "fade",
-        "duration": 0.8
+        "duration": 0.5
       },
       "params": {
-        "speed": 1.05,
-        "warp": 0.95,
+        "speed": 0.24,
+        "warp": 0.2,
         "turnRate": 0.95,
         "turnStrength": 0.4,
         "drift": 0.96,
@@ -5716,16 +5692,16 @@
     {
       "id": "New Section 128",
       "start": 375.694896,
-      "end": 385.694896,
+      "end": 382.87,
       "effect": "infinitycloud",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
         "out": "fade",
-        "duration": 0.8
+        "duration": 0.5
       },
       "params": {
-        "speed": 1.75
+        "speed": 0.24
       },
       "automation": [],
       "layers": [],
@@ -5734,13 +5710,13 @@
     {
       "id": "New Section 129",
       "start": 376.87362,
-      "end": 386.87362,
+      "end": 382.87,
       "effect": "particles",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
         "out": "fade",
-        "duration": 0.8
+        "duration": 0.5
       },
       "params": {
         "trail": 0.2,
@@ -5756,13 +5732,13 @@
     {
       "id": "New Section 130",
       "start": 377.802072,
-      "end": 387.802072,
+      "end": 382.87,
       "effect": "lens_wobbler",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
         "out": "fade",
-        "duration": 0.8
+        "duration": 0.5
       },
       "params": {
         "bufW": 220,
@@ -5793,21 +5769,21 @@
     {
       "id": "New Section 131",
       "start": 378.353809,
-      "end": 388.353809,
+      "end": 382.87,
       "effect": "roadDrive",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
         "out": "fade",
-        "duration": 0.8
+        "duration": 0.5
       },
       "params": {
-        "speed": 0.85,
+        "speed": 0.24,
         "roadWidth": 16.5,
         "laneDashLength": 2.8,
         "laneGap": 8.5,
         "fog": 0.31,
-        "glow": 0.7,
+        "glow": 0.1,
         "cameraBob": 1.45,
         "curveStrength": 4.5,
         "curveFrequency": 0.15,
@@ -5821,16 +5797,16 @@
     {
       "id": "New Section 132",
       "start": 379.383878,
-      "end": 389.383878,
+      "end": 382.87,
       "effect": "volumetric_clouds",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
         "out": "fade",
-        "duration": 0.8
+        "duration": 0.5
       },
       "params": {
-        "density": 0.38,
+        "density": 0.12,
         "layers": 4,
         "windSpeed": -0.8,
         "cloudScale": 0.65,
@@ -5845,6 +5821,21 @@
     }
   ],
   "textCues": [
+    {
+      "id": "this-hit-00542",
+      "start": "00:54.2",
+      "end": "00:54.32",
+      "text": "THIS",
+      "x": 0.5,
+      "y": 0.48,
+      "align": "center",
+      "size": 64,
+      "color": "#ff3b30",
+      "effects": {
+        "glitchIn": true,
+        "shadow": true
+      }
+    },
     {
       "id": "title-8bit",
       "start": "00:54.3",
@@ -6018,36 +6009,6 @@
       }
     },
     {
-      "id": "title-polygons",
-      "start": "02:43.7",
-      "end": "02:46.0",
-      "text": "🧊",
-      "x": 0.5,
-      "y": 0.2,
-      "align": "center",
-      "size": 34,
-      "color": "#ffd166",
-      "effects": {
-        "shadow": true,
-        "glitchIn": true
-      }
-    },
-    {
-      "id": "this-hit-00542",
-      "start": "00:54.2",
-      "end": "00:54.32",
-      "text": "THIS",
-      "x": 0.5,
-      "y": 0.48,
-      "align": "center",
-      "size": 64,
-      "color": "#ff3b30",
-      "effects": {
-        "glitchIn": true,
-        "shadow": true
-      }
-    },
-    {
       "id": "this-hit-02525",
       "start": "02:32.5",
       "end": "02:32.62",
@@ -6063,18 +6024,33 @@
       }
     },
     {
-      "id": "this-hit-04407",
-      "start": "04:40.73",
-      "end": "04:40.85",
-      "text": "THIS",
+      "id": "era-cue-early3d",
+      "start": "02:32.6",
+      "end": "02:35.2",
+      "text": "EARLY 3D DAWN",
       "x": 0.5,
-      "y": 0.5,
+      "y": 0.16,
       "align": "center",
-      "size": 68,
-      "color": "#ff3b30",
+      "size": 24,
+      "color": "#9ef0ff",
       "effects": {
-        "glitchIn": true,
-        "shadow": true
+        "shadow": true,
+        "scanlineMask": 0.1
+      }
+    },
+    {
+      "id": "title-polygons",
+      "start": "02:43.7",
+      "end": "02:46.0",
+      "text": "🧊",
+      "x": 0.5,
+      "y": 0.2,
+      "align": "center",
+      "size": 34,
+      "color": "#ffd166",
+      "effects": {
+        "shadow": true,
+        "glitchIn": true
       }
     },
     {
@@ -6137,6 +6113,51 @@
       "color": "#ffffff",
       "effects": {
         "glitchIn": true,
+        "shadow": true,
+        "scanlineMask": 0.08
+      }
+    },
+    {
+      "id": "era-cue-webgl",
+      "start": "04:32.2",
+      "end": "04:35.0",
+      "text": "WEBGL RISING",
+      "x": 0.5,
+      "y": 0.16,
+      "align": "center",
+      "size": 24,
+      "color": "#ffd166",
+      "effects": {
+        "shadow": true,
+        "scanlineMask": 0.1
+      }
+    },
+    {
+      "id": "this-hit-04407",
+      "start": "04:40.73",
+      "end": "04:40.85",
+      "text": "THIS",
+      "x": 0.5,
+      "y": 0.5,
+      "align": "center",
+      "size": 68,
+      "color": "#ff3b30",
+      "effects": {
+        "glitchIn": true,
+        "shadow": true
+      }
+    },
+    {
+      "id": "outro-cue",
+      "start": "06:14.0",
+      "end": "06:18.0",
+      "text": "RESPECT TO THE SCENE",
+      "x": 0.5,
+      "y": 0.86,
+      "align": "center",
+      "size": 18,
+      "color": "#b7c7d6",
+      "effects": {
         "shadow": true,
         "scanlineMask": 0.08
       }

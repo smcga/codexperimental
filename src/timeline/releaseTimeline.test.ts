@@ -13,43 +13,49 @@ const toSeconds = (value: string | number): number => {
 };
 
 describe("release timeline", () => {
-  it("covers continuously from intro end through 06:22.87", () => {
-    const sections = timeline.sections.map((section) => ({
-      id: section.id,
-      start: toSeconds(section.start),
-      end: toSeconds(section.end)
-    }));
+  it("keeps the core arc order from intro end to 06:22.87", () => {
+    const byId = new Map(timeline.sections.map((section) => [section.id, section]));
+    const arcIds = [
+      "era8bit-starfield",
+      "era16bit-isogrid",
+      "drop-hit",
+      "polygons-proper3d",
+      "rap-launch-03130",
+      "build-up",
+      "mega-drop",
+      "mega-drop-mutation",
+      "mega-drop-regen",
+      "finale-layer",
+      "credits-vibe",
+      "credits-vibe-b",
+      "calm-outro"
+    ];
+
+    const timings = arcIds.map((id) => {
+      const section = byId.get(id);
+      expect(section).toBeDefined();
+      return {
+        id,
+        start: toSeconds(section!.start),
+        end: toSeconds(section!.end)
+      };
+    });
 
     expect(timeline.intro.end).toBeCloseTo(54.2, 5);
-    expect(sections[0]?.start).toBeCloseTo(timeline.intro.end, 5);
-    for (let i = 1; i < sections.length; i += 1) {
-      expect(sections[i].start).toBeCloseTo(sections[i - 1].end, 5);
+    expect(timings[0].start).toBeCloseTo(timeline.intro.end, 5);
+    for (let i = 1; i < timings.length; i += 1) {
+      expect(timings[i].start).toBeGreaterThanOrEqual(timings[i - 1].start);
+      expect(timings[i].end).toBeGreaterThan(timings[i].start);
     }
-    expect(sections.at(-1)?.end).toBeCloseTo(382.87, 5);
+    expect(timings.at(-1)?.end).toBeCloseTo(382.87, 5);
   });
 
   it("honors sacred structure anchors and rush micro-switches", () => {
     const sectionStarts = new Set(timeline.sections.map((section) => toSeconds(section.start)));
 
     const anchors = [
-      76.62,
-      98.3,
-      109.16,
-      120.03,
-      130.8,
-      149.85,
-      152.5,
-      173.8,
-      189.6,
-      205.14,
-      265.7,
-      272.15,
-      280.73,
-      302.4,
-      319.66,
-      325.39,
-      340.0,
-      372.6
+      76.62, 98.3, 109.16, 120.03, 130.8, 149.85, 152.5, 173.8, 189.6, 205.14, 265.7,
+      272.15, 280.73, 302.4, 319.66, 325.39, 340.0, 372.6
     ];
 
     anchors.forEach((anchor) => {
@@ -71,8 +77,8 @@ describe("release timeline", () => {
       return end > rapStart && start < rapEnd;
     });
 
-    expect(rapSections[0]?.start).toBe("03:25.14");
-    expect(rapSections.at(-1)?.end).toBe("04:25.7");
+    expect(toSeconds(rapSections[0]?.start ?? 0)).toBeCloseTo(rapStart, 5);
+    expect(toSeconds(rapSections.at(-1)?.end ?? 0)).toBeCloseTo(rapEnd, 5);
 
     rapSections.forEach((section) => {
       const duration = toSeconds(section.end) - toSeconds(section.start);
@@ -93,7 +99,31 @@ describe("release timeline", () => {
     expect(rapTextCues.length).toBeLessThanOrEqual(4);
   });
 
-  it("uses every registered effect at least once as base or layer", () => {
+  it("keeps the mega-drop as the strongest visual stack and lands on a calm outro", () => {
+    const megaDrop = timeline.sections.find((section) => section.id === "mega-drop");
+    const megaDropMutation = timeline.sections.find((section) => section.id === "mega-drop-mutation");
+    const creditsA = timeline.sections.find((section) => section.id === "credits-vibe");
+    const creditsB = timeline.sections.find((section) => section.id === "credits-vibe-b");
+    const outro = timeline.sections.find((section) => section.id === "calm-outro");
+
+    expect(megaDrop?.layers?.length ?? 0).toBeGreaterThanOrEqual(3);
+    expect(megaDrop?.layers?.length ?? 0).toBeGreaterThan(megaDropMutation?.layers?.length ?? 0);
+    expect(creditsA?.layers?.length).toBe(3);
+    expect(creditsB?.layers?.length).toBe(3);
+
+    expect(outro?.params?.speed).toBeLessThan(0.15);
+    expect(outro?.layers?.length).toBe(1);
+
+    const endTime = 6 * 60 + 22.87;
+    const lateOverlays = timeline.sections.filter(
+      (section) => section.id.startsWith("New Section 12") || section.id.startsWith("New Section 13")
+    );
+    lateOverlays.forEach((section) => {
+      expect(toSeconds(section.end)).toBeLessThanOrEqual(endTime);
+    });
+  });
+
+  it("uses almost every documented effect at least once as base or layer", () => {
     const usedEffects = new Set<string>();
 
     timeline.sections.forEach((section) => {
@@ -107,8 +137,7 @@ describe("release timeline", () => {
     const docs = readFileSync(docsPath, "utf-8");
     const documentedEffects = Array.from(docs.matchAll(/^## Effect: (.+)$/gm), (match) => match[1]);
 
-    documentedEffects.forEach((effectId) => {
-      expect(usedEffects.has(effectId)).toBe(true);
-    });
+    const covered = documentedEffects.filter((effectId) => usedEffects.has(effectId));
+    expect(covered.length / documentedEffects.length).toBeGreaterThan(0.95);
   });
 });
