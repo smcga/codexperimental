@@ -111,6 +111,27 @@ export const computeSceneSeekTime = (sceneStart: number | string, audioOffset: n
   return Math.max(0, parseTimelineTimeValue(sceneStart) - audioOffset);
 };
 
+export const getScenePlayingAtTime = (
+  scenes: RawSectionConfig[],
+  demoTime: number
+): RawSectionConfig | null => {
+  if (!Number.isFinite(demoTime)) {
+    return null;
+  }
+  const sorted = [...scenes].sort((a, b) => parseTimelineTimeValue(a.start) - parseTimelineTimeValue(b.start));
+  for (let index = 0; index < sorted.length; index += 1) {
+    const scene = sorted[index];
+    const start = parseTimelineTimeValue(scene.start);
+    const fallbackEnd =
+      index < sorted.length - 1 ? parseTimelineTimeValue(sorted[index + 1].start) : Number.POSITIVE_INFINITY;
+    const end = scene.end !== undefined && scene.end !== null ? parseTimelineTimeValue(scene.end) : fallbackEnd;
+    if (demoTime >= start && demoTime < end) {
+      return scene;
+    }
+  }
+  return null;
+};
+
 export async function createEditorRoot(init: EditorInit): Promise<EditorController> {
   const state: EditorState = {
     timeline: null,
@@ -125,6 +146,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   let previewCanvas: HTMLCanvasElement | null = null;
   let previewContext: CanvasRenderingContext2D | null = null;
   let editorVisible = false;
+  let currentDemoTime = 0;
 
   const getEffectParamOptions = (effectName: string | null | undefined): string[] => {
     const config = getEffectDebugConfig(effectName ?? null);
@@ -331,6 +353,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         selectedScenePanel.innerHTML = `
           <div class="editor-selected-scene-label">Selected scene</div>
           <button type="button" class="editor-selected-scene-id" data-action="jump-selected">${selectedScene.id}</button>
+          <div class="editor-selected-scene-actions">
+            <button type="button" data-action="select-current">Select current</button>
+            <button type="button" data-action="select-loop-current">Select and loop current</button>
+          </div>
           <div class="editor-scene-meta">
             <span>${formatTime(parseTimelineTimeValue(selectedScene.start))}</span>
             <span>→</span>
@@ -341,6 +367,26 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           .querySelector<HTMLButtonElement>("[data-action='jump-selected']")
           ?.addEventListener("click", () => {
             init.seek(computeSceneSeekTime(selectedScene.start, init.getAudioOffset()));
+          });
+
+        selectedScenePanel
+          .querySelector<HTMLButtonElement>("[data-action='select-current']")
+          ?.addEventListener("click", () => {
+            const currentScene = getScenePlayingAtTime(state.timeline?.sections ?? [], currentDemoTime);
+            if (!currentScene) {
+              return;
+            }
+            selectScene(currentScene.id);
+          });
+
+        selectedScenePanel
+          .querySelector<HTMLButtonElement>("[data-action='select-loop-current']")
+          ?.addEventListener("click", () => {
+            const currentScene = getScenePlayingAtTime(state.timeline?.sections ?? [], currentDemoTime);
+            if (!currentScene) {
+              return;
+            }
+            setState({ selectedSceneId: currentScene.id, loopEnabled: true });
           });
       }
     }
@@ -1199,6 +1245,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     },
     isVisible: () => editorVisible,
     updatePlayback: (demoTime: number, playing: boolean) => {
+      currentDemoTime = demoTime;
       if (playbackLabel) {
         playbackLabel.textContent = formatTime(demoTime);
       }
