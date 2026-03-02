@@ -2281,6 +2281,3567 @@
       "automation": [],
       "layers": [],
       "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 1",
+      "start": 60.280726,
+      "end": 65,
+      "effect": "dotTunnel",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "ringCount": 92,
+        "dotsPerRing": 81,
+        "fov": 112,
+        "speed": 1.45,
+        "twist": -0.75,
+        "palette": 6,
+        "glow": 0.45,
+        "seed": 5519
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 2",
+      "start": 82.461587,
+      "end": 92,
+      "effect": "neon_alley",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "quality": 2,
+        "speed": 0.65,
+        "exposure": 1.65,
+        "hueShift": 0.7,
+        "seed": 4
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 3",
+      "start": 88.2,
+      "end": 92,
+      "effect": "kefrens_bars",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "barCount": 70,
+        "barWidth": 34,
+        "amp": 315,
+        "freq": 4.7,
+        "speed": -9.55,
+        "phaseOffset": -2.12,
+        "palette": "c64"
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 4",
+      "start": 104.259716,
+      "end": 106.27000000000001,
+      "effect": "sphere3d",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 0.9
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 5",
+      "start": 104.889558,
+      "end": 106.27000000000001,
+      "effect": "sphere3d",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 0.3
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 6",
+      "start": 105.458446,
+      "end": 106.27000000000001,
+      "effect": "explicitpixels",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "mode": "explicit",
+        "speed": 1.85,
+        "audioReact": 1.2
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 7",
+      "start": 128.727744,
+      "end": 130.8,
+      "effect": "flyover",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 1.8,
+        "horizon": 0.53,
+        "seaDetail": 2,
+        "waveSpeed": 0.35,
+        "waveIntensity": 1.3,
+        "islandCount": 8,
+        "islandSeed": 1,
+        "fog": 0.25,
+        "palette": "night",
+        "audioReactive": 0.05
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 8",
+      "start": 142.407199,
+      "end": 143.6,
+      "effect": "kefrens_bars",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "horizon": 0.39,
+        "sunRadius": 0.44,
+        "stripeHeight": 5,
+        "stripeGap": 11,
+        "seaSpeed": 1.65,
+        "starCount": 310,
+        "glow": 0.05,
+        "scanlines": 0.5,
+        "audioReactive": 0.75
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 10",
+      "start": 158.243996,
+      "end": 163.5,
+      "effect": "amiga_showcase",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "count": 104,
+        "restitution": 0.81,
+        "friction": 0.51,
+        "gravity": 2270,
+        "kickImpulse": 620,
+        "beatImpulse": 2140,
+        "kickRadius": 5,
+        "scatterAngleDeg": 96,
+        "scatterJitter": 0.39,
+        "kickUpBias": 0.21,
+        "kickTorque": 301,
+        "loosenDuration": 2.05,
+        "loosenFrictionMult": 0.83,
+        "loosenRestitutionAdd": 0.07,
+        "loosenPosCorrMult": 0.9,
+        "loosenExtraSlop": 6.8,
+        "maxLinVel": 4160,
+        "maxAngVel": 183,
+        "kickOriginY": 0.65,
+        "sepBiasDeg": 174,
+        "seed": 8608,
+        "trail": 0.67,
+        "shatter": 0.73,
+        "wreckingCue": 0.45
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 12",
+      "start": 160.565991,
+      "end": 163.5,
+      "effect": "amiga_showcase",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "audioReact": 0.2,
+        "barCount": 4,
+        "barSaturation": 0.85,
+        "barSpeed": 1.55,
+        "barWaveAmp": 105,
+        "barWaveFreq": 10.2,
+        "bobCount": 8,
+        "bobIntensity": 0.75,
+        "bobRadius": 128,
+        "bobTrail": 0.46,
+        "glenz": 0,
+        "twistAmp": 4.15,
+        "twistHueSpeed": 151,
+        "twistSlices": 72,
+        "twistSpeed": 3.25,
+        "twistWidth": 0.2,
+        "twistX": 0.56
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 13",
+      "start": 165,
+      "end": 169,
+      "effect": "glenz_vectors",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "model": "octa",
+        "instances": 2,
+        "camDist": 5.4,
+        "focal": 900,
+        "rotXSpeed": 0.3,
+        "rotYSpeed": 0.5,
+        "rotZSpeed": 1.25,
+        "baseHue": 155,
+        "hueSpeed": -89,
+        "sat": 62,
+        "lightness": 9,
+        "faceAlpha": 0.23,
+        "edge": 1,
+        "edgeAlpha": 0.06,
+        "lineWidth": 4.4,
+        "trailFade": 0.48,
+        "sortFaces": "none",
+        "audioReact": 0.6,
+        "beatKick": 0.45,
+        "seed": 723
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 14",
+      "start": 180.159728,
+      "end": 181.5,
+      "effect": "glenz_vectors",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "model": "icosa",
+        "instances": 4,
+        "camDist": 5.4,
+        "focal": 560,
+        "rotXSpeed": 2.2,
+        "rotYSpeed": 2.3,
+        "rotZSpeed": 0.15,
+        "baseHue": 10,
+        "hueSpeed": 95,
+        "sat": 85,
+        "lightness": 76,
+        "faceAlpha": 0.25,
+        "edge": 0,
+        "edgeAlpha": 0.66,
+        "lineWidth": 4.1,
+        "trailFade": 0.84,
+        "sortFaces": "backToFront",
+        "audioReact": 0.25,
+        "beatKick": 0.85,
+        "seed": 684
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 15",
+      "start": 185.538603,
+      "end": 189.6,
+      "effect": "volumetric_clouds",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "density": 0.38,
+        "layers": 8,
+        "windSpeed": -0.05,
+        "cloudScale": 1.8,
+        "detail": 0.75,
+        "sunlight": 0.65,
+        "haze": 0.26,
+        "audioReact": 0.35
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 16",
+      "start": 188.478829,
+      "end": 189.6,
+      "effect": "lens_wobbler",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "bufW": 348,
+        "bufH": 120,
+        "rotSpeed": 0.88,
+        "baseScale": 1.23,
+        "zoomAmp": 0.13,
+        "zoomSpeed": 1.05,
+        "scrollU": 118,
+        "scrollV": -73,
+        "lensRadius": 15,
+        "lensStrength": 1.15,
+        "invertRing": 0,
+        "wobble": 1,
+        "wobbleAmp": 8.5,
+        "wobbleFreq": 0.23,
+        "wobbleSpeed": 1.7,
+        "wobbleSlice": 1,
+        "audioReact": 0.4,
+        "beatKick": 0.95,
+        "seed": 134,
+        "lensPath": "lissajous"
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 17",
+      "start": 194.698874,
+      "end": 194.8,
+      "effect": "dotTunnel",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "ringCount": 75,
+        "dotsPerRing": 111,
+        "fov": 64,
+        "speed": 2.95,
+        "twist": 1.25,
+        "palette": 10,
+        "glow": 1.5,
+        "seed": 1271
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 18",
+      "start": 198.946835,
+      "end": 205.14,
+      "effect": "feedback",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "scale": 0.015,
+        "wobble": 0.035,
+        "rotation": 0.08,
+        "trail": 0.92,
+        "glow": 0.5
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 19",
+      "start": 200.235542,
+      "end": 205.14,
+      "effect": "fractal",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "iterations": 1350,
+        "trebleBoost": 50,
+        "speed": 0.55,
+        "scale": 0.33,
+        "alpha": 0.65
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 20",
+      "start": 201.617129,
+      "end": 205.14,
+      "effect": "fractal",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "iterations": 1350,
+        "trebleBoost": 400,
+        "speed": 2.8,
+        "scale": 0.36,
+        "alpha": 0.6
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 21",
+      "start": 202.484974,
+      "end": 205.14,
+      "effect": "ribbons",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "count": 10,
+        "speed": 0.3,
+        "amplitude": 0.23,
+        "audioBoost": 0.48,
+        "offset": 0.38,
+        "spacing": 0.23,
+        "thickness": 6
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 22",
+      "start": 203.216403,
+      "end": 205.14,
+      "effect": "sine_distorter",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "mode": "vertical",
+        "amp": 53,
+        "freq": 0.16,
+        "speed": 5.4,
+        "slice": 1,
+        "phase": 5.52,
+        "sourceScale": 2,
+        "edges": "wrap",
+        "source": "logo",
+        "logoText": "WAVE",
+        "audioReact": 0.3,
+        "beatBoost": 0.1,
+        "glow": 0.27
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 23",
+      "start": 203.875269,
+      "end": 205.14,
+      "effect": "amiga_showcase",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "audioReact": 0.1,
+        "barCount": 11,
+        "barSaturation": 0.95,
+        "barSpeed": 2.5,
+        "barWaveAmp": 92,
+        "barWaveFreq": 7.2,
+        "bobCount": 63,
+        "bobIntensity": 0.35,
+        "bobRadius": 110,
+        "bobTrail": 0.17,
+        "glenz": 0,
+        "twistAmp": 4.35,
+        "twistHueSpeed": 80,
+        "twistSlices": 25,
+        "twistSpeed": 3.25,
+        "twistWidth": 0.48,
+        "twistX": 0.42
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 24",
+      "start": 204.577673,
+      "end": 205.14,
+      "effect": "rotozoom",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 0.95
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 25",
+      "start": 205.352975,
+      "end": 210,
+      "effect": "lissajous",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "points": 90,
+        "speed": 0.4,
+        "a": 1.8,
+        "b": 2.7,
+        "radius": 0.39,
+        "lineWidth": 4.2
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 26",
+      "start": 207.051974,
+      "end": 210,
+      "effect": "portrait",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "zoom": 1.83,
+        "drift": 0.2
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 27",
+      "start": 207.922723,
+      "end": 210,
+      "effect": "gl_fractal_tunnel",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "quality": 2,
+        "warp": 0.8,
+        "hueShift": 0.71,
+        "exposure": 1.2,
+        "seed": 1
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 28",
+      "start": 208.982133,
+      "end": 210,
+      "effect": "raymarch_fractal",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "quality": 1.5,
+        "fractal": "mandelbulb",
+        "cameraRadius": 2.55,
+        "cameraHeight": 0.5,
+        "cameraOrbitSpeed": 0.9,
+        "paletteSpeed": 0.02,
+        "audioReact": 0.7,
+        "beatKick": 0.95,
+        "fractalScale": 2.15
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 29",
+      "start": 210.931103,
+      "end": 214.8,
+      "effect": "roadDrive",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 2.8,
+        "roadWidth": 4.5,
+        "laneDashLength": 2.2,
+        "laneGap": 3.1,
+        "fog": 0.43,
+        "glow": 0.35,
+        "cameraBob": 0.44,
+        "curveStrength": 5.35,
+        "curveFrequency": 0.185,
+        "bassReactive": 1.85,
+        "rmsReactive": 1.75
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 30",
+      "start": 212.079785,
+      "end": 214.8,
+      "effect": "finale",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "trail": 0.2,
+        "starSpeed": 2.55,
+        "starWarp": 1.95,
+        "starTurn": 1,
+        "particleCount": 109,
+        "particleForce": 3.2,
+        "bars": 51,
+        "barHeight": 0.2
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 31",
+      "start": 213.089853,
+      "end": 214.8,
+      "effect": "fractal_zoomer",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "setType": "julia",
+        "zoom": 0.45,
+        "centerX": 0.17,
+        "centerY": -1.52,
+        "iterations": 305,
+        "paletteSpeed": 1.94,
+        "audioReact": 0.95
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 32",
+      "start": 214.20029,
+      "end": 214.8,
+      "effect": "copper_gradient_splits",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "scanStep": 4,
+        "gradientRowStep": 34,
+        "barCount": 6,
+        "speed": 2.95,
+        "barWobble": 55,
+        "barHueStep": 70,
+        "hueWobble": 90,
+        "saturation": 0.45,
+        "lightnessBase": 0.5,
+        "lightnessPeak": 0.65,
+        "splits": 4,
+        "hamish": 0,
+        "hamishStrength": 0.05,
+        "paletteClamp": 0,
+        "paletteClampSteps": 45,
+        "audioReact": 1,
+        "beatKick": 1,
+        "regions": 0.84
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 33",
+      "start": 215.230217,
+      "end": 219.6,
+      "effect": "textured_cube",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "scale": 6,
+        "camDist": 6.9,
+        "focalMul": 0.85,
+        "rotXSpeed": 0.1,
+        "rotYSpeed": 1.05,
+        "rotZSpeed": 0.95,
+        "backfaceCull": 0,
+        "perspectiveCorrect": 1,
+        "edge": 0,
+        "edgeAlpha": 0.25,
+        "shadeStrength": 0.5,
+        "audioReact": 0.4,
+        "beatKick": 0.8,
+        "textureAnim": 0
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 34",
+      "start": 216.219967,
+      "end": 219.6,
+      "effect": "metaballs",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "bufW": 470,
+        "bufH": 230,
+        "count": 9,
+        "baseRadius": 37,
+        "radiusVar": 8,
+        "baseThreshold": 1.76,
+        "edgeSoftness": 0.07,
+        "normalZ": 350,
+        "ambient": 0.8,
+        "diffuse": 0.7,
+        "specStrength": 0.1,
+        "shininess": 2,
+        "rimStrength": 1,
+        "palette": "chrome",
+        "hueSpeed": 27,
+        "smoothing": 1,
+        "glow": 0.15,
+        "audioReact": 0.35,
+        "beatKick": 0.95,
+        "seed": 974
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 35",
+      "start": 217.389672,
+      "end": 219.6,
+      "effect": "rain",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "intensity": 0.65,
+        "wind": -0.15,
+        "speed": 1.55,
+        "streakLength": 2,
+        "splash": 0,
+        "hue": 113,
+        "storm": 0.2,
+        "turbulence": 0.7,
+        "mist": 0.5,
+        "seed": 977
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 36",
+      "start": 218.4694,
+      "end": 219.6,
+      "effect": "border_multiplex",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "hwSprites": 10,
+        "totalSprites": 69,
+        "bandHeight": 26,
+        "spriteSize": 18,
+        "speed": 199,
+        "rasterJitter": 5.5,
+        "borderMaskStrength": 0.45,
+        "audioReact": 0.05,
+        "seed": 98
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 37",
+      "start": 220.739151,
+      "end": 224.4,
+      "effect": "textmode_charset",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "cols": 65,
+        "rows": 108,
+        "glyphSet": 6,
+        "mode": 5,
+        "speed": 5.55,
+        "palette": 4,
+        "scanlines": 0.4,
+        "seed": 308
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 38",
+      "start": 221.95679,
+      "end": 224.4,
+      "effect": "metaballs",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "bufW": 390,
+        "bufH": 150,
+        "count": 12,
+        "baseRadius": 36,
+        "radiusVar": 24,
+        "baseThreshold": 1.2,
+        "edgeSoftness": 0.09,
+        "normalZ": 170,
+        "ambient": 0.15,
+        "diffuse": 1.65,
+        "specStrength": 1.45,
+        "shininess": 3,
+        "rimStrength": 1.3,
+        "palette": "chrome",
+        "hueSpeed": 4,
+        "smoothing": 0,
+        "glow": 0.55,
+        "audioReact": 0.85,
+        "beatKick": 0.45,
+        "seed": 215
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 39",
+      "start": 223.326767,
+      "end": 224.4,
+      "effect": "vga_fire",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "fireW": 131,
+        "fireH": 76,
+        "stepsPerFrame": 1,
+        "baseHeat": 203,
+        "sparkChance": 0.62,
+        "decay": 2,
+        "wind": 0.37,
+        "windWave": 1.67,
+        "turbulence": 1.54,
+        "gustOnBeat": 0.26,
+        "audioReact": 0.65,
+        "logoText": "FIRE",
+        "logoSize": 88,
+        "logoY": 0.98,
+        "scanlines": 0.31,
+        "glowStrength": 1.04
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 40",
+      "start": 224.50518,
+      "end": 229.2,
+      "effect": "raytrace_spheres",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "quality": 1,
+        "bufW": 0.67,
+        "bufH": 0.23,
+        "sphereCount": 4,
+        "cellSize": 3,
+        "adaptive": 0,
+        "refineThreshold": 142,
+        "refineGrow": 0,
+        "aa": 1,
+        "aaMode": "refinedOnly",
+        "outputSmoothing": 1,
+        "forceAA": 0,
+        "seed": 9611,
+        "fov": 84,
+        "audioReact": 0.65,
+        "beatKick": 0.9,
+        "maxDepth": 2,
+        "ambient": 0.09,
+        "diffuseStrength": 1.55,
+        "specStrength": 1.25,
+        "shininess": 17,
+        "floorReflect": 0.87,
+        "scanlines": 0
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 41",
+      "start": 225.567492,
+      "end": 229.2,
+      "effect": "lens_wobbler",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "bufW": 240,
+        "bufH": 238,
+        "rotSpeed": 1.14,
+        "baseScale": 1.5,
+        "zoomAmp": 0.06,
+        "zoomSpeed": 1,
+        "scrollU": 62,
+        "scrollV": -2,
+        "lensRadius": 86,
+        "lensStrength": 1.35,
+        "invertRing": 0,
+        "wobble": 0,
+        "wobbleAmp": 7,
+        "wobbleFreq": 0.14,
+        "wobbleSpeed": 6.4,
+        "wobbleSlice": 6,
+        "audioReact": 0.3,
+        "beatKick": 0.85,
+        "seed": 64,
+        "lensPath": "lissajous"
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 42",
+      "start": 226.905542,
+      "end": 229.2,
+      "effect": "plasma",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 0.75
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 43",
+      "start": 228.336093,
+      "end": 229.2,
+      "effect": "finale",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "trail": 0.8,
+        "starSpeed": 3.75,
+        "starWarp": 1.85,
+        "starTurn": 1.3,
+        "particleCount": 41,
+        "particleForce": 1.8,
+        "bars": 47,
+        "barHeight": 1
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 44",
+      "start": 229.735095,
+      "end": 234,
+      "effect": "volumetric_clouds",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "density": 0.92,
+        "layers": 7,
+        "windSpeed": -0.45,
+        "cloudScale": 1.7,
+        "detail": 0.25,
+        "sunlight": 0.15,
+        "haze": 0.79,
+        "audioReact": 0.4
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 45",
+      "start": 230.666796,
+      "end": 234,
+      "effect": "voxel_landscape",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "bufW": 160,
+        "bufH": 224,
+        "speed": 27,
+        "turnRate": 0.34,
+        "turnWobble": 0.03,
+        "camH": 68,
+        "heightBob": 6,
+        "beatBump": 2.5,
+        "fov": 0.92,
+        "horizon": 57,
+        "scale": 83,
+        "maxDist": 1120,
+        "stepBase": 4,
+        "stepGrow": 140,
+        "fogStrength": 0.9,
+        "audioReact": 0.6,
+        "beatKick": 0,
+        "scanlines": 1,
+        "seed": 3363
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 46",
+      "start": 231.696634,
+      "end": 234,
+      "effect": "tunnel",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 1.45
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 47",
+      "start": 232.645749,
+      "end": 234,
+      "effect": "fluid",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 0.4,
+        "dissipation": 0.972,
+        "splatCount": 3,
+        "splatSize": 2,
+        "turbulence": 1.9,
+        "hueShift": 125,
+        "seed": 784
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 48",
+      "start": 233.876407,
+      "end": 234,
+      "effect": "amiga_showcase",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "audioReact": 0.85,
+        "barCount": 3,
+        "barSaturation": 0.35,
+        "barSpeed": 1.2,
+        "barWaveAmp": 15,
+        "barWaveFreq": 1.9,
+        "bobCount": 33,
+        "bobIntensity": 0.85,
+        "bobRadius": 21,
+        "bobTrail": 0.78,
+        "glenz": 1,
+        "twistAmp": 4.4,
+        "twistHueSpeed": 165,
+        "twistSlices": 71,
+        "twistSpeed": 1,
+        "twistWidth": 0.72,
+        "twistX": 0.24
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 49",
+      "start": 234.924208,
+      "end": 238.8,
+      "effect": "kefrens_bars",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "barCount": 71,
+        "barWidth": 130,
+        "amp": 213,
+        "freq": 16.4,
+        "speed": 6.5,
+        "phaseOffset": -3.15,
+        "palette": "rainbow"
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 50",
+      "start": 238.096634,
+      "end": 238.8,
+      "effect": "equalizer",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "bars": 10,
+        "barWidth": 0.9,
+        "height": 0.3,
+        "bassBoost": 47,
+        "alpha": 0.7
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 51",
+      "start": 240.885931,
+      "end": 243.6,
+      "effect": "glitch",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "sparkles": 130,
+        "sparkleSize": 4.5,
+        "sliceCount": 5,
+        "sliceBoost": 17,
+        "sliceHeight": 10,
+        "sliceVariance": 19,
+        "offset": 0.22,
+        "shake": 1.7,
+        "maxShake": 10.7
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 52",
+      "start": 242.276226,
+      "end": 243.6,
+      "effect": "neon",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "shapes": 1,
+        "radius": 65,
+        "radiusStep": 47,
+        "speed": 0.65,
+        "glow": 13,
+        "lineWidth": 2.4
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 53",
+      "start": 243.023543,
+      "end": 243.6,
+      "effect": "envmap_donut",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "bufW": 168,
+        "bufH": 94,
+        "segmentsU": 43,
+        "segmentsV": 82,
+        "R": 0.8,
+        "r": 0.4,
+        "camDist": 4.8,
+        "focalMul": 1,
+        "rotXSpeed": 1.1,
+        "rotYSpeed": 0.8,
+        "rotZSpeed": 0.15,
+        "fresnelStrength": 0.5,
+        "specStrength": 0.55,
+        "shininess": 11,
+        "chromeDesat": 0.03,
+        "backfaceCull": 1,
+        "scanlines": 0,
+        "edge": 0,
+        "audioReact": 0.05,
+        "beatKick": 0.4,
+        "seed": 13
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 54",
+      "start": 244.503815,
+      "end": 248.4,
+      "effect": "vga_fire",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "fireW": 83,
+        "fireH": 253,
+        "stepsPerFrame": 3,
+        "baseHeat": 254,
+        "sparkChance": 0.05,
+        "decay": 3,
+        "wind": 0.28,
+        "windWave": 0.13,
+        "turbulence": 1.37,
+        "gustOnBeat": 0.9,
+        "audioReact": 0.3,
+        "logoText": "FIRE",
+        "logoSize": 105,
+        "logoY": 0.14,
+        "scanlines": 0.48,
+        "glowStrength": 0.62
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 55",
+      "start": 245.921546,
+      "end": 248.4,
+      "effect": "treegrowth",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 0.56,
+        "levels": 9,
+        "trunkHeight": 0.38,
+        "branchScale": 0.75,
+        "branchAngle": 40,
+        "trunkWidth": 21,
+        "sway": 0.06,
+        "leafSize": 4.5,
+        "jitter": 0.19,
+        "seed": 2.4,
+        "growth": 0.4
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 56",
+      "start": 246.861954,
+      "end": 248.4,
+      "effect": "envmap_donut",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "bufW": 304,
+        "bufH": 170,
+        "segmentsU": 42,
+        "segmentsV": 41,
+        "R": 1.65,
+        "r": 0.7,
+        "camDist": 4.1,
+        "focalMul": 1.65,
+        "rotXSpeed": 0.75,
+        "rotYSpeed": 1.1,
+        "rotZSpeed": 1.75,
+        "fresnelStrength": 1.35,
+        "specStrength": 0.25,
+        "shininess": 49,
+        "chromeDesat": 0.97,
+        "backfaceCull": 1,
+        "scanlines": 1,
+        "edge": 0,
+        "audioReact": 0.7,
+        "beatKick": 0.4,
+        "seed": 50
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 57",
+      "start": 248.162272,
+      "end": 248.4,
+      "effect": "greets_wall",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "layout": "grid",
+        "transitionStyle": "pop",
+        "cycleSeconds": 1.1,
+        "columns": 5,
+        "padding": 0.02,
+        "highlightPulse": 0.7,
+        "beatPulseDecay": 1.8,
+        "audioReact": 0.5,
+        "title": "GREETS",
+        "names": "Fairlight|TRSI|Spaceballs|CNCD|Mercury|TBL"
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 58",
+      "start": 249.660102,
+      "end": 253.2,
+      "effect": "amiga_showcase",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "audioReact": 0.85,
+        "barCount": 1,
+        "barSaturation": 0.2,
+        "barSpeed": 1.7,
+        "barWaveAmp": 59,
+        "barWaveFreq": 2.6,
+        "bobCount": 6,
+        "bobIntensity": 0.75,
+        "bobRadius": 160,
+        "bobTrail": 0.31,
+        "glenz": 0,
+        "twistAmp": 4.3,
+        "twistHueSpeed": 105,
+        "twistSlices": 26,
+        "twistSpeed": 2.9,
+        "twistWidth": 0.49,
+        "twistX": 0.21
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 59",
+      "start": 250.709053,
+      "end": 253.2,
+      "effect": "vector3d_balls",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "model": "sphere",
+        "pointCount": 1032,
+        "wireframe": 1,
+        "roundDots": 1,
+        "baseDotSize": 2.6,
+        "dotDepthScale": 1.4,
+        "lineWidth": 5.6,
+        "camDist": 4.65,
+        "rotXSpeed": 2,
+        "rotYSpeed": 1.9,
+        "rotZSpeed": 0.55,
+        "trail": 0.21,
+        "stripeFreq": 1.6,
+        "stripeSpeed": 1.95,
+        "stripeStrength": 0.15,
+        "palette": "rainbow",
+        "audioReact": 0.65,
+        "beatKick": 0.35,
+        "seed": 2275
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 60",
+      "start": 251.628161,
+      "end": 253.2,
+      "effect": "glenz_vectors",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "model": "icosa",
+        "instances": 2,
+        "camDist": 4.9,
+        "focal": 440,
+        "rotXSpeed": 1.6,
+        "rotYSpeed": 0.05,
+        "rotZSpeed": 0,
+        "baseHue": 80,
+        "hueSpeed": 31,
+        "sat": 19,
+        "lightness": 69,
+        "faceAlpha": 0.28,
+        "edge": 1,
+        "edgeAlpha": 0.09,
+        "lineWidth": 2.4,
+        "trailFade": 0.68,
+        "sortFaces": "backToFront",
+        "audioReact": 0.25,
+        "beatKick": 0.45,
+        "seed": 907
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 61",
+      "start": 252.655644,
+      "end": 253.2,
+      "effect": "textured_cube",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "scale": 4,
+        "camDist": 4.4,
+        "focalMul": 1,
+        "rotXSpeed": 0.3,
+        "rotYSpeed": 1.85,
+        "rotZSpeed": 0.4,
+        "backfaceCull": 0,
+        "perspectiveCorrect": 0,
+        "edge": 0,
+        "edgeAlpha": 0.45,
+        "shadeStrength": 1.15,
+        "audioReact": 0.05,
+        "beatKick": 0.05,
+        "textureAnim": 1
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 62",
+      "start": 253.967443,
+      "end": 258,
+      "effect": "flyover",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 1.65,
+        "horizon": 0.56,
+        "seaDetail": 1.4,
+        "waveSpeed": 1.05,
+        "waveIntensity": 0.85,
+        "islandCount": 7,
+        "islandSeed": 1,
+        "fog": 0.15,
+        "palette": "night",
+        "audioReactive": 0.9
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 63",
+      "start": 255.195198,
+      "end": 258,
+      "effect": "neon_alley",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "quality": 1,
+        "speed": 1.3,
+        "exposure": 1.2,
+        "hueShift": 0.11,
+        "seed": 23
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 64",
+      "start": 256.294516,
+      "end": 258,
+      "effect": "finale",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "trail": 0.15,
+        "starSpeed": 2.75,
+        "starWarp": 1.1,
+        "starTurn": 0.4,
+        "particleCount": 25,
+        "particleForce": 5.7,
+        "bars": 35,
+        "barHeight": 0.65
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 65",
+      "start": 257.54549,
+      "end": 258,
+      "effect": "boids_simulation",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "count": 117,
+        "speed": 1.45,
+        "cohesion": 0.23,
+        "alignment": 0.75,
+        "separation": 0.19,
+        "neighborRadius": 146,
+        "separationRadius": 20,
+        "trail": 0.02,
+        "size": 1.7,
+        "seed": 775
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 66",
+      "start": 259.274678,
+      "end": 262,
+      "effect": "textmode_charset",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "cols": 31,
+        "rows": 36,
+        "glyphSet": 8,
+        "mode": 7,
+        "speed": 5.4,
+        "palette": 7,
+        "scanlines": 0.8,
+        "seed": 783
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 67",
+      "start": 260.76656,
+      "end": 262,
+      "effect": "treegrowth",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 0.96,
+        "levels": 7,
+        "trunkHeight": 0.4,
+        "branchScale": 0.79,
+        "branchAngle": 17,
+        "trunkWidth": 10,
+        "sway": 0.13,
+        "leafSize": 0.5,
+        "jitter": 0.37,
+        "seed": 5.7,
+        "growth": 0.12
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 68",
+      "start": 261.875313,
+      "end": 262,
+      "effect": "effect_evolution",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "density": 1.55,
+        "motion": 0.6,
+        "warp": 0.5,
+        "trail": 0.6,
+        "seed": 4308
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 69",
+      "start": 263.436855,
+      "end": 265.7,
+      "effect": "rain",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "intensity": 0.65,
+        "wind": 0.45,
+        "speed": 0.7,
+        "streakLength": 0.75,
+        "splash": 0,
+        "hue": 71,
+        "storm": 0,
+        "turbulence": 0.7,
+        "mist": 0.4,
+        "seed": 355
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 70",
+      "start": 264.908218,
+      "end": 265.7,
+      "effect": "lissajous",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "points": 480,
+        "speed": 2.6,
+        "a": 5.8,
+        "b": 3.6,
+        "radius": 0.12,
+        "lineWidth": 5.2
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 71",
+      "start": 266.176589,
+      "end": 272.15,
+      "effect": "wireframeRide",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 0.65,
+        "gridWidth": 121,
+        "gridDepth": 191,
+        "gridResX": 267,
+        "gridResZ": 71,
+        "amplitude": 16.1,
+        "noiseFreq": 0.07,
+        "cameraHeight": 4.5,
+        "fov": 83,
+        "fog": 0.43,
+        "neon": 0.75,
+        "bassReactive": 0.25,
+        "rmsReactive": 0.4,
+        "sun": 0
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 72",
+      "start": 283.989195,
+      "end": 302.4,
+      "effect": "textmode_charset",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "cols": 57,
+        "rows": 83,
+        "glyphSet": 5,
+        "mode": 0,
+        "speed": 2.2,
+        "palette": 6,
+        "scanlines": 0.4,
+        "seed": 460
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 73",
+      "start": 285.227424,
+      "end": 302.4,
+      "effect": "volumetric_clouds",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "density": 0.4,
+        "layers": 6,
+        "windSpeed": 1.95,
+        "cloudScale": 0.5,
+        "detail": 0.1,
+        "sunlight": 0.45,
+        "haze": 0.77,
+        "audioReact": 0.2
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 74",
+      "start": 286.018039,
+      "end": 302.4,
+      "effect": "tunnel",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 0.9
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 75",
+      "start": 287.004887,
+      "end": 302.4,
+      "effect": "particles",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "trail": 0.5,
+        "burst": 59,
+        "burstAudio": 19,
+        "force": 3.7,
+        "forceAudio": 5
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 76",
+      "start": 287.972248,
+      "end": 302.4,
+      "effect": "tunnel",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 1.4
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 77",
+      "start": 288.863314,
+      "end": 302.4,
+      "effect": "textured_cube",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "scale": 4,
+        "camDist": 7,
+        "focalMul": 0.85,
+        "rotXSpeed": 1.75,
+        "rotYSpeed": 0.15,
+        "rotZSpeed": 0.6,
+        "backfaceCull": 0,
+        "perspectiveCorrect": 0,
+        "edge": 0,
+        "edgeAlpha": 0.15,
+        "shadeStrength": 1.2,
+        "audioReact": 0.4,
+        "beatKick": 0.5,
+        "textureAnim": 0
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 78",
+      "start": 289.773287,
+      "end": 302.4,
+      "effect": "effect_evolution",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "density": 1.55,
+        "motion": 0.35,
+        "warp": 0.15,
+        "trail": 0.06,
+        "seed": 923
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 79",
+      "start": 290.66145,
+      "end": 302.4,
+      "effect": "sphere3d",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 1.45
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 80",
+      "start": 291.44814,
+      "end": 302.4,
+      "effect": "glenz_vectors",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "model": "cube",
+        "instances": 5,
+        "camDist": 4.4,
+        "focal": 910,
+        "rotXSpeed": 1.75,
+        "rotYSpeed": 0.3,
+        "rotZSpeed": 0.8,
+        "baseHue": 245,
+        "hueSpeed": 11,
+        "sat": 64,
+        "lightness": 8,
+        "faceAlpha": 0.32,
+        "edge": 0,
+        "edgeAlpha": 0.88,
+        "lineWidth": 2.3,
+        "trailFade": 0.36,
+        "sortFaces": "backToFront",
+        "audioReact": 0.6,
+        "beatKick": 0.8,
+        "seed": 806
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 81",
+      "start": 292.468924,
+      "end": 302.4,
+      "effect": "voxel_landscape",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "bufW": 496,
+        "bufH": 344,
+        "speed": 142,
+        "turnRate": 0.55,
+        "turnWobble": 0.43,
+        "camH": 171,
+        "heightBob": 17,
+        "beatBump": 29.5,
+        "fov": 1.42,
+        "horizon": 52,
+        "scale": 106,
+        "maxDist": 470,
+        "stepBase": 4,
+        "stepGrow": 130,
+        "fogStrength": 0.25,
+        "audioReact": 0.05,
+        "beatKick": 0.3,
+        "scanlines": 1,
+        "seed": 2054
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 82",
+      "start": 293.409332,
+      "end": 302.4,
+      "effect": "fluid",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 0.7,
+        "dissipation": 0.929,
+        "splatCount": 6,
+        "splatSize": 2,
+        "turbulence": 1.8,
+        "hueShift": 180,
+        "seed": 627
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 83",
+      "start": 294.288788,
+      "end": 302.4,
+      "effect": "rain",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "intensity": 0.95,
+        "wind": 0,
+        "speed": 1.55,
+        "streakLength": 0.45,
+        "splash": 1,
+        "hue": 90,
+        "storm": 0.3,
+        "turbulence": 0.7,
+        "mist": 0.6,
+        "seed": 255
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 84",
+      "start": 295.428628,
+      "end": 302.4,
+      "effect": "vga_fire",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "fireW": 354,
+        "fireH": 186,
+        "stepsPerFrame": 2,
+        "baseHeat": 245,
+        "sparkChance": 0.63,
+        "decay": 3,
+        "wind": -0.28,
+        "windWave": 1.85,
+        "turbulence": 0.02,
+        "gustOnBeat": 0.62,
+        "audioReact": 1,
+        "logoText": "SMCGA",
+        "logoSize": 130,
+        "logoY": 0.93,
+        "scanlines": 0.27,
+        "glowStrength": 0.78
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 85",
+      "start": 296.397566,
+      "end": 302.4,
+      "effect": "gl_fractal_tunnel",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "quality": 3,
+        "warp": 0.55,
+        "hueShift": 0.03,
+        "exposure": 0.75,
+        "seed": 1
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 86",
+      "start": 297.506319,
+      "end": 302.4,
+      "effect": "fractal_zoomer",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "setType": "burningShip",
+        "zoom": 1.45,
+        "centerX": -1.61,
+        "centerY": -0.47,
+        "iterations": 42,
+        "paletteSpeed": 0.53,
+        "audioReact": 0.05
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 87",
+      "start": 298.456912,
+      "end": 302.4,
+      "effect": "shadebobs_bobs",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "mode": "hybrid",
+        "shadeCount": 72,
+        "bobCount": 93,
+        "shadeScale": 2,
+        "blobRadius": 96,
+        "trailFade": 0.01,
+        "blend": "screen",
+        "hueSpeed": 9,
+        "steer": 9,
+        "maxSpeed": 365,
+        "spriteSize": 23,
+        "boingCheckers": 0,
+        "bobAlpha": 0.47,
+        "fastBlob": 0,
+        "audioReact": 0.85,
+        "beatPulseStrength": 0.5,
+        "dirtyRects": 0,
+        "seed": 19.5
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 88",
+      "start": 299.606283,
+      "end": 302.4,
+      "effect": "wireframeRide",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 1.15,
+        "gridWidth": 35,
+        "gridDepth": 138,
+        "gridResX": 102,
+        "gridResZ": 69,
+        "amplitude": 10.7,
+        "noiseFreq": 0.07,
+        "cameraHeight": 22,
+        "fov": 77,
+        "fog": 0.59,
+        "neon": 2.15,
+        "bassReactive": 0.85,
+        "rmsReactive": 0.05,
+        "sun": 0
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 89",
+      "start": 300.565836,
+      "end": 302.4,
+      "effect": "voxel_landscape",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "bufW": 336,
+        "bufH": 176,
+        "speed": 103,
+        "turnRate": 0.51,
+        "turnWobble": 0.13,
+        "camH": 150,
+        "heightBob": 3.5,
+        "beatBump": 25,
+        "fov": 1.26,
+        "horizon": 109,
+        "scale": 102,
+        "maxDist": 240,
+        "stepBase": 3,
+        "stepGrow": 135,
+        "fogStrength": 0.1,
+        "audioReact": 0.4,
+        "beatKick": 0.6,
+        "scanlines": 1,
+        "seed": 7766
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 90",
+      "start": 301.352988,
+      "end": 302.4,
+      "effect": "gl_impossible_corridor",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "quality": 2,
+        "warp": 1.1,
+        "hueShift": 0.82,
+        "exposure": 1.5,
+        "seed": 1298,
+        "speed": 1.4,
+        "internalScale": 0.55
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 91",
+      "start": 301.843716,
+      "end": 302.4,
+      "effect": "lens_wobbler",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "bufW": 452,
+        "bufH": 282,
+        "rotSpeed": 1.31,
+        "baseScale": 0.78,
+        "zoomAmp": 0.26,
+        "zoomSpeed": 1.3,
+        "scrollU": 110,
+        "scrollV": 74,
+        "lensRadius": 52,
+        "lensStrength": 0.35,
+        "invertRing": 1,
+        "wobble": 0,
+        "wobbleAmp": 4,
+        "wobbleFreq": 0.07,
+        "wobbleSpeed": 4.6,
+        "wobbleSlice": 2,
+        "audioReact": 0.8,
+        "beatKick": 0.3,
+        "seed": 969,
+        "lensPath": "circle"
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 92",
+      "start": 309.033195,
+      "end": 319.66,
+      "effect": "border_multiplex",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "hwSprites": 5,
+        "totalSprites": 100,
+        "bandHeight": 23,
+        "spriteSize": 22,
+        "speed": 168,
+        "rasterJitter": 1.9,
+        "borderMaskStrength": 0.4,
+        "audioReact": 0.1,
+        "seed": 653
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 93",
+      "start": 311.842726,
+      "end": 319.66,
+      "effect": "equalizer",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "bars": 9,
+        "barWidth": 0.35,
+        "height": 0.55,
+        "bassBoost": 11,
+        "alpha": 0.45
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 94",
+      "start": 316.45072,
+      "end": 319.66,
+      "effect": "voxel_landscape",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "bufW": 128,
+        "bufH": 312,
+        "speed": 92,
+        "turnRate": 0.28,
+        "turnWobble": 0.07,
+        "camH": 163,
+        "heightBob": 5.5,
+        "beatBump": 21.5,
+        "fov": 1.5,
+        "horizon": 80,
+        "scale": 107,
+        "maxDist": 860,
+        "stepBase": 6,
+        "stepGrow": 85,
+        "fogStrength": 0.8,
+        "audioReact": 0.4,
+        "beatKick": 0.1,
+        "scanlines": 0,
+        "seed": 2010
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 95",
+      "start": 320.180615,
+      "end": 325.39,
+      "effect": "moire_grid",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "spacing": 62,
+        "lineWidth": 1.2,
+        "speed": -2.9,
+        "warp": 96,
+        "intensity": 0.8,
+        "palette": "magenta",
+        "audioReact": 0.2
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 96",
+      "start": 323.901613,
+      "end": 325.39,
+      "effect": "gl_fractal_tunnel",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "quality": 1,
+        "warp": 0.95,
+        "hueShift": 0.11,
+        "exposure": 0.55,
+        "seed": 8
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 97",
+      "start": 324.470502,
+      "end": 325.39,
+      "effect": "tunnel",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 1.55
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 98",
+      "start": 325.248972,
+      "end": 325.39,
+      "effect": "raytrace_spheres",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "quality": 3,
+        "bufW": 0.41,
+        "bufH": 0.35,
+        "sphereCount": 3,
+        "cellSize": 5,
+        "adaptive": 1,
+        "refineThreshold": 138,
+        "refineGrow": 0,
+        "aa": 0,
+        "aaMode": "full",
+        "outputSmoothing": 1,
+        "forceAA": 1,
+        "seed": 903,
+        "fov": 86,
+        "audioReact": 0.95,
+        "beatKick": 0.3,
+        "maxDepth": 2,
+        "ambient": 0.35,
+        "diffuseStrength": 0.35,
+        "specStrength": 1.2,
+        "shininess": 17,
+        "floorReflect": 0.29,
+        "scanlines": 1
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 99",
+      "start": 326.5203,
+      "end": 340,
+      "effect": "raytrace_spheres",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "quality": 1,
+        "bufW": 0.74,
+        "bufH": 0.3,
+        "sphereCount": 8,
+        "cellSize": 5,
+        "adaptive": 1,
+        "refineThreshold": 161,
+        "refineGrow": 0,
+        "aa": 2,
+        "aaMode": "refinedOnly",
+        "outputSmoothing": 1,
+        "forceAA": 1,
+        "seed": 372,
+        "fov": 43,
+        "audioReact": 0.25,
+        "beatKick": 0.7,
+        "maxDepth": 3,
+        "ambient": 0.23,
+        "diffuseStrength": 1,
+        "specStrength": 1.45,
+        "shininess": 46,
+        "floorReflect": 0.35,
+        "scanlines": 1
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 100",
+      "start": 327.528378,
+      "end": 340,
+      "effect": "neon",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "shapes": 2,
+        "radius": 66,
+        "radiusStep": 60,
+        "speed": 0.65,
+        "glow": 18,
+        "lineWidth": 4.9
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 101",
+      "start": 328.137877,
+      "end": 340,
+      "effect": "glenz_vectors",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "model": "cube",
+        "instances": 3,
+        "camDist": 5.9,
+        "focal": 720,
+        "rotXSpeed": 1.2,
+        "rotYSpeed": 1.65,
+        "rotZSpeed": 1.25,
+        "baseHue": 0,
+        "hueSpeed": 69,
+        "sat": 5,
+        "lightness": 25,
+        "faceAlpha": 0.04,
+        "edge": 1,
+        "edgeAlpha": 0.62,
+        "lineWidth": 2.5,
+        "trailFade": 0.32,
+        "sortFaces": "none",
+        "audioReact": 0.55,
+        "beatKick": 0.25,
+        "seed": 276
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 102",
+      "start": 328.718375,
+      "end": 340,
+      "effect": "feedback",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "scale": 0.145,
+        "wobble": 0.05,
+        "rotation": 0.01,
+        "trail": 0.9,
+        "glow": 0.2
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 103",
+      "start": 329.876496,
+      "end": 340,
+      "effect": "vector3d_balls",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "model": "sphere",
+        "pointCount": 777,
+        "wireframe": 1,
+        "roundDots": 1,
+        "baseDotSize": 1.5,
+        "dotDepthScale": 1.2,
+        "lineWidth": 3.6,
+        "camDist": 5.85,
+        "rotXSpeed": 1.55,
+        "rotYSpeed": 1.65,
+        "rotZSpeed": 0.6,
+        "trail": 0.18,
+        "stripeFreq": 2,
+        "stripeSpeed": 0.05,
+        "stripeStrength": 0.9,
+        "palette": "spectrum",
+        "audioReact": 0.5,
+        "beatKick": 0.7,
+        "seed": 2363
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 104",
+      "start": 331.70713,
+      "end": 340,
+      "effect": "neon",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "shapes": 3,
+        "radius": 17,
+        "radiusStep": 22,
+        "speed": 0.65,
+        "glow": 37,
+        "lineWidth": 6
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 105",
+      "start": 332.682649,
+      "end": 340,
+      "effect": "lens_wobbler",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "bufW": 412,
+        "bufH": 138,
+        "rotSpeed": 1.64,
+        "baseScale": 1.52,
+        "zoomAmp": 0.14,
+        "zoomSpeed": 1.75,
+        "scrollU": 17,
+        "scrollV": 4,
+        "lensRadius": 49,
+        "lensStrength": 1.3,
+        "invertRing": 1,
+        "wobble": 1,
+        "wobbleAmp": 2,
+        "wobbleFreq": 0.29,
+        "wobbleSpeed": 2.1,
+        "wobbleSlice": 3,
+        "audioReact": 0.55,
+        "beatKick": 0.4,
+        "seed": 243,
+        "lensPath": "lissajous"
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 106",
+      "start": 333.422785,
+      "end": 340,
+      "effect": "roadDrive",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 0.6,
+        "roadWidth": 14.25,
+        "laneDashLength": 7.8,
+        "laneGap": 7.4,
+        "fog": 0.86,
+        "glow": 1.75,
+        "cameraBob": 0.32,
+        "curveStrength": 1.7,
+        "curveFrequency": 0.015,
+        "bassReactive": 1.8,
+        "rmsReactive": 2
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 107",
+      "start": 334.563162,
+      "end": 340,
+      "effect": "textured_cube",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "scale": 3,
+        "camDist": 5.6,
+        "focalMul": 0.85,
+        "rotXSpeed": 0,
+        "rotYSpeed": 0.5,
+        "rotZSpeed": 1.6,
+        "backfaceCull": 1,
+        "perspectiveCorrect": 1,
+        "edge": 1,
+        "edgeAlpha": 0.95,
+        "shadeStrength": 1.15,
+        "audioReact": 0.45,
+        "beatKick": 0.85,
+        "textureAnim": 1
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 108",
+      "start": 337.512399,
+      "end": 340,
+      "effect": "neon",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "shapes": 5,
+        "radius": 66,
+        "radiusStep": 5,
+        "speed": 1.25,
+        "glow": 14,
+        "lineWidth": 4
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 109",
+      "start": 338.71389,
+      "end": 340,
+      "effect": "roadDrive",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 2.8,
+        "roadWidth": 14.75,
+        "laneDashLength": 0.9,
+        "laneGap": 3.8,
+        "fog": 0.53,
+        "glow": 2.2,
+        "cameraBob": 0.29,
+        "curveStrength": 1.3,
+        "curveFrequency": 0.03,
+        "bassReactive": 1.8,
+        "rmsReactive": 1.05
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 110",
+      "start": 339.253428,
+      "end": 340,
+      "effect": "poly_morph_showcase",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "lat": 24,
+        "lon": 30,
+        "morphSpeed": 0.3,
+        "styleSpeed": 0.12,
+        "style": "glenz",
+        "camDist": 4,
+        "focalMul": 1.1,
+        "rotXSpeed": -1.55,
+        "rotYSpeed": 1.8,
+        "rotZSpeed": 1.8,
+        "sat": 44,
+        "baseHue": 285,
+        "hueSpeed": 75,
+        "solidAlpha": 0.65,
+        "glenzAlpha": 0.2,
+        "shadedAlpha": 0.15,
+        "edge": 1,
+        "edgeAlpha": 0.3,
+        "sortSolid": 0,
+        "sortShaded": 0,
+        "sortGlenz": 1,
+        "audioReact": 0.2,
+        "beatKick": 0.9,
+        "seed": 148
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 111",
+      "start": 339.764691,
+      "end": 340,
+      "effect": "raster_bars",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "barCount": 22,
+        "barThickness": 63,
+        "speed": 2.1,
+        "waveAmp": 60,
+        "waveFreq": 9.3,
+        "splitStrength": 0.7,
+        "scanlineStep": 2,
+        "audioReact": 0.9,
+        "beatThump": 0.7,
+        "border": 0,
+        "borderSize": 0.38,
+        "orientation": 1,
+        "palette": 7
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 112",
+      "start": 357.761492,
+      "end": 372.6,
+      "effect": "spherecloud",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 1.35
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 113",
+      "start": 358.498787,
+      "end": 372.6,
+      "effect": "textmode_charset",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "cols": 130,
+        "rows": 91,
+        "glyphSet": 5,
+        "mode": 4,
+        "speed": 2.45,
+        "palette": 7,
+        "scanlines": 0.9,
+        "seed": 921
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 114",
+      "start": 359.167745,
+      "end": 372.6,
+      "effect": "starfield",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 1.85,
+        "warp": 0.6,
+        "turnRate": 0.8,
+        "turnStrength": 0,
+        "drift": 0.58,
+        "sparkle": 0.55,
+        "colorShift": 0.45
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 115",
+      "start": 359.828841,
+      "end": 372.6,
+      "effect": "gl_fractal_tunnel",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "quality": 1,
+        "warp": 0.15,
+        "hueShift": 0.27,
+        "exposure": 0.55,
+        "seed": 2
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 116",
+      "start": 362.216213,
+      "end": 372.6,
+      "effect": "vga_fire",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "fireW": 392,
+        "fireH": 170,
+        "stepsPerFrame": 1,
+        "baseHeat": 87,
+        "sparkChance": 0.52,
+        "decay": 6,
+        "wind": 0.73,
+        "windWave": 1.83,
+        "turbulence": 2.69,
+        "gustOnBeat": 0.1,
+        "audioReact": 0.75,
+        "logoText": "FIRE",
+        "logoSize": 26,
+        "logoY": 0.85,
+        "scanlines": 0.9,
+        "glowStrength": 1.8
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 117",
+      "start": 364.9066,
+      "end": 372.6,
+      "effect": "rain",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "intensity": 0.5,
+        "wind": -0.75,
+        "speed": 0.75,
+        "streakLength": 2.1,
+        "splash": 1,
+        "hue": 136,
+        "storm": 0.85,
+        "turbulence": 0.65,
+        "mist": 0.1,
+        "seed": 851
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 118",
+      "start": 366.575689,
+      "end": 372.6,
+      "effect": "spherecloud",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 1.5
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 119",
+      "start": 367.446449,
+      "end": 372.6,
+      "effect": "fractal",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "iterations": 1100,
+        "trebleBoost": 150,
+        "speed": 1.65,
+        "scale": 0.11,
+        "alpha": 0.2
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 120",
+      "start": 368.337448,
+      "end": 372.6,
+      "effect": "torus_orbit_3d",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "ringCount": 9,
+        "pointsPerRing": 214,
+        "majorRadius": 0.57,
+        "minorRadius": 0.52,
+        "spinSpeed": -0.6,
+        "wobbleSpeed": -1.5,
+        "depth": 2.8,
+        "glow": 0.25,
+        "palette": "teal",
+        "audioReact": 0.65
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 121",
+      "start": 368.967591,
+      "end": 372.6,
+      "effect": "lissajous",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "points": 470,
+        "speed": 0.9,
+        "a": 1.4,
+        "b": 5.3,
+        "radius": 0.16,
+        "lineWidth": 3.4
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 122",
+      "start": 369.624158,
+      "end": 372.6,
+      "effect": "explicitpixels",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "mode": "procedural",
+        "speed": 2.8,
+        "audioReact": 0.05
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 123",
+      "start": 370.344228,
+      "end": 372.6,
+      "effect": "portrait",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "zoom": 1.46,
+        "drift": 0.2
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 124",
+      "start": 370.974063,
+      "end": 372.6,
+      "effect": "voxel_landscape",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "bufW": 272,
+        "bufH": 240,
+        "speed": 109,
+        "turnRate": 0.21,
+        "turnWobble": 0.14,
+        "camH": 163,
+        "heightBob": 6,
+        "beatBump": 3.5,
+        "fov": 1.12,
+        "horizon": 143,
+        "scale": 113,
+        "maxDist": 1100,
+        "stepBase": 6,
+        "stepGrow": 130,
+        "fogStrength": 0.9,
+        "audioReact": 0.9,
+        "beatKick": 0.9,
+        "scanlines": 1,
+        "seed": 485
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 125",
+      "start": 371.684907,
+      "end": 372.6,
+      "effect": "space_hangar",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "quality": 2,
+        "speed": 1.6,
+        "exposure": 1.15,
+        "hueShift": 0.5,
+        "seed": 11
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 126",
+      "start": 372.323875,
+      "end": 372.6,
+      "effect": "effect_evolution",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "density": 1.95,
+        "motion": 0.25,
+        "warp": 1,
+        "trail": 0.22,
+        "seed": 2923
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 127",
+      "start": 372.923267,
+      "end": 382.923267,
+      "effect": "starfield",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 1.05,
+        "warp": 0.95,
+        "turnRate": 0.95,
+        "turnStrength": 0.4,
+        "drift": 0.96,
+        "sparkle": 0.65,
+        "colorShift": 0.25
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 128",
+      "start": 375.694896,
+      "end": 385.694896,
+      "effect": "infinitycloud",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 1.75
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 129",
+      "start": 376.87362,
+      "end": 386.87362,
+      "effect": "particles",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "trail": 0.2,
+        "burst": 7,
+        "burstAudio": 5,
+        "force": 2.7,
+        "forceAudio": 2.8
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 130",
+      "start": 377.802072,
+      "end": 387.802072,
+      "effect": "lens_wobbler",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "bufW": 220,
+        "bufH": 240,
+        "rotSpeed": 0.27,
+        "baseScale": 0.93,
+        "zoomAmp": 0.48,
+        "zoomSpeed": 1.95,
+        "scrollU": -1,
+        "scrollV": 12,
+        "lensRadius": 53,
+        "lensStrength": 0.5,
+        "invertRing": 0,
+        "wobble": 0,
+        "wobbleAmp": 15,
+        "wobbleFreq": 0.02,
+        "wobbleSpeed": 7.5,
+        "wobbleSlice": 6,
+        "audioReact": 0.85,
+        "beatKick": 0.1,
+        "seed": 758,
+        "lensPath": "circle"
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 131",
+      "start": 378.353809,
+      "end": 388.353809,
+      "effect": "roadDrive",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "speed": 0.85,
+        "roadWidth": 16.5,
+        "laneDashLength": 2.8,
+        "laneGap": 8.5,
+        "fog": 0.31,
+        "glow": 0.7,
+        "cameraBob": 1.45,
+        "curveStrength": 4.5,
+        "curveFrequency": 0.15,
+        "bassReactive": 1.5,
+        "rmsReactive": 0.6
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "New Section 132",
+      "start": 379.383878,
+      "end": 389.383878,
+      "effect": "volumetric_clouds",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "density": 0.38,
+        "layers": 4,
+        "windSpeed": -0.8,
+        "cloudScale": 0.65,
+        "detail": 0.4,
+        "sunlight": 0.95,
+        "haze": 0.14,
+        "audioReact": 0.8
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
     }
   ],
   "textCues": [
