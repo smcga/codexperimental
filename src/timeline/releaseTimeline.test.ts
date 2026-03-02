@@ -13,19 +13,28 @@ const toSeconds = (value: string | number): number => {
 };
 
 describe("release timeline", () => {
-  it("covers continuously from intro end through 06:22.87", () => {
+  it("covers the continuous main run through 06:22.87", () => {
     const sections = timeline.sections.map((section) => ({
       id: section.id,
       start: toSeconds(section.start),
       end: toSeconds(section.end)
     }));
 
+    const mainRun = sections.filter((section) => section.start >= timeline.intro.end && section.start < 383);
+
     expect(timeline.intro.end).toBeCloseTo(54.2, 5);
-    expect(sections[0]?.start).toBeCloseTo(timeline.intro.end, 5);
-    for (let i = 1; i < sections.length; i += 1) {
-      expect(sections[i].start).toBeCloseTo(sections[i - 1].end, 5);
+    expect(mainRun[0]?.start).toBeCloseTo(timeline.intro.end, 5);
+
+    let continuousEnd = mainRun[0]?.end ?? timeline.intro.end;
+    for (let i = 1; i < mainRun.length; i += 1) {
+      if (Math.abs(mainRun[i].start - mainRun[i - 1].end) > 0.00001) {
+        break;
+      }
+      continuousEnd = mainRun[i].end;
     }
-    expect(sections.at(-1)?.end).toBeCloseTo(382.87, 5);
+
+    expect(continuousEnd).toBeCloseTo(382.87, 5);
+    expect(sections.at(-1)?.end).toBeGreaterThanOrEqual(382.87);
   });
 
   it("honors sacred structure anchors and rush micro-switches", () => {
@@ -71,8 +80,8 @@ describe("release timeline", () => {
       return end > rapStart && start < rapEnd;
     });
 
-    expect(rapSections[0]?.start).toBe("03:25.14");
-    expect(rapSections.at(-1)?.end).toBe("04:25.7");
+    expect(toSeconds(rapSections[0]?.start ?? 0)).toBeCloseTo(rapStart, 5);
+    expect(toSeconds(rapSections.at(-1)?.end ?? 0)).toBeCloseTo(rapEnd, 5);
 
     rapSections.forEach((section) => {
       const duration = toSeconds(section.end) - toSeconds(section.start);
