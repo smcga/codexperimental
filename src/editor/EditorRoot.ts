@@ -107,6 +107,10 @@ export type EditorController = {
   getLoopState: () => { enabled: boolean; start: number; end: number } | null;
 };
 
+export const computeSceneSeekTime = (sceneStart: number | string, audioOffset: number): number => {
+  return Math.max(0, parseTimelineTimeValue(sceneStart) - audioOffset);
+};
+
 export async function createEditorRoot(init: EditorInit): Promise<EditorController> {
   const state: EditorState = {
     timeline: null,
@@ -249,6 +253,8 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     const inspectorScrollState = previousInspector
       ? { sceneId: previousInspector.dataset.sceneId ?? null, scrollTop: previousInspector.scrollTop }
       : null;
+    const previousSceneList = init.container.querySelector<HTMLDivElement>(".editor-scene-list");
+    const sceneListScrollTop = previousSceneList?.scrollTop ?? 0;
 
     init.container.innerHTML = `
       <div class="editor-header">
@@ -263,6 +269,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       <div class="editor-body">
         <section class="editor-column editor-scenes">
           <div class="editor-section-title">Scenes</div>
+          <div class="editor-selected-scene" data-region="selected-scene"></div>
           <div class="editor-scene-list" data-region="scene-list"></div>
           <button type="button" class="editor-add" data-action="add-scene">+ Scene</button>
         </section>
@@ -302,6 +309,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     if (nextInspector && inspectorScrollState && inspectorScrollState.sceneId === state.selectedSceneId) {
       nextInspector.scrollTop = inspectorScrollState.scrollTop;
     }
+    const nextSceneList = init.container.querySelector<HTMLDivElement>(".editor-scene-list");
+    if (nextSceneList) {
+      nextSceneList.scrollTop = sceneListScrollTop;
+    }
   };
 
   const renderSceneList = (): void => {
@@ -309,8 +320,30 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     if (!list || !state.timeline) {
       return;
     }
+    const selectedScenePanel = init.container.querySelector<HTMLDivElement>("[data-region='selected-scene']");
     list.innerHTML = "";
     const sections = state.timeline.sections;
+    const selectedScene = state.selectedSceneId ? getSceneById(state.selectedSceneId) : null;
+    if (selectedScenePanel) {
+      if (!selectedScene) {
+        selectedScenePanel.innerHTML = `<div class="editor-selected-scene-empty">No scene selected.</div>`;
+      } else {
+        selectedScenePanel.innerHTML = `
+          <div class="editor-selected-scene-label">Selected scene</div>
+          <button type="button" class="editor-selected-scene-id" data-action="jump-selected">${selectedScene.id}</button>
+          <div class="editor-scene-meta">
+            <span>${formatTime(parseTimelineTimeValue(selectedScene.start))}</span>
+            <span>→</span>
+            <span>${formatTime(getSceneEnd(selectedScene))}</span>
+          </div>
+        `;
+        selectedScenePanel
+          .querySelector<HTMLButtonElement>("[data-action='jump-selected']")
+          ?.addEventListener("click", () => {
+            init.seek(computeSceneSeekTime(selectedScene.start, init.getAudioOffset()));
+          });
+      }
+    }
     let dragIndex: number | null = null;
 
     sections.forEach((scene, index) => {
@@ -353,7 +386,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       });
 
       const selectButton = item.querySelector<HTMLButtonElement>(".editor-scene-select");
-      selectButton?.addEventListener("click", () => selectScene(scene.id));
+      selectButton?.addEventListener("click", () => {
+        selectScene(scene.id);
+        init.seek(computeSceneSeekTime(scene.start, init.getAudioOffset()));
+      });
 
       const duplicateButton = item.querySelector<HTMLButtonElement>("[data-action='duplicate']");
       duplicateButton?.addEventListener("click", () => {
@@ -421,7 +457,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       if (scene.id === state.selectedSceneId) {
         block.classList.add("is-selected");
       }
-      block.addEventListener("click", () => selectScene(scene.id));
+      block.addEventListener("click", () => {
+        selectScene(scene.id);
+        init.seek(computeSceneSeekTime(scene.start, init.getAudioOffset()));
+      });
       blocks.appendChild(block);
     });
   };
@@ -1070,8 +1109,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       if (!scene) {
         return;
       }
-      const offset = init.getAudioOffset();
-      init.seek(Math.max(0, Number(scene.start) - offset));
+      init.seek(computeSceneSeekTime(scene.start, init.getAudioOffset()));
     });
 
     transport

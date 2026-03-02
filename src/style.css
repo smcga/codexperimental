@@ -328,6 +328,36 @@ body,
   padding-right: 0.25rem;
 }
 
+.editor-selected-scene {
+  border: 1px solid rgba(142, 249, 255, 0.35);
+  background: rgba(142, 249, 255, 0.08);
+  padding: 0.5rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.editor-selected-scene-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(215, 247, 255, 0.75);
+}
+
+.editor-selected-scene-id {
+  background: transparent;
+  border: none;
+  color: inherit;
+  text-align: left;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+
+.editor-selected-scene-empty {
+  font-size: 0.75rem;
+  color: rgba(215, 247, 255, 0.75);
+}
+
 .editor-scene-item {
   border: 1px solid rgba(255, 255, 255, 0.15);
   padding: 0.5rem;
