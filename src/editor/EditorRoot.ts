@@ -88,6 +88,8 @@ type EditorState = {
   fieldErrors: Record<string, string>;
 };
 
+type EditorParamValue = number | string | boolean | null;
+
 type EditorInit = {
   container: HTMLElement;
   effectNames: string[];
@@ -173,6 +175,26 @@ export const isWithinSceneStartThreshold = (
   }
   return scenes.some((scene) => Math.abs(parseTimelineTimeValue(scene.start) - playbackTime) <= thresholdSeconds);
 };
+
+export const parseEditorParamInputValue = (input: string): EditorParamValue => {
+  const trimmed = input.trim();
+  if (!trimmed) {
+    return 0;
+  }
+  const numeric = Number(trimmed);
+  if (Number.isFinite(numeric)) {
+    return numeric;
+  }
+  if (trimmed === "true" || trimmed === "false" || trimmed === "null") {
+    return JSON.parse(trimmed) as EditorParamValue;
+  }
+  if ((trimmed.startsWith('"') && trimmed.endsWith('"')) || (trimmed.startsWith("'") && trimmed.endsWith("'"))) {
+    return trimmed.slice(1, -1);
+  }
+  return trimmed;
+};
+
+export const isEditorParamToggleChecked = (value: unknown): boolean => value === true || value === 1;
 
 export async function createEditorRoot(init: EditorInit): Promise<EditorController> {
   const state: EditorState = {
@@ -764,7 +786,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
             ([key, value]) => `
             <div class="editor-param-row">
               <input type="text" data-param-key list="${listId}" value="${key}" />
-              <input type="text" data-param-value value="${String(value)}" />
+              <span data-param-value-slot><input type="text" data-param-value value="${String(value)}" /></span>
               <button type="button" data-action="remove-param">Remove</button>
             </div>`
           )
@@ -800,39 +822,48 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     `;
 
     const rows = container.querySelectorAll<HTMLDivElement>(".editor-param-row");
+    const config = getEffectDebugConfig(effectName);
+    const controlsByKey = new Map((config?.controls ?? []).map((control) => [control.key, control]));
 
-    const parseParamInputValue = (input: string): number => {
-      const trimmed = input.trim();
-      if (!trimmed) {
-        return 0;
+    rows.forEach((row) => {
+      const key = row.querySelector<HTMLInputElement>("[data-param-key]")?.value ?? "";
+      const control = controlsByKey.get(key);
+      const value = params[key] as unknown as EditorParamValue;
+      const valueSlot = row.querySelector<HTMLElement>("[data-param-value-slot]");
+      if (!valueSlot) {
+        return;
       }
-      const numeric = Number(trimmed);
-      if (Number.isFinite(numeric)) {
-        return numeric;
+      if (control?.type === "toggle") {
+        valueSlot.innerHTML = `<input type="checkbox" data-param-value-toggle ${isEditorParamToggleChecked(value) ? "checked" : ""} />`;
+        return;
       }
-      if (trimmed === "true" || trimmed === "false" || trimmed === "null") {
-        return JSON.parse(trimmed) as unknown as number;
+      if (control?.type === "select") {
+        valueSlot.innerHTML = `<select data-param-value-select>${(control.options ?? [])
+          .map((option) => `<option value="${option.value}" ${String(value) === option.value ? "selected" : ""}>${option.label}</option>`)
+          .join("")}</select>`;
+        return;
       }
-      if (
-        (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
-        (trimmed.startsWith("'") && trimmed.endsWith("'"))
-      ) {
-        return trimmed.slice(1, -1) as unknown as number;
-      }
-      return trimmed as unknown as number;
-    };
+      valueSlot.innerHTML = `<input type="text" data-param-value value="${String(value)}" />`;
+    });
 
     rows.forEach((row, index) => {
       const keyInput = row.querySelector<HTMLInputElement>("[data-param-key]");
-      const valueInput = row.querySelector<HTMLInputElement>("[data-param-value]");
       const removeButton = row.querySelector<HTMLButtonElement>("[data-action='remove-param']");
 
       const updateParams = (): void => {
         const entries = Array.from(container.querySelectorAll<HTMLDivElement>(".editor-param-row")).map((item) => {
-          const key = item.querySelector<HTMLInputElement>("[data-param-key]")?.value ?? "";
-          const value = parseParamInputValue(
-            item.querySelector<HTMLInputElement>("[data-param-value]")?.value ?? ""
-          );
+          const keyInput = item.querySelector<HTMLInputElement>("[data-param-key]");
+          const key = keyInput?.value ?? "";
+          const control = controlsByKey.get(key);
+          const toggleInput = item.querySelector<HTMLInputElement>("[data-param-value-toggle]");
+          const selectInput = item.querySelector<HTMLSelectElement>("[data-param-value-select]");
+          const textInput = item.querySelector<HTMLInputElement>("[data-param-value]");
+          const value: EditorParamValue =
+            control?.type === "toggle"
+              ? toggleInput?.checked ?? false
+              : control?.type === "select"
+                ? selectInput?.value ?? ""
+                : parseEditorParamInputValue(textInput?.value ?? "");
           return [key, value] as const;
         });
         const nextParams: Record<string, number> = {};
@@ -845,7 +876,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       };
 
       keyInput?.addEventListener("change", updateParams);
-      valueInput?.addEventListener("change", updateParams);
+      row.querySelectorAll<HTMLInputElement | HTMLSelectElement>("[data-param-value], [data-param-value-toggle], [data-param-value-select]").forEach((input) => {
+        input.addEventListener("change", updateParams);
+      });
       removeButton?.addEventListener("click", () => {
         const nextEntries = Object.entries(params).filter((_, paramIndex) => paramIndex !== index);
         onChange(Object.fromEntries(nextEntries));
@@ -859,7 +892,12 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       if (!key) {
         return;
       }
-      onChange({ ...params, [key]: 0 });
+      const control = controlsByKey.get(key);
+      const nextValue =
+        control?.type === "toggle"
+          ? Boolean(control.defaultValue)
+          : (control?.defaultValue ?? 0);
+      onChange({ ...params, [key]: nextValue as unknown as number });
     });
 
     const customParamSubmit = container.querySelector<HTMLButtonElement>("[data-action='add-param-custom-submit']");
