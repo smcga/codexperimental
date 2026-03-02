@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { getDebugEffectSelectorOptions, getDebugEffectSelectorValue, shouldShowEffectPanel } from "./debugPanel";
+import {
+  formatEffectSettingsForTimeline,
+  getDebugEffectSelectorOptions,
+  getDebugEffectSelectorValue,
+  shouldShowEffectPanel
+} from "./debugPanel";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -28,5 +33,15 @@ describe("debug effect selector helpers", () => {
     const keys = [...registrySource.matchAll(/^\s*([a-zA-Z0-9_]+)\s*:/gm)].map((match) => match[1]);
     const options = getDebugEffectSelectorOptions(keys);
     expect(options).toContain("greets_wall");
+  });
+
+  it("formats effect settings for timeline section JSON", () => {
+    expect(formatEffectSettingsForTimeline("starfield", { speed: 0.8, density: 120 })).toBe(`{
+  "effect": "starfield",
+  "params": {
+    "speed": 0.8,
+    "density": 120
+  }
+}`);
   });
 });
