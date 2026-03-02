@@ -8,7 +8,9 @@ import {
   getScenePlayingAtTime,
   isWithinSceneStartThreshold,
   isEditorParamToggleChecked,
-  parseEditorParamInputValue
+  parseEditorParamInputValue,
+  splitCueWords,
+  generateWordTextCues
 } from "./EditorRoot";
 
 describe("computeSceneSeekTime", () => {
@@ -172,5 +174,66 @@ describe("isEditorParamToggleChecked", () => {
     expect(isEditorParamToggleChecked(1)).toBe(true);
     expect(isEditorParamToggleChecked(false)).toBe(false);
     expect(isEditorParamToggleChecked(0)).toBe(false);
+  });
+});
+
+
+describe("splitCueWords", () => {
+  it("splits on whitespace and ignores empty tokens", () => {
+    expect(splitCueWords("  one\n two   three\t")).toEqual(["one", "two", "three"]);
+  });
+});
+
+describe("generateWordTextCues", () => {
+  it("creates one cue per word spread across the timing window", () => {
+    const cues = generateWordTextCues({
+      text: "alpha beta gamma",
+      start: 10,
+      end: 13,
+      font: "Inter",
+      color: "#ff00aa",
+      size: 56,
+      x: 0.2,
+      y: 0.4,
+      align: "left",
+      existingIds: new Set()
+    });
+
+    expect(cues).toHaveLength(3);
+    expect(cues.map((cue) => cue.text)).toEqual(["alpha", "beta", "gamma"]);
+    expect(cues.map((cue) => cue.start)).toEqual([10, 11, 12]);
+    expect(cues.map((cue) => cue.end)).toEqual([11, 12, 13]);
+    expect(cues[0]).toMatchObject({
+      color: "#ff00aa",
+      size: 56,
+      x: 0.2,
+      y: 0.4,
+      align: "left",
+      units: "normalized"
+    });
+    expect(cues[0].spans?.[0]).toMatchObject({
+      font: "Inter",
+      color: "#ff00aa",
+      size: 56,
+      text: "alpha"
+    });
+  });
+
+  it("ensures generated ids are unique against existing cues", () => {
+    const cues = generateWordTextCues({
+      text: "one two",
+      start: 0,
+      end: 1,
+      font: "inherit",
+      color: "#fff",
+      size: 42,
+      x: 0.5,
+      y: 0.7,
+      align: "center",
+      idPrefix: "scene",
+      existingIds: new Set(["scene-1", "scene-2"])
+    });
+
+    expect(cues.map((cue) => cue.id)).toEqual(["scene-1-2", "scene-2-2"]);
   });
 });
