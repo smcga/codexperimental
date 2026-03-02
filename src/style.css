@@ -496,6 +496,18 @@ body,
   text-align: right;
 }
 
+.editor-automation-list {
+  display: grid;
+  gap: 0.4rem;
+  overflow-x: auto;
+  padding-bottom: 0.2rem;
+}
+
+.editor-automation-header,
+.editor-automation-row {
+  min-width: 760px;
+}
+
 .editor-automation-row {
   grid-template-columns: repeat(5, minmax(0, 1fr)) minmax(140px, 1fr) auto auto auto;
 }
