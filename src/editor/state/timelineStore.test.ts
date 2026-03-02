@@ -97,6 +97,20 @@ describe("timelineStore", () => {
     expect(invalid.error).toBe("Invalid JSON.");
   });
 
+  it("parseAdvancedParamsJSON accepts string enum params", () => {
+    const previous = { speed: 1 };
+    const parsed = parseAdvancedParamsJSON('{"fractal":"mandelbox","audioReact":0.8}', previous);
+    expect(parsed.error).toBeNull();
+    expect(parsed.nextParams).toEqual({ fractal: "mandelbox", audioReact: 0.8 });
+  });
+
+  it("parseAdvancedParamsJSON rejects nested values", () => {
+    const previous = { speed: 1 };
+    const parsed = parseAdvancedParamsJSON('{"fractal":{"type":"mandelbox"}}', previous);
+    expect(parsed.nextParams).toEqual(previous);
+    expect(parsed.error).toBe("Param fractal must be a number, string, boolean, or null.");
+  });
+
   it("parseTimelineTimeValue handles numbers and mm:ss strings", () => {
     expect(parseTimelineTimeValue(12.5)).toBe(12.5);
     expect(parseTimelineTimeValue("01:02.5")).toBeCloseTo(62.5);

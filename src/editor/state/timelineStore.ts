@@ -171,10 +171,14 @@ export function parseAdvancedParamsJSON(
     }
     const nextParams: Record<string, number> = {};
     for (const [key, entry] of Object.entries(parsed)) {
-      if (typeof entry !== "number" || Number.isNaN(entry)) {
-        return { nextParams: previous, error: `Param ${key} must be a number.` };
+      const isNumber = typeof entry === "number" && !Number.isNaN(entry);
+      const isString = typeof entry === "string";
+      const isBoolean = typeof entry === "boolean";
+      const isNull = entry === null;
+      if (!isNumber && !isString && !isBoolean && !isNull) {
+        return { nextParams: previous, error: `Param ${key} must be a number, string, boolean, or null.` };
       }
-      nextParams[key] = entry;
+      nextParams[key] = entry as unknown as number;
     }
     return { nextParams, error: null };
   } catch (error) {
