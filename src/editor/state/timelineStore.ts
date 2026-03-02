@@ -19,6 +19,7 @@ export function createScene(options?: {
   start?: number;
   end?: number;
   effect?: string;
+  params?: Record<string, number | string>;
 }): RawSectionConfig {
   const start = options?.start ?? 0;
   const end = options?.end ?? start + DEFAULT_SCENE_DURATION;
@@ -33,7 +34,7 @@ export function createScene(options?: {
       out: "fade",
       duration: 0.8
     },
-    params: {},
+    params: options?.params ?? {},
     automation: [],
     layers: [],
     fitAlign: "fill"
