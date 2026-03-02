@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { computeSceneSeekTime, getScenePlayingAtTime } from "./EditorRoot";
+import { computeSceneSeekTime, getNewSceneTimeRange, getScenePlayingAtTime } from "./EditorRoot";
 
 describe("computeSceneSeekTime", () => {
   it("subtracts audio offset from the scene start", () => {
@@ -34,5 +34,29 @@ describe("getScenePlayingAtTime", () => {
   it("returns null when no scene matches", () => {
     expect(getScenePlayingAtTime(scenes, 30)).toBeNull();
     expect(getScenePlayingAtTime(scenes, Number.NaN)).toBeNull();
+  });
+});
+
+describe("getNewSceneTimeRange", () => {
+  const scenes = [
+    { id: "intro", start: 0, end: 10, effect: "starfield" },
+    { id: "middle", start: 10, end: 20, effect: "starfield" },
+    { id: "ending", start: 24, end: 28, effect: "starfield" }
+  ];
+
+  it("starts the new scene at the current playback position", () => {
+    expect(getNewSceneTimeRange(scenes, 12.5)).toEqual({ start: 12.5, end: 24 });
+  });
+
+  it("uses the next scene start as the new scene end", () => {
+    expect(getNewSceneTimeRange(scenes, 0)).toEqual({ start: 0, end: 10 });
+  });
+
+  it("falls back to a 10 second duration when there is no following scene", () => {
+    expect(getNewSceneTimeRange(scenes, 30)).toEqual({ start: 30, end: 40 });
+  });
+
+  it("clamps negative playback time to zero", () => {
+    expect(getNewSceneTimeRange(scenes, -3)).toEqual({ start: 0, end: 10 });
   });
 });

@@ -132,6 +132,22 @@ export const getScenePlayingAtTime = (
   return null;
 };
 
+export const getNewSceneTimeRange = (
+  scenes: RawSectionConfig[],
+  playbackTime: number
+): { start: number; end: number } => {
+  const start = Math.max(0, playbackTime);
+  const nextStart = scenes
+    .map((scene) => parseTimelineTimeValue(scene.start))
+    .filter((sceneStart) => sceneStart > start)
+    .sort((a, b) => a - b)[0];
+
+  return {
+    start,
+    end: nextStart ?? start + 10
+  };
+};
+
 export async function createEditorRoot(init: EditorInit): Promise<EditorController> {
   const state: EditorState = {
     timeline: null,
@@ -1240,15 +1256,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     });
 
     init.container.querySelector<HTMLButtonElement>("[data-action='add-scene']")?.addEventListener("click", () => {
-      const maxEnd =
-        state.timeline?.sections.reduce((max, section) => {
-          const start = parseTimelineTimeValue(section.start);
-          const end = section.end ?? start + 5;
-          return Math.max(max, parseTimelineTimeValue(end));
-        }, 0) ?? 0;
+      const { start, end } = getNewSceneTimeRange(state.timeline?.sections ?? [], currentDemoTime);
       const newScene = createScene({
-        start: maxEnd,
-        end: maxEnd + 10,
+        start,
+        end,
         effect: init.effectNames[0] ?? "starfield"
       });
       updateTimeline(
