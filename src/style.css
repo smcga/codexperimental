@@ -231,6 +231,30 @@ body,
   color: rgba(232, 247, 255, 0.75);
 }
 
+
+#debug-effect-copy {
+  width: 100%;
+  margin-bottom: 0.35rem;
+  background: rgba(255, 255, 255, 0.08);
+  color: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.25rem 0.45rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+#debug-effect-copy:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+#debug-effect-copy-status {
+  min-height: 1.1rem;
+  margin-bottom: 0.35rem;
+}
+
 .debug-textarea {
   width: 100%;
   min-height: 160px;

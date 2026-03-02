@@ -9,3 +9,14 @@ export function getDebugEffectSelectorValue(forcedEffect: string | null): string
 export function getDebugEffectSelectorOptions(effectNames: string[]): string[] {
   return ["timeline", ...effectNames];
 }
+
+export function formatEffectSettingsForTimeline(effectName: string, params: Record<string, unknown>): string {
+  return JSON.stringify(
+    {
+      effect: effectName,
+      params
+    },
+    null,
+    2
+  );
+}

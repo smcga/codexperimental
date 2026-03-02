@@ -27,6 +27,7 @@ import {
   getSecondHalfSkipTime
 } from "./controls";
 import {
+  formatEffectSettingsForTimeline,
   getDebugEffectSelectorOptions,
   getDebugEffectSelectorValue,
   shouldShowEffectPanel
@@ -50,6 +51,8 @@ const debugEffectPanel = document.querySelector<HTMLDivElement>("#debug-effect-p
 const debugEffectTitle = document.querySelector<HTMLDivElement>("#debug-effect-title");
 const debugEffectControls = document.querySelector<HTMLDivElement>("#debug-effect-controls");
 const debugEffectEmpty = document.querySelector<HTMLDivElement>("#debug-effect-empty");
+const debugEffectCopyButton = document.querySelector<HTMLButtonElement>("#debug-effect-copy");
+const debugEffectCopyStatus = document.querySelector<HTMLDivElement>("#debug-effect-copy-status");
 const debugMonochromeToggle = document.querySelector<HTMLInputElement>("#debug-monochrome");
 const debugSkipIntroButton = document.querySelector<HTMLButtonElement>("#debug-skip-intro");
 const debugSkipSecondHalfButton = document.querySelector<HTMLButtonElement>("#debug-skip-second-half");
@@ -310,6 +313,48 @@ function syncEffectInputs(effectName: string, controls: EffectParamControl[]): v
   });
 }
 
+
+function getResolvedEffectParams(effectName: string, controls: EffectParamControl[]): Record<string, string | number> {
+  const rawParams = controls.reduce<Record<string, string | number>>((params, control) => {
+    params[control.key] = control.defaultValue;
+    return params;
+  }, {});
+  const nextParams = coerceEffectParams(effectName, {
+    ...rawParams,
+    ...debugState.effectParams[effectName]
+  });
+  debugState.effectParams[effectName] = nextParams;
+  return nextParams;
+}
+
+function setCopyStatus(message: string, isError = false): void {
+  if (!debugEffectCopyStatus) {
+    return;
+  }
+  debugEffectCopyStatus.textContent = message;
+  debugEffectCopyStatus.classList.toggle("debug-error", isError);
+}
+
+async function copyCurrentEffectSettings(): Promise<void> {
+  if (!debugState.forcedEffect) {
+    return;
+  }
+  const config = getEffectDebugConfig(debugState.forcedEffect);
+  if (!config) {
+    return;
+  }
+  const payload = formatEffectSettingsForTimeline(
+    debugState.forcedEffect,
+    getResolvedEffectParams(debugState.forcedEffect, config.controls)
+  );
+  try {
+    await navigator.clipboard.writeText(payload);
+    setCopyStatus("Copied timeline JSON.");
+  } catch {
+    setCopyStatus("Clipboard blocked. Copy failed.", true);
+  }
+}
+
 function renderEffectPanel(effectName: string): void {
   if (!debugEffectPanel || !debugEffectControls || !debugEffectTitle || !debugEffectEmpty) {
     return;
@@ -320,6 +365,10 @@ function renderEffectPanel(effectName: string): void {
   }
   debugEffectTitle.textContent = config.title;
   debugEffectControls.innerHTML = "";
+  setCopyStatus("");
+  if (debugEffectCopyButton) {
+    debugEffectCopyButton.disabled = false;
+  }
   if (config.controls.length === 0) {
     debugEffectEmpty.classList.remove("hidden");
     return;
@@ -399,6 +448,12 @@ function updateEffectPanelVisibility(): void {
   }
   const visible = shouldShowEffectPanel(debugState.enabled, debugState.forcedEffect);
   debugEffectPanel.classList.toggle("hidden", !visible);
+  if (debugEffectCopyButton) {
+    debugEffectCopyButton.disabled = !visible;
+  }
+  if (!visible) {
+    setCopyStatus("");
+  }
   if (visible && debugState.forcedEffect) {
     renderEffectPanel(debugState.forcedEffect);
   }
@@ -434,6 +489,12 @@ if (!releaseMode && debugEraSelect) {
 if (!releaseMode && debugMonochromeToggle) {
   debugMonochromeToggle.addEventListener("change", () => {
     debugState.monochromeOverride = debugMonochromeToggle.checked ? true : null;
+  });
+}
+
+if (!releaseMode && debugEffectCopyButton) {
+  debugEffectCopyButton.addEventListener("click", () => {
+    void copyCurrentEffectSettings();
   });
 }
 
