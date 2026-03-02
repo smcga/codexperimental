@@ -148,6 +148,32 @@ export const getNewSceneTimeRange = (
   };
 };
 
+export const getNextNewSectionName = (scenes: RawSectionConfig[]): string => {
+  const nextNumber = scenes.reduce((max, scene) => {
+    const match = scene.id.match(/^New Section (\d+)$/);
+    if (!match) {
+      return max;
+    }
+    const value = Number(match[1]);
+    if (!Number.isFinite(value)) {
+      return max;
+    }
+    return Math.max(max, value);
+  }, 0);
+  return `New Section ${nextNumber + 1}`;
+};
+
+export const isWithinSceneStartThreshold = (
+  scenes: RawSectionConfig[],
+  playbackTime: number,
+  thresholdSeconds = 0.1
+): boolean => {
+  if (!Number.isFinite(playbackTime) || !Number.isFinite(thresholdSeconds) || thresholdSeconds < 0) {
+    return false;
+  }
+  return scenes.some((scene) => Math.abs(parseTimelineTimeValue(scene.start) - playbackTime) <= thresholdSeconds);
+};
+
 export async function createEditorRoot(init: EditorInit): Promise<EditorController> {
   const state: EditorState = {
     timeline: null,
@@ -163,6 +189,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   let previewContext: CanvasRenderingContext2D | null = null;
   let editorVisible = false;
   let currentDemoTime = 0;
+  let isPlaying = false;
 
   const getEffectParamOptions = (effectName: string | null | undefined): string[] => {
     const config = getEffectDebugConfig(effectName ?? null);
@@ -1256,8 +1283,13 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     });
 
     init.container.querySelector<HTMLButtonElement>("[data-action='add-scene']")?.addEventListener("click", () => {
-      const { start, end } = getNewSceneTimeRange(state.timeline?.sections ?? [], currentDemoTime);
+      const sections = state.timeline?.sections ?? [];
+      if (isPlaying && isWithinSceneStartThreshold(sections, currentDemoTime)) {
+        return;
+      }
+      const { start, end } = getNewSceneTimeRange(sections, currentDemoTime);
       const newScene = createScene({
+        id: getNextNewSectionName(sections),
         start,
         end,
         effect: init.effectNames[0] ?? "starfield"
@@ -1281,6 +1313,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     isVisible: () => editorVisible,
     updatePlayback: (demoTime: number, playing: boolean) => {
       currentDemoTime = demoTime;
+      isPlaying = playing;
       if (playbackLabel) {
         playbackLabel.textContent = formatTime(demoTime);
       }
