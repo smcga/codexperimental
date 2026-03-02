@@ -353,6 +353,12 @@ body,
   padding: 0;
 }
 
+.editor-selected-scene-actions {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
 .editor-selected-scene-empty {
   font-size: 0.75rem;
   color: rgba(215, 247, 255, 0.75);
