@@ -4,7 +4,9 @@ import {
   getNewSceneTimeRange,
   getNextNewSectionName,
   getScenePlayingAtTime,
-  isWithinSceneStartThreshold
+  isWithinSceneStartThreshold,
+  isEditorParamToggleChecked,
+  parseEditorParamInputValue
 } from "./EditorRoot";
 
 describe("computeSceneSeekTime", () => {
@@ -95,5 +97,28 @@ describe("isWithinSceneStartThreshold", () => {
 
   it("returns false when playback time is outside the threshold", () => {
     expect(isWithinSceneStartThreshold(scenes, 2.11)).toBe(false);
+  });
+});
+
+describe("parseEditorParamInputValue", () => {
+  it("parses booleans and null", () => {
+    expect(parseEditorParamInputValue("true")).toBe(true);
+    expect(parseEditorParamInputValue("false")).toBe(false);
+    expect(parseEditorParamInputValue("null")).toBeNull();
+  });
+
+  it("parses numbers and strings", () => {
+    expect(parseEditorParamInputValue("1.25")).toBe(1.25);
+    expect(parseEditorParamInputValue("\"chrome\"")).toBe("chrome");
+    expect(parseEditorParamInputValue("rawValue")).toBe("rawValue");
+  });
+});
+
+describe("isEditorParamToggleChecked", () => {
+  it("accepts both legacy numeric and boolean values", () => {
+    expect(isEditorParamToggleChecked(true)).toBe(true);
+    expect(isEditorParamToggleChecked(1)).toBe(true);
+    expect(isEditorParamToggleChecked(false)).toBe(false);
+    expect(isEditorParamToggleChecked(0)).toBe(false);
   });
 });
