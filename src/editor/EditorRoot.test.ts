@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { computeSceneSeekTime, getNewSceneTimeRange, getScenePlayingAtTime } from "./EditorRoot";
+import {
+  computeSceneSeekTime,
+  getNewSceneTimeRange,
+  getNextNewSectionName,
+  getScenePlayingAtTime,
+  isWithinSceneStartThreshold
+} from "./EditorRoot";
 
 describe("computeSceneSeekTime", () => {
   it("subtracts audio offset from the scene start", () => {
@@ -58,5 +64,36 @@ describe("getNewSceneTimeRange", () => {
 
   it("clamps negative playback time to zero", () => {
     expect(getNewSceneTimeRange(scenes, -3)).toEqual({ start: 0, end: 10 });
+  });
+});
+
+describe("getNextNewSectionName", () => {
+  it("uses New Section 1 when there are no matching section ids", () => {
+    expect(getNextNewSectionName([])).toBe("New Section 1");
+    expect(getNextNewSectionName([{ id: "intro", start: 0, effect: "starfield" }])).toBe("New Section 1");
+  });
+
+  it("increments from the highest New Section suffix", () => {
+    const scenes = [
+      { id: "New Section 2", start: 0, effect: "starfield" },
+      { id: "New Section 9", start: 10, effect: "starfield" },
+      { id: "New Section 4", start: 20, effect: "starfield" }
+    ];
+    expect(getNextNewSectionName(scenes)).toBe("New Section 10");
+  });
+});
+
+describe("isWithinSceneStartThreshold", () => {
+  const scenes = [
+    { id: "a", start: 2, effect: "starfield" },
+    { id: "b", start: 5.5, effect: "starfield" }
+  ];
+
+  it("returns true when playback time is within the threshold of a start", () => {
+    expect(isWithinSceneStartThreshold(scenes, 2.08)).toBe(true);
+  });
+
+  it("returns false when playback time is outside the threshold", () => {
+    expect(isWithinSceneStartThreshold(scenes, 2.11)).toBe(false);
   });
 });
