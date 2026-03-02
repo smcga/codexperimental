@@ -1904,7 +1904,8 @@
       "effect": "wireframeRide",
       "params": {
         "speed": 0.68,
-        "glow": 0.28
+        "glow": 0.28,
+        "gridWidth": 600
       },
       "layers": [
         {
@@ -1920,6 +1921,16 @@
           "blend": "screen",
           "opacity": 0.09
         }
+      ],
+      "automation": [
+        {
+          "param": "cameraHeight",
+          "from": 0,
+          "to": 15,
+          "t0": 265.7,
+          "t1": 272.1,
+          "ease": "linear"
+        }
       ]
     },
     {
@@ -1929,7 +1940,16 @@
       "effect": "raymarch_fractal",
       "params": {
         "speed": 0.86,
-        "glow": 0.34
+        "glow": 0.34,
+        "fractal": "mandelbox",
+        "cameraRadius": 3.95,
+        "audioReact": 0,
+        "beatKick": 0,
+        "cameraHeight": 2,
+        "cameraOrbitSpeed": 0.09,
+        "fractalScale": 1,
+        "paletteSpeed": 0.15,
+        "quality": 1
       },
       "automation": [
         {
