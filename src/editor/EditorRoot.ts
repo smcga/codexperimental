@@ -165,6 +165,51 @@ export const getNextNewSectionName = (scenes: RawSectionConfig[]): string => {
   return `New Section ${nextNumber + 1}`;
 };
 
+export const getRandomEffectSelection = (effectNames: string[], randomValue = Math.random): string => {
+  if (effectNames.length === 0) {
+    return "starfield";
+  }
+  const index = Math.min(effectNames.length - 1, Math.floor(randomValue() * effectNames.length));
+  return effectNames[index] ?? "starfield";
+};
+
+export const getRandomEffectParams = (
+  effectName: string,
+  randomValue = Math.random
+): Record<string, number | string> => {
+  const config = getEffectDebugConfig(effectName);
+  if (!config) {
+    return {};
+  }
+
+  return config.controls.reduce<Record<string, number | string>>((params, control) => {
+    if (control.type === "toggle") {
+      params[control.key] = randomValue() >= 0.5 ? 1 : 0;
+      return params;
+    }
+
+    if (control.type === "select") {
+      if (!control.options || control.options.length === 0) {
+        params[control.key] = control.defaultValue;
+        return params;
+      }
+      const optionIndex = Math.min(control.options.length - 1, Math.floor(randomValue() * control.options.length));
+      params[control.key] = control.options[optionIndex]?.value ?? control.defaultValue;
+      return params;
+    }
+
+    const fallbackDefault = typeof control.defaultValue === "number" ? control.defaultValue : 0;
+    const min = control.min ?? Math.min(0, fallbackDefault);
+    const max = control.max ?? Math.max(min + 1, fallbackDefault * 2 || 1);
+    const step = control.step ?? 0.01;
+    const range = Math.max(0, max - min);
+    const unrounded = min + randomValue() * range;
+    const stepped = step > 0 ? Math.round((unrounded - min) / step) * step + min : unrounded;
+    params[control.key] = Number(stepped.toFixed(6));
+    return params;
+  }, {});
+};
+
 export const isWithinSceneStartThreshold = (
   scenes: RawSectionConfig[],
   playbackTime: number,
@@ -1326,11 +1371,13 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         return;
       }
       const { start, end } = getNewSceneTimeRange(sections, currentDemoTime);
+      const effect = getRandomEffectSelection(init.effectNames);
       const newScene = createScene({
         id: getNextNewSectionName(sections),
         start,
         end,
-        effect: init.effectNames[0] ?? "starfield"
+        effect,
+        params: getRandomEffectParams(effect)
       });
       updateTimeline(
         (draft) => {

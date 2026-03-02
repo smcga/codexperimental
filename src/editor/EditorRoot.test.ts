@@ -3,6 +3,8 @@ import {
   computeSceneSeekTime,
   getNewSceneTimeRange,
   getNextNewSectionName,
+  getRandomEffectParams,
+  getRandomEffectSelection,
   getScenePlayingAtTime,
   isWithinSceneStartThreshold,
   isEditorParamToggleChecked,
@@ -82,6 +84,56 @@ describe("getNextNewSectionName", () => {
       { id: "New Section 4", start: 20, effect: "starfield" }
     ];
     expect(getNextNewSectionName(scenes)).toBe("New Section 10");
+  });
+});
+
+describe("getRandomEffectSelection", () => {
+  it("returns a random effect from the available list", () => {
+    expect(getRandomEffectSelection(["starfield", "plasma", "glitch"], () => 0.5)).toBe("plasma");
+  });
+
+  it("falls back to starfield when no effects are available", () => {
+    expect(getRandomEffectSelection([], () => 0.8)).toBe("starfield");
+  });
+});
+
+describe("getRandomEffectParams", () => {
+  it("generates random values for all effect controls", () => {
+    const nextValue = [0.2, 0.6, 0.1, 0.8, 0.05, 0.95, 0.4, 0.75];
+    let index = 0;
+    const randomValue = () => {
+      const value = nextValue[index] ?? 0.5;
+      index += 1;
+      return value;
+    };
+
+    const params = getRandomEffectParams("starfield", randomValue);
+    expect(Object.keys(params)).toEqual([
+      "speed",
+      "warp",
+      "turnRate",
+      "turnStrength",
+      "drift",
+      "sparkle",
+      "colorShift"
+    ]);
+    expect(params).toEqual({
+      speed: 0.4,
+      warp: 0.6,
+      turnRate: 0.15,
+      turnStrength: 0.8,
+      drift: 0.05,
+      sparkle: 1.9,
+      colorShift: -0.2
+    });
+  });
+
+  it("supports toggle and select controls", () => {
+    const params = getRandomEffectParams("metaballs", () => 0.9);
+
+    expect(params.palette).toBe("neon");
+    expect(params.smoothing).toBe(1);
+    expect(params.seed).toBe(899);
   });
 });
 
