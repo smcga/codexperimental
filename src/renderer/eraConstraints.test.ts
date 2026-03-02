@@ -11,4 +11,12 @@ describe("getEraConstraints", () => {
     expect(scaled.renderWidth).toBe(480);
     expect(scaled.renderHeight).toBe(270);
   });
+
+  it("disables scanline overlay for every era preset", () => {
+    const eras = ["8bit", "16bit", "ps1", "pcdemo", "future"] as const;
+
+    for (const era of eras) {
+      expect(getEraConstraints(era, 320, 180).overlayScanline).toBe(0);
+    }
+  });
 });
