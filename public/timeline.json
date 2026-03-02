@@ -2309,7 +2309,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 60.280726,
-          "t1": 65.0,
+          "t1": 65,
           "ease": "inOutSine"
         }
       ],
@@ -2350,7 +2350,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 82.461587,
-          "t1": 92.0,
+          "t1": 92,
           "ease": "inOutSine"
         }
       ],
@@ -2393,7 +2393,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 88.2,
-          "t1": 92.0,
+          "t1": 92,
           "ease": "inOutSine"
         }
       ],
@@ -2765,8 +2765,8 @@
           "param": "intensity",
           "from": 0.85,
           "to": 1.15,
-          "t0": 165.0,
-          "t1": 169.0,
+          "t0": 165,
+          "t1": 169,
           "ease": "inOutSine"
         }
       ],
@@ -3313,7 +3313,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 205.352975,
-          "t1": 210.0,
+          "t1": 210,
           "ease": "inOutSine"
         }
       ],
@@ -3353,7 +3353,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 207.051974,
-          "t1": 210.0,
+          "t1": 210,
           "ease": "inOutSine"
         }
       ],
@@ -3394,7 +3394,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 207.922723,
-          "t1": 210.0,
+          "t1": 210,
           "ease": "inOutSine"
         }
       ],
@@ -3439,7 +3439,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 208.982133,
-          "t1": 210.0,
+          "t1": 210,
           "ease": "inOutSine"
         }
       ],
@@ -4216,7 +4216,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 229.735095,
-          "t1": 234.0,
+          "t1": 234,
           "ease": "inOutSine"
         }
       ],
@@ -4271,7 +4271,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 230.666796,
-          "t1": 234.0,
+          "t1": 234,
           "ease": "inOutSine"
         }
       ],
@@ -4308,7 +4308,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 231.696634,
-          "t1": 234.0,
+          "t1": 234,
           "ease": "inOutSine"
         }
       ],
@@ -4351,7 +4351,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 232.645749,
-          "t1": 234.0,
+          "t1": 234,
           "ease": "inOutSine"
         }
       ],
@@ -4404,7 +4404,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 233.876407,
-          "t1": 234.0,
+          "t1": 234,
           "ease": "inOutSine"
         }
       ],
@@ -5094,7 +5094,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 253.967443,
-          "t1": 258.0,
+          "t1": 258,
           "ease": "inOutSine"
         }
       ],
@@ -5135,7 +5135,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 255.195198,
-          "t1": 258.0,
+          "t1": 258,
           "ease": "inOutSine"
         }
       ],
@@ -5179,7 +5179,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 256.294516,
-          "t1": 258.0,
+          "t1": 258,
           "ease": "inOutSine"
         }
       ],
@@ -5225,7 +5225,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 257.54549,
-          "t1": 258.0,
+          "t1": 258,
           "ease": "inOutSine"
         }
       ],
@@ -5269,7 +5269,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 259.274678,
-          "t1": 262.0,
+          "t1": 262,
           "ease": "inOutSine"
         }
       ],
@@ -5316,7 +5316,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 260.76656,
-          "t1": 262.0,
+          "t1": 262,
           "ease": "inOutSine"
         }
       ],
@@ -5357,7 +5357,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 261.875313,
-          "t1": 262.0,
+          "t1": 262,
           "ease": "inOutSine"
         }
       ],
@@ -6800,7 +6800,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 326.5203,
-          "t1": 340.0,
+          "t1": 340,
           "ease": "inOutSine"
         }
       ],
@@ -6842,7 +6842,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 327.528378,
-          "t1": 340.0,
+          "t1": 340,
           "ease": "inOutSine"
         }
       ],
@@ -6898,7 +6898,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 328.137877,
-          "t1": 340.0,
+          "t1": 340,
           "ease": "inOutSine"
         }
       ],
@@ -6939,7 +6939,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 328.718375,
-          "t1": 340.0,
+          "t1": 340,
           "ease": "inOutSine"
         }
       ],
@@ -6994,7 +6994,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 329.876496,
-          "t1": 340.0,
+          "t1": 340,
           "ease": "inOutSine"
         }
       ],
@@ -7036,7 +7036,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 331.70713,
-          "t1": 340.0,
+          "t1": 340,
           "ease": "inOutSine"
         }
       ],
@@ -7092,7 +7092,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 332.682649,
-          "t1": 340.0,
+          "t1": 340,
           "ease": "inOutSine"
         }
       ],
@@ -7139,7 +7139,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 333.422785,
-          "t1": 340.0,
+          "t1": 340,
           "ease": "inOutSine"
         }
       ],
@@ -7189,7 +7189,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 334.563162,
-          "t1": 340.0,
+          "t1": 340,
           "ease": "inOutSine"
         }
       ],
@@ -7231,7 +7231,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 337.512399,
-          "t1": 340.0,
+          "t1": 340,
           "ease": "inOutSine"
         }
       ],
@@ -7278,7 +7278,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 338.71389,
-          "t1": 340.0,
+          "t1": 340,
           "ease": "inOutSine"
         }
       ],
@@ -7338,7 +7338,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 339.253428,
-          "t1": 340.0,
+          "t1": 340,
           "ease": "inOutSine"
         }
       ],
@@ -7387,7 +7387,7 @@
           "from": 0.85,
           "to": 1.15,
           "t0": 339.764691,
-          "t1": 340.0,
+          "t1": 340,
           "ease": "inOutSine"
         }
       ],
@@ -8495,7 +8495,7 @@
       "id": "title-polygons",
       "start": "02:43.7",
       "end": "02:46.0",
-      "text": "\ud83e\uddca",
+      "text": "🧊",
       "x": 0.5,
       "y": 0.2,
       "align": "center",
@@ -8552,67 +8552,543 @@
       }
     },
     {
-      "id": "rap-cue-empower",
-      "start": "03:26",
-      "end": "03:27.2",
-      "text": "ASK \u2192 BUILD",
+      "id": "rap-lyric-01",
+      "start": "03:26.00",
+      "end": "03:27.60",
+      "text": "All I had to do was ask — now it's real, it exists.",
       "x": 0.5,
-      "y": 0.18,
+      "y": 0.84,
+      "size": 44,
+      "color": "#f5f7ff",
+      "font": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+      "weight": 800,
       "align": "center",
-      "size": 30,
-      "color": "#9ef0ff",
+      "safe": true,
+      "maxWidth": 1200,
       "effects": {
-        "glitchIn": true,
+        "glow": true,
         "shadow": true,
-        "scanlineMask": 0.12
+        "scanlines": false
       }
     },
     {
-      "id": "rap-cue-elite",
-      "start": "03:44.8",
-      "end": "03:46",
-      "text": "NOT JUST ELITES",
+      "id": "rap-lyric-02",
+      "start": "03:27.60",
+      "end": "03:29.20",
+      "text": "From an idea, from a vibe, I made this,",
       "x": 0.5,
-      "y": 0.82,
+      "y": 0.84,
+      "size": 44,
+      "color": "#f5f7ff",
+      "font": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+      "weight": 800,
       "align": "center",
-      "size": 26,
-      "color": "#ffd166",
+      "safe": true,
+      "maxWidth": 1200,
       "effects": {
-        "glitchIn": true,
+        "glow": true,
         "shadow": true,
-        "scanlineMask": 0.1
+        "scanlines": false
       }
     },
     {
-      "id": "rap-cue-limit",
-      "start": "03:59",
-      "end": "04:00.2",
-      "text": "SKY'S THE LIMIT",
+      "id": "rap-lyric-03",
+      "start": "03:29.20",
+      "end": "03:31.20",
+      "text": "Wanna make a beat? paint a dream? write an app? well, man,",
       "x": 0.5,
-      "y": 0.18,
+      "y": 0.84,
+      "size": 44,
+      "color": "#f5f7ff",
+      "font": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+      "weight": 800,
       "align": "center",
-      "size": 28,
-      "color": "#ffb703",
+      "safe": true,
+      "maxWidth": 1200,
       "effects": {
-        "glitchIn": true,
+        "glow": true,
         "shadow": true,
-        "scanlineMask": 0.1
+        "scanlines": false
       }
     },
     {
-      "id": "rap-cue-soul",
-      "start": "04:08.7",
-      "end": "04:09.8",
-      "text": "WHERE'S THE SOUL?",
+      "id": "rap-lyric-04",
+      "start": "03:31.20",
+      "end": "03:33.10",
+      "text": "Now everybody got the skills, now everybody can!",
       "x": 0.5,
-      "y": 0.82,
+      "y": 0.84,
+      "size": 44,
+      "color": "#f5f7ff",
+      "font": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+      "weight": 800,
       "align": "center",
-      "size": 24,
-      "color": "#ffffff",
+      "safe": true,
+      "maxWidth": 1200,
       "effects": {
-        "glitchIn": true,
+        "glow": true,
         "shadow": true,
-        "scanlineMask": 0.08
+        "scanlines": false
+      }
+    },
+    {
+      "id": "rap-lyric-05",
+      "start": "03:33.10",
+      "end": "03:34.70",
+      "text": "You wanted your genius to stay elite,",
+      "x": 0.5,
+      "y": 0.84,
+      "size": 44,
+      "color": "#f5f7ff",
+      "font": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+      "weight": 800,
+      "align": "center",
+      "safe": true,
+      "maxWidth": 1200,
+      "effects": {
+        "glow": true,
+        "shadow": true,
+        "scanlines": false
+      }
+    },
+    {
+      "id": "rap-lyric-06",
+      "start": "03:34.70",
+      "end": "03:36.60",
+      "text": "Now the street’s got brushes, pens and beats.",
+      "x": 0.5,
+      "y": 0.84,
+      "size": 44,
+      "color": "#f5f7ff",
+      "font": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+      "weight": 800,
+      "align": "center",
+      "safe": true,
+      "maxWidth": 1200,
+      "effects": {
+        "glow": true,
+        "shadow": true,
+        "scanlines": false
+      }
+    },
+    {
+      "id": "rap-lyric-07",
+      "start": "03:36.60",
+      "end": "03:38.60",
+      "text": "It was “real” when you sampled the Beatles and Yay,",
+      "x": 0.5,
+      "y": 0.84,
+      "size": 44,
+      "color": "#f5f7ff",
+      "font": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+      "weight": 800,
+      "align": "center",
+      "safe": true,
+      "maxWidth": 1200,
+      "effects": {
+        "glow": true,
+        "shadow": true,
+        "scanlines": false
+      }
+    },
+    {
+      "id": "rap-lyric-08",
+      "start": "03:38.60",
+      "end": "03:40.70",
+      "text": "But you hate the remix of the whole human race.",
+      "x": 0.5,
+      "y": 0.84,
+      "size": 44,
+      "color": "#f5f7ff",
+      "font": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+      "weight": 800,
+      "align": "center",
+      "safe": true,
+      "maxWidth": 1200,
+      "effects": {
+        "glow": true,
+        "shadow": true,
+        "scanlines": false
+      }
+    },
+    {
+      "id": "rap-lyric-09",
+      "start": "03:40.70",
+      "end": "03:42.20",
+      "text": "(Scared of the slop?) Yeah, cool, so stop.",
+      "x": 0.5,
+      "y": 0.84,
+      "size": 44,
+      "color": "#f5f7ff",
+      "font": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+      "weight": 800,
+      "align": "center",
+      "safe": true,
+      "maxWidth": 1200,
+      "effects": {
+        "glow": true,
+        "shadow": true,
+        "scanlines": false
+      }
+    },
+    {
+      "id": "rap-lyric-10",
+      "start": "03:42.20",
+      "end": "03:43.90",
+      "text": "But I seen bland before models dropped.",
+      "x": 0.5,
+      "y": 0.84,
+      "size": 44,
+      "color": "#f5f7ff",
+      "font": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+      "weight": 800,
+      "align": "center",
+      "safe": true,
+      "maxWidth": 1200,
+      "effects": {
+        "glow": true,
+        "shadow": true,
+        "scanlines": false
+      }
+    },
+    {
+      "id": "rap-lyric-11",
+      "start": "03:43.90",
+      "end": "03:45.40",
+      "text": "It ain’t fake, it’s realer than you—",
+      "x": 0.5,
+      "y": 0.84,
+      "size": 44,
+      "color": "#f5f7ff",
+      "font": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+      "weight": 800,
+      "align": "center",
+      "safe": true,
+      "maxWidth": 1200,
+      "effects": {
+        "glow": true,
+        "shadow": true,
+        "scanlines": false
+      }
+    },
+    {
+      "id": "rap-lyric-12",
+      "start": "03:45.40",
+      "end": "03:47.00",
+      "text": "Cos it’s got *intent* and it tells a truth.",
+      "x": 0.5,
+      "y": 0.84,
+      "size": 44,
+      "color": "#f5f7ff",
+      "font": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+      "weight": 800,
+      "align": "center",
+      "safe": true,
+      "maxWidth": 1200,
+      "effects": {
+        "glow": true,
+        "shadow": true,
+        "scanlines": false
+      }
+    },
+    {
+      "id": "rap-lyric-13",
+      "start": "03:47.00",
+      "end": "03:49.00",
+      "text": "You think it’s hollow ‘cause you can’t hear screams?",
+      "x": 0.5,
+      "y": 0.84,
+      "size": 44,
+      "color": "#f5f7ff",
+      "font": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+      "weight": 800,
+      "align": "center",
+      "safe": true,
+      "maxWidth": 1200,
+      "effects": {
+        "glow": true,
+        "shadow": true,
+        "scanlines": false
+      }
+    },
+    {
+      "id": "rap-lyric-14",
+      "start": "03:49.00",
+      "end": "03:51.20",
+      "text": "I think it’s pure ‘cause it amplifies dreams.",
+      "x": 0.5,
+      "y": 0.84,
+      "size": 44,
+      "color": "#f5f7ff",
+      "font": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+      "weight": 800,
+      "align": "center",
+      "safe": true,
+      "maxWidth": 1200,
+      "effects": {
+        "glow": true,
+        "shadow": true,
+        "scanlines": false
+      }
+    },
+    {
+      "id": "rap-lyric-15",
+      "start": "03:51.60",
+      "end": "03:53.30",
+      "text": "You blame the brush ‘cause you painted crap?",
+      "x": 0.5,
+      "y": 0.84,
+      "size": 44,
+      "color": "#f5f7ff",
+      "font": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+      "weight": 800,
+      "align": "center",
+      "safe": true,
+      "maxWidth": 1200,
+      "effects": {
+        "glow": true,
+        "shadow": true,
+        "scanlines": false
+      }
+    },
+    {
+      "id": "rap-lyric-16",
+      "start": "03:53.30",
+      "end": "03:55.00",
+      "text": "You blame the synth ‘cause your tune was flat?",
+      "x": 0.5,
+      "y": 0.84,
+      "size": 44,
+      "color": "#f5f7ff",
+      "font": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+      "weight": 800,
+      "align": "center",
+      "safe": true,
+      "maxWidth": 1200,
+      "effects": {
+        "glow": true,
+        "shadow": true,
+        "scanlines": false
+      }
+    },
+    {
+      "id": "rap-lyric-17",
+      "start": "03:55.00",
+      "end": "03:56.80",
+      "text": "You blame the pen when your novel’s whack?",
+      "x": 0.5,
+      "y": 0.84,
+      "size": 44,
+      "color": "#f5f7ff",
+      "font": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+      "weight": 800,
+      "align": "center",
+      "safe": true,
+      "maxWidth": 1200,
+      "effects": {
+        "glow": true,
+        "shadow": true,
+        "scanlines": false
+      }
+    },
+    {
+      "id": "rap-lyric-18",
+      "start": "03:56.80",
+      "end": "03:58.90",
+      "text": "Aight then, blame shoes when you can’t run track.",
+      "x": 0.5,
+      "y": 0.84,
+      "size": 44,
+      "color": "#f5f7ff",
+      "font": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+      "weight": 800,
+      "align": "center",
+      "safe": true,
+      "maxWidth": 1200,
+      "effects": {
+        "glow": true,
+        "shadow": true,
+        "scanlines": false
+      }
+    },
+    {
+      "id": "rap-lyric-19",
+      "start": "03:58.90",
+      "end": "04:01.00",
+      "text": "This ain’t Skynet, this is sky's the limit—",
+      "x": 0.5,
+      "y": 0.84,
+      "size": 44,
+      "color": "#f5f7ff",
+      "font": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+      "weight": 800,
+      "align": "center",
+      "safe": true,
+      "maxWidth": 1200,
+      "effects": {
+        "glow": true,
+        "shadow": true,
+        "scanlines": false
+      }
+    },
+    {
+      "id": "rap-lyric-20",
+      "start": "04:01.00",
+      "end": "04:03.20",
+      "text": "You're mad that a kid with a dream can now live it.",
+      "x": 0.5,
+      "y": 0.84,
+      "size": 44,
+      "color": "#f5f7ff",
+      "font": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+      "weight": 800,
+      "align": "center",
+      "safe": true,
+      "maxWidth": 1200,
+      "effects": {
+        "glow": true,
+        "shadow": true,
+        "scanlines": false
+      }
+    },
+    {
+      "id": "rap-lyric-21",
+      "start": "04:03.20",
+      "end": "04:05.40",
+      "text": "Feed full of slop? That’s a mirror, not fate, (look!)",
+      "x": 0.5,
+      "y": 0.84,
+      "size": 44,
+      "color": "#f5f7ff",
+      "font": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+      "weight": 800,
+      "align": "center",
+      "safe": true,
+      "maxWidth": 1200,
+      "effects": {
+        "glow": true,
+        "shadow": true,
+        "scanlines": false
+      }
+    },
+    {
+      "id": "rap-lyric-22",
+      "start": "04:05.40",
+      "end": "04:07.80",
+      "text": "The same crowd chased clicks before models were made, (true!)",
+      "x": 0.5,
+      "y": 0.84,
+      "size": 44,
+      "color": "#f5f7ff",
+      "font": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+      "weight": 800,
+      "align": "center",
+      "safe": true,
+      "maxWidth": 1200,
+      "effects": {
+        "glow": true,
+        "shadow": true,
+        "scanlines": false
+      }
+    },
+    {
+      "id": "rap-lyric-23",
+      "start": "04:07.80",
+      "end": "04:10.50",
+      "text": "Yeah, I hear the fears, “Where’s the soul, where's the feeling?”",
+      "x": 0.5,
+      "y": 0.84,
+      "size": 44,
+      "color": "#f5f7ff",
+      "font": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+      "weight": 800,
+      "align": "center",
+      "safe": true,
+      "maxWidth": 1200,
+      "effects": {
+        "glow": true,
+        "shadow": true,
+        "scanlines": false
+      }
+    },
+    {
+      "id": "rap-lyric-24",
+      "start": "04:10.50",
+      "end": "04:13.30",
+      "text": "Believe me when I say that A.I. art can have deep meaning,",
+      "x": 0.5,
+      "y": 0.84,
+      "size": 44,
+      "color": "#f5f7ff",
+      "font": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+      "weight": 800,
+      "align": "center",
+      "safe": true,
+      "maxWidth": 1200,
+      "effects": {
+        "glow": true,
+        "shadow": true,
+        "scanlines": false
+      }
+    },
+    {
+      "id": "rap-lyric-25",
+      "start": "04:13.30",
+      "end": "04:15.50",
+      "text": "Why did you make it? Did it capture your feelings?",
+      "x": 0.5,
+      "y": 0.84,
+      "size": 44,
+      "color": "#f5f7ff",
+      "font": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+      "weight": 800,
+      "align": "center",
+      "safe": true,
+      "maxWidth": 1200,
+      "effects": {
+        "glow": true,
+        "shadow": true,
+        "scanlines": false
+      }
+    },
+    {
+      "id": "rap-lyric-26",
+      "start": "04:15.50",
+      "end": "04:18.00",
+      "text": "The method doesn't matter, doesn't compromise the meaning.",
+      "x": 0.5,
+      "y": 0.84,
+      "size": 44,
+      "color": "#f5f7ff",
+      "font": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+      "weight": 800,
+      "align": "center",
+      "safe": true,
+      "maxWidth": 1200,
+      "effects": {
+        "glow": true,
+        "shadow": true,
+        "scanlines": false
+      }
+    },
+    {
+      "id": "rap-lyric-27",
+      "start": "04:18.00",
+      "end": "04:22.00",
+      "text": "It's incredible what we can create from nothing more than dreaming.",
+      "x": 0.5,
+      "y": 0.84,
+      "size": 44,
+      "color": "#f5f7ff",
+      "font": "Inter, \"Helvetica Neue\", Arial, sans-serif",
+      "weight": 800,
+      "align": "center",
+      "safe": true,
+      "maxWidth": 1200,
+      "effects": {
+        "glow": true,
+        "shadow": true,
+        "scanlines": false
       }
     }
   ]
