@@ -23,6 +23,7 @@ import {
 } from "./state/timelineStore";
 import { clearTimelineDraft, downloadTimeline, loadTimelineDraft, saveTimelineDraft } from "./serialization";
 import { getEffectDebugConfig } from "../renderer/debug/effectDebug";
+import { EditorPreviewMode, getPreviewDrawRegion } from "./previewFraming";
 
 const ERA_PRESETS: EraPreset[] = ["8bit", "16bit", "ps1", "pcdemo", "future"];
 const BLEND_MODES: BlendMode[] = [
@@ -86,6 +87,7 @@ type EditorState = {
   loopEnabled: boolean;
   error: string | null;
   fieldErrors: Record<string, string>;
+  previewMode: EditorPreviewMode;
 };
 
 type EditorParamValue = number | string | boolean | null;
@@ -248,7 +250,8 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     selectedSceneId: null,
     loopEnabled: false,
     error: null,
-    fieldErrors: {}
+    fieldErrors: {},
+    previewMode: "landscape"
   };
   let playbackLabel: HTMLSpanElement | null = null;
   let playbackButton: HTMLButtonElement | null = null;
@@ -424,6 +427,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           <label class="editor-toggle">
             <input type="checkbox" data-action="loop-toggle" ${state.loopEnabled ? "checked" : ""} />
             <span>Loop scene</span>
+          </label>
+          <label class="editor-toggle">
+            <input type="checkbox" data-action="portrait-preview-toggle" ${state.previewMode === "portrait-mobile" ? "checked" : ""} />
+            <span>Portrait mobile preview</span>
           </label>
           <span class="editor-timestamp" data-region="timestamp">00:00.0</span>
         </div>
@@ -1314,6 +1321,13 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         const target = event.target as HTMLInputElement;
         setState({ loopEnabled: target.checked });
       });
+
+    transport
+      .querySelector<HTMLInputElement>("[data-action='portrait-preview-toggle']")
+      ?.addEventListener("change", (event) => {
+        const target = event.target as HTMLInputElement;
+        setState({ previewMode: target.checked ? "portrait-mobile" : "landscape" });
+      });
   };
 
   const bindHeaderActions = (): void => {
@@ -1412,19 +1426,19 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         return;
       }
       const { width, height } = previewCanvas;
-      const sourceRatio = source.width / source.height;
-      const targetRatio = width / height;
-      let drawWidth = width;
-      let drawHeight = height;
-      if (sourceRatio > targetRatio) {
-        drawHeight = width / sourceRatio;
-      } else {
-        drawWidth = height * sourceRatio;
-      }
-      const offsetX = (width - drawWidth) / 2;
-      const offsetY = (height - drawHeight) / 2;
+      const drawRegion = getPreviewDrawRegion(source.width, source.height, width, height, state.previewMode);
       previewContext.clearRect(0, 0, width, height);
-      previewContext.drawImage(source, offsetX, offsetY, drawWidth, drawHeight);
+      previewContext.drawImage(
+        source,
+        drawRegion.sourceX,
+        drawRegion.sourceY,
+        drawRegion.sourceWidth,
+        drawRegion.sourceHeight,
+        drawRegion.destX,
+        drawRegion.destY,
+        drawRegion.destWidth,
+        drawRegion.destHeight
+      );
     },
     getLoopState: () => {
       if (!state.loopEnabled || !state.selectedSceneId || !state.timeline) {
