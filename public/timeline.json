@@ -2283,7 +2283,7 @@
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 1",
+      "id": "Scene 001 - Dot Tunnel",
       "start": 60.280726,
       "end": 65,
       "effect": "dotTunnel",
@@ -2303,12 +2303,31 @@
         "glow": 0.45,
         "seed": 5519
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 60.280726,
+          "t1": 65.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 2",
+      "id": "Scene 002 - Neon Alley",
       "start": 82.461587,
       "end": 92,
       "effect": "neon_alley",
@@ -2325,12 +2344,31 @@
         "hueShift": 0.7,
         "seed": 4
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 82.461587,
+          "t1": 92.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 3",
+      "id": "Scene 003 - Kefrens Bars",
       "start": 88.2,
       "end": 92,
       "effect": "kefrens_bars",
@@ -2349,12 +2387,31 @@
         "phaseOffset": -2.12,
         "palette": "c64"
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 88.2,
+          "t1": 92.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 4",
+      "id": "Scene 004 - Sphere3d",
       "start": 104.259716,
       "end": 106.27000000000001,
       "effect": "sphere3d",
@@ -2367,12 +2424,31 @@
       "params": {
         "speed": 0.9
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 104.259716,
+          "t1": 106.27000000000001,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 5",
+      "id": "Scene 005 - Sphere3d",
       "start": 104.889558,
       "end": 106.27000000000001,
       "effect": "sphere3d",
@@ -2385,12 +2461,31 @@
       "params": {
         "speed": 0.3
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 104.889558,
+          "t1": 106.27000000000001,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 6",
+      "id": "Scene 006 - Explicitpixels",
       "start": 105.458446,
       "end": 106.27000000000001,
       "effect": "explicitpixels",
@@ -2405,12 +2500,31 @@
         "speed": 1.85,
         "audioReact": 1.2
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 105.458446,
+          "t1": 106.27000000000001,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 7",
+      "id": "Scene 007 - Flyover",
       "start": 128.727744,
       "end": 130.8,
       "effect": "flyover",
@@ -2432,12 +2546,31 @@
         "palette": "night",
         "audioReactive": 0.05
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 128.727744,
+          "t1": 130.8,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 8",
+      "id": "Scene 008 - Kefrens Bars",
       "start": 142.407199,
       "end": 143.6,
       "effect": "kefrens_bars",
@@ -2458,12 +2591,31 @@
         "scanlines": 0.5,
         "audioReactive": 0.75
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 142.407199,
+          "t1": 143.6,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 10",
+      "id": "Scene 009 - Amiga Showcase",
       "start": 158.243996,
       "end": 163.5,
       "effect": "amiga_showcase",
@@ -2499,12 +2651,31 @@
         "shatter": 0.73,
         "wreckingCue": 0.45
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 158.243996,
+          "t1": 163.5,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 12",
+      "id": "Scene 010 - Amiga Showcase",
       "start": 160.565991,
       "end": 163.5,
       "effect": "amiga_showcase",
@@ -2533,12 +2704,31 @@
         "twistWidth": 0.2,
         "twistX": 0.56
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 160.565991,
+          "t1": 163.5,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 13",
+      "id": "Scene 011 - Glenz Vectors",
       "start": 165,
       "end": 169,
       "effect": "glenz_vectors",
@@ -2570,12 +2760,31 @@
         "beatKick": 0.45,
         "seed": 723
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 165.0,
+          "t1": 169.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 14",
+      "id": "Scene 012 - Glenz Vectors",
       "start": 180.159728,
       "end": 181.5,
       "effect": "glenz_vectors",
@@ -2607,12 +2816,31 @@
         "beatKick": 0.85,
         "seed": 684
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 180.159728,
+          "t1": 181.5,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 15",
+      "id": "Scene 013 - Volumetric Clouds",
       "start": 185.538603,
       "end": 189.6,
       "effect": "volumetric_clouds",
@@ -2632,12 +2860,31 @@
         "haze": 0.26,
         "audioReact": 0.35
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 185.538603,
+          "t1": 189.6,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 16",
+      "id": "Scene 014 - Lens Wobbler",
       "start": 188.478829,
       "end": 189.6,
       "effect": "lens_wobbler",
@@ -2669,12 +2916,31 @@
         "seed": 134,
         "lensPath": "lissajous"
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 188.478829,
+          "t1": 189.6,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 17",
+      "id": "Scene 015 - Dot Tunnel",
       "start": 194.698874,
       "end": 194.8,
       "effect": "dotTunnel",
@@ -2694,12 +2960,31 @@
         "glow": 1.5,
         "seed": 1271
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 194.698874,
+          "t1": 194.8,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 18",
+      "id": "Scene 016 - Feedback",
       "start": 198.946835,
       "end": 205.14,
       "effect": "feedback",
@@ -2716,12 +3001,31 @@
         "trail": 0.92,
         "glow": 0.5
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 198.946835,
+          "t1": 205.14,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 19",
+      "id": "Scene 017 - Fractal",
       "start": 200.235542,
       "end": 205.14,
       "effect": "fractal",
@@ -2738,12 +3042,31 @@
         "scale": 0.33,
         "alpha": 0.65
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 200.235542,
+          "t1": 205.14,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 20",
+      "id": "Scene 018 - Fractal",
       "start": 201.617129,
       "end": 205.14,
       "effect": "fractal",
@@ -2760,12 +3083,31 @@
         "scale": 0.36,
         "alpha": 0.6
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 201.617129,
+          "t1": 205.14,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 21",
+      "id": "Scene 019 - Ribbons",
       "start": 202.484974,
       "end": 205.14,
       "effect": "ribbons",
@@ -2784,12 +3126,31 @@
         "spacing": 0.23,
         "thickness": 6
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 202.484974,
+          "t1": 205.14,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 22",
+      "id": "Scene 020 - Sine Distorter",
       "start": 203.216403,
       "end": 205.14,
       "effect": "sine_distorter",
@@ -2814,12 +3175,31 @@
         "beatBoost": 0.1,
         "glow": 0.27
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 203.216403,
+          "t1": 205.14,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 23",
+      "id": "Scene 021 - Amiga Showcase",
       "start": 203.875269,
       "end": 205.14,
       "effect": "amiga_showcase",
@@ -2848,12 +3228,31 @@
         "twistWidth": 0.48,
         "twistX": 0.42
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 203.875269,
+          "t1": 205.14,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 24",
+      "id": "Scene 022 - Rotozoom",
       "start": 204.577673,
       "end": 205.14,
       "effect": "rotozoom",
@@ -2866,12 +3265,31 @@
       "params": {
         "speed": 0.95
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 204.577673,
+          "t1": 205.14,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 25",
+      "id": "Scene 023 - Lissajous",
       "start": 205.352975,
       "end": 210,
       "effect": "lissajous",
@@ -2889,15 +3307,34 @@
         "radius": 0.39,
         "lineWidth": 4.2
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 205.352975,
+          "t1": 210.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 26",
+      "id": "Scene 024 - Raymarch Fractal",
       "start": 207.051974,
       "end": 210,
-      "effect": "portrait",
+      "effect": "raymarch_fractal",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -2906,14 +3343,35 @@
       },
       "params": {
         "zoom": 1.83,
-        "drift": 0.2
+        "drift": 0.2,
+        "speed": 0.22,
+        "hueShift": 0.14
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 207.051974,
+          "t1": 210.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 27",
+      "id": "Scene 025 - Gl Fractal Tunnel",
       "start": 207.922723,
       "end": 210,
       "effect": "gl_fractal_tunnel",
@@ -2930,12 +3388,31 @@
         "exposure": 1.2,
         "seed": 1
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 207.922723,
+          "t1": 210.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 28",
+      "id": "Scene 026 - Raymarch Fractal",
       "start": 208.982133,
       "end": 210,
       "effect": "raymarch_fractal",
@@ -2956,12 +3433,31 @@
         "beatKick": 0.95,
         "fractalScale": 2.15
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 208.982133,
+          "t1": 210.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 29",
+      "id": "Scene 027 - Road Drive",
       "start": 210.931103,
       "end": 214.8,
       "effect": "roadDrive",
@@ -2984,12 +3480,31 @@
         "bassReactive": 1.85,
         "rmsReactive": 1.75
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 210.931103,
+          "t1": 214.8,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 30",
+      "id": "Scene 028 - Finale",
       "start": 212.079785,
       "end": 214.8,
       "effect": "finale",
@@ -3009,12 +3524,31 @@
         "bars": 51,
         "barHeight": 0.2
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 212.079785,
+          "t1": 214.8,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 31",
+      "id": "Scene 029 - Fractal Zoomer",
       "start": 213.089853,
       "end": 214.8,
       "effect": "fractal_zoomer",
@@ -3033,12 +3567,31 @@
         "paletteSpeed": 1.94,
         "audioReact": 0.95
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 213.089853,
+          "t1": 214.8,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 32",
+      "id": "Scene 030 - Copper Gradient Splits",
       "start": 214.20029,
       "end": 214.8,
       "effect": "copper_gradient_splits",
@@ -3068,12 +3621,31 @@
         "beatKick": 1,
         "regions": 0.84
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 214.20029,
+          "t1": 214.8,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 33",
+      "id": "Scene 031 - Textured Cube",
       "start": 215.230217,
       "end": 219.6,
       "effect": "textured_cube",
@@ -3099,12 +3671,31 @@
         "beatKick": 0.8,
         "textureAnim": 0
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 215.230217,
+          "t1": 219.6,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 34",
+      "id": "Scene 032 - Metaballs",
       "start": 216.219967,
       "end": 219.6,
       "effect": "metaballs",
@@ -3136,12 +3727,31 @@
         "beatKick": 0.95,
         "seed": 974
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 216.219967,
+          "t1": 219.6,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 35",
+      "id": "Scene 033 - Rain",
       "start": 217.389672,
       "end": 219.6,
       "effect": "rain",
@@ -3163,12 +3773,31 @@
         "mist": 0.5,
         "seed": 977
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 217.389672,
+          "t1": 219.6,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 36",
+      "id": "Scene 034 - Border Multiplex",
       "start": 218.4694,
       "end": 219.6,
       "effect": "border_multiplex",
@@ -3189,12 +3818,31 @@
         "audioReact": 0.05,
         "seed": 98
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 218.4694,
+          "t1": 219.6,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 37",
+      "id": "Scene 035 - Textmode Charset",
       "start": 220.739151,
       "end": 224.4,
       "effect": "textmode_charset",
@@ -3214,12 +3862,31 @@
         "scanlines": 0.4,
         "seed": 308
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 220.739151,
+          "t1": 224.4,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 38",
+      "id": "Scene 036 - Metaballs",
       "start": 221.95679,
       "end": 224.4,
       "effect": "metaballs",
@@ -3251,12 +3918,31 @@
         "beatKick": 0.45,
         "seed": 215
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 221.95679,
+          "t1": 224.4,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 39",
+      "id": "Scene 037 - Vga Fire",
       "start": 223.326767,
       "end": 224.4,
       "effect": "vga_fire",
@@ -3284,12 +3970,31 @@
         "scanlines": 0.31,
         "glowStrength": 1.04
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 223.326767,
+          "t1": 224.4,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 40",
+      "id": "Scene 038 - Raytrace Spheres",
       "start": 224.50518,
       "end": 229.2,
       "effect": "raytrace_spheres",
@@ -3324,12 +4029,31 @@
         "floorReflect": 0.87,
         "scanlines": 0
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 224.50518,
+          "t1": 229.2,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 41",
+      "id": "Scene 039 - Lens Wobbler",
       "start": 225.567492,
       "end": 229.2,
       "effect": "lens_wobbler",
@@ -3361,12 +4085,31 @@
         "seed": 64,
         "lensPath": "lissajous"
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 225.567492,
+          "t1": 229.2,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 42",
+      "id": "Scene 040 - Plasma",
       "start": 226.905542,
       "end": 229.2,
       "effect": "plasma",
@@ -3379,12 +4122,31 @@
       "params": {
         "speed": 0.75
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 226.905542,
+          "t1": 229.2,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 43",
+      "id": "Scene 041 - Finale",
       "start": 228.336093,
       "end": 229.2,
       "effect": "finale",
@@ -3404,12 +4166,31 @@
         "bars": 47,
         "barHeight": 1
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 228.336093,
+          "t1": 229.2,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 44",
+      "id": "Scene 042 - Volumetric Clouds",
       "start": 229.735095,
       "end": 234,
       "effect": "volumetric_clouds",
@@ -3429,12 +4210,31 @@
         "haze": 0.79,
         "audioReact": 0.4
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 229.735095,
+          "t1": 234.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 45",
+      "id": "Scene 043 - Voxel Landscape",
       "start": 230.666796,
       "end": 234,
       "effect": "voxel_landscape",
@@ -3465,12 +4265,31 @@
         "scanlines": 1,
         "seed": 3363
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 230.666796,
+          "t1": 234.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 46",
+      "id": "Scene 044 - Tunnel",
       "start": 231.696634,
       "end": 234,
       "effect": "tunnel",
@@ -3483,12 +4302,31 @@
       "params": {
         "speed": 1.45
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 231.696634,
+          "t1": 234.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 47",
+      "id": "Scene 045 - Fluid",
       "start": 232.645749,
       "end": 234,
       "effect": "fluid",
@@ -3507,12 +4345,31 @@
         "hueShift": 125,
         "seed": 784
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 232.645749,
+          "t1": 234.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 48",
+      "id": "Scene 046 - Amiga Showcase",
       "start": 233.876407,
       "end": 234,
       "effect": "amiga_showcase",
@@ -3541,12 +4398,31 @@
         "twistWidth": 0.72,
         "twistX": 0.24
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 233.876407,
+          "t1": 234.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 49",
+      "id": "Scene 047 - Kefrens Bars",
       "start": 234.924208,
       "end": 238.8,
       "effect": "kefrens_bars",
@@ -3565,12 +4441,31 @@
         "phaseOffset": -3.15,
         "palette": "rainbow"
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 234.924208,
+          "t1": 238.8,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 50",
+      "id": "Scene 048 - Equalizer",
       "start": 238.096634,
       "end": 238.8,
       "effect": "equalizer",
@@ -3587,12 +4482,31 @@
         "bassBoost": 47,
         "alpha": 0.7
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 238.096634,
+          "t1": 238.8,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 51",
+      "id": "Scene 049 - Glitch",
       "start": 240.885931,
       "end": 243.6,
       "effect": "glitch",
@@ -3613,12 +4527,31 @@
         "shake": 1.7,
         "maxShake": 10.7
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 240.885931,
+          "t1": 243.6,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 52",
+      "id": "Scene 050 - Neon",
       "start": 242.276226,
       "end": 243.6,
       "effect": "neon",
@@ -3636,12 +4569,31 @@
         "glow": 13,
         "lineWidth": 2.4
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 242.276226,
+          "t1": 243.6,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 53",
+      "id": "Scene 051 - Envmap Donut",
       "start": 243.023543,
       "end": 243.6,
       "effect": "envmap_donut",
@@ -3674,12 +4626,31 @@
         "beatKick": 0.4,
         "seed": 13
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 243.023543,
+          "t1": 243.6,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 54",
+      "id": "Scene 052 - Vga Fire",
       "start": 244.503815,
       "end": 248.4,
       "effect": "vga_fire",
@@ -3707,12 +4678,31 @@
         "scanlines": 0.48,
         "glowStrength": 0.62
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 244.503815,
+          "t1": 248.4,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 55",
+      "id": "Scene 053 - Treegrowth",
       "start": 245.921546,
       "end": 248.4,
       "effect": "treegrowth",
@@ -3735,12 +4725,31 @@
         "seed": 2.4,
         "growth": 0.4
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 245.921546,
+          "t1": 248.4,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 56",
+      "id": "Scene 054 - Envmap Donut",
       "start": 246.861954,
       "end": 248.4,
       "effect": "envmap_donut",
@@ -3773,12 +4782,31 @@
         "beatKick": 0.4,
         "seed": 50
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 246.861954,
+          "t1": 248.4,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 57",
+      "id": "Scene 055 - Greets Wall",
       "start": 248.162272,
       "end": 248.4,
       "effect": "greets_wall",
@@ -3800,12 +4828,31 @@
         "title": "GREETS",
         "names": "Fairlight|TRSI|Spaceballs|CNCD|Mercury|TBL"
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 248.162272,
+          "t1": 248.4,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 58",
+      "id": "Scene 056 - Amiga Showcase",
       "start": 249.660102,
       "end": 253.2,
       "effect": "amiga_showcase",
@@ -3834,12 +4881,31 @@
         "twistWidth": 0.49,
         "twistX": 0.21
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 249.660102,
+          "t1": 253.2,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 59",
+      "id": "Scene 057 - Vector3d Balls",
       "start": 250.709053,
       "end": 253.2,
       "effect": "vector3d_balls",
@@ -3870,12 +4936,31 @@
         "beatKick": 0.35,
         "seed": 2275
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 250.709053,
+          "t1": 253.2,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 60",
+      "id": "Scene 058 - Glenz Vectors",
       "start": 251.628161,
       "end": 253.2,
       "effect": "glenz_vectors",
@@ -3907,12 +4992,31 @@
         "beatKick": 0.45,
         "seed": 907
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 251.628161,
+          "t1": 253.2,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 61",
+      "id": "Scene 059 - Textured Cube",
       "start": 252.655644,
       "end": 253.2,
       "effect": "textured_cube",
@@ -3938,12 +5042,31 @@
         "beatKick": 0.05,
         "textureAnim": 1
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 252.655644,
+          "t1": 253.2,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 62",
+      "id": "Scene 060 - Flyover",
       "start": 253.967443,
       "end": 258,
       "effect": "flyover",
@@ -3965,12 +5088,31 @@
         "palette": "night",
         "audioReactive": 0.9
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 253.967443,
+          "t1": 258.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 63",
+      "id": "Scene 061 - Neon Alley",
       "start": 255.195198,
       "end": 258,
       "effect": "neon_alley",
@@ -3987,12 +5129,31 @@
         "hueShift": 0.11,
         "seed": 23
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 255.195198,
+          "t1": 258.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 64",
+      "id": "Scene 062 - Finale",
       "start": 256.294516,
       "end": 258,
       "effect": "finale",
@@ -4012,12 +5173,31 @@
         "bars": 35,
         "barHeight": 0.65
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 256.294516,
+          "t1": 258.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 65",
+      "id": "Scene 063 - Boids Simulation",
       "start": 257.54549,
       "end": 258,
       "effect": "boids_simulation",
@@ -4039,12 +5219,31 @@
         "size": 1.7,
         "seed": 775
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 257.54549,
+          "t1": 258.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 66",
+      "id": "Scene 064 - Textmode Charset",
       "start": 259.274678,
       "end": 262,
       "effect": "textmode_charset",
@@ -4064,12 +5263,31 @@
         "scanlines": 0.8,
         "seed": 783
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 259.274678,
+          "t1": 262.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 67",
+      "id": "Scene 065 - Treegrowth",
       "start": 260.76656,
       "end": 262,
       "effect": "treegrowth",
@@ -4092,12 +5310,31 @@
         "seed": 5.7,
         "growth": 0.12
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 260.76656,
+          "t1": 262.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 68",
+      "id": "Scene 066 - Effect Evolution",
       "start": 261.875313,
       "end": 262,
       "effect": "effect_evolution",
@@ -4114,12 +5351,31 @@
         "trail": 0.6,
         "seed": 4308
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 261.875313,
+          "t1": 262.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 69",
+      "id": "Scene 067 - Rain",
       "start": 263.436855,
       "end": 265.7,
       "effect": "rain",
@@ -4141,12 +5397,31 @@
         "mist": 0.4,
         "seed": 355
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 263.436855,
+          "t1": 265.7,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 70",
+      "id": "Scene 068 - Lissajous",
       "start": 264.908218,
       "end": 265.7,
       "effect": "lissajous",
@@ -4164,12 +5439,31 @@
         "radius": 0.12,
         "lineWidth": 5.2
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 264.908218,
+          "t1": 265.7,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 71",
+      "id": "Scene 069 - Wireframe Ride",
       "start": 266.176589,
       "end": 272.15,
       "effect": "wireframeRide",
@@ -4195,12 +5489,31 @@
         "rmsReactive": 0.4,
         "sun": 0
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 266.176589,
+          "t1": 272.15,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 72",
+      "id": "Scene 070 - Textmode Charset",
       "start": 283.989195,
       "end": 302.4,
       "effect": "textmode_charset",
@@ -4220,12 +5533,31 @@
         "scanlines": 0.4,
         "seed": 460
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 283.989195,
+          "t1": 302.4,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 73",
+      "id": "Scene 071 - Volumetric Clouds",
       "start": 285.227424,
       "end": 302.4,
       "effect": "volumetric_clouds",
@@ -4245,12 +5577,31 @@
         "haze": 0.77,
         "audioReact": 0.2
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 285.227424,
+          "t1": 302.4,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 74",
+      "id": "Scene 072 - Tunnel",
       "start": 286.018039,
       "end": 302.4,
       "effect": "tunnel",
@@ -4263,12 +5614,31 @@
       "params": {
         "speed": 0.9
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 286.018039,
+          "t1": 302.4,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 75",
+      "id": "Scene 073 - Particles",
       "start": 287.004887,
       "end": 302.4,
       "effect": "particles",
@@ -4285,12 +5655,31 @@
         "force": 3.7,
         "forceAudio": 5
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 287.004887,
+          "t1": 302.4,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 76",
+      "id": "Scene 074 - Tunnel",
       "start": 287.972248,
       "end": 302.4,
       "effect": "tunnel",
@@ -4303,12 +5692,31 @@
       "params": {
         "speed": 1.4
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 287.972248,
+          "t1": 302.4,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 77",
+      "id": "Scene 075 - Textured Cube",
       "start": 288.863314,
       "end": 302.4,
       "effect": "textured_cube",
@@ -4334,12 +5742,31 @@
         "beatKick": 0.5,
         "textureAnim": 0
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 288.863314,
+          "t1": 302.4,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 78",
+      "id": "Scene 076 - Effect Evolution",
       "start": 289.773287,
       "end": 302.4,
       "effect": "effect_evolution",
@@ -4356,12 +5783,31 @@
         "trail": 0.06,
         "seed": 923
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 289.773287,
+          "t1": 302.4,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 79",
+      "id": "Scene 077 - Sphere3d",
       "start": 290.66145,
       "end": 302.4,
       "effect": "sphere3d",
@@ -4374,12 +5820,31 @@
       "params": {
         "speed": 1.45
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 290.66145,
+          "t1": 302.4,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 80",
+      "id": "Scene 078 - Glenz Vectors",
       "start": 291.44814,
       "end": 302.4,
       "effect": "glenz_vectors",
@@ -4411,12 +5876,31 @@
         "beatKick": 0.8,
         "seed": 806
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 291.44814,
+          "t1": 302.4,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 81",
+      "id": "Scene 079 - Voxel Landscape",
       "start": 292.468924,
       "end": 302.4,
       "effect": "voxel_landscape",
@@ -4447,12 +5931,31 @@
         "scanlines": 1,
         "seed": 2054
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 292.468924,
+          "t1": 302.4,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 82",
+      "id": "Scene 080 - Fluid",
       "start": 293.409332,
       "end": 302.4,
       "effect": "fluid",
@@ -4471,12 +5974,31 @@
         "hueShift": 180,
         "seed": 627
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 293.409332,
+          "t1": 302.4,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 83",
+      "id": "Scene 081 - Rain",
       "start": 294.288788,
       "end": 302.4,
       "effect": "rain",
@@ -4498,12 +6020,31 @@
         "mist": 0.6,
         "seed": 255
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 294.288788,
+          "t1": 302.4,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 84",
+      "id": "Scene 082 - Vga Fire",
       "start": 295.428628,
       "end": 302.4,
       "effect": "vga_fire",
@@ -4531,12 +6072,31 @@
         "scanlines": 0.27,
         "glowStrength": 0.78
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 295.428628,
+          "t1": 302.4,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 85",
+      "id": "Scene 083 - Gl Fractal Tunnel",
       "start": 296.397566,
       "end": 302.4,
       "effect": "gl_fractal_tunnel",
@@ -4553,12 +6113,31 @@
         "exposure": 0.75,
         "seed": 1
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 296.397566,
+          "t1": 302.4,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 86",
+      "id": "Scene 084 - Fractal Zoomer",
       "start": 297.506319,
       "end": 302.4,
       "effect": "fractal_zoomer",
@@ -4577,12 +6156,31 @@
         "paletteSpeed": 0.53,
         "audioReact": 0.05
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 297.506319,
+          "t1": 302.4,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 87",
+      "id": "Scene 085 - Shadebobs Bobs",
       "start": 298.456912,
       "end": 302.4,
       "effect": "shadebobs_bobs",
@@ -4612,12 +6210,31 @@
         "dirtyRects": 0,
         "seed": 19.5
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 298.456912,
+          "t1": 302.4,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 88",
+      "id": "Scene 086 - Wireframe Ride",
       "start": 299.606283,
       "end": 302.4,
       "effect": "wireframeRide",
@@ -4643,12 +6260,31 @@
         "rmsReactive": 0.05,
         "sun": 0
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 299.606283,
+          "t1": 302.4,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 89",
+      "id": "Scene 087 - Voxel Landscape",
       "start": 300.565836,
       "end": 302.4,
       "effect": "voxel_landscape",
@@ -4679,12 +6315,31 @@
         "scanlines": 1,
         "seed": 7766
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 300.565836,
+          "t1": 302.4,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 90",
+      "id": "Scene 088 - Gl Impossible Corridor",
       "start": 301.352988,
       "end": 302.4,
       "effect": "gl_impossible_corridor",
@@ -4703,12 +6358,31 @@
         "speed": 1.4,
         "internalScale": 0.55
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 301.352988,
+          "t1": 302.4,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 91",
+      "id": "Scene 089 - Lens Wobbler",
       "start": 301.843716,
       "end": 302.4,
       "effect": "lens_wobbler",
@@ -4740,12 +6414,31 @@
         "seed": 969,
         "lensPath": "circle"
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 301.843716,
+          "t1": 302.4,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 92",
+      "id": "Scene 090 - Border Multiplex",
       "start": 309.033195,
       "end": 319.66,
       "effect": "border_multiplex",
@@ -4766,12 +6459,31 @@
         "audioReact": 0.1,
         "seed": 653
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 309.033195,
+          "t1": 319.66,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 93",
+      "id": "Scene 091 - Equalizer",
       "start": 311.842726,
       "end": 319.66,
       "effect": "equalizer",
@@ -4788,12 +6500,31 @@
         "bassBoost": 11,
         "alpha": 0.45
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 311.842726,
+          "t1": 319.66,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 94",
+      "id": "Scene 092 - Voxel Landscape",
       "start": 316.45072,
       "end": 319.66,
       "effect": "voxel_landscape",
@@ -4824,12 +6555,31 @@
         "scanlines": 0,
         "seed": 2010
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 316.45072,
+          "t1": 319.66,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 95",
+      "id": "Scene 093 - Moire Grid",
       "start": 320.180615,
       "end": 325.39,
       "effect": "moire_grid",
@@ -4848,12 +6598,31 @@
         "palette": "magenta",
         "audioReact": 0.2
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 320.180615,
+          "t1": 325.39,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 96",
+      "id": "Scene 094 - Gl Fractal Tunnel",
       "start": 323.901613,
       "end": 325.39,
       "effect": "gl_fractal_tunnel",
@@ -4870,12 +6639,31 @@
         "exposure": 0.55,
         "seed": 8
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 323.901613,
+          "t1": 325.39,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 97",
+      "id": "Scene 095 - Tunnel",
       "start": 324.470502,
       "end": 325.39,
       "effect": "tunnel",
@@ -4888,12 +6676,31 @@
       "params": {
         "speed": 1.55
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 324.470502,
+          "t1": 325.39,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 98",
+      "id": "Scene 096 - Raytrace Spheres",
       "start": 325.248972,
       "end": 325.39,
       "effect": "raytrace_spheres",
@@ -4928,12 +6735,31 @@
         "floorReflect": 0.29,
         "scanlines": 1
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 325.248972,
+          "t1": 325.39,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 99",
+      "id": "Scene 097 - Raytrace Spheres",
       "start": 326.5203,
       "end": 340,
       "effect": "raytrace_spheres",
@@ -4968,12 +6794,31 @@
         "floorReflect": 0.35,
         "scanlines": 1
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 326.5203,
+          "t1": 340.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 100",
+      "id": "Scene 098 - Neon",
       "start": 327.528378,
       "end": 340,
       "effect": "neon",
@@ -4991,12 +6836,31 @@
         "glow": 18,
         "lineWidth": 4.9
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 327.528378,
+          "t1": 340.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 101",
+      "id": "Scene 099 - Glenz Vectors",
       "start": 328.137877,
       "end": 340,
       "effect": "glenz_vectors",
@@ -5028,12 +6892,31 @@
         "beatKick": 0.25,
         "seed": 276
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 328.137877,
+          "t1": 340.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 102",
+      "id": "Scene 100 - Feedback",
       "start": 328.718375,
       "end": 340,
       "effect": "feedback",
@@ -5050,12 +6933,31 @@
         "trail": 0.9,
         "glow": 0.2
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 328.718375,
+          "t1": 340.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 103",
+      "id": "Scene 101 - Vector3d Balls",
       "start": 329.876496,
       "end": 340,
       "effect": "vector3d_balls",
@@ -5086,12 +6988,31 @@
         "beatKick": 0.7,
         "seed": 2363
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 329.876496,
+          "t1": 340.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 104",
+      "id": "Scene 102 - Neon",
       "start": 331.70713,
       "end": 340,
       "effect": "neon",
@@ -5109,12 +7030,31 @@
         "glow": 37,
         "lineWidth": 6
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 331.70713,
+          "t1": 340.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 105",
+      "id": "Scene 103 - Lens Wobbler",
       "start": 332.682649,
       "end": 340,
       "effect": "lens_wobbler",
@@ -5146,12 +7086,31 @@
         "seed": 243,
         "lensPath": "lissajous"
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 332.682649,
+          "t1": 340.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 106",
+      "id": "Scene 104 - Road Drive",
       "start": 333.422785,
       "end": 340,
       "effect": "roadDrive",
@@ -5174,12 +7133,31 @@
         "bassReactive": 1.8,
         "rmsReactive": 2
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 333.422785,
+          "t1": 340.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 107",
+      "id": "Scene 105 - Textured Cube",
       "start": 334.563162,
       "end": 340,
       "effect": "textured_cube",
@@ -5205,12 +7183,31 @@
         "beatKick": 0.85,
         "textureAnim": 1
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 334.563162,
+          "t1": 340.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 108",
+      "id": "Scene 106 - Neon",
       "start": 337.512399,
       "end": 340,
       "effect": "neon",
@@ -5228,12 +7225,31 @@
         "glow": 14,
         "lineWidth": 4
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 337.512399,
+          "t1": 340.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 109",
+      "id": "Scene 107 - Road Drive",
       "start": 338.71389,
       "end": 340,
       "effect": "roadDrive",
@@ -5256,12 +7272,31 @@
         "bassReactive": 1.8,
         "rmsReactive": 1.05
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 338.71389,
+          "t1": 340.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 110",
+      "id": "Scene 108 - Poly Morph Showcase",
       "start": 339.253428,
       "end": 340,
       "effect": "poly_morph_showcase",
@@ -5297,12 +7332,31 @@
         "beatKick": 0.9,
         "seed": 148
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 339.253428,
+          "t1": 340.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 111",
+      "id": "Scene 109 - Raster Bars",
       "start": 339.764691,
       "end": 340,
       "effect": "raster_bars",
@@ -5327,12 +7381,31 @@
         "orientation": 1,
         "palette": 7
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 339.764691,
+          "t1": 340.0,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 112",
+      "id": "Scene 110 - Spherecloud",
       "start": 357.761492,
       "end": 372.6,
       "effect": "spherecloud",
@@ -5345,12 +7418,31 @@
       "params": {
         "speed": 1.35
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 357.761492,
+          "t1": 372.6,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 113",
+      "id": "Scene 111 - Textmode Charset",
       "start": 358.498787,
       "end": 372.6,
       "effect": "textmode_charset",
@@ -5370,12 +7462,31 @@
         "scanlines": 0.9,
         "seed": 921
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 358.498787,
+          "t1": 372.6,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 114",
+      "id": "Scene 112 - Starfield",
       "start": 359.167745,
       "end": 372.6,
       "effect": "starfield",
@@ -5394,12 +7505,31 @@
         "sparkle": 0.55,
         "colorShift": 0.45
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 359.167745,
+          "t1": 372.6,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 115",
+      "id": "Scene 113 - Gl Fractal Tunnel",
       "start": 359.828841,
       "end": 372.6,
       "effect": "gl_fractal_tunnel",
@@ -5416,12 +7546,31 @@
         "exposure": 0.55,
         "seed": 2
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 359.828841,
+          "t1": 372.6,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 116",
+      "id": "Scene 114 - Vga Fire",
       "start": 362.216213,
       "end": 372.6,
       "effect": "vga_fire",
@@ -5449,12 +7598,31 @@
         "scanlines": 0.9,
         "glowStrength": 1.8
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 362.216213,
+          "t1": 372.6,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 117",
+      "id": "Scene 115 - Rain",
       "start": 364.9066,
       "end": 372.6,
       "effect": "rain",
@@ -5476,12 +7644,31 @@
         "mist": 0.1,
         "seed": 851
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 364.9066,
+          "t1": 372.6,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 118",
+      "id": "Scene 116 - Spherecloud",
       "start": 366.575689,
       "end": 372.6,
       "effect": "spherecloud",
@@ -5494,12 +7681,31 @@
       "params": {
         "speed": 1.5
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 366.575689,
+          "t1": 372.6,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 119",
+      "id": "Scene 117 - Fractal",
       "start": 367.446449,
       "end": 372.6,
       "effect": "fractal",
@@ -5516,12 +7722,31 @@
         "scale": 0.11,
         "alpha": 0.2
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 367.446449,
+          "t1": 372.6,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 120",
+      "id": "Scene 118 - Torus Orbit 3d",
       "start": 368.337448,
       "end": 372.6,
       "effect": "torus_orbit_3d",
@@ -5543,12 +7768,31 @@
         "palette": "teal",
         "audioReact": 0.65
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 368.337448,
+          "t1": 372.6,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 121",
+      "id": "Scene 119 - Lissajous",
       "start": 368.967591,
       "end": 372.6,
       "effect": "lissajous",
@@ -5566,12 +7810,31 @@
         "radius": 0.16,
         "lineWidth": 3.4
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 368.967591,
+          "t1": 372.6,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 122",
+      "id": "Scene 120 - Explicitpixels",
       "start": 369.624158,
       "end": 372.6,
       "effect": "explicitpixels",
@@ -5586,15 +7849,34 @@
         "speed": 2.8,
         "audioReact": 0.05
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 369.624158,
+          "t1": 372.6,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 123",
+      "id": "Scene 121 - Portrait",
       "start": 370.344228,
       "end": 372.6,
-      "effect": "portrait",
+      "effect": "raymarch_fractal",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -5603,14 +7885,35 @@
       },
       "params": {
         "zoom": 1.46,
-        "drift": 0.2
+        "drift": 0.2,
+        "speed": 0.22,
+        "hueShift": 0.14
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 370.344228,
+          "t1": 372.6,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 124",
+      "id": "Scene 122 - Voxel Landscape",
       "start": 370.974063,
       "end": 372.6,
       "effect": "voxel_landscape",
@@ -5641,12 +7944,31 @@
         "scanlines": 1,
         "seed": 485
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 370.974063,
+          "t1": 372.6,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 125",
+      "id": "Scene 123 - Space Hangar",
       "start": 371.684907,
       "end": 372.6,
       "effect": "space_hangar",
@@ -5663,12 +7985,31 @@
         "hueShift": 0.5,
         "seed": 11
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 371.684907,
+          "t1": 372.6,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 126",
+      "id": "Scene 124 - Effect Evolution",
       "start": 372.323875,
       "end": 372.6,
       "effect": "effect_evolution",
@@ -5685,12 +8026,31 @@
         "trail": 0.22,
         "seed": 2923
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 372.323875,
+          "t1": 372.6,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 127",
+      "id": "Scene 125 - Starfield",
       "start": 372.923267,
       "end": 382.923267,
       "effect": "starfield",
@@ -5709,12 +8069,31 @@
         "sparkle": 0.65,
         "colorShift": 0.25
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 372.923267,
+          "t1": 382.923267,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 128",
+      "id": "Scene 126 - Infinitycloud",
       "start": 375.694896,
       "end": 385.694896,
       "effect": "infinitycloud",
@@ -5727,12 +8106,31 @@
       "params": {
         "speed": 1.75
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 375.694896,
+          "t1": 385.694896,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 129",
+      "id": "Scene 127 - Particles",
       "start": 376.87362,
       "end": 386.87362,
       "effect": "particles",
@@ -5749,12 +8147,31 @@
         "force": 2.7,
         "forceAudio": 2.8
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 376.87362,
+          "t1": 386.87362,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 130",
+      "id": "Scene 128 - Lens Wobbler",
       "start": 377.802072,
       "end": 387.802072,
       "effect": "lens_wobbler",
@@ -5786,12 +8203,31 @@
         "seed": 758,
         "lensPath": "circle"
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 377.802072,
+          "t1": 387.802072,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 131",
+      "id": "Scene 129 - Road Drive",
       "start": 378.353809,
       "end": 388.353809,
       "effect": "roadDrive",
@@ -5814,12 +8250,31 @@
         "bassReactive": 1.5,
         "rmsReactive": 0.6
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 378.353809,
+          "t1": 388.353809,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     },
     {
-      "id": "New Section 132",
+      "id": "Scene 130 - Volumetric Clouds",
       "start": 379.383878,
       "end": 389.383878,
       "effect": "volumetric_clouds",
@@ -5839,8 +8294,27 @@
         "haze": 0.14,
         "audioReact": 0.8
       },
-      "automation": [],
-      "layers": [],
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.85,
+          "to": 1.15,
+          "t0": 379.383878,
+          "t1": 389.383878,
+          "ease": "inOutSine"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "feedback",
+          "opacity": 0.18,
+          "blend": "screen",
+          "params": {
+            "mix": 0.12
+          },
+          "automation": []
+        }
+      ],
       "fitAlign": "fill"
     }
   ],
@@ -6021,7 +8495,7 @@
       "id": "title-polygons",
       "start": "02:43.7",
       "end": "02:46.0",
-      "text": "🧊",
+      "text": "\ud83e\uddca",
       "x": 0.5,
       "y": 0.2,
       "align": "center",
@@ -6081,7 +8555,7 @@
       "id": "rap-cue-empower",
       "start": "03:26",
       "end": "03:27.2",
-      "text": "ASK → BUILD",
+      "text": "ASK \u2192 BUILD",
       "x": 0.5,
       "y": 0.18,
       "align": "center",

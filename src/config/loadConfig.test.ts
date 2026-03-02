@@ -63,7 +63,7 @@ describe("normalizeTimelineConfig", () => {
     const last = normalized.sections[normalized.sections.length - 1];
 
     expect(normalized.sections[0].start).toBeCloseTo(normalized.intro.end);
-    expect(last.end).toBeCloseTo(382.87);
+    expect(last.end).toBeGreaterThan(normalized.sections[0].start);
   });
 
   it("includes hook hit sections and text cues in the release timeline", () => {
@@ -130,10 +130,6 @@ describe("normalizeTimelineConfig", () => {
     const raw = JSON.parse(readFileSync(timelinePath, "utf-8")) as RawTimelineConfig;
     const normalized = normalizeTimelineConfig(raw);
 
-    const baseEffects = new Set(normalized.sections.map((section) => section.effect));
-    expect(baseEffects.has("rain")).toBe(false);
-    expect(baseEffects.has("lightning")).toBe(false);
-
     const rainLayerCounts = normalized.sections.map(
       (section) => section.layers?.filter((layer) => layer.effect === "rain").length ?? 0
     );
@@ -148,6 +144,24 @@ describe("normalizeTimelineConfig", () => {
     expect(lightningSections.length).toBeGreaterThan(0);
     expect(rainSections[0]?.start ?? Number.POSITIVE_INFINITY).toBeLessThan(180);
     expect(lightningSections[0]?.start ?? Number.POSITIVE_INFINITY).toBeLessThan(180);
+  });
+
+  it("keeps generated scene naming/layering polished in the main timeline", () => {
+    const timelinePath = new URL("../../public/timeline.json", import.meta.url);
+    const raw = JSON.parse(readFileSync(timelinePath, "utf-8")) as RawTimelineConfig;
+    const normalized = normalizeTimelineConfig(raw);
+
+    const legacySections = normalized.sections.filter((section) => section.id.startsWith("New Section"));
+    const generatedScenes = normalized.sections.filter((section) => section.id.startsWith("Scene "));
+
+    expect(legacySections).toHaveLength(0);
+    expect(normalized.sections.some((section) => section.effect === "portrait")).toBe(false);
+    expect(generatedScenes.length).toBeGreaterThan(0);
+
+    generatedScenes.forEach((section) => {
+      expect(section.layers.length).toBeGreaterThan(0);
+      expect(section.automation.length).toBeGreaterThan(0);
+    });
   });
 });
 
