@@ -259,6 +259,23 @@
           "effect": "fluid",
           "blend": "screen",
           "opacity": 0.09
+        },
+        {
+          "effect": "equalizer",
+          "opacity": 0.05,
+          "blend": "soft-light",
+          "params": {},
+          "automation": [
+            {
+              "param": "opacity",
+              "from": 0.61,
+              "to": 0,
+              "t0": 78.8,
+              "t1": 92,
+              "ease": "easeOutBounce"
+            }
+          ],
+          "fitAlign": "fill"
         }
       ]
     },
@@ -864,10 +881,10 @@
         {
           "param": "speed",
           "from": 0.94,
-          "to": 1.36,
-          "t0": "02:00.03",
-          "t1": "02:10.8",
-          "ease": "easeInOutQuad"
+          "to": 1.96,
+          "t0": 120,
+          "t1": 130.8,
+          "ease": "easeInSine"
         }
       ],
       "layers": [
@@ -2174,6 +2191,76 @@
           "opacity": 0.08
         }
       ]
+    },
+    {
+      "id": "scene-94e4ts",
+      "start": 104,
+      "end": 105,
+      "effect": "finale",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {},
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "scene-aldn33",
+      "start": 169,
+      "end": 171,
+      "effect": "textured_cube",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "audioReact": 0.4,
+        "backfaceCull": 0,
+        "beatKick": 0,
+        "rotXSpeed": 0.15,
+        "rotYSpeed": 0.15,
+        "rotZSpeed": 0.1,
+        "camDist": 4,
+        "scale": 3,
+        "edgeAlpha": 0.25
+      },
+      "automation": [
+        {
+          "param": "audioReact",
+          "from": 0,
+          "to": 1,
+          "t0": 169,
+          "t1": 171,
+          "ease": "linear"
+        }
+      ],
+      "layers": [],
+      "fitAlign": "fill"
+    },
+    {
+      "id": "scene-rczf92",
+      "start": 194.8,
+      "end": 196,
+      "effect": "envmap_donut",
+      "era": "pcdemo",
+      "transition": {
+        "in": "fade",
+        "out": "fade",
+        "duration": 0.8
+      },
+      "params": {
+        "camDist": 4.8,
+        "audioReact": 0
+      },
+      "automation": [],
+      "layers": [],
+      "fitAlign": "fill"
     }
   ],
   "textCues": [
