@@ -84,6 +84,20 @@ describe("normalizeTimelineConfig", () => {
     expect(lateHookText?.start).toBeCloseTo(280.73);
   });
 
+  it("ships the full rap verse as tightly timed lyric cues", () => {
+    const releasePath = new URL("../../public/timeline.release.json", import.meta.url);
+    const raw = JSON.parse(readFileSync(releasePath, "utf-8")) as RawTimelineConfig;
+    const normalized = normalizeTimelineConfig(raw);
+
+    const rapLyrics = normalized.textCues.filter((cue) => cue.id.startsWith("rap-lyric-"));
+
+    expect(rapLyrics).toHaveLength(27);
+    expect(rapLyrics[0]?.text).toContain("All I had to do was ask");
+    expect(rapLyrics.at(-1)?.text).toContain("nothing more than dreaming");
+    expect(rapLyrics[0]?.start).toBeCloseTo(206);
+    expect(rapLyrics.at(-1)?.end).toBeCloseTo(262);
+  });
+
   it("features the wireframe ride and mutation sections in the release timeline", () => {
     const releasePath = new URL("../../public/timeline.release.json", import.meta.url);
     const raw = JSON.parse(readFileSync(releasePath, "utf-8")) as RawTimelineConfig;
