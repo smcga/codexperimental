@@ -380,6 +380,10 @@ body,
   place-items: center;
 }
 
+.editor-preview.is-portrait-mobile {
+  aspect-ratio: 9 / 16;
+}
+
 .editor-preview canvas {
   width: 100%;
   height: 100%;

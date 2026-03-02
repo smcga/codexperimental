@@ -84,9 +84,43 @@ type EditorState = {
   originalTimeline: RawTimelineConfig | null;
   selectedSceneId: string | null;
   loopEnabled: boolean;
+  previewViewport: "landscape" | "portrait-mobile";
   error: string | null;
   fieldErrors: Record<string, string>;
 };
+
+export function getPreviewDrawRegion(
+  sourceWidth: number,
+  sourceHeight: number,
+  targetWidth: number,
+  targetHeight: number,
+  viewport: "landscape" | "portrait-mobile"
+): { drawWidth: number; drawHeight: number; offsetX: number; offsetY: number } {
+  const sourceRatio = sourceWidth / Math.max(1, sourceHeight);
+  const targetRatio = targetWidth / Math.max(1, targetHeight);
+
+  let drawWidth = targetWidth;
+  let drawHeight = targetHeight;
+
+  if (viewport === "portrait-mobile") {
+    if (sourceRatio > targetRatio) {
+      drawWidth = targetHeight * sourceRatio;
+    } else {
+      drawHeight = targetWidth / sourceRatio;
+    }
+  } else if (sourceRatio > targetRatio) {
+    drawHeight = targetWidth / sourceRatio;
+  } else {
+    drawWidth = targetHeight * sourceRatio;
+  }
+
+  return {
+    drawWidth,
+    drawHeight,
+    offsetX: (targetWidth - drawWidth) / 2,
+    offsetY: (targetHeight - drawHeight) / 2
+  };
+}
 
 type EditorInit = {
   container: HTMLElement;
@@ -113,6 +147,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     originalTimeline: null,
     selectedSceneId: null,
     loopEnabled: false,
+    previewViewport: "landscape",
     error: null,
     fieldErrors: {}
   };
@@ -268,8 +303,12 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         </section>
         <section class="editor-column editor-timeline">
           <div class="editor-section-title">Timeline</div>
-          <div class="editor-preview">
-            <canvas data-region="preview-canvas" width="640" height="360"></canvas>
+          <div class="editor-preview ${state.previewViewport === "portrait-mobile" ? "is-portrait-mobile" : ""}">
+            <canvas
+              data-region="preview-canvas"
+              width="${state.previewViewport === "portrait-mobile" ? 360 : 640}"
+              height="${state.previewViewport === "portrait-mobile" ? 640 : 360}"
+            ></canvas>
           </div>
           <div class="editor-timeline-view" data-region="timeline-view"></div>
         </section>
@@ -285,6 +324,14 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           <label class="editor-toggle">
             <input type="checkbox" data-action="loop-toggle" ${state.loopEnabled ? "checked" : ""} />
             <span>Loop scene</span>
+          </label>
+          <label class="editor-toggle">
+            <input
+              type="checkbox"
+              data-action="portrait-preview-toggle"
+              ${state.previewViewport === "portrait-mobile" ? "checked" : ""}
+            />
+            <span>Portrait mobile preview</span>
           </label>
           <span class="editor-timestamp" data-region="timestamp">00:00.0</span>
         </div>
@@ -1080,6 +1127,13 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         const target = event.target as HTMLInputElement;
         setState({ loopEnabled: target.checked });
       });
+
+    transport
+      .querySelector<HTMLInputElement>("[data-action='portrait-preview-toggle']")
+      ?.addEventListener("change", (event) => {
+        const target = event.target as HTMLInputElement;
+        setState({ previewViewport: target.checked ? "portrait-mobile" : "landscape" });
+      });
   };
 
   const bindHeaderActions = (): void => {
@@ -1174,17 +1228,13 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         return;
       }
       const { width, height } = previewCanvas;
-      const sourceRatio = source.width / source.height;
-      const targetRatio = width / height;
-      let drawWidth = width;
-      let drawHeight = height;
-      if (sourceRatio > targetRatio) {
-        drawHeight = width / sourceRatio;
-      } else {
-        drawWidth = height * sourceRatio;
-      }
-      const offsetX = (width - drawWidth) / 2;
-      const offsetY = (height - drawHeight) / 2;
+      const { drawWidth, drawHeight, offsetX, offsetY } = getPreviewDrawRegion(
+        source.width,
+        source.height,
+        width,
+        height,
+        state.previewViewport
+      );
       previewContext.clearRect(0, 0, width, height);
       previewContext.drawImage(source, offsetX, offsetY, drawWidth, drawHeight);
     },
