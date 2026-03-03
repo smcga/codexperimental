@@ -163,6 +163,27 @@ describe("normalizeTimelineConfig", () => {
       expect(section.automation.length).toBeGreaterThan(0);
     });
   });
+
+  it("keeps rap chapter cues visually varied without retiming lyrics", () => {
+    const timelinePath = new URL("../../public/timeline.json", import.meta.url);
+    const raw = JSON.parse(readFileSync(timelinePath, "utf-8")) as RawTimelineConfig;
+    const normalized = normalizeTimelineConfig(raw);
+
+    const rapStart = 3 * 60 + 25.14;
+    const rapEnd = 4 * 60 + 25.7;
+    const rapCues = normalized.textCues.filter((cue) => cue.end > rapStart && cue.start < rapEnd);
+
+    expect(rapCues.length).toBeGreaterThan(200);
+    expect(new Set(rapCues.map((cue) => cue.align)).size).toBeGreaterThanOrEqual(3);
+    expect(new Set(rapCues.map((cue) => cue.x.toFixed(2))).size).toBeGreaterThanOrEqual(5);
+    expect(new Set(rapCues.map((cue) => cue.y.toFixed(2))).size).toBeGreaterThanOrEqual(5);
+    expect(Math.max(...rapCues.map((cue) => cue.size))).toBeGreaterThanOrEqual(56);
+
+    const typewriterCount = rapCues.filter((cue) => cue.effects.typewriter).length;
+    const glitchCount = rapCues.filter((cue) => cue.effects.glitchIn).length;
+    expect(typewriterCount).toBeGreaterThan(40);
+    expect(glitchCount).toBeGreaterThan(80);
+  });
 });
 
 it("defaults section framing to auto and accepts explicit override", () => {
