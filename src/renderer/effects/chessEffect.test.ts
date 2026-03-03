@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { applyMove, buildBoardAtMove, createInitialBoard, drawPiece, resolveLocalStartTime } from "./chessEffect";
 
 class TestPath2D {
+  addPath(): void {}
   arc(): void {}
   moveTo(): void {}
   lineTo(): void {}
@@ -65,17 +66,21 @@ describe("chessEffect helpers", () => {
       translate: () => undefined,
       scale: () => undefined,
       beginPath: () => undefined,
+      clip: () => undefined,
       arc: () => undefined,
       ellipse: () => undefined,
       fill: () => undefined,
+      fillRect: () => undefined,
       stroke: () => undefined,
+      createLinearGradient: () => gradient,
       createRadialGradient: () => gradient,
       fillStyle: "",
       strokeStyle: "",
       lineWidth: 0,
       lineJoin: "round",
       lineCap: "round",
-      globalAlpha: 1
+      globalAlpha: 1,
+      globalCompositeOperation: "source-over"
     } as unknown as CanvasRenderingContext2D;
 
     ["P", "R", "N", "B", "Q", "K", "p", "r", "n", "b", "q", "k"].forEach((piece) => {

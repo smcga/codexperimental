@@ -156,197 +156,245 @@ export function resolveLocalStartTime(
   return existing.localStartTime;
 }
 
-const pieceSilhouetteCache: Partial<Record<Lowercase<PieceCode>, Path2D>> = {};
+const piecePathCache: Partial<
+  Record<Lowercase<PieceCode>, { body: Path2D; top?: Path2D; cutout?: Path2D; accent?: Path2D; full: Path2D }>
+> = {};
 
-function getPieceSilhouette(kind: Lowercase<PieceCode>): Path2D {
-  const cached = pieceSilhouetteCache[kind];
+function getPiecePaths(kind: Lowercase<PieceCode>): { body: Path2D; top?: Path2D; cutout?: Path2D; accent?: Path2D; full: Path2D } {
+  const cached = piecePathCache[kind];
   if (cached) {
     return cached;
   }
 
-  const path = new Path2D();
+  const body = new Path2D();
+  let top: Path2D | undefined;
+  let cutout: Path2D | undefined;
+  let accent: Path2D | undefined;
+
   switch (kind) {
     case "p": {
-      path.arc(0, -0.34, 0.16, 0, Math.PI * 2);
-      path.moveTo(-0.11, -0.2);
-      path.bezierCurveTo(-0.16, -0.12, -0.15, 0.05, -0.1, 0.2);
-      path.lineTo(0.1, 0.2);
-      path.bezierCurveTo(0.15, 0.05, 0.16, -0.12, 0.11, -0.2);
-      path.closePath();
+      body.moveTo(-0.12, 0.08);
+      body.lineTo(-0.08, -0.08);
+      body.lineTo(0.08, -0.08);
+      body.lineTo(0.12, 0.08);
+      body.closePath();
+
+      top = new Path2D();
+      top.arc(0, -0.22, 0.095, 0, Math.PI * 2);
       break;
     }
     case "r": {
-      path.moveTo(-0.2, 0.2);
-      path.lineTo(-0.18, -0.34);
-      path.lineTo(0.18, -0.34);
-      path.lineTo(0.2, 0.2);
-      path.closePath();
+      body.moveTo(-0.17, 0.08);
+      body.lineTo(-0.145, -0.28);
+      body.lineTo(0.145, -0.28);
+      body.lineTo(0.17, 0.08);
+      body.closePath();
 
-      path.rect(-0.24, -0.48, 0.09, 0.1);
-      path.rect(-0.1, -0.48, 0.09, 0.1);
-      path.rect(0.04, -0.48, 0.09, 0.1);
-      path.rect(0.18, -0.48, 0.09, 0.1);
+      top = new Path2D();
+      top.moveTo(-0.18, -0.28);
+      top.lineTo(-0.18, -0.38);
+      top.lineTo(-0.12, -0.38);
+      top.lineTo(-0.12, -0.32);
+      top.lineTo(-0.04, -0.32);
+      top.lineTo(-0.04, -0.38);
+      top.lineTo(0.04, -0.38);
+      top.lineTo(0.04, -0.32);
+      top.lineTo(0.12, -0.32);
+      top.lineTo(0.12, -0.38);
+      top.lineTo(0.18, -0.38);
+      top.lineTo(0.18, -0.28);
+      top.closePath();
       break;
     }
     case "n": {
-      path.moveTo(-0.21, 0.22);
-      path.bezierCurveTo(-0.22, 0.04, -0.2, -0.15, -0.14, -0.34);
-      path.bezierCurveTo(-0.08, -0.56, 0.12, -0.62, 0.22, -0.49);
-      path.bezierCurveTo(0.13, -0.48, 0.04, -0.42, 0, -0.3);
-      path.bezierCurveTo(0.09, -0.26, 0.18, -0.18, 0.21, -0.04);
-      path.bezierCurveTo(0.16, 0.03, 0.1, 0.08, 0.03, 0.14);
-      path.lineTo(0.16, 0.22);
-      path.closePath();
+      body.moveTo(-0.17, 0.1);
+      body.lineTo(-0.1, -0.08);
+      body.lineTo(-0.1, -0.24);
+      body.lineTo(-0.04, -0.4);
+      body.lineTo(0.05, -0.47);
+      body.lineTo(0.09, -0.39);
+      body.lineTo(0.03, -0.33);
+      body.lineTo(0.12, -0.29);
+      body.lineTo(0.17, -0.2);
+      body.lineTo(0.08, -0.12);
+      body.lineTo(-0.01, -0.14);
+      body.lineTo(0.05, -0.06);
+      body.lineTo(0.02, 0.1);
+      body.closePath();
+
+      accent = new Path2D();
+      accent.moveTo(-0.08, -0.34);
+      accent.lineTo(-0.03, -0.43);
+      accent.lineTo(0.02, -0.35);
+
+      cutout = new Path2D();
+      cutout.arc(0.04, -0.27, 0.022, 0, Math.PI * 2);
       break;
     }
     case "b": {
-      path.moveTo(-0.15, 0.2);
-      path.bezierCurveTo(-0.16, 0.02, -0.1, -0.16, -0.03, -0.26);
-      path.bezierCurveTo(-0.18, -0.34, -0.17, -0.58, 0, -0.62);
-      path.bezierCurveTo(0.17, -0.58, 0.18, -0.34, 0.03, -0.26);
-      path.bezierCurveTo(0.1, -0.16, 0.16, 0.02, 0.15, 0.2);
-      path.closePath();
+      body.moveTo(-0.12, 0.1);
+      body.lineTo(-0.08, -0.12);
+      body.bezierCurveTo(-0.06, -0.28, -0.03, -0.36, 0, -0.44);
+      body.bezierCurveTo(0.03, -0.36, 0.06, -0.28, 0.08, -0.12);
+      body.lineTo(0.12, 0.1);
+      body.closePath();
+
+      top = new Path2D();
+      top.moveTo(-0.09, -0.38);
+      top.bezierCurveTo(-0.09, -0.5, -0.03, -0.58, 0, -0.58);
+      top.bezierCurveTo(0.03, -0.58, 0.09, -0.5, 0.09, -0.38);
+      top.bezierCurveTo(0.09, -0.31, 0.04, -0.25, 0, -0.22);
+      top.bezierCurveTo(-0.04, -0.25, -0.09, -0.31, -0.09, -0.38);
+      top.closePath();
+
+      cutout = new Path2D();
+      cutout.moveTo(-0.01, -0.51);
+      cutout.lineTo(0.07, -0.4);
+      cutout.lineTo(0.045, -0.37);
+      cutout.lineTo(-0.03, -0.48);
+      cutout.closePath();
       break;
     }
     case "q": {
-      path.moveTo(-0.22, 0.2);
-      path.bezierCurveTo(-0.2, -0.04, -0.16, -0.24, -0.12, -0.36);
-      path.lineTo(0.12, -0.36);
-      path.bezierCurveTo(0.16, -0.24, 0.2, -0.04, 0.22, 0.2);
-      path.closePath();
+      body.moveTo(-0.18, 0.1);
+      body.lineTo(-0.14, -0.15);
+      body.lineTo(0.14, -0.15);
+      body.lineTo(0.18, 0.1);
+      body.closePath();
 
-      path.moveTo(-0.2, -0.35);
-      path.lineTo(-0.12, -0.52);
-      path.lineTo(-0.02, -0.37);
-      path.lineTo(0, -0.56);
-      path.lineTo(0.02, -0.37);
-      path.lineTo(0.12, -0.52);
-      path.lineTo(0.2, -0.35);
-      path.closePath();
+      top = new Path2D();
+      top.moveTo(-0.19, -0.15);
+      top.lineTo(-0.14, -0.35);
+      top.lineTo(-0.08, -0.2);
+      top.lineTo(-0.02, -0.39);
+      top.lineTo(0, -0.2);
+      top.lineTo(0.02, -0.39);
+      top.lineTo(0.08, -0.2);
+      top.lineTo(0.14, -0.35);
+      top.lineTo(0.19, -0.15);
+      top.closePath();
+
+      accent = new Path2D();
+      for (const px of [-0.14, -0.07, 0, 0.07, 0.14]) {
+        accent.moveTo(px + 0.018, -0.37);
+        accent.arc(px, -0.37, 0.018, 0, Math.PI * 2);
+      }
       break;
     }
     case "k": {
-      path.moveTo(-0.23, 0.2);
-      path.bezierCurveTo(-0.22, -0.05, -0.16, -0.25, -0.1, -0.35);
-      path.lineTo(0.1, -0.35);
-      path.bezierCurveTo(0.16, -0.25, 0.22, -0.05, 0.23, 0.2);
-      path.closePath();
+      body.moveTo(-0.19, 0.1);
+      body.lineTo(-0.15, -0.14);
+      body.lineTo(0.15, -0.14);
+      body.lineTo(0.19, 0.1);
+      body.closePath();
 
-      path.rect(-0.18, -0.43, 0.36, 0.08);
+      top = new Path2D();
+      top.rect(-0.15, -0.3, 0.3, 0.09);
+
+      accent = new Path2D();
+      accent.rect(-0.018, -0.47, 0.036, 0.18);
+      accent.rect(-0.095, -0.41, 0.19, 0.04);
       break;
     }
     default:
       break;
   }
 
-  pieceSilhouetteCache[kind] = path;
-  return path;
+  const full = new Path2D();
+  full.addPath(body);
+  if (top) {
+    full.addPath(top);
+  }
+  if (accent) {
+    full.addPath(accent);
+  }
+
+  const paths = { body, top, cutout, accent, full };
+  piecePathCache[kind] = paths;
+  return paths;
 }
 
-function drawBase(ctx: CanvasRenderingContext2D, radius: number, fill: string, stroke: string): void {
-  const rim = new Path2D();
-  rim.arc(0, 0.23, radius, 0, Math.PI * 2);
-
-  const baseGradient = ctx.createRadialGradient(-radius * 0.35, 0.16, radius * 0.2, 0, 0.23, radius);
-  baseGradient.addColorStop(0, fill);
-  baseGradient.addColorStop(1, stroke);
-  ctx.fillStyle = baseGradient;
-  ctx.fill(rim);
-  ctx.stroke(rim);
-
-  ctx.globalAlpha = 0.24;
-  ctx.beginPath();
-  ctx.arc(-radius * 0.2, 0.18, radius * 0.62, Math.PI * 0.9, Math.PI * 1.9);
-  ctx.stroke();
-  ctx.globalAlpha = 1;
+function withAlpha(hexColor: string, alpha: number): string {
+  const hex = hexColor.replace("#", "");
+  const value = hex.length === 3 ? hex.split("").map((part) => part + part).join("") : hex;
+  const r = parseInt(value.slice(0, 2), 16);
+  const g = parseInt(value.slice(2, 4), 16);
+  const b = parseInt(value.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
 export function drawPiece(ctx: CanvasRenderingContext2D, piece: PieceCode, x: number, y: number, size: number): void {
   const isWhite = piece === piece.toUpperCase();
   const fill = isWhite ? "#f6f2e8" : "#1b1b1b";
   const stroke = isWhite ? "#1b1b1b" : "#f6f2e8";
-  const pieceHeight = size * 0.9;
-  const baseRadius = size * 0.325;
-  const pieceScale = pieceHeight;
+  const u = size;
+  const lineWidth = Math.max(1.5, u * 0.05);
+  const kind = piece.toLowerCase() as Lowercase<PieceCode>;
+
+  const baseRadius = u * 0.3;
+  const bodyLift = -u * 0.08;
+  const pieceScale = u;
+
+  const paths = getPiecePaths(kind);
 
   ctx.save();
-  ctx.translate(x, y + size * 0.18);
+  ctx.translate(x, y + u * 0.14);
+  ctx.lineWidth = lineWidth;
   ctx.strokeStyle = stroke;
-  ctx.lineWidth = Math.max(1.2, size * 0.045);
-  ctx.lineJoin = "round";
   ctx.lineCap = "round";
+  ctx.lineJoin = "round";
 
-  ctx.globalAlpha = 0.2;
+  ctx.globalAlpha = 0.18;
   ctx.fillStyle = stroke;
   ctx.beginPath();
-  ctx.ellipse(0.02 * size, baseRadius * 1.15, baseRadius * 0.92, baseRadius * 0.28, 0, 0, Math.PI * 2);
+  ctx.ellipse(0, u * 0.2, baseRadius * 0.88, baseRadius * 0.26, 0, 0, Math.PI * 2);
   ctx.fill();
   ctx.globalAlpha = 1;
 
-  drawBase(ctx, baseRadius, fill, stroke);
-
-  const silhouette = getPieceSilhouette(piece.toLowerCase());
-  const bodyGradient = ctx.createRadialGradient(
-    -pieceScale * 0.16,
-    -pieceScale * 0.52,
-    pieceScale * 0.05,
-    0,
-    -pieceScale * 0.12,
-    pieceScale * 0.7
-  );
-  bodyGradient.addColorStop(0, fill);
-  bodyGradient.addColorStop(1, stroke);
-  ctx.fillStyle = bodyGradient;
-
-  ctx.save();
-  ctx.scale(pieceScale, pieceScale);
-  ctx.fill(silhouette);
-  ctx.stroke(silhouette);
-
-  if (piece.toLowerCase() === "n") {
-    const eye = new Path2D();
-    eye.arc(0.09, -0.36, 0.03, 0, Math.PI * 2);
-    ctx.fillStyle = stroke;
-    ctx.fill(eye);
-  }
-
-  if (piece.toLowerCase() === "b") {
-    const slit = new Path2D();
-    slit.moveTo(-0.02, -0.48);
-    slit.lineTo(0.07, -0.36);
-    slit.lineTo(0.03, -0.33);
-    slit.lineTo(-0.05, -0.45);
-    slit.closePath();
-    ctx.fillStyle = stroke;
-    ctx.fill(slit);
-  }
-
-  if (piece.toLowerCase() === "q") {
-    const bead = new Path2D();
-    [-0.2, -0.1, 0, 0.1, 0.2].forEach((px) => {
-      bead.moveTo(px + 0.03, -0.52);
-      bead.arc(px, -0.52, 0.03, 0, Math.PI * 2);
-    });
-    ctx.fillStyle = fill;
-    ctx.fill(bead);
-    ctx.stroke(bead);
-  }
-
-  if (piece.toLowerCase() === "k") {
-    const cross = new Path2D();
-    cross.rect(-0.02, -0.62, 0.04, 0.18);
-    cross.rect(-0.09, -0.56, 0.18, 0.04);
-    ctx.fillStyle = fill;
-    ctx.fill(cross);
-    ctx.stroke(cross);
-  }
-  ctx.restore();
-
-  ctx.globalAlpha = 0.25;
+  ctx.fillStyle = fill;
   ctx.beginPath();
-  ctx.arc(0, -pieceHeight * 0.26, pieceHeight * 0.12, Math.PI * 0.2, Math.PI * 0.9);
+  ctx.arc(0, u * 0.14, baseRadius, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.lineWidth = lineWidth * 0.72;
+  ctx.globalAlpha = 0.35;
+  ctx.beginPath();
+  ctx.arc(-u * 0.03, u * 0.11, baseRadius * 0.73, Math.PI * 0.86, Math.PI * 1.9);
   ctx.stroke();
   ctx.globalAlpha = 1;
+  ctx.lineWidth = lineWidth;
+
+  ctx.save();
+  ctx.translate(0, bodyLift);
+  ctx.scale(pieceScale, pieceScale);
+  ctx.fillStyle = fill;
+  ctx.fill(paths.body);
+  if (paths.top) {
+    ctx.fill(paths.top);
+  }
+  if (paths.accent) {
+    ctx.fill(paths.accent);
+  }
+
+  if (paths.cutout) {
+    ctx.save();
+    ctx.globalCompositeOperation = "destination-out";
+    ctx.fill(paths.cutout);
+    ctx.restore();
+  }
+
+  const highlight = ctx.createLinearGradient(-0.25, -0.58, 0.12, -0.08);
+  highlight.addColorStop(0, withAlpha(isWhite ? fill : stroke, 0.2));
+  highlight.addColorStop(1, withAlpha(isWhite ? fill : stroke, 0));
+  ctx.save();
+  ctx.clip(paths.full);
+  ctx.fillStyle = highlight;
+  ctx.fillRect(-0.34, -0.72, 0.68, 0.9);
+  ctx.restore();
+
+  ctx.stroke(paths.full);
+  ctx.restore();
 
   ctx.restore();
 }
