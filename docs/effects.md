@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/index.ts`.
 
-Total effects: **68**.
+Total effects: **69**.
 
 ## Table of contents
 
@@ -74,6 +74,7 @@ Total effects: **68**.
 - [Effect: explicitpixels](#effect-explicitpixels)
 - [Effect: volumetric_clouds](#effect-volumetric-clouds)
 - [Effect: boids_simulation](#effect-boids-simulation)
+- [Effect: voxel_world_builder](#effect-voxel-world-builder)
 
 ## Cross-reference
 
@@ -95,9 +96,9 @@ Total effects: **68**.
 
 - `speed` (used in 40 effects)
 - `audioReact` (used in 27 effects)
-- `seed` (used in 25 effects)
+- `seed` (used in 26 effects)
 - `beatKick` (used in 14 effects)
-- `glow` (used in 9 effects)
+- `glow` (used in 10 effects)
 - `palette` (used in 9 effects)
 - `trail` (used in 7 effects)
 - `scanlines` (used in 7 effects)
@@ -2466,6 +2467,36 @@ Total effects: **68**.
 ```json
 {
   "effect": "boids_simulation",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: voxel_world_builder
+
+- **Registry key:** `voxel_world_builder`
+- **Implementation:** `src/renderer/effects/VoxelWorldBuilder.ts` (class `VoxelWorldBuilderEffect`)
+- **Renderer:** hybrid
+- **Description:** Implemented by VoxelWorldBuilderEffect (src/renderer/effects/VoxelWorldBuilder.ts).
+- **Audio features:** None detected
+- **Performance notes:** Hybrid WebGL2 rendering with Canvas2D blitting.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.buildProgress` | number | 0 | min 0, max 1 | Build Progress | yes |
+| `params.cameraLift` | number | 0.15 | min -0.25, max 1.5 | Camera Lift | yes |
+| `params.cityDensity` | number | 0.62 | min 0, max 1 | City Density | yes |
+| `params.glow` | number | 0.85 | min 0, max 2 | Glow | yes |
+| `params.seed` | number | 11 | min 0, max 9999 | Seed | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "voxel_world_builder",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
