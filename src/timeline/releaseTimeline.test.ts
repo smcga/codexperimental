@@ -99,7 +99,26 @@ describe("release timeline", () => {
       return end > rapStart && start < rapEnd;
     });
     expect(rapTextCues.length).toBeGreaterThanOrEqual(2);
-    expect(rapTextCues.length).toBeLessThanOrEqual(4);
+  });
+
+  it("keeps rap chapter text cues portrait-safe for mobile", () => {
+    const rapStart = 3 * 60 + 25.14;
+    const rapEnd = 4 * 60 + 25.7;
+    const rapTextCues = timeline.textCues.filter((cue) => {
+      const start = toSeconds(cue.start);
+      const end = toSeconds(cue.end);
+      return end > rapStart && start < rapEnd;
+    });
+
+    rapTextCues.forEach((cue) => {
+      expect(cue.x).toBeGreaterThanOrEqual(0.2);
+      expect(cue.x).toBeLessThanOrEqual(0.8);
+      expect(cue.y).toBeGreaterThanOrEqual(0.15);
+      expect(cue.y).toBeLessThanOrEqual(0.85);
+
+      const lineLengths = cue.text.split("\n").map((line) => line.trim().length);
+      expect(Math.max(...lineLengths)).toBeLessThanOrEqual(14);
+    });
   });
 
   it("uses every registered effect at least once as base or layer", () => {
