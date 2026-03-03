@@ -515,6 +515,38 @@ body,
   padding: 0.3rem 0.4rem;
 }
 
+.editor-cue-bulk {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 0.5rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.editor-cue-bulk summary {
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.editor-cue-bulk textarea {
+  min-height: 100px;
+}
+
+.editor-cue-bulk-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.5rem;
+}
+
+.editor-cue {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.45rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.5rem;
+  align-items: end;
+}
+
 .editor-advanced textarea {
   min-height: 90px;
   font-family: "Fira Code", "JetBrains Mono", "SFMono-Regular", "Menlo", monospace;

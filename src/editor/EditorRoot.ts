@@ -1,4 +1,5 @@
 import {
+  RawTextCue,
   BlendMode,
   EraPreset,
   RawParamAutomation,
@@ -89,6 +90,26 @@ type EditorState = {
 };
 
 type EditorParamValue = number | string | boolean | null;
+
+type BulkCueGenerationOptions = {
+  text: string;
+  start: number;
+  end: number;
+  font: string;
+  color: string;
+  size: number;
+  x: number;
+  y: number;
+  align: "left" | "center" | "right";
+  existingIds?: Set<string>;
+  idPrefix?: string;
+};
+
+type CueTypography = {
+  font: string;
+  color: string;
+  size: number;
+};
 
 type EditorInit = {
   container: HTMLElement;
@@ -240,6 +261,93 @@ export const parseEditorParamInputValue = (input: string): EditorParamValue => {
 };
 
 export const isEditorParamToggleChecked = (value: unknown): boolean => value === true || value === 1;
+
+export const splitCueWords = (value: string): string[] => {
+  return value
+    .split(/\s+/)
+    .map((word) => word.trim())
+    .filter((word) => word.length > 0);
+};
+
+
+export const getCueTypography = (cue: RawTextCue): CueTypography => {
+  const firstSpan = cue.spans?.[0];
+  return {
+    font: firstSpan?.font ?? "Courier New",
+    color: firstSpan?.color ?? cue.color ?? "#ffffff",
+    size: firstSpan?.size ?? cue.size ?? 42
+  };
+};
+
+const applyCueTypography = (cue: RawTextCue, typography: CueTypography): void => {
+  cue.size = typography.size;
+  cue.color = typography.color;
+  cue.spans = [
+    {
+      text: cue.text ?? cue.spans?.[0]?.text ?? "",
+      font: typography.font,
+      color: typography.color,
+      size: typography.size,
+      weight: cue.spans?.[0]?.weight ?? "bold"
+    }
+  ];
+};
+
+const createUniqueCueId = (baseId: string, existingIds: Set<string>): string => {
+  if (!existingIds.has(baseId)) {
+    existingIds.add(baseId);
+    return baseId;
+  }
+
+  let suffix = 2;
+  while (existingIds.has(`${baseId}-${suffix}`)) {
+    suffix += 1;
+  }
+  const next = `${baseId}-${suffix}`;
+  existingIds.add(next);
+  return next;
+};
+
+export const generateWordTextCues = (options: BulkCueGenerationOptions): RawTextCue[] => {
+  const words = splitCueWords(options.text);
+  if (words.length === 0) {
+    return [];
+  }
+
+  const start = Number.isFinite(options.start) ? options.start : 0;
+  const end = Number.isFinite(options.end) ? options.end : start + words.length * 0.3;
+  const timelineDuration = Math.max(0, end - start);
+  const slotDuration = words.length > 0 ? timelineDuration / words.length : 0;
+  const minDuration = 0.05;
+  const existingIds = options.existingIds ?? new Set<string>();
+  const idPrefix = options.idPrefix ?? "cue";
+
+  return words.map((word, index) => {
+    const cueStart = start + slotDuration * index;
+    const nextBoundary = index === words.length - 1 ? end : start + slotDuration * (index + 1);
+    const cueEnd = Math.max(cueStart + minDuration, nextBoundary);
+    const id = createUniqueCueId(`${idPrefix}-${index + 1}`, existingIds);
+    return {
+      ...createTextCue({ id, start: cueStart, end: cueEnd }),
+      text: word,
+      spans: [
+        {
+          text: word,
+          font: options.font,
+          color: options.color,
+          size: options.size,
+          weight: "bold"
+        }
+      ],
+      color: options.color,
+      size: options.size,
+      x: options.x,
+      y: options.y,
+      align: options.align,
+      units: "normalized"
+    };
+  });
+};
 
 export async function createEditorRoot(init: EditorInit): Promise<EditorController> {
   const state: EditorState = {
@@ -707,6 +815,56 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       </div>
       <div class="editor-group">
         <div class="editor-group-title">Text Cues</div>
+        <details class="editor-cue-bulk" open>
+          <summary>Bulk cue generator</summary>
+          <label>
+            <span>Words / lines</span>
+            <textarea data-bulk-cue-field="text" placeholder="Paste words here (split by spaces or new lines)"></textarea>
+          </label>
+          <div class="editor-cue-bulk-grid">
+            <label>
+              <span>Start (s)</span>
+              <input type="number" step="0.1" data-bulk-cue-field="start" value="${formatEditableTime(scene.start)}" />
+            </label>
+            <label>
+              <span>End (s)</span>
+              <input type="number" step="0.1" data-bulk-cue-field="end" value="${formatEditableTime(getSceneEnd(scene), true)}" />
+            </label>
+            <label>
+              <span>Size (px)</span>
+              <input type="number" step="1" min="1" data-bulk-cue-field="size" value="42" />
+            </label>
+            <label>
+              <span>Colour</span>
+              <input type="text" data-bulk-cue-field="color" value="#ffffff" />
+            </label>
+            <label>
+              <span>Font</span>
+              <input type="text" data-bulk-cue-field="font" value="inherit" />
+            </label>
+            <label>
+              <span>X (0..1)</span>
+              <input type="number" step="0.01" min="0" max="1" data-bulk-cue-field="x" value="0.5" />
+            </label>
+            <label>
+              <span>Y (0..1)</span>
+              <input type="number" step="0.01" min="0" max="1" data-bulk-cue-field="y" value="0.7" />
+            </label>
+            <label>
+              <span>Align</span>
+              <select data-bulk-cue-field="align">
+                <option value="left">Left</option>
+                <option value="center" selected>Center</option>
+                <option value="right">Right</option>
+              </select>
+            </label>
+          </div>
+          <label class="editor-toggle">
+            <input type="checkbox" data-bulk-cue-field="replace" />
+            <span>Replace cues already starting in this scene</span>
+          </label>
+          <button type="button" class="editor-add" data-action="generate-cues">Generate cues from words</button>
+        </details>
         <div data-region="text-cues"></div>
         <button type="button" class="editor-add" data-action="add-cue">+ Text cue</button>
       </div>
@@ -802,6 +960,55 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       const end = Math.min(getSceneEnd(scene), start + 3);
       updateTimeline((draft) => {
         draft.textCues = [...(draft.textCues ?? []), createTextCue({ start, end })];
+      });
+    });
+
+    const generateCuesButton = inspector.querySelector<HTMLButtonElement>("[data-action='generate-cues']");
+    generateCuesButton?.addEventListener("click", () => {
+      const text =
+        inspector.querySelector<HTMLTextAreaElement>("[data-bulk-cue-field='text']")?.value ?? "";
+      const start = Number(inspector.querySelector<HTMLInputElement>("[data-bulk-cue-field='start']")?.value ?? 0);
+      const end = Number(inspector.querySelector<HTMLInputElement>("[data-bulk-cue-field='end']")?.value ?? 0);
+      const size = Number(inspector.querySelector<HTMLInputElement>("[data-bulk-cue-field='size']")?.value ?? 42);
+      const color =
+        inspector.querySelector<HTMLInputElement>("[data-bulk-cue-field='color']")?.value?.trim() || "#ffffff";
+      const font = inspector.querySelector<HTMLInputElement>("[data-bulk-cue-field='font']")?.value?.trim() || "inherit";
+      const x = Number(inspector.querySelector<HTMLInputElement>("[data-bulk-cue-field='x']")?.value ?? 0.5);
+      const y = Number(inspector.querySelector<HTMLInputElement>("[data-bulk-cue-field='y']")?.value ?? 0.7);
+      const align =
+        (inspector.querySelector<HTMLSelectElement>("[data-bulk-cue-field='align']")?.value as
+          | "left"
+          | "center"
+          | "right") ?? "center";
+      const replace = inspector.querySelector<HTMLInputElement>("[data-bulk-cue-field='replace']")?.checked ?? false;
+
+      updateTimeline((draft) => {
+        const sceneStart = parseTimelineTimeValue(scene.start);
+        const sceneEnd = getSceneEnd(scene);
+        const existingCues = draft.textCues ?? [];
+        const nextExistingIds = new Set(existingCues.map((cue) => cue.id));
+        const generated = generateWordTextCues({
+          text,
+          start,
+          end,
+          font,
+          color,
+          size: Number.isFinite(size) && size > 0 ? size : 42,
+          x: Number.isFinite(x) ? x : 0.5,
+          y: Number.isFinite(y) ? y : 0.7,
+          align,
+          existingIds: nextExistingIds,
+          idPrefix: scene.id.toLowerCase().replace(/[^a-z0-9]+/g, "-") || "cue"
+        });
+        const retained = replace
+          ? existingCues.filter((cue) => {
+              const cueStart = parseTimelineTimeValue(cue.start);
+              return cueStart < sceneStart || cueStart > sceneEnd;
+            })
+          : existingCues;
+        draft.textCues = [...retained, ...generated].sort(
+          (a, b) => parseTimelineTimeValue(a.start) - parseTimelineTimeValue(b.start)
+        );
       });
     });
   };
@@ -1241,6 +1448,34 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
             <span>Text</span>
             <input type="text" data-cue-field="text" value="${cue.text ?? ""}" />
           </label>
+          <label>
+            <span>Font</span>
+            <input type="text" data-cue-field="font" value="${getCueTypography(cue).font}" />
+          </label>
+          <label>
+            <span>Colour</span>
+            <input type="text" data-cue-field="color" value="${getCueTypography(cue).color}" />
+          </label>
+          <label>
+            <span>Size (px)</span>
+            <input type="number" step="1" min="1" data-cue-field="size" value="${getCueTypography(cue).size}" />
+          </label>
+          <label>
+            <span>X (0..1)</span>
+            <input type="number" step="0.01" data-cue-field="x" value="${cue.x ?? 0.5}" />
+          </label>
+          <label>
+            <span>Y (0..1)</span>
+            <input type="number" step="0.01" data-cue-field="y" value="${cue.y ?? 0.7}" />
+          </label>
+          <label>
+            <span>Align</span>
+            <select data-cue-field="align">
+              <option value="left" ${cue.align === "left" ? "selected" : ""}>Left</option>
+              <option value="center" ${cue.align === "center" ? "selected" : ""}>Center</option>
+              <option value="right" ${cue.align === "right" ? "selected" : ""}>Right</option>
+            </select>
+          </label>
           <button type="button" data-cue-action="delete" data-cue-id="${cue.id}">Delete cue</button>
         </div>
       `
@@ -1249,7 +1484,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
 
     container.querySelectorAll<HTMLDivElement>(".editor-cue").forEach((cueEl) => {
       const cueId = cueEl.dataset.cueId ?? "";
-      cueEl.querySelectorAll<HTMLInputElement>("[data-cue-field]").forEach((input) => {
+      cueEl.querySelectorAll<HTMLInputElement | HTMLSelectElement>("[data-cue-field]").forEach((input) => {
         input.addEventListener("change", () => {
           updateTimeline((draft) => {
             const targetCue = draft.textCues?.find((cue) => cue.id === cueId);
@@ -1265,6 +1500,30 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
               targetCue.end = Number(input.value);
             } else if (field === "text") {
               targetCue.text = input.value;
+              if (targetCue.spans && targetCue.spans.length > 0) {
+                targetCue.spans[0].text = input.value;
+              }
+            } else if (field === "font") {
+              const typography = getCueTypography(targetCue);
+              applyCueTypography(targetCue, { ...typography, font: input.value || typography.font });
+            } else if (field === "color") {
+              const typography = getCueTypography(targetCue);
+              applyCueTypography(targetCue, { ...typography, color: input.value || typography.color });
+            } else if (field === "size") {
+              const typography = getCueTypography(targetCue);
+              const nextSize = Number(input.value);
+              applyCueTypography(targetCue, {
+                ...typography,
+                size: Number.isFinite(nextSize) && nextSize > 0 ? nextSize : typography.size
+              });
+            } else if (field === "x") {
+              targetCue.x = Number(input.value);
+              targetCue.units = "normalized";
+            } else if (field === "y") {
+              targetCue.y = Number(input.value);
+              targetCue.units = "normalized";
+            } else if (field === "align") {
+              targetCue.align = input.value as "left" | "center" | "right";
             }
           });
         });
