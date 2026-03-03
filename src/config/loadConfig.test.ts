@@ -163,6 +163,26 @@ describe("normalizeTimelineConfig", () => {
       expect(section.automation.length).toBeGreaterThan(0);
     });
   });
+
+  it("spreads rap lyric cues across the portrait-safe area", () => {
+    const timelinePath = new URL("../../public/timeline.json", import.meta.url);
+    const raw = JSON.parse(readFileSync(timelinePath, "utf-8")) as RawTimelineConfig;
+    const normalized = normalizeTimelineConfig(raw);
+
+    const rapSceneCues = normalized.textCues.filter(
+      (cue) => cue.id.startsWith("scene-") && cue.start >= 205.4 && cue.start <= 237.2
+    );
+
+    expect(rapSceneCues.length).toBeGreaterThan(100);
+    expect(new Set(rapSceneCues.map((cue) => cue.x)).size).toBeGreaterThan(3);
+    expect(new Set(rapSceneCues.map((cue) => cue.y)).size).toBeGreaterThan(5);
+    expect(Math.min(...rapSceneCues.map((cue) => cue.x))).toBeGreaterThanOrEqual(0.14);
+    expect(Math.max(...rapSceneCues.map((cue) => cue.x))).toBeLessThanOrEqual(0.8);
+    expect(Math.min(...rapSceneCues.map((cue) => cue.y))).toBeGreaterThanOrEqual(0.16);
+    expect(Math.max(...rapSceneCues.map((cue) => cue.y))).toBeLessThanOrEqual(0.86);
+    expect(Math.max(...rapSceneCues.map((cue) => cue.size))).toBeLessThanOrEqual(30);
+    expect(rapSceneCues.every((cue) => cue.safe === true)).toBe(true);
+  });
 });
 
 it("defaults section framing to auto and accepts explicit override", () => {
