@@ -7,6 +7,7 @@ import { ROAD_DRIVE_DEFAULTS } from "../effects/roadDrive";
 import { BORDER_MULTIPLEX_DEFAULTS } from "../effects/borderMultiplexEffect";
 import { ENVMAP_DONUT_DEFAULTS } from "../effects/envmapDonut";
 import { VOXEL_LANDSCAPE_DEFAULTS } from "../effects/voxelLandscape";
+import { VOXEL_WORLD_BUILDER_DEFAULTS } from "../effects/VoxelWorldBuilder";
 import { TEXTURED_CUBE_DEFAULTS } from "../effects/texturedCube";
 import { SINE_DISTORTER_DEFAULTS } from "../effects/sineDistorter";
 import { GLENZ_VECTORS_DEFAULTS } from "../effects/glenzVectors";
@@ -439,6 +440,28 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("beatKick", "Beat Kick", VOXEL_LANDSCAPE_DEFAULTS.beatKick, { min: 0, max: 1, step: 0.05 }),
       toggleControl("scanlines", "Scanlines", false),
       numberControl("seed", "Seed", VOXEL_LANDSCAPE_DEFAULTS.seed, { min: 0, max: 9999, step: 1 })
+    ]
+  },
+  voxel_world_builder: {
+    title: "Voxel World Builder Controls",
+    controls: [
+      numberControl("buildProgress", "Build Progress", VOXEL_WORLD_BUILDER_DEFAULTS.buildProgress, {
+        min: 0,
+        max: 1,
+        step: 0.01
+      }),
+      numberControl("cityDensity", "City Density", VOXEL_WORLD_BUILDER_DEFAULTS.cityDensity, {
+        min: 0,
+        max: 1,
+        step: 0.01
+      }),
+      numberControl("glow", "Glow", VOXEL_WORLD_BUILDER_DEFAULTS.glow, { min: 0, max: 2, step: 0.01 }),
+      numberControl("cameraLift", "Camera Lift", VOXEL_WORLD_BUILDER_DEFAULTS.cameraLift, {
+        min: -0.25,
+        max: 1.5,
+        step: 0.01
+      }),
+      numberControl("seed", "Seed", VOXEL_WORLD_BUILDER_DEFAULTS.seed, { min: 0, max: 9999, step: 1 })
     ]
   },
   synthwaveSunset: {

@@ -177,6 +177,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `chess` | `speed`, `showHighlights`, `startTime` |  |
 | `flyover` | `speed`, `horizon`, `seaDetail`, `waveSpeed`, `waveIntensity`, `islandCount`, `islandSeed`, `fog`, `palette`, `audioReactive` | `palette` supports `day`, `sunset`, `night`. |
 | `voxel_landscape` | `bufW`, `bufH`, `speed`, `turnRate`, `turnWobble`, `camH`, `heightBob`, `beatBump`, `fov`, `horizon`, `scale`, `maxDist`, `stepBase`, `stepGrow`, `fogStrength`, `audioReact`, `beatKick`, `scanlines`, `seed` | Heightfield voxel landscape flyover with portrait-aware camera framing. |
+| `voxel_world_builder` | `buildProgress`, `cityDensity`, `glow`, `cameraLift`, `seed` | WebGL2 instanced voxel city assembler (64x64 cubes); falls back to Canvas2D isometric voxels when WebGL2 is unavailable. |
 | `gl_fractal_tunnel` | `quality`, `warp`, `hueShift`, `exposure`, `seed` | Falls back to `tunnel` when WebGL2 is unavailable. |
 | `physics_pile` | `count`, `restitution`, `friction`, `gravity`, `kickImpulse`, `beatImpulse`, `kickRadius`, `scatterAngleDeg`, `scatterJitter`, `kickUpBias`, `kickTorque`, `loosenDuration`, `loosenFrictionMult`, `loosenRestitutionAdd`, `loosenPosCorrMult`, `loosenExtraSlop`, `maxLinVel`, `maxAngVel`, `kickOrigin`, `kickOriginY`, `sepBiasDeg`, `spawnMode`, `trail`, `seed`, `wreckingCue`, `shatter` | `spawnMode` supports `pile` or `rain`. |
 | `gl_impossible_corridor` | `quality`, `warp`, `hueShift`, `exposure`, `seed`, `speed`, `internalScale` | Falls back to `tunnel` when WebGL2 is unavailable. |
@@ -204,6 +205,40 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `fractal_zoomer` | `setType`, `zoom`, `centerX`, `centerY`, `iterations`, `paletteSpeed`, `audioReact` | `setType` supports `mandelbrot`, `julia`, or `burningShip`. |
 | `explicitpixels` | `mode`, `speed`, `audioReact` | `mode` supports `explicit` (generated wall of byte assignments) or `procedural` (loop-driven animation). |
 | `raymarch_fractal` | `quality`, `fractal`, `cameraRadius`, `cameraHeight`, `cameraOrbitSpeed`, `paletteSpeed`, `audioReact`, `beatKick`, `fractalScale` | `fractal` supports `mandelbulb` or `mandelbox`. |
+
+#### voxel_world_builder intended usage
+
+Use `voxel_world_builder` for the lyric moment **"we can build whole worlds, all we have to do is ask for it"** and drive the staged assembly with timeline automation over the section duration.
+
+Recommended section setup:
+
+```json
+{
+  "id": "rap-world-build",
+  "start": "03:44.4",
+  "end": "03:49.2",
+  "effect": "voxel_world_builder",
+  "params": {
+    "buildProgress": 0,
+    "cityDensity": 0.62,
+    "glow": 0.85,
+    "cameraLift": 0.15
+  },
+  "automation": [
+    { "param": "buildProgress", "from": 0.0, "to": 1.0, "t0": "03:44.4", "t1": "03:49.2", "ease": "inOutSine" },
+    { "param": "cameraLift", "from": 0.05, "to": 0.3, "t0": "03:44.4", "t1": "03:49.2", "ease": "inOutSine" },
+    { "param": "glow", "from": 0.65, "to": 1.05, "t0": "03:47.8", "t1": "03:49.2", "ease": "outQuad" }
+  ]
+}
+```
+
+Automation guidance by phase:
+
+- `buildProgress` **0.0 → 0.4**: terrain rises from flat ground.
+- `buildProgress` **0.4 → 0.8**: city blocks/buildings extrude.
+- `buildProgress` **0.8 → 1.0**: emissive intensity and window flicker become dominant.
+- Keep `cityDensity` mostly static per shot for structural readability (recommended `0.5`–`0.75`).
+- Use a gentle `cameraLift` ramp (for example +`0.2`) to avoid perspective popping at low resolutions (320×180).
 
 #### bumpmap_plane parameters
 
