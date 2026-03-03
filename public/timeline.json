@@ -8541,10 +8541,10 @@
       "start": 205.4,
       "end": 205.5483870967742,
       "text": "All",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.18,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -8557,20 +8557,21 @@
           "text": "All",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-2",
       "start": 205.5483870967742,
       "end": 205.69677419354838,
       "text": "I",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.29,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -8583,20 +8584,21 @@
           "text": "I",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-3",
       "start": 205.69677419354838,
       "end": 205.84516129032258,
       "text": "had",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.4,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -8609,20 +8611,21 @@
           "text": "had",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-4",
       "start": 205.84516129032258,
       "end": 205.99354838709678,
       "text": "to",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.51,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -8635,20 +8638,21 @@
           "text": "to",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-5",
       "start": 205.99354838709678,
       "end": 206.14193548387098,
       "text": "do",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.62,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -8661,20 +8665,21 @@
           "text": "do",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-6",
       "start": 206.14193548387098,
       "end": 206.29032258064515,
       "text": "was",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.73,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -8687,20 +8692,21 @@
           "text": "was",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-7",
       "start": 206.29032258064515,
       "end": 206.43870967741935,
       "text": "ask,",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.84,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -8713,20 +8719,21 @@
           "text": "ask,",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-8",
       "start": 206.43870967741935,
       "end": 206.58709677419355,
       "text": "now",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.18,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -8739,20 +8746,21 @@
           "text": "now",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-9",
       "start": 206.58709677419355,
       "end": 206.73548387096776,
       "text": "it's",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.29,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -8765,20 +8773,21 @@
           "text": "it's",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-10",
       "start": 206.73548387096776,
       "end": 206.88387096774193,
       "text": "real,",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.4,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -8791,20 +8800,21 @@
           "text": "real,",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-11",
       "start": 206.88387096774193,
       "end": 207.03225806451613,
       "text": "it",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.51,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -8817,20 +8827,21 @@
           "text": "it",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-12",
       "start": 207.03225806451613,
       "end": 207.18064516129033,
       "text": "exists.",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.62,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -8843,20 +8854,21 @@
           "text": "exists.",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-13",
       "start": 207.18064516129033,
       "end": 207.32903225806453,
       "text": "From",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.73,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -8869,20 +8881,21 @@
           "text": "From",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-14",
       "start": 207.32903225806453,
       "end": 207.4774193548387,
       "text": "an",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.84,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -8895,20 +8908,21 @@
           "text": "an",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-15",
       "start": 207.4774193548387,
       "end": 207.6258064516129,
       "text": "vibe,",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.18,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -8921,20 +8935,21 @@
           "text": "vibe,",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-16",
       "start": 207.6258064516129,
       "end": 207.7741935483871,
       "text": "from",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.29,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -8947,20 +8962,21 @@
           "text": "from",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-17",
       "start": 207.7741935483871,
       "end": 207.9225806451613,
       "text": "an",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.4,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -8973,20 +8989,21 @@
           "text": "an",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-18",
       "start": 207.9225806451613,
       "end": 208.07096774193548,
       "text": "idea,",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.51,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -8999,20 +9016,21 @@
           "text": "idea,",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-19",
       "start": 208.07096774193548,
       "end": 208.21935483870968,
       "text": "I",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.62,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9025,20 +9043,21 @@
           "text": "I",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-20",
       "start": 208.21935483870968,
       "end": 208.36774193548388,
       "text": "spawned",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.73,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9051,20 +9070,21 @@
           "text": "spawned",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-21",
       "start": 208.36774193548388,
       "end": 208.51612903225808,
       "text": "this.",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.84,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9077,20 +9097,21 @@
           "text": "this.",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-22",
       "start": 208.51612903225808,
       "end": 208.66451612903225,
       "text": "Wanna",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.18,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9103,20 +9124,21 @@
           "text": "Wanna",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-23",
       "start": 208.66451612903225,
       "end": 208.81290322580645,
       "text": "Make",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.29,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9129,20 +9151,21 @@
           "text": "Make",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-24",
       "start": 208.81290322580645,
       "end": 208.96129032258065,
       "text": "a",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.4,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9155,20 +9178,21 @@
           "text": "a",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-25",
       "start": 208.96129032258065,
       "end": 209.10967741935485,
       "text": "beat?",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.51,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9181,20 +9205,21 @@
           "text": "beat?",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-26",
       "start": 209.10967741935485,
       "end": 209.25806451612902,
       "text": "write",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.62,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9207,20 +9232,21 @@
           "text": "write",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-27",
       "start": 209.25806451612902,
       "end": 209.40645161290323,
       "text": "an",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.73,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9233,20 +9259,21 @@
           "text": "an",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-28",
       "start": 209.40645161290323,
       "end": 209.55483870967743,
       "text": "app?",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.84,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9259,20 +9286,21 @@
           "text": "app?",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-29",
       "start": 209.55483870967743,
       "end": 209.70322580645163,
       "text": "well",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.18,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9285,20 +9313,21 @@
           "text": "well",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-30",
       "start": 209.70322580645163,
       "end": 209.8516129032258,
       "text": "man,",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.29,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9311,20 +9340,21 @@
           "text": "man,",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-023-lissajous-31",
       "start": 209.8516129032258,
       "end": 210,
       "text": "Now",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.4,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9337,20 +9367,21 @@
           "text": "Now",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-030-copper-gradient-splits-1",
       "start": 214.2,
       "end": 214.5,
       "text": "before",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.51,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9363,20 +9394,21 @@
           "text": "before",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-030-copper-gradient-splits-2",
       "start": 214.5,
       "end": 214.8,
       "text": "any",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.62,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9389,20 +9421,21 @@
           "text": "any",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-031-textured-cube-1",
       "start": 215.2,
       "end": 215.75,
       "text": "trained",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.73,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9415,20 +9448,21 @@
           "text": "trained",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-031-textured-cube-1-2",
       "start": 215.2,
       "end": 215.475,
       "text": "trained",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.84,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9441,20 +9475,21 @@
           "text": "trained",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-031-textured-cube-2-2",
       "start": 215.475,
       "end": 215.75,
       "text": "mate.",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.18,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9467,20 +9502,21 @@
           "text": "mate.",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-031-textured-cube-3-2",
       "start": 215.75,
       "end": 216.02499999999998,
       "text": "You",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.29,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9493,20 +9529,21 @@
           "text": "You",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-031-textured-cube-4-2",
       "start": 216.02499999999998,
       "end": 216.29999999999998,
       "text": "say",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.4,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9519,20 +9556,21 @@
           "text": "say",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-031-textured-cube-5-2",
       "start": 216.29999999999998,
       "end": 216.575,
       "text": "it's",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.51,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9545,20 +9583,21 @@
           "text": "it's",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-031-textured-cube-6-2",
       "start": 216.575,
       "end": 216.85,
       "text": "fake,",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.62,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9571,20 +9610,21 @@
           "text": "fake,",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-031-textured-cube-7-2",
       "start": 216.85,
       "end": 217.125,
       "text": "no",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.73,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9597,20 +9637,21 @@
           "text": "no",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-031-textured-cube-8-2",
       "start": 217.125,
       "end": 217.39999999999998,
       "text": "skill,",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.84,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9623,20 +9664,21 @@
           "text": "skill,",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-031-textured-cube-9",
       "start": 217.39999999999998,
       "end": 217.67499999999998,
       "text": "no",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.18,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9649,20 +9691,21 @@
           "text": "no",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-031-textured-cube-10",
       "start": 217.67499999999998,
       "end": 217.95,
       "text": "effort's",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.29,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9675,20 +9718,21 @@
           "text": "effort's",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-031-textured-cube-11",
       "start": 217.95,
       "end": 218.225,
       "text": "been",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.4,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9701,20 +9745,21 @@
           "text": "been",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-031-textured-cube-12",
       "start": 218.225,
       "end": 218.5,
       "text": "applied.",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.51,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9727,20 +9772,21 @@
           "text": "applied.",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-031-textured-cube-13",
       "start": 218.5,
       "end": 218.775,
       "text": "Why",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.62,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9753,20 +9799,21 @@
           "text": "Why",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-031-textured-cube-14",
       "start": 218.775,
       "end": 219.04999999999998,
       "text": "the",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.73,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9779,20 +9826,21 @@
           "text": "the",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-031-textured-cube-15",
       "start": 219.04999999999998,
       "end": 219.325,
       "text": "hate,",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.84,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9805,20 +9853,21 @@
           "text": "hate,",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-031-textured-cube-16",
       "start": 219.325,
       "end": 219.6,
       "text": "mate?",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.18,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9831,20 +9880,21 @@
           "text": "mate?",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-035-textmode-charset-1",
       "start": 219.5,
       "end": 219.7578947368421,
       "text": "chill,",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.29,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9857,20 +9907,21 @@
           "text": "chill,",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-035-textmode-charset-2",
       "start": 219.7578947368421,
       "end": 220.0157894736842,
       "text": "I've",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.4,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9883,20 +9934,21 @@
           "text": "I've",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-035-textmode-charset-3",
       "start": 220.0157894736842,
       "end": 220.2736842105263,
       "text": "found",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.51,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9909,20 +9961,21 @@
           "text": "found",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-035-textmode-charset-4",
       "start": 220.2736842105263,
       "end": 220.53157894736842,
       "text": "new",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.62,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9935,20 +9988,21 @@
           "text": "new",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-035-textmode-charset-5",
       "start": 220.53157894736842,
       "end": 220.78947368421052,
       "text": "creative",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.73,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9961,20 +10015,21 @@
           "text": "creative",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-035-textmode-charset-6",
       "start": 220.78947368421052,
       "end": 221.04736842105262,
       "text": "heights.",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.84,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -9987,20 +10042,21 @@
           "text": "heights.",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-035-textmode-charset-7",
       "start": 221.04736842105262,
       "end": 221.30526315789473,
       "text": "And",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.18,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10013,20 +10069,21 @@
           "text": "And",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-035-textmode-charset-8",
       "start": 221.30526315789473,
       "end": 221.56315789473683,
       "text": "anyway,",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.29,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10039,20 +10096,21 @@
           "text": "anyway,",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-035-textmode-charset-9",
       "start": 221.56315789473683,
       "end": 221.82105263157894,
       "text": "Why",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.4,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10065,20 +10123,21 @@
           "text": "Why",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-035-textmode-charset-10",
       "start": 221.82105263157894,
       "end": 222.07894736842107,
       "text": "should",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.51,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10091,20 +10150,21 @@
           "text": "should",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-035-textmode-charset-11",
       "start": 222.07894736842107,
       "end": 222.33684210526317,
       "text": "art",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.62,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10117,20 +10177,21 @@
           "text": "art",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-035-textmode-charset-12",
       "start": 222.33684210526317,
       "end": 222.59473684210528,
       "text": "be",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.73,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10143,20 +10204,21 @@
           "text": "be",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-035-textmode-charset-13",
       "start": 222.59473684210528,
       "end": 222.85263157894738,
       "text": "just",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.84,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10169,20 +10231,21 @@
           "text": "just",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-035-textmode-charset-14",
       "start": 222.85263157894738,
       "end": 223.11052631578949,
       "text": "for",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.18,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10195,20 +10258,21 @@
           "text": "for",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-035-textmode-charset-15",
       "start": 223.11052631578949,
       "end": 223.3684210526316,
       "text": "an",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.29,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10221,20 +10285,21 @@
           "text": "an",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-035-textmode-charset-16",
       "start": 223.3684210526316,
       "end": 223.6263157894737,
       "text": "elite?",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.4,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10247,20 +10312,21 @@
           "text": "elite?",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-035-textmode-charset-17",
       "start": 223.6263157894737,
       "end": 223.8842105263158,
       "text": "I",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.51,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10273,20 +10339,21 @@
           "text": "I",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-035-textmode-charset-18",
       "start": 223.8842105263158,
       "end": 224.1421052631579,
       "text": "believe",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.62,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10299,20 +10366,21 @@
           "text": "believe",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-035-textmode-charset-19",
       "start": 224.1421052631579,
       "end": 224.4,
       "text": "that",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.73,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10325,20 +10393,21 @@
           "text": "that",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-038-raytrace-spheres-1",
       "start": 224.5,
       "end": 224.735,
       "text": "everyone",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.84,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10351,20 +10420,21 @@
           "text": "everyone",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-038-raytrace-spheres-2",
       "start": 224.735,
       "end": 224.97,
       "text": "should",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.18,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10377,20 +10447,21 @@
           "text": "should",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-038-raytrace-spheres-3",
       "start": 224.97,
       "end": 225.20499999999998,
       "text": "be",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.29,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10403,20 +10474,21 @@
           "text": "be",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-038-raytrace-spheres-4",
       "start": 225.20499999999998,
       "end": 225.44,
       "text": "able",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.4,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10429,20 +10501,21 @@
           "text": "able",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-038-raytrace-spheres-5",
       "start": 225.44,
       "end": 225.675,
       "text": "to",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.51,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10455,20 +10528,21 @@
           "text": "to",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-038-raytrace-spheres-6",
       "start": 225.675,
       "end": 225.91,
       "text": "make",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.62,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10481,20 +10555,21 @@
           "text": "make",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-038-raytrace-spheres-7",
       "start": 225.91,
       "end": 226.14499999999998,
       "text": "their",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.73,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10507,20 +10582,21 @@
           "text": "their",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-038-raytrace-spheres-8",
       "start": 226.14499999999998,
       "end": 226.38,
       "text": "own",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.84,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10533,20 +10609,21 @@
           "text": "own",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-038-raytrace-spheres-9",
       "start": 226.38,
       "end": 226.615,
       "text": "beats.",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.18,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10559,20 +10636,21 @@
           "text": "beats.",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-038-raytrace-spheres-10",
       "start": 226.615,
       "end": 226.85,
       "text": "If",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.29,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10585,20 +10663,21 @@
           "text": "If",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-038-raytrace-spheres-11",
       "start": 226.85,
       "end": 227.08499999999998,
       "text": "it",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.4,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10611,20 +10690,21 @@
           "text": "it",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-038-raytrace-spheres-12",
       "start": 227.08499999999998,
       "end": 227.32,
       "text": "was",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.51,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10637,20 +10717,21 @@
           "text": "was",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-038-raytrace-spheres-13",
       "start": 227.32,
       "end": 227.555,
       "text": "real",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.62,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10663,20 +10744,21 @@
           "text": "real",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-038-raytrace-spheres-14",
       "start": 227.555,
       "end": 227.79,
       "text": "when",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.73,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10689,20 +10771,21 @@
           "text": "when",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-038-raytrace-spheres-15",
       "start": 227.79,
       "end": 228.02499999999998,
       "text": "you",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.84,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10715,20 +10798,21 @@
           "text": "you",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-038-raytrace-spheres-16",
       "start": 228.02499999999998,
       "end": 228.26,
       "text": "sampled",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.18,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10741,20 +10825,21 @@
           "text": "sampled",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-038-raytrace-spheres-17",
       "start": 228.26,
       "end": 228.495,
       "text": "the",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.29,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10767,20 +10852,21 @@
           "text": "the",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-038-raytrace-spheres-18",
       "start": 228.495,
       "end": 228.73,
       "text": "Beatles",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.4,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10793,20 +10879,21 @@
           "text": "Beatles",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-038-raytrace-spheres-19",
       "start": 228.73,
       "end": 228.96499999999997,
       "text": "and",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.51,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10819,20 +10906,21 @@
           "text": "and",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-038-raytrace-spheres-20",
       "start": 228.96499999999997,
       "end": 229.2,
       "text": "remixed",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.62,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10845,20 +10933,21 @@
           "text": "remixed",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-042-volumetric-clouds-1",
       "start": 229.1,
       "end": 229.33333333333331,
       "text": "'ye,",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.73,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10871,20 +10960,21 @@
           "text": "'ye,",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-042-volumetric-clouds-2",
       "start": 229.33333333333331,
       "end": 229.56666666666666,
       "text": "Then",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.84,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10897,20 +10987,21 @@
           "text": "Then",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-042-volumetric-clouds-3",
       "start": 229.56666666666666,
       "end": 229.79999999999998,
       "text": "why",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.18,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10923,20 +11014,21 @@
           "text": "why",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-042-volumetric-clouds-4",
       "start": 229.79999999999998,
       "end": 230.03333333333333,
       "text": "you",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.29,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10949,20 +11041,21 @@
           "text": "you",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-042-volumetric-clouds-5",
       "start": 230.03333333333333,
       "end": 230.26666666666665,
       "text": "hatin'",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.4,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -10975,20 +11068,21 @@
           "text": "hatin'",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-042-volumetric-clouds-6",
       "start": 230.26666666666665,
       "end": 230.5,
       "text": "on",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.51,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11001,20 +11095,21 @@
           "text": "on",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-042-volumetric-clouds-7",
       "start": 230.5,
       "end": 230.73333333333332,
       "text": "this",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.62,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11027,20 +11122,21 @@
           "text": "this",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-042-volumetric-clouds-8",
       "start": 230.73333333333332,
       "end": 230.96666666666667,
       "text": "mashup",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.73,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11053,20 +11149,21 @@
           "text": "mashup",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-042-volumetric-clouds-9",
       "start": 230.96666666666667,
       "end": 231.2,
       "text": "of",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.84,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11079,20 +11176,21 @@
           "text": "of",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-042-volumetric-clouds-10",
       "start": 231.2,
       "end": 231.43333333333334,
       "text": "the",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.18,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11105,20 +11203,21 @@
           "text": "the",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-042-volumetric-clouds-11",
       "start": 231.43333333333334,
       "end": 231.66666666666666,
       "text": "whole",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.29,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11131,20 +11230,21 @@
           "text": "whole",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-042-volumetric-clouds-12",
       "start": 231.66666666666666,
       "end": 231.9,
       "text": "damn",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.4,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11157,20 +11257,21 @@
           "text": "damn",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-042-volumetric-clouds-13",
       "start": 231.9,
       "end": 232.13333333333333,
       "text": "human",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.51,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11183,20 +11284,21 @@
           "text": "human",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-042-volumetric-clouds-14",
       "start": 232.13333333333333,
       "end": 232.36666666666667,
       "text": "race?",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.62,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11209,20 +11311,21 @@
           "text": "race?",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-042-volumetric-clouds-15",
       "start": 232.36666666666667,
       "end": 232.6,
       "text": "Would",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.73,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11235,20 +11338,21 @@
           "text": "Would",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-042-volumetric-clouds-16",
       "start": 232.6,
       "end": 232.83333333333334,
       "text": "You",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.84,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11261,20 +11365,21 @@
           "text": "You",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-042-volumetric-clouds-17",
       "start": 232.83333333333334,
       "end": 233.06666666666666,
       "text": "blame",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.18,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11287,20 +11392,21 @@
           "text": "blame",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-042-volumetric-clouds-18",
       "start": 233.06666666666666,
       "end": 233.3,
       "text": "the",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.29,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11313,20 +11419,21 @@
           "text": "the",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-042-volumetric-clouds-19",
       "start": 233.3,
       "end": 233.53333333333333,
       "text": "brush",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.4,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11339,20 +11446,21 @@
           "text": "brush",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-042-volumetric-clouds-20",
       "start": 233.53333333333333,
       "end": 233.76666666666668,
       "text": "‘cause",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.51,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11365,20 +11473,21 @@
           "text": "‘cause",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-042-volumetric-clouds-21",
       "start": 233.76666666666668,
       "end": 234,
       "text": "you",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.62,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11391,20 +11500,21 @@
           "text": "you",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-046-amiga-showcase-1",
       "start": 233.9,
       "end": 234.4,
       "text": "painted",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.73,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11417,20 +11527,21 @@
           "text": "painted",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-046-amiga-showcase-2",
       "start": 234.4,
       "end": 234.9,
       "text": "crap?",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.84,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11443,20 +11554,21 @@
           "text": "crap?",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-047-kefrens-bars-1",
       "start": 234.9,
       "end": 235.17857142857144,
       "text": "Would",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.18,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11469,20 +11581,21 @@
           "text": "Would",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-047-kefrens-bars-2",
       "start": 235.17857142857144,
       "end": 235.45714285714286,
       "text": "You",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.29,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11495,20 +11608,21 @@
           "text": "You",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-047-kefrens-bars-3",
       "start": 235.45714285714286,
       "end": 235.7357142857143,
       "text": "blame",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.4,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11521,20 +11635,21 @@
           "text": "blame",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-047-kefrens-bars-4",
       "start": 235.7357142857143,
       "end": 236.01428571428573,
       "text": "the",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.51,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11547,20 +11662,21 @@
           "text": "the",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-047-kefrens-bars-5",
       "start": 236.01428571428573,
       "end": 236.29285714285714,
       "text": "synth",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.62,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11573,20 +11689,21 @@
           "text": "synth",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-047-kefrens-bars-6",
       "start": 236.29285714285714,
       "end": 236.57142857142858,
       "text": "‘cause",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.73,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11599,20 +11716,21 @@
           "text": "‘cause",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-047-kefrens-bars-7",
       "start": 236.57142857142858,
       "end": 236.85000000000002,
       "text": "your",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.84,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11625,20 +11743,21 @@
           "text": "your",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-047-kefrens-bars-8",
       "start": 236.85000000000002,
       "end": 237.12857142857143,
       "text": "tune",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.18,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11651,20 +11770,21 @@
           "text": "tune",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-047-kefrens-bars-9",
       "start": 237.12857142857143,
       "end": 237.40714285714287,
       "text": "was",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.29,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11677,20 +11797,21 @@
           "text": "was",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-047-kefrens-bars-10",
       "start": 237.40714285714287,
       "end": 237.68571428571428,
       "text": "flat?",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.4,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11703,20 +11824,21 @@
           "text": "flat?",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-047-kefrens-bars-11",
       "start": 237.68571428571428,
       "end": 237.96428571428572,
       "text": "Would",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.51,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11729,20 +11851,21 @@
           "text": "Would",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-047-kefrens-bars-12",
       "start": 237.96428571428572,
       "end": 238.24285714285716,
       "text": "You",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.62,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11755,20 +11878,21 @@
           "text": "You",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-047-kefrens-bars-13",
       "start": 238.24285714285716,
       "end": 238.52142857142857,
       "text": "blame",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.73,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11781,20 +11905,21 @@
           "text": "blame",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-047-kefrens-bars-14",
       "start": 238.52142857142857,
       "end": 238.8,
       "text": "the",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.84,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11807,20 +11932,21 @@
           "text": "the",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-048-equalizer-1",
       "start": 238.7,
       "end": 239.0086956521739,
       "text": "mirror",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.18,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11833,20 +11959,21 @@
           "text": "mirror",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-048-equalizer-2",
       "start": 239.0086956521739,
       "end": 239.3173913043478,
       "text": "'cos",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.29,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11859,20 +11986,21 @@
           "text": "'cos",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-048-equalizer-3",
       "start": 239.3173913043478,
       "end": 239.62608695652173,
       "text": "your",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.4,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11885,20 +12013,21 @@
           "text": "your",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-048-equalizer-4",
       "start": 239.62608695652173,
       "end": 239.93478260869566,
       "text": "face",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.51,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11911,20 +12040,21 @@
           "text": "face",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-048-equalizer-5",
       "start": 239.93478260869566,
       "end": 240.24347826086955,
       "text": "looks",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.62,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11937,20 +12067,21 @@
           "text": "looks",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-048-equalizer-6",
       "start": 240.24347826086955,
       "end": 240.55217391304348,
       "text": "chopped?",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.73,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11963,20 +12094,21 @@
           "text": "chopped?",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-048-equalizer-7",
       "start": 240.55217391304348,
       "end": 240.8608695652174,
       "text": "Nah,",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.84,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -11989,20 +12121,21 @@
           "text": "Nah,",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-048-equalizer-8",
       "start": 240.8608695652174,
       "end": 241.1695652173913,
       "text": "so",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.18,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12015,20 +12148,21 @@
           "text": "so",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-048-equalizer-9",
       "start": 241.1695652173913,
       "end": 241.47826086956522,
       "text": "why",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.29,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12041,20 +12175,21 @@
           "text": "why",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-048-equalizer-10",
       "start": 241.47826086956522,
       "end": 241.78695652173914,
       "text": "blame",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.4,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12067,20 +12202,21 @@
           "text": "blame",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-048-equalizer-11",
       "start": 241.78695652173914,
       "end": 242.09565217391304,
       "text": "A.I.",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.51,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12093,20 +12229,21 @@
           "text": "A.I.",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-048-equalizer-12",
       "start": 242.09565217391304,
       "end": 242.40434782608696,
       "text": "for",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.62,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12119,20 +12256,21 @@
           "text": "for",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-048-equalizer-13",
       "start": 242.40434782608696,
       "end": 242.71304347826086,
       "text": "all",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.73,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12145,20 +12283,21 @@
           "text": "all",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-048-equalizer-14",
       "start": 242.71304347826086,
       "end": 243.02173913043478,
       "text": "the",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.84,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12171,20 +12310,21 @@
           "text": "the",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-048-equalizer-15",
       "start": 243.02173913043478,
       "end": 243.3304347826087,
       "text": "slop?",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.18,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12197,20 +12337,21 @@
           "text": "slop?",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-048-equalizer-16",
       "start": 243.3304347826087,
       "end": 243.6391304347826,
       "text": "This",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.29,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12223,20 +12364,21 @@
           "text": "This",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-048-equalizer-17",
       "start": 243.6391304347826,
       "end": 243.94782608695652,
       "text": "ain't",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.4,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12249,20 +12391,21 @@
           "text": "ain't",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-048-equalizer-18",
       "start": 243.94782608695652,
       "end": 244.25652173913045,
       "text": "Skynet,",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.51,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12275,20 +12418,21 @@
           "text": "Skynet,",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-048-equalizer-19",
       "start": 244.25652173913045,
       "end": 244.56521739130434,
       "text": "this",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.62,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12301,20 +12445,21 @@
           "text": "this",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-048-equalizer-20",
       "start": 244.56521739130434,
       "end": 244.87391304347827,
       "text": "is",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.73,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12327,20 +12472,21 @@
           "text": "is",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-048-equalizer-21",
       "start": 244.87391304347827,
       "end": 245.1826086956522,
       "text": "sky's",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.84,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12353,20 +12499,21 @@
           "text": "sky's",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-048-equalizer-22",
       "start": 245.1826086956522,
       "end": 245.4913043478261,
       "text": "the",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.18,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12379,20 +12526,21 @@
           "text": "the",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-048-equalizer-23",
       "start": 245.4913043478261,
       "end": 245.8,
       "text": "limit,",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.29,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12405,20 +12553,21 @@
           "text": "limit,",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-053-treegrowth-1",
       "start": 245.9,
       "end": 246.10833333333335,
       "text": "Why",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.4,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12431,20 +12580,21 @@
           "text": "Why",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-053-treegrowth-2",
       "start": 246.10833333333335,
       "end": 246.31666666666666,
       "text": "you",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.51,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12457,20 +12607,21 @@
           "text": "you",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-053-treegrowth-3",
       "start": 246.31666666666666,
       "end": 246.525,
       "text": "mad",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.62,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12483,20 +12634,21 @@
           "text": "mad",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-053-treegrowth-4",
       "start": 246.525,
       "end": 246.73333333333335,
       "text": "that",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.73,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12509,20 +12661,21 @@
           "text": "that",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-053-treegrowth-5",
       "start": 246.73333333333335,
       "end": 246.94166666666666,
       "text": "when",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.84,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12535,20 +12688,21 @@
           "text": "when",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-053-treegrowth-6",
       "start": 246.94166666666666,
       "end": 247.15,
       "text": "you",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.18,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12561,20 +12715,21 @@
           "text": "you",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-053-treegrowth-7",
       "start": 247.15,
       "end": 247.35833333333335,
       "text": "have",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.29,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12587,20 +12742,21 @@
           "text": "have",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-053-treegrowth-8",
       "start": 247.35833333333335,
       "end": 247.56666666666666,
       "text": "an",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.4,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12613,20 +12769,21 @@
           "text": "an",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-053-treegrowth-9",
       "start": 247.56666666666666,
       "end": 247.775,
       "text": "idea",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.51,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12639,20 +12796,21 @@
           "text": "idea",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-053-treegrowth-10",
       "start": 247.775,
       "end": 247.98333333333335,
       "text": "you",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.62,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12665,20 +12823,21 @@
           "text": "you",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-053-treegrowth-11",
       "start": 247.98333333333335,
       "end": 248.19166666666666,
       "text": "can",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.73,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12691,20 +12850,21 @@
           "text": "can",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-053-treegrowth-12",
       "start": 248.19166666666666,
       "end": 248.4,
       "text": "magically",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.84,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12717,20 +12877,21 @@
           "text": "magically",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-056-amiga-showcase-1",
       "start": 248.3,
       "end": 248.52272727272728,
       "text": "appear",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.18,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12743,20 +12904,21 @@
           "text": "appear",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-056-amiga-showcase-2",
       "start": 248.52272727272728,
       "end": 248.74545454545455,
       "text": "it?",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.29,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12769,20 +12931,21 @@
           "text": "it?",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-056-amiga-showcase-3",
       "start": 248.74545454545455,
       "end": 248.96818181818182,
       "text": "I",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.4,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12795,20 +12958,21 @@
           "text": "I",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-056-amiga-showcase-4",
       "start": 248.96818181818182,
       "end": 249.1909090909091,
       "text": "hear",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.51,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12821,20 +12985,21 @@
           "text": "hear",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-056-amiga-showcase-5",
       "start": 249.1909090909091,
       "end": 249.41363636363636,
       "text": "’em",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.62,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12847,20 +13012,21 @@
           "text": "’em",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-056-amiga-showcase-6",
       "start": 249.41363636363636,
       "end": 249.63636363636365,
       "text": "ask",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.73,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12873,20 +13039,21 @@
           "text": "ask",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-056-amiga-showcase-7",
       "start": 249.63636363636365,
       "end": 249.85909090909092,
       "text": "“where’s",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.84,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12899,20 +13066,21 @@
           "text": "“where’s",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-056-amiga-showcase-8",
       "start": 249.85909090909092,
       "end": 250.0818181818182,
       "text": "the",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.18,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12925,20 +13093,21 @@
           "text": "the",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-056-amiga-showcase-9",
       "start": 250.0818181818182,
       "end": 250.30454545454546,
       "text": "soul?”",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.29,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12951,20 +13120,21 @@
           "text": "soul?”",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-056-amiga-showcase-10",
       "start": 250.30454545454546,
       "end": 250.52727272727273,
       "text": "yeah,",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.4,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -12977,20 +13147,21 @@
           "text": "yeah,",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-056-amiga-showcase-11",
       "start": 250.52727272727273,
       "end": 250.75,
       "text": "“where’s",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.51,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13003,20 +13174,21 @@
           "text": "“where’s",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-056-amiga-showcase-12",
       "start": 250.75,
       "end": 250.97272727272727,
       "text": "the",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.62,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13029,20 +13201,21 @@
           "text": "the",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-056-amiga-showcase-13",
       "start": 250.97272727272727,
       "end": 251.19545454545454,
       "text": "feeling?”",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.73,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13055,20 +13228,21 @@
           "text": "feeling?”",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-056-amiga-showcase-14",
       "start": 251.19545454545454,
       "end": 251.4181818181818,
       "text": "I",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.84,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13081,20 +13255,21 @@
           "text": "I",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-056-amiga-showcase-15",
       "start": 251.4181818181818,
       "end": 251.64090909090908,
       "text": "know",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.18,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13107,20 +13282,21 @@
           "text": "know",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-056-amiga-showcase-16",
       "start": 251.64090909090908,
       "end": 251.86363636363635,
       "text": "it's",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.29,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13133,20 +13309,21 @@
           "text": "it's",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-056-amiga-showcase-17",
       "start": 251.86363636363635,
       "end": 252.08636363636364,
       "text": "there",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.4,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13159,20 +13336,21 @@
           "text": "there",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-056-amiga-showcase-18",
       "start": 252.08636363636364,
       "end": 252.3090909090909,
       "text": "—",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.51,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13185,20 +13363,21 @@
           "text": "—",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-056-amiga-showcase-19",
       "start": 252.3090909090909,
       "end": 252.53181818181818,
       "text": "cos",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.62,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13211,20 +13390,21 @@
           "text": "cos",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-056-amiga-showcase-20",
       "start": 252.53181818181818,
       "end": 252.75454545454545,
       "text": "I’ve",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.73,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13237,20 +13417,21 @@
           "text": "I’ve",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-056-amiga-showcase-21",
       "start": 252.75454545454545,
       "end": 252.97727272727272,
       "text": "felt",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.84,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13263,20 +13444,21 @@
           "text": "felt",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-056-amiga-showcase-22",
       "start": 252.97727272727272,
       "end": 253.2,
       "text": "it",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.18,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13289,20 +13471,21 @@
           "text": "it",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-060-flyover-1",
       "start": 253.1,
       "end": 253.3722222222222,
       "text": "true",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.29,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13315,20 +13498,21 @@
           "text": "true",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-060-flyover-2",
       "start": 253.3722222222222,
       "end": 253.64444444444445,
       "text": "deep",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.4,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13341,20 +13525,21 @@
           "text": "deep",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-060-flyover-3",
       "start": 253.64444444444445,
       "end": 253.91666666666666,
       "text": "real",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.51,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13367,20 +13552,21 @@
           "text": "real",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-060-flyover-4",
       "start": 253.91666666666666,
       "end": 254.1888888888889,
       "text": "meaning.",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.62,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13393,20 +13579,21 @@
           "text": "meaning.",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-060-flyover-5",
       "start": 254.1888888888889,
       "end": 254.4611111111111,
       "text": "A.I.",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.73,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13419,20 +13606,21 @@
           "text": "A.I.",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-060-flyover-6",
       "start": 254.4611111111111,
       "end": 254.73333333333332,
       "text": "art",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.84,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13445,20 +13633,21 @@
           "text": "art",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-060-flyover-7",
       "start": 254.73333333333332,
       "end": 255.00555555555556,
       "text": "can",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.18,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13471,20 +13660,21 @@
           "text": "can",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-060-flyover-8",
       "start": 255.00555555555556,
       "end": 255.27777777777777,
       "text": "have",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.29,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13497,20 +13687,21 @@
           "text": "have",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-060-flyover-9",
       "start": 255.27777777777777,
       "end": 255.55,
       "text": "soul,",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.4,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13523,20 +13714,21 @@
           "text": "soul,",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-060-flyover-10",
       "start": 255.55,
       "end": 255.82222222222222,
       "text": "it",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.51,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13549,20 +13741,21 @@
           "text": "it",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-060-flyover-11",
       "start": 255.82222222222222,
       "end": 256.09444444444443,
       "text": "comes",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.62,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13575,20 +13768,21 @@
           "text": "comes",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-060-flyover-12",
       "start": 256.09444444444443,
       "end": 256.3666666666667,
       "text": "from",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.73,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13601,20 +13795,21 @@
           "text": "from",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-060-flyover-13",
       "start": 256.3666666666667,
       "end": 256.6388888888889,
       "text": "the",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.84,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13627,20 +13822,21 @@
           "text": "the",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-060-flyover-14",
       "start": 256.6388888888889,
       "end": 256.9111111111111,
       "text": "human",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.18,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13653,20 +13849,21 @@
           "text": "human",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-060-flyover-15",
       "start": 256.9111111111111,
       "end": 257.18333333333334,
       "text": "steering,",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.29,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13679,20 +13876,21 @@
           "text": "steering,",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-060-flyover-16",
       "start": 257.18333333333334,
       "end": 257.4555555555556,
       "text": "It",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.4,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13705,20 +13903,21 @@
           "text": "It",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-060-flyover-17",
       "start": 257.4555555555556,
       "end": 257.72777777777776,
       "text": "was",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.51,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13731,20 +13930,21 @@
           "text": "was",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-060-flyover-18",
       "start": 257.72777777777776,
       "end": 258,
       "text": "never",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.62,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13757,20 +13957,21 @@
           "text": "never",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-064-textmode-charset-1",
       "start": 257.8,
       "end": 258.03333333333336,
       "text": "’bout",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.73,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13783,20 +13984,21 @@
           "text": "’bout",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-064-textmode-charset-2",
       "start": 258.03333333333336,
       "end": 258.26666666666665,
       "text": "the",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.84,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13809,20 +14011,21 @@
           "text": "the",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-064-textmode-charset-3",
       "start": 258.26666666666665,
       "end": 258.5,
       "text": "method,",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.18,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13835,20 +14038,21 @@
           "text": "method,",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-064-textmode-charset-4",
       "start": 258.5,
       "end": 258.73333333333335,
       "text": "nah,",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.29,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13861,20 +14065,21 @@
           "text": "nah,",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-064-textmode-charset-5",
       "start": 258.73333333333335,
       "end": 258.9666666666667,
       "text": "it",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.4,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13887,20 +14092,21 @@
           "text": "it",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-064-textmode-charset-6",
       "start": 258.9666666666667,
       "end": 259.2,
       "text": "'bout",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.51,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13913,20 +14119,21 @@
           "text": "'bout",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-064-textmode-charset-7",
       "start": 259.2,
       "end": 259.43333333333334,
       "text": "what",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.62,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13939,20 +14146,21 @@
           "text": "what",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-064-textmode-charset-8",
       "start": 259.43333333333334,
       "end": 259.6666666666667,
       "text": "truth",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.73,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13965,20 +14173,21 @@
           "text": "truth",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-064-textmode-charset-9",
       "start": 259.6666666666667,
       "end": 259.9,
       "text": "you’re",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.84,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -13991,20 +14200,21 @@
           "text": "you’re",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-064-textmode-charset-10",
       "start": 259.9,
       "end": 260.1333333333333,
       "text": "revealing.",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.18,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -14017,20 +14227,21 @@
           "text": "revealing.",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-064-textmode-charset-11",
       "start": 260.1333333333333,
       "end": 260.3666666666667,
       "text": "It’s",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.29,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -14043,20 +14254,21 @@
           "text": "It’s",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-064-textmode-charset-12",
       "start": 260.3666666666667,
       "end": 260.6,
       "text": "mad",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.4,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -14069,20 +14281,21 @@
           "text": "mad",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-064-textmode-charset-13",
       "start": 260.6,
       "end": 260.8333333333333,
       "text": "that",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.51,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -14095,20 +14308,21 @@
           "text": "that",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-064-textmode-charset-14",
       "start": 260.8333333333333,
       "end": 261.06666666666666,
       "text": "from",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.62,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -14121,20 +14335,21 @@
           "text": "from",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-064-textmode-charset-15",
       "start": 261.06666666666666,
       "end": 261.3,
       "text": "a",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.73,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -14147,20 +14362,21 @@
           "text": "a",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-064-textmode-charset-16",
       "start": 261.3,
       "end": 261.53333333333336,
       "text": "thought,",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.61,
+      "y": 0.84,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -14173,20 +14389,21 @@
           "text": "thought,",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-064-textmode-charset-17",
       "start": 261.53333333333336,
       "end": 261.76666666666665,
       "text": "from",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.18,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -14199,20 +14416,21 @@
           "text": "from",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-064-textmode-charset-18",
       "start": 261.76666666666665,
       "end": 262,
       "text": "dreaming",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.29,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -14225,20 +14443,21 @@
           "text": "dreaming",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-067-rain-1",
       "start": 262.1,
       "end": 262.31176470588235,
       "text": "of",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.4,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -14251,20 +14470,21 @@
           "text": "of",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-067-rain-2",
       "start": 262.31176470588235,
       "end": 262.52352941176474,
       "text": "random",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.51,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -14277,20 +14497,21 @@
           "text": "random",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-067-rain-3",
       "start": 262.52352941176474,
       "end": 262.7352941176471,
       "text": "shit,",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.62,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -14303,20 +14524,21 @@
           "text": "shit,",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-067-rain-4",
       "start": 262.7352941176471,
       "end": 262.9470588235294,
       "text": "We",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.73,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -14329,20 +14551,21 @@
           "text": "We",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-067-rain-5",
       "start": 262.9470588235294,
       "end": 263.1588235294118,
       "text": "can",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.82,
+      "y": 0.84,
+      "align": "right",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -14355,20 +14578,21 @@
           "text": "can",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-067-rain-6",
       "start": 263.1588235294118,
       "end": 263.3705882352941,
       "text": "build",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.18,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -14381,20 +14605,21 @@
           "text": "build",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-067-rain-7",
       "start": 263.3705882352941,
       "end": 263.58235294117645,
       "text": "whole",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.29,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -14407,20 +14632,21 @@
           "text": "whole",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-067-rain-8",
       "start": 263.58235294117645,
       "end": 263.79411764705884,
       "text": "worlds,",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.4,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -14433,20 +14659,21 @@
           "text": "worlds,",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-067-rain-9",
       "start": 263.79411764705884,
       "end": 264.00588235294117,
       "text": "all",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.51,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -14459,20 +14686,21 @@
           "text": "all",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-067-rain-10",
       "start": 264.00588235294117,
       "end": 264.21764705882356,
       "text": "we",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.62,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -14485,20 +14713,21 @@
           "text": "we",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-067-rain-11",
       "start": 264.21764705882356,
       "end": 264.4294117647059,
       "text": "have",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.73,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -14511,20 +14740,21 @@
           "text": "have",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-067-rain-12",
       "start": 264.4294117647059,
       "end": 264.6411764705882,
       "text": "to",
-      "x": 0.5,
-      "y": 0.7,
-      "align": "center",
-      "size": 42,
+      "x": 0.18,
+      "y": 0.84,
+      "align": "left",
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -14537,20 +14767,21 @@
           "text": "to",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-067-rain-13",
       "start": 264.6411764705882,
       "end": 264.8529411764706,
       "text": "do",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.18,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -14563,20 +14794,21 @@
           "text": "do",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-067-rain-14",
       "start": 264.8529411764706,
       "end": 265.06470588235294,
       "text": "is",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.29,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -14589,20 +14821,21 @@
           "text": "is",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-067-rain-15",
       "start": 265.06470588235294,
       "end": 265.27647058823527,
       "text": "ask",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.4,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -14615,20 +14848,21 @@
           "text": "ask",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-067-rain-16",
       "start": 265.27647058823527,
       "end": 265.48823529411766,
       "text": "for",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.51,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -14641,20 +14875,21 @@
           "text": "for",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "scene-067-rain-17",
       "start": 265.48823529411766,
       "end": 265.7,
       "text": "it",
-      "x": 0.5,
-      "y": 0.7,
+      "x": 0.39,
+      "y": 0.62,
       "align": "center",
-      "size": 42,
+      "size": 28,
       "color": "#ffffff",
       "units": "normalized",
       "effects": {
@@ -14667,10 +14902,11 @@
           "text": "it",
           "font": "inherit",
           "color": "#ffffff",
-          "size": 42,
+          "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "safe": true
     },
     {
       "id": "this-hit-04407",
