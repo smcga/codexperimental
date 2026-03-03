@@ -1,6 +1,19 @@
 import { describe, expect, it } from "vitest";
 
-import { applyMove, buildBoardAtMove, createInitialBoard, resolveLocalStartTime } from "./chessEffect";
+import { applyMove, buildBoardAtMove, createInitialBoard, drawPiece, resolveLocalStartTime } from "./chessEffect";
+
+class TestPath2D {
+  arc(): void {}
+  moveTo(): void {}
+  lineTo(): void {}
+  bezierCurveTo(): void {}
+  closePath(): void {}
+  rect(): void {}
+}
+
+if (!("Path2D" in globalThis)) {
+  (globalThis as typeof globalThis & { Path2D: typeof TestPath2D }).Path2D = TestPath2D;
+}
 
 describe("chessEffect helpers", () => {
   it("builds the initial board with standard piece placement", () => {
@@ -42,5 +55,31 @@ describe("chessEffect helpers", () => {
 
     const backwardAnchor = resolveLocalStartTime(anchorKey, 5, moveInterval);
     expect(backwardAnchor).toBe(5);
+  });
+
+  it("draws all piece types with gradient shading", () => {
+    const gradient = { addColorStop: () => undefined };
+    const ctx = {
+      save: () => undefined,
+      restore: () => undefined,
+      translate: () => undefined,
+      scale: () => undefined,
+      beginPath: () => undefined,
+      arc: () => undefined,
+      ellipse: () => undefined,
+      fill: () => undefined,
+      stroke: () => undefined,
+      createRadialGradient: () => gradient,
+      fillStyle: "",
+      strokeStyle: "",
+      lineWidth: 0,
+      lineJoin: "round",
+      lineCap: "round",
+      globalAlpha: 1
+    } as unknown as CanvasRenderingContext2D;
+
+    ["P", "R", "N", "B", "Q", "K", "p", "r", "n", "b", "q", "k"].forEach((piece) => {
+      expect(() => drawPiece(ctx, piece, 10, 10, 40)).not.toThrow();
+    });
   });
 });
