@@ -90,7 +90,7 @@ describe("release timeline", () => {
 
     const rapEffects = new Set(rapSections.map((section) => section.effect));
     expect(rapEffects.has("sphere3d")).toBe(true);
-    expect(rapEffects.has("infinitycloud")).toBe(true);
+    expect(rapEffects.has("voxel_world_builder")).toBe(true);
     expect(rapEffects.has("neon_alley")).toBe(true);
 
     const rapTextCues = timeline.textCues.filter((cue) => {
