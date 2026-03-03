@@ -180,7 +180,8 @@
         {
           "effect": "particles",
           "blend": "screen",
-          "opacity": 0.12
+          "opacity": 0.12,
+          "params": {}
         }
       ],
       "fitAlign": "centre"
@@ -207,12 +208,16 @@
         {
           "effect": "raster_bars",
           "blend": "overlay",
-          "opacity": 0.12
+          "opacity": 0.12,
+          "params": {
+            "audioReact": 0.2
+          }
         },
         {
           "effect": "kefrens_bars",
           "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {}
         }
       ]
     },
@@ -228,7 +233,8 @@
         {
           "effect": "equalizer",
           "blend": "screen",
-          "opacity": 0.16
+          "opacity": 0.16,
+          "params": {}
         },
         {
           "effect": "feedback",
@@ -253,12 +259,16 @@
         {
           "effect": "moire_grid",
           "blend": "overlay",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {
+            "audioReact": 0.2
+          }
         },
         {
           "effect": "fluid",
           "blend": "screen",
-          "opacity": 0.09
+          "opacity": 0.09,
+          "params": {}
         },
         {
           "effect": "equalizer",
@@ -292,12 +302,14 @@
         {
           "effect": "lissajous",
           "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {}
         },
         {
           "effect": "bokeh",
           "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {}
         }
       ]
     },
@@ -322,7 +334,8 @@
         {
           "effect": "textmode_charset",
           "blend": "overlay",
-          "opacity": 0.09
+          "opacity": 0.09,
+          "params": {}
         }
       ],
       "automation": [
@@ -362,7 +375,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.08
+          "opacity": 0.08,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -392,7 +408,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.083
+          "opacity": 0.083,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -422,7 +441,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.087
+          "opacity": 0.087,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -452,7 +474,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.09
+          "opacity": 0.09,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -482,7 +507,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.093
+          "opacity": 0.093,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -512,7 +540,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.097
+          "opacity": 0.097,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -542,7 +573,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -572,7 +606,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.103
+          "opacity": 0.103,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -602,7 +639,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.107
+          "opacity": 0.107,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -632,7 +672,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.11
+          "opacity": 0.11,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -662,7 +705,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.113
+          "opacity": 0.113,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -692,7 +738,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.117
+          "opacity": 0.117,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -722,7 +771,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.12
+          "opacity": 0.12,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -752,7 +804,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.123
+          "opacity": 0.123,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -782,7 +837,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.127
+          "opacity": 0.127,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -812,7 +870,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.13
+          "opacity": 0.13,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -843,7 +904,8 @@
       "effect": "synthwaveSunset",
       "params": {
         "sunRadius": 0.02,
-        "glow": 0.24
+        "glow": 0.24,
+        "audioReactive": 0.2
       },
       "automation": [
         {
@@ -859,12 +921,14 @@
         {
           "effect": "bokeh",
           "blend": "screen",
-          "opacity": 0.11
+          "opacity": 0.11,
+          "params": {}
         },
         {
           "effect": "rain",
           "blend": "screen",
-          "opacity": 0.08
+          "opacity": 0.08,
+          "params": {}
         }
       ]
     },
@@ -891,12 +955,14 @@
         {
           "effect": "equalizer",
           "blend": "screen",
-          "opacity": 0.16
+          "opacity": 0.16,
+          "params": {}
         },
         {
           "effect": "lightning",
           "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {}
         }
       ]
     },
@@ -920,7 +986,8 @@
         {
           "effect": "dotTunnel",
           "blend": "screen",
-          "opacity": 0.08
+          "opacity": 0.08,
+          "params": {}
         }
       ],
       "fitAlign": "centre"
@@ -931,18 +998,22 @@
       "end": "02:23.6",
       "effect": "physics_pile",
       "params": {
-        "gravity": 0.34
+        "gravity": 0.34,
+        "kickImpulse": 0.2,
+        "beatImpulse": 0.2
       },
       "layers": [
         {
           "effect": "glitch",
           "blend": "overlay",
-          "opacity": 0.08
+          "opacity": 0.08,
+          "params": {}
         },
         {
           "effect": "particles",
           "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {}
         }
       ]
     },
@@ -952,13 +1023,17 @@
       "end": "02:29.85",
       "effect": "voxel_landscape",
       "params": {
-        "speed": 0.36
+        "speed": 0.36,
+        "audioReact": 0.2
       },
       "layers": [
         {
           "effect": "raytrace_spheres",
           "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {
+            "audioReact": 0.2
+          }
         },
         {
           "effect": "feedback",
@@ -985,7 +1060,8 @@
           "blend": "screen",
           "opacity": 1,
           "params": {
-            "mode": 0
+            "mode": 0,
+            "audioReact": 0.2
           }
         }
       ]
@@ -1021,24 +1097,30 @@
         {
           "effect": "starfield",
           "blend": "screen",
-          "opacity": 0.15
+          "opacity": 0.15,
+          "params": {}
         },
         {
           "effect": "vga_fire",
           "blend": "source-over",
-          "opacity": 0.16
+          "opacity": 0.16,
+          "params": {
+            "audioReact": 0.2
+          }
         },
         {
           "effect": "space_hangar",
           "blend": "screen",
-          "opacity": 0.12
+          "opacity": 0.12,
+          "params": {}
         },
         {
           "effect": "fractal_zoomer",
           "opacity": 0.6,
           "blend": "color-dodge",
           "params": {
-            "message": 0
+            "message": 0,
+            "audioReact": 0.2
           },
           "automation": [],
           "fitAlign": "fill"
@@ -1058,12 +1140,16 @@
         {
           "effect": "fake3d",
           "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {}
         },
         {
           "effect": "vector3d_balls",
           "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -1093,7 +1179,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.08
+          "opacity": 0.08,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -1123,7 +1212,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.084
+          "opacity": 0.084,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -1153,7 +1245,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.088
+          "opacity": 0.088,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -1183,7 +1278,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.092
+          "opacity": 0.092,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -1213,7 +1311,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.096
+          "opacity": 0.096,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -1243,7 +1344,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -1273,7 +1377,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.104
+          "opacity": 0.104,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -1303,7 +1410,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.108
+          "opacity": 0.108,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -1333,7 +1443,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.112
+          "opacity": 0.112,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -1363,7 +1476,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.116
+          "opacity": 0.116,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -1393,7 +1509,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.12
+          "opacity": 0.12,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -1423,7 +1542,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.124
+          "opacity": 0.124,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -1453,7 +1575,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.128
+          "opacity": 0.128,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -1483,7 +1608,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.132
+          "opacity": 0.132,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -1513,7 +1641,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.136
+          "opacity": 0.136,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -1543,7 +1674,10 @@
         {
           "effect": "vga_fire",
           "blend": "lighter",
-          "opacity": 0.14
+          "opacity": 0.14,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -1560,12 +1694,16 @@
         {
           "effect": "bokeh",
           "blend": "screen",
-          "opacity": 0.11
+          "opacity": 0.11,
+          "params": {}
         },
         {
           "effect": "volumetric_clouds",
           "blend": "screen",
-          "opacity": 0.09
+          "opacity": 0.09,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -1575,13 +1713,17 @@
       "end": "03:09.6",
       "effect": "raytrace_spheres",
       "params": {
-        "speed": 0.4
+        "speed": 0.4,
+        "audioReact": 0.2
       },
       "layers": [
         {
           "effect": "vga_fire",
           "blend": "screen",
-          "opacity": 0.35
+          "opacity": 0.35,
+          "params": {
+            "audioReact": 0.2
+          }
         },
         {
           "effect": "plasma",
@@ -1607,7 +1749,10 @@
         {
           "effect": "platformerScroll",
           "blend": "screen",
-          "opacity": 0.09
+          "opacity": 0.09,
+          "params": {
+            "audioReact": 0.2
+          }
         },
         {
           "effect": "feedback",
@@ -1654,7 +1799,8 @@
         {
           "effect": "particles",
           "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {}
         },
         {
           "effect": "feedback",
@@ -1680,7 +1826,8 @@
         {
           "effect": "glitch",
           "blend": "overlay",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {}
         },
         {
           "effect": "feedback",
@@ -1700,7 +1847,8 @@
       "params": {
         "speed": 0.46,
         "wobble": 0.22,
-        "glow": 0.29
+        "glow": 0.29,
+        "audioReact": 0.2
       },
       "layers": [
         {
@@ -1727,7 +1875,8 @@
         {
           "effect": "particles",
           "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {}
         }
       ]
     },
@@ -1774,7 +1923,8 @@
         {
           "effect": "equalizer",
           "blend": "screen",
-          "opacity": 0.09
+          "opacity": 0.09,
+          "params": {}
         }
       ]
     },
@@ -1792,7 +1942,8 @@
         {
           "effect": "particles",
           "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {}
         }
       ]
     },
@@ -1810,7 +1961,8 @@
         {
           "effect": "wireframeRide",
           "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {}
         }
       ]
     },
@@ -1849,7 +2001,8 @@
         {
           "effect": "bokeh",
           "blend": "screen",
-          "opacity": 0.08
+          "opacity": 0.08,
+          "params": {}
         }
       ]
     },
@@ -1867,7 +2020,8 @@
         {
           "effect": "particles",
           "blend": "screen",
-          "opacity": 0.12
+          "opacity": 0.12,
+          "params": {}
         }
       ]
     },
@@ -1885,7 +2039,8 @@
         {
           "effect": "particles",
           "blend": "screen",
-          "opacity": 0.14
+          "opacity": 0.14,
+          "params": {}
         },
         {
           "effect": "feedback",
@@ -1919,7 +2074,8 @@
         {
           "effect": "boids_simulation",
           "blend": "screen",
-          "opacity": 0.09
+          "opacity": 0.09,
+          "params": {}
         }
       ],
       "automation": [
@@ -1965,7 +2121,8 @@
         {
           "effect": "tunnel",
           "blend": "screen",
-          "opacity": 0.12
+          "opacity": 0.12,
+          "params": {}
         },
         {
           "effect": "feedback",
@@ -2001,27 +2158,36 @@
         {
           "effect": "starfield",
           "blend": "screen",
-          "opacity": 0.2
+          "opacity": 0.2,
+          "params": {}
         },
         {
           "effect": "particles",
           "blend": "lighter",
-          "opacity": 0.22
+          "opacity": 0.22,
+          "params": {}
         },
         {
           "effect": "ribbons",
           "blend": "screen",
-          "opacity": 0.18
+          "opacity": 0.18,
+          "params": {}
         },
         {
           "effect": "vga_fire",
           "blend": "screen",
-          "opacity": 0.14
+          "opacity": 0.14,
+          "params": {
+            "audioReact": 0.2
+          }
         },
         {
           "effect": "metaballs",
           "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -2038,22 +2204,30 @@
         {
           "effect": "poly_morph_showcase",
           "blend": "screen",
-          "opacity": 0.12
+          "opacity": 0.12,
+          "params": {
+            "audioReact": 0.2
+          }
         },
         {
           "effect": "fluid",
           "blend": "screen",
-          "opacity": 0.11
+          "opacity": 0.11,
+          "params": {}
         },
         {
           "effect": "treegrowth",
           "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {}
         },
         {
           "effect": "fractal_zoomer",
           "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -2064,23 +2238,33 @@
       "effect": "torus_orbit_3d",
       "params": {
         "speed": 0.82,
-        "glow": 0.34
+        "glow": 0.34,
+        "audioReact": 0.2
       },
       "layers": [
         {
           "effect": "envmap_donut",
           "blend": "screen",
-          "opacity": 0.12
+          "opacity": 0.12,
+          "params": {
+            "audioReact": 0.2
+          }
         },
         {
           "effect": "glenz_vectors",
           "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {
+            "audioReact": 0.2
+          }
         },
         {
           "effect": "bumpmap_plane",
           "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -2107,17 +2291,24 @@
         {
           "effect": "neon_alley",
           "blend": "screen",
-          "opacity": 0.16
+          "opacity": 0.16,
+          "params": {}
         },
         {
           "effect": "explicitpixels",
           "blend": "screen",
-          "opacity": 0.11
+          "opacity": 0.11,
+          "params": {
+            "audioReact": 0.2
+          }
         },
         {
           "effect": "amiga_showcase",
           "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -2128,33 +2319,47 @@
       "effect": "greets_wall",
       "params": {
         "speed": 0.52,
-        "glow": 0.24
+        "glow": 0.24,
+        "audioReact": 0.2
       },
       "layers": [
         {
           "effect": "sine_scroller_logo",
           "blend": "screen",
-          "opacity": 0.12
+          "opacity": 0.12,
+          "params": {
+            "audioReact": 0.2
+          }
         },
         {
           "effect": "border_multiplex",
           "blend": "overlay",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {
+            "audioReact": 0.2
+          }
         },
         {
           "effect": "copper_gradient_splits",
           "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {
+            "audioReact": 0.2
+          }
         },
         {
           "effect": "roadDrive",
           "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {}
         },
         {
           "effect": "flyover",
           "blend": "screen",
-          "opacity": 0.09
+          "opacity": 0.09,
+          "params": {
+            "audioReactive": 0.2
+          }
         }
       ]
     },
@@ -2164,33 +2369,45 @@
       "end": "06:12.6",
       "effect": "textured_cube",
       "params": {
-        "speed": 0.56
+        "speed": 0.56,
+        "audioReact": 0.2
       },
       "layers": [
         {
           "effect": "twister",
           "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {
+            "audioReact": 0.2
+          }
         },
         {
           "effect": "shadebobs_bobs",
           "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {
+            "audioReact": 0.2
+          }
         },
         {
           "effect": "blobs",
           "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {}
         },
         {
           "effect": "fractal",
           "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {}
         },
         {
           "effect": "volumetric_clouds",
           "blend": "screen",
-          "opacity": 0.1
+          "opacity": 0.1,
+          "params": {
+            "audioReact": 0.2
+          }
         }
       ]
     },
@@ -2208,7 +2425,8 @@
         {
           "effect": "spherecloud",
           "blend": "screen",
-          "opacity": 0.08
+          "opacity": 0.08,
+          "params": {}
         }
       ]
     },
@@ -2240,7 +2458,7 @@
         "duration": 0.8
       },
       "params": {
-        "audioReact": 0.4,
+        "audioReact": 0.2,
         "backfaceCull": 0,
         "beatKick": 0,
         "rotXSpeed": 0.15,
@@ -2498,7 +2716,7 @@
       "params": {
         "mode": "explicit",
         "speed": 1.85,
-        "audioReact": 1.2
+        "audioReact": 0.2
       },
       "automation": [
         {
@@ -2649,7 +2867,8 @@
         "seed": 8608,
         "trail": 0.67,
         "shatter": 0.73,
-        "wreckingCue": 0.45
+        "wreckingCue": 0.45,
+        "audioReact": 0.2
       },
       "automation": [
         {
@@ -2756,7 +2975,7 @@
         "lineWidth": 4.4,
         "trailFade": 0.48,
         "sortFaces": "none",
-        "audioReact": 0.6,
+        "audioReact": 0.2,
         "beatKick": 0.45,
         "seed": 723
       },
@@ -2812,7 +3031,7 @@
         "lineWidth": 4.1,
         "trailFade": 0.84,
         "sortFaces": "backToFront",
-        "audioReact": 0.25,
+        "audioReact": 0.2,
         "beatKick": 0.85,
         "seed": 684
       },
@@ -2858,7 +3077,7 @@
         "detail": 0.75,
         "sunlight": 0.65,
         "haze": 0.26,
-        "audioReact": 0.35
+        "audioReact": 0.2
       },
       "automation": [
         {
@@ -2911,7 +3130,7 @@
         "wobbleFreq": 0.23,
         "wobbleSpeed": 1.7,
         "wobbleSlice": 1,
-        "audioReact": 0.4,
+        "audioReact": 0.2,
         "beatKick": 0.95,
         "seed": 134,
         "lensPath": "lissajous"
@@ -3171,7 +3390,7 @@
         "edges": "wrap",
         "source": "logo",
         "logoText": "WAVE",
-        "audioReact": 0.3,
+        "audioReact": 0.2,
         "beatBoost": 0.1,
         "glow": 0.27
       },
@@ -3345,7 +3564,8 @@
         "zoom": 1.83,
         "drift": 0.2,
         "speed": 0.22,
-        "hueShift": 0.14
+        "hueShift": 0.14,
+        "audioReact": 0.2
       },
       "automation": [
         {
@@ -3429,7 +3649,7 @@
         "cameraHeight": 0.5,
         "cameraOrbitSpeed": 0.9,
         "paletteSpeed": 0.02,
-        "audioReact": 0.7,
+        "audioReact": 0.2,
         "beatKick": 0.95,
         "fractalScale": 2.15
       },
@@ -3565,7 +3785,7 @@
         "centerY": -1.52,
         "iterations": 305,
         "paletteSpeed": 1.94,
-        "audioReact": 0.95
+        "audioReact": 0.2
       },
       "automation": [
         {
@@ -3617,7 +3837,7 @@
         "hamishStrength": 0.05,
         "paletteClamp": 0,
         "paletteClampSteps": 45,
-        "audioReact": 1,
+        "audioReact": 0.2,
         "beatKick": 1,
         "regions": 0.84
       },
@@ -3667,7 +3887,7 @@
         "edge": 0,
         "edgeAlpha": 0.25,
         "shadeStrength": 0.5,
-        "audioReact": 0.4,
+        "audioReact": 0.2,
         "beatKick": 0.8,
         "textureAnim": 0
       },
@@ -3723,7 +3943,7 @@
         "hueSpeed": 27,
         "smoothing": 1,
         "glow": 0.15,
-        "audioReact": 0.35,
+        "audioReact": 0.2,
         "beatKick": 0.95,
         "seed": 974
       },
@@ -3914,7 +4134,7 @@
         "hueSpeed": 4,
         "smoothing": 0,
         "glow": 0.55,
-        "audioReact": 0.85,
+        "audioReact": 0.2,
         "beatKick": 0.45,
         "seed": 215
       },
@@ -3963,7 +4183,7 @@
         "windWave": 1.67,
         "turbulence": 1.54,
         "gustOnBeat": 0.26,
-        "audioReact": 0.65,
+        "audioReact": 0.2,
         "logoText": "FIRE",
         "logoSize": 88,
         "logoY": 0.98,
@@ -4019,7 +4239,7 @@
         "forceAA": 0,
         "seed": 9611,
         "fov": 84,
-        "audioReact": 0.65,
+        "audioReact": 0.2,
         "beatKick": 0.9,
         "maxDepth": 2,
         "ambient": 0.09,
@@ -4080,7 +4300,7 @@
         "wobbleFreq": 0.14,
         "wobbleSpeed": 6.4,
         "wobbleSlice": 6,
-        "audioReact": 0.3,
+        "audioReact": 0.2,
         "beatKick": 0.85,
         "seed": 64,
         "lensPath": "lissajous"
@@ -4208,7 +4428,7 @@
         "detail": 0.25,
         "sunlight": 0.15,
         "haze": 0.79,
-        "audioReact": 0.4
+        "audioReact": 0.2
       },
       "automation": [
         {
@@ -4260,7 +4480,7 @@
         "stepBase": 4,
         "stepGrow": 140,
         "fogStrength": 0.9,
-        "audioReact": 0.6,
+        "audioReact": 0.2,
         "beatKick": 0,
         "scanlines": 1,
         "seed": 3363
@@ -4380,7 +4600,7 @@
         "duration": 0.8
       },
       "params": {
-        "audioReact": 0.85,
+        "audioReact": 0.2,
         "barCount": 3,
         "barSaturation": 0.35,
         "barSpeed": 1.2,
@@ -4671,7 +4891,7 @@
         "windWave": 0.13,
         "turbulence": 1.37,
         "gustOnBeat": 0.9,
-        "audioReact": 0.3,
+        "audioReact": 0.2,
         "logoText": "FIRE",
         "logoSize": 105,
         "logoY": 0.14,
@@ -4778,7 +4998,7 @@
         "backfaceCull": 1,
         "scanlines": 1,
         "edge": 0,
-        "audioReact": 0.7,
+        "audioReact": 0.2,
         "beatKick": 0.4,
         "seed": 50
       },
@@ -4824,7 +5044,7 @@
         "padding": 0.02,
         "highlightPulse": 0.7,
         "beatPulseDecay": 1.8,
-        "audioReact": 0.5,
+        "audioReact": 0.2,
         "title": "GREETS",
         "names": "Fairlight|TRSI|Spaceballs|CNCD|Mercury|TBL"
       },
@@ -4863,7 +5083,7 @@
         "duration": 0.8
       },
       "params": {
-        "audioReact": 0.85,
+        "audioReact": 0.2,
         "barCount": 1,
         "barSaturation": 0.2,
         "barSpeed": 1.7,
@@ -4932,7 +5152,7 @@
         "stripeSpeed": 1.95,
         "stripeStrength": 0.15,
         "palette": "rainbow",
-        "audioReact": 0.65,
+        "audioReact": 0.2,
         "beatKick": 0.35,
         "seed": 2275
       },
@@ -4988,7 +5208,7 @@
         "lineWidth": 2.4,
         "trailFade": 0.68,
         "sortFaces": "backToFront",
-        "audioReact": 0.25,
+        "audioReact": 0.2,
         "beatKick": 0.45,
         "seed": 907
       },
@@ -5086,7 +5306,7 @@
         "islandSeed": 1,
         "fog": 0.15,
         "palette": "night",
-        "audioReactive": 0.9
+        "audioReactive": 0.2
       },
       "automation": [
         {
@@ -5738,7 +5958,7 @@
         "edge": 0,
         "edgeAlpha": 0.15,
         "shadeStrength": 1.2,
-        "audioReact": 0.4,
+        "audioReact": 0.2,
         "beatKick": 0.5,
         "textureAnim": 0
       },
@@ -5872,7 +6092,7 @@
         "lineWidth": 2.3,
         "trailFade": 0.36,
         "sortFaces": "backToFront",
-        "audioReact": 0.6,
+        "audioReact": 0.2,
         "beatKick": 0.8,
         "seed": 806
       },
@@ -6065,7 +6285,7 @@
         "windWave": 1.85,
         "turbulence": 0.02,
         "gustOnBeat": 0.62,
-        "audioReact": 1,
+        "audioReact": 0.2,
         "logoText": "SMCGA",
         "logoSize": 130,
         "logoY": 0.93,
@@ -6205,7 +6425,7 @@
         "boingCheckers": 0,
         "bobAlpha": 0.47,
         "fastBlob": 0,
-        "audioReact": 0.85,
+        "audioReact": 0.2,
         "beatPulseStrength": 0.5,
         "dirtyRects": 0,
         "seed": 19.5
@@ -6310,7 +6530,7 @@
         "stepBase": 3,
         "stepGrow": 135,
         "fogStrength": 0.1,
-        "audioReact": 0.4,
+        "audioReact": 0.2,
         "beatKick": 0.6,
         "scanlines": 1,
         "seed": 7766
@@ -6409,7 +6629,7 @@
         "wobbleFreq": 0.07,
         "wobbleSpeed": 4.6,
         "wobbleSlice": 2,
-        "audioReact": 0.8,
+        "audioReact": 0.2,
         "beatKick": 0.3,
         "seed": 969,
         "lensPath": "circle"
@@ -6550,7 +6770,7 @@
         "stepBase": 6,
         "stepGrow": 85,
         "fogStrength": 0.8,
-        "audioReact": 0.4,
+        "audioReact": 0.2,
         "beatKick": 0.1,
         "scanlines": 0,
         "seed": 2010
@@ -6725,7 +6945,7 @@
         "forceAA": 1,
         "seed": 903,
         "fov": 86,
-        "audioReact": 0.95,
+        "audioReact": 0.2,
         "beatKick": 0.3,
         "maxDepth": 2,
         "ambient": 0.35,
@@ -6784,7 +7004,7 @@
         "forceAA": 1,
         "seed": 372,
         "fov": 43,
-        "audioReact": 0.25,
+        "audioReact": 0.2,
         "beatKick": 0.7,
         "maxDepth": 3,
         "ambient": 0.23,
@@ -6888,7 +7108,7 @@
         "lineWidth": 2.5,
         "trailFade": 0.32,
         "sortFaces": "none",
-        "audioReact": 0.55,
+        "audioReact": 0.2,
         "beatKick": 0.25,
         "seed": 276
       },
@@ -6984,7 +7204,7 @@
         "stripeSpeed": 0.05,
         "stripeStrength": 0.9,
         "palette": "spectrum",
-        "audioReact": 0.5,
+        "audioReact": 0.2,
         "beatKick": 0.7,
         "seed": 2363
       },
@@ -7081,7 +7301,7 @@
         "wobbleFreq": 0.29,
         "wobbleSpeed": 2.1,
         "wobbleSlice": 3,
-        "audioReact": 0.55,
+        "audioReact": 0.2,
         "beatKick": 0.4,
         "seed": 243,
         "lensPath": "lissajous"
@@ -7179,7 +7399,7 @@
         "edge": 1,
         "edgeAlpha": 0.95,
         "shadeStrength": 1.15,
-        "audioReact": 0.45,
+        "audioReact": 0.2,
         "beatKick": 0.85,
         "textureAnim": 1
       },
@@ -7374,7 +7594,7 @@
         "waveFreq": 9.3,
         "splitStrength": 0.7,
         "scanlineStep": 2,
-        "audioReact": 0.9,
+        "audioReact": 0.2,
         "beatThump": 0.7,
         "border": 0,
         "borderSize": 0.38,
@@ -7591,7 +7811,7 @@
         "windWave": 1.83,
         "turbulence": 2.69,
         "gustOnBeat": 0.1,
-        "audioReact": 0.75,
+        "audioReact": 0.2,
         "logoText": "FIRE",
         "logoSize": 26,
         "logoY": 0.85,
@@ -7766,7 +7986,7 @@
         "depth": 2.8,
         "glow": 0.25,
         "palette": "teal",
-        "audioReact": 0.65
+        "audioReact": 0.2
       },
       "automation": [
         {
@@ -7887,7 +8107,8 @@
         "zoom": 1.46,
         "drift": 0.2,
         "speed": 0.22,
-        "hueShift": 0.14
+        "hueShift": 0.14,
+        "audioReact": 0.2
       },
       "automation": [
         {
@@ -7939,7 +8160,7 @@
         "stepBase": 6,
         "stepGrow": 130,
         "fogStrength": 0.9,
-        "audioReact": 0.9,
+        "audioReact": 0.2,
         "beatKick": 0.9,
         "scanlines": 1,
         "seed": 485
@@ -8198,7 +8419,7 @@
         "wobbleFreq": 0.02,
         "wobbleSpeed": 7.5,
         "wobbleSlice": 6,
-        "audioReact": 0.85,
+        "audioReact": 0.2,
         "beatKick": 0.1,
         "seed": 758,
         "lensPath": "circle"
@@ -8292,7 +8513,7 @@
         "detail": 0.4,
         "sunlight": 0.95,
         "haze": 0.14,
-        "audioReact": 0.8
+        "audioReact": 0.2
       },
       "automation": [
         {
@@ -8525,7 +8746,7 @@
       "id": "title-polygons",
       "start": "02:43.7",
       "end": "02:46.0",
-      "text": "\ud83e\uddca",
+      "text": "🧊",
       "x": 0.5,
       "y": 0.2,
       "align": "center",
@@ -11482,7 +11703,7 @@
       "id": "scene-042-volumetric-clouds-20",
       "start": 233.53333333333333,
       "end": 233.76666666666668,
-      "text": "\u2018cause",
+      "text": "‘cause",
       "x": 0.5,
       "y": 0.58,
       "align": "center",
@@ -11496,7 +11717,7 @@
       },
       "spans": [
         {
-          "text": "\u2018cause",
+          "text": "‘cause",
           "color": "#ff7ad9",
           "size": 34,
           "weight": "bold",
@@ -11726,7 +11947,7 @@
       "id": "scene-047-kefrens-bars-6",
       "start": 236.29285714285714,
       "end": 236.57142857142858,
-      "text": "\u2018cause",
+      "text": "‘cause",
       "x": 0.174,
       "y": 0.507,
       "align": "left",
@@ -11742,7 +11963,7 @@
       },
       "spans": [
         {
-          "text": "\u2018cause",
+          "text": "‘cause",
           "color": "#a5b4fc",
           "size": 37,
           "weight": "bold",
@@ -13041,7 +13262,7 @@
       "id": "scene-056-amiga-showcase-5",
       "start": 249.1909090909091,
       "end": 249.41363636363636,
-      "text": "\u2019em",
+      "text": "’em",
       "x": 0.5,
       "y": 0.393,
       "align": "center",
@@ -13055,7 +13276,7 @@
       },
       "spans": [
         {
-          "text": "\u2019em",
+          "text": "’em",
           "color": "#f7e9a4",
           "size": 45,
           "weight": "bold",
@@ -13093,7 +13314,7 @@
       "id": "scene-056-amiga-showcase-7",
       "start": 249.63636363636365,
       "end": 249.85909090909092,
-      "text": "\u201cwhere\u2019s",
+      "text": "“where’s",
       "x": 0.5,
       "y": 0.607,
       "align": "center",
@@ -13109,7 +13330,7 @@
       },
       "spans": [
         {
-          "text": "\u201cwhere\u2019s",
+          "text": "“where’s",
           "color": "#ffb86c",
           "size": 37,
           "weight": "bold",
@@ -13150,7 +13371,7 @@
       "id": "scene-056-amiga-showcase-9",
       "start": 250.0818181818182,
       "end": 250.30454545454546,
-      "text": "soul?\u201d",
+      "text": "soul?”",
       "x": 0.5,
       "y": 0.82,
       "align": "center",
@@ -13164,7 +13385,7 @@
       },
       "spans": [
         {
-          "text": "soul?\u201d",
+          "text": "soul?”",
           "color": "#ffffff",
           "size": 60,
           "weight": "900",
@@ -13205,7 +13426,7 @@
       "id": "scene-056-amiga-showcase-11",
       "start": 250.52727272727273,
       "end": 250.75,
-      "text": "\u201cwhere\u2019s",
+      "text": "“where’s",
       "x": 0.157,
       "y": 0.36,
       "align": "left",
@@ -13219,7 +13440,7 @@
       },
       "spans": [
         {
-          "text": "\u201cwhere\u2019s",
+          "text": "“where’s",
           "color": "#f7e9a4",
           "size": 43,
           "weight": "bold",
@@ -13257,7 +13478,7 @@
       "id": "scene-056-amiga-showcase-13",
       "start": 250.97272727272727,
       "end": 251.19545454545454,
-      "text": "feeling?\u201d",
+      "text": "feeling?”",
       "x": 0.21,
       "y": 0.8,
       "align": "left",
@@ -13273,7 +13494,7 @@
       },
       "spans": [
         {
-          "text": "feeling?\u201d",
+          "text": "feeling?”",
           "color": "#ffb86c",
           "size": 51,
           "weight": "900",
@@ -13394,7 +13615,7 @@
       "id": "scene-056-amiga-showcase-18",
       "start": 252.08636363636364,
       "end": 252.3090909090909,
-      "text": "\u2014",
+      "text": "—",
       "x": 0.843,
       "y": 0.367,
       "align": "right",
@@ -13408,7 +13629,7 @@
       },
       "spans": [
         {
-          "text": "\u2014",
+          "text": "—",
           "color": "#a5b4fc",
           "size": 45,
           "weight": "bold",
@@ -13446,7 +13667,7 @@
       "id": "scene-056-amiga-showcase-20",
       "start": 252.53181818181818,
       "end": 252.75454545454545,
-      "text": "I\u2019ve",
+      "text": "I’ve",
       "x": 0.83,
       "y": 0.47,
       "align": "right",
@@ -13462,7 +13683,7 @@
       },
       "spans": [
         {
-          "text": "I\u2019ve",
+          "text": "I’ve",
           "color": "#f7e9a4",
           "size": 37,
           "weight": "bold",
@@ -14019,7 +14240,7 @@
       "id": "scene-064-textmode-charset-1",
       "start": 257.8,
       "end": 258.03333333333336,
-      "text": "\u2019bout",
+      "text": "’bout",
       "x": 0.177,
       "y": 0.53,
       "align": "left",
@@ -14036,7 +14257,7 @@
       },
       "spans": [
         {
-          "text": "\u2019bout",
+          "text": "’bout",
           "color": "#ff7ad9",
           "size": 40,
           "weight": "bold",
@@ -14237,7 +14458,7 @@
       "id": "scene-064-textmode-charset-9",
       "start": 259.6666666666667,
       "end": 259.9,
-      "text": "you\u2019re",
+      "text": "you’re",
       "x": 0.206,
       "y": 0.77,
       "align": "left",
@@ -14254,7 +14475,7 @@
       },
       "spans": [
         {
-          "text": "you\u2019re",
+          "text": "you’re",
           "color": "#9ef0ff",
           "size": 40,
           "weight": "bold",
@@ -14292,7 +14513,7 @@
       "id": "scene-064-textmode-charset-11",
       "start": 260.1333333333333,
       "end": 260.3666666666667,
-      "text": "It\u2019s",
+      "text": "It’s",
       "x": 0.87,
       "y": 0.16,
       "align": "right",
@@ -14309,7 +14530,7 @@
       },
       "spans": [
         {
-          "text": "It\u2019s",
+          "text": "It’s",
           "color": "#ff7ad9",
           "size": 40,
           "weight": "bold",
