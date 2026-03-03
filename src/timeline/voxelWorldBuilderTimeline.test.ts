@@ -30,7 +30,7 @@ function expectWorldBuilderSection(section: Section | undefined): void {
   expect(section?.params).toMatchObject({
     buildProgress: 0,
     cityDensity: 0.62,
-    glow: 0.85,
+    glow: 0.9,
     cameraLift: 0.15,
   });
 
@@ -40,23 +40,23 @@ function expectWorldBuilderSection(section: Section | undefined): void {
       from: 0,
       to: 1,
       t0: "03:44.4",
-      t1: "03:49.2",
-      ease: "inOutSine",
+      t1: "03:47.8",
+      ease: "outCubic",
     },
     {
       param: "cameraLift",
       from: 0.05,
-      to: 0.3,
+      to: 0.32,
       t0: "03:44.4",
-      t1: "03:49.2",
+      t1: "03:48.6",
       ease: "inOutSine",
     },
     {
       param: "glow",
-      from: 0.65,
-      to: 1.05,
-      t0: "03:47.8",
-      t1: "03:49.2",
+      from: 0.7,
+      to: 1.08,
+      t0: "03:46.6",
+      t1: "03:48.8",
       ease: "outQuad",
     },
   ]);
