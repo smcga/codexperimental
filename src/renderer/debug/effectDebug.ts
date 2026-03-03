@@ -22,6 +22,7 @@ import { IMPOSSIBLE_CORRIDOR_DEFAULTS } from "../effects/gl/impossibleCorridorEf
 import { MOIRE_GRID_DEFAULTS } from "../effects/moireGridEffect";
 import { TORUS_ORBIT_3D_DEFAULTS } from "../effects/torusOrbit3d";
 import { VOLUMETRIC_CLOUDS_DEFAULTS } from "../effects/volumetricCloudsEffect";
+import { WORLD_BUILDER_DEFAULTS } from "../effects/worldBuilderEffect";
 
 export type EffectParamValue = number | string;
 
@@ -415,6 +416,20 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
         max: 1,
         step: 0.05
       })
+    ]
+  },
+  world_builder: {
+    title: "World Builder Controls",
+    controls: [
+      numberControl("gridWidth", "Grid Width", WORLD_BUILDER_DEFAULTS.gridWidth, { min: 8, max: 34, step: 1 }),
+      numberControl("gridDepth", "Grid Depth", WORLD_BUILDER_DEFAULTS.gridDepth, { min: 8, max: 34, step: 1 }),
+      numberControl("maxHeight", "Max Height", WORLD_BUILDER_DEFAULTS.maxHeight, { min: 2, max: 20, step: 1 }),
+      numberControl("voxelSize", "Voxel Size", WORLD_BUILDER_DEFAULTS.voxelSize, { min: 8, max: 32, step: 1 }),
+      numberControl("speed", "Build Speed", WORLD_BUILDER_DEFAULTS.speed, { min: 0.03, max: 1.2, step: 0.01 }),
+      numberControl("horizon", "Horizon", WORLD_BUILDER_DEFAULTS.horizon, { min: 0.4, max: 0.9, step: 0.01 }),
+      numberControl("audioReact", "Audio React", WORLD_BUILDER_DEFAULTS.audioReact, { min: 0, max: 1, step: 0.05 }),
+      numberControl("beatKick", "Beat Kick", WORLD_BUILDER_DEFAULTS.beatKick, { min: 0, max: 1.4, step: 0.05 }),
+      numberControl("seed", "Seed", WORLD_BUILDER_DEFAULTS.seed, { min: 0, max: 9999, step: 1 })
     ]
   },
   voxel_landscape: {

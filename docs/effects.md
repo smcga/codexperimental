@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/index.ts`.
 
-Total effects: **68**.
+Total effects: **69**.
 
 ## Table of contents
 
@@ -74,6 +74,7 @@ Total effects: **68**.
 - [Effect: explicitpixels](#effect-explicitpixels)
 - [Effect: volumetric_clouds](#effect-volumetric-clouds)
 - [Effect: boids_simulation](#effect-boids-simulation)
+- [Effect: world_builder](#effect-world-builder)
 
 ## Cross-reference
 
@@ -93,10 +94,10 @@ Total effects: **68**.
 
 ### Common parameter patterns
 
-- `speed` (used in 40 effects)
-- `audioReact` (used in 27 effects)
-- `seed` (used in 25 effects)
-- `beatKick` (used in 14 effects)
+- `speed` (used in 41 effects)
+- `audioReact` (used in 28 effects)
+- `seed` (used in 26 effects)
+- `beatKick` (used in 15 effects)
 - `glow` (used in 9 effects)
 - `palette` (used in 9 effects)
 - `trail` (used in 7 effects)
@@ -2466,6 +2467,40 @@ Total effects: **68**.
 ```json
 {
   "effect": "boids_simulation",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: world_builder
+
+- **Registry key:** `world_builder`
+- **Implementation:** `src/renderer/effects/worldBuilderEffect.ts` (class `WorldBuilderEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by WorldBuilderEffect (src/renderer/effects/worldBuilderEffect.ts).
+- **Audio features:** bass, isBeat, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReact` | number | 0.65 | min 0, max 1 | Audio React | yes |
+| `params.beatKick` | number | 0.75 | min 0, max 1.4 | Beat Kick | yes |
+| `params.gridDepth` | number | 18 | min 8, max 34 | Grid Depth | yes |
+| `params.gridWidth` | number | 18 | min 8, max 34 | Grid Width | yes |
+| `params.horizon` | number | 0.72 | min 0.4, max 0.9 | Horizon | yes |
+| `params.maxHeight` | number | 9 | min 2, max 20 | Max Height | yes |
+| `params.seed` | number | 4242 | min 0, max 9999 | Seed | yes |
+| `params.speed` | number | 0.22 | min 0.03, max 1.2 | Build Speed | yes |
+| `params.voxelSize` | number | 16 | min 8, max 32 | Voxel Size | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "world_builder",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
