@@ -76,6 +76,23 @@ describe("VoxelWorldBuilder phase model", () => {
     expect(late.glowBoost).toBeGreaterThan(0);
   });
 
+  it("maps documented buildProgress ranges to intended phase dominance", () => {
+    const phaseA = voxelBuildPhases(0.2);
+    const phaseB = voxelBuildPhases(0.6);
+    const phaseC = voxelBuildPhases(0.9);
+
+    expect(phaseA.terrain).toBeGreaterThan(phaseA.buildings);
+    expect(phaseA.glowBoost).toBe(0);
+
+    expect(phaseB.terrain).toBe(1);
+    expect(phaseB.buildings).toBeGreaterThan(0);
+    expect(phaseB.glowBoost).toBe(0);
+
+    expect(phaseC.terrain).toBe(1);
+    expect(phaseC.buildings).toBe(1);
+    expect(phaseC.glowBoost).toBeGreaterThan(0);
+  });
+
   it("raises columns monotonically as build progress increases", () => {
     const t = 3;
     const b = 18;
