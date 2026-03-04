@@ -23,6 +23,7 @@ import { IMPOSSIBLE_CORRIDOR_DEFAULTS } from "../effects/gl/impossibleCorridorEf
 import { MOIRE_GRID_DEFAULTS } from "../effects/moireGridEffect";
 import { TORUS_ORBIT_3D_DEFAULTS } from "../effects/torusOrbit3d";
 import { VOLUMETRIC_CLOUDS_DEFAULTS } from "../effects/volumetricCloudsEffect";
+import { WATER_DROPS_OVERLAY_DEFAULTS } from "../effects/waterDropsOverlay";
 
 export type EffectParamValue = number | string;
 
@@ -1165,6 +1166,16 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("palette", "Palette", TEXTMODE_CHARSET_DEFAULTS.palette, { min: 0, max: 8, step: 1 }),
       numberControl("scanlines", "Scanlines", TEXTMODE_CHARSET_DEFAULTS.scanlines, { min: 0, max: 1, step: 0.05 }),
       numberControl("seed", "Seed", TEXTMODE_CHARSET_DEFAULTS.seed, { min: 0, max: 999, step: 1 })
+    ]
+  },
+  waterDropsOverlay: {
+    title: "Water Drops Overlay Controls",
+    controls: [
+      numberControl("density", "Density", WATER_DROPS_OVERLAY_DEFAULTS.density, { min: 0, max: 2, step: 0.05 }),
+      numberControl("maxDrops", "Max Drops", WATER_DROPS_OVERLAY_DEFAULTS.maxDrops, { min: 0, max: 300, step: 1 }),
+      numberControl("speed", "Speed", WATER_DROPS_OVERLAY_DEFAULTS.speed, { min: 0, max: 3, step: 0.05 }),
+      numberControl("distortion", "Distortion", WATER_DROPS_OVERLAY_DEFAULTS.distortion, { min: 0, max: 2.5, step: 0.05 }),
+      numberControl("highlight", "Highlight", WATER_DROPS_OVERLAY_DEFAULTS.highlight, { min: 0, max: 2, step: 0.05 })
     ]
   },
   bumpmap_plane: {
