@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/index.ts`.
 
-Total effects: **69**.
+Total effects: **70**.
 
 ## Table of contents
 
@@ -75,6 +75,7 @@ Total effects: **69**.
 - [Effect: volumetric_clouds](#effect-volumetric-clouds)
 - [Effect: boids_simulation](#effect-boids-simulation)
 - [Effect: voxel_world_builder](#effect-voxel-world-builder)
+- [Effect: water_drops](#effect-water-drops)
 
 ## Cross-reference
 
@@ -95,12 +96,12 @@ Total effects: **69**.
 ### Common parameter patterns
 
 - `speed` (used in 40 effects)
-- `audioReact` (used in 27 effects)
-- `seed` (used in 26 effects)
+- `audioReact` (used in 28 effects)
+- `seed` (used in 27 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 10 effects)
 - `palette` (used in 9 effects)
-- `trail` (used in 7 effects)
+- `trail` (used in 8 effects)
 - `scanlines` (used in 7 effects)
 - `count` (used in 6 effects)
 - `lineWidth` (used in 6 effects)
@@ -2497,6 +2498,43 @@ Total effects: **69**.
 ```json
 {
   "effect": "voxel_world_builder",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: water_drops
+
+- **Registry key:** `water_drops`
+- **Implementation:** `src/renderer/effects/waterDropsEffect.ts` (class `WaterDropsEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by WaterDropsEffect (src/renderer/effects/waterDropsEffect.ts).
+- **Audio features:** beat, rms
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReact` | number | 0.25 | min 0, max 1 | Audio React | yes |
+| `params.distortion` | number | 0.38 | min 0, max 1 | Distortion | yes |
+| `params.dropCount` | number | 72 | min 8, max 280 | Drop Count | yes |
+| `params.fallSpeed` | number | 0.12 | min 0, max 1.2 | Fall Speed | yes |
+| `params.maxRadius` | number | 18 | min 2, max 120 | Max Radius | yes |
+| `params.microDrops` | number | 0.7 | min 0, max 1 | Micro Drops | yes |
+| `params.minRadius` | number | 3 | min 1, max 80 | Min Radius | yes |
+| `params.refraction` | number | 0.85 | min 0, max 1 | Refraction | yes |
+| `params.rivulets` | number | 0.35 | min 0, max 1 | Rivulets | yes |
+| `params.seed` | number | 0 | min 0, max 999 | Seed | yes |
+| `params.tint` | number | 205 | min 170, max 230 | Tint | yes |
+| `params.trail` | number | 0.28 | min 0, max 1 | Trail | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "water_drops",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
