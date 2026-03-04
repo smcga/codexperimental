@@ -70,6 +70,7 @@ import { BoidsSimulationEffect } from "./boidsSimulationEffect";
 import { VoxelWorldBuilderEffect } from "./VoxelWorldBuilder";
 import { WaterDropsEffect } from "./waterDropsEffect";
 import { FireworksDisplayEffect } from "./fireworksDisplayEffect";
+import { CosmicVoyageEffect } from "./cosmicVoyageEffect";
 
 export const effectRegistry: Record<string, Effect> = {
   starfield: new StarfieldEffect(),
@@ -143,6 +144,7 @@ export const effectRegistry: Record<string, Effect> = {
   voxel_world_builder: new VoxelWorldBuilderEffect(),
   water_drops: new WaterDropsEffect(),
   fireworks_display: new FireworksDisplayEffect(),
+  cosmic_voyage: new CosmicVoyageEffect(),
 };
 
 export function resetEffects(): void {

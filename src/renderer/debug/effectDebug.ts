@@ -23,6 +23,7 @@ import { IMPOSSIBLE_CORRIDOR_DEFAULTS } from "../effects/gl/impossibleCorridorEf
 import { MOIRE_GRID_DEFAULTS } from "../effects/moireGridEffect";
 import { TORUS_ORBIT_3D_DEFAULTS } from "../effects/torusOrbit3d";
 import { VOLUMETRIC_CLOUDS_DEFAULTS } from "../effects/volumetricCloudsEffect";
+import { COSMIC_VOYAGE_DEFAULTS } from "../effects/cosmicVoyageEffect";
 
 export type EffectParamValue = number | string;
 
@@ -88,6 +89,21 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("drift", "Drift", 0.14, { min: 0, max: 1, step: 0.01 }),
       numberControl("sparkle", "Sparkle", 0.55, { min: 0, max: 2, step: 0.05 }),
       numberControl("colorShift", "Color Shift", 0, { min: -1, max: 1, step: 0.05 })
+    ]
+  },
+  cosmic_voyage: {
+    title: "Cosmic Voyage Controls",
+    controls: [
+      numberControl("speed", "Speed", COSMIC_VOYAGE_DEFAULTS.speed, { min: 0, max: 3, step: 0.05 }),
+      numberControl("warp", "Warp", COSMIC_VOYAGE_DEFAULTS.warp, { min: 0, max: 2.4, step: 0.05 }),
+      numberControl("starDensity", "Star Density", COSMIC_VOYAGE_DEFAULTS.starDensity, { min: 0.2, max: 2.5, step: 0.05 }),
+      numberControl("galaxyGlow", "Galaxy Glow", COSMIC_VOYAGE_DEFAULTS.galaxyGlow, { min: 0, max: 1.5, step: 0.05 }),
+      numberControl("nebula", "Nebula", COSMIC_VOYAGE_DEFAULTS.nebula, { min: 0, max: 1.5, step: 0.05 }),
+      numberControl("asteroidDensity", "Asteroid Density", COSMIC_VOYAGE_DEFAULTS.asteroidDensity, { min: 0, max: 2, step: 0.05 }),
+      numberControl("planetCount", "Planet Count", COSMIC_VOYAGE_DEFAULTS.planetCount, { min: 1, max: 8, step: 1 }),
+      numberControl("parallax", "Parallax", COSMIC_VOYAGE_DEFAULTS.parallax, { min: 0, max: 1, step: 0.05 }),
+      numberControl("bloom", "Bloom", COSMIC_VOYAGE_DEFAULTS.bloom, { min: 0, max: 1.6, step: 0.05 }),
+      numberControl("seed", "Seed", COSMIC_VOYAGE_DEFAULTS.seed, { min: 0, max: 9999, step: 1 })
     ]
   },
   plasma: {
