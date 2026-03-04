@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/index.ts`.
 
-Total effects: **70**.
+Total effects: **71**.
 
 ## Table of contents
 
@@ -76,6 +76,7 @@ Total effects: **70**.
 - [Effect: boids_simulation](#effect-boids-simulation)
 - [Effect: voxel_world_builder](#effect-voxel-world-builder)
 - [Effect: water_drops](#effect-water-drops)
+- [Effect: fireworks_display](#effect-fireworks-display)
 
 ## Cross-reference
 
@@ -96,16 +97,16 @@ Total effects: **70**.
 ### Common parameter patterns
 
 - `speed` (used in 40 effects)
-- `audioReact` (used in 28 effects)
-- `seed` (used in 27 effects)
+- `audioReact` (used in 29 effects)
+- `seed` (used in 28 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 10 effects)
+- `trail` (used in 9 effects)
 - `palette` (used in 9 effects)
-- `trail` (used in 8 effects)
+- `hueShift` (used in 7 effects)
 - `scanlines` (used in 7 effects)
 - `count` (used in 6 effects)
 - `lineWidth` (used in 6 effects)
-- `hueShift` (used in 6 effects)
 - `quality` (used in 6 effects)
 
 ## Effects
@@ -2535,6 +2536,40 @@ Total effects: **70**.
 ```json
 {
   "effect": "water_drops",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: fireworks_display
+
+- **Registry key:** `fireworks_display`
+- **Implementation:** `src/renderer/effects/fireworksDisplayEffect.ts` (class `FireworksDisplayEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by FireworksDisplayEffect (src/renderer/effects/fireworksDisplayEffect.ts).
+- **Audio features:** beat, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReact` | number | 0.7 | min 0, max 1 | Audio React | yes |
+| `params.burstSize` | number | 0.78 | min 0.2, max 1.4 | Burst Size | yes |
+| `params.glitter` | number | 0.62 | min 0, max 1 | Glitter | yes |
+| `params.gravity` | number | 0.58 | min 0.1, max 1.2 | Gravity | yes |
+| `params.hueShift` | number | 0 | min -180, max 180 | Hue Shift | yes |
+| `params.launchSpread` | number | 0.82 | min 0.2, max 1 | Launch Spread | yes |
+| `params.seed` | number | 0 | min 0, max 999 | Seed | yes |
+| `params.shellRate` | number | 0.55 | min 0.1, max 1.5 | Shell Rate | yes |
+| `params.trail` | number | 0.28 | min 0, max 0.92 | Trail | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "fireworks_display",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
