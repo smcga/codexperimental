@@ -19,9 +19,9 @@ const createContext = () => ({
   arc: vi.fn(),
   fill: vi.fn(),
   stroke: vi.fn(),
-  fillRect: vi.fn(),
   moveTo: vi.fn(),
   lineTo: vi.fn(),
+  quadraticCurveTo: vi.fn(),
   set fillStyle(_value: string) {},
   set strokeStyle(_value: string) {},
   set lineWidth(_value: number) {}
@@ -36,26 +36,32 @@ describe("WaterDropsEffect", () => {
   it("clamps and resolves params", () => {
     const params = resolveWaterDropsParams({
       dropCount: 3,
-      minRadius: 1,
+      minRadius: 0,
       maxRadius: 600,
       distortion: 3,
       trail: -2,
       audioReact: 8,
       tint: 500,
+      refraction: 2,
+      microDrops: -1,
+      rivulets: 4,
       seed: 9
     });
 
     expect(params.dropCount).toBe(8);
-    expect(params.minRadius).toBe(2);
+    expect(params.minRadius).toBe(1);
     expect(params.maxRadius).toBe(120);
     expect(params.distortion).toBe(1);
     expect(params.trail).toBe(0);
     expect(params.audioReact).toBe(1);
     expect(params.tint).toBe(230);
+    expect(params.refraction).toBe(1);
+    expect(params.microDrops).toBe(0);
+    expect(params.rivulets).toBe(1);
     expect(params.seed).toBe(9);
   });
 
-  it("draws expected primitives based on drop count and trail setting", () => {
+  it("draws droplet arcs, micro drops, and curved trails", () => {
     const effect = new WaterDropsEffect();
     const ctx = createContext();
 
@@ -66,16 +72,14 @@ describe("WaterDropsEffect", () => {
       time: 0.5,
       delta: 0.016,
       audio: createAudio(),
-      params: { dropCount: 10, trail: 1, seed: 1 }
+      params: { dropCount: 10, trail: 1, microDrops: 1, rivulets: 1, seed: 1 }
     });
 
-    expect(ctx.fillRect).toHaveBeenCalledTimes(1);
-    expect(ctx.arc).toHaveBeenCalledTimes(30);
-    expect(ctx.moveTo).toHaveBeenCalledTimes(10);
-    expect(ctx.lineTo).toHaveBeenCalledTimes(10);
+    expect(ctx.arc.mock.calls.length).toBeGreaterThan(40);
+    expect(ctx.quadraticCurveTo).toHaveBeenCalled();
   });
 
-  it("skips trail path when trail is zero", () => {
+  it("omits droplet trails and rivulets when disabled", () => {
     const effect = new WaterDropsEffect();
     const ctx = createContext();
 
@@ -86,10 +90,9 @@ describe("WaterDropsEffect", () => {
       time: 0.5,
       delta: 0.016,
       audio: createAudio(),
-      params: { dropCount: 10, trail: 0, seed: 1 }
+      params: { dropCount: 10, trail: 0, rivulets: 0, microDrops: 0, seed: 1 }
     });
 
-    expect(ctx.moveTo).not.toHaveBeenCalled();
-    expect(ctx.lineTo).not.toHaveBeenCalled();
+    expect(ctx.quadraticCurveTo).not.toHaveBeenCalled();
   });
 });

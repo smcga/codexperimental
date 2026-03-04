@@ -935,10 +935,13 @@
           "blend": "screen",
           "opacity": 0.12,
           "params": {
-            "dropCount": 36,
-            "trail": 0.3,
-            "fallSpeed": 0.16,
-            "audioReact": 0.15
+            "dropCount": 56,
+            "trail": 0.4,
+            "fallSpeed": 0.14,
+            "audioReact": 0.15,
+            "refraction": 0.95,
+            "microDrops": 0.85,
+            "rivulets": 0.4
           }
         }
       ]

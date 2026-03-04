@@ -2517,15 +2517,18 @@ Total effects: **70**.
 
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
 | --- | --- | --- | --- | --- | --- |
-| `params.audioReact` | number | 0.35 | min 0, max 1 | Audio React | yes |
-| `params.distortion` | number | 0.65 | min 0, max 1 | Distortion | yes |
-| `params.dropCount` | number | 48 | min 8, max 220 | Drop Count | yes |
-| `params.fallSpeed` | number | 0.22 | min 0, max 1.2 | Fall Speed | yes |
-| `params.maxRadius` | number | 24 | min 4, max 120 | Max Radius | yes |
-| `params.minRadius` | number | 6 | min 2, max 80 | Min Radius | yes |
+| `params.audioReact` | number | 0.25 | min 0, max 1 | Audio React | yes |
+| `params.distortion` | number | 0.38 | min 0, max 1 | Distortion | yes |
+| `params.dropCount` | number | 72 | min 8, max 280 | Drop Count | yes |
+| `params.fallSpeed` | number | 0.12 | min 0, max 1.2 | Fall Speed | yes |
+| `params.maxRadius` | number | 18 | min 2, max 120 | Max Radius | yes |
+| `params.microDrops` | number | 0.7 | min 0, max 1 | Micro Drops | yes |
+| `params.minRadius` | number | 3 | min 1, max 80 | Min Radius | yes |
+| `params.refraction` | number | 0.85 | min 0, max 1 | Refraction | yes |
+| `params.rivulets` | number | 0.35 | min 0, max 1 | Rivulets | yes |
 | `params.seed` | number | 0 | min 0, max 999 | Seed | yes |
 | `params.tint` | number | 205 | min 170, max 230 | Tint | yes |
-| `params.trail` | number | 0.45 | min 0, max 1 | Trail | yes |
+| `params.trail` | number | 0.28 | min 0, max 1 | Trail | yes |
 
 ### Minimal layer usage
 
