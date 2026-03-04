@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/index.ts`.
 
-Total effects: **69**.
+Total effects: **70**.
 
 ## Table of contents
 
@@ -75,6 +75,7 @@ Total effects: **69**.
 - [Effect: volumetric_clouds](#effect-volumetric-clouds)
 - [Effect: boids_simulation](#effect-boids-simulation)
 - [Effect: voxel_world_builder](#effect-voxel-world-builder)
+- [Effect: waterDropsOverlay](#effect-waterDropsOverlay)
 
 ## Cross-reference
 
@@ -94,7 +95,7 @@ Total effects: **69**.
 
 ### Common parameter patterns
 
-- `speed` (used in 40 effects)
+- `speed` (used in 41 effects)
 - `audioReact` (used in 27 effects)
 - `seed` (used in 26 effects)
 - `beatKick` (used in 14 effects)
@@ -2497,6 +2498,36 @@ Total effects: **69**.
 ```json
 {
   "effect": "voxel_world_builder",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: waterDropsOverlay
+
+- **Registry key:** `waterDropsOverlay`
+- **Implementation:** `src/renderer/effects/waterDropsOverlay.ts` (class `WaterDropsOverlayEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by WaterDropsOverlayEffect (src/renderer/effects/waterDropsOverlay.ts).
+- **Audio features:** None detected
+- **Performance notes:** Uses ImageData per frame; CPU cost scales with resolution.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.density` | number | 1 | min 0, max 2 | Density | yes |
+| `params.distortion` | number | 1 | min 0, max 2.5 | Distortion | yes |
+| `params.highlight` | number | 1 | min 0, max 2 | Highlight | yes |
+| `params.maxDrops` | number | 80 | min 0, max 300 | Max Drops | yes |
+| `params.speed` | number | 1 | min 0, max 3 | Speed | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "waterDropsOverlay",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
