@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/index.ts`.
 
-Total effects: **69**.
+Total effects: **70**.
 
 ## Table of contents
 
@@ -75,6 +75,7 @@ Total effects: **69**.
 - [Effect: volumetric_clouds](#effect-volumetric-clouds)
 - [Effect: boids_simulation](#effect-boids-simulation)
 - [Effect: voxel_world_builder](#effect-voxel-world-builder)
+- [Effect: waterDrops](#effect-waterDrops)
 
 ## Cross-reference
 
@@ -94,9 +95,9 @@ Total effects: **69**.
 
 ### Common parameter patterns
 
-- `speed` (used in 40 effects)
+- `speed` (used in 41 effects)
+- `seed` (used in 27 effects)
 - `audioReact` (used in 27 effects)
-- `seed` (used in 26 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 10 effects)
 - `palette` (used in 9 effects)
@@ -2497,6 +2498,42 @@ Total effects: **69**.
 ```json
 {
   "effect": "voxel_world_builder",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: waterDrops
+
+- **Registry key:** `waterDrops`
+- **Implementation:** `src/renderer/effects/waterDrops.ts` (class `WaterDropsEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by WaterDropsEffect (src/renderer/effects/waterDrops.ts).
+- **Audio features:** None detected
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.density` | number | 0.8 | min 0, max 2.4 | Density | yes |
+| `params.distort` | number | 0 | min 0, max 1 | Distort | yes |
+| `params.distortScale` | number | 0.5 | min 0, max 2 | Distort Scale | yes |
+| `params.dripRate` | number | 0.15 | min 0, max 1 | Drip Rate | yes |
+| `params.highlight` | number | 1 | min 0, max 2.5 | Highlight | yes |
+| `params.opacity` | number | 0.35 | min 0, max 1 | Opacity | yes |
+| `params.rim` | number | 1 | min 0, max 2.5 | Rim | yes |
+| `params.seed` | number | 1 | min 0, max 999 | Seed | yes |
+| `params.size` | number | 1 | min 0.2, max 2.4 | Size | yes |
+| `params.speed` | number | 0.25 | min 0, max 3 | Speed | yes |
+| `params.streaks` | number | 0.6 | min 0, max 1 | Streaks | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "waterDrops",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
