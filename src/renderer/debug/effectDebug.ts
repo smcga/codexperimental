@@ -274,6 +274,22 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("seed", "Seed", 0, { min: 0, max: 999, step: 1 })
     ]
   },
+  waterDrops: {
+    title: "Water Drops Controls",
+    controls: [
+      numberControl("seed", "Seed", 1, { min: 0, max: 999, step: 1 }),
+      numberControl("density", "Density", 0.8, { min: 0, max: 2.4, step: 0.05 }),
+      numberControl("size", "Size", 1, { min: 0.2, max: 2.4, step: 0.05 }),
+      numberControl("speed", "Speed", 0.25, { min: 0, max: 3, step: 0.05 }),
+      numberControl("dripRate", "Drip Rate", 0.15, { min: 0, max: 1, step: 0.01 }),
+      numberControl("opacity", "Opacity", 0.35, { min: 0, max: 1, step: 0.01 }),
+      numberControl("highlight", "Highlight", 1, { min: 0, max: 2.5, step: 0.05 }),
+      numberControl("rim", "Rim", 1, { min: 0, max: 2.5, step: 0.05 }),
+      numberControl("streaks", "Streaks", 0.6, { min: 0, max: 1, step: 0.01 }),
+      numberControl("distort", "Distort", 0, { min: 0, max: 1, step: 0.01 }),
+      numberControl("distortScale", "Distort Scale", 0.5, { min: 0, max: 2, step: 0.05 })
+    ]
+  },
   border_multiplex: {
     title: "Border Multiplex Controls",
     controls: [
