@@ -156,6 +156,46 @@ describe("effect debug params", () => {
     });
   });
 
+  it("provides defaults for water drops controls", () => {
+    expect(getEffectDebugDefaults("water_drops")).toEqual({
+      dropCount: 48,
+      minRadius: 6,
+      maxRadius: 24,
+      fallSpeed: 0.22,
+      distortion: 0.65,
+      trail: 0.45,
+      audioReact: 0.35,
+      tint: 205,
+      seed: 0
+    });
+  });
+
+  it("coerces water drops params based on control constraints", () => {
+    const params = coerceEffectParams("water_drops", {
+      dropCount: 2,
+      minRadius: 0,
+      maxRadius: 500,
+      fallSpeed: -3,
+      distortion: 2,
+      trail: -1,
+      audioReact: 5,
+      tint: 999,
+      seed: 1200
+    });
+
+    expect(params).toEqual({
+      dropCount: 8,
+      minRadius: 2,
+      maxRadius: 120,
+      fallSpeed: 0,
+      distortion: 1,
+      trail: 0,
+      audioReact: 1,
+      tint: 230,
+      seed: 999
+    });
+  });
+
   it("provides defaults for tree growth controls", () => {
     expect(getEffectDebugDefaults("treegrowth")).toEqual({
       speed: 0.18,

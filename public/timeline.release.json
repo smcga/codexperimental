@@ -929,6 +929,17 @@
           "blend": "screen",
           "opacity": 0.08,
           "params": {}
+        },
+        {
+          "effect": "water_drops",
+          "blend": "screen",
+          "opacity": 0.12,
+          "params": {
+            "dropCount": 36,
+            "trail": 0.3,
+            "fallSpeed": 0.16,
+            "audioReact": 0.15
+          }
         }
       ]
     },

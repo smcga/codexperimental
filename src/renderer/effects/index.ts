@@ -68,6 +68,7 @@ import { ExplicitPixelsEffect } from "./explicitPixelsEffect";
 import { VolumetricCloudsEffect } from "./volumetricCloudsEffect";
 import { BoidsSimulationEffect } from "./boidsSimulationEffect";
 import { VoxelWorldBuilderEffect } from "./VoxelWorldBuilder";
+import { WaterDropsEffect } from "./waterDropsEffect";
 
 export const effectRegistry: Record<string, Effect> = {
   starfield: new StarfieldEffect(),
@@ -139,6 +140,7 @@ export const effectRegistry: Record<string, Effect> = {
   volumetric_clouds: new VolumetricCloudsEffect(),
   boids_simulation: new BoidsSimulationEffect(),
   voxel_world_builder: new VoxelWorldBuilderEffect(),
+  water_drops: new WaterDropsEffect(),
 };
 
 export function resetEffects(): void {
