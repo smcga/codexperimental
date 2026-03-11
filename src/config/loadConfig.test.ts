@@ -50,6 +50,20 @@ describe("normalizeTimelineConfig", () => {
     expect(normalized.sections[0].era).toBe("8bit");
   });
 
+
+  it("accepts the signal-collapse transition type", () => {
+    const raw = createBaseConfig();
+    raw.sections[0].transition = { in: "signal-collapse", out: "signal-collapse", duration: 0.6 };
+
+    const normalized = normalizeTimelineConfig(raw);
+
+    expect(normalized.sections[0].transition).toEqual({
+      in: "signal-collapse",
+      out: "signal-collapse",
+      duration: 0.6
+    });
+  });
+
   it("rejects invalid era presets", () => {
     const raw = createBaseConfig();
     raw.sections[0].era = "future-nope" as "pcdemo";

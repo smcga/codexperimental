@@ -541,6 +541,9 @@ export class Renderer {
       case "flash":
         this.drawFlashTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
         return;
+      case "signal-collapse":
+        this.drawSignalCollapseTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
+        return;
       case "fade":
         this.drawFadeTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
         return;
@@ -633,6 +636,71 @@ export class Renderer {
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(offsetX + shakeX, offsetY + shakeY, this.baseWidth * scale, this.baseHeight * scale);
     ctx.restore();
+  }
+
+  private drawSignalCollapseTransition(
+    ctx: CanvasRenderingContext2D,
+    progress: number,
+    scale: number,
+    offsetX: number,
+    offsetY: number,
+    shakeX: number,
+    shakeY: number,
+    camera: CameraState,
+    smoothing: boolean
+  ): void {
+    const width = this.baseWidth * scale;
+    const height = this.baseHeight * scale;
+    const safeProgress = clamp(progress, 0, 1);
+    const collapseProgress = clamp(safeProgress / 0.55, 0, 1);
+    const expandProgress = clamp((safeProgress - 0.45) / 0.55, 0, 1);
+
+    this.drawScaled(ctx, this.transitionCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1, camera, smoothing);
+
+    const centerX = offsetX + shakeX + width / 2;
+    const centerY = offsetY + shakeY + height / 2;
+    const collapsedHeight = Math.max(1, height * (1 - collapseProgress));
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(offsetX + shakeX, centerY - collapsedHeight / 2, width, collapsedHeight);
+    ctx.clip();
+    this.drawScaled(ctx, this.transitionCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1, camera, smoothing);
+    ctx.restore();
+
+    const scanlineStrength = clamp(collapseProgress * 1.1, 0, 1);
+    if (scanlineStrength > 0) {
+      ctx.save();
+      ctx.globalCompositeOperation = "screen";
+      ctx.globalAlpha = scanlineStrength * 0.7;
+      ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+      for (let y = offsetY + shakeY; y < offsetY + shakeY + height; y += Math.max(2, Math.round(4 * (1 - collapseProgress) + 1))) {
+        ctx.fillRect(offsetX + shakeX, y, width, 1);
+      }
+      ctx.restore();
+    }
+
+    const toRadius = Math.hypot(width, height) * 0.5 * expandProgress;
+    if (toRadius > 0) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, toRadius, 0, Math.PI * 2);
+      ctx.clip();
+      this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1, camera, smoothing);
+      ctx.restore();
+    }
+
+    const flash = Math.exp(-Math.pow((safeProgress - 0.5) / 0.12, 2));
+    if (flash > 0.01) {
+      const bloom = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, Math.max(width, height) * 0.6);
+      bloom.addColorStop(0, `rgba(255, 255, 255, ${clamp(flash * 0.95, 0, 1)})`);
+      bloom.addColorStop(0.4, `rgba(255, 255, 255, ${clamp(flash * 0.45, 0, 1)})`);
+      bloom.addColorStop(1, "rgba(255, 255, 255, 0)");
+      ctx.save();
+      ctx.fillStyle = bloom;
+      ctx.fillRect(offsetX + shakeX, offsetY + shakeY, width, height);
+      ctx.restore();
+    }
   }
 
   private drawScaled(

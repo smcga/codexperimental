@@ -54,7 +54,8 @@ const TRANSITION_TYPES: TransitionType[] = [
   "slide-up",
   "slide-down",
   "iris",
-  "flash"
+  "flash",
+  "signal-collapse"
 ];
 const EASE_NAMES = [
   "linear",
