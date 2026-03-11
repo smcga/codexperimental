@@ -8,7 +8,8 @@ const TRANSITION_TYPES = [
   "slide-up",
   "slide-down",
   "iris",
-  "flash"
+  "flash",
+  "signal-collapse"
 ] as const;
 
 export type TransitionType = (typeof TRANSITION_TYPES)[number];
