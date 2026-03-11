@@ -193,6 +193,23 @@
             "glitter": 0.72,
             "audioReact": 0.2
           }
+        },
+        {
+          "effect": "cosmic_voyage",
+          "blend": "screen",
+          "opacity": 0.16,
+          "params": {
+            "speed": 1.25,
+            "warp": 0.82,
+            "starDensity": 1.1,
+            "galaxyGlow": 0.95,
+            "nebula": 0.78,
+            "asteroidDensity": 0.65,
+            "planetCount": 3,
+            "parallax": 0.8,
+            "bloom": 0.9,
+            "seed": 7
+          }
         }
       ],
       "fitAlign": "centre"

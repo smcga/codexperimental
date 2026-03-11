@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/index.ts`.
 
-Total effects: **71**.
+Total effects: **72**.
 
 ## Table of contents
 
@@ -77,6 +77,7 @@ Total effects: **71**.
 - [Effect: voxel_world_builder](#effect-voxel-world-builder)
 - [Effect: water_drops](#effect-water-drops)
 - [Effect: fireworks_display](#effect-fireworks-display)
+- [Effect: cosmic_voyage](#effect-cosmic-voyage)
 
 ## Cross-reference
 
@@ -96,18 +97,18 @@ Total effects: **71**.
 
 ### Common parameter patterns
 
-- `speed` (used in 40 effects)
+- `speed` (used in 41 effects)
+- `seed` (used in 29 effects)
 - `audioReact` (used in 29 effects)
-- `seed` (used in 28 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 10 effects)
 - `trail` (used in 9 effects)
 - `palette` (used in 9 effects)
 - `hueShift` (used in 7 effects)
 - `scanlines` (used in 7 effects)
+- `warp` (used in 6 effects)
 - `count` (used in 6 effects)
 - `lineWidth` (used in 6 effects)
-- `quality` (used in 6 effects)
 
 ## Effects
 
@@ -2570,6 +2571,41 @@ Total effects: **71**.
 ```json
 {
   "effect": "fireworks_display",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: cosmic_voyage
+
+- **Registry key:** `cosmic_voyage`
+- **Implementation:** `src/renderer/effects/cosmicVoyageEffect.ts` (class `CosmicVoyageEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by CosmicVoyageEffect (src/renderer/effects/cosmicVoyageEffect.ts).
+- **Audio features:** bass, beatStrength, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.asteroidDensity` | number | 0.65 | min 0, max 2 | Asteroid Density | yes |
+| `params.bloom` | number | 0.8 | min 0, max 1.6 | Bloom | yes |
+| `params.galaxyGlow` | number | 0.85 | min 0, max 1.5 | Galaxy Glow | yes |
+| `params.nebula` | number | 0.7 | min 0, max 1.5 | Nebula | yes |
+| `params.parallax` | number | 0.75 | min 0, max 1 | Parallax | yes |
+| `params.planetCount` | number | 3 | min 1, max 8 | Planet Count | yes |
+| `params.seed` | number | 7 | min 0, max 9999 | Seed | yes |
+| `params.speed` | number | 1.2 | min 0, max 3 | Speed | yes |
+| `params.starDensity` | number | 1 | min 0.2, max 2.5 | Star Density | yes |
+| `params.warp` | number | 0.7 | min 0, max 2.4 | Warp | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "cosmic_voyage",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
