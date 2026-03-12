@@ -34,9 +34,11 @@ import {
 } from "./debug/debugPanel";
 import { applyEraOverride, applyEraOverrideToTransition } from "./debug/eraOverride";
 import { createEditorRoot, EditorController } from "./editor/EditorRoot";
+import { createMobilePreviewController, DEFAULT_MOBILE_PREVIEW_PROFILE, getTouchDeviceState } from "./editor/MobilePreview";
 import { fetchViews, registerViewOncePerSession } from "./viewCounter";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
+const appRoot = document.querySelector<HTMLDivElement>("#app");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
 const overlayText = overlay?.querySelector<HTMLDivElement>(".start-text");
 const debugOverlay = document.querySelector<HTMLDivElement>("#debug-overlay");
@@ -71,9 +73,20 @@ const editorModeFromQuery = queryParams.get("editor") === "1";
 const renderSettings = getRenderSettings(queryParams);
 const qualityState = createQualityState(renderSettings.qualityScale, renderSettings.autoQuality);
 
-if (!canvas || !overlay || !overlayText || !debugOverlay || !debugTimestamp || !debugTransitionSelect || !debugEraSelect) {
+if (!canvas || !appRoot || !overlay || !overlayText || !debugOverlay || !debugTimestamp || !debugTransitionSelect || !debugEraSelect) {
   throw new Error("Missing canvas or overlay element");
 }
+
+const isMobilePreview = import.meta.env.DEV && true;
+const mobilePreview = createMobilePreviewController({
+  enabled: isMobilePreview,
+  appRoot,
+  canvas,
+  overlay,
+  mobileControls,
+  profile: DEFAULT_MOBILE_PREVIEW_PROFILE
+});
+const isTouchDevice = getTouchDeviceState(mobilePreview.enabled);
 
 const ctx = canvas.getContext("2d");
 if (!ctx) {
@@ -87,6 +100,7 @@ const getEffectiveBaseSize = (): { width: number; height: number } => ({
 
 let { width: effectiveBaseWidth, height: effectiveBaseHeight } = getEffectiveBaseSize();
 const renderer = new Renderer(effectiveBaseWidth, effectiveBaseHeight);
+renderer.setTouchMode(isTouchDevice);
 const introRenderer = new TerminalIntroRenderer();
 const explosionState = createExplosionState();
 let audioPlayer: AudioPlayer | null = null;
@@ -143,8 +157,13 @@ function applyQualityScale(): void {
 }
 
 function resize(): void {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  const dpr = mobilePreview.getDpr();
+  const viewport = mobilePreview.getViewportSize();
+  canvas.style.width = `${viewport.width}px`;
+  canvas.style.height = `${viewport.height}px`;
+  canvas.width = Math.round(viewport.width * dpr);
+  canvas.height = Math.round(viewport.height * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
 resize();
@@ -188,8 +207,9 @@ function toggleDebugOverlay(): void {
 
 function toggleFullscreen(): void {
   const action = getFullscreenAction(document.fullscreenEnabled, document.fullscreenElement);
+  const fullscreenTarget = mobilePreview.getFullscreenTarget(canvas);
   if (action === "enter") {
-    canvas.requestFullscreen();
+    fullscreenTarget.requestFullscreen();
   }
   if (action === "exit") {
     document.exitFullscreen();
@@ -663,12 +683,16 @@ function loop(): void {
   lastDemoTime = demoTime;
 
   const audioFeatures: AudioFeatures = audioPlayer.updateFeatures();
+  const viewport = mobilePreview.getViewportSize();
+  const safeArea = mobilePreview.getSafeAreaInsets();
   const state = timeline.getState(demoTime);
+  ctx.save();
+  ctx.translate(safeArea.left, safeArea.top);
   if (state.mode === "intro") {
     introRenderer.render({
       ctx,
-      width: canvas.width,
-      height: canvas.height,
+      width: viewport.width,
+      height: viewport.height,
       time: demoTime,
       config: introConfig
     });
@@ -705,8 +729,8 @@ function loop(): void {
 
     renderer.render({
       ctx,
-      width: canvas.width,
-      height: canvas.height,
+      width: viewport.width,
+      height: viewport.height,
       time: demoTime,
       delta,
       section: sectionOverride,
@@ -717,8 +741,9 @@ function loop(): void {
       screenShake: explosionShake,
       framingOverride: debugState.framingOverride
     });
-    renderExplosion(ctx, canvas.width, canvas.height, explosionTime, explosionState, explosionShake);
+    renderExplosion(ctx, viewport.width, viewport.height, explosionTime, explosionState, explosionShake);
   }
+  ctx.restore();
 
   debugTimestamp.textContent = formatTimestamp(demoTime);
   if (debugWebglStatus) {
@@ -776,4 +801,8 @@ if (mobileControls && mobileFullscreenButton) {
   mobileFullscreenButton.addEventListener("click", () => {
     toggleFullscreen();
   });
+}
+
+if (isTouchDevice && mobileControls) {
+  mobileControls.style.display = "flex";
 }

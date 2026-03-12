@@ -54,6 +54,7 @@ export class Renderer {
   private baseHeight: number;
   private lastFramingState: FramingState | null = null;
   private lastFitAlignDebug: FitAlignDebug | null = null;
+  private touchMode = false;
 
   constructor(baseWidth = 320, baseHeight = 180) {
     this.baseWidth = baseWidth;
@@ -128,6 +129,14 @@ export class Renderer {
 
   getCurrentFitAlignDebug(): FitAlignDebug | null {
     return this.lastFitAlignDebug;
+  }
+
+  setTouchMode(enabled: boolean): void {
+    this.touchMode = enabled;
+  }
+
+  getTouchMode(): boolean {
+    return this.touchMode;
   }
 
   setBaseSize(baseWidth: number, baseHeight: number): void {
