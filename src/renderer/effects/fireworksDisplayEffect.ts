@@ -2,7 +2,7 @@ import { clamp } from "../../util/math";
 import { Effect, EffectRenderContext } from "./types";
 
 /**
- * Audio-reactive fireworks display with deterministic shell timing, multiring bursts, and glitter tails.
+ * Audio-reactive fireworks display with deterministic shell timing, ember launch points, multiring bursts, and glitter tails.
  */
 export const FIREWORKS_DISPLAY_DEFAULTS = {
   shellRate: 0.55,
@@ -33,6 +33,70 @@ export const fireworksPalette = (baseHue: number, paletteIndex: number): { core:
   };
 };
 
+export type FireworksLaunchState = {
+  x: number;
+  y: number;
+  prevX: number;
+  prevY: number;
+  tailStartX: number;
+  tailStartY: number;
+  headRadius: number;
+  tailLength: number;
+  sparkCount: number;
+  glowAlpha: number;
+};
+
+export const computeFireworksLaunchState = ({
+  width,
+  height,
+  launchX,
+  baseY,
+  apexY,
+  shellSeed,
+  launchProgress,
+  energy
+}: {
+  width: number;
+  height: number;
+  launchX: number;
+  baseY: number;
+  apexY: number;
+  shellSeed: number;
+  launchProgress: number;
+  energy: number;
+}): FireworksLaunchState => {
+  const clampedProgress = clamp(launchProgress, 0, 1);
+  const eased = 1 - (1 - clampedProgress) * (1 - clampedProgress);
+  const prevProgress = Math.max(0, clampedProgress - 0.03);
+  const prevEased = 1 - (1 - prevProgress) * (1 - prevProgress);
+  const wobble = (fireworksHash01(shellSeed + 5.1) - 0.5) * width * 0.025;
+  const curve = Math.sin(clampedProgress * Math.PI) * wobble;
+  const prevCurve = Math.sin(prevProgress * Math.PI) * wobble;
+  const x = launchX + curve * (1 - clampedProgress * 0.35);
+  const prevX = launchX + prevCurve * (1 - prevProgress * 0.35);
+  const y = baseY - (baseY - apexY) * eased;
+  const prevY = baseY - (baseY - apexY) * prevEased;
+  const dx = x - prevX;
+  const dy = y - prevY;
+  const directionLength = Math.hypot(dx, dy) || 1;
+  const tailLength = 8 + energy * 8 + (1 - clampedProgress) * Math.min(height, width) * 0.018;
+  const tailStartX = x - (dx / directionLength) * tailLength;
+  const tailStartY = y - (dy / directionLength) * tailLength;
+
+  return {
+    x,
+    y,
+    prevX,
+    prevY,
+    tailStartX,
+    tailStartY,
+    headRadius: 1.5 + energy * 1.15,
+    tailLength,
+    sparkCount: 3 + Math.round(energy * 4),
+    glowAlpha: 0.32 + energy * 0.22
+  };
+};
+
 export class FireworksDisplayEffect implements Effect {
   render({ ctx, width, height, time, audio, params }: EffectRenderContext): void {
     const rawParams = params as Record<string, unknown>;
@@ -50,7 +114,8 @@ export class FireworksDisplayEffect implements Effect {
     ctx.fillRect(0, 0, width, height);
 
     const beatPulse = audio.beat ? 1 : 0;
-    const energy = clamp(audio.rms * 0.7 + audio.treble * 0.25 + beatPulse * 0.45, 0, 1.5);
+    const audioEnergy = audio.rms * 0.7 + audio.treble * 0.25 + beatPulse * 0.45;
+    const energy = clamp((1 - audioReact) * 0.55 + audioEnergy * audioReact, 0, 1.5);
     const shellCount = Math.max(4, Math.floor(7 + shellRate * 15 + energy * 6));
     const cycleDuration = 1.9 / shellRate;
     const launchWindow = 0.33;
@@ -69,22 +134,65 @@ export class FireworksDisplayEffect implements Effect {
 
       if (phase < launchWindow) {
         const launchProgress = phase / launchWindow;
-        const eased = 1 - (1 - launchProgress) * (1 - launchProgress);
-        const y = baseY - (baseY - apexY) * eased;
-        const wobble = (fireworksHash01(shellSeed + 5.1) - 0.5) * width * 0.025;
-        const x = launchX + wobble * (1 - launchProgress);
+        const launchState = computeFireworksLaunchState({
+          width,
+          height,
+          launchX,
+          baseY,
+          apexY,
+          shellSeed,
+          launchProgress,
+          energy
+        });
 
-        ctx.strokeStyle = palette.spark;
-        ctx.lineWidth = 1.2 + energy * 0.8;
+        ctx.globalCompositeOperation = "lighter";
+        ctx.strokeStyle = `hsla(${(24 + hueShift + shellIndex * 6) % 360}, 92%, 54%, ${0.3 + launchState.glowAlpha * 0.45})`;
+        ctx.lineWidth = 0.8 + energy * 0.35;
         ctx.beginPath();
-        ctx.moveTo(x, baseY);
-        ctx.lineTo(x, y);
+        ctx.moveTo(launchState.tailStartX, launchState.tailStartY);
+        ctx.lineTo(launchState.prevX, launchState.prevY);
         ctx.stroke();
 
-        ctx.fillStyle = `hsla(${(48 + hueShift + shellIndex * 5) % 360}, 100%, 78%, ${0.72 + energy * 0.2})`;
+        const gradient = ctx.createLinearGradient(
+          launchState.tailStartX,
+          launchState.tailStartY,
+          launchState.x,
+          launchState.y
+        );
+        gradient.addColorStop(0, `hsla(${(18 + hueShift + shellIndex * 5) % 360}, 88%, 28%, 0)`);
+        gradient.addColorStop(0.35, `hsla(${(22 + hueShift + shellIndex * 5) % 360}, 95%, 36%, 0.18)`);
+        gradient.addColorStop(1, `hsla(${(38 + hueShift + shellIndex * 5) % 360}, 100%, 78%, ${0.88 + energy * 0.08})`);
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 1 + energy * 0.5;
         ctx.beginPath();
-        ctx.arc(x, y, 1.3 + energy * 1.1, 0, Math.PI * 2);
+        ctx.moveTo(launchState.tailStartX, launchState.tailStartY);
+        ctx.lineTo(launchState.x, launchState.y);
+        ctx.stroke();
+
+        ctx.fillStyle = `hsla(${(24 + hueShift + shellIndex * 5) % 360}, 100%, 50%, ${0.2 + energy * 0.08})`;
+        ctx.beginPath();
+        ctx.arc(launchState.x, launchState.y, launchState.headRadius * 2.4, 0, Math.PI * 2);
         ctx.fill();
+
+        for (let sparkIndex = 0; sparkIndex < launchState.sparkCount; sparkIndex += 1) {
+          const sparkSeed = shellSeed + sparkIndex * 9.7 + Math.floor(time * 48);
+          const sparkT = fireworksHash01(sparkSeed + 1.7);
+          const jitter = (fireworksHash01(sparkSeed + 3.3) - 0.5) * launchState.tailLength * 0.16;
+          const sparkX = launchState.x + (launchState.tailStartX - launchState.x) * sparkT + jitter;
+          const sparkY = launchState.y + (launchState.tailStartY - launchState.y) * sparkT;
+          const sparkAlpha = (0.16 + (1 - sparkT) * 0.34) * flicker;
+          const sparkRadius = 0.45 + (1 - sparkT) * 0.8 + energy * 0.15;
+          ctx.fillStyle = `hsla(${(28 + hueShift + shellIndex * 5) % 360}, 100%, ${42 + (1 - sparkT) * 24}%, ${sparkAlpha})`;
+          ctx.beginPath();
+          ctx.arc(sparkX, sparkY, sparkRadius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.fillStyle = `hsla(${(46 + hueShift + shellIndex * 5) % 360}, 100%, 79%, ${0.76 + energy * 0.18})`;
+        ctx.beginPath();
+        ctx.arc(launchState.x, launchState.y, launchState.headRadius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalCompositeOperation = "source-over";
         continue;
       }
 

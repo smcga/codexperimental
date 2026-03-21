@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { FIREWORKS_DISPLAY_DEFAULTS, fireworksHash01, fireworksPalette } from "./fireworksDisplayEffect";
+import {
+  computeFireworksLaunchState,
+  FIREWORKS_DISPLAY_DEFAULTS,
+  fireworksHash01,
+  fireworksPalette
+} from "./fireworksDisplayEffect";
 
 describe("fireworks display helpers", () => {
   it("keeps deterministic hash values in [0, 1)", () => {
@@ -17,6 +22,26 @@ describe("fireworks display helpers", () => {
     expect(palette.core).toContain("hsla(");
     expect(palette.spark).toContain("hsla(");
     expect(palette.smoke).toContain("hsla(");
+  });
+
+  it("builds a compact launch profile with a short ember tail", () => {
+    const launchState = computeFireworksLaunchState({
+      width: 320,
+      height: 180,
+      launchX: 140,
+      baseY: 190,
+      apexY: 50,
+      shellSeed: 12.34,
+      launchProgress: 0.4,
+      energy: 0.75
+    });
+
+    expect(launchState.y).toBeLessThan(190);
+    expect(launchState.y).toBeGreaterThan(50);
+    expect(launchState.tailLength).toBeGreaterThan(8);
+    expect(launchState.tailLength).toBeLessThan(24);
+    expect(launchState.sparkCount).toBeGreaterThanOrEqual(3);
+    expect(launchState.tailStartY).toBeGreaterThan(launchState.y);
   });
 
   it("exposes stable defaults for docs/debug controls", () => {
