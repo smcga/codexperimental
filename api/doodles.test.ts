@@ -211,6 +211,50 @@ describe("api/doodles handler", () => {
     );
   });
 
+  it("sends an ntfy message with approve and reject links when configured", async () => {
+    process.env.DOODLE_MODERATION_TOKEN = "secret-token";
+    process.env.DOODLE_MODERATION_BASE_URL = "https://demo.example.com";
+    process.env.DOODLE_MODERATION_NTFY_URL = "https://ntfy.sh/doodle-topic";
+    process.env.DOODLE_MODERATION_NTFY_TOKEN = "ntfy-token";
+    const redis = createMockRedis();
+
+    vi.doMock("./kv.js", () => ({
+      createKvClients: () => ({ readClient: redis, writeClient: redis })
+    }));
+
+    const { default: handler } = await import("./doodles");
+    const response = createResponse();
+
+    await handler(
+      {
+        method: "POST",
+        body: JSON.stringify({ imageData: "data:image/png;base64,c3VibWl0dGVk" }),
+        url: "/api/doodles"
+      },
+      response.response
+    );
+
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      "https://ntfy.sh/doodle-topic",
+      expect.objectContaining({
+        method: "POST",
+        headers: expect.objectContaining({
+          "Content-Type": "text/plain; charset=utf-8",
+          Title: "Doodle awaiting approval",
+          Priority: "high",
+          Authorization: "Bearer ntfy-token"
+        }),
+        body: expect.stringContaining("Approve: https://demo.example.com/api/doodles?action=approve")
+      })
+    );
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      "https://ntfy.sh/doodle-topic",
+      expect.objectContaining({
+        body: expect.stringContaining("Reject: https://demo.example.com/api/doodles?action=reject")
+      })
+    );
+  });
+
   it("rejects invalid doodle payloads", async () => {
     const redis = createMockRedis();
 

@@ -312,3 +312,39 @@ npm run preview
 - Append `?editor=1` in dev builds to open the Scene + Timeline Editor (or toggle "Editor mode" in the debug overlay). The editor shows a live preview, edits hot-apply to the running demo, and changes persist to localStorage.
 - The editor's Text Cues panel now includes a bulk generator: paste words/new lines, set font/colour/size/position/alignment plus start/end timing, and auto-create evenly timed cue sequences (useful for ~100 words over ~30 seconds).
 - On touch devices, two floating buttons appear in the lower-right corner: `DBG` toggles the debug overlay and `⛶` toggles fullscreen.
+
+### Phone notifications via ntfy (recommended)
+
+If you want your phone to buzz the moment someone submits a doodle, the simplest path is to use `ntfy`. The app is available for Android and iPhone, and this project already knows how to publish moderation messages to an ntfy topic.
+
+1. Pick a long, hard-to-guess topic name, for example `doodle-moderation-a8f4c2e91b7d`.
+2. In your deployment environment, set these variables:
+
+   ```bash
+   DOODLE_MODERATION_TOKEN=replace-this-with-a-long-random-secret
+   DOODLE_MODERATION_BASE_URL=https://your-public-site.example.com
+   DOODLE_MODERATION_NTFY_URL=https://ntfy.sh/doodle-moderation-a8f4c2e91b7d
+   ```
+
+   Optional if you run a protected/self-hosted ntfy server:
+
+   ```bash
+   DOODLE_MODERATION_NTFY_TOKEN=your-ntfy-access-token
+   ```
+
+3. Redeploy the site so the serverless doodle API sees the new environment variables.
+4. On your phone, install the official ntfy app:
+   - Android: Google Play, F-Droid, or the official APK/GitHub release.
+   - iPhone: App Store.
+5. Open the ntfy app, add a subscription, and subscribe to the same topic name you configured above on the `ntfy.sh` server (or your self-hosted ntfy server if you are not using `ntfy.sh`).
+6. Allow notifications when iOS/Android prompts you. If your phone has per-app notification settings disabled, re-enable them in the system settings before testing.
+7. Submit a test doodle from the site. Your phone should receive a notification titled `Doodle awaiting approval`.
+8. Open that notification and tap the `Approve:` or `Reject:` link in the message body. Those links hit your site's signed moderation endpoint directly, so one tap performs the moderation action in the browser.
+
+Quick verification from a laptop/terminal before testing the site itself:
+
+```bash
+curl -H "Title: ntfy doodle test" -d "If you can read this on your phone, ntfy is wired up." https://ntfy.sh/doodle-moderation-a8f4c2e91b7d
+```
+
+If that curl command appears on your phone but doodle submissions do not, double-check `DOODLE_MODERATION_BASE_URL`, `DOODLE_MODERATION_TOKEN`, and `DOODLE_MODERATION_NTFY_URL`, then redeploy.
