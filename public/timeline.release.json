@@ -1105,6 +1105,17 @@
             "mode": 0,
             "audioReact": 0.2
           }
+        },
+        {
+          "effect": "lemmings_march",
+          "blend": "screen",
+          "opacity": 0.28,
+          "params": {
+            "colonySize": 10,
+            "worldLength": 220,
+            "spawnInterval": 0.75,
+            "scrollFollow": 0.45
+          }
         }
       ]
     },
