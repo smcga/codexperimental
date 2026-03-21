@@ -1,5 +1,41 @@
-import { describe, expect, it } from "vitest";
-import { hash1, platformAt, runnerJumpOffset, supportTopY } from "./platformerScroll";
+import { describe, expect, it, vi } from "vitest";
+
+import {
+  buildRunnerSprite,
+  hash1,
+  PLATFORMER_SCROLL_DEFAULTS,
+  PlatformerScrollEffect,
+  platformAt,
+  runnerJumpOffset,
+  supportTopY
+} from "./platformerScroll";
+
+const createGradient = () => ({ addColorStop: vi.fn() });
+
+const createCtx = () =>
+  ({
+    fillStyle: "",
+    clearRect: vi.fn(),
+    fillRect: vi.fn(),
+    beginPath: vi.fn(),
+    closePath: vi.fn(),
+    moveTo: vi.fn(),
+    lineTo: vi.fn(),
+    fill: vi.fn(),
+    createLinearGradient: vi.fn(() => createGradient())
+  }) as unknown as CanvasRenderingContext2D;
+
+const audio = {
+  timeDomain: new Uint8Array(0),
+  frequency: new Uint8Array(0),
+  rms: 0.35,
+  bass: 0.2,
+  mid: 0.2,
+  treble: 0.2,
+  beat: true,
+  beatStrength: 0.4,
+  impactStrength: 0.25
+};
 
 describe("platformerScroll helpers", () => {
   it("hash1 is deterministic for the same index/seed", () => {
@@ -49,5 +85,56 @@ describe("platformerScroll helpers", () => {
     expect(upAtMid).toBeGreaterThan(0);
     expect(flat).toBe(0);
     expect(down).toBe(0);
+  });
+
+  it("buildRunnerSprite creates a colorful mascot silhouette with animated limbs", () => {
+    const earlyFrame = buildRunnerSprite(100, 160, 16, 0, 0.2);
+    const laterFrame = buildRunnerSprite(100, 160, 16, 0.2, 0.2);
+    const palette = new Set(earlyFrame.parts.map((part) => part.color));
+    const partNames = new Set(earlyFrame.parts.map((part) => part.name));
+    const earlyFrontShoe = earlyFrame.parts.find((part) => part.name === "shoe-front");
+    const laterFrontShoe = laterFrame.parts.find((part) => part.name === "shoe-front");
+
+    expect(palette.size).toBeGreaterThanOrEqual(7);
+    expect(partNames.has("scarf-knot")).toBe(true);
+    expect(partNames.has("glove-front")).toBe(true);
+    expect(partNames.has("quill-back-top")).toBe(true);
+    expect(earlyFrame.shadow.w).toBeGreaterThan(0);
+    expect(earlyFrontShoe?.x).not.toBe(laterFrontShoe?.x);
+  });
+});
+
+describe("PlatformerScrollEffect", () => {
+  it("exposes stable defaults for docs and UI", () => {
+    expect(PLATFORMER_SCROLL_DEFAULTS.speed).toBe(140);
+    expect(PLATFORMER_SCROLL_DEFAULTS.seed).toBe(1337);
+    expect(PLATFORMER_SCROLL_DEFAULTS.tileSize).toBeGreaterThanOrEqual(8);
+  });
+
+  it("renders a colorful runner instead of a monochrome block silhouette", () => {
+    const effect = new PlatformerScrollEffect();
+    const ctx = createCtx();
+    const colorUsage = new Map<string, number>();
+
+    (ctx.fillRect as ReturnType<typeof vi.fn>).mockImplementation(() => {
+      const color = String((ctx as unknown as { fillStyle: unknown }).fillStyle);
+      colorUsage.set(color, (colorUsage.get(color) ?? 0) + 1);
+    });
+
+    effect.render({
+      ctx,
+      width: 320,
+      height: 180,
+      time: 0.25,
+      delta: 1 / 60,
+      audio,
+      params: {}
+    });
+
+    expect((ctx.clearRect as ReturnType<typeof vi.fn>).mock.calls.length).toBe(1);
+    expect(colorUsage.get("#2563eb") ?? 0).toBeGreaterThan(0);
+    expect(colorUsage.get("#ffb703") ?? 0).toBeGreaterThan(0);
+    expect(colorUsage.get("#ef4444") ?? 0).toBeGreaterThan(0);
+    expect(colorUsage.get("#f8fafc") ?? 0).toBeGreaterThan(0);
   });
 });
