@@ -4,8 +4,15 @@ export type DoodleRecord = {
   createdAt: number;
 };
 
+export type DoodleSubmissionResult = {
+  doodle: DoodleRecord | null;
+  moderationStatus: "pending" | null;
+};
+
 type DoodlesResponse = {
   doodles?: DoodleRecord[];
+  doodle?: DoodleRecord;
+  moderationStatus?: "pending";
   error?: string;
 };
 
@@ -37,7 +44,11 @@ function normalizeDoodles(value: unknown): DoodleRecord[] {
   });
 }
 
-async function requestDoodles(init?: RequestInit): Promise<DoodleRecord[]> {
+function normalizeDoodle(value: unknown): DoodleRecord | null {
+  return normalizeDoodles(value ? [value] : [])[0] ?? null;
+}
+
+async function requestDoodles(init?: RequestInit): Promise<DoodlesResponse> {
   const response = await fetch("/api/doodles", {
     headers: {
       Accept: "application/json",
@@ -50,9 +61,7 @@ async function requestDoodles(init?: RequestInit): Promise<DoodleRecord[]> {
     throw new Error(`Doodle request failed with status ${response.status}`);
   }
 
-  const payload = (await response.json()) as DoodlesResponse;
-  doodleCache = normalizeDoodles(payload.doodles);
-  return doodleCache;
+  return (await response.json()) as DoodlesResponse;
 }
 
 export async function fetchDoodles(forceRefresh = false): Promise<DoodleRecord[]> {
@@ -65,6 +74,10 @@ export async function fetchDoodles(forceRefresh = false): Promise<DoodleRecord[]
   }
 
   doodlesRequest = requestDoodles({ method: "GET" })
+    .then((payload) => {
+      doodleCache = normalizeDoodles(payload.doodles);
+      return doodleCache;
+    })
     .catch(() => doodleCache)
     .finally(() => {
       doodlesRequest = null;
@@ -73,12 +86,16 @@ export async function fetchDoodles(forceRefresh = false): Promise<DoodleRecord[]
   return doodlesRequest;
 }
 
-export async function submitDoodle(imageData: string): Promise<DoodleRecord[]> {
-  const doodles = await requestDoodles({
+export async function submitDoodle(imageData: string): Promise<DoodleSubmissionResult> {
+  const payload = await requestDoodles({
     method: "POST",
     body: JSON.stringify({ imageData })
   });
-  return doodles;
+
+  return {
+    doodle: normalizeDoodle(payload.doodle),
+    moderationStatus: payload.moderationStatus ?? null
+  };
 }
 
 export function getCachedDoodles(): DoodleRecord[] {

@@ -227,7 +227,7 @@ function resetDoodleCanvas(): void {
   doodleDrawing = false;
   doodlePointerId = null;
   updateDoodleSubmitState();
-  setDoodleStatus("Draw on the canvas, then submit when you are ready.");
+  setDoodleStatus("Draw on the canvas, then submit it for approval when you are ready.");
 }
 
 function setDoodleModalVisible(visible: boolean): void {
@@ -266,7 +266,7 @@ async function submitCurrentDoodle(): Promise<void> {
 
   try {
     await submitDoodle(doodleCanvas.toDataURL("image/png"));
-    setDoodleStatus("Doodle submitted. It can now show up in the doodle greetz wall.", "success");
+    setDoodleStatus("Doodle submitted for approval. It will only appear on the doodle greetz wall after you approve it.", "success");
     setDoodleModalVisible(false);
   } catch {
     setDoodleStatus("Unable to save the doodle right now. Please try again.", "error");

@@ -2,7 +2,7 @@ import { Redis } from "@upstash/redis";
 
 type KvEnv = NodeJS.ProcessEnv;
 
-export type KvClient = Pick<Redis, "get" | "incr" | "lrange" | "lpush" | "ltrim">;
+export type KvClient = Pick<Redis, "get" | "set" | "incr" | "lrange" | "lpush" | "ltrim">;
 
 type KvConfig = {
   url: string | null;

@@ -186,7 +186,7 @@ export class DoodleGreetzWallEffect implements Effect {
       ctx.fillText("ADD A DOODLE TO FILL THE WALL", width * 0.5, height * 0.5);
       ctx.font = `${Math.round(Math.max(13, height * 0.03))}px monospace`;
       ctx.fillStyle = "rgba(232, 247, 255, 0.62)";
-      ctx.fillText("Submitted doodles will appear here.", width * 0.5, height * 0.58);
+      ctx.fillText("Approved doodles will appear here after review.", width * 0.5, height * 0.58);
       return;
     }
 

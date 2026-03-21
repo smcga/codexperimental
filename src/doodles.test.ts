@@ -14,7 +14,7 @@ describe("doodles client", () => {
     clearDoodleCache();
   });
 
-  it("fetches and caches doodles", async () => {
+  it("fetches and caches approved doodles", async () => {
     globalThis.fetch = vi.fn(async () => ({
       ok: true,
       status: 200,
@@ -29,19 +29,21 @@ describe("doodles client", () => {
     expect(getCachedDoodles()).toHaveLength(1);
   });
 
-  it("submits doodles and refreshes the cache", async () => {
-    globalThis.fetch = vi.fn(async (_input, init) => ({
+  it("returns pending moderation info after submitting a doodle", async () => {
+    globalThis.fetch = vi.fn(async () => ({
       ok: true,
       status: 200,
       json: async () => ({
-        doodles: [{ id: String(init?.method), imageData: "data:image/png;base64,def", createdAt: 2 }]
+        doodle: { id: "pending-1", imageData: "data:image/png;base64,def", createdAt: 2 },
+        moderationStatus: "pending"
       })
     })) as typeof fetch;
 
-    await expect(submitDoodle("data:image/png;base64,def")).resolves.toEqual([
-      { id: "POST", imageData: "data:image/png;base64,def", createdAt: 2 }
-    ]);
-    expect(getCachedDoodles()).toEqual([{ id: "POST", imageData: "data:image/png;base64,def", createdAt: 2 }]);
+    await expect(submitDoodle("data:image/png;base64,def")).resolves.toEqual({
+      doodle: { id: "pending-1", imageData: "data:image/png;base64,def", createdAt: 2 },
+      moderationStatus: "pending"
+    });
+    expect(getCachedDoodles()).toEqual([]);
   });
 
   it("returns the existing cache if a refresh fails", async () => {
