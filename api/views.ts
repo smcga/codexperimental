@@ -1,11 +1,6 @@
-import { Redis } from "@upstash/redis";
+import { createKvClients } from "./kv";
 
-const redisUrl = process.env.KV_REST_API_URL ?? process.env.KV_URL ?? process.env.REDIS_URL;
-const redisWriteToken = process.env.KV_REST_API_TOKEN;
-const redisReadToken = process.env.KV_REST_API_READ_ONLY_TOKEN ?? redisWriteToken;
-
-const readClient = redisUrl && redisReadToken ? new Redis({ url: redisUrl, token: redisReadToken }) : null;
-const writeClient = redisUrl && redisWriteToken ? new Redis({ url: redisUrl, token: redisWriteToken }) : null;
+const { readClient, writeClient } = createKvClients();
 
 type JsonResponse = {
   count: number;

@@ -34,11 +34,14 @@ import {
 } from "./debug/debugPanel";
 import { applyEraOverride, applyEraOverrideToTransition } from "./debug/eraOverride";
 import { createEditorRoot, EditorController } from "./editor/EditorRoot";
+import { submitDoodle } from "./doodles";
 import { fetchViews, registerViewOncePerSession } from "./viewCounter";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
 const overlayText = overlay?.querySelector<HTMLDivElement>(".start-text");
+const overlayActions = document.querySelector<HTMLDivElement>("#overlay-actions");
+const addDoodleButton = document.querySelector<HTMLButtonElement>("#add-doodle-button");
 const debugOverlay = document.querySelector<HTMLDivElement>("#debug-overlay");
 const debugTimestamp = document.querySelector<HTMLSpanElement>("#debug-timestamp");
 const debugWebglStatus = document.querySelector<HTMLSpanElement>("#debug-webgl-status");
@@ -64,6 +67,12 @@ const mobileControls = document.querySelector<HTMLDivElement>("#mobile-controls"
 const mobileDebugButton = document.querySelector<HTMLButtonElement>("#mobile-debug");
 const mobileFullscreenButton = document.querySelector<HTMLButtonElement>("#mobile-fullscreen");
 const viewCounter = document.querySelector<HTMLDivElement>("#view-counter");
+const doodleModal = document.querySelector<HTMLDivElement>("#doodle-modal");
+const doodleCanvas = document.querySelector<HTMLCanvasElement>("#doodle-canvas");
+const doodleStatus = document.querySelector<HTMLDivElement>("#doodle-status");
+const doodleClearButton = document.querySelector<HTMLButtonElement>("#doodle-clear");
+const doodleCancelButton = document.querySelector<HTMLButtonElement>("#doodle-cancel");
+const doodleSubmitButton = document.querySelector<HTMLButtonElement>("#doodle-submit");
 
 const queryParams = new URLSearchParams(window.location.search);
 const releaseMode = queryParams.get("release") === "1";
@@ -100,6 +109,11 @@ let currentAudioSrc = "";
 let editorController: EditorController | null = null;
 let lastFrameTimestamp = performance.now();
 let currentViewCount = 0;
+let overlayMode: "start" | "status" | "end" = "start";
+let doodleHasStroke = false;
+let doodleSubmitting = false;
+let doodleDrawing = false;
+let doodlePointerId: number | null = null;
 const debugState = {
   enabled: false,
   forcedEffect: null as string | null,
@@ -111,6 +125,11 @@ const debugState = {
   ),
   framingOverride: "auto" as FramingOverride
 };
+
+const doodleCtx = doodleCanvas?.getContext("2d") ?? null;
+
+updateOverlayActions();
+resetDoodleCanvas();
 
 function updateViewCounter(count: number): void {
   currentViewCount = count;
@@ -154,13 +173,106 @@ void fetchViews().then((count) => {
   updateViewCounter(count);
 });
 
-function setOverlay(text: string, show = true, isError = false): void {
+function updateOverlayActions(): void {
+  if (!overlay || !overlayActions) {
+    return;
+  }
+  overlay.dataset.mode = overlayMode;
+  overlayActions.classList.toggle("hidden", overlayMode !== "end");
+}
+
+function setOverlay(text: string, show = true, isError = false, mode: "start" | "status" | "end" = "status"): void {
+  overlayMode = mode;
+  updateOverlayActions();
   overlayText.textContent = text;
   overlay.dataset.state = isError ? "error" : "normal";
   if (show) {
     overlay.classList.remove("hidden");
   } else {
     overlay.classList.add("hidden");
+  }
+}
+
+function setDoodleStatus(message: string, state: "idle" | "error" | "success" = "idle"): void {
+  if (!doodleStatus) {
+    return;
+  }
+  doodleStatus.textContent = message;
+  doodleStatus.dataset.state = state;
+}
+
+function updateDoodleSubmitState(): void {
+  if (!doodleSubmitButton) {
+    return;
+  }
+  doodleSubmitButton.disabled = doodleSubmitting || !doodleHasStroke;
+}
+
+function resetDoodleCanvas(): void {
+  if (!doodleCanvas || !doodleCtx) {
+    return;
+  }
+
+  doodleCtx.clearRect(0, 0, doodleCanvas.width, doodleCanvas.height);
+  const gradient = doodleCtx.createLinearGradient(0, 0, 0, doodleCanvas.height);
+  gradient.addColorStop(0, "#08101f");
+  gradient.addColorStop(1, "#03060b");
+  doodleCtx.fillStyle = gradient;
+  doodleCtx.fillRect(0, 0, doodleCanvas.width, doodleCanvas.height);
+  doodleCtx.strokeStyle = "#8ef9ff";
+  doodleCtx.lineWidth = 8;
+  doodleCtx.lineCap = "round";
+  doodleCtx.lineJoin = "round";
+  doodleHasStroke = false;
+  doodleDrawing = false;
+  doodlePointerId = null;
+  updateDoodleSubmitState();
+  setDoodleStatus("Draw on the canvas, then submit when you are ready.");
+}
+
+function setDoodleModalVisible(visible: boolean): void {
+  if (!doodleModal) {
+    return;
+  }
+  doodleModal.classList.toggle("hidden", !visible);
+  doodleModal.setAttribute("aria-hidden", visible ? "false" : "true");
+  if (visible) {
+    resetDoodleCanvas();
+  }
+}
+
+function getDoodleCanvasPoint(event: PointerEvent): { x: number; y: number } | null {
+  if (!doodleCanvas) {
+    return null;
+  }
+  const rect = doodleCanvas.getBoundingClientRect();
+  if (rect.width <= 0 || rect.height <= 0) {
+    return null;
+  }
+  return {
+    x: ((event.clientX - rect.left) / rect.width) * doodleCanvas.width,
+    y: ((event.clientY - rect.top) / rect.height) * doodleCanvas.height
+  };
+}
+
+async function submitCurrentDoodle(): Promise<void> {
+  if (!doodleCanvas || !doodleSubmitButton || doodleSubmitting || !doodleHasStroke) {
+    return;
+  }
+
+  doodleSubmitting = true;
+  updateDoodleSubmitState();
+  setDoodleStatus("Submitting doodle…");
+
+  try {
+    await submitDoodle(doodleCanvas.toDataURL("image/png"));
+    setDoodleStatus("Doodle submitted. It can now show up in the doodle greetz wall.", "success");
+    setDoodleModalVisible(false);
+  } catch {
+    setDoodleStatus("Unable to save the doodle right now. Please try again.", "error");
+  } finally {
+    doodleSubmitting = false;
+    updateDoodleSubmitState();
   }
 }
 
@@ -584,7 +696,8 @@ async function startDemo(): Promise<void> {
   if (isRunning) {
     return;
   }
-  setOverlay("Loading…", true);
+  setDoodleModalVisible(false);
+  setOverlay("Loading…", true, false, "status");
 
   try {
     const config = pendingConfig ?? (await loadConfig(releaseMode ? "/timeline.release.json" : "/timeline.json"));
@@ -606,7 +719,7 @@ async function startDemo(): Promise<void> {
     isRunning = true;
     lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
     lastFrameTimestamp = performance.now();
-    setOverlay("", false);
+    setOverlay("", false, false, "status");
     if (!releaseMode) {
       updateDebugSkipButtonState(lastDemoTime);
     }
@@ -615,7 +728,7 @@ async function startDemo(): Promise<void> {
     animationFrame = requestAnimationFrame(loop);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
-    setOverlay(`Error: ${message}`, true, true);
+    setOverlay(`Error: ${message}`, true, true, "start");
   }
 }
 
@@ -624,6 +737,7 @@ async function restartDemo(): Promise<void> {
     await startDemo();
     return;
   }
+  setDoodleModalVisible(false);
   await audioPlayer.restart();
   renderer.reset();
   lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
@@ -631,7 +745,7 @@ async function restartDemo(): Promise<void> {
   if (!releaseMode) {
     updateDebugSkipButtonState(lastDemoTime);
   }
-  setOverlay("", false);
+  setOverlay("", false, false, "status");
   if (!isRunning) {
     isRunning = true;
     animationFrame = requestAnimationFrame(loop);
@@ -743,7 +857,7 @@ function loop(): void {
 
   if (audioPlayer.ended) {
     isRunning = false;
-    setOverlay("THE END (press R to restart)", true);
+    setOverlay("THE END (press R to restart)", true, false, "end");
     return;
   }
 
@@ -751,10 +865,95 @@ function loop(): void {
 }
 
 overlay.addEventListener("click", () => {
-  startDemo();
+  if (overlayMode !== "start") {
+    return;
+  }
+  void startDemo();
 });
 
+if (addDoodleButton) {
+  addDoodleButton.addEventListener("click", (event) => {
+    event.stopPropagation();
+    setDoodleModalVisible(true);
+  });
+}
+
+if (doodleCanvas && doodleCtx) {
+  doodleCanvas.addEventListener("pointerdown", (event) => {
+    const point = getDoodleCanvasPoint(event);
+    if (!point) {
+      return;
+    }
+    doodleDrawing = true;
+    doodlePointerId = event.pointerId;
+    doodleCanvas.setPointerCapture(event.pointerId);
+    doodleCtx.beginPath();
+    doodleCtx.moveTo(point.x, point.y);
+    doodleCtx.lineTo(point.x + 0.01, point.y + 0.01);
+    doodleCtx.stroke();
+    doodleHasStroke = true;
+    updateDoodleSubmitState();
+    setDoodleStatus("Nice. Keep drawing, or submit when you're done.");
+  });
+
+  doodleCanvas.addEventListener("pointermove", (event) => {
+    if (!doodleDrawing || doodlePointerId !== event.pointerId) {
+      return;
+    }
+    const point = getDoodleCanvasPoint(event);
+    if (!point) {
+      return;
+    }
+    doodleCtx.lineTo(point.x, point.y);
+    doodleCtx.stroke();
+  });
+
+  const finishDrawing = (event: PointerEvent) => {
+    if (doodlePointerId !== event.pointerId) {
+      return;
+    }
+    doodleDrawing = false;
+    doodlePointerId = null;
+    if (doodleCanvas.hasPointerCapture(event.pointerId)) {
+      doodleCanvas.releasePointerCapture(event.pointerId);
+    }
+  };
+
+  doodleCanvas.addEventListener("pointerup", finishDrawing);
+  doodleCanvas.addEventListener("pointercancel", finishDrawing);
+}
+
+if (doodleClearButton) {
+  doodleClearButton.addEventListener("click", () => {
+    resetDoodleCanvas();
+  });
+}
+
+if (doodleCancelButton) {
+  doodleCancelButton.addEventListener("click", () => {
+    setDoodleModalVisible(false);
+  });
+}
+
+if (doodleSubmitButton) {
+  doodleSubmitButton.addEventListener("click", () => {
+    void submitCurrentDoodle();
+  });
+}
+
+if (doodleModal) {
+  doodleModal.addEventListener("click", (event) => {
+    if (event.target === doodleModal) {
+      setDoodleModalVisible(false);
+    }
+  });
+}
+
 window.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && doodleModal && !doodleModal.classList.contains("hidden")) {
+    setDoodleModalVisible(false);
+    return;
+  }
   if (!releaseMode && event.key.toLowerCase() === "d") {
     toggleDebugOverlay();
   }

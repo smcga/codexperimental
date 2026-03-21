@@ -5079,10 +5079,10 @@
       "fitAlign": "fill"
     },
     {
-      "id": "Scene 055 - Greets Wall",
+      "id": "Scene 055 - Doodle Greetz Wall",
       "start": 248.162272,
       "end": 248.4,
-      "effect": "greets_wall",
+      "effect": "doodle_greetz_wall",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -5098,7 +5098,7 @@
         "highlightPulse": 0.7,
         "beatPulseDecay": 1.8,
         "audioReact": 0.2,
-        "title": "GREETS",
+        "title": "DOODLE GREETZ WALL",
         "names": "Fairlight|TRSI|Spaceballs|CNCD|Mercury|TBL"
       },
       "automation": [
