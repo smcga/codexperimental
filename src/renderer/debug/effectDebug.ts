@@ -27,6 +27,7 @@ import { VOLUMETRIC_CLOUDS_DEFAULTS } from "../effects/volumetricCloudsEffect";
 import { COSMIC_VOYAGE_DEFAULTS } from "../effects/cosmicVoyageEffect";
 import { LEMMINGS_MARCH_DEFAULTS } from "../effects/lemmingsMarchEffect";
 import { PRISM_BLOOM_DEFAULTS } from "../effects/prismBloomEffect";
+import { VELVET_DREAMSCAPE_DEFAULTS } from "../effects/velvetDreamscapeEffect";
 
 export type EffectParamValue = number | string;
 
@@ -136,6 +137,19 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("vignette", "Vignette", PRISM_BLOOM_DEFAULTS.vignette, { min: 0, max: 1, step: 0.05 }),
       numberControl("audioReact", "Audio React", PRISM_BLOOM_DEFAULTS.audioReact, { min: 0, max: 1, step: 0.05 }),
       numberControl("seed", "Seed", PRISM_BLOOM_DEFAULTS.seed, { min: 0, max: 9999, step: 1 })
+    ]
+  },
+  velvet_dreamscape: {
+    title: "Velvet Dreamscape Controls",
+    controls: [
+      numberControl("bloom", "Bloom", VELVET_DREAMSCAPE_DEFAULTS.bloom, { min: 0, max: 1.6, step: 0.05 }),
+      numberControl("flow", "Flow", VELVET_DREAMSCAPE_DEFAULTS.flow, { min: 0, max: 1.8, step: 0.05 }),
+      numberControl("ribbonCount", "Ribbon Count", VELVET_DREAMSCAPE_DEFAULTS.ribbonCount, { min: 4, max: 24, step: 1 }),
+      numberControl("grain", "Grain", VELVET_DREAMSCAPE_DEFAULTS.grain, { min: 0, max: 1, step: 0.05 }),
+      numberControl("hueDrift", "Hue Drift", VELVET_DREAMSCAPE_DEFAULTS.hueDrift, { min: -1, max: 1, step: 0.05 }),
+      numberControl("focus", "Focus", VELVET_DREAMSCAPE_DEFAULTS.focus, { min: 0, max: 1.2, step: 0.05 }),
+      numberControl("audioReact", "Audio React", VELVET_DREAMSCAPE_DEFAULTS.audioReact, { min: 0, max: 1, step: 0.05 }),
+      numberControl("seed", "Seed", VELVET_DREAMSCAPE_DEFAULTS.seed, { min: 0, max: 9999, step: 1 })
     ]
   },
   plasma: {

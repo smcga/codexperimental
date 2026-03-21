@@ -78,6 +78,43 @@ describe("effect debug params", () => {
     });
   });
 
+  it("provides defaults for velvet dreamscape controls", () => {
+    expect(getEffectDebugDefaults("velvet_dreamscape")).toEqual({
+      bloom: 0.78,
+      flow: 0.62,
+      ribbonCount: 11,
+      grain: 0.32,
+      hueDrift: 0.08,
+      focus: 0.58,
+      audioReact: 0.68,
+      seed: 5
+    });
+  });
+
+  it("coerces velvet dreamscape params based on control constraints", () => {
+    const params = coerceEffectParams("velvet_dreamscape", {
+      bloom: -1,
+      flow: 3,
+      ribbonCount: 99,
+      grain: -0.2,
+      hueDrift: 4,
+      focus: 9,
+      audioReact: 2,
+      seed: 10000
+    });
+
+    expect(params).toEqual({
+      bloom: 0,
+      flow: 1.8,
+      ribbonCount: 24,
+      grain: 0,
+      hueDrift: 1,
+      focus: 1.2,
+      audioReact: 1,
+      seed: 9999
+    });
+  });
+
   it("provides defaults for wireframe ride controls", () => {
     expect(getEffectDebugDefaults("wireframeRide")).toEqual({
       speed: 1,

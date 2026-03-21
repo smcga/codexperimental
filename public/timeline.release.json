@@ -966,6 +966,20 @@
           }
         },
         {
+          "effect": "velvet_dreamscape",
+          "blend": "screen",
+          "opacity": 0.16,
+          "params": {
+            "bloom": 0.84,
+            "flow": 0.58,
+            "ribbonCount": 8,
+            "grain": 0.22,
+            "hueDrift": 0.1,
+            "focus": 0.54,
+            "audioReact": 0.18
+          }
+        },
+        {
           "effect": "rain",
           "blend": "screen",
           "opacity": 0.08,
