@@ -21,6 +21,34 @@ type PlatformInfo = {
   lengthCols: number;
 };
 
+export type RunnerSpritePart = {
+  color: string;
+  name: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+};
+
+export type RunnerSprite = {
+  parts: RunnerSpritePart[];
+  shadow: RunnerSpritePart;
+};
+
+const RUNNER_COLORS = {
+  outline: "#10141f",
+  cobalt: "#2563eb",
+  cobaltDark: "#1d4ed8",
+  muzzle: "#ffd4b8",
+  scarf: "#ffb703",
+  gloves: "#f8fafc",
+  shoes: "#ef4444",
+  sole: "#ffffff",
+  eye: "#f8fafc",
+  iris: "#0f172a",
+  spark: "#7dd3fc"
+} as const;
+
 const asFinite = (value: unknown, fallback: number): number =>
   typeof value === "number" && Number.isFinite(value) ? value : fallback;
 
@@ -84,6 +112,138 @@ export function runnerJumpOffset(prevSupportY: number, currentSupportY: number, 
   const arc = Math.sin(phase * Math.PI);
   const extra = 1 + Math.floor(audioAmount * 2);
   return Math.floor(arc * (lift * 0.85 + extra));
+}
+
+export function buildRunnerSprite(baseX: number, footY: number, tileSize: number, time: number, audioAmount: number): RunnerSprite {
+  const unit = Math.max(1, Math.round(tileSize / 16));
+  const x = baseX - 3 * unit;
+  const y = footY - 16 * unit;
+  const legSwing = Math.sin(time * 18) >= 0 ? unit : -unit;
+  const armSwing = Math.sin(time * 18 + Math.PI * 0.65) >= 0 ? unit : -unit;
+  const scarfLift = Math.floor(audioAmount * 2) * unit;
+
+  const parts: RunnerSpritePart[] = [
+    { name: "quill-back-top", color: RUNNER_COLORS.outline, x: x + unit, y: y + 3 * unit, w: 6 * unit, h: 3 * unit },
+    { name: "quill-back-mid", color: RUNNER_COLORS.cobaltDark, x, y: y + 5 * unit, w: 7 * unit, h: 3 * unit },
+    { name: "quill-back-low", color: RUNNER_COLORS.cobalt, x: x + unit, y: y + 8 * unit, w: 6 * unit, h: 3 * unit },
+    { name: "ear-back", color: RUNNER_COLORS.outline, x: x + 6 * unit, y: y, w: 2 * unit, h: 3 * unit },
+    { name: "ear-front", color: RUNNER_COLORS.cobaltDark, x: x + 8 * unit, y: y + unit, w: 2 * unit, h: 3 * unit },
+    { name: "head", color: RUNNER_COLORS.cobalt, x: x + 4 * unit, y: y + 2 * unit, w: 7 * unit, h: 7 * unit },
+    { name: "face", color: RUNNER_COLORS.muzzle, x: x + 7 * unit, y: y + 4 * unit, w: 4 * unit, h: 4 * unit },
+    { name: "eye", color: RUNNER_COLORS.eye, x: x + 8 * unit, y: y + 3 * unit, w: 2 * unit, h: 2 * unit },
+    { name: "iris", color: RUNNER_COLORS.iris, x: x + 9 * unit, y: y + 3 * unit, w: unit, h: 2 * unit },
+    { name: "torso", color: RUNNER_COLORS.cobaltDark, x: x + 5 * unit, y: y + 8 * unit, w: 5 * unit, h: 4 * unit },
+    { name: "chest", color: RUNNER_COLORS.muzzle, x: x + 7 * unit, y: y + 9 * unit, w: 3 * unit, h: 3 * unit },
+    {
+      name: "scarf-tail",
+      color: RUNNER_COLORS.scarf,
+      x: x + (legSwing > 0 ? 3 : 2) * unit,
+      y: y + (8 - scarfLift / unit) * unit,
+      w: 3 * unit,
+      h: 2 * unit
+    },
+    { name: "scarf-knot", color: RUNNER_COLORS.scarf, x: x + 6 * unit, y: y + 8 * unit, w: 3 * unit, h: 2 * unit },
+    {
+      name: "arm-back",
+      color: RUNNER_COLORS.cobaltDark,
+      x: x + (4 + armSwing) * unit,
+      y: y + 8 * unit,
+      w: 2 * unit,
+      h: 4 * unit
+    },
+    {
+      name: "glove-back",
+      color: RUNNER_COLORS.gloves,
+      x: x + (3 + armSwing) * unit,
+      y: y + 11 * unit,
+      w: 2 * unit,
+      h: 2 * unit
+    },
+    {
+      name: "arm-front",
+      color: RUNNER_COLORS.cobalt,
+      x: x + (9 - armSwing) * unit,
+      y: y + 8 * unit,
+      w: 2 * unit,
+      h: 4 * unit
+    },
+    {
+      name: "glove-front",
+      color: RUNNER_COLORS.gloves,
+      x: x + (10 - armSwing) * unit,
+      y: y + 11 * unit,
+      w: 2 * unit,
+      h: 2 * unit
+    },
+    {
+      name: "leg-back",
+      color: RUNNER_COLORS.cobaltDark,
+      x: x + (6 - legSwing) * unit,
+      y: y + 12 * unit,
+      w: 2 * unit,
+      h: 3 * unit
+    },
+    {
+      name: "shoe-back",
+      color: RUNNER_COLORS.shoes,
+      x: x + (5 - legSwing) * unit,
+      y: y + 15 * unit,
+      w: 4 * unit,
+      h: 2 * unit
+    },
+    {
+      name: "sole-back",
+      color: RUNNER_COLORS.sole,
+      x: x + (5 - legSwing) * unit,
+      y: y + 16 * unit,
+      w: 4 * unit,
+      h: unit
+    },
+    {
+      name: "leg-front",
+      color: RUNNER_COLORS.cobalt,
+      x: x + (8 + legSwing) * unit,
+      y: y + 12 * unit,
+      w: 2 * unit,
+      h: 3 * unit
+    },
+    {
+      name: "shoe-front",
+      color: RUNNER_COLORS.shoes,
+      x: x + (8 + legSwing) * unit,
+      y: y + 15 * unit,
+      w: 4 * unit,
+      h: 2 * unit
+    },
+    {
+      name: "sole-front",
+      color: RUNNER_COLORS.sole,
+      x: x + (8 + legSwing) * unit,
+      y: y + 16 * unit,
+      w: 4 * unit,
+      h: unit
+    },
+    {
+      name: "spark",
+      color: RUNNER_COLORS.spark,
+      x: x + 2 * unit,
+      y: y + 12 * unit - scarfLift,
+      w: 2 * unit,
+      h: unit
+    }
+  ];
+
+  return {
+    parts,
+    shadow: {
+      name: "shadow",
+      color: "rgba(0, 0, 0, 0.22)",
+      x: x + 2 * unit,
+      y: footY + 4 * unit,
+      w: 12 * unit,
+      h: Math.max(unit, Math.floor(unit * 1.5))
+    }
+  };
 }
 
 const drawHillLayer = (
@@ -250,23 +410,14 @@ export class PlatformerScrollEffect implements Effect {
     const hop = runnerJumpOffset(prevSupportY, currentSupportY, colProgress, audioAmount);
     const runBob = Math.floor((Math.sin(time * 14) * 1.5 + audioAmount * 1.5) * 0.5);
     const runnerFootY = supportY - hop - runBob - 1;
+    const runnerSprite = buildRunnerSprite(runnerBaseX, runnerFootY, tileSize, time, audioAmount);
 
-    const bodyW = Math.max(8, Math.floor(tileSize * 0.7));
-    const bodyH = Math.max(10, Math.floor(tileSize * 0.95));
-    const legPhase = Math.sin(time * 18);
+    ctx.fillStyle = runnerSprite.shadow.color;
+    ctx.fillRect(runnerSprite.shadow.x, runnerSprite.shadow.y, runnerSprite.shadow.w, runnerSprite.shadow.h);
 
-    ctx.fillStyle = "#111317";
-    ctx.fillRect(runnerBaseX, runnerFootY - bodyH, bodyW, bodyH);
-    ctx.fillRect(runnerBaseX + 2, runnerFootY - bodyH - 5, bodyW - 4, 5);
-
-    const legTick = legPhase > 0 ? 2 : -2;
-    const legY = runnerFootY;
-    ctx.fillRect(runnerBaseX + 1, legY, 3, 6);
-    ctx.fillRect(runnerBaseX + bodyW - 4 + legTick, legY, 3, 6);
-    ctx.fillRect(runnerBaseX - 2, runnerFootY - bodyH + 2, 2, 4);
-    ctx.fillRect(runnerBaseX + bodyW, runnerFootY - bodyH + 2, 2, 4);
-
-    ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
-    ctx.fillRect(runnerBaseX - 2, supportY + 5, bodyW + 4, 2);
+    for (const part of runnerSprite.parts) {
+      ctx.fillStyle = part.color;
+      ctx.fillRect(part.x, part.y, part.w, part.h);
+    }
   }
 }
