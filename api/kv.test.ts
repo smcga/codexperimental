@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { createKvClients, getKvConfig } from "./kv";
+import { createKvClients, getKvConfig } from "./kv.js";
 
 describe("getKvConfig", () => {
   it("prefers DB2-prefixed env vars when present", () => {

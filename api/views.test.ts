@@ -67,7 +67,7 @@ describe("api/views handler", () => {
       incr: vi.fn(async () => 4)
     };
 
-    vi.doMock("./kv", () => ({
+    vi.doMock("./kv.js", () => ({
       createKvClients: () => ({ readClient: readMock, writeClient: writeMock })
     }));
 

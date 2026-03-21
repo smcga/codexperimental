@@ -1,4 +1,4 @@
-import { createKvClients } from "./kv";
+import { createKvClients } from "./kv.js";
 
 const { readClient, writeClient } = createKvClients();
 

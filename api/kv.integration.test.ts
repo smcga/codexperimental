@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 
-import { createKvClients, getKvConfig } from "./kv";
+import { createKvClients, getKvConfig } from "./kv.js";
 
 const originalEnv = { ...process.env };
 const hasDb2IntegrationEnv = Boolean(process.env.DB2_KV_REST_API_URL && process.env.DB2_KV_REST_API_TOKEN);
