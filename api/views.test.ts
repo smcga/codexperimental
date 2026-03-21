@@ -37,6 +37,11 @@ describe("api/views handler", () => {
   });
 
   it("returns 0 when no env vars are configured", async () => {
+    delete process.env.DB2_KV_REST_API_URL;
+    delete process.env.DB2_KV_URL;
+    delete process.env.DB2_REDIS_URL;
+    delete process.env.DB2_KV_REST_API_TOKEN;
+    delete process.env.DB2_KV_REST_API_READ_ONLY_TOKEN;
     delete process.env.KV_REST_API_URL;
     delete process.env.KV_URL;
     delete process.env.REDIS_URL;
@@ -53,10 +58,6 @@ describe("api/views handler", () => {
   });
 
   it("uses the read client for GET and write client for POST", async () => {
-    process.env.KV_REST_API_URL = "https://example.upstash.io";
-    process.env.KV_REST_API_TOKEN = "write-token";
-    process.env.KV_REST_API_READ_ONLY_TOKEN = "read-token";
-
     const readMock: MockRedis = {
       get: vi.fn(async () => 3),
       incr: vi.fn(async () => 0)
@@ -66,10 +67,8 @@ describe("api/views handler", () => {
       incr: vi.fn(async () => 4)
     };
 
-    vi.mock("@upstash/redis", () => ({
-      Redis: vi.fn()
-        .mockImplementationOnce(() => readMock)
-        .mockImplementationOnce(() => writeMock)
+    vi.doMock("./kv", () => ({
+      createKvClients: () => ({ readClient: readMock, writeClient: writeMock })
     }));
 
     const { default: handler } = await import("./views");

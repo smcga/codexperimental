@@ -198,6 +198,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `lemmings_march` | `spawnInterval`, `colonySize`, `worldLength`, `hilliness`, `wallRate`, `digRate`, `bashRate`, `bridgeRate`, `floatiness`, `scrollFollow`, `seed` | Tiny colony sim with contextual climber/digger/basher/builder/floater behaviour, deformable terrain, and a rescue portal score. |
 | `platformerScroll` | `speed`, `seed`, `tileSize`, `groundRatio`, `parallaxFar`, `parallaxMid`, `parallaxFront`, `audioReact`, `beatKick`, `platformRate`, `platformMaxSteps` | Deterministic side-scrolling platformer parallax scene with looping platforms and runner silhouette. |
 | `greets_wall` | `names`, `layout`, `transitionStyle`, `cycleSeconds`, `columns`, `padding`, `highlightPulse`, `beatPulseDecay`, `audioReact`, `title` | `layout` supports `grid` or `carousel`; `transitionStyle` supports `slide`, `fade`, or `pop`. |
+| `doodle_greetz_wall` | `layout`, `transitionStyle`, `cycleSeconds`, `columns`, `padding`, `highlightPulse`, `beatPulseDecay`, `audioReact`, `title` | Pulls user-submitted PNG doodles from the doodle API and renders them in `grid` or `carousel` layouts. |
 | `lightning` | `trigger`, `chancePerSecond`, `cooldown`, `flashDuration`, `bolt`, `branches`, `seed` | `trigger` supports `beat`, `random`, `both`. |
 | `effect_evolution` | `density`, `motion`, `warp`, `trail`, `seed` | Reinterprets the same lattice across eras. |
 | `treegrowth` | `speed`, `levels`, `trunkHeight`, `branchScale`, `branchAngle`, `trunkWidth`, `sway`, `leafSize`, `jitter`, `seed`, `growth` | `growth` overrides the automatic growth cycle (0-1). |
@@ -295,10 +296,12 @@ npm run preview
 
 - Click to start (audio + visuals)
 - `R` to restart
+- At the end screen, use **Add a doodle** to draw and submit a doodle for the `doodle_greetz_wall` effect.
 - `F` to toggle fullscreen (if supported)
 - `D` to toggle the debug overlay (timestamp, skip intro, skip to second half, transition selection, effect overrides, monochrome toggle)
 - The debug overlay shows WebGL status as `OK` or `FALLBACK` when available.
 - When the debug overlay is visible, selecting an effect reveals a secondary panel with effect-specific controls (or a note when none are available).
+- The serverless view/doodle APIs accept either the legacy `KV_*` Upstash variables or the newer `DB2_KV_*` prefixed variants.
 - Append `?editor=1` in dev builds to open the Scene + Timeline Editor (or toggle "Editor mode" in the debug overlay). The editor shows a live preview, edits hot-apply to the running demo, and changes persist to localStorage.
 - The editor's Text Cues panel now includes a bulk generator: paste words/new lines, set font/colour/size/position/alignment plus start/end timing, and auto-create evenly timed cue sequences (useful for ~100 words over ~30 seconds).
 - On touch devices, two floating buttons appear in the lower-right corner: `DBG` toggles the debug overlay and `⛶` toggles fullscreen.

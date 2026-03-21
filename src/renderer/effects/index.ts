@@ -60,6 +60,7 @@ import { PlatformerScrollEffect } from "./platformerScroll";
 import { FractalZoomerEffect } from "./fractalZoomer";
 import { KefrensBarsEffect } from "./kefrensBars";
 import { GreetsWallEffect } from "./greetsWall";
+import { DoodleGreetzWallEffect } from "./doodleGreetzWall";
 import { DotTunnelEffect } from "./dotTunnel";
 import { TextmodeCharsetEffect } from "./textmodeCharset";
 import { MoireGridEffect } from "./moireGridEffect";
@@ -135,6 +136,7 @@ export const effectRegistry: Record<string, Effect> = {
   fractal_zoomer: new FractalZoomerEffect(),
   kefrens_bars: new KefrensBarsEffect(),
   greets_wall: new GreetsWallEffect(),
+  doodle_greetz_wall: new DoodleGreetzWallEffect(),
   dotTunnel: new DotTunnelEffect(),
   textmode_charset: new TextmodeCharsetEffect(),
   moire_grid: new MoireGridEffect(),

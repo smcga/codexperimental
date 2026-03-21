@@ -15,6 +15,7 @@ import { BUMPMAP_PLANE_DEFAULTS } from "../effects/bumpmapPlane";
 import { FRACTAL_ZOOMER_DEFAULTS } from "../effects/fractalZoomer";
 import { KEFRENS_BARS_DEFAULTS } from "../effects/kefrensBars";
 import { GREETS_WALL_DEFAULTS } from "../effects/greetsWall";
+import { DOODLE_GREETZ_WALL_DEFAULTS } from "../effects/doodleGreetzWall";
 import { TEXTMODE_CHARSET_DEFAULTS } from "../effects/textmodeCharset";
 import { DOT_TUNNEL_DEFAULTS } from "../effects/dotTunnel";
 import { PLATFORMER_SCROLL_DEFAULTS } from "../effects/platformerScroll";
@@ -725,6 +726,27 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       selectControl("names", "Names", "Fairlight|TRSI|Spaceballs|CNCD|Mercury|TBL", [
         { label: "Default Names", value: "Fairlight|TRSI|Spaceballs|CNCD|Mercury|TBL" }
       ])
+    ]
+  },
+  doodle_greetz_wall: {
+    title: "Doodle Greetz Wall Controls",
+    controls: [
+      selectControl("layout", "Layout", DOODLE_GREETZ_WALL_DEFAULTS.layout, [
+        { label: "Grid", value: "grid" },
+        { label: "Carousel", value: "carousel" }
+      ]),
+      selectControl("transitionStyle", "Transition", DOODLE_GREETZ_WALL_DEFAULTS.transitionStyle, [
+        { label: "Slide", value: "slide" },
+        { label: "Fade", value: "fade" },
+        { label: "Pop", value: "pop" }
+      ]),
+      numberControl("cycleSeconds", "Cycle Seconds", DOODLE_GREETZ_WALL_DEFAULTS.cycleSeconds, { min: 0.35, max: 6, step: 0.05 }),
+      numberControl("columns", "Columns", DOODLE_GREETZ_WALL_DEFAULTS.columns, { min: 1, max: 8, step: 1 }),
+      numberControl("padding", "Padding", DOODLE_GREETZ_WALL_DEFAULTS.padding, { min: 0.02, max: 0.18, step: 0.01 }),
+      numberControl("highlightPulse", "Highlight Pulse", DOODLE_GREETZ_WALL_DEFAULTS.highlightPulse, { min: 0, max: 1.5, step: 0.05 }),
+      numberControl("beatPulseDecay", "Beat Decay", DOODLE_GREETZ_WALL_DEFAULTS.beatPulseDecay, { min: 0.2, max: 8, step: 0.1 }),
+      numberControl("audioReact", "Audio React", DOODLE_GREETZ_WALL_DEFAULTS.audioReact, { min: 0, max: 1, step: 0.05 }),
+      selectControl("title", "Title", DOODLE_GREETZ_WALL_DEFAULTS.title, [{ label: DOODLE_GREETZ_WALL_DEFAULTS.title, value: DOODLE_GREETZ_WALL_DEFAULTS.title }])
     ]
   },
   treegrowth: {

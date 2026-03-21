@@ -8,8 +8,24 @@
   <body>
     <div id="app">
       <canvas id="demo"></canvas>
-      <div id="start-overlay">
+      <div id="start-overlay" data-mode="start">
         <div class="start-text">CLICK TO START</div>
+        <div class="overlay-actions hidden" id="overlay-actions">
+          <button id="add-doodle-button" type="button">Add a doodle</button>
+        </div>
+      </div>
+      <div id="doodle-modal" class="doodle-modal hidden" aria-hidden="true">
+        <div class="doodle-panel">
+          <div class="doodle-title">Add a doodle</div>
+          <p class="doodle-copy">Draw something quick, then submit it to the doodle greetz wall.</p>
+          <canvas id="doodle-canvas" width="512" height="288" aria-label="Doodle canvas"></canvas>
+          <div id="doodle-status" class="doodle-status">Draw on the canvas, then submit when you are ready.</div>
+          <div class="doodle-actions">
+            <button id="doodle-clear" type="button">Clear</button>
+            <button id="doodle-cancel" type="button">Cancel</button>
+            <button id="doodle-submit" type="button">Submit doodle</button>
+          </div>
+        </div>
       </div>
       <div id="debug-panels">
         <div id="debug-overlay" class="debug-panel hidden">

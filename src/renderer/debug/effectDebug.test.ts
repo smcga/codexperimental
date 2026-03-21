@@ -498,6 +498,20 @@ describe("effect debug params", () => {
     });
   });
 
+  it("provides defaults for doodle greetz wall controls", () => {
+    expect(getEffectDebugDefaults("doodle_greetz_wall")).toEqual({
+      layout: "grid",
+      transitionStyle: "slide",
+      cycleSeconds: 1.5,
+      columns: 3,
+      padding: 0.08,
+      highlightPulse: 0.65,
+      beatPulseDecay: 2.2,
+      audioReact: 0.45,
+      title: "DOODLE GREETZ WALL"
+    });
+  });
+
   it("provides defaults for textmode charset controls", () => {
     expect(getEffectDebugDefaults("textmode_charset")).toEqual({
       cols: 64,

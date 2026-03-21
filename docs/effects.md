@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/index.ts`.
 
-Total effects: **73**.
+Total effects: **74**.
 
 ## Table of contents
 
@@ -67,6 +67,7 @@ Total effects: **73**.
 - [Effect: fractal_zoomer](#effect-fractal-zoomer)
 - [Effect: kefrens_bars](#effect-kefrens-bars)
 - [Effect: greets_wall](#effect-greets-wall)
+- [Effect: doodle_greetz_wall](#effect-doodle-greetz-wall)
 - [Effect: dotTunnel](#effect-dotTunnel)
 - [Effect: textmode_charset](#effect-textmode-charset)
 - [Effect: moire_grid](#effect-moire-grid)
@@ -100,7 +101,7 @@ Total effects: **73**.
 
 - `speed` (used in 41 effects)
 - `seed` (used in 30 effects)
-- `audioReact` (used in 29 effects)
+- `audioReact` (used in 30 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 10 effects)
 - `trail` (used in 9 effects)
@@ -2242,6 +2243,40 @@ Total effects: **73**.
 ```json
 {
   "effect": "greets_wall",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: doodle_greetz_wall
+
+- **Registry key:** `doodle_greetz_wall`
+- **Implementation:** `src/renderer/effects/doodleGreetzWall.ts` (class `DoodleGreetzWallEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by DoodleGreetzWallEffect (src/renderer/effects/doodleGreetzWall.ts).
+- **Audio features:** beat, impactStrength, rms
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReact` | number | 0.45 | min 0, max 1 | Audio React | yes |
+| `params.beatPulseDecay` | number | 2.2 | min 0.2, max 8 | Beat Decay | yes |
+| `params.columns` | number | 3 | min 1, max 8 | Columns | yes |
+| `params.cycleSeconds` | number | 1.5 | min 0.35, max 6 | Cycle Seconds | yes |
+| `params.highlightPulse` | number | 0.65 | min 0, max 1.5 | Highlight Pulse | yes |
+| `params.layout` | string | "grid" | options: grid, carousel | Layout | no |
+| `params.padding` | number | 0.08 | min 0.02, max 0.18 | Padding | yes |
+| `params.title` | string | "DOODLE GREETZ WALL" | options: DOODLE GREETZ WALL | Title | no |
+| `params.transitionStyle` | string | "slide" | options: slide, fade, pop | Transition | no |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "doodle_greetz_wall",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
