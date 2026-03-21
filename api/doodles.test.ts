@@ -1,3 +1,5 @@
+import process from "node:process";
+
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 type MockRedis = {
@@ -76,12 +78,12 @@ describe("api/doodles handler", () => {
     const readMock: MockRedis = {
       lrange: vi.fn(async () => [existingDoodle]),
       lpush: vi.fn(async () => 0),
-      ltrim: vi.fn(async () => "OK")
+      ltrim: vi.fn<MockRedis["ltrim"]>().mockResolvedValue("OK")
     };
     const writeMock: MockRedis = {
       lrange: vi.fn(async () => nextDoodles),
       lpush: vi.fn(async () => 2),
-      ltrim: vi.fn(async () => "OK")
+      ltrim: vi.fn<MockRedis["ltrim"]>().mockResolvedValue("OK")
     };
 
     vi.doMock("./kv.js", () => ({
@@ -115,7 +117,7 @@ describe("api/doodles handler", () => {
     const mock: MockRedis = {
       lrange: vi.fn(async () => []),
       lpush: vi.fn(async () => 1),
-      ltrim: vi.fn(async () => "OK")
+      ltrim: vi.fn<MockRedis["ltrim"]>().mockResolvedValue("OK")
     };
 
     vi.doMock("./kv.js", () => ({
