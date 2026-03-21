@@ -10,6 +10,7 @@ import { resolveMonochrome } from "./monochrome";
 import { computePresentTransform, computeScreenSafeRect } from "./present";
 import { renderTextCues } from "./text/textRenderer";
 import { CameraPunchThroughTransitionState, computeCameraPunchThroughTransitionState } from "./transitions/cameraPunchThrough";
+import { ShatterTransitionLayout, computeShatterTransitionState, createShatterTransitionLayout } from "./transitions/shatterTransition";
 
 export type RenderState = {
   ctx: CanvasRenderingContext2D;
@@ -51,6 +52,7 @@ export class Renderer {
   private mobileFromCtx: CanvasRenderingContext2D;
   private mobileToCanvas: HTMLCanvasElement;
   private mobileToCtx: CanvasRenderingContext2D;
+  private shatterLayout: ShatterTransitionLayout;
   private baseWidth: number;
   private baseHeight: number;
   private lastFramingState: FramingState | null = null;
@@ -59,6 +61,7 @@ export class Renderer {
   constructor(baseWidth = 320, baseHeight = 180) {
     this.baseWidth = baseWidth;
     this.baseHeight = baseHeight;
+    this.shatterLayout = createShatterTransitionLayout(baseWidth, baseHeight);
     this.baseCanvas = document.createElement("canvas");
     this.baseCanvas.width = baseWidth;
     this.baseCanvas.height = baseHeight;
@@ -137,6 +140,7 @@ export class Renderer {
     }
     this.baseWidth = baseWidth;
     this.baseHeight = baseHeight;
+    this.shatterLayout = createShatterTransitionLayout(baseWidth, baseHeight);
     this.baseCanvas.width = baseWidth;
     this.baseCanvas.height = baseHeight;
     this.transitionCanvas.width = baseWidth;
@@ -213,7 +217,7 @@ export class Renderer {
       if (transition) {
         this.renderSectionTo(this.transitionCtx, transition.from, time, delta, audio, framing);
         this.renderSectionTo(this.baseCtx, transition.to, time, delta, audio, framing);
-        this.drawTransition(ctx, transition, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints);
+        this.drawTransition(ctx, transition, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints, audio);
       } else {
         this.renderSectionTo(this.baseCtx, section, time, delta, audio, framing);
         this.drawScaled(
@@ -273,6 +277,10 @@ export class Renderer {
       this.renderSectionToMobileScreen(this.mobileToCtx, transition.to, time, delta, audio, shakeX, shakeY, camera, framing);
       if (transition.type === "camera-punch-through") {
         this.drawCameraPunchThroughMobileTransition(targetCtx, transition.progress, width, height);
+        return;
+      }
+      if (transition.type === "shatter") {
+        this.drawShatterMobileTransition(targetCtx, transition.progress, width, height, audio);
         return;
       }
       targetCtx.save();
@@ -569,7 +577,8 @@ export class Renderer {
     shakeX: number,
     shakeY: number,
     camera: CameraState,
-    eraConstraints: EraConstraints
+    eraConstraints: EraConstraints,
+    audio: AudioFeatures
   ): void {
     const progress = transition.progress;
     switch (transition.type) {
@@ -607,6 +616,9 @@ export class Renderer {
         return;
       case "camera-punch-through":
         this.drawCameraPunchThroughTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
+        return;
+      case "shatter":
+        this.drawShatterTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing, audio);
         return;
       case "fade":
         this.drawFadeTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
@@ -842,6 +854,128 @@ export class Renderer {
       ctx.fillRect(rectX, rectY, width, height);
       ctx.restore();
     }
+  }
+
+  private drawShatterMobileTransition(
+    targetCtx: CanvasRenderingContext2D,
+    progress: number,
+    width: number,
+    height: number,
+    audio: AudioFeatures
+  ): void {
+    const state = computeShatterTransitionState(this.shatterLayout, progress, audio.bass, audio.beatStrength);
+    targetCtx.save();
+    targetCtx.globalAlpha = state.toAlpha;
+    targetCtx.drawImage(this.mobileToCanvas, 0, 0, width, height);
+    targetCtx.restore();
+
+    const scaleX = width / this.baseWidth;
+    const scaleY = height / this.baseHeight;
+    targetCtx.save();
+    targetCtx.imageSmoothingEnabled = true;
+    for (const shard of state.shards) {
+      if (shard.alpha <= 0.001) {
+        continue;
+      }
+      targetCtx.save();
+      targetCtx.globalAlpha = shard.alpha;
+      targetCtx.translate((shard.centroid.x + shard.offsetX) * scaleX, (shard.centroid.y + shard.offsetY) * scaleY);
+      targetCtx.rotate(shard.currentRotation);
+      targetCtx.scale(shard.currentScale, shard.currentScale);
+      targetCtx.translate(-shard.centroid.x * scaleX, -shard.centroid.y * scaleY);
+      targetCtx.beginPath();
+      const [firstPoint, ...rest] = shard.polygon;
+      targetCtx.moveTo(firstPoint.x * scaleX, firstPoint.y * scaleY);
+      for (const point of rest) {
+        targetCtx.lineTo(point.x * scaleX, point.y * scaleY);
+      }
+      targetCtx.closePath();
+      targetCtx.clip();
+      targetCtx.drawImage(this.mobileFromCanvas, 0, 0, width, height);
+      targetCtx.restore();
+    }
+    targetCtx.restore();
+
+    if (state.crackAlpha > 0.001) {
+      targetCtx.save();
+      targetCtx.strokeStyle = `rgba(255, 255, 255, ${state.crackAlpha})`;
+      targetCtx.lineWidth = state.crackWidth;
+      for (const shard of state.shards) {
+        targetCtx.beginPath();
+        const [firstPoint, ...rest] = shard.polygon;
+        targetCtx.moveTo((firstPoint.x + shard.offsetX * 0.2) * scaleX, (firstPoint.y + shard.offsetY * 0.2) * scaleY);
+        for (const point of rest) {
+          targetCtx.lineTo((point.x + shard.offsetX * 0.2) * scaleX, (point.y + shard.offsetY * 0.2) * scaleY);
+        }
+        targetCtx.closePath();
+        targetCtx.stroke();
+      }
+      targetCtx.restore();
+    }
+  }
+
+  private drawShatterTransition(
+    ctx: CanvasRenderingContext2D,
+    progress: number,
+    scale: number,
+    offsetX: number,
+    offsetY: number,
+    shakeX: number,
+    shakeY: number,
+    camera: CameraState,
+    smoothing: boolean,
+    audio: AudioFeatures
+  ): void {
+    const state = computeShatterTransitionState(this.shatterLayout, progress, audio.bass, audio.beatStrength);
+    this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shakeX, shakeY, state.toAlpha, camera, smoothing);
+
+    ctx.save();
+    ctx.imageSmoothingEnabled = smoothing;
+    ctx.translate(offsetX + shakeX, offsetY + shakeY);
+    ctx.scale(scale, scale);
+    ctx.translate(this.baseWidth / 2, this.baseHeight / 2);
+    ctx.scale(camera.zoom, camera.zoom);
+    ctx.translate(-this.baseWidth / 2 + camera.panX, -this.baseHeight / 2 + camera.panY);
+
+    for (const shard of state.shards) {
+      if (shard.alpha <= 0.001) {
+        continue;
+      }
+      const [firstPoint, ...rest] = shard.polygon;
+      ctx.save();
+      ctx.globalAlpha = shard.alpha;
+      ctx.translate(shard.centroid.x + shard.offsetX, shard.centroid.y + shard.offsetY);
+      ctx.rotate(shard.currentRotation);
+      ctx.scale(shard.currentScale, shard.currentScale);
+      ctx.translate(-shard.centroid.x, -shard.centroid.y);
+      ctx.beginPath();
+      ctx.moveTo(firstPoint.x, firstPoint.y);
+      for (const point of rest) {
+        ctx.lineTo(point.x, point.y);
+      }
+      ctx.closePath();
+      ctx.clip();
+      ctx.drawImage(this.transitionCanvas, 0, 0, this.baseWidth, this.baseHeight);
+      ctx.restore();
+    }
+
+    if (state.crackAlpha > 0.001) {
+      ctx.save();
+      ctx.strokeStyle = `rgba(255, 255, 255, ${state.crackAlpha})`;
+      ctx.lineWidth = state.crackWidth / Math.max(scale, 0.0001);
+      for (const shard of state.shards) {
+        const [firstPoint, ...rest] = shard.polygon;
+        ctx.beginPath();
+        ctx.moveTo(firstPoint.x + shard.offsetX * 0.2, firstPoint.y + shard.offsetY * 0.2);
+        for (const point of rest) {
+          ctx.lineTo(point.x + shard.offsetX * 0.2, point.y + shard.offsetY * 0.2);
+        }
+        ctx.closePath();
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+    ctx.restore();
   }
 
   private drawCameraPunchThroughStreaks(
