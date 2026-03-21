@@ -46,4 +46,45 @@ describe("getKvConfig", () => {
       readToken: "db2-write"
     });
   });
+
+  it("normalizes quoted env values so copied dashboard values still work", () => {
+    const config = getKvConfig({
+      DB2_KV_REST_API_URL: '  "https://db2.example.upstash.io"\n',
+      DB2_KV_REST_API_TOKEN: ' "db2-write" ',
+      DB2_KV_REST_API_READ_ONLY_TOKEN: "\n'db2-read'\n"
+    } as NodeJS.ProcessEnv);
+
+    expect(config).toEqual({
+      url: "https://db2.example.upstash.io",
+      writeToken: "db2-write",
+      readToken: "db2-read"
+    });
+  });
+
+  it("ignores redis protocol URLs that are not usable with the REST SDK", () => {
+    const config = getKvConfig({
+      DB2_KV_URL: "redis://default:password@db2.example.upstash.io:6379",
+      DB2_REDIS_URL: "redis://default:password@db2.example.upstash.io:6379",
+      DB2_KV_REST_API_TOKEN: "db2-write"
+    } as NodeJS.ProcessEnv);
+
+    expect(config).toEqual({
+      url: null,
+      writeToken: "db2-write",
+      readToken: "db2-write"
+    });
+  });
+
+  it("still accepts HTTP-compatible fallback URLs", () => {
+    const config = getKvConfig({
+      DB2_KV_URL: "https://db2.example.upstash.io",
+      DB2_KV_REST_API_TOKEN: "db2-write"
+    } as NodeJS.ProcessEnv);
+
+    expect(config).toEqual({
+      url: "https://db2.example.upstash.io",
+      writeToken: "db2-write",
+      readToken: "db2-write"
+    });
+  });
 });
