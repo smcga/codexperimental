@@ -51,15 +51,15 @@ describe("normalizeTimelineConfig", () => {
   });
 
 
-  it("accepts the signal-collapse and camera-punch-through transition types", () => {
+  it("accepts the signal-collapse, camera-punch-through, and shatter transition types", () => {
     const raw = createBaseConfig();
-    raw.sections[0].transition = { in: "signal-collapse", out: "camera-punch-through", duration: 0.6 };
+    raw.sections[0].transition = { in: "signal-collapse", out: "shatter", duration: 0.6 };
 
     const normalized = normalizeTimelineConfig(raw);
 
     expect(normalized.sections[0].transition).toEqual({
       in: "signal-collapse",
-      out: "camera-punch-through",
+      out: "shatter",
       duration: 0.6
     });
   });
