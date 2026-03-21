@@ -26,6 +26,7 @@ import { TORUS_ORBIT_3D_DEFAULTS } from "../effects/torusOrbit3d";
 import { VOLUMETRIC_CLOUDS_DEFAULTS } from "../effects/volumetricCloudsEffect";
 import { COSMIC_VOYAGE_DEFAULTS } from "../effects/cosmicVoyageEffect";
 import { LEMMINGS_MARCH_DEFAULTS } from "../effects/lemmingsMarchEffect";
+import { PRISM_BLOOM_DEFAULTS } from "../effects/prismBloomEffect";
 
 export type EffectParamValue = number | string;
 
@@ -122,6 +123,19 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("floatiness", "Floatiness", LEMMINGS_MARCH_DEFAULTS.floatiness, { min: 0, max: 1, step: 0.05 }),
       numberControl("scrollFollow", "Scroll Follow", LEMMINGS_MARCH_DEFAULTS.scrollFollow, { min: 0, max: 1, step: 0.05 }),
       numberControl("seed", "Seed", LEMMINGS_MARCH_DEFAULTS.seed, { min: 0, max: 9999, step: 1 })
+    ]
+  },
+  prism_bloom: {
+    title: "Prism Bloom Controls",
+    controls: [
+      numberControl("bloom", "Bloom", PRISM_BLOOM_DEFAULTS.bloom, { min: 0, max: 1.4, step: 0.05 }),
+      numberControl("flow", "Flow", PRISM_BLOOM_DEFAULTS.flow, { min: 0, max: 1.5, step: 0.05 }),
+      numberControl("petalCount", "Petal Count", PRISM_BLOOM_DEFAULTS.petalCount, { min: 6, max: 36, step: 1 }),
+      numberControl("smear", "Smear", PRISM_BLOOM_DEFAULTS.smear, { min: 0, max: 1.1, step: 0.05 }),
+      numberControl("prismShift", "Prism Shift", PRISM_BLOOM_DEFAULTS.prismShift, { min: -1, max: 1, step: 0.05 }),
+      numberControl("vignette", "Vignette", PRISM_BLOOM_DEFAULTS.vignette, { min: 0, max: 1, step: 0.05 }),
+      numberControl("audioReact", "Audio React", PRISM_BLOOM_DEFAULTS.audioReact, { min: 0, max: 1, step: 0.05 }),
+      numberControl("seed", "Seed", PRISM_BLOOM_DEFAULTS.seed, { min: 0, max: 9999, step: 1 })
     ]
   },
   plasma: {

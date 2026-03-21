@@ -953,6 +953,19 @@
           "params": {}
         },
         {
+          "effect": "prism_bloom",
+          "blend": "screen",
+          "opacity": 0.2,
+          "params": {
+            "bloom": 0.9,
+            "flow": 0.48,
+            "petalCount": 16,
+            "smear": 0.38,
+            "prismShift": 0.12,
+            "audioReact": 0.15
+          }
+        },
+        {
           "effect": "rain",
           "blend": "screen",
           "opacity": 0.08,

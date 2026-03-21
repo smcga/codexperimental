@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/index.ts`.
 
-Total effects: **74**.
+Total effects: **75**.
 
 ## Table of contents
 
@@ -80,6 +80,7 @@ Total effects: **74**.
 - [Effect: fireworks_display](#effect-fireworks-display)
 - [Effect: cosmic_voyage](#effect-cosmic-voyage)
 - [Effect: lemmings_march](#effect-lemmings-march)
+- [Effect: prism_bloom](#effect-prism-bloom)
 
 ## Cross-reference
 
@@ -100,8 +101,8 @@ Total effects: **74**.
 ### Common parameter patterns
 
 - `speed` (used in 41 effects)
-- `seed` (used in 30 effects)
-- `audioReact` (used in 30 effects)
+- `seed` (used in 31 effects)
+- `audioReact` (used in 31 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 10 effects)
 - `trail` (used in 9 effects)
@@ -2678,6 +2679,39 @@ Total effects: **74**.
 ```json
 {
   "effect": "lemmings_march",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: prism_bloom
+
+- **Registry key:** `prism_bloom`
+- **Implementation:** `src/renderer/effects/prismBloomEffect.ts` (class `PrismBloomEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by PrismBloomEffect (src/renderer/effects/prismBloomEffect.ts).
+- **Audio features:** beat, beatStrength, mid, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReact` | number | 0.72 | min 0, max 1 | Audio React | yes |
+| `params.bloom` | number | 0.82 | min 0, max 1.4 | Bloom | yes |
+| `params.flow` | number | 0.58 | min 0, max 1.5 | Flow | yes |
+| `params.petalCount` | number | 18 | min 6, max 36 | Petal Count | yes |
+| `params.prismShift` | number | 0.18 | min -1, max 1 | Prism Shift | yes |
+| `params.seed` | number | 3 | min 0, max 9999 | Seed | yes |
+| `params.smear` | number | 0.44 | min 0, max 1.1 | Smear | yes |
+| `params.vignette` | number | 0.52 | min 0, max 1 | Vignette | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "prism_bloom",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
