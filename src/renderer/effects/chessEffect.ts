@@ -1,3 +1,5 @@
+// Self-playing chess effect with higher-contrast board highlights and more recognisable,
+// silhouette-led piece drawings for each chess piece type.
 import { fitSquareToSafe } from "./framingFit";
 import { Effect, EffectRenderContext } from "./types";
 
@@ -16,6 +18,28 @@ type ResolvedMove = {
   capture: boolean;
   captured?: PieceCode | null;
 };
+
+type PieceFeatureTag =
+  | "crown"
+  | "cross"
+  | "mitre"
+  | "horseHead"
+  | "battlements"
+  | "pawnHead"
+  | "tallBody";
+
+type PieceSilhouette = {
+  label: "pawn" | "rook" | "knight" | "bishop" | "queen" | "king";
+  featureTags: PieceFeatureTag[];
+  crownPoints: number;
+  geometryScore: number;
+};
+
+type PieceDrawCommand =
+  | { kind: "circle"; x: number; y: number; radius: number }
+  | { kind: "rect"; x: number; y: number; width: number; height: number }
+  | { kind: "polygon"; points: Array<[number, number]> }
+  | { kind: "line"; from: [number, number]; to: [number, number] };
 
 const BASE_MOVE_INTERVAL = 1.5;
 const CAPTURE_FLASH_DURATION = 0.4;
@@ -156,92 +180,184 @@ export function resolveLocalStartTime(
   return existing.localStartTime;
 }
 
+const withBase = (...commands: PieceDrawCommand[]): PieceDrawCommand[] => [
+  { kind: "rect", x: -0.66, y: 0.49, width: 1.32, height: 0.18 },
+  { kind: "rect", x: -0.5, y: 0.29, width: 1.0, height: 0.16 },
+  ...commands
+];
+
+const pieceGeometryByType: Record<Lowercase<PieceCode>, PieceDrawCommand[]> = {
+  p: withBase(
+    { kind: "circle", x: 0, y: -0.34, radius: 0.26 },
+    {
+      kind: "polygon",
+      points: [
+        [-0.22, -0.05],
+        [0.22, -0.05],
+        [0.28, 0.27],
+        [-0.28, 0.27]
+      ]
+    }
+  ),
+  r: withBase(
+    { kind: "rect", x: -0.38, y: -0.32, width: 0.76, height: 0.62 },
+    { kind: "rect", x: -0.48, y: -0.46, width: 0.14, height: 0.14 },
+    { kind: "rect", x: -0.08, y: -0.46, width: 0.16, height: 0.14 },
+    { kind: "rect", x: 0.34, y: -0.46, width: 0.14, height: 0.14 }
+  ),
+  n: withBase(
+    {
+      kind: "polygon",
+      points: [
+        [-0.4, 0.29],
+        [-0.32, -0.38],
+        [-0.06, -0.54],
+        [0.18, -0.46],
+        [0.12, -0.18],
+        [0.34, -0.02],
+        [0.2, 0.2],
+        [0.3, 0.29]
+      ]
+    },
+    { kind: "circle", x: -0.1, y: -0.31, radius: 0.04 },
+    { kind: "line", from: [-0.02, -0.08], to: [0.18, -0.02] }
+  ),
+  b: withBase(
+    { kind: "circle", x: 0, y: -0.38, radius: 0.18 },
+    {
+      kind: "polygon",
+      points: [
+        [0, -0.62],
+        [0.12, -0.5],
+        [0.04, -0.3],
+        [0.22, -0.04],
+        [0.16, 0.27],
+        [-0.16, 0.27],
+        [-0.22, -0.04],
+        [-0.04, -0.3],
+        [-0.12, -0.5]
+      ]
+    },
+    { kind: "line", from: [-0.02, -0.56], to: [0.12, -0.28] }
+  ),
+  q: withBase(
+    {
+      kind: "polygon",
+      points: [
+        [-0.42, 0.27],
+        [-0.3, -0.24],
+        [-0.16, -0.42],
+        [0, -0.16],
+        [0.16, -0.42],
+        [0.3, -0.24],
+        [0.42, 0.27]
+      ]
+    },
+    { kind: "circle", x: -0.28, y: -0.44, radius: 0.08 },
+    { kind: "circle", x: 0, y: -0.54, radius: 0.09 },
+    { kind: "circle", x: 0.28, y: -0.44, radius: 0.08 }
+  ),
+  k: withBase(
+    { kind: "rect", x: -0.18, y: -0.2, width: 0.36, height: 0.5 },
+    {
+      kind: "polygon",
+      points: [
+        [-0.32, 0.27],
+        [-0.24, -0.02],
+        [0.24, -0.02],
+        [0.32, 0.27]
+      ]
+    },
+    { kind: "line", from: [0, -0.7], to: [0, -0.32] },
+    { kind: "line", from: [-0.18, -0.52], to: [0.18, -0.52] }
+  )
+};
+
+const pieceSilhouettes: Record<Lowercase<PieceCode>, PieceSilhouette> = {
+  p: { label: "pawn", featureTags: ["pawnHead"], crownPoints: 0, geometryScore: 4 },
+  r: { label: "rook", featureTags: ["battlements", "tallBody"], crownPoints: 3, geometryScore: 6 },
+  n: { label: "knight", featureTags: ["horseHead", "tallBody"], crownPoints: 0, geometryScore: 7 },
+  b: { label: "bishop", featureTags: ["mitre", "tallBody"], crownPoints: 0, geometryScore: 7 },
+  q: { label: "queen", featureTags: ["crown", "tallBody"], crownPoints: 3, geometryScore: 8 },
+  k: { label: "king", featureTags: ["cross", "tallBody"], crownPoints: 0, geometryScore: 7 }
+};
+
+export function getPieceSilhouette(piece: PieceCode): PieceSilhouette {
+  return pieceSilhouettes[piece.toLowerCase() as Lowercase<PieceCode>];
+}
+
+export function getPieceDrawCommands(piece: PieceCode): PieceDrawCommand[] {
+  return pieceGeometryByType[piece.toLowerCase() as Lowercase<PieceCode>];
+}
+
+function renderCommand(ctx: CanvasRenderingContext2D, command: PieceDrawCommand, scale: number): void {
+  switch (command.kind) {
+    case "circle":
+      ctx.beginPath();
+      ctx.arc(command.x * scale, command.y * scale, command.radius * scale, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      return;
+    case "rect":
+      ctx.beginPath();
+      ctx.rect(command.x * scale, command.y * scale, command.width * scale, command.height * scale);
+      ctx.fill();
+      ctx.stroke();
+      return;
+    case "polygon":
+      ctx.beginPath();
+      command.points.forEach(([px, py], index) => {
+        const x = px * scale;
+        const y = py * scale;
+        if (index === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      });
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      return;
+    case "line":
+      ctx.beginPath();
+      ctx.moveTo(command.from[0] * scale, command.from[1] * scale);
+      ctx.lineTo(command.to[0] * scale, command.to[1] * scale);
+      ctx.stroke();
+      return;
+    default:
+      return;
+  }
+}
+
 function drawPiece(ctx: CanvasRenderingContext2D, piece: PieceCode, x: number, y: number, size: number): void {
   const isWhite = piece === piece.toUpperCase();
-  const fill = isWhite ? "#f6f2e8" : "#1b1b1b";
-  const stroke = isWhite ? "#1b1b1b" : "#f6f2e8";
-  const base = size * 0.34;
+  const fill = isWhite ? "#f7f0dd" : "#18181c";
+  const stroke = isWhite ? "#1a2230" : "#f7f0dd";
+  const accent = isWhite ? "rgba(17, 24, 39, 0.18)" : "rgba(255, 248, 230, 0.22)";
+  const scale = size * 0.38;
 
   ctx.save();
   ctx.translate(x, y);
+  ctx.lineJoin = "round";
+  ctx.lineCap = "round";
+  ctx.shadowColor = isWhite ? "rgba(11, 15, 20, 0.22)" : "rgba(247, 240, 221, 0.16)";
+  ctx.shadowBlur = size * 0.06;
   ctx.fillStyle = fill;
   ctx.strokeStyle = stroke;
-  ctx.lineWidth = Math.max(1.5, size * 0.06);
+  ctx.lineWidth = Math.max(1.5, size * 0.055);
 
-  switch (piece.toLowerCase()) {
-    case "p": {
-      ctx.beginPath();
-      ctx.arc(0, -base * 0.35, base * 0.55, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.rect(-base * 0.5, base * 0.1, base, base * 0.55);
-      ctx.fill();
-      ctx.stroke();
-      break;
-    }
-    case "r": {
-      ctx.beginPath();
-      ctx.rect(-base * 0.65, -base * 0.2, base * 1.3, base * 1.1);
-      ctx.fill();
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.rect(-base * 0.8, -base * 0.7, base * 1.6, base * 0.4);
-      ctx.fill();
-      ctx.stroke();
-      break;
-    }
-    case "n": {
-      ctx.beginPath();
-      ctx.moveTo(-base * 0.7, base * 0.7);
-      ctx.lineTo(-base * 0.3, -base * 0.7);
-      ctx.lineTo(base * 0.6, -base * 0.3);
-      ctx.lineTo(base * 0.4, base * 0.8);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-      break;
-    }
-    case "b": {
-      ctx.beginPath();
-      ctx.arc(0, -base * 0.3, base * 0.6, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(0, -base * 0.1);
-      ctx.lineTo(0, base * 0.8);
-      ctx.stroke();
-      break;
-    }
-    case "q": {
-      ctx.beginPath();
-      ctx.moveTo(-base * 0.7, base * 0.7);
-      ctx.lineTo(-base * 0.5, -base * 0.2);
-      ctx.lineTo(0, -base * 0.8);
-      ctx.lineTo(base * 0.5, -base * 0.2);
-      ctx.lineTo(base * 0.7, base * 0.7);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-      break;
-    }
-    case "k": {
-      ctx.beginPath();
-      ctx.rect(-base * 0.45, -base * 0.7, base * 0.9, base * 1.4);
-      ctx.fill();
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(0, -base * 1.0);
-      ctx.lineTo(0, -base * 1.4);
-      ctx.moveTo(-base * 0.3, -base * 1.2);
-      ctx.lineTo(base * 0.3, -base * 1.2);
-      ctx.stroke();
-      break;
-    }
-    default:
-      break;
+  for (const command of getPieceDrawCommands(piece)) {
+    renderCommand(ctx, command, scale);
   }
+
+  ctx.shadowBlur = 0;
+  ctx.strokeStyle = accent;
+  ctx.lineWidth = Math.max(1, size * 0.028);
+  ctx.beginPath();
+  ctx.moveTo(-scale * 0.34, scale * 0.05);
+  ctx.quadraticCurveTo(0, -scale * 0.06, scale * 0.34, scale * 0.05);
+  ctx.stroke();
 
   ctx.restore();
 }
