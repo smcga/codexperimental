@@ -82,17 +82,35 @@ describe("chessEffect helpers", () => {
   });
 
   it("builds draw commands that preserve iconic piece details", () => {
+    const pawnCommands = getPieceDrawCommands("P");
     const queenCommands = getPieceDrawCommands("Q");
     const kingCommands = getPieceDrawCommands("K");
     const knightCommands = getPieceDrawCommands("N");
     const bishopCommands = getPieceDrawCommands("B");
     const rookCommands = getPieceDrawCommands("R");
 
-    expect(queenCommands.filter((command) => command.kind === "circle")).toHaveLength(3);
-    expect(kingCommands.filter((command) => command.kind === "line")).toHaveLength(2);
-    expect(knightCommands.some((command) => command.kind === "polygon")).toBe(true);
-    expect(knightCommands.some((command) => command.kind === "line")).toBe(true);
-    expect(bishopCommands.filter((command) => command.kind === "line")).toHaveLength(1);
-    expect(rookCommands.filter((command) => command.kind === "rect")).toHaveLength(6);
+    expect(pawnCommands.filter((command) => command.kind === "line")).toHaveLength(1);
+    expect(queenCommands.filter((command) => command.kind === "circle")).toHaveLength(5);
+    expect(queenCommands.filter((command) => command.kind === "line")).toHaveLength(1);
+    expect(kingCommands.filter((command) => command.kind === "line")).toHaveLength(3);
+    expect(knightCommands.filter((command) => command.kind === "polygon")).toHaveLength(2);
+    expect(knightCommands.filter((command) => command.kind === "line")).toHaveLength(2);
+    expect(bishopCommands.filter((command) => command.kind === "line")).toHaveLength(2);
+    expect(rookCommands.filter((command) => command.kind === "rect")).toHaveLength(7);
+  });
+
+  it("gives major pieces unique geometry signatures so they stay recognisable at a glance", () => {
+    const signature = (piece: "Q" | "K" | "B" | "N" | "R" | "P") =>
+      getPieceDrawCommands(piece).reduce<Record<string, number>>((counts, command) => {
+        counts[command.kind] = (counts[command.kind] ?? 0) + 1;
+        return counts;
+      }, {});
+
+    expect(signature("P")).toEqual({ rect: 3, circle: 1, polygon: 1, line: 1 });
+    expect(signature("R")).toEqual({ rect: 7, line: 1 });
+    expect(signature("N")).toEqual({ rect: 2, polygon: 2, circle: 1, line: 2 });
+    expect(signature("B")).toEqual({ rect: 2, circle: 1, polygon: 1, line: 2 });
+    expect(signature("Q")).toEqual({ rect: 2, polygon: 1, circle: 5, line: 1 });
+    expect(signature("K")).toEqual({ rect: 4, polygon: 1, line: 3 });
   });
 });

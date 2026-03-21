@@ -1,5 +1,5 @@
 // Self-playing chess effect with higher-contrast board highlights and more recognisable,
-// silhouette-led piece drawings for each chess piece type.
+// silhouette-led piece drawings with clearer crowns, crosses, mitres, battlements, and horse heads.
 import { fitSquareToSafe } from "./framingFit";
 import { Effect, EffectRenderContext } from "./types";
 
@@ -189,38 +189,46 @@ const withBase = (...commands: PieceDrawCommand[]): PieceDrawCommand[] => [
 const pieceGeometryByType: Record<Lowercase<PieceCode>, PieceDrawCommand[]> = {
   p: withBase(
     { kind: "circle", x: 0, y: -0.34, radius: 0.26 },
+    { kind: "rect", x: -0.16, y: -0.08, width: 0.32, height: 0.08 },
     {
       kind: "polygon",
       points: [
-        [-0.22, -0.05],
-        [0.22, -0.05],
-        [0.28, 0.27],
-        [-0.28, 0.27]
+        [-0.18, -0.02],
+        [0.18, -0.02],
+        [0.3, 0.27],
+        [-0.3, 0.27]
       ]
-    }
+    },
+    { kind: "line", from: [-0.12, 0.08], to: [0.12, 0.08] }
   ),
   r: withBase(
-    { kind: "rect", x: -0.38, y: -0.32, width: 0.76, height: 0.62 },
-    { kind: "rect", x: -0.48, y: -0.46, width: 0.14, height: 0.14 },
-    { kind: "rect", x: -0.08, y: -0.46, width: 0.16, height: 0.14 },
-    { kind: "rect", x: 0.34, y: -0.46, width: 0.14, height: 0.14 }
+    { kind: "rect", x: -0.38, y: -0.34, width: 0.76, height: 0.64 },
+    { kind: "rect", x: -0.48, y: -0.5, width: 0.13, height: 0.16 },
+    { kind: "rect", x: -0.18, y: -0.5, width: 0.13, height: 0.16 },
+    { kind: "rect", x: 0.05, y: -0.5, width: 0.13, height: 0.16 },
+    { kind: "rect", x: 0.35, y: -0.5, width: 0.13, height: 0.16 },
+    { kind: "line", from: [-0.24, -0.08], to: [0.24, -0.08] }
   ),
   n: withBase(
     {
       kind: "polygon",
       points: [
         [-0.4, 0.29],
-        [-0.32, -0.38],
-        [-0.06, -0.54],
-        [0.18, -0.46],
-        [0.12, -0.18],
-        [0.34, -0.02],
-        [0.2, 0.2],
-        [0.3, 0.29]
+        [-0.34, -0.12],
+        [-0.28, -0.42],
+        [-0.08, -0.58],
+        [0.08, -0.48],
+        [0.02, -0.34],
+        [0.18, -0.22],
+        [0.34, -0.04],
+        [0.18, 0.08],
+        [0.28, 0.29]
       ]
     },
-    { kind: "circle", x: -0.1, y: -0.31, radius: 0.04 },
-    { kind: "line", from: [-0.02, -0.08], to: [0.18, -0.02] }
+    { kind: "polygon", points: [[-0.18, -0.54], [-0.1, -0.72], [-0.02, -0.5]] },
+    { kind: "circle", x: -0.12, y: -0.33, radius: 0.04 },
+    { kind: "line", from: [-0.06, -0.08], to: [0.16, 0] },
+    { kind: "line", from: [-0.1, 0.06], to: [0.14, 0.16] }
   ),
   b: withBase(
     { kind: "circle", x: 0, y: -0.38, radius: 0.18 },
@@ -230,46 +238,56 @@ const pieceGeometryByType: Record<Lowercase<PieceCode>, PieceDrawCommand[]> = {
         [0, -0.62],
         [0.12, -0.5],
         [0.04, -0.3],
+        [0.2, -0.14],
         [0.22, -0.04],
         [0.16, 0.27],
         [-0.16, 0.27],
         [-0.22, -0.04],
+        [-0.2, -0.14],
         [-0.04, -0.3],
         [-0.12, -0.5]
       ]
     },
-    { kind: "line", from: [-0.02, -0.56], to: [0.12, -0.28] }
+    { kind: "line", from: [-0.04, -0.58], to: [0.14, -0.24] },
+    { kind: "line", from: [-0.16, 0.02], to: [0.16, 0.02] }
   ),
   q: withBase(
     {
       kind: "polygon",
       points: [
         [-0.42, 0.27],
-        [-0.3, -0.24],
-        [-0.16, -0.42],
-        [0, -0.16],
-        [0.16, -0.42],
-        [0.3, -0.24],
+        [-0.34, -0.12],
+        [-0.24, -0.38],
+        [-0.12, -0.18],
+        [0, -0.44],
+        [0.12, -0.18],
+        [0.24, -0.38],
+        [0.34, -0.12],
         [0.42, 0.27]
       ]
     },
-    { kind: "circle", x: -0.28, y: -0.44, radius: 0.08 },
-    { kind: "circle", x: 0, y: -0.54, radius: 0.09 },
-    { kind: "circle", x: 0.28, y: -0.44, radius: 0.08 }
+    { kind: "circle", x: -0.3, y: -0.44, radius: 0.07 },
+    { kind: "circle", x: -0.15, y: -0.56, radius: 0.07 },
+    { kind: "circle", x: 0, y: -0.62, radius: 0.08 },
+    { kind: "circle", x: 0.15, y: -0.56, radius: 0.07 },
+    { kind: "circle", x: 0.3, y: -0.44, radius: 0.07 },
+    { kind: "line", from: [-0.24, -0.1], to: [0.24, -0.1] }
   ),
   k: withBase(
-    { kind: "rect", x: -0.18, y: -0.2, width: 0.36, height: 0.5 },
+    { kind: "rect", x: -0.2, y: -0.22, width: 0.4, height: 0.52 },
     {
       kind: "polygon",
       points: [
-        [-0.32, 0.27],
-        [-0.24, -0.02],
-        [0.24, -0.02],
-        [0.32, 0.27]
+        [-0.34, 0.27],
+        [-0.24, -0.06],
+        [0.24, -0.06],
+        [0.34, 0.27]
       ]
     },
-    { kind: "line", from: [0, -0.7], to: [0, -0.32] },
-    { kind: "line", from: [-0.18, -0.52], to: [0.18, -0.52] }
+    { kind: "rect", x: -0.1, y: -0.46, width: 0.2, height: 0.1 },
+    { kind: "line", from: [0, -0.78], to: [0, -0.36] },
+    { kind: "line", from: [-0.2, -0.58], to: [0.2, -0.58] },
+    { kind: "line", from: [-0.2, -0.08], to: [0.2, -0.08] }
   )
 };
 
@@ -332,6 +350,7 @@ function renderCommand(ctx: CanvasRenderingContext2D, command: PieceDrawCommand,
 
 function drawPiece(ctx: CanvasRenderingContext2D, piece: PieceCode, x: number, y: number, size: number): void {
   const isWhite = piece === piece.toUpperCase();
+  const silhouette = getPieceSilhouette(piece);
   const fill = isWhite ? "#f7f0dd" : "#18181c";
   const stroke = isWhite ? "#1a2230" : "#f7f0dd";
   const accent = isWhite ? "rgba(17, 24, 39, 0.18)" : "rgba(255, 248, 230, 0.22)";
@@ -355,8 +374,45 @@ function drawPiece(ctx: CanvasRenderingContext2D, piece: PieceCode, x: number, y
   ctx.strokeStyle = accent;
   ctx.lineWidth = Math.max(1, size * 0.028);
   ctx.beginPath();
-  ctx.moveTo(-scale * 0.34, scale * 0.05);
-  ctx.quadraticCurveTo(0, -scale * 0.06, scale * 0.34, scale * 0.05);
+  switch (silhouette.label) {
+    case "pawn":
+      ctx.moveTo(-scale * 0.16, scale * 0.08);
+      ctx.lineTo(scale * 0.16, scale * 0.08);
+      break;
+    case "rook":
+      ctx.moveTo(-scale * 0.24, -scale * 0.08);
+      ctx.lineTo(scale * 0.24, -scale * 0.08);
+      ctx.moveTo(-scale * 0.24, scale * 0.06);
+      ctx.lineTo(scale * 0.24, scale * 0.06);
+      break;
+    case "knight":
+      ctx.moveTo(-scale * 0.08, -scale * 0.06);
+      ctx.lineTo(scale * 0.18, scale * 0.02);
+      ctx.moveTo(-scale * 0.12, scale * 0.08);
+      ctx.lineTo(scale * 0.14, scale * 0.16);
+      break;
+    case "bishop":
+      ctx.moveTo(-scale * 0.04, -scale * 0.4);
+      ctx.lineTo(scale * 0.12, -scale * 0.16);
+      ctx.moveTo(-scale * 0.16, scale * 0.02);
+      ctx.lineTo(scale * 0.16, scale * 0.02);
+      break;
+    case "queen":
+      ctx.moveTo(-scale * 0.26, -scale * 0.1);
+      ctx.lineTo(scale * 0.26, -scale * 0.1);
+      ctx.moveTo(-scale * 0.18, -scale * 0.28);
+      ctx.lineTo(0, -scale * 0.46);
+      ctx.lineTo(scale * 0.18, -scale * 0.28);
+      break;
+    case "king":
+      ctx.moveTo(0, -scale * 0.56);
+      ctx.lineTo(0, -scale * 0.32);
+      ctx.moveTo(-scale * 0.16, -scale * 0.44);
+      ctx.lineTo(scale * 0.16, -scale * 0.44);
+      ctx.moveTo(-scale * 0.2, -scale * 0.06);
+      ctx.lineTo(scale * 0.2, -scale * 0.06);
+      break;
+  }
   ctx.stroke();
 
   ctx.restore();
