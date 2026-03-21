@@ -71,6 +71,7 @@ import { VoxelWorldBuilderEffect } from "./VoxelWorldBuilder";
 import { WaterDropsEffect } from "./waterDropsEffect";
 import { FireworksDisplayEffect } from "./fireworksDisplayEffect";
 import { CosmicVoyageEffect } from "./cosmicVoyageEffect";
+import { CameraPunchThroughEffect } from "./cameraPunchThroughEffect";
 
 export const effectRegistry: Record<string, Effect> = {
   starfield: new StarfieldEffect(),
@@ -145,6 +146,7 @@ export const effectRegistry: Record<string, Effect> = {
   water_drops: new WaterDropsEffect(),
   fireworks_display: new FireworksDisplayEffect(),
   cosmic_voyage: new CosmicVoyageEffect(),
+  camera_punch_through: new CameraPunchThroughEffect(),
 };
 
 export function resetEffects(): void {

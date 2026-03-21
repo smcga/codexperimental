@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/index.ts`.
 
-Total effects: **72**.
+Total effects: **73**.
 
 ## Table of contents
 
@@ -78,6 +78,7 @@ Total effects: **72**.
 - [Effect: water_drops](#effect-water-drops)
 - [Effect: fireworks_display](#effect-fireworks-display)
 - [Effect: cosmic_voyage](#effect-cosmic-voyage)
+- [Effect: camera_punch_through](#effect-camera-punch-through)
 
 ## Cross-reference
 
@@ -97,8 +98,8 @@ Total effects: **72**.
 
 ### Common parameter patterns
 
-- `speed` (used in 41 effects)
-- `seed` (used in 29 effects)
+- `speed` (used in 42 effects)
+- `seed` (used in 30 effects)
 - `audioReact` (used in 29 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 10 effects)
@@ -2606,6 +2607,37 @@ Total effects: **72**.
 ```json
 {
   "effect": "cosmic_voyage",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: camera_punch_through
+
+- **Registry key:** `camera_punch_through`
+- **Implementation:** `src/renderer/effects/cameraPunchThroughEffect.ts` (class `CameraPunchThroughEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by CameraPunchThroughEffect (src/renderer/effects/cameraPunchThroughEffect.ts).
+- **Audio features:** bass, beatStrength, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.blur` | number | no explicit default | unspecified | Used in effect render logic. | yes |
+| `params.depthFade` | number | no explicit default | unspecified | Used in effect render logic. | yes |
+| `params.fov` | number | no explicit default | unspecified | Used in effect render logic. | yes |
+| `params.seed` | number | no explicit default | unspecified | Used in effect render logic. | yes |
+| `params.speed` | number | no explicit default | unspecified | Used in effect render logic. | yes |
+| `params.streaks` | number | no explicit default | unspecified | Used in effect render logic. | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "camera_punch_through",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
