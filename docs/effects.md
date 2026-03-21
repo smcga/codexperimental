@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/index.ts`.
 
-Total effects: **72**.
+Total effects: **73**.
 
 ## Table of contents
 
@@ -78,6 +78,7 @@ Total effects: **72**.
 - [Effect: water_drops](#effect-water-drops)
 - [Effect: fireworks_display](#effect-fireworks-display)
 - [Effect: cosmic_voyage](#effect-cosmic-voyage)
+- [Effect: lemmings_march](#effect-lemmings-march)
 
 ## Cross-reference
 
@@ -98,7 +99,7 @@ Total effects: **72**.
 ### Common parameter patterns
 
 - `speed` (used in 41 effects)
-- `seed` (used in 29 effects)
+- `seed` (used in 30 effects)
 - `audioReact` (used in 29 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 10 effects)
@@ -2606,6 +2607,42 @@ Total effects: **72**.
 ```json
 {
   "effect": "cosmic_voyage",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: lemmings_march
+
+- **Registry key:** `lemmings_march`
+- **Implementation:** `src/renderer/effects/lemmingsMarchEffect.ts` (class `LemmingsMarchEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Demoscene-flavoured lemmings-like colony where tiny walkers spill from the sky, traverse a deformable landscape, use contextual abilities, and score by reaching a portal.
+- **Audio features:** bass, beat, beatStrength
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.bashRate` | number | 28 | min 2, max 40 | Bash Rate | yes |
+| `params.bridgeRate` | number | 6 | min 1, max 12 | Bridge Rate | yes |
+| `params.colonySize` | number | 18 | min 4, max 48 | Colony Size | yes |
+| `params.digRate` | number | 18 | min 2, max 40 | Dig Rate | yes |
+| `params.floatiness` | number | 0.45 | min 0, max 1 | Floatiness | yes |
+| `params.hilliness` | number | 0.65 | min 0, max 1.4 | Hilliness | yes |
+| `params.scrollFollow` | number | 0.22 | min 0, max 1 | Scroll Follow | yes |
+| `params.seed` | number | 73 | min 0, max 9999 | Seed | yes |
+| `params.spawnInterval` | number | 0.9 | min 0.2, max 3 | Spawn Interval | yes |
+| `params.wallRate` | number | 0.22 | min 0, max 0.5 | Wall Rate | yes |
+| `params.worldLength` | number | 320 | min 120, max 640 | World Length | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "lemmings_march",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
