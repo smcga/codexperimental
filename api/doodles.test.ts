@@ -84,7 +84,7 @@ describe("api/doodles handler", () => {
       ltrim: vi.fn(async () => "OK")
     };
 
-    vi.doMock("./kv", () => ({
+    vi.doMock("./kv.js", () => ({
       createKvClients: () => ({ readClient: readMock, writeClient: writeMock })
     }));
 
@@ -118,7 +118,7 @@ describe("api/doodles handler", () => {
       ltrim: vi.fn(async () => "OK")
     };
 
-    vi.doMock("./kv", () => ({
+    vi.doMock("./kv.js", () => ({
       createKvClients: () => ({ readClient: mock, writeClient: mock })
     }));
 
