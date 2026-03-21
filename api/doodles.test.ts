@@ -38,6 +38,11 @@ describe("api/doodles handler", () => {
   });
 
   it("returns an empty doodle list when KV is not configured", async () => {
+    delete process.env.DB2_KV_REST_API_URL;
+    delete process.env.DB2_KV_URL;
+    delete process.env.DB2_REDIS_URL;
+    delete process.env.DB2_KV_REST_API_TOKEN;
+    delete process.env.DB2_KV_REST_API_READ_ONLY_TOKEN;
     delete process.env.KV_REST_API_URL;
     delete process.env.KV_URL;
     delete process.env.REDIS_URL;
@@ -54,10 +59,6 @@ describe("api/doodles handler", () => {
   });
 
   it("uses the read client for GET and write client for POST", async () => {
-    process.env.KV_REST_API_URL = "https://example.upstash.io";
-    process.env.KV_REST_API_TOKEN = "write-token";
-    process.env.KV_REST_API_READ_ONLY_TOKEN = "read-token";
-
     const existingDoodle = {
       id: "old",
       imageData: "data:image/png;base64,b2xk",
@@ -83,10 +84,8 @@ describe("api/doodles handler", () => {
       ltrim: vi.fn(async () => "OK")
     };
 
-    vi.mock("@upstash/redis", () => ({
-      Redis: vi.fn()
-        .mockImplementationOnce(() => readMock)
-        .mockImplementationOnce(() => writeMock)
+    vi.doMock("./kv", () => ({
+      createKvClients: () => ({ readClient: readMock, writeClient: writeMock })
     }));
 
     const { default: handler } = await import("./doodles");
@@ -113,17 +112,14 @@ describe("api/doodles handler", () => {
   });
 
   it("rejects invalid doodle payloads", async () => {
-    process.env.KV_REST_API_URL = "https://example.upstash.io";
-    process.env.KV_REST_API_TOKEN = "write-token";
-
     const mock: MockRedis = {
       lrange: vi.fn(async () => []),
       lpush: vi.fn(async () => 1),
       ltrim: vi.fn(async () => "OK")
     };
 
-    vi.mock("@upstash/redis", () => ({
-      Redis: vi.fn().mockImplementation(() => mock)
+    vi.doMock("./kv", () => ({
+      createKvClients: () => ({ readClient: mock, writeClient: mock })
     }));
 
     const { default: handler } = await import("./doodles");
