@@ -12,7 +12,8 @@
     "test": "vitest run",
     "docs:effects": "tsx scripts/generateEffectsDocs.ts",
     "docs:check": "vitest run src/renderer/effects/effectsDocs.test.ts",
-    "gen:explicitpixels": "tsx scripts/generateExplicitPixels.ts"
+    "gen:explicitpixels": "tsx scripts/generateExplicitPixels.ts",
+    "test:integration": "vitest run api/kv.integration.test.ts"
   },
   "dependencies": {
     "@upstash/redis": "^1.34.0"

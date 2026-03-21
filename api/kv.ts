@@ -4,6 +4,12 @@ type KvEnv = NodeJS.ProcessEnv;
 
 export type KvClient = Pick<Redis, "get" | "incr" | "lrange" | "lpush" | "ltrim">;
 
+type KvConfig = {
+  url: string | null;
+  readToken: string | null;
+  writeToken: string | null;
+};
+
 function normalizeEnvValue(value: string | undefined): string | null {
   if (typeof value !== "string") {
     return null;
@@ -14,7 +20,7 @@ function normalizeEnvValue(value: string | undefined): string | null {
     return null;
   }
 
-  const unquoted = trimmed.replace(/^(["'])(.*)\1$/s, "$2").trim();
+  const unquoted = trimmed.replace(/^("|')(.*)\1$/s, "$2").trim();
   return unquoted || null;
 }
 
@@ -29,28 +35,43 @@ function getFirstDefined(env: KvEnv, keys: string[]): string | null {
   return null;
 }
 
-function getRestUrl(env: KvEnv): string | null {
-  const preferredRestUrl = getFirstDefined(env, ["DB2_KV_REST_API_URL", "KV_REST_API_URL"]);
-  if (preferredRestUrl) {
-    return preferredRestUrl;
-  }
+function hasAnyDefined(env: KvEnv, keys: string[]): boolean {
+  return keys.some((key) => normalizeEnvValue(env[key]) !== null);
+}
 
-  const compatibleUrl = getFirstDefined(env, ["DB2_KV_URL", "DB2_REDIS_URL", "KV_URL", "REDIS_URL"]);
-  if (compatibleUrl?.startsWith("http://") || compatibleUrl?.startsWith("https://")) {
-    return compatibleUrl;
+function getHttpCompatibleUrl(env: KvEnv, keys: string[]): string | null {
+  const url = getFirstDefined(env, keys);
+  if (url?.startsWith("http://") || url?.startsWith("https://")) {
+    return url;
   }
 
   return null;
 }
 
-export function getKvConfig(env: KvEnv = process.env): { url: string | null; readToken: string | null; writeToken: string | null } {
-  const url = getRestUrl(env);
-  const writeToken = getFirstDefined(env, ["DB2_KV_REST_API_TOKEN", "KV_REST_API_TOKEN"]);
-  const readToken = getFirstDefined(env, ["DB2_KV_REST_API_READ_ONLY_TOKEN", "KV_REST_API_READ_ONLY_TOKEN"]) ?? writeToken;
+export function getKvConfig(env: KvEnv = process.env): KvConfig {
+  const hasDb2Config = hasAnyDefined(env, [
+    "DB2_KV_REST_API_URL",
+    "DB2_KV_URL",
+    "DB2_REDIS_URL",
+    "DB2_KV_REST_API_TOKEN",
+    "DB2_KV_REST_API_READ_ONLY_TOKEN"
+  ]);
+
+  const url = hasDb2Config
+    ? getHttpCompatibleUrl(env, ["DB2_KV_REST_API_URL", "DB2_KV_URL", "DB2_REDIS_URL"])
+    : getHttpCompatibleUrl(env, ["KV_REST_API_URL", "KV_URL", "REDIS_URL"]);
+
+  const writeToken = hasDb2Config
+    ? getFirstDefined(env, ["DB2_KV_REST_API_TOKEN"])
+    : getFirstDefined(env, ["KV_REST_API_TOKEN"]);
+
+  const readToken = hasDb2Config
+    ? getFirstDefined(env, ["DB2_KV_REST_API_READ_ONLY_TOKEN"])
+    : getFirstDefined(env, ["KV_REST_API_READ_ONLY_TOKEN"]);
 
   return {
     url,
-    readToken,
+    readToken: readToken ?? writeToken,
     writeToken
   };
 }

@@ -34,6 +34,22 @@ describe("getKvConfig", () => {
     });
   });
 
+  it("locks to DB2 vars once any DB2 config is present", () => {
+    const config = getKvConfig({
+      DB2_KV_REST_API_URL: "https://db2.example.upstash.io",
+      DB2_KV_REST_API_TOKEN: "db2-write",
+      KV_REST_API_URL: "https://legacy.example.upstash.io",
+      KV_REST_API_TOKEN: "legacy-write",
+      KV_REST_API_READ_ONLY_TOKEN: "legacy-read"
+    } as NodeJS.ProcessEnv);
+
+    expect(config).toEqual({
+      url: "https://db2.example.upstash.io",
+      writeToken: "db2-write",
+      readToken: "db2-write"
+    });
+  });
+
   it("uses the write token for reads when no read-only token is configured", () => {
     const config = getKvConfig({
       DB2_KV_REST_API_URL: "https://db2.example.upstash.io",
