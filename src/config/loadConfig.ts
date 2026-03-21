@@ -9,7 +9,8 @@ const TRANSITION_TYPES = [
   "slide-down",
   "iris",
   "flash",
-  "signal-collapse"
+  "signal-collapse",
+  "camera-punch-through"
 ] as const;
 
 export type TransitionType = (typeof TRANSITION_TYPES)[number];

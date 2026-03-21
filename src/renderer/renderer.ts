@@ -9,6 +9,7 @@ import { computeFraming, FramingOverride, FramingState } from "./framing";
 import { resolveMonochrome } from "./monochrome";
 import { computePresentTransform, computeScreenSafeRect } from "./present";
 import { renderTextCues } from "./text/textRenderer";
+import { CameraPunchThroughTransitionState, computeCameraPunchThroughTransitionState } from "./transitions/cameraPunchThrough";
 
 export type RenderState = {
   ctx: CanvasRenderingContext2D;
@@ -270,6 +271,10 @@ export class Renderer {
       this.mobileToCtx.fillRect(0, 0, width, height);
       this.renderSectionToMobileScreen(this.mobileFromCtx, transition.from, time, delta, audio, shakeX, shakeY, camera, framing);
       this.renderSectionToMobileScreen(this.mobileToCtx, transition.to, time, delta, audio, shakeX, shakeY, camera, framing);
+      if (transition.type === "camera-punch-through") {
+        this.drawCameraPunchThroughMobileTransition(targetCtx, transition.progress, width, height);
+        return;
+      }
       targetCtx.save();
       targetCtx.globalAlpha = 1 - clamp(transition.progress, 0, 1);
       targetCtx.drawImage(this.mobileFromCanvas, 0, 0, width, height);
@@ -280,6 +285,62 @@ export class Renderer {
     }
 
     this.renderSectionToMobileScreen(targetCtx, section, time, delta, audio, shakeX, shakeY, camera, framing);
+  }
+
+  private drawCameraPunchThroughMobileTransition(
+    targetCtx: CanvasRenderingContext2D,
+    progress: number,
+    width: number,
+    height: number
+  ): void {
+    const state = computeCameraPunchThroughTransitionState(progress);
+    const centerX = width / 2;
+    const centerY = height / 2;
+
+    targetCtx.save();
+    targetCtx.translate(centerX, centerY);
+    targetCtx.scale(state.fromZoom, state.fromZoom);
+    targetCtx.translate(-centerX, -centerY + state.fromPanY);
+    targetCtx.globalAlpha = state.fromAlpha;
+    targetCtx.drawImage(this.mobileFromCanvas, 0, 0, width, height);
+    targetCtx.restore();
+
+    if (state.streakAlpha > 0.001) {
+      this.drawCameraPunchThroughStreaks(targetCtx, centerX, centerY, width, height, progress, state);
+    }
+
+    targetCtx.save();
+    targetCtx.translate(centerX, centerY);
+    targetCtx.scale(state.toZoom, state.toZoom);
+    targetCtx.translate(-centerX, -centerY);
+    targetCtx.globalAlpha = state.toAlpha;
+    targetCtx.drawImage(this.mobileToCanvas, 0, 0, width, height);
+    targetCtx.restore();
+
+    if (state.bloomAlpha > 0.001) {
+      const bloom = targetCtx.createRadialGradient(
+        centerX,
+        centerY,
+        width * 0.04,
+        centerX,
+        centerY,
+        width * state.bloomRadius
+      );
+      bloom.addColorStop(0, `rgba(255, 255, 255, ${clamp(state.bloomAlpha, 0, 1)})`);
+      bloom.addColorStop(0.35, `rgba(190, 230, 255, ${clamp(state.bloomAlpha * 0.55, 0, 1)})`);
+      bloom.addColorStop(1, "rgba(0, 0, 0, 0)");
+      targetCtx.save();
+      targetCtx.fillStyle = bloom;
+      targetCtx.fillRect(0, 0, width, height);
+      targetCtx.restore();
+    }
+
+    if (state.impactAlpha > 0.001) {
+      targetCtx.save();
+      targetCtx.fillStyle = `rgba(255, 255, 255, ${Math.pow(state.impactAlpha, 0.8)})`;
+      targetCtx.fillRect(0, 0, width, height);
+      targetCtx.restore();
+    }
   }
 
   private renderSectionToMobileScreen(
@@ -544,6 +605,9 @@ export class Renderer {
       case "signal-collapse":
         this.drawSignalCollapseTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
         return;
+      case "camera-punch-through":
+        this.drawCameraPunchThroughTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
+        return;
       case "fade":
         this.drawFadeTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
         return;
@@ -703,6 +767,115 @@ export class Renderer {
     }
   }
 
+  private drawCameraPunchThroughTransition(
+    ctx: CanvasRenderingContext2D,
+    progress: number,
+    scale: number,
+    offsetX: number,
+    offsetY: number,
+    shakeX: number,
+    shakeY: number,
+    camera: CameraState,
+    smoothing: boolean
+  ): void {
+    const state = computeCameraPunchThroughTransitionState(progress);
+    const width = this.baseWidth * scale;
+    const height = this.baseHeight * scale;
+    const rectX = offsetX + shakeX;
+    const rectY = offsetY + shakeY;
+    const centerX = rectX + width / 2;
+    const centerY = rectY + height / 2;
+
+    this.drawCanvasToRect(
+      ctx,
+      this.transitionCanvas,
+      rectX,
+      rectY,
+      width,
+      height,
+      state.fromAlpha,
+      camera,
+      smoothing,
+      state.fromZoom,
+      0,
+      state.fromPanY
+    );
+
+    if (state.streakAlpha > 0.001) {
+      this.drawCameraPunchThroughStreaks(ctx, centerX, centerY, width, height, progress, state);
+    }
+
+    if (state.toAlpha > 0.001) {
+      this.drawCanvasToRect(
+        ctx,
+        this.baseCanvas,
+        rectX,
+        rectY,
+        width,
+        height,
+        state.toAlpha,
+        camera,
+        smoothing,
+        state.toZoom
+      );
+    }
+
+    if (state.ringAlpha > 0.001 || state.bloomAlpha > 0.001) {
+      const bloom = ctx.createRadialGradient(centerX, centerY, width * 0.04, centerX, centerY, width * state.bloomRadius);
+      bloom.addColorStop(0, `rgba(255, 255, 255, ${clamp(state.bloomAlpha, 0, 1)})`);
+      bloom.addColorStop(0.35, `rgba(190, 230, 255, ${clamp(state.bloomAlpha * 0.55, 0, 1)})`);
+      bloom.addColorStop(1, "rgba(0, 0, 0, 0)");
+      ctx.save();
+      ctx.fillStyle = bloom;
+      ctx.fillRect(rectX, rectY, width, height);
+      ctx.strokeStyle = `rgba(200, 240, 255, ${state.ringAlpha})`;
+      ctx.lineWidth = 2 + progress * 4;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, Math.max(width, height) * (0.1 + progress * 0.42), 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    if (state.impactAlpha > 0.001) {
+      ctx.save();
+      ctx.fillStyle = `rgba(255, 255, 255, ${Math.pow(state.impactAlpha, 0.8)})`;
+      ctx.fillRect(rectX, rectY, width, height);
+      ctx.restore();
+    }
+  }
+
+  private drawCameraPunchThroughStreaks(
+    ctx: CanvasRenderingContext2D,
+    centerX: number,
+    centerY: number,
+    width: number,
+    height: number,
+    progress: number,
+    state: CameraPunchThroughTransitionState
+  ): void {
+    const maxRadius = Math.hypot(width, height) * 0.5;
+    const streakCount = 26;
+    ctx.save();
+    ctx.lineCap = "round";
+    for (let i = 0; i < streakCount; i += 1) {
+      const angle = (Math.PI * 2 * i) / streakCount + progress * 0.35;
+      const distance = maxRadius * (0.12 + (i % 5) * 0.035);
+      const length = maxRadius * state.streakLength;
+      const innerX = centerX + Math.cos(angle) * distance * 0.15;
+      const innerY = centerY + Math.sin(angle) * distance * 0.15;
+      const outerX = centerX + Math.cos(angle) * Math.min(maxRadius, distance + length);
+      const outerY = centerY + Math.sin(angle) * Math.min(maxRadius, distance + length);
+      const alpha = state.streakAlpha * (0.45 + ((i * 17) % 7) * 0.08);
+      ctx.strokeStyle = `rgba(175, 225, 255, ${clamp(alpha, 0, 1)})`;
+      ctx.lineWidth = 1.5 + progress * 4 + (i % 3);
+      ctx.beginPath();
+      ctx.moveTo(innerX, innerY);
+      ctx.lineTo(outerX, outerY);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
   private drawScaled(
     ctx: CanvasRenderingContext2D,
     canvas: HTMLCanvasElement,
@@ -715,17 +888,46 @@ export class Renderer {
     camera: CameraState,
     smoothing: boolean
   ): void {
+    this.drawCanvasToRect(
+      ctx,
+      canvas,
+      offsetX + shakeX,
+      offsetY + shakeY,
+      this.baseWidth * scale,
+      this.baseHeight * scale,
+      alpha,
+      camera,
+      smoothing
+    );
+  }
+
+  private drawCanvasToRect(
+    ctx: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    alpha: number,
+    camera: CameraState,
+    smoothing: boolean,
+    extraZoom = 1,
+    extraPanX = 0,
+    extraPanY = 0
+  ): void {
+    const widthScale = width / this.baseWidth;
+    const heightScale = height / this.baseHeight;
     ctx.save();
     ctx.globalAlpha = clamp(alpha, 0, 1);
     ctx.imageSmoothingEnabled = smoothing;
-    ctx.translate(offsetX + shakeX, offsetY + shakeY);
-    ctx.translate((this.baseWidth * scale) / 2, (this.baseHeight * scale) / 2);
-    ctx.scale(camera.zoom, camera.zoom);
+    ctx.translate(x, y);
+    ctx.translate(width / 2, height / 2);
+    ctx.scale(camera.zoom * extraZoom, camera.zoom * extraZoom);
     ctx.translate(
-      -(this.baseWidth * scale) / 2 + camera.panX * scale,
-      -(this.baseHeight * scale) / 2 + camera.panY * scale
+      -width / 2 + camera.panX * widthScale + extraPanX,
+      -height / 2 + camera.panY * heightScale + extraPanY
     );
-    ctx.drawImage(canvas, 0, 0, this.baseWidth * scale, this.baseHeight * scale);
+    ctx.drawImage(canvas, 0, 0, width, height);
     ctx.restore();
   }
 

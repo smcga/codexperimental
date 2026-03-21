@@ -12,7 +12,7 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 - Edit `public/timeline.json` to change the intro terminal script, section timings, transitions, or text cues. Use `mm:ss` or `mm:ss.s` time strings for section and cue start/end values (for example, `01:44.5`).
 - `public/timeline.release.json` is a release-cut timeline that adds per-section era presets and a curated arc for the graphics-history progression. Load it with the release URL flag described below.
 - The bundled timeline includes lyric-style overlays in `textCues`; adjust or replace those cues to change the on-screen callouts synced to the music.
-- Transition types include `fade`, `wipe`, `slide-left`, `slide-right`, `slide-up`, `slide-down`, `iris`, `flash`, and `signal-collapse`.
+- Transition types include `fade`, `wipe`, `slide-left`, `slide-right`, `slide-up`, `slide-down`, `iris`, `flash`, `signal-collapse`, and `camera-punch-through`.
 - Effect sections can include a `params` object to tune effect-specific settings such as starfield speed, warp, or turning intensity.
 - Effects can animate numeric params with an `automation` array on a section or a layer; entries are applied in array order (last wins) and ease over absolute demo time.
 - Sections can optionally define `layers` to mix multiple effects together, with `blend` modes like `screen` or `overlay` and per-layer `opacity`.
@@ -194,7 +194,6 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `water_drops` | `dropCount`, `minRadius`, `maxRadius`, `fallSpeed`, `distortion`, `trail`, `audioReact`, `tint`, `refraction`, `microDrops`, `rivulets`, `seed` | Stylized droplets on glass with dark/bright refractive edges, tiny bead clusters, and optional rivulet streaks. |
 | `fireworks_display` | `shellRate`, `burstSize`, `glitter`, `trail`, `gravity`, `hueShift`, `audioReact`, `launchSpread`, `seed` | Audio-reactive fireworks with deterministic shell timing, sparkling burst spokes, and smoky bloom rings. |
 | `cosmic_voyage` | `speed`, `warp`, `starDensity`, `galaxyGlow`, `nebula`, `asteroidDensity`, `planetCount`, `parallax`, `bloom`, `seed` | Cinematic deep-space flythrough with layered galaxies, planets, and asteroid belts. |
-| `camera_punch_through` | `speed`, `fov`, `blur`, `depthFade`, `streaks`, `seed` | Aggressive forward punch-in transition with radial streaks, FOV surge, and a hard white depth impact. |
 | `platformerScroll` | `speed`, `seed`, `tileSize`, `groundRatio`, `parallaxFar`, `parallaxMid`, `parallaxFront`, `audioReact`, `beatKick`, `platformRate`, `platformMaxSteps` | Deterministic side-scrolling platformer parallax scene with looping platforms and runner silhouette. |
 | `greets_wall` | `names`, `layout`, `transitionStyle`, `cycleSeconds`, `columns`, `padding`, `highlightPulse`, `beatPulseDecay`, `audioReact`, `title` | `layout` supports `grid` or `carousel`; `transitionStyle` supports `slide`, `fade`, or `pop`. |
 | `lightning` | `trigger`, `chancePerSecond`, `cooldown`, `flashDuration`, `bolt`, `branches`, `seed` | `trigger` supports `beat`, `random`, `both`. |
