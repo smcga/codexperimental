@@ -1,3 +1,5 @@
+import process from "node:process";
+
 import { afterEach, describe, expect, it } from "vitest";
 
 import { createKvClients, getKvConfig } from "./kv.js";
