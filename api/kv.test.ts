@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
-import { getKvConfig } from "./kv";
+import { createKvClients, getKvConfig } from "./kv";
 
 describe("getKvConfig", () => {
   it("prefers DB2-prefixed env vars when present", () => {
@@ -103,4 +103,20 @@ describe("getKvConfig", () => {
       readToken: "db2-write"
     });
   });
+
+  it("returns null clients instead of throwing when Redis construction fails", () => {
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
+
+    const clients = createKvClients({
+      DB2_KV_REST_API_URL: "https://",
+      DB2_KV_REST_API_TOKEN: "db2-write"
+    } as NodeJS.ProcessEnv);
+
+    expect(clients).toEqual({
+      readClient: null,
+      writeClient: null
+    });
+    expect(consoleError).toHaveBeenCalled();
+  });
+
 });

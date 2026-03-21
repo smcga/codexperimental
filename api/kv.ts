@@ -79,8 +79,13 @@ export function getKvConfig(env: KvEnv = process.env): KvConfig {
 export function createKvClients(env: KvEnv = process.env): { readClient: KvClient | null; writeClient: KvClient | null } {
   const { url, readToken, writeToken } = getKvConfig(env);
 
-  const readClient = url && readToken ? new Redis({ url, token: readToken }) : null;
-  const writeClient = url && writeToken ? new Redis({ url, token: writeToken }) : null;
+  try {
+    const readClient = url && readToken ? new Redis({ url, token: readToken }) : null;
+    const writeClient = url && writeToken ? new Redis({ url, token: writeToken }) : null;
 
-  return { readClient, writeClient };
+    return { readClient, writeClient };
+  } catch (error) {
+    console.error("[kv] Failed to create Upstash Redis client", error);
+    return { readClient: null, writeClient: null };
+  }
 }
