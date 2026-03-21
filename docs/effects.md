@@ -758,7 +758,7 @@ Total effects: **75**.
 - **Registry key:** `chess`
 - **Implementation:** `src/renderer/effects/chessEffect.ts` (class `ChessEffect`)
 - **Renderer:** Canvas2D
-- **Description:** Self-playing chess effect with higher-contrast board highlights and more recognisable, silhouette-led piece drawings for each chess piece type. Scripted moves: no castling, en passant, or promotions are modeled.
+- **Description:** Self-playing chess effect with higher-contrast board highlights and more recognisable, silhouette-led piece drawings with clearer crowns, crosses, mitres, battlements, and horse heads. Scripted moves: no castling, en passant, or promotions are modeled.
 - **Audio features:** beatStrength
 - **Performance notes:** None noted.
 
