@@ -35,6 +35,13 @@ export type RunnerSprite = {
   shadow: RunnerSpritePart;
 };
 
+export type RunnerJumpState = {
+  crouchOffset: number;
+  jumpOffset: number;
+  poseAmount: number;
+  supportBlend: number;
+};
+
 const RUNNER_COLORS = {
   outline: "#10141f",
   cobalt: "#2563eb",
@@ -103,24 +110,67 @@ export function supportTopY(
   return Math.min(groundTop - frontPulse, platformY);
 }
 
-export function runnerJumpOffset(prevSupportY: number, currentSupportY: number, colProgress: number, audioAmount: number): number {
+export function getRunnerJumpState(
+  prevSupportY: number,
+  currentSupportY: number,
+  colProgress: number,
+  audioAmount: number
+): RunnerJumpState {
   if (currentSupportY >= prevSupportY) {
-    return 0;
+    return {
+      crouchOffset: 0,
+      jumpOffset: 0,
+      poseAmount: 0,
+      supportBlend: smoothstep(colProgress)
+    };
   }
+
   const lift = prevSupportY - currentSupportY;
-  const phase = smoothstep(colProgress);
-  const arc = Math.sin(phase * Math.PI);
-  const extra = 1 + Math.floor(audioAmount * 2);
-  return Math.floor(arc * (lift * 0.85 + extra));
+  const anticipationWindow = 0.18;
+  const flightStart = 0.12;
+  const flightWindow = 0.82;
+  const crouchPhase = clamp(colProgress / anticipationWindow, 0, 1);
+  const crouchOffset = Math.floor(Math.sin(crouchPhase * Math.PI) * (1 + lift * 0.08 + audioAmount * 2));
+  const flightPhase = clamp((colProgress - flightStart) / flightWindow, 0, 1);
+  const supportBlend = smoothstep(clamp((colProgress - 0.16) / 0.74, 0, 1));
+  const apexLift = lift + Math.max(2, Math.floor(lift * 0.35) + 1 + Math.floor(audioAmount * 2));
+  const jumpOffset = Math.floor(4 * flightPhase * (1 - flightPhase) * apexLift);
+  const poseEnvelope = Math.sin(Math.PI * flightPhase);
+  const poseAmount = clamp(poseEnvelope + crouchPhase * 0.25, 0, 1);
+
+  return {
+    crouchOffset: colProgress < anticipationWindow ? crouchOffset : 0,
+    jumpOffset,
+    poseAmount,
+    supportBlend
+  };
 }
 
-export function buildRunnerSprite(baseX: number, footY: number, tileSize: number, time: number, audioAmount: number): RunnerSprite {
+export function runnerJumpOffset(prevSupportY: number, currentSupportY: number, colProgress: number, audioAmount: number): number {
+  return getRunnerJumpState(prevSupportY, currentSupportY, colProgress, audioAmount).jumpOffset;
+}
+
+export function buildRunnerSprite(
+  baseX: number,
+  footY: number,
+  tileSize: number,
+  time: number,
+  audioAmount: number,
+  poseAmount = 0
+): RunnerSprite {
   const unit = Math.max(1, Math.round(tileSize / 16));
   const x = baseX - 3 * unit;
   const y = footY - 16 * unit;
-  const legSwing = Math.sin(time * 18) >= 0 ? unit : -unit;
-  const armSwing = Math.sin(time * 18 + Math.PI * 0.65) >= 0 ? unit : -unit;
+  const legSwing = Math.sin(time * 18) >= 0 ? 1 : -1;
+  const armSwing = Math.sin(time * 18 + Math.PI * 0.65) >= 0 ? 1 : -1;
   const scarfLift = Math.floor(audioAmount * 2) * unit;
+  const curl = smoothstep(poseAmount);
+  const crouchCompressionUnits = Math.round(curl * 2);
+  const bodyLiftUnits = Math.round(curl * 2);
+  const armTuckUnits = Math.round(curl * 2);
+  const legTuckUnits = Math.round(curl * 4);
+  const shoeTuckUnits = Math.round(curl * 3);
+  const ballShiftUnits = Math.round(curl);
 
   const parts: RunnerSpritePart[] = [
     { name: "quill-back-top", color: RUNNER_COLORS.outline, x: x + unit, y: y + 3 * unit, w: 6 * unit, h: 3 * unit },
@@ -128,12 +178,12 @@ export function buildRunnerSprite(baseX: number, footY: number, tileSize: number
     { name: "quill-back-low", color: RUNNER_COLORS.cobalt, x: x + unit, y: y + 8 * unit, w: 6 * unit, h: 3 * unit },
     { name: "ear-back", color: RUNNER_COLORS.outline, x: x + 6 * unit, y: y, w: 2 * unit, h: 3 * unit },
     { name: "ear-front", color: RUNNER_COLORS.cobaltDark, x: x + 8 * unit, y: y + unit, w: 2 * unit, h: 3 * unit },
-    { name: "head", color: RUNNER_COLORS.cobalt, x: x + 4 * unit, y: y + 2 * unit, w: 7 * unit, h: 7 * unit },
-    { name: "face", color: RUNNER_COLORS.muzzle, x: x + 7 * unit, y: y + 4 * unit, w: 4 * unit, h: 4 * unit },
-    { name: "eye", color: RUNNER_COLORS.eye, x: x + 8 * unit, y: y + 3 * unit, w: 2 * unit, h: 2 * unit },
-    { name: "iris", color: RUNNER_COLORS.iris, x: x + 9 * unit, y: y + 3 * unit, w: unit, h: 2 * unit },
-    { name: "torso", color: RUNNER_COLORS.cobaltDark, x: x + 5 * unit, y: y + 8 * unit, w: 5 * unit, h: 4 * unit },
-    { name: "chest", color: RUNNER_COLORS.muzzle, x: x + 7 * unit, y: y + 9 * unit, w: 3 * unit, h: 3 * unit },
+    { name: "head", color: RUNNER_COLORS.cobalt, x: x + (4 - ballShiftUnits) * unit, y: y + (2 + bodyLiftUnits) * unit, w: 7 * unit, h: 7 * unit },
+    { name: "face", color: RUNNER_COLORS.muzzle, x: x + (7 - ballShiftUnits) * unit, y: y + (4 + bodyLiftUnits) * unit, w: 4 * unit, h: 4 * unit },
+    { name: "eye", color: RUNNER_COLORS.eye, x: x + (8 - ballShiftUnits) * unit, y: y + (3 + bodyLiftUnits) * unit, w: 2 * unit, h: 2 * unit },
+    { name: "iris", color: RUNNER_COLORS.iris, x: x + (9 - ballShiftUnits) * unit, y: y + (3 + bodyLiftUnits) * unit, w: unit, h: 2 * unit },
+    { name: "torso", color: RUNNER_COLORS.cobaltDark, x: x + (5 - ballShiftUnits) * unit, y: y + (8 - crouchCompressionUnits) * unit, w: 5 * unit, h: (4 + crouchCompressionUnits) * unit },
+    { name: "chest", color: RUNNER_COLORS.muzzle, x: x + (7 - ballShiftUnits) * unit, y: y + (9 - crouchCompressionUnits) * unit, w: 3 * unit, h: 3 * unit },
     {
       name: "scarf-tail",
       color: RUNNER_COLORS.scarf,
@@ -146,80 +196,80 @@ export function buildRunnerSprite(baseX: number, footY: number, tileSize: number
     {
       name: "arm-back",
       color: RUNNER_COLORS.cobaltDark,
-      x: x + (4 + armSwing) * unit,
-      y: y + 8 * unit,
+      x: x + (4 + armSwing + armTuckUnits - ballShiftUnits) * unit,
+      y: y + (8 - armTuckUnits) * unit,
       w: 2 * unit,
       h: 4 * unit
     },
     {
       name: "glove-back",
       color: RUNNER_COLORS.gloves,
-      x: x + (3 + armSwing) * unit,
-      y: y + 11 * unit,
+      x: x + (3 + armSwing + armTuckUnits - ballShiftUnits) * unit,
+      y: y + (11 - armTuckUnits) * unit,
       w: 2 * unit,
       h: 2 * unit
     },
     {
       name: "arm-front",
       color: RUNNER_COLORS.cobalt,
-      x: x + (9 - armSwing) * unit,
-      y: y + 8 * unit,
+      x: x + (9 - armSwing - armTuckUnits - ballShiftUnits) * unit,
+      y: y + (8 - armTuckUnits) * unit,
       w: 2 * unit,
       h: 4 * unit
     },
     {
       name: "glove-front",
       color: RUNNER_COLORS.gloves,
-      x: x + (10 - armSwing) * unit,
-      y: y + 11 * unit,
+      x: x + (10 - armSwing - armTuckUnits - ballShiftUnits) * unit,
+      y: y + (11 - armTuckUnits) * unit,
       w: 2 * unit,
       h: 2 * unit
     },
     {
       name: "leg-back",
       color: RUNNER_COLORS.cobaltDark,
-      x: x + (6 - legSwing) * unit,
-      y: y + 12 * unit,
+      x: x + (6 - legSwing + legTuckUnits - ballShiftUnits) * unit,
+      y: y + (12 - legTuckUnits) * unit,
       w: 2 * unit,
       h: 3 * unit
     },
     {
       name: "shoe-back",
       color: RUNNER_COLORS.shoes,
-      x: x + (5 - legSwing) * unit,
-      y: y + 15 * unit,
+      x: x + (5 - legSwing + shoeTuckUnits - ballShiftUnits) * unit,
+      y: y + (15 - legTuckUnits) * unit,
       w: 4 * unit,
       h: 2 * unit
     },
     {
       name: "sole-back",
       color: RUNNER_COLORS.sole,
-      x: x + (5 - legSwing) * unit,
-      y: y + 16 * unit,
+      x: x + (5 - legSwing + shoeTuckUnits - ballShiftUnits) * unit,
+      y: y + (16 - legTuckUnits) * unit,
       w: 4 * unit,
       h: unit
     },
     {
       name: "leg-front",
       color: RUNNER_COLORS.cobalt,
-      x: x + (8 + legSwing) * unit,
-      y: y + 12 * unit,
+      x: x + (8 + legSwing - legTuckUnits - ballShiftUnits) * unit,
+      y: y + (12 - legTuckUnits) * unit,
       w: 2 * unit,
       h: 3 * unit
     },
     {
       name: "shoe-front",
       color: RUNNER_COLORS.shoes,
-      x: x + (8 + legSwing) * unit,
-      y: y + 15 * unit,
+      x: x + (8 + legSwing - shoeTuckUnits - ballShiftUnits) * unit,
+      y: y + (15 - legTuckUnits) * unit,
       w: 4 * unit,
       h: 2 * unit
     },
     {
       name: "sole-front",
       color: RUNNER_COLORS.sole,
-      x: x + (8 + legSwing) * unit,
-      y: y + 16 * unit,
+      x: x + (8 + legSwing - shoeTuckUnits - ballShiftUnits) * unit,
+      y: y + (16 - legTuckUnits) * unit,
       w: 4 * unit,
       h: unit
     },
@@ -406,11 +456,11 @@ export class PlatformerScrollEffect implements Effect {
       frontPulse
     );
 
-    const supportY = Math.floor(prevSupportY + (currentSupportY - prevSupportY) * smoothstep(colProgress));
-    const hop = runnerJumpOffset(prevSupportY, currentSupportY, colProgress, audioAmount);
+    const jumpState = getRunnerJumpState(prevSupportY, currentSupportY, colProgress, audioAmount);
+    const supportY = Math.floor(prevSupportY + (currentSupportY - prevSupportY) * jumpState.supportBlend);
     const runBob = Math.floor((Math.sin(time * 14) * 1.5 + audioAmount * 1.5) * 0.5);
-    const runnerFootY = supportY - hop - runBob - 1;
-    const runnerSprite = buildRunnerSprite(runnerBaseX, runnerFootY, tileSize, time, audioAmount);
+    const runnerFootY = supportY - jumpState.jumpOffset + jumpState.crouchOffset - runBob - 1;
+    const runnerSprite = buildRunnerSprite(runnerBaseX, runnerFootY, tileSize, time, audioAmount, jumpState.poseAmount);
 
     ctx.fillStyle = runnerSprite.shadow.color;
     ctx.fillRect(runnerSprite.shadow.x, runnerSprite.shadow.y, runnerSprite.shadow.w, runnerSprite.shadow.h);

@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import {
   buildRunnerSprite,
+  getRunnerJumpState,
   hash1,
   PLATFORMER_SCROLL_DEFAULTS,
   PlatformerScrollEffect,
@@ -87,6 +88,20 @@ describe("platformerScroll helpers", () => {
     expect(down).toBe(0);
   });
 
+  it("getRunnerJumpState adds a crouch, delayed takeoff, and curled pose on upward jumps", () => {
+    const anticipation = getRunnerJumpState(220, 180, 0.08, 0.3);
+    const airborne = getRunnerJumpState(220, 180, 0.5, 0.3);
+    const grounded = getRunnerJumpState(180, 220, 0.5, 0.3);
+
+    expect(anticipation.crouchOffset).toBeGreaterThan(0);
+    expect(anticipation.jumpOffset).toBe(0);
+    expect(airborne.jumpOffset).toBeGreaterThan(20);
+    expect(airborne.poseAmount).toBeGreaterThan(0.8);
+    expect(airborne.supportBlend).toBeLessThan(1);
+    expect(grounded.crouchOffset).toBe(0);
+    expect(grounded.poseAmount).toBe(0);
+  });
+
   it("buildRunnerSprite creates a colorful mascot silhouette with animated limbs", () => {
     const earlyFrame = buildRunnerSprite(100, 160, 16, 0, 0.2);
     const laterFrame = buildRunnerSprite(100, 160, 16, 0.2, 0.2);
@@ -101,6 +116,21 @@ describe("platformerScroll helpers", () => {
     expect(partNames.has("quill-back-top")).toBe(true);
     expect(earlyFrame.shadow.w).toBeGreaterThan(0);
     expect(earlyFrontShoe?.x).not.toBe(laterFrontShoe?.x);
+  });
+
+  it("buildRunnerSprite tucks the limbs inward while airborne", () => {
+    const running = buildRunnerSprite(100, 160, 16, 0.1, 0.2, 0);
+    const jumping = buildRunnerSprite(100, 160, 16, 0.1, 0.2, 1);
+    const runningFrontShoe = running.parts.find((part) => part.name === "shoe-front");
+    const jumpingFrontShoe = jumping.parts.find((part) => part.name === "shoe-front");
+    const runningFrontGlove = running.parts.find((part) => part.name === "glove-front");
+    const jumpingFrontGlove = jumping.parts.find((part) => part.name === "glove-front");
+
+    expect(runningFrontShoe && jumpingFrontShoe).toBeTruthy();
+    expect(runningFrontGlove && jumpingFrontGlove).toBeTruthy();
+    expect(jumpingFrontShoe!.y).toBeLessThan(runningFrontShoe!.y);
+    expect(Math.abs(jumpingFrontShoe!.x - 100)).toBeLessThan(Math.abs(runningFrontShoe!.x - 100));
+    expect(jumpingFrontGlove!.y).toBeLessThan(runningFrontGlove!.y);
   });
 });
 
