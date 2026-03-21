@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/index.ts`.
 
-Total effects: **75**.
+Total effects: **76**.
 
 ## Table of contents
 
@@ -81,6 +81,7 @@ Total effects: **75**.
 - [Effect: cosmic_voyage](#effect-cosmic-voyage)
 - [Effect: lemmings_march](#effect-lemmings-march)
 - [Effect: prism_bloom](#effect-prism-bloom)
+- [Effect: velvet_dreamscape](#effect-velvet-dreamscape)
 
 ## Cross-reference
 
@@ -101,8 +102,8 @@ Total effects: **75**.
 ### Common parameter patterns
 
 - `speed` (used in 41 effects)
-- `seed` (used in 31 effects)
-- `audioReact` (used in 31 effects)
+- `seed` (used in 32 effects)
+- `audioReact` (used in 32 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 10 effects)
 - `trail` (used in 9 effects)
@@ -2712,6 +2713,39 @@ Total effects: **75**.
 ```json
 {
   "effect": "prism_bloom",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: velvet_dreamscape
+
+- **Registry key:** `velvet_dreamscape`
+- **Implementation:** `src/renderer/effects/velvetDreamscapeEffect.ts` (class `VelvetDreamscapeEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by VelvetDreamscapeEffect (src/renderer/effects/velvetDreamscapeEffect.ts).
+- **Audio features:** beat, beatStrength, mid, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReact` | number | 0.68 | min 0, max 1 | Audio React | yes |
+| `params.bloom` | number | 0.78 | min 0, max 1.6 | Bloom | yes |
+| `params.flow` | number | 0.62 | min 0, max 1.8 | Flow | yes |
+| `params.focus` | number | 0.58 | min 0, max 1.2 | Focus | yes |
+| `params.grain` | number | 0.32 | min 0, max 1 | Grain | yes |
+| `params.hueDrift` | number | 0.08 | min -1, max 1 | Hue Drift | yes |
+| `params.ribbonCount` | number | 11 | min 4, max 24 | Ribbon Count | yes |
+| `params.seed` | number | 5 | min 0, max 9999 | Seed | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "velvet_dreamscape",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
