@@ -73,6 +73,7 @@ import { WaterDropsEffect } from "./waterDropsEffect";
 import { FireworksDisplayEffect } from "./fireworksDisplayEffect";
 import { CosmicVoyageEffect } from "./cosmicVoyageEffect";
 import { LemmingsMarchEffect } from "./lemmingsMarchEffect";
+import { PrismBloomEffect } from "./prismBloomEffect";
 
 export const effectRegistry: Record<string, Effect> = {
   starfield: new StarfieldEffect(),
@@ -149,6 +150,7 @@ export const effectRegistry: Record<string, Effect> = {
   fireworks_display: new FireworksDisplayEffect(),
   cosmic_voyage: new CosmicVoyageEffect(),
   lemmings_march: new LemmingsMarchEffect(),
+  prism_bloom: new PrismBloomEffect(),
 };
 
 export function resetEffects(): void {
