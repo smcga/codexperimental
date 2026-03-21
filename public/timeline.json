@@ -1865,12 +1865,39 @@
       "id": "rap-punchline-stack-03450",
       "start": "03:44.4",
       "end": "03:49.2",
-      "effect": "infinitycloud",
+      "effect": "voxel_world_builder",
       "params": {
-        "density": 0.28,
-        "speed": 0.44,
-        "glow": 0.32
+        "buildProgress": 0,
+        "cityDensity": 0.62,
+        "glow": 0.9,
+        "cameraLift": 0.15
       },
+      "automation": [
+        {
+          "param": "buildProgress",
+          "from": 0,
+          "to": 1,
+          "t0": "03:44.4",
+          "t1": "03:47.8",
+          "ease": "outCubic"
+        },
+        {
+          "param": "cameraLift",
+          "from": 0.05,
+          "to": 0.32,
+          "t0": "03:44.4",
+          "t1": "03:48.6",
+          "ease": "inOutSine"
+        },
+        {
+          "param": "glow",
+          "from": 0.7,
+          "to": 1.08,
+          "t0": "03:46.6",
+          "t1": "03:48.8",
+          "ease": "outQuad"
+        }
+      ],
       "layers": [
         {
           "effect": "particles",
