@@ -12,7 +12,7 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 - Edit `public/timeline.json` to change the intro terminal script, section timings, transitions, or text cues. Use `mm:ss` or `mm:ss.s` time strings for section and cue start/end values (for example, `01:44.5`).
 - `public/timeline.release.json` is a release-cut timeline that adds per-section era presets and a curated arc for the graphics-history progression. Load it with the release URL flag described below.
 - The bundled timeline includes lyric-style overlays in `textCues`; adjust or replace those cues to change the on-screen callouts synced to the music.
-- Transition types include `fade`, `wipe`, `slide-left`, `slide-right`, `slide-up`, `slide-down`, `iris`, `flash`, `shatter`, `signal-collapse`, and `camera-punch-through`.
+- Transition types include `fade`, `wipe`, `slide-left`, `slide-right`, `slide-up`, `slide-down`, `iris`, `flash`, `shatter`, `signal-collapse`, `camera-punch-through`, and `reality-peel`.
 - Effect sections can include a `params` object to tune effect-specific settings such as starfield speed, warp, or turning intensity.
 - Effects can animate numeric params with an `automation` array on a section or a layer; entries are applied in array order (last wins) and ease over absolute demo time.
 - Sections can optionally define `layers` to mix multiple effects together, with `blend` modes like `screen` or `overlay` and per-layer `opacity`.
@@ -129,7 +129,7 @@ Automation supports numeric params only; non-numeric values fall back to the bas
 
 - `audio`: soundtrack path and optional timeline offset in seconds.
 - `intro`: terminal intro mode, end timestamp, visual theme, and scripted terminal events (`prompt`, `type`, `enter`, `output`, `ascii`, `clear`).
-- `sections`: ordered effect schedule with IDs, timing, effect key, optional era preset (`8bit`, `16bit`, `ps1`, `pcdemo`, `future`), transitions, `fitAlign` (`top`/`centre`/`bottom`/`fill`), parameter overrides, optional automations, and optional layered effects.
+- `sections`: ordered effect schedule with IDs, timing, effect key, optional era preset (`8bit`, `16bit`, `ps1`, `pcdemo`, `future`), transitions (including `reality-peel` for a curled corner reveal), `fitAlign` (`top`/`centre`/`bottom`/`fill`), parameter overrides, optional automations, and optional layered effects.
 - `textCues`: optional overlay callouts with timing, position, typography, and optional per-cue visual effects (glitch, shadow, scanline mask, and typewriter speed).
 - Time fields accept either seconds (`number`) or timeline strings (`mm:ss` / `mm:ss.s`).
 

@@ -10,6 +10,7 @@ import { resolveMonochrome } from "./monochrome";
 import { computePresentTransform, computeScreenSafeRect } from "./present";
 import { renderTextCues } from "./text/textRenderer";
 import { CameraPunchThroughTransitionState, computeCameraPunchThroughTransitionState } from "./transitions/cameraPunchThrough";
+import { computeRealityPeelTransitionState } from "./transitions/realityPeel";
 import { computeShatterTransitionState } from "./transitions/shatter";
 
 export type RenderState = {
@@ -289,6 +290,19 @@ export class Renderer {
           audio,
           { zoom: 1, panX: 0, panY: 0 },
           true
+        );
+        return;
+      }
+      if (transition.type === "reality-peel") {
+        this.drawRealityPeelTransitionCanvas(
+          targetCtx,
+          this.mobileFromCanvas,
+          this.mobileToCanvas,
+          transition.progress,
+          0,
+          0,
+          width,
+          height
         );
         return;
       }
@@ -639,6 +653,9 @@ export class Renderer {
         return;
       case "camera-punch-through":
         this.drawCameraPunchThroughTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
+        return;
+      case "reality-peel":
+        this.drawRealityPeelTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
         return;
       case "fade":
         this.drawFadeTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
@@ -1085,6 +1102,158 @@ export class Renderer {
       ctx.lineTo(outerX, outerY);
       ctx.stroke();
     }
+    ctx.restore();
+  }
+
+  private drawRealityPeelTransition(
+    ctx: CanvasRenderingContext2D,
+    progress: number,
+    scale: number,
+    offsetX: number,
+    offsetY: number,
+    shakeX: number,
+    shakeY: number,
+    camera: CameraState,
+    smoothing: boolean
+  ): void {
+    this.passCtx.clearRect(0, 0, this.baseWidth, this.baseHeight);
+    this.drawRealityPeelTransitionCanvas(
+      this.passCtx,
+      this.transitionCanvas,
+      this.baseCanvas,
+      progress,
+      0,
+      0,
+      this.baseWidth,
+      this.baseHeight
+    );
+    this.drawScaled(ctx, this.passCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1, camera, smoothing);
+  }
+
+  private drawRealityPeelTransitionCanvas(
+    ctx: CanvasRenderingContext2D,
+    fromCanvas: HTMLCanvasElement,
+    toCanvas: HTMLCanvasElement,
+    progress: number,
+    rectX: number,
+    rectY: number,
+    width: number,
+    height: number
+  ): void {
+    const state = computeRealityPeelTransitionState(progress, width, height);
+    const visibleEdgeX = Math.max(0, state.flapLeftX + state.curlBackX * 0.24);
+
+    ctx.save();
+    ctx.clearRect(rectX, rectY, width, height);
+    ctx.globalAlpha = state.revealAlpha;
+    ctx.drawImage(toCanvas, rectX, rectY, width, height);
+    ctx.restore();
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(rectX, rectY);
+    ctx.lineTo(rectX + state.foldX, rectY);
+    ctx.lineTo(rectX + visibleEdgeX, rectY + state.foldY);
+    ctx.lineTo(rectX + width, rectY + height);
+    ctx.lineTo(rectX, rectY + height);
+    ctx.closePath();
+    ctx.clip();
+    ctx.drawImage(fromCanvas, rectX, rectY, width, height);
+    ctx.restore();
+
+    const flapPoints = [
+      { x: rectX + state.foldX, y: rectY },
+      { x: rectX + width, y: rectY },
+      { x: rectX + width, y: rectY + state.peelDepth },
+      { x: rectX + state.flapLeftX, y: rectY + state.flapBottomY }
+    ];
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(flapPoints[0].x + state.curlBackX * 0.16, flapPoints[0].y + state.curlLiftY * 0.45);
+    flapPoints.slice(1).forEach((point) => ctx.lineTo(point.x, point.y));
+    ctx.closePath();
+    ctx.fillStyle = `rgba(0, 0, 0, ${state.shadowAlpha})`;
+    ctx.fill();
+    ctx.restore();
+
+    this.drawRealityPeelFlap(ctx, fromCanvas, rectX, rectY, width, height, state);
+  }
+
+  private drawRealityPeelFlap(
+    ctx: CanvasRenderingContext2D,
+    fromCanvas: HTMLCanvasElement,
+    rectX: number,
+    rectY: number,
+    width: number,
+    height: number,
+    state: ReturnType<typeof computeRealityPeelTransitionState>
+  ): void {
+    const sourceX = Math.max(0, Math.min(width - 1, state.foldX));
+    const sourceWidth = Math.max(1, width - sourceX);
+    const sourceHeight = Math.max(1, state.foldY);
+    const stripCount = Math.max(18, Math.round(sourceWidth / 8));
+
+    for (let index = 0; index < stripCount; index += 1) {
+      const u0 = index / stripCount;
+      const u1 = (index + 1) / stripCount;
+      const sx0 = sourceX + sourceWidth * u0;
+      const sx1 = sourceX + sourceWidth * u1;
+      const sw = Math.max(1, sx1 - sx0);
+      const bend0 = Math.sin(u0 * Math.PI) * state.curlLiftY;
+      const bend1 = Math.sin(u1 * Math.PI) * state.curlLiftY;
+      const side0X = rectX + state.flapLeftX + (width - state.flapLeftX) * u0;
+      const side1X = rectX + state.flapLeftX + (width - state.flapLeftX) * u1;
+      const top0X = rectX + state.foldX + (width - state.foldX) * u0;
+      const top1X = rectX + state.foldX + (width - state.foldX) * u1;
+      const bottom0Y = rectY + state.flapBottomY + (state.peelDepth - state.flapBottomY) * u0 + bend0;
+      const bottom1Y = rectY + state.flapBottomY + (state.peelDepth - state.flapBottomY) * u1 + bend1;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(top0X, rectY);
+      ctx.lineTo(top1X, rectY);
+      ctx.lineTo(side1X, bottom1Y);
+      ctx.lineTo(side0X, bottom0Y);
+      ctx.closePath();
+      ctx.clip();
+      ctx.transform(
+        (top1X - top0X) / sw,
+        0,
+        (side0X - top0X) / sourceHeight,
+        (bottom0Y - rectY) / sourceHeight,
+        top0X,
+        rectY
+      );
+      ctx.drawImage(fromCanvas, sx0, rectY, sw, sourceHeight, 0, 0, sw, sourceHeight);
+      ctx.restore();
+    }
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(rectX + state.foldX, rectY);
+    ctx.lineTo(rectX + width, rectY);
+    ctx.lineTo(rectX + width, rectY + state.peelDepth);
+    ctx.lineTo(rectX + state.flapLeftX, rectY + state.flapBottomY);
+    ctx.closePath();
+    ctx.clip();
+
+    const underside = ctx.createLinearGradient(rectX + state.foldX, rectY, rectX + state.flapLeftX, rectY + state.flapBottomY);
+    underside.addColorStop(0, `rgba(255, 255, 255, ${state.highlightAlpha})`);
+    underside.addColorStop(0.35, `rgba(255, 244, 225, ${state.undersideAlpha * 0.32})`);
+    underside.addColorStop(1, `rgba(24, 18, 16, ${state.undersideAlpha})`);
+    ctx.fillStyle = underside;
+    ctx.fillRect(rectX + state.flapLeftX, rectY, width - state.flapLeftX, state.flapBottomY + state.peelDepth);
+
+    const crease = ctx.createLinearGradient(rectX + state.foldX, rectY, rectX + state.flapLeftX, rectY + state.flapBottomY);
+    crease.addColorStop(0, `rgba(255, 255, 255, ${state.creaseAlpha})`);
+    crease.addColorStop(1, "rgba(255, 255, 255, 0)");
+    ctx.strokeStyle = crease;
+    ctx.lineWidth = Math.max(1, width / 220);
+    ctx.beginPath();
+    ctx.moveTo(rectX + state.foldX, rectY);
+    ctx.lineTo(rectX + state.flapLeftX, rectY + state.flapBottomY);
+    ctx.stroke();
     ctx.restore();
   }
 
