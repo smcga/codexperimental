@@ -266,7 +266,7 @@ async function submitCurrentDoodle(): Promise<void> {
 
   try {
     await submitDoodle(doodleCanvas.toDataURL("image/png"));
-    setDoodleStatus("Doodle submitted for approval. It will only appear on the doodle greetz wall after you approve it.", "success");
+    setDoodleStatus("Doodle submitted for review. It will only appear on the doodle greetz wall after you open the review page and approve it.", "success");
     setDoodleModalVisible(false);
   } catch {
     setDoodleStatus("Unable to save the doodle right now. Please try again.", "error");

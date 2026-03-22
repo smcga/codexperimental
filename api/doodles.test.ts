@@ -119,7 +119,8 @@ describe("api/doodles handler", () => {
     expect(postRes.response.statusCode).toBe(200);
     expect(JSON.parse(postRes.getBody())).toEqual({
       doodle: expect.objectContaining({ imageData: "data:image/png;base64,c3VibWl0dGVk" }),
-      moderationStatus: "pending"
+      moderationStatus: "pending",
+      reviewUrl: null
     });
     expect(redis.lpush).not.toHaveBeenCalled();
 
@@ -153,6 +154,31 @@ describe("api/doodles handler", () => {
     expect(JSON.parse(authorizedRes.getBody())).toEqual({ doodles: approved, pendingDoodles: pending });
   });
 
+  it("returns a single pending doodle for the review page", async () => {
+    process.env.DOODLE_MODERATION_TOKEN = "secret-token";
+    process.env.DOODLE_MODERATION_BASE_URL = "https://demo.example.com";
+    const pending = [{ id: "pending-1", imageData: "data:image/png;base64,Yg==", createdAt: 2 }];
+    const redis = createMockRedis([], pending);
+
+    vi.doMock("./kv.js", () => ({
+      createKvClients: () => ({ readClient: redis, writeClient: redis })
+    }));
+
+    const { default: handler } = await import("./doodles");
+    const response = createResponse();
+
+    await handler(
+      { method: "GET", url: "/api/doodles?pendingId=pending-1&token=secret-token" },
+      response.response
+    );
+
+    expect(response.response.statusCode).toBe(200);
+    expect(JSON.parse(response.getBody())).toEqual({
+      doodle: pending[0],
+      reviewUrl: "https://demo.example.com/review.html?id=pending-1&token=secret-token"
+    });
+  });
+
   it("approves a pending doodle through a signed one-tap link", async () => {
     process.env.DOODLE_MODERATION_TOKEN = "secret-token";
     const pending = [{ id: "pending-1", imageData: "data:image/png;base64,Yg==", createdAt: 2 }];
@@ -179,7 +205,7 @@ describe("api/doodles handler", () => {
     expect(redis.set).toHaveBeenCalledWith("doodles:pending", []);
   });
 
-  it("sends a moderation notification with action links when configured", async () => {
+  it("sends a moderation notification with review metadata when configured", async () => {
     process.env.DOODLE_MODERATION_TOKEN = "secret-token";
     process.env.DOODLE_MODERATION_BASE_URL = "https://demo.example.com";
     process.env.DOODLE_MODERATION_WEBHOOK_URL = "https://hooks.example.com/doodles";
@@ -206,12 +232,12 @@ describe("api/doodles handler", () => {
       expect.objectContaining({
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: expect.stringContaining("https://demo.example.com/api/doodles?action=approve")
+        body: expect.stringContaining("https://demo.example.com/review.html?id=")
       })
     );
   });
 
-  it("sends an ntfy message with approve and reject links when configured", async () => {
+  it("sends an ntfy message that opens the review page on tap", async () => {
     process.env.DOODLE_MODERATION_TOKEN = "secret-token";
     process.env.DOODLE_MODERATION_BASE_URL = "https://demo.example.com";
     process.env.DOODLE_MODERATION_NTFY_URL = "https://ntfy.sh/doodle-topic";
@@ -242,15 +268,16 @@ describe("api/doodles handler", () => {
           "Content-Type": "text/plain; charset=utf-8",
           Title: "Doodle awaiting approval",
           Priority: "high",
+          Click: expect.stringMatching(/^https:\/\/demo\.example\.com\/review\.html\?id=/),
           Authorization: "Bearer ntfy-token"
         }),
-        body: expect.stringContaining("Approve: https://demo.example.com/api/doodles?action=approve")
+        body: expect.stringContaining("Tap this notification to open the doodle review page")
       })
     );
-    expect(globalThis.fetch).toHaveBeenCalledWith(
+    expect(globalThis.fetch).not.toHaveBeenCalledWith(
       "https://ntfy.sh/doodle-topic",
       expect.objectContaining({
-        body: expect.stringContaining("Reject: https://demo.example.com/api/doodles?action=reject")
+        body: expect.stringContaining("Approve: https://demo.example.com/api/doodles?action=approve")
       })
     );
   });

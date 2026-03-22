@@ -300,14 +300,14 @@ npm run preview
 
 - Click to start (audio + visuals)
 - `R` to restart
-- At the end screen, use **Add a doodle** to draw and submit a doodle for moderation; it only appears in `doodle_greetz_wall` after approval.
+- At the end screen, use **Add a doodle** to draw and submit a doodle for moderation; it only appears in `doodle_greetz_wall` after someone opens the review page and approves it.
 - `F` to toggle fullscreen (if supported)
 - `D` to toggle the debug overlay (timestamp, skip intro, skip to second half, transition selection, effect overrides, monochrome toggle)
 - The debug overlay shows WebGL status as `OK` or `FALLBACK` when available.
 - When the debug overlay is visible, selecting an effect reveals a secondary panel with effect-specific controls (or a note when none are available).
 - The serverless view/doodle APIs accept either the legacy `KV_*` Upstash variables or the newer `DB2_KV_*` prefixed variants. If any `DB2_*` variable is present, the API locks to the DB2 configuration and ignores legacy `KV_*` values. Use the REST URL/token variables (`*_KV_REST_API_URL`, `*_KV_REST_API_TOKEN`, and optionally `*_KV_REST_API_READ_ONLY_TOKEN`); copied values are trimmed, and raw `redis://` URLs are ignored by the REST client.
-- Doodle submissions now land in a pending moderation queue. The public doodle wall only reads approved doodles, while pending doodles stay hidden until approved via a signed moderation link. Set `DOODLE_MODERATION_TOKEN` (or legacy `DOODLE_ADMIN_TOKEN`) to enable approvals/rejections through `/api/doodles?action=approve|reject&id=...&token=...` and `/api/doodles?includePending=1&token=...`.
-- To get fast phone notifications for new doodles, set `DOODLE_MODERATION_BASE_URL` to your public site URL and configure either `DOODLE_MODERATION_WEBHOOK_URL` for a custom JSON webhook payload or `DOODLE_MODERATION_NTFY_URL` (plus optional `DOODLE_MODERATION_NTFY_TOKEN`) to push a message through ntfy. The notification payload/message includes one-tap approve/reject links and a moderation queue endpoint URL.
+- Doodle submissions now land in a pending moderation queue. The public doodle wall only reads approved doodles, while pending doodles stay hidden until approved via the signed review flow. Set `DOODLE_MODERATION_TOKEN` (or legacy `DOODLE_ADMIN_TOKEN`) to enable the review page at `/review.html?id=...&token=...`, direct moderation actions through `/api/doodles?action=approve|reject&id=...&token=...`, and queue inspection through `/api/doodles?includePending=1&token=...`.
+- To get fast phone notifications for new doodles, set `DOODLE_MODERATION_BASE_URL` to your public site URL and configure either `DOODLE_MODERATION_WEBHOOK_URL` for a custom JSON webhook payload or `DOODLE_MODERATION_NTFY_URL` (plus optional `DOODLE_MODERATION_NTFY_TOKEN`) to push a message through ntfy. The webhook payload includes the review URL plus direct moderation endpoints, while the ntfy notification sets a default click action that opens the signed doodle review page.
 - Run `npm run test:integration` in an environment with the DB2 secrets set to verify the live Upstash database exists and can be read/written. If the DB2 URL is malformed, the APIs now fail closed instead of crashing with a 500 during Redis client creation. The serverless API modules also use explicit `.js` ESM imports so Vercel can resolve the emitted files correctly.
 - Append `?editor=1` in dev builds to open the Scene + Timeline Editor (or toggle "Editor mode" in the debug overlay). The editor shows a live preview, edits hot-apply to the running demo, and changes persist to localStorage.
 - The editor's Text Cues panel now includes a bulk generator: paste words/new lines, set font/colour/size/position/alignment plus start/end timing, and auto-create evenly timed cue sequences (useful for ~100 words over ~30 seconds).
@@ -339,7 +339,8 @@ If you want your phone to buzz the moment someone submits a doodle, the simplest
 5. Open the ntfy app, add a subscription, and subscribe to the same topic name you configured above on the `ntfy.sh` server (or your self-hosted ntfy server if you are not using `ntfy.sh`).
 6. Allow notifications when iOS/Android prompts you. If your phone has per-app notification settings disabled, re-enable them in the system settings before testing.
 7. Submit a test doodle from the site. Your phone should receive a notification titled `Doodle awaiting approval`.
-8. Open that notification and tap the `Approve:` or `Reject:` link in the message body. Those links hit your site's signed moderation endpoint directly, so one tap performs the moderation action in the browser.
+8. Tap the notification itself. ntfy uses its default click action to open the signed `/review.html?...` page for that doodle.
+9. Review the doodle image on that page, then use the **Approve** or **Deny** buttons at the bottom to finish moderation in the browser.
 
 Quick verification from a laptop/terminal before testing the site itself:
 
