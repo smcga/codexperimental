@@ -123,6 +123,7 @@ describe("release timeline", () => {
       "lemmings_march",
       "prism_bloom",
       "tetris_matrix",
+      "matrix_rain",
       "velvet_dreamscape",
       "water_drops"
     ]);

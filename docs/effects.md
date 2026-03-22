@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **77**.
+Total effects: **78**.
 
 ## Table of contents
 
@@ -41,6 +41,7 @@ Total effects: **77**.
 - [Effect: lens_wobbler](#effect-lens-wobbler)
 - [Effect: lightning](#effect-lightning)
 - [Effect: lissajous](#effect-lissajous)
+- [Effect: matrix_rain](#effect-matrix-rain)
 - [Effect: metaballs](#effect-metaballs)
 - [Effect: moire_grid](#effect-moire-grid)
 - [Effect: neon](#effect-neon)
@@ -102,12 +103,12 @@ Total effects: **77**.
 
 ### Common parameter patterns
 
-- `speed` (used in 42 effects)
-- `seed` (used in 33 effects)
+- `speed` (used in 43 effects)
+- `seed` (used in 34 effects)
 - `audioReact` (used in 32 effects)
 - `beatKick` (used in 14 effects)
-- `glow` (used in 11 effects)
-- `trail` (used in 9 effects)
+- `glow` (used in 12 effects)
+- `trail` (used in 10 effects)
 - `palette` (used in 9 effects)
 - `hueShift` (used in 7 effects)
 - `scanlines` (used in 7 effects)
@@ -1295,6 +1296,40 @@ Total effects: **77**.
 ```json
 {
   "effect": "lissajous",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: matrix_rain
+
+- **Registry key:** `matrix_rain`
+- **Implementation:** `src/renderer/effects/matrixRainEffect.ts` (class `MatrixRainEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Falling green code columns with glowing heads, configurable trail persistence, and alternate glyph banks for a classic Matrix-style terminal rain.
+- **Audio features:** beat, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.brightness` | number | 0.9 | min 0.25, max 1.4 | Brightness | yes |
+| `params.density` | number | 0.78 | min 0.1, max 1 | Density | yes |
+| `params.fontSize` | number | 18 | min 10, max 32 | Font Size | yes |
+| `params.glow` | number | 0.85 | min 0, max 1.5 | Glow | yes |
+| `params.glyphSet` | number | 0 | min 0, max 2 | Glyph Set | yes |
+| `params.jitter` | number | 0.25 | min 0, max 1 | Jitter | yes |
+| `params.seed` | number | 1337 | min 0, max 9999 | Seed | yes |
+| `params.speed` | number | 1.1 | min 0.2, max 4 | Speed | yes |
+| `params.trail` | number | 0.72 | min 0.15, max 1 | Trail | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "matrix_rain",
   "opacity": 1,
   "blend": "source-over",
   "params": {}

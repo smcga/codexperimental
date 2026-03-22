@@ -33,6 +33,7 @@ import { lemmings_marchManifest } from "./lemmings_march.manifest";
 import { lens_wobblerManifest } from "./lens_wobbler.manifest";
 import { lightningManifest } from "./lightning.manifest";
 import { lissajousManifest } from "./lissajous.manifest";
+import { matrix_rainManifest } from "./matrix_rain.manifest";
 import { metaballsManifest } from "./metaballs.manifest";
 import { moire_gridManifest } from "./moire_grid.manifest";
 import { neonManifest } from "./neon.manifest";
@@ -112,6 +113,7 @@ export const generatedEffectManifests = [
   lens_wobblerManifest,
   lightningManifest,
   lissajousManifest,
+  matrix_rainManifest,
   metaballsManifest,
   moire_gridManifest,
   neonManifest,
