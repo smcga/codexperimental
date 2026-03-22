@@ -2,6 +2,7 @@ import { AudioFeatures } from "../audio/audioPlayer";
 import { FitAlign, SectionConfig, TextCue, TransitionType } from "../config/loadConfig";
 import { resolveAutomatedParams } from "../timeline/automation";
 import { clamp } from "../util/math";
+import { collectActiveEffectNames, resetNewlyActivatedEffects } from "./effectActivation";
 import { CameraState, computeDynamicCamera } from "./camera";
 import { EraConstraints, getEraConstraints, quantizeToPalette } from "./eraConstraints";
 import { effectRegistry, resetEffects } from "./effects";
@@ -57,6 +58,7 @@ export class Renderer {
   private baseHeight: number;
   private lastFramingState: FramingState | null = null;
   private lastFitAlignDebug: FitAlignDebug | null = null;
+  private activeEffectNames = new Set<string>();
 
   constructor(baseWidth = 320, baseHeight = 180) {
     this.baseWidth = baseWidth;
@@ -149,6 +151,7 @@ export class Renderer {
 
   reset(): void {
     resetEffects();
+    this.activeEffectNames.clear();
     this.baseCtx.clearRect(0, 0, this.baseWidth, this.baseHeight);
     this.transitionCtx.clearRect(0, 0, this.baseWidth, this.baseHeight);
     this.sceneCtx.clearRect(0, 0, this.sceneCanvas.width, this.sceneCanvas.height);
@@ -169,6 +172,10 @@ export class Renderer {
     screenShake,
     framingOverride
   }: RenderState): void {
+    const nextActiveEffects = collectActiveEffectNames(section, transition);
+    resetNewlyActivatedEffects(this.activeEffectNames, nextActiveEffects, effectRegistry);
+    this.activeEffectNames = nextActiveEffects;
+
     const activeSection = transition?.to ?? section;
     const eraConstraints = getEraConstraints(activeSection.era, this.baseWidth, this.baseHeight);
     const framing = computeFraming(
