@@ -57,7 +57,8 @@ const TRANSITION_TYPES: TransitionType[] = [
   "flash",
   "shatter",
   "signal-collapse",
-  "camera-punch-through"
+  "camera-punch-through",
+  "reality-peel"
 ];
 const EASE_NAMES = [
   "linear",

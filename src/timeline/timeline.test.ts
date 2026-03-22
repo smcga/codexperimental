@@ -46,4 +46,44 @@ describe("Timeline mode switching", () => {
     expect(timeline.getState(54.15).mode).toBe("sections");
     expect(timeline.getState(60).mode).toBe("sections");
   });
+
+  it("surfaces the configured incoming transition type while a section handoff is active", () => {
+    const config = normalizeTimelineConfig({
+      ...baseConfig,
+      sections: [
+        {
+          id: "start",
+          start: 54.15,
+          end: 60,
+          effect: "starfield",
+          transition: {
+            in: "fade",
+            out: "fade",
+            duration: 0.8
+          }
+        },
+        {
+          id: "peel",
+          start: 60,
+          end: 66,
+          effect: "plasma",
+          transition: {
+            in: "reality-peel",
+            out: "fade",
+            duration: 1.2
+          }
+        }
+      ]
+    });
+    const timeline = new Timeline(config);
+
+    const state = timeline.getState(60.4);
+
+    expect(state.transition).toMatchObject({
+      type: "reality-peel",
+      from: expect.objectContaining({ id: "start" }),
+      to: expect.objectContaining({ id: "peel" })
+    });
+    expect(state.transition?.progress).toBeCloseTo(0.3333333333);
+  });
 });

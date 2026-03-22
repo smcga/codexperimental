@@ -45,3 +45,12 @@ describe("debug effect selector helpers", () => {
 }`);
   });
 });
+
+describe("debug transition selector", () => {
+  it("includes reality-peel in the debug panel markup", () => {
+    const indexPath = path.resolve(process.cwd(), "index.html");
+    const indexSource = fs.readFileSync(indexPath, "utf-8");
+
+    expect(indexSource).toContain('<option value="reality-peel">Reality Peel</option>');
+  });
+});
