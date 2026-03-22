@@ -301,6 +301,7 @@ npm run preview
 ## Controls
 
 - Click to start (audio + visuals)
+- The start overlay and end overlay now include a **Share** action. On supported devices it opens the native share sheet; otherwise it reveals quick-share links for LinkedIn, X, Facebook, Reddit, email, plus a copy-link fallback.
 - `R` to restart
 - At the end screen, use **Add a doodle** to draw and submit a doodle for moderation; it only appears in `doodle_greetz_wall` after someone opens the review page and approves it.
 - `F` to toggle fullscreen (if supported)

@@ -4,14 +4,43 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Demoscene AI 2022</title>
+    <meta
+      name="description"
+      content="A single-page demoscene-style browser experience with synced audio, retro-futurist effects, and easy sharing."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Demoscene AI 2022" />
+    <meta
+      property="og:description"
+      content="A single-page demoscene-style browser experience with synced audio, retro-futurist effects, and easy sharing."
+    />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Demoscene AI 2022" />
+    <meta
+      name="twitter:description"
+      content="A single-page demoscene-style browser experience with synced audio, retro-futurist effects, and easy sharing."
+    />
   </head>
   <body>
     <div id="app">
       <canvas id="demo"></canvas>
       <div id="start-overlay" data-mode="start">
-        <div class="start-text">CLICK TO START</div>
-        <div class="overlay-actions hidden" id="overlay-actions">
-          <button id="add-doodle-button" type="button">Add a doodle</button>
+        <div class="overlay-panel">
+          <div class="start-text">CLICK TO START</div>
+          <div id="share-status" class="share-status hidden" aria-live="polite"></div>
+          <div class="overlay-actions" id="overlay-actions">
+            <button id="overlay-share-button" type="button">Share</button>
+            <button id="overlay-restart-button" class="hidden" type="button">Restart</button>
+            <button id="add-doodle-button" class="hidden" type="button">Add a doodle</button>
+          </div>
+          <div id="share-panel" class="share-panel hidden" aria-label="Share this demo">
+            <button id="share-copy-button" type="button">Copy link</button>
+            <a id="share-linkedin" href="#" target="_blank" rel="noreferrer noopener">LinkedIn</a>
+            <a id="share-x" href="#" target="_blank" rel="noreferrer noopener">X</a>
+            <a id="share-facebook" href="#" target="_blank" rel="noreferrer noopener">Facebook</a>
+            <a id="share-reddit" href="#" target="_blank" rel="noreferrer noopener">Reddit</a>
+            <a id="share-email" href="#">Email</a>
+          </div>
         </div>
       </div>
       <div id="doodle-modal" class="doodle-modal hidden" aria-hidden="true">
