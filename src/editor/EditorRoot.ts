@@ -55,6 +55,7 @@ const TRANSITION_TYPES: TransitionType[] = [
   "slide-down",
   "iris",
   "flash",
+  "shatter",
   "signal-collapse",
   "camera-punch-through"
 ];
