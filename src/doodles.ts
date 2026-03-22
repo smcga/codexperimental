@@ -7,12 +7,14 @@ export type DoodleRecord = {
 export type DoodleSubmissionResult = {
   doodle: DoodleRecord | null;
   moderationStatus: "pending" | null;
+  reviewUrl: string | null;
 };
 
 type DoodlesResponse = {
   doodles?: DoodleRecord[];
   doodle?: DoodleRecord;
   moderationStatus?: "pending";
+  reviewUrl?: string | null;
   error?: string;
 };
 
@@ -48,8 +50,8 @@ function normalizeDoodle(value: unknown): DoodleRecord | null {
   return normalizeDoodles(value ? [value] : [])[0] ?? null;
 }
 
-async function requestDoodles(init?: RequestInit): Promise<DoodlesResponse> {
-  const response = await fetch("/api/doodles", {
+async function requestDoodles(path = "/api/doodles", init?: RequestInit): Promise<DoodlesResponse> {
+  const response = await fetch(path, {
     headers: {
       Accept: "application/json",
       ...(init?.body ? { "Content-Type": "application/json" } : {})
@@ -64,6 +66,20 @@ async function requestDoodles(init?: RequestInit): Promise<DoodlesResponse> {
   return (await response.json()) as DoodlesResponse;
 }
 
+export function buildModerationActionUrl(action: "approve" | "reject", id: string, token: string): string {
+  const params = new URLSearchParams({ action, id, token });
+  return `/api/doodles?${params.toString()}`;
+}
+
+export async function fetchPendingDoodle(id: string, token: string): Promise<{ doodle: DoodleRecord | null; reviewUrl: string | null }> {
+  const params = new URLSearchParams({ pendingId: id, token });
+  const payload = await requestDoodles(`/api/doodles?${params.toString()}`, { method: "GET" });
+  return {
+    doodle: normalizeDoodle(payload.doodle),
+    reviewUrl: payload.reviewUrl ?? null
+  };
+}
+
 export async function fetchDoodles(forceRefresh = false): Promise<DoodleRecord[]> {
   if (!forceRefresh && doodleCache.length > 0) {
     return doodleCache;
@@ -73,7 +89,7 @@ export async function fetchDoodles(forceRefresh = false): Promise<DoodleRecord[]
     return doodlesRequest;
   }
 
-  doodlesRequest = requestDoodles({ method: "GET" })
+  doodlesRequest = requestDoodles("/api/doodles", { method: "GET" })
     .then((payload) => {
       doodleCache = normalizeDoodles(payload.doodles);
       return doodleCache;
@@ -87,14 +103,15 @@ export async function fetchDoodles(forceRefresh = false): Promise<DoodleRecord[]
 }
 
 export async function submitDoodle(imageData: string): Promise<DoodleSubmissionResult> {
-  const payload = await requestDoodles({
+  const payload = await requestDoodles("/api/doodles", {
     method: "POST",
     body: JSON.stringify({ imageData })
   });
 
   return {
     doodle: normalizeDoodle(payload.doodle),
-    moderationStatus: payload.moderationStatus ?? null
+    moderationStatus: payload.moderationStatus ?? null,
+    reviewUrl: payload.reviewUrl ?? null
   };
 }
 

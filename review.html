@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Review doodle</title>
+  </head>
+  <body class="review-page-body">
+    <main class="review-page">
+      <section class="review-card">
+        <p class="review-eyebrow">Moderation</p>
+        <h1 class="review-title">Review doodle</h1>
+        <p id="review-copy" class="review-copy">Open this page from your notification to inspect the doodle before deciding.</p>
+        <div class="review-image-shell">
+          <img id="review-image" class="review-image hidden" alt="Submitted doodle awaiting moderation" />
+          <div id="review-placeholder" class="review-placeholder">Loading doodle…</div>
+        </div>
+        <p id="review-meta" class="review-meta hidden"></p>
+        <div id="review-status" class="doodle-status">Checking moderation link…</div>
+        <div class="doodle-actions review-actions">
+          <a id="review-deny" class="review-button review-button-secondary disabled" href="#" aria-disabled="true">Deny</a>
+          <a id="review-approve" class="review-button disabled" href="#" aria-disabled="true">Approve</a>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/src/doodleReview.ts"></script>
+  </body>
+</html>

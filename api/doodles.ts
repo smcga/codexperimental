@@ -36,6 +36,7 @@ type JsonResponse = {
   pendingDoodles?: DoodleRecord[];
   doodle?: DoodleRecord;
   moderationStatus?: "pending" | "approved" | "rejected";
+  reviewUrl?: string | null;
   error?: string;
 };
 
@@ -177,6 +178,17 @@ function getModerationBaseUrl(requestUrl: URL): string | null {
   return `${candidate.protocol}//${candidate.host}`;
 }
 
+function getReviewUrl(doodleId: string, moderationBaseUrl: string | null, moderationToken: string | null): string | null {
+  if (!moderationBaseUrl || !moderationToken) {
+    return null;
+  }
+
+  const url = new URL("/review.html", moderationBaseUrl);
+  url.searchParams.set("id", doodleId);
+  url.searchParams.set("token", moderationToken);
+  return url.toString();
+}
+
 async function readApprovedDoodles(): Promise<DoodleRecord[]> {
   if (!readClient) {
     return [];
@@ -229,6 +241,7 @@ async function sendModerationNotification(doodle: DoodleRecord, requestUrl: URL)
 
   const approveUrl = withAction("approve");
   const rejectUrl = withAction("reject");
+  const reviewUrl = getReviewUrl(doodle.id, moderationBaseUrl, moderationToken);
   const pendingQueueUrl = moderationBaseUrl && moderationToken
     ? `${new URL("/api/doodles?includePending=1", moderationBaseUrl).toString()}&token=${encodeURIComponent(moderationToken)}`
     : null;
@@ -245,7 +258,7 @@ async function sendModerationNotification(doodle: DoodleRecord, requestUrl: URL)
           event: "doodle_submitted",
           doodle,
           createdAtIso,
-          moderation: { approveUrl, rejectUrl, pendingQueueUrl }
+          moderation: { approveUrl, rejectUrl, reviewUrl, pendingQueueUrl }
         })
       })
     );
@@ -254,9 +267,10 @@ async function sendModerationNotification(doodle: DoodleRecord, requestUrl: URL)
   if (ntfyUrl) {
     const lines = [
       `New doodle submitted at ${createdAtIso}.`,
-      approveUrl ? `Approve: ${approveUrl}` : "Approve link unavailable.",
-      rejectUrl ? `Reject: ${rejectUrl}` : "Reject link unavailable.",
-      pendingQueueUrl ? `Queue: ${pendingQueueUrl}` : "Queue link unavailable."
+      reviewUrl
+        ? "Tap this notification to open the doodle review page, then approve or deny it there."
+        : "Doodle review page unavailable because the moderation URL/token is not configured.",
+      pendingQueueUrl ? `Queue API: ${pendingQueueUrl}` : "Queue API unavailable."
     ];
 
     tasks.push(
@@ -266,6 +280,7 @@ async function sendModerationNotification(doodle: DoodleRecord, requestUrl: URL)
           "Content-Type": "text/plain; charset=utf-8",
           "Title": "Doodle awaiting approval",
           "Priority": "high",
+          ...(reviewUrl ? { "Click": reviewUrl } : {}),
           ...(ntfyToken ? { Authorization: `Bearer ${ntfyToken}` } : {})
         },
         body: lines.join("\n")
@@ -337,6 +352,29 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
       return;
     }
 
+    if (url.searchParams.has("pendingId")) {
+      if (!isAuthorized(url)) {
+        sendJson(res, 401, { error: "A valid moderation token is required." });
+        return;
+      }
+
+      const pendingId = url.searchParams.get("pendingId");
+      if (!pendingId) {
+        sendJson(res, 400, { error: "A pending doodle id is required." });
+        return;
+      }
+
+      const pendingDoodles = await readPendingDoodles(readClient ?? writeClient);
+      const doodle = pendingDoodles.find((entry) => entry.id === pendingId);
+      if (!doodle) {
+        sendJson(res, 404, { error: "That pending doodle could not be found." });
+        return;
+      }
+
+      sendJson(res, 200, { doodle, reviewUrl: getReviewUrl(doodle.id, getModerationBaseUrl(url), getModerationToken()) });
+      return;
+    }
+
     const doodles = await readApprovedDoodles();
 
     if (url.searchParams.get("includePending") === "1") {
@@ -376,7 +414,7 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
       const pendingDoodles = await readPendingDoodles(writeClient);
       await writePendingDoodles(writeClient, [doodle, ...pendingDoodles]);
       await sendModerationNotification(doodle, url);
-      sendJson(res, 200, { doodle, moderationStatus: "pending" });
+      sendJson(res, 200, { doodle, moderationStatus: "pending", reviewUrl: getReviewUrl(doodle.id, getModerationBaseUrl(url), getModerationToken()) });
     } catch {
       sendJson(res, 503, { error: "Unable to save doodle right now." });
     }
