@@ -92,14 +92,14 @@ describe("getNextNewSectionName", () => {
 });
 
 describe("transition selector sources", () => {
-  it("includes bitplane-wipe in the editor transition options", () => {
+  it("includes packet-loss in the editor transition options", () => {
     const source = fs.readFileSync(path.resolve(process.cwd(), "src/editor/EditorRoot.ts"), "utf-8");
-    expect(source).toContain('"bitplane-wipe"');
+    expect(source).toContain('"packet-loss"');
   });
 
-  it("includes bitplane-wipe in the debug panel transition options", () => {
+  it("includes packet-loss in the debug panel transition options", () => {
     const source = fs.readFileSync(path.resolve(process.cwd(), "index.html"), "utf-8");
-    expect(source).toContain('<option value="bitplane-wipe">Bitplane Wipe</option>');
+    expect(source).toContain('<option value="packet-loss">Packet Loss</option>');
   });
 });
 

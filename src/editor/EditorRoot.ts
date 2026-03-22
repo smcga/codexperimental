@@ -58,7 +58,8 @@ const TRANSITION_TYPES: TransitionType[] = [
   "shatter",
   "signal-collapse",
   "camera-punch-through",
-  "bitplane-wipe"
+  "bitplane-wipe",
+  "packet-loss"
 ];
 const EASE_NAMES = [
   "linear",

@@ -11,6 +11,7 @@ import { computePresentTransform, computeScreenSafeRect } from "./present";
 import { renderTextCues } from "./text/textRenderer";
 import { computeBitplaneWipeTransitionState } from "./transitions/bitplaneWipe";
 import { CameraPunchThroughTransitionState, computeCameraPunchThroughTransitionState } from "./transitions/cameraPunchThrough";
+import { computePacketLossTransitionState } from "./transitions/packetLoss";
 import { computeShatterTransitionState } from "./transitions/shatter";
 
 export type RenderState = {
@@ -295,6 +296,19 @@ export class Renderer {
       }
       if (transition.type === "bitplane-wipe") {
         this.drawBitplaneWipeTransitionCanvas(
+          targetCtx,
+          this.mobileFromCanvas,
+          this.mobileToCanvas,
+          transition.progress,
+          0,
+          0,
+          width,
+          height
+        );
+        return;
+      }
+      if (transition.type === "packet-loss") {
+        this.drawPacketLossTransitionCanvas(
           targetCtx,
           this.mobileFromCanvas,
           this.mobileToCanvas,
@@ -656,6 +670,9 @@ export class Renderer {
         return;
       case "bitplane-wipe":
         this.drawBitplaneWipeTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
+        return;
+      case "packet-loss":
+        this.drawPacketLossTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
         return;
       case "fade":
         this.drawFadeTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
@@ -1148,6 +1165,117 @@ export class Renderer {
         for (let y = rectY + (band.index % 2); y < rectY + height; y += scanlineStep) {
           ctx.fillRect(rectX + band.x, y, Math.max(1, band.width - 1), 1);
         }
+      }
+      ctx.restore();
+    }
+  }
+
+  private drawPacketLossTransition(
+    ctx: CanvasRenderingContext2D,
+    progress: number,
+    scale: number,
+    offsetX: number,
+    offsetY: number,
+    shakeX: number,
+    shakeY: number,
+    camera: CameraState,
+    smoothing: boolean
+  ): void {
+    this.drawPacketLossTransitionCanvas(
+      ctx,
+      this.transitionCanvas,
+      this.baseCanvas,
+      progress,
+      offsetX + shakeX,
+      offsetY + shakeY,
+      this.baseWidth * scale,
+      this.baseHeight * scale,
+      camera,
+      smoothing
+    );
+  }
+
+  private drawPacketLossTransitionCanvas(
+    ctx: CanvasRenderingContext2D,
+    fromCanvas: HTMLCanvasElement,
+    toCanvas: HTMLCanvasElement,
+    progress: number,
+    rectX: number,
+    rectY: number,
+    width: number,
+    height: number,
+    camera: CameraState = { zoom: 1, panX: 0, panY: 0 },
+    smoothing = true
+  ): void {
+    const state = computePacketLossTransitionState(progress, width, height);
+
+    this.drawCanvasToRect(ctx, fromCanvas, rectX, rectY, width, height, 1, camera, smoothing);
+
+    for (const cell of state.cells) {
+      if (cell.freeze > 0.001) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(rectX + cell.x, rectY + cell.y, cell.width + 0.5, cell.height + 0.5);
+        ctx.clip();
+        this.drawCanvasToRect(
+          ctx,
+          fromCanvas,
+          rectX + cell.jitterX,
+          rectY + cell.jitterY,
+          width,
+          height,
+          clamp(cell.freeze * 0.9, 0, 0.9),
+          camera,
+          smoothing
+        );
+        ctx.restore();
+      }
+
+      if (cell.dropout > 0.001) {
+        ctx.save();
+        ctx.fillStyle = `rgba(0, 0, 0, ${clamp(cell.dropout * 0.92, 0, 0.92)})`;
+        ctx.fillRect(rectX + cell.x, rectY + cell.y, Math.ceil(cell.width), Math.ceil(cell.height));
+        ctx.restore();
+      }
+
+      if (cell.reveal > 0.001) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(rectX + cell.x, rectY + cell.y, cell.width + 0.75, cell.height + 0.75);
+        ctx.clip();
+        this.drawCanvasToRect(
+          ctx,
+          toCanvas,
+          rectX - cell.jitterX * 0.35,
+          rectY - cell.jitterY * 0.35,
+          width,
+          height,
+          clamp(0.22 + cell.reveal * 0.9, 0, 1),
+          camera,
+          smoothing
+        );
+        ctx.restore();
+      }
+
+      if (cell.glow > 0.001 && cell.reveal > 0.02 && cell.reveal < 0.999) {
+        ctx.save();
+        ctx.strokeStyle = `rgba(190, 235, 255, ${cell.glow * (1 - cell.reveal) * 0.45})`;
+        ctx.lineWidth = Math.max(1, width * 0.0025);
+        ctx.strokeRect(rectX + cell.x + 0.5, rectY + cell.y + 0.5, Math.max(1, cell.width - 1), Math.max(1, cell.height - 1));
+        ctx.restore();
+      }
+    }
+
+    if (state.noiseAlpha > 0.001) {
+      ctx.save();
+      ctx.globalCompositeOperation = "screen";
+      ctx.fillStyle = `rgba(255, 255, 255, ${state.noiseAlpha})`;
+      for (const cell of state.cells) {
+        if (cell.dropout <= 0.01 && cell.reveal >= 0.995) {
+          continue;
+        }
+        const scanlineY = rectY + cell.y + ((cell.index * 7) % Math.max(1, Math.floor(cell.height)));
+        ctx.fillRect(rectX + cell.x, scanlineY, Math.max(1, cell.width - 1), 1);
       }
       ctx.restore();
     }
