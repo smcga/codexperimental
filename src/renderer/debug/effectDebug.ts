@@ -28,6 +28,7 @@ import { COSMIC_VOYAGE_DEFAULTS } from "../effects/cosmicVoyageEffect";
 import { LEMMINGS_MARCH_DEFAULTS } from "../effects/lemmingsMarchEffect";
 import { PRISM_BLOOM_DEFAULTS } from "../effects/prismBloomEffect";
 import { VELVET_DREAMSCAPE_DEFAULTS } from "../effects/velvetDreamscapeEffect";
+import { TETRIS_MATRIX_DEFAULTS } from "../effects/tetrisMatrixEffect";
 
 export type EffectParamValue = number | string;
 
@@ -137,6 +138,17 @@ const EFFECT_DEBUG_CONFIGS: Record<string, EffectDebugConfig> = {
       numberControl("vignette", "Vignette", PRISM_BLOOM_DEFAULTS.vignette, { min: 0, max: 1, step: 0.05 }),
       numberControl("audioReact", "Audio React", PRISM_BLOOM_DEFAULTS.audioReact, { min: 0, max: 1, step: 0.05 }),
       numberControl("seed", "Seed", PRISM_BLOOM_DEFAULTS.seed, { min: 0, max: 9999, step: 1 })
+    ]
+  },
+  tetris_matrix: {
+    title: "Tetris Matrix Controls",
+    controls: [
+      numberControl("speed", "Speed", TETRIS_MATRIX_DEFAULTS.speed, { min: 0.35, max: 3, step: 0.05 }),
+      numberControl("level", "Level", TETRIS_MATRIX_DEFAULTS.level, { min: 1, max: 20, step: 1 }),
+      numberControl("glow", "Glow", TETRIS_MATRIX_DEFAULTS.glow, { min: 0, max: 1.5, step: 0.05 }),
+      numberControl("contrast", "Contrast", TETRIS_MATRIX_DEFAULTS.contrast, { min: 0.35, max: 1.3, step: 0.05 }),
+      numberControl("ghost", "Ghost", TETRIS_MATRIX_DEFAULTS.ghost, { min: 0, max: 1, step: 0.05 }),
+      numberControl("seed", "Seed", TETRIS_MATRIX_DEFAULTS.seed, { min: 0, max: 9999, step: 1 })
     ]
   },
   velvet_dreamscape: {

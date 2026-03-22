@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/index.ts`.
 
-Total effects: **76**.
+Total effects: **77**.
 
 ## Table of contents
 
@@ -82,6 +82,7 @@ Total effects: **76**.
 - [Effect: lemmings_march](#effect-lemmings-march)
 - [Effect: prism_bloom](#effect-prism-bloom)
 - [Effect: velvet_dreamscape](#effect-velvet-dreamscape)
+- [Effect: tetris_matrix](#effect-tetris-matrix)
 
 ## Cross-reference
 
@@ -101,11 +102,11 @@ Total effects: **76**.
 
 ### Common parameter patterns
 
-- `speed` (used in 41 effects)
-- `seed` (used in 32 effects)
+- `speed` (used in 42 effects)
+- `seed` (used in 33 effects)
 - `audioReact` (used in 32 effects)
 - `beatKick` (used in 14 effects)
-- `glow` (used in 10 effects)
+- `glow` (used in 11 effects)
 - `trail` (used in 9 effects)
 - `palette` (used in 9 effects)
 - `hueShift` (used in 7 effects)
@@ -2746,6 +2747,37 @@ Total effects: **76**.
 ```json
 {
   "effect": "velvet_dreamscape",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: tetris_matrix
+
+- **Registry key:** `tetris_matrix`
+- **Implementation:** `src/renderer/effects/tetrisMatrixEffect.ts` (class `TetrisMatrixEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Implemented by TetrisMatrixEffect (src/renderer/effects/tetrisMatrixEffect.ts).
+- **Audio features:** beat, beatStrength, rms
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.contrast` | number | 0.88 | min 0.35, max 1.3 | Contrast | yes |
+| `params.ghost` | number | 1 | min 0, max 1 | Ghost | yes |
+| `params.glow` | number | 0.78 | min 0, max 1.5 | Glow | yes |
+| `params.level` | number | 8 | min 1, max 20 | Level | yes |
+| `params.seed` | number | 1989 | min 0, max 9999 | Seed | yes |
+| `params.speed` | number | 1 | min 0.35, max 3 | Speed | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "tetris_matrix",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
