@@ -89,6 +89,11 @@ describe("debug effect selector helpers", () => {
     expect(options).toContain("greets_wall");
   });
 
+  it("includes water_reflection from the effect manifest registry", () => {
+    const options = getDebugEffectSelectorOptions(getRegistryEffectNames());
+    expect(options).toContain("water_reflection");
+  });
+
   it("formats effect settings for timeline section JSON", () => {
     expect(formatEffectSettingsForTimeline("starfield", { speed: 0.8, density: 120 })).toBe(`{
   "effect": "starfield",
