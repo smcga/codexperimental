@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **77**.
+Total effects: **78**.
 
 ## Table of contents
 
@@ -54,6 +54,7 @@ Total effects: **77**.
 - [Effect: prism_bloom](#effect-prism-bloom)
 - [Effect: proper3d](#effect-proper3d)
 - [Effect: rain](#effect-rain)
+- [Effect: rainbow_cat](#effect-rainbow-cat)
 - [Effect: raster_bars](#effect-raster-bars)
 - [Effect: raymarch_fractal](#effect-raymarch-fractal)
 - [Effect: raytrace_spheres](#effect-raytrace-spheres)
@@ -102,8 +103,8 @@ Total effects: **77**.
 
 ### Common parameter patterns
 
-- `speed` (used in 42 effects)
-- `seed` (used in 33 effects)
+- `speed` (used in 43 effects)
+- `seed` (used in 34 effects)
 - `audioReact` (used in 32 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 11 effects)
@@ -1744,6 +1745,39 @@ Total effects: **77**.
 ```json
 {
   "effect": "rain",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: rainbow_cat
+
+- **Registry key:** `rainbow_cat`
+- **Implementation:** `src/renderer/effects/rainbowCatEffect.ts` (class `RainbowCatEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Synth-night rainbow cat with a bobbing pixel body, glitter stars, and a configurable six-colour trail.
+- **Audio features:** beat, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.bounce` | number | 0.45 | min 0, max 1.2 | Bounce | yes |
+| `params.catScale` | number | 1 | min 0.6, max 1.8 | Cat Scale | yes |
+| `params.rainbowLength` | number | 0.72 | min 0.2, max 1 | Rainbow Length | yes |
+| `params.seed` | number | 0 | min 0, max 999 | Seed | yes |
+| `params.sparkle` | number | 0.6 | min 0, max 1 | Sparkle | yes |
+| `params.speed` | number | 0.9 | min 0.2, max 2.5 | Speed | yes |
+| `params.starDensity` | number | 0.65 | min 0, max 1 | Star Density | yes |
+| `params.trailAlpha` | number | 0.82 | min 0.1, max 1 | Trail Alpha | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "rainbow_cat",
   "opacity": 1,
   "blend": "source-over",
   "params": {}

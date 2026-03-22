@@ -929,6 +929,18 @@
           "blend": "screen",
           "opacity": 0.08,
           "params": {}
+        },
+        {
+          "effect": "rainbow_cat",
+          "blend": "screen",
+          "opacity": 0.16,
+          "params": {
+            "speed": 0.72,
+            "rainbowLength": 0.88,
+            "sparkle": 0.5,
+            "trailAlpha": 0.75,
+            "starDensity": 0.4
+          }
         }
       ]
     },
