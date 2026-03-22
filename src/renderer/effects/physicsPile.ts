@@ -85,6 +85,12 @@ const PALETTE = [
 const DEFAULT_TRAIL = 0.2;
 const DEFAULT_COUNT = 18;
 const DEFAULT_KICK_IMPULSE = 250;
+const DEFAULT_INTRO_HOLD = 0.65;
+
+type PileLayoutEntry = {
+  x: number;
+  y: number;
+};
 
 function mulberry32(seed: number): () => number {
   let t = seed >>> 0;
@@ -109,6 +115,86 @@ function resolveKickOriginMode(value: unknown): KickOriginMode {
 
 function resolveNumberParam(value: unknown, fallback: number): number {
   return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+}
+
+export function planPileLayout(
+  widths: number[],
+  heights: number[],
+  worldWidth: number,
+  worldHeight: number
+): PileLayoutEntry[] {
+  const count = Math.min(widths.length, heights.length);
+  if (count === 0) {
+    return [];
+  }
+
+  const layout: PileLayoutEntry[] = new Array(count);
+  const minDim = Math.min(worldWidth, worldHeight);
+  const gapX = clamp(minDim * 0.012, 4, 10);
+  const gapY = clamp(minDim * 0.01, 4, 10);
+  const marginX = Math.max(16, gapX * 2);
+  const floorY = worldHeight - Math.max(14, gapY * 3);
+
+  let columns = count;
+  let bestOverflow = Number.POSITIVE_INFINITY;
+  for (let candidate = 3; candidate <= count; candidate += 1) {
+    const rowCount = Math.ceil(count / candidate);
+    let totalHeight = 0;
+    let maxRowWidth = 0;
+    for (let row = 0; row < rowCount; row += 1) {
+      const start = row * candidate;
+      const end = Math.min(count, start + candidate);
+      let rowWidth = 0;
+      let rowHeight = 0;
+      for (let index = start; index < end; index += 1) {
+        rowWidth += widths[index];
+        rowHeight = Math.max(rowHeight, heights[index]);
+      }
+      rowWidth += Math.max(0, end - start - 1) * gapX;
+      maxRowWidth = Math.max(maxRowWidth, rowWidth);
+      totalHeight += rowHeight;
+      if (row > 0) {
+        totalHeight += gapY;
+      }
+    }
+    const widthOverflow = Math.max(0, maxRowWidth - (worldWidth - marginX * 2));
+    const heightOverflow = Math.max(0, totalHeight - (worldHeight * 0.82));
+    const overflow = widthOverflow + heightOverflow;
+    if (overflow < bestOverflow) {
+      bestOverflow = overflow;
+      columns = candidate;
+    }
+    if (overflow <= 0) {
+      break;
+    }
+  }
+
+  let rowTop = floorY;
+  const rowCount = Math.ceil(count / columns);
+  for (let row = 0; row < rowCount; row += 1) {
+    const start = row * columns;
+    const end = Math.min(count, start + columns);
+    let rowWidth = 0;
+    let rowHeight = 0;
+    for (let index = start; index < end; index += 1) {
+      rowWidth += widths[index];
+      rowHeight = Math.max(rowHeight, heights[index]);
+    }
+    rowWidth += Math.max(0, end - start - 1) * gapX;
+    const startX = clamp((worldWidth - rowWidth) * 0.5, marginX, Math.max(marginX, worldWidth - rowWidth - marginX));
+    let cursorX = startX;
+    const rowBottom = rowTop;
+    for (let index = start; index < end; index += 1) {
+      layout[index] = {
+        x: cursorX + widths[index] * 0.5,
+        y: rowBottom - heights[index] * 0.5
+      };
+      cursorX += widths[index] + gapX;
+    }
+    rowTop -= rowHeight + gapY;
+  }
+
+  return layout;
 }
 
 export class PhysicsWorld {
@@ -207,7 +293,6 @@ export class PhysicsWorld {
     this.beatLoosenTimer = 0;
 
     const clamped = clamp(count, 5, MAX_BODIES);
-    const columns = Math.max(3, Math.floor(Math.sqrt(clamped)));
     const widths: number[] = new Array(clamped);
     const heights: number[] = new Array(clamped);
     let maxW = 0;
@@ -223,22 +308,23 @@ export class PhysicsWorld {
     }
 
     const maxExtent = Math.hypot(maxW, maxH);
+    const pileLayout = spawnMode === "pile" ? planPileLayout(widths, heights, this.width, this.height) : [];
+    const rainColumns = Math.max(3, Math.floor(Math.sqrt(clamped)));
     const spacingX = Math.max(this.width * 0.08, maxExtent * 1.05);
     const spacingY = Math.max(this.height * 0.06, maxExtent * 1.05);
-    const totalWidth = (columns - 1) * spacingX;
+    const totalWidth = (rainColumns - 1) * spacingX;
     const minBaseX = maxExtent * 0.5 + totalWidth * 0.5;
     const maxBaseX = this.width - maxExtent * 0.5 - totalWidth * 0.5;
     const baseX = clamp(this.width * 0.5, minBaseX, maxBaseX);
-    const baseY = Math.min(this.height * 0.78, this.height - maxExtent * 0.5);
 
     for (let i = 0; i < clamped; i += 1) {
       const width = widths[i];
       const height = heights[i];
       const palette = PALETTE[i % PALETTE.length];
-      const col = i % columns;
-      const row = Math.floor(i / columns);
-      const angle = (rng() - 0.5) * 0.6;
-      const angularVelocity = (rng() - 0.5) * 1.2;
+      const col = i % rainColumns;
+      const row = Math.floor(i / rainColumns);
+      const angle = spawnMode === "pile" ? 0 : (rng() - 0.5) * 0.6;
+      const angularVelocity = spawnMode === "pile" ? 0 : (rng() - 0.5) * 1.2;
 
       let x = 0;
       let y = 0;
@@ -247,27 +333,29 @@ export class PhysicsWorld {
 
       let placed = false;
       const target = { x: 0, y: 0 };
-      for (let attempt = 0; attempt < 16; attempt += 1) {
-        if (spawnMode === "rain") {
+      if (spawnMode === "pile") {
+        const planned = pileLayout[i];
+        if (planned) {
+          x = planned.x;
+          y = planned.y;
+          placed = true;
+        }
+      } else {
+        for (let attempt = 0; attempt < 16; attempt += 1) {
           x = rng() * this.width;
           y = -rng() * this.height * 0.6 - 40 - attempt * 8;
           vx = (rng() - 0.5) * 20;
           vy = rng() * 40;
-        } else {
-          x = baseX + (col - (columns - 1) / 2) * spacingX;
-          y = baseY - row * spacingY - attempt * 6;
-          vx = (rng() - 0.5) * 40;
-          vy = (rng() - 0.5) * 30;
-        }
-        if (this.resolveSpawnPosition(x, y, width, height, angle, target)) {
-          x = target.x;
-          y = target.y;
-          placed = true;
-          break;
+          if (this.resolveSpawnPosition(x, y, width, height, angle, target)) {
+            x = target.x;
+            y = target.y;
+            placed = true;
+            break;
+          }
         }
       }
       if (!placed) {
-        x = baseX + (col - (columns - 1) / 2) * spacingX;
+        x = baseX + (col - (rainColumns - 1) / 2) * spacingX;
         y = -height - i * height * 1.5;
       }
 
@@ -1020,6 +1108,7 @@ export class PhysicsPileEffect implements Effect {
   private shatterParticles: ShatterParticle[] = [];
   private shatterTimer = 0;
   private shatterActive = false;
+  private introHoldRemaining = 0;
 
   render({ ctx, width, height, time, audio, params }: EffectRenderContext): void {
     const count = clamp(resolveNumberParam(params.count, DEFAULT_COUNT), 5, MAX_BODIES);
@@ -1072,6 +1161,7 @@ export class PhysicsPileEffect implements Effect {
         this.lastConfig.seed
       );
       this.world.lastTime = time;
+      this.introHoldRemaining = DEFAULT_INTRO_HOLD;
     } else if (
       this.lastConfig.count !== count ||
       this.lastConfig.restitution !== restitution ||
@@ -1091,6 +1181,7 @@ export class PhysicsPileEffect implements Effect {
         friction,
         this.lastConfig.seed
       );
+      this.introHoldRemaining = DEFAULT_INTRO_HOLD;
     }
 
     if (trail !== this.trailAlpha) {
@@ -1140,7 +1231,8 @@ export class PhysicsPileEffect implements Effect {
       world.accumulator = 0;
     } else {
       world.update(frameDt);
-      if (audio.beat || audio.beatStrength > 0.2) {
+      this.introHoldRemaining = Math.max(0, this.introHoldRemaining - frameDt);
+      if (this.introHoldRemaining <= 0 && (audio.beat || audio.beatStrength > 0.2)) {
         world.applyBeatImpulse(kickImpulse, audio.beatStrength);
       }
 
@@ -1180,6 +1272,7 @@ export class PhysicsPileEffect implements Effect {
     this.shatterParticles = [];
     this.shatterTimer = 0;
     this.shatterActive = false;
+    this.introHoldRemaining = 0;
   }
 
   private startShatter(world: PhysicsWorld): void {
