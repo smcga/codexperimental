@@ -6,8 +6,7 @@ import {
   getDebugEffectSelectorValue,
   shouldShowEffectPanel
 } from "./debugPanel";
-import fs from "node:fs";
-import path from "node:path";
+import { getRegistryEffectNames } from "../renderer/effects/effectsDocGenerator";
 import { SectionConfig, TextCue } from "../config/loadConfig";
 
 const baseSection: SectionConfig = {
@@ -85,11 +84,8 @@ describe("debug effect selector helpers", () => {
     expect(getDebugEffectSelectorOptions(["starfield", "roadDrive"])).toEqual(["timeline", "starfield", "roadDrive"]);
   });
 
-  it("includes greets_wall from the effect registry source", () => {
-    const registryPath = path.resolve(process.cwd(), "src/renderer/effects/index.ts");
-    const registrySource = fs.readFileSync(registryPath, "utf-8");
-    const keys = [...registrySource.matchAll(/^\s*([a-zA-Z0-9_]+)\s*:/gm)].map((match) => match[1]);
-    const options = getDebugEffectSelectorOptions(keys);
+  it("includes greets_wall from the effect manifest registry", () => {
+    const options = getDebugEffectSelectorOptions(getRegistryEffectNames());
     expect(options).toContain("greets_wall");
   });
 

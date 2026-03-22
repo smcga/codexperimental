@@ -23,7 +23,7 @@ import {
   reorderScenes
 } from "./state/timelineStore";
 import { clearTimelineDraft, downloadTimeline, loadTimelineDraft, saveTimelineDraft } from "./serialization";
-import { getEffectDebugConfig } from "../renderer/debug/effectDebug";
+import { getManifestDebugConfig } from "../renderer/effects/manifest";
 
 const ERA_PRESETS: EraPreset[] = ["8bit", "16bit", "ps1", "pcdemo", "future"];
 const BLEND_MODES: BlendMode[] = [
@@ -202,7 +202,7 @@ export const getRandomEffectParams = (
   effectName: string,
   randomValue = Math.random
 ): Record<string, number | string> => {
-  const config = getEffectDebugConfig(effectName);
+  const config = getManifestDebugConfig(effectName);
   if (!config) {
     return {};
   }
@@ -371,7 +371,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   let isPlaying = false;
 
   const getEffectParamOptions = (effectName: string | null | undefined): string[] => {
-    const config = getEffectDebugConfig(effectName ?? null);
+    const config = getManifestDebugConfig(effectName ?? null);
     if (!config) {
       return [];
     }
@@ -1078,7 +1078,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     `;
 
     const rows = container.querySelectorAll<HTMLDivElement>(".editor-param-row");
-    const config = getEffectDebugConfig(effectName);
+    const config = getManifestDebugConfig(effectName);
     const controlsByKey = new Map((config?.controls ?? []).map((control) => [control.key, control]));
 
     rows.forEach((row) => {
