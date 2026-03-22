@@ -40,6 +40,7 @@ import { submitDoodle } from "./doodles";
 import { fetchViews, registerViewOncePerSession } from "./viewCounter";
 import { buildSharePayload, canUseNativeShare, getShareLink, ShareLinkPlatform } from "./share";
 import { getOverlayPresentation, OverlayMode } from "./overlayContent";
+import { buildTransitionOptionMarkup } from "./renderer/transitions";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
@@ -145,6 +146,8 @@ const debugState = {
 };
 
 const doodleCtx = doodleCanvas?.getContext("2d") ?? null;
+
+debugTransitionSelect.innerHTML = buildTransitionOptionMarkup({ includeAuto: true });
 
 updateOverlayActions();
 resetDoodleCanvas();

@@ -24,6 +24,7 @@ import {
 } from "./state/timelineStore";
 import { clearTimelineDraft, downloadTimeline, loadTimelineDraft, saveTimelineDraft } from "./serialization";
 import { getManifestDebugConfig } from "../renderer/effects/manifest";
+import { transitionOptions } from "../renderer/transitions";
 
 const ERA_PRESETS: EraPreset[] = ["8bit", "16bit", "ps1", "pcdemo", "future"];
 const BLEND_MODES: BlendMode[] = [
@@ -46,20 +47,6 @@ const FIT_ALIGN_OPTIONS: Array<{ label: string; value: FitAlign }> = [
   { label: "Stretch/Fill", value: "fill" }
 ];
 
-const TRANSITION_TYPES: TransitionType[] = [
-  "fade",
-  "wipe",
-  "slide-left",
-  "slide-right",
-  "slide-up",
-  "slide-down",
-  "iris",
-  "flash",
-  "shatter",
-  "signal-collapse",
-  "camera-punch-through",
-  "bitplane-wipe"
-];
 const EASE_NAMES = [
   "linear",
   "easeInOutQuad",
@@ -790,13 +777,13 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         <label>
           <span>In</span>
           <select data-field="transition-in">
-            ${TRANSITION_TYPES.map((type) => `<option value="${type}" ${type === scene.transition?.in ? "selected" : ""}>${type}</option>`).join("")}
+            ${transitionOptions.map((option) => `<option value="${option.value}" ${option.value === scene.transition?.in ? "selected" : ""}>${option.label}</option>`).join("")}
           </select>
         </label>
         <label>
           <span>Out</span>
           <select data-field="transition-out">
-            ${TRANSITION_TYPES.map((type) => `<option value="${type}" ${type === scene.transition?.out ? "selected" : ""}>${type}</option>`).join("")}
+            ${transitionOptions.map((option) => `<option value="${option.value}" ${option.value === scene.transition?.out ? "selected" : ""}>${option.label}</option>`).join("")}
           </select>
         </label>
         <label>
