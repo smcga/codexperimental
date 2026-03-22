@@ -36,12 +36,23 @@ import { applyEraOverride, applyEraOverrideToTransition } from "./debug/eraOverr
 import { createEditorRoot, EditorController } from "./editor/EditorRoot";
 import { submitDoodle } from "./doodles";
 import { fetchViews, registerViewOncePerSession } from "./viewCounter";
+import { buildSharePayload, canUseNativeShare, getShareLink, ShareLinkPlatform } from "./share";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
 const overlayText = overlay?.querySelector<HTMLDivElement>(".start-text");
 const overlayActions = document.querySelector<HTMLDivElement>("#overlay-actions");
+const overlayShareButton = document.querySelector<HTMLButtonElement>("#overlay-share-button");
+const overlayRestartButton = document.querySelector<HTMLButtonElement>("#overlay-restart-button");
 const addDoodleButton = document.querySelector<HTMLButtonElement>("#add-doodle-button");
+const shareStatus = document.querySelector<HTMLDivElement>("#share-status");
+const sharePanel = document.querySelector<HTMLDivElement>("#share-panel");
+const shareCopyButton = document.querySelector<HTMLButtonElement>("#share-copy-button");
+const shareLinkedIn = document.querySelector<HTMLAnchorElement>("#share-linkedin");
+const shareX = document.querySelector<HTMLAnchorElement>("#share-x");
+const shareFacebook = document.querySelector<HTMLAnchorElement>("#share-facebook");
+const shareReddit = document.querySelector<HTMLAnchorElement>("#share-reddit");
+const shareEmail = document.querySelector<HTMLAnchorElement>("#share-email");
 const debugOverlay = document.querySelector<HTMLDivElement>("#debug-overlay");
 const debugTimestamp = document.querySelector<HTMLSpanElement>("#debug-timestamp");
 const debugWebglStatus = document.querySelector<HTMLSpanElement>("#debug-webgl-status");
@@ -114,6 +125,7 @@ let doodleHasStroke = false;
 let doodleSubmitting = false;
 let doodleDrawing = false;
 let doodlePointerId: number | null = null;
+let sharePanelVisible = false;
 const debugState = {
   enabled: false,
   forcedEffect: null as string | null,
@@ -130,6 +142,7 @@ const doodleCtx = doodleCanvas?.getContext("2d") ?? null;
 
 updateOverlayActions();
 resetDoodleCanvas();
+syncShareLinks();
 
 function updateViewCounter(count: number): void {
   currentViewCount = count;
@@ -178,7 +191,15 @@ function updateOverlayActions(): void {
     return;
   }
   overlay.dataset.mode = overlayMode;
-  overlayActions.classList.toggle("hidden", overlayMode !== "end");
+  const showActions = overlayMode === "start" || overlayMode === "end";
+  overlayActions.classList.toggle("hidden", !showActions);
+  overlayShareButton?.classList.toggle("hidden", !showActions);
+  overlayRestartButton?.classList.toggle("hidden", overlayMode !== "end");
+  addDoodleButton?.classList.toggle("hidden", overlayMode !== "end");
+  if (!showActions) {
+    setSharePanelVisible(false);
+    setShareStatus("");
+  }
 }
 
 function setOverlay(text: string, show = true, isError = false, mode: "start" | "status" | "end" = "status"): void {
@@ -191,6 +212,77 @@ function setOverlay(text: string, show = true, isError = false, mode: "start" | 
   } else {
     overlay.classList.add("hidden");
   }
+}
+
+function setShareStatus(message: string, state: "idle" | "error" = "idle"): void {
+  if (!shareStatus) {
+    return;
+  }
+  shareStatus.textContent = message;
+  shareStatus.dataset.state = state;
+  shareStatus.classList.toggle("hidden", message.length === 0);
+}
+
+function setSharePanelVisible(visible: boolean): void {
+  sharePanelVisible = visible;
+  if (!sharePanel) {
+    return;
+  }
+  sharePanel.classList.toggle("hidden", !visible);
+}
+
+function getShareUrl(): string {
+  return window.location.href;
+}
+
+function syncShareLinks(): void {
+  const payload = buildSharePayload(getShareUrl());
+  const shareAnchors: Array<[HTMLAnchorElement | null, ShareLinkPlatform]> = [
+    [shareLinkedIn, "linkedin"],
+    [shareX, "x"],
+    [shareFacebook, "facebook"],
+    [shareReddit, "reddit"],
+    [shareEmail, "email"]
+  ];
+
+  shareAnchors.forEach(([anchor, platform]) => {
+    if (!anchor) {
+      return;
+    }
+    anchor.href = getShareLink(platform, payload);
+  });
+}
+
+async function copyShareLink(): Promise<void> {
+  try {
+    await navigator.clipboard.writeText(getShareUrl());
+    setShareStatus("Link copied. Share it anywhere you like.");
+  } catch {
+    setShareStatus("Clipboard access was blocked on this browser.", "error");
+  }
+}
+
+async function shareDemo(): Promise<void> {
+  syncShareLinks();
+  const payload = buildSharePayload(getShareUrl());
+  if (canUseNativeShare(navigator.share)) {
+    try {
+      await navigator.share(payload);
+      setShareStatus("Thanks for sharing.");
+      setSharePanelVisible(false);
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        return;
+      }
+      setShareStatus("Share sheet unavailable here, showing quick links instead.", "error");
+      setSharePanelVisible(true);
+    }
+    return;
+  }
+
+  const nextVisible = !sharePanelVisible;
+  setSharePanelVisible(nextVisible);
+  setShareStatus(nextVisible ? "Pick a platform or copy the link below." : "");
 }
 
 function setDoodleStatus(message: string, state: "idle" | "error" | "success" = "idle"): void {
@@ -857,7 +949,8 @@ function loop(): void {
 
   if (audioPlayer.ended) {
     isRunning = false;
-    setOverlay("THE END (press R to restart)", true, false, "end");
+    setOverlay("THE END", true, false, "end");
+    setShareStatus("Restart, add a doodle, or share the demo.");
     return;
   }
 
@@ -871,12 +964,46 @@ overlay.addEventListener("click", () => {
   void startDemo();
 });
 
+if (overlayShareButton) {
+  overlayShareButton.addEventListener("click", (event) => {
+    event.stopPropagation();
+    void shareDemo();
+  });
+}
+
+if (overlayRestartButton) {
+  overlayRestartButton.addEventListener("click", (event) => {
+    event.stopPropagation();
+    void restartDemo();
+  });
+}
+
 if (addDoodleButton) {
   addDoodleButton.addEventListener("click", (event) => {
     event.stopPropagation();
     setDoodleModalVisible(true);
   });
 }
+
+if (shareCopyButton) {
+  shareCopyButton.addEventListener("click", (event) => {
+    event.stopPropagation();
+    void copyShareLink();
+  });
+}
+
+if (sharePanel) {
+  sharePanel.addEventListener("click", (event) => {
+    event.stopPropagation();
+  });
+}
+
+[shareLinkedIn, shareX, shareFacebook, shareReddit, shareEmail].forEach((anchor) => {
+  anchor?.addEventListener("click", (event) => {
+    event.stopPropagation();
+    setShareStatus("Sharing link opened in a new tab.");
+  });
+});
 
 if (doodleCanvas && doodleCtx) {
   doodleCanvas.addEventListener("pointerdown", (event) => {

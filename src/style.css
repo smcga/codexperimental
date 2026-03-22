@@ -37,6 +37,13 @@ body,
   transition: opacity 0.6s ease;
 }
 
+.overlay-panel {
+  display: grid;
+  gap: 1rem;
+  justify-items: center;
+  padding: 1.5rem;
+}
+
 #start-overlay.hidden {
   opacity: 0;
   pointer-events: none;
@@ -690,7 +697,9 @@ body,
 
 .overlay-actions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
+  gap: 0.75rem;
   z-index: 1;
 }
 
@@ -698,8 +707,15 @@ body,
   display: none;
 }
 
+#overlay-share-button,
+#overlay-restart-button,
+#share-copy-button,
+.share-panel a,
 #add-doodle-button,
 .doodle-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: rgba(8, 20, 36, 0.88);
   color: #dffcff;
   border: 1px solid rgba(142, 249, 255, 0.45);
@@ -713,6 +729,14 @@ body,
   box-shadow: 0 0 18px rgba(0, 255, 255, 0.12);
 }
 
+#overlay-share-button:hover,
+#overlay-share-button:focus-visible,
+#overlay-restart-button:hover,
+#overlay-restart-button:focus-visible,
+#share-copy-button:hover,
+#share-copy-button:focus-visible,
+.share-panel a:hover,
+.share-panel a:focus-visible,
 #add-doodle-button:hover,
 #add-doodle-button:focus-visible,
 .doodle-actions button:hover,
@@ -720,6 +744,35 @@ body,
   outline: none;
   border-color: rgba(142, 249, 255, 0.85);
   box-shadow: 0 0 24px rgba(0, 255, 255, 0.22);
+}
+
+
+.share-status {
+  min-height: 1.1rem;
+  color: rgba(232, 247, 255, 0.8);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: none;
+}
+
+.share-status[data-state="error"] {
+  color: #ff9797;
+}
+
+.share-panel {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.65rem;
+  max-width: min(780px, 92vw);
+}
+
+.share-panel a {
+  text-decoration: none;
+}
+
+#overlay-restart-button {
+  background: rgba(28, 12, 24, 0.95);
 }
 
 .doodle-modal {
@@ -902,6 +955,11 @@ body,
 }
 
 @media (max-width: 640px) {
+  .share-panel > * {
+    flex: 1 1 calc(50% - 0.65rem);
+    text-align: center;
+  }
+
   .doodle-actions {
     justify-content: stretch;
   }
