@@ -1,16 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import ts from "typescript";
-import { getEffectDebugConfig } from "../debug/effectDebug";
-
+import { effectManifests } from "./manifest";
 export type ParamType = "number" | "string" | "boolean" | "object" | "array" | "union";
-
 type ParamConstraints = {
   min?: number;
   max?: number;
   options?: string[];
 };
-
 type ParamInfo = {
   path: string;
   type: ParamType;
@@ -19,7 +16,6 @@ type ParamInfo = {
   behavior: string;
   automatable: "yes" | "no" | "unknown";
 };
-
 type EffectDocEntry = {
   name: string;
   className: string;
@@ -30,14 +26,10 @@ type EffectDocEntry = {
   audioFeatures: string[];
   performanceNotes: string[];
 };
-
 type DefaultsMap = Record<string, string | number | boolean | null>;
-
-const REGISTRY_PATH = path.resolve(process.cwd(), "src/renderer/effects/index.ts");
+const REGISTRY_PATH = path.resolve(process.cwd(), "src/renderer/effects/manifest/index.ts");
 const LOAD_CONFIG_PATH = path.resolve(process.cwd(), "src/config/loadConfig.ts");
-
 const VALID_IDENTIFIER = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
-
 const formatDefaultValue = (value: string | number | boolean | null | undefined): string => {
   if (value === undefined) {
     return "no explicit default";
@@ -50,7 +42,6 @@ const formatDefaultValue = (value: string | number | boolean | null | undefined)
   }
   return String(value);
 };
-
 const formatConstraints = (constraints: ParamConstraints | undefined): string => {
   if (!constraints) {
     return "unspecified";
@@ -64,7 +55,6 @@ const formatConstraints = (constraints: ParamConstraints | undefined): string =>
   }
   return parts.length > 0 ? parts.join("; ") : "unspecified";
 };
-
 const inferTypeFromValue = (value: string | number | boolean | null | undefined): ParamType | null => {
   if (value === null) {
     return "union";
@@ -80,19 +70,11 @@ const inferTypeFromValue = (value: string | number | boolean | null | undefined)
   }
   return null;
 };
-
 const parseSourceFile = (filePath: string): ts.SourceFile => {
   const source = fs.readFileSync(filePath, "utf-8");
   return ts.createSourceFile(filePath, source, ts.ScriptTarget.Latest, true);
 };
-
-const resolveModulePath = (modulePath: string): string => {
-  const base = path.resolve(path.dirname(REGISTRY_PATH), modulePath);
-  const candidates = [`${base}.ts`, `${base}.tsx`, path.join(base, "index.ts"), path.join(base, "index.tsx")];
-  const match = candidates.find((candidate) => fs.existsSync(candidate));
-  return match ?? base;
-};
-
+const resolveSourcePath = (modulePath: string): string => path.resolve(process.cwd(), modulePath);
 const getLeadingDescription = (sourceText: string): string | null => {
   const trimmed = sourceText.trimStart();
   if (trimmed.startsWith("/*")) {
@@ -113,7 +95,6 @@ const getLeadingDescription = (sourceText: string): string | null => {
   }
   return null;
 };
-
 const parseBlendModes = (): string[] => {
   const sourceFile = parseSourceFile(LOAD_CONFIG_PATH);
   const blendModes: string[] = [];
@@ -141,62 +122,6 @@ const parseBlendModes = (): string[] => {
   });
   return blendModes;
 };
-
-const getImportMap = (sourceFile: ts.SourceFile): Map<string, string> => {
-  const importMap = new Map<string, string>();
-  sourceFile.forEachChild((node) => {
-    if (!ts.isImportDeclaration(node)) {
-      return;
-    }
-    const namedBindings = node.importClause?.namedBindings;
-    if (!namedBindings || !ts.isNamedImports(namedBindings)) {
-      return;
-    }
-    namedBindings.elements.forEach((element) => {
-      importMap.set(element.name.text, (node.moduleSpecifier as ts.StringLiteral).text);
-    });
-  });
-  return importMap;
-};
-
-const parseRegistry = (): Array<{ name: string; className: string; modulePath: string }> => {
-  const sourceFile = parseSourceFile(REGISTRY_PATH);
-  const importMap = getImportMap(sourceFile);
-  const entries: Array<{ name: string; className: string; modulePath: string }> = [];
-
-  sourceFile.forEachChild((node) => {
-    if (!ts.isVariableStatement(node)) {
-      return;
-    }
-    const declaration = node.declarationList.declarations.find(
-      (decl) => ts.isIdentifier(decl.name) && decl.name.text === "effectRegistry"
-    );
-    if (!declaration || !declaration.initializer || !ts.isObjectLiteralExpression(declaration.initializer)) {
-      return;
-    }
-    declaration.initializer.properties.forEach((property) => {
-      if (!ts.isPropertyAssignment(property)) {
-        return;
-      }
-      const nameNode = property.name;
-      const effectName = ts.isIdentifier(nameNode) ? nameNode.text : ts.isStringLiteral(nameNode) ? nameNode.text : null;
-      if (!effectName) {
-        return;
-      }
-      if (!ts.isNewExpression(property.initializer)) {
-        return;
-      }
-      const className = ts.isIdentifier(property.initializer.expression)
-        ? property.initializer.expression.text
-        : property.initializer.expression.getText(sourceFile);
-      const modulePath = importMap.get(className) ?? "unknown";
-      entries.push({ name: effectName, className, modulePath });
-    });
-  });
-
-  return entries;
-};
-
 type ParamExtraction = {
   paramPaths: Set<string>;
   defaults: DefaultsMap;
@@ -207,7 +132,6 @@ type ParamExtraction = {
   performanceNotes: Set<string>;
   description: string | null;
 };
-
 const getDefaultsFromObject = (sourceFile: ts.SourceFile): DefaultsMap => {
   const defaults: DefaultsMap = {};
   sourceFile.forEachChild((node) => {
@@ -239,7 +163,6 @@ const getDefaultsFromObject = (sourceFile: ts.SourceFile): DefaultsMap => {
   });
   return defaults;
 };
-
 const literalFromExpression = (expression: ts.Expression): string | number | boolean | null | undefined => {
   if (ts.isNumericLiteral(expression)) {
     return Number(expression.text);
@@ -258,7 +181,6 @@ const literalFromExpression = (expression: ts.Expression): string | number | boo
   }
   return undefined;
 };
-
 const resolveParamAliasInitializer = (initializer: ts.Expression): string | null => {
   if (ts.isIdentifier(initializer)) {
     return initializer.text;
@@ -268,7 +190,6 @@ const resolveParamAliasInitializer = (initializer: ts.Expression): string | null
   }
   return null;
 };
-
 const buildParamPath = (segments: Array<{ type: "property" | "element"; value: string }>): string => {
   let pathValue = "params";
   segments.forEach((segment) => {
@@ -282,7 +203,6 @@ const buildParamPath = (segments: Array<{ type: "property" | "element"; value: s
   });
   return pathValue;
 };
-
 const getParamSegments = (
   node: ts.Expression,
   paramAliases: Set<string>
@@ -316,7 +236,6 @@ const getParamSegments = (
   }
   return null;
 };
-
 const collectParamData = (filePath: string): ParamExtraction => {
   const sourceText = fs.readFileSync(filePath, "utf-8");
   const sourceFile = ts.createSourceFile(filePath, sourceText, ts.ScriptTarget.Latest, true);
@@ -327,21 +246,17 @@ const collectParamData = (filePath: string): ParamExtraction => {
   const audioFeatures = new Set<string>();
   const performanceNotes = new Set<string>();
   const description = getLeadingDescription(sourceText);
-
   const paramAliases = new Set<string>(["params"]);
   const audioAliases = new Set<string>(["audio"]);
-
   const recordParamPath = (segments: Array<{ type: "property" | "element"; value: string }>): string => {
     const pathValue = buildParamPath(segments);
     paramPaths.add(pathValue);
     return pathValue;
   };
-
   const recordConstraint = (paramPath: string, constraint: ParamConstraints): void => {
     const current = paramConstraints.get(paramPath) ?? {};
     paramConstraints.set(paramPath, { ...current, ...constraint });
   };
-
   const recordDefault = (paramPath: string, value: string | number | boolean | null | undefined): void => {
     if (value === undefined) {
       return;
@@ -350,7 +265,6 @@ const collectParamData = (filePath: string): ParamExtraction => {
       paramDefaults.set(paramPath, value);
     }
   };
-
   const inferRenderer = (): "Canvas2D" | "WebGL2" | "hybrid" => {
     if (filePath.includes(`${path.sep}gl${path.sep}`)) {
       performanceNotes.add("WebGL2 shader pipeline; performance depends on GPU.");
@@ -365,9 +279,7 @@ const collectParamData = (filePath: string): ParamExtraction => {
     }
     return "Canvas2D";
   };
-
   const renderer = inferRenderer();
-
   const visit = (node: ts.Node): void => {
     if (ts.isVariableDeclaration(node) && node.initializer) {
       const aliasTarget = resolveParamAliasInitializer(node.initializer);
@@ -379,7 +291,6 @@ const collectParamData = (filePath: string): ParamExtraction => {
         audioAliases.add(node.name.text);
       }
     }
-
     if (ts.isVariableDeclaration(node) && node.initializer && ts.isObjectBindingPattern(node.name)) {
       const initializerName = resolveParamAliasInitializer(node.initializer);
       if (initializerName && paramAliases.has(initializerName)) {
@@ -399,7 +310,6 @@ const collectParamData = (filePath: string): ParamExtraction => {
         });
       }
     }
-
     if (ts.isBinaryExpression(node)) {
       if (node.operatorToken.kind === ts.SyntaxKind.QuestionQuestionToken || node.operatorToken.kind === ts.SyntaxKind.BarBarToken) {
         const segments = getParamSegments(node.left, paramAliases);
@@ -409,7 +319,6 @@ const collectParamData = (filePath: string): ParamExtraction => {
         }
       }
     }
-
     if (ts.isCallExpression(node) && ts.isIdentifier(node.expression)) {
       const functionName = node.expression.text;
       if (["clamp", "clampInt"].includes(functionName) && node.arguments.length >= 3) {
@@ -448,7 +357,6 @@ const collectParamData = (filePath: string): ParamExtraction => {
         }
       }
     }
-
     if (ts.isPropertyAccessExpression(node) || ts.isPropertyAccessChain(node)) {
       const segments = getParamSegments(node, paramAliases);
       if (segments && segments.length > 0) {
@@ -459,26 +367,21 @@ const collectParamData = (filePath: string): ParamExtraction => {
         audioFeatures.add(audioSegments[0].value);
       }
     }
-
     if (ts.isElementAccessExpression(node) || ts.isElementAccessChain(node)) {
       const segments = getParamSegments(node, paramAliases);
       if (segments && segments.length > 0) {
         recordParamPath(segments);
       }
     }
-
     ts.forEachChild(node, visit);
   };
-
   visit(sourceFile);
-
   Object.entries(defaults).forEach(([key, value]) => {
     const pathValue = `params.${key}`;
     if (paramPaths.has(pathValue)) {
       recordDefault(pathValue, value);
     }
   });
-
   return {
     paramPaths,
     defaults,
@@ -490,7 +393,6 @@ const collectParamData = (filePath: string): ParamExtraction => {
     description
   };
 };
-
 const renderEffectSection = (entry: EffectDocEntry): string => {
   const paramsTable = entry.params
     .map(
@@ -500,7 +402,6 @@ const renderEffectSection = (entry: EffectDocEntry): string => {
     .join("\n");
   const audioList = entry.audioFeatures.length > 0 ? entry.audioFeatures.join(", ") : "None detected";
   const performanceList = entry.performanceNotes.length > 0 ? entry.performanceNotes.join(" ") : "None noted.";
-
   return [
     `## Effect: ${entry.name}`,
     ``,
@@ -534,33 +435,14 @@ const renderEffectSection = (entry: EffectDocEntry): string => {
     ``
   ].join("\n");
 };
-
 export const buildEffectDocs = (): EffectDocEntry[] => {
-  const registryEntries = parseRegistry();
-  return registryEntries.map((entry) => {
-    const modulePath = entry.modulePath === "unknown" ? "unknown" : resolveModulePath(entry.modulePath);
-    const relativeModulePath =
-      entry.modulePath === "unknown" ? "unknown" : path.relative(process.cwd(), modulePath).replace(/\\\\/g, "/");
-    const extraction = entry.modulePath === "unknown"
-      ? {
-          paramPaths: new Set<string>(),
-          defaults: {},
-          paramDefaults: new Map<string, string | number | boolean | null>(),
-          paramConstraints: new Map<string, ParamConstraints>(),
-          audioFeatures: new Set<string>(),
-          renderer: "Canvas2D" as const,
-          performanceNotes: new Set<string>(),
-          description: null
-        }
-      : collectParamData(modulePath);
-
-    const debugConfig = getEffectDebugConfig(entry.name);
-    const debugControls = debugConfig?.controls ?? [];
+  return effectManifests.map((manifest) => {
+    const modulePath = resolveSourcePath(manifest.sourcePath);
+    const extraction = collectParamData(modulePath);
+    const debugControls = manifest.debug.controls;
     const debugControlMap = new Map(debugControls.map((control) => [control.key, control]));
-
     const mergedParamPaths = new Set<string>(extraction.paramPaths);
     debugControls.forEach((control) => mergedParamPaths.add(`params.${control.key}`));
-
     const params: ParamInfo[] = Array.from(mergedParamPaths)
       .sort()
       .map((paramPath) => {
@@ -583,7 +465,6 @@ export const buildEffectDocs = (): EffectDocEntry[] => {
           : extraction.paramConstraints.get(paramPath);
         const behavior = debugControl?.label ?? "Used in effect render logic.";
         const automatable = type === "number" ? "yes" : type === "string" ? "no" : "unknown";
-
         return {
           path: paramPath,
           type,
@@ -593,24 +474,19 @@ export const buildEffectDocs = (): EffectDocEntry[] => {
           automatable
         };
       });
-
-    const description =
-      extraction.description ??
-      `Implemented by ${entry.className} (${relativeModulePath}).`;
-
+    const description = manifest.docs.description || extraction.description || `Implemented by ${manifest.className} (${manifest.sourcePath}).`;
     return {
-      name: entry.name,
-      className: entry.className,
-      modulePath: relativeModulePath,
+      name: manifest.key,
+      className: manifest.className,
+      modulePath: manifest.sourcePath,
       renderer: extraction.renderer,
       description,
       params,
       audioFeatures: Array.from(extraction.audioFeatures).sort(),
-      performanceNotes: Array.from(extraction.performanceNotes),
+      performanceNotes: Array.from(extraction.performanceNotes)
     };
   });
 };
-
 const buildCommonParamPatterns = (effects: EffectDocEntry[]): Array<{ name: string; count: number }> => {
   const counts = new Map<string, number>();
   effects.forEach((effect) => {
@@ -636,7 +512,7 @@ export const generateEffectsDoc = (): { markdown: string; effectNames: string[];
   const header = [
     "# Effects Reference",
     "",
-    `Generated from \`${path.relative(process.cwd(), REGISTRY_PATH).replace(/\\\\/g, "/")}\`.`,
+    `Generated from \`${path.relative(process.cwd(), REGISTRY_PATH).replace(/\\/g, "/")}\`.`,
     "",
     `Total effects: **${effects.length}**.`,
     "",
@@ -663,4 +539,4 @@ export const generateEffectsDoc = (): { markdown: string; effectNames: string[];
   return { markdown: `${header}\n\n${body}\n`, effectNames, registryPath: REGISTRY_PATH };
 };
 
-export const getRegistryEffectNames = (): string[] => parseRegistry().map((entry) => entry.name).sort();
+export const getRegistryEffectNames = (): string[] => effectManifests.map((manifest) => manifest.key);

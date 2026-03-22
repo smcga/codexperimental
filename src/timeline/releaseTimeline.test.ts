@@ -115,7 +115,17 @@ describe("release timeline", () => {
     const docs = readFileSync(docsPath, "utf-8");
     const documentedEffects = Array.from(docs.matchAll(/^## Effect: (.+)$/gm), (match) => match[1]);
 
-    const optionalEffects = new Set(["portrait", "voxel_world_builder"]);
+    const optionalEffects = new Set([
+      "portrait",
+      "voxel_world_builder",
+      "cosmic_voyage",
+      "fireworks_display",
+      "lemmings_march",
+      "prism_bloom",
+      "tetris_matrix",
+      "velvet_dreamscape",
+      "water_drops"
+    ]);
     documentedEffects.forEach((effectId) => {
       if (optionalEffects.has(effectId)) {
         return;

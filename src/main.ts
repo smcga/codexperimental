@@ -13,7 +13,8 @@ import { Timeline } from "./timeline/timeline";
 import { Renderer } from "./renderer/renderer";
 import { FramingOverride } from "./renderer/framing";
 import { effectRegistry } from "./renderer/effects";
-import { coerceEffectParams, getEffectDebugConfig, getEffectDebugDefaults, EffectParamControl } from "./renderer/debug/effectDebug";
+import { getEffectRegistryKeys, getManifestDebugConfig, EffectParamControl } from "./renderer/effects/manifest";
+import { coerceEffectParams, getEffectDebugDefaults } from "./renderer/debug/effectDebug";
 import { getWebGLStatusLabel } from "./renderer/effects/gl/webglStatus";
 import { TerminalIntroRenderer } from "./renderer/intro/terminalIntro";
 import { createExplosionState, getExplosionShake, renderExplosion } from "./renderer/overlays/explosion";
@@ -138,7 +139,7 @@ const debugState = {
   eraOverride: null as EraPreset | null,
   monochromeOverride: null as boolean | null,
   effectParams: Object.fromEntries(
-    Object.keys(effectRegistry).map((effectName) => [effectName, getEffectDebugDefaults(effectName)])
+    getEffectRegistryKeys().map((effectName) => [effectName, getEffectDebugDefaults(effectName)])
   ),
   framingOverride: "auto" as FramingOverride
 };
@@ -499,7 +500,7 @@ function createEffectSelector(): void {
 
   debugEffectSelect.innerHTML = "";
 
-  getDebugEffectSelectorOptions(Object.keys(effectRegistry)).forEach((effectName) => {
+  getDebugEffectSelectorOptions(getEffectRegistryKeys()).forEach((effectName) => {
     const option = document.createElement("option");
     option.value = effectName;
     option.textContent = effectName;
@@ -567,7 +568,7 @@ async function copyCurrentEffectSettings(): Promise<void> {
   if (!debugState.forcedEffect) {
     return;
   }
-  const config = getEffectDebugConfig(debugState.forcedEffect);
+  const config = getManifestDebugConfig(debugState.forcedEffect);
   if (!config) {
     return;
   }
@@ -587,7 +588,7 @@ function renderEffectPanel(effectName: string): void {
   if (!debugEffectPanel || !debugEffectControls || !debugEffectTitle || !debugEffectEmpty) {
     return;
   }
-  const config = getEffectDebugConfig(effectName);
+  const config = getManifestDebugConfig(effectName);
   if (!config) {
     return;
   }
@@ -773,7 +774,7 @@ if (!releaseMode) {
   if (editorRoot) {
     createEditorRoot({
       container: editorRoot,
-      effectNames: Object.keys(effectRegistry),
+      effectNames: getEffectRegistryKeys(),
       applyTimeline: applyRawTimeline,
       play: async () => {
         if (!audioPlayer) {
