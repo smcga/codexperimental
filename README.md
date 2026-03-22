@@ -30,6 +30,7 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 - The `chess` effect renders a deterministic, self-playing chess match with clearer, silhouette-driven pieces that better read as crowns, crosses, mitres, battlements, and horse heads; tune pacing with `params.speed` or anchor with `params.startTime`.
 - The `gl_fractal_tunnel` effect renders a WebGL2 raymarched tunnel with audio-reactive pulses and bloom; tune `params` like `quality`, `warp`, `hueShift`, `exposure`, and `seed`. It falls back to the `tunnel` effect when WebGL2 is unavailable.
 - The `physics_pile` effect simulates a stack of 2D rigid bodies; tune `params` like `count`, `restitution`, `friction`, `gravity`, `kickImpulse`/`beatImpulse`, `kickRadius`, `scatterAngleDeg`, `scatterJitter`, `kickUpBias`, `kickTorque`, `loosenDuration`, `loosenFrictionMult`, `loosenRestitutionAdd`, `loosenPosCorrMult`, `loosenExtraSlop`, `maxLinVel`, `maxAngVel`, `kickOrigin`, `kickOriginY`, `sepBiasDeg`, `spawnMode`, `trail`, `seed`, `wreckingCue` (swings in a heavy ball), and `shatter` (freezes and dissolves the stack into particles).
+- The `pendulum_wave` effect renders a coupled pendulum sculpture with weighty strings and beat-driven impulses; tune `params` like `count`, `spread`, `gravity`, `damping`, `coupling`, `bobRadius`, `trail`, `sway`, `audioReact`, and `seed`.
 - The `gl_impossible_corridor` effect renders a WebGL2 raymarched impossible corridor with bass-driven breathing, beat kicks, and treble shimmer; tune `params` like `quality`, `warp`, `hueShift`, `exposure`, `seed`, and `speed`. It falls back to the `tunnel` effect when WebGL2 is unavailable.
 - The `neon_alley` effect renders a WebGL2 raymarched neon alley with audio-reactive shimmer; tune `params` like `quality`, `speed`, `exposure`, `hueShift`, and `seed`. It falls back to the `neon` effect when WebGL2 is unavailable.
 - The `space_hangar` effect renders a WebGL2 raymarched sci-fi hangar flythrough with bass-driven camera shake; tune `params` like `quality`, `speed`, `exposure`, `hueShift`, and `seed`. It falls back to the `tunnel` effect when WebGL2 is unavailable.
@@ -164,6 +165,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `isogrid` | `opacity`, `lineWidth`, `spacing`, `wave`, `speed` |  |
 | `neon` | `shapes`, `radius`, `radiusStep`, `speed`, `glow`, `lineWidth` |  |
 | `particles` | `trail`, `burst`, `burstAudio`, `force`, `forceAudio` |  |
+| `pendulum_wave` | `count`, `spread`, `gravity`, `damping`, `coupling`, `bobRadius`, `trail`, `sway`, `audioReact`, `seed` | Coupled pendulum array with weighted strings, inertia, and beat-driven impulses. |
 | `border_multiplex` | `hwSprites`, `totalSprites`, `bandHeight`, `spriteSize`, `speed`, `rasterJitter`, `borderMaskStrength`, `audioReact`, `seed` |  |
 | `fluid` | `speed`, `dissipation`, `splatCount`, `splatSize`, `turbulence`, `hueShift`, `seed` |  |
 | `boids_simulation` | `count`, `speed`, `cohesion`, `alignment`, `separation`, `neighborRadius`, `separationRadius`, `trail`, `size`, `seed` | Audio-reactive flocking simulation with wraparound space and neon boid trails. |

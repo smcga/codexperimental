@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **77**.
+Total effects: **78**.
 
 ## Table of contents
 
@@ -46,6 +46,7 @@ Total effects: **77**.
 - [Effect: neon](#effect-neon)
 - [Effect: neon_alley](#effect-neon-alley)
 - [Effect: particles](#effect-particles)
+- [Effect: pendulum_wave](#effect-pendulum-wave)
 - [Effect: physics_pile](#effect-physics-pile)
 - [Effect: plasma](#effect-plasma)
 - [Effect: platformerScroll](#effect-platformerScroll)
@@ -103,15 +104,15 @@ Total effects: **77**.
 ### Common parameter patterns
 
 - `speed` (used in 42 effects)
-- `seed` (used in 33 effects)
-- `audioReact` (used in 32 effects)
+- `seed` (used in 34 effects)
+- `audioReact` (used in 33 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 11 effects)
-- `trail` (used in 9 effects)
+- `trail` (used in 10 effects)
 - `palette` (used in 9 effects)
+- `count` (used in 7 effects)
 - `hueShift` (used in 7 effects)
 - `scanlines` (used in 7 effects)
-- `count` (used in 6 effects)
 - `bufH` (used in 6 effects)
 - `bufW` (used in 6 effects)
 
@@ -1463,6 +1464,41 @@ Total effects: **77**.
 ```json
 {
   "effect": "particles",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: pendulum_wave
+
+- **Registry key:** `pendulum_wave`
+- **Implementation:** `src/renderer/effects/pendulumWaveEffect.ts` (class `PendulumWaveEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Coupled pendulum array with weighted strings, inertia, and beat-driven impulses.
+- **Audio features:** bass, beat, beatStrength, mid, rms
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReact` | number | 0.74 | min 0, max 1 | Audio React | yes |
+| `params.bobRadius` | number | 0.9 | min 0.45, max 1.6 | Bob Radius | yes |
+| `params.count` | number | 11 | min 5, max 24 | Count | yes |
+| `params.coupling` | number | 0.44 | min 0, max 1.4 | Coupling | yes |
+| `params.damping` | number | 0.1 | min 0.02, max 1.2 | Damping | yes |
+| `params.gravity` | number | 0.78 | min 0, max 1.6 | Gravity | yes |
+| `params.seed` | number | 7 | min 0, max 9999 | Seed | yes |
+| `params.spread` | number | 0.78 | min 0.3, max 0.95 | Spread | yes |
+| `params.sway` | number | 0.56 | min 0, max 1.4 | Sway | yes |
+| `params.trail` | number | 0.2 | min 0.02, max 0.65 | Trail | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "pendulum_wave",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
