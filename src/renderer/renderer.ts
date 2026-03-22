@@ -9,6 +9,7 @@ import { computeFraming, FramingOverride, FramingState } from "./framing";
 import { resolveMonochrome } from "./monochrome";
 import { computePresentTransform, computeScreenSafeRect } from "./present";
 import { renderTextCues } from "./text/textRenderer";
+import { computeBitplaneWipeTransitionState } from "./transitions/bitplaneWipe";
 import { CameraPunchThroughTransitionState, computeCameraPunchThroughTransitionState } from "./transitions/cameraPunchThrough";
 import { computeShatterTransitionState } from "./transitions/shatter";
 
@@ -289,6 +290,19 @@ export class Renderer {
           audio,
           { zoom: 1, panX: 0, panY: 0 },
           true
+        );
+        return;
+      }
+      if (transition.type === "bitplane-wipe") {
+        this.drawBitplaneWipeTransitionCanvas(
+          targetCtx,
+          this.mobileFromCanvas,
+          this.mobileToCanvas,
+          transition.progress,
+          0,
+          0,
+          width,
+          height
         );
         return;
       }
@@ -639,6 +653,9 @@ export class Renderer {
         return;
       case "camera-punch-through":
         this.drawCameraPunchThroughTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
+        return;
+      case "bitplane-wipe":
+        this.drawBitplaneWipeTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
         return;
       case "fade":
         this.drawFadeTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
@@ -1052,6 +1069,86 @@ export class Renderer {
       ctx.save();
       ctx.fillStyle = `rgba(255, 255, 255, ${Math.pow(state.impactAlpha, 0.8)})`;
       ctx.fillRect(rectX, rectY, width, height);
+      ctx.restore();
+    }
+  }
+
+  private drawBitplaneWipeTransition(
+    ctx: CanvasRenderingContext2D,
+    progress: number,
+    scale: number,
+    offsetX: number,
+    offsetY: number,
+    shakeX: number,
+    shakeY: number,
+    camera: CameraState,
+    smoothing: boolean
+  ): void {
+    this.drawBitplaneWipeTransitionCanvas(
+      ctx,
+      this.transitionCanvas,
+      this.baseCanvas,
+      progress,
+      offsetX + shakeX,
+      offsetY + shakeY,
+      this.baseWidth * scale,
+      this.baseHeight * scale,
+      camera,
+      smoothing
+    );
+  }
+
+  private drawBitplaneWipeTransitionCanvas(
+    ctx: CanvasRenderingContext2D,
+    fromCanvas: HTMLCanvasElement,
+    toCanvas: HTMLCanvasElement,
+    progress: number,
+    rectX: number,
+    rectY: number,
+    width: number,
+    height: number,
+    camera: CameraState = { zoom: 1, panX: 0, panY: 0 },
+    smoothing = true
+  ): void {
+    const state = computeBitplaneWipeTransitionState(progress, width);
+
+    this.drawCanvasToRect(ctx, fromCanvas, rectX, rectY, width, height, 1, camera, smoothing);
+
+    for (const band of state.bands) {
+      if (band.progress <= 0.001) {
+        continue;
+      }
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(rectX + band.x, rectY, band.width + 0.75, height);
+      ctx.clip();
+      this.drawCanvasToRect(ctx, toCanvas, rectX, rectY, width, height, band.progress, camera, smoothing);
+      ctx.restore();
+
+      if (band.edgeGlow > 0.001 && band.progress < 0.999) {
+        const edgeX = rectX + band.x + band.width;
+        const glowWidth = Math.max(2, width * 0.006);
+        const glow = ctx.createLinearGradient(edgeX - glowWidth, rectY, edgeX + glowWidth, rectY);
+        glow.addColorStop(0, "rgba(255, 255, 255, 0)");
+        glow.addColorStop(0.5, `rgba(190, 235, 255, ${band.edgeGlow * 0.4})`);
+        glow.addColorStop(1, "rgba(255, 255, 255, 0)");
+        ctx.save();
+        ctx.fillStyle = glow;
+        ctx.fillRect(edgeX - glowWidth, rectY, glowWidth * 2, height);
+        ctx.restore();
+      }
+    }
+
+    if (state.overlayAlpha > 0.001) {
+      ctx.save();
+      ctx.globalCompositeOperation = "screen";
+      ctx.fillStyle = `rgba(255, 255, 255, ${state.overlayAlpha})`;
+      for (const band of state.bands) {
+        const scanlineStep = Math.max(2, Math.round(6 - band.progress * 3));
+        for (let y = rectY + (band.index % 2); y < rectY + height; y += scanlineStep) {
+          ctx.fillRect(rectX + band.x, y, Math.max(1, band.width - 1), 1);
+        }
+      }
       ctx.restore();
     }
   }
