@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   computeSceneSeekTime,
@@ -86,6 +88,18 @@ describe("getNextNewSectionName", () => {
       { id: "New Section 4", start: 20, effect: "starfield" }
     ];
     expect(getNextNewSectionName(scenes)).toBe("New Section 10");
+  });
+});
+
+describe("transition selector sources", () => {
+  it("includes bitplane-wipe in the editor transition options", () => {
+    const source = fs.readFileSync(path.resolve(process.cwd(), "src/editor/EditorRoot.ts"), "utf-8");
+    expect(source).toContain('"bitplane-wipe"');
+  });
+
+  it("includes bitplane-wipe in the debug panel transition options", () => {
+    const source = fs.readFileSync(path.resolve(process.cwd(), "index.html"), "utf-8");
+    expect(source).toContain('<option value="bitplane-wipe">Bitplane Wipe</option>');
   });
 });
 
