@@ -12,7 +12,8 @@ const TRANSITION_TYPES = [
   "shatter",
   "signal-collapse",
   "camera-punch-through",
-  "bitplane-wipe"
+  "bitplane-wipe",
+  "packet-loss"
 ] as const;
 
 export type TransitionType = (typeof TRANSITION_TYPES)[number];

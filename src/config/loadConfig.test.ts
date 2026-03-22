@@ -51,14 +51,14 @@ describe("normalizeTimelineConfig", () => {
   });
 
 
-  it("accepts the shatter, camera-punch-through, and bitplane-wipe transition types", () => {
+  it("accepts the shatter, camera-punch-through, bitplane-wipe, and packet-loss transition types", () => {
     const raw = createBaseConfig();
-    raw.sections[0].transition = { in: "shatter", out: "bitplane-wipe", duration: 0.6 };
+    raw.sections[0].transition = { in: "packet-loss", out: "bitplane-wipe", duration: 0.6 };
 
     const normalized = normalizeTimelineConfig(raw);
 
     expect(normalized.sections[0].transition).toEqual({
-      in: "shatter",
+      in: "packet-loss",
       out: "bitplane-wipe",
       duration: 0.6
     });
