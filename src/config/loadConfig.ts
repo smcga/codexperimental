@@ -9,6 +9,7 @@ const TRANSITION_TYPES = [
   "slide-down",
   "iris",
   "flash",
+  "shatter",
   "signal-collapse",
   "camera-punch-through"
 ] as const;

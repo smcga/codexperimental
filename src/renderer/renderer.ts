@@ -10,6 +10,7 @@ import { resolveMonochrome } from "./monochrome";
 import { computePresentTransform, computeScreenSafeRect } from "./present";
 import { renderTextCues } from "./text/textRenderer";
 import { CameraPunchThroughTransitionState, computeCameraPunchThroughTransitionState } from "./transitions/cameraPunchThrough";
+import { computeShatterTransitionState } from "./transitions/shatter";
 
 export type RenderState = {
   ctx: CanvasRenderingContext2D;
@@ -213,7 +214,7 @@ export class Renderer {
       if (transition) {
         this.renderSectionTo(this.transitionCtx, transition.from, time, delta, audio, framing);
         this.renderSectionTo(this.baseCtx, transition.to, time, delta, audio, framing);
-        this.drawTransition(ctx, transition, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints);
+        this.drawTransition(ctx, transition, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints, audio);
       } else {
         this.renderSectionTo(this.baseCtx, section, time, delta, audio, framing);
         this.drawScaled(
@@ -273,6 +274,22 @@ export class Renderer {
       this.renderSectionToMobileScreen(this.mobileToCtx, transition.to, time, delta, audio, shakeX, shakeY, camera, framing);
       if (transition.type === "camera-punch-through") {
         this.drawCameraPunchThroughMobileTransition(targetCtx, transition.progress, width, height);
+        return;
+      }
+      if (transition.type === "shatter") {
+        this.drawShatterTransitionCanvas(
+          targetCtx,
+          this.mobileFromCanvas,
+          this.mobileToCanvas,
+          transition.progress,
+          0,
+          0,
+          width,
+          height,
+          audio,
+          { zoom: 1, panX: 0, panY: 0 },
+          true
+        );
         return;
       }
       targetCtx.save();
@@ -569,7 +586,8 @@ export class Renderer {
     shakeX: number,
     shakeY: number,
     camera: CameraState,
-    eraConstraints: EraConstraints
+    eraConstraints: EraConstraints,
+    audio: AudioFeatures
   ): void {
     const progress = transition.progress;
     switch (transition.type) {
@@ -601,6 +619,20 @@ export class Renderer {
         return;
       case "flash":
         this.drawFlashTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
+        return;
+      case "shatter":
+        this.drawShatterTransition(
+          ctx,
+          progress,
+          scale,
+          offsetX,
+          offsetY,
+          shakeX,
+          shakeY,
+          camera,
+          eraConstraints.smoothing,
+          audio
+        );
         return;
       case "signal-collapse":
         this.drawSignalCollapseTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
@@ -765,6 +797,186 @@ export class Renderer {
       ctx.fillRect(offsetX + shakeX, offsetY + shakeY, width, height);
       ctx.restore();
     }
+  }
+
+  private drawShatterTransition(
+    ctx: CanvasRenderingContext2D,
+    progress: number,
+    scale: number,
+    offsetX: number,
+    offsetY: number,
+    shakeX: number,
+    shakeY: number,
+    camera: CameraState,
+    smoothing: boolean,
+    audio: AudioFeatures
+  ): void {
+    this.drawShatterTransitionCanvas(
+      ctx,
+      this.transitionCanvas,
+      this.baseCanvas,
+      progress,
+      offsetX + shakeX,
+      offsetY + shakeY,
+      this.baseWidth * scale,
+      this.baseHeight * scale,
+      audio,
+      camera,
+      smoothing
+    );
+  }
+
+  private drawShatterTransitionCanvas(
+    ctx: CanvasRenderingContext2D,
+    fromCanvas: HTMLCanvasElement,
+    toCanvas: HTMLCanvasElement,
+    progress: number,
+    rectX: number,
+    rectY: number,
+    width: number,
+    height: number,
+    audio: AudioFeatures,
+    camera: CameraState,
+    smoothing: boolean
+  ): void {
+    const state = computeShatterTransitionState(progress, width, height, audio.beatStrength + audio.bass * 0.35);
+
+    ctx.save();
+    ctx.fillStyle = `rgba(0, 0, 0, ${state.backdropAlpha})`;
+    ctx.fillRect(rectX, rectY, width, height);
+    ctx.restore();
+
+    this.drawCanvasToRect(ctx, toCanvas, rectX, rectY, width, height, state.toAlpha, camera, smoothing);
+
+    for (const shard of state.shards) {
+      if (shard.alpha <= 0.001) {
+        continue;
+      }
+      this.drawShatterShadow(ctx, shard, rectX, rectY);
+      this.drawShardCanvas(ctx, fromCanvas, shard, rectX, rectY, width, height, camera, smoothing);
+      this.drawShatterEdge(ctx, shard, rectX, rectY);
+    }
+
+    if (state.flashAlpha > 0.001) {
+      const centerX = rectX + width / 2;
+      const centerY = rectY + height / 2;
+      const bloom = ctx.createRadialGradient(centerX, centerY, width * 0.06, centerX, centerY, width * 0.72);
+      bloom.addColorStop(0, `rgba(255, 255, 255, ${state.flashAlpha})`);
+      bloom.addColorStop(0.35, `rgba(210, 235, 255, ${clamp(state.flashAlpha * 0.58, 0, 1)})`);
+      bloom.addColorStop(1, "rgba(0, 0, 0, 0)");
+      ctx.save();
+      ctx.fillStyle = bloom;
+      ctx.fillRect(rectX, rectY, width, height);
+      ctx.restore();
+    }
+  }
+
+  private drawShardCanvas(
+    ctx: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
+    shard: ReturnType<typeof computeShatterTransitionState>["shards"][number],
+    rectX: number,
+    rectY: number,
+    width: number,
+    height: number,
+    camera: CameraState,
+    smoothing: boolean
+  ): void {
+    const widthScale = width / this.baseWidth;
+    const heightScale = height / this.baseHeight;
+    const centroidX = rectX + shard.centroid.x;
+    const centroidY = rectY + shard.centroid.y;
+    ctx.save();
+    this.traceShardPolygon(ctx, shard, rectX, rectY, shard.translateX, shard.translateY, shard.rotation, shard.scale);
+    ctx.clip();
+    ctx.globalAlpha = clamp(shard.alpha, 0, 1);
+    ctx.imageSmoothingEnabled = smoothing;
+    ctx.translate(centroidX + shard.translateX, centroidY + shard.translateY);
+    ctx.rotate(shard.rotation);
+    ctx.scale(camera.zoom * shard.scale, camera.zoom * shard.scale);
+    ctx.translate(
+      -shard.centroid.x + camera.panX * widthScale,
+      -shard.centroid.y + camera.panY * heightScale
+    );
+    ctx.translate(-rectX, -rectY);
+    ctx.drawImage(canvas, rectX, rectY, width, height);
+    ctx.restore();
+  }
+
+  private drawShatterShadow(
+    ctx: CanvasRenderingContext2D,
+    shard: ReturnType<typeof computeShatterTransitionState>["shards"][number],
+    rectX: number,
+    rectY: number
+  ): void {
+    if (shard.shadowAlpha <= 0.001) {
+      return;
+    }
+    ctx.save();
+    this.traceShardPolygon(
+      ctx,
+      shard,
+      rectX,
+      rectY,
+      shard.translateX * 1.08 + 4,
+      shard.translateY * 1.08 + 4,
+      shard.rotation,
+      shard.scale
+    );
+    ctx.fillStyle = `rgba(0, 0, 0, ${shard.shadowAlpha})`;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  private drawShatterEdge(
+    ctx: CanvasRenderingContext2D,
+    shard: ReturnType<typeof computeShatterTransitionState>["shards"][number],
+    rectX: number,
+    rectY: number
+  ): void {
+    if (shard.edgeAlpha <= 0.001) {
+      return;
+    }
+    ctx.save();
+    this.traceShardPolygon(ctx, shard, rectX, rectY, shard.translateX, shard.translateY, shard.rotation, shard.scale);
+    ctx.strokeStyle = `rgba(220, 240, 255, ${shard.edgeAlpha})`;
+    ctx.lineWidth = 1.15;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  private traceShardPolygon(
+    ctx: CanvasRenderingContext2D,
+    shard: ReturnType<typeof computeShatterTransitionState>["shards"][number],
+    rectX: number,
+    rectY: number,
+    translateX = 0,
+    translateY = 0,
+    rotation = 0,
+    scale = 1
+  ): void {
+    const [first, ...rest] = shard.polygon;
+    if (!first) {
+      return;
+    }
+    const cos = Math.cos(rotation);
+    const sin = Math.sin(rotation);
+    const transformPoint = (point: { x: number; y: number }) => {
+      const localX = (point.x - shard.centroid.x) * scale;
+      const localY = (point.y - shard.centroid.y) * scale;
+      return {
+        x: rectX + shard.centroid.x + translateX + localX * cos - localY * sin,
+        y: rectY + shard.centroid.y + translateY + localX * sin + localY * cos
+      };
+    };
+    const start = transformPoint(first);
+    ctx.beginPath();
+    ctx.moveTo(start.x, start.y);
+    rest.forEach((point) => {
+      const transformed = transformPoint(point);
+      ctx.lineTo(transformed.x, transformed.y);
+    });
+    ctx.closePath();
   }
 
   private drawCameraPunchThroughTransition(
