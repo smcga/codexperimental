@@ -8,7 +8,7 @@ import {
   loadConfig,
   normalizeTimelineConfig
 } from "./config/loadConfig";
-import { AudioPlayer, AudioFeatures } from "./audio/audioPlayer";
+import { AudioFeatures, AudioPlayback, createAudioPlayback } from "./audio/audioPlayer";
 import { Timeline } from "./timeline/timeline";
 import { Renderer } from "./renderer/renderer";
 import { FramingOverride } from "./renderer/framing";
@@ -69,6 +69,7 @@ const debugEffectEmpty = document.querySelector<HTMLDivElement>("#debug-effect-e
 const debugEffectCopyButton = document.querySelector<HTMLButtonElement>("#debug-effect-copy");
 const debugEffectCopyStatus = document.querySelector<HTMLDivElement>("#debug-effect-copy-status");
 const debugMonochromeToggle = document.querySelector<HTMLInputElement>("#debug-monochrome");
+const debugProceduralMusicToggle = document.querySelector<HTMLInputElement>("#debug-procedural-music");
 const debugSkipIntroButton = document.querySelector<HTMLButtonElement>("#debug-skip-intro");
 const debugSkipSecondHalfButton = document.querySelector<HTMLButtonElement>("#debug-skip-second-half");
 const debugSkipBackButton = document.querySelector<HTMLButtonElement>("#debug-skip-back");
@@ -110,7 +111,7 @@ let { width: effectiveBaseWidth, height: effectiveBaseHeight } = getEffectiveBas
 const renderer = new Renderer(effectiveBaseWidth, effectiveBaseHeight);
 const introRenderer = new TerminalIntroRenderer();
 const explosionState = createExplosionState();
-let audioPlayer: AudioPlayer | null = null;
+let audioPlayer: AudioPlayback | null = null;
 let timeline: Timeline | null = null;
 let introConfig: IntroConfig | null = null;
 let animationFrame = 0;
@@ -133,6 +134,7 @@ const debugState = {
   transitionOverride: null as TransitionType | null,
   eraOverride: null as EraPreset | null,
   monochromeOverride: null as boolean | null,
+  proceduralMusic: false,
   effectParams: Object.fromEntries(
     Object.keys(effectRegistry).map((effectName) => [effectName, getEffectDebugDefaults(effectName)])
   ),
@@ -159,10 +161,20 @@ async function handlePlaybackStarted(): Promise<void> {
   }
 }
 
-function attachAudioPlayerHandlers(player: AudioPlayer): void {
+function attachAudioPlayerHandlers(player: AudioPlayback): void {
   player.onStarted = () => {
     void handlePlaybackStarted();
   };
+}
+
+function createPlayerForCurrentMode(src: string, durationHint?: number): AudioPlayback {
+  const player = createAudioPlayback({
+    src,
+    procedural: debugState.proceduralMusic,
+    durationHint
+  });
+  attachAudioPlayerHandlers(player);
+  return player;
 }
 
 function applyQualityScale(): void {
@@ -412,8 +424,7 @@ async function applyTimelineConfig(config: TimelineConfig): Promise<void> {
   const shouldReloadAudio = config.audio.src !== currentAudioSrc;
   if (shouldReloadAudio) {
     audioPlayer.destroy();
-    audioPlayer = new AudioPlayer(config.audio.src);
-    attachAudioPlayerHandlers(audioPlayer);
+    audioPlayer = createPlayerForCurrentMode(config.audio.src);
     await audioPlayer.load();
     currentAudioSrc = config.audio.src;
   }
@@ -423,6 +434,34 @@ async function applyTimelineConfig(config: TimelineConfig): Promise<void> {
   lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
   updateDebugSkipButtonState(lastDemoTime);
   setOverlay("", false);
+  if (!wasPaused) {
+    await audioPlayer.play();
+  }
+}
+
+async function applyDebugAudioMode(procedural: boolean): Promise<void> {
+  debugState.proceduralMusic = procedural;
+  if (!debugProceduralMusicToggle) {
+    return;
+  }
+  debugProceduralMusicToggle.checked = procedural;
+  if (!audioPlayer) {
+    return;
+  }
+
+  const currentTime = audioPlayer.currentTime;
+  const wasPaused = audioPlayer.paused;
+  const durationHint = audioPlayer.duration;
+  audioPlayer.destroy();
+  audioPlayer = createPlayerForCurrentMode(currentAudioSrc, durationHint);
+  await audioPlayer.load();
+  audioPlayer.seek(currentTime);
+  if (!timeline) {
+    return;
+  }
+  timeline.setAudioDuration(audioPlayer.duration);
+  lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+  updateDebugSkipButtonState(lastDemoTime);
   if (!wasPaused) {
     await audioPlayer.play();
   }
@@ -697,6 +736,12 @@ if (!releaseMode && debugMonochromeToggle) {
   });
 }
 
+if (!releaseMode && debugProceduralMusicToggle) {
+  debugProceduralMusicToggle.addEventListener("change", () => {
+    void applyDebugAudioMode(debugProceduralMusicToggle.checked);
+  });
+}
+
 if (!releaseMode && debugEffectCopyButton) {
   debugEffectCopyButton.addEventListener("click", () => {
     void copyCurrentEffectSettings();
@@ -799,8 +844,7 @@ async function startDemo(): Promise<void> {
     if (audioPlayer) {
       audioPlayer.destroy();
     }
-    audioPlayer = new AudioPlayer(config.audio.src);
-    attachAudioPlayerHandlers(audioPlayer);
+    audioPlayer = createPlayerForCurrentMode(config.audio.src);
     await audioPlayer.load();
     currentAudioSrc = config.audio.src;
 
