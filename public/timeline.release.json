@@ -210,6 +210,19 @@
             "bloom": 0.9,
             "seed": 7
           }
+        },
+        {
+          "effect": "tetris_matrix",
+          "blend": "overlay",
+          "opacity": 0.18,
+          "params": {
+            "speed": 1.1,
+            "level": 7,
+            "glow": 0.7,
+            "contrast": 0.92,
+            "ghost": 1,
+            "seed": 1989
+          }
         }
       ],
       "fitAlign": "centre"

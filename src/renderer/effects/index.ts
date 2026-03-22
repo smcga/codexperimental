@@ -75,6 +75,7 @@ import { CosmicVoyageEffect } from "./cosmicVoyageEffect";
 import { LemmingsMarchEffect } from "./lemmingsMarchEffect";
 import { PrismBloomEffect } from "./prismBloomEffect";
 import { VelvetDreamscapeEffect } from "./velvetDreamscapeEffect";
+import { TetrisMatrixEffect } from "./tetrisMatrixEffect";
 
 export const effectRegistry: Record<string, Effect> = {
   starfield: new StarfieldEffect(),
@@ -153,6 +154,7 @@ export const effectRegistry: Record<string, Effect> = {
   lemmings_march: new LemmingsMarchEffect(),
   prism_bloom: new PrismBloomEffect(),
   velvet_dreamscape: new VelvetDreamscapeEffect(),
+  tetris_matrix: new TetrisMatrixEffect(),
 };
 
 export function resetEffects(): void {

@@ -78,6 +78,37 @@ describe("effect debug params", () => {
     });
   });
 
+  it("provides defaults for tetris matrix controls", () => {
+    expect(getEffectDebugDefaults("tetris_matrix")).toEqual({
+      speed: 1,
+      level: 8,
+      glow: 0.78,
+      contrast: 0.88,
+      ghost: 1,
+      seed: 1989
+    });
+  });
+
+  it("coerces tetris matrix params based on control constraints", () => {
+    const params = coerceEffectParams("tetris_matrix", {
+      speed: 0,
+      level: 30,
+      glow: -1,
+      contrast: 5,
+      ghost: -0.5,
+      seed: 10001
+    });
+
+    expect(params).toEqual({
+      speed: 0.35,
+      level: 20,
+      glow: 0,
+      contrast: 1.3,
+      ghost: 0,
+      seed: 9999
+    });
+  });
+
   it("provides defaults for velvet dreamscape controls", () => {
     expect(getEffectDebugDefaults("velvet_dreamscape")).toEqual({
       bloom: 0.78,
