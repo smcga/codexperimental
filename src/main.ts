@@ -38,11 +38,15 @@ import { createEditorRoot, EditorController } from "./editor/EditorRoot";
 import { submitDoodle } from "./doodles";
 import { fetchViews, registerViewOncePerSession } from "./viewCounter";
 import { buildSharePayload, canUseNativeShare, getShareLink, ShareLinkPlatform } from "./share";
+import { getOverlayPresentation, OverlayMode } from "./overlayContent";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
+const overlayKicker = document.querySelector<HTMLDivElement>("#overlay-kicker");
 const overlayText = overlay?.querySelector<HTMLDivElement>(".start-text");
+const overlaySubtitle = document.querySelector<HTMLDivElement>("#overlay-subtitle");
 const overlayActions = document.querySelector<HTMLDivElement>("#overlay-actions");
+const overlayStartButton = document.querySelector<HTMLButtonElement>("#overlay-start-button");
 const overlayShareButton = document.querySelector<HTMLButtonElement>("#overlay-share-button");
 const overlayRestartButton = document.querySelector<HTMLButtonElement>("#overlay-restart-button");
 const addDoodleButton = document.querySelector<HTMLButtonElement>("#add-doodle-button");
@@ -121,7 +125,7 @@ let currentAudioSrc = "";
 let editorController: EditorController | null = null;
 let lastFrameTimestamp = performance.now();
 let currentViewCount = 0;
-let overlayMode: "start" | "status" | "end" = "start";
+let overlayMode: OverlayMode = "start";
 let doodleHasStroke = false;
 let doodleSubmitting = false;
 let doodleDrawing = false;
@@ -191,19 +195,38 @@ function updateOverlayActions(): void {
   if (!overlay || !overlayActions) {
     return;
   }
+  const presentation = getOverlayPresentation(overlayMode);
   overlay.dataset.mode = overlayMode;
-  const showActions = overlayMode === "start" || overlayMode === "end";
-  overlayActions.classList.toggle("hidden", !showActions);
-  overlayShareButton?.classList.toggle("hidden", !showActions);
-  overlayRestartButton?.classList.toggle("hidden", overlayMode !== "end");
-  addDoodleButton?.classList.toggle("hidden", overlayMode !== "end");
-  if (!showActions) {
+  if (overlayKicker) {
+    overlayKicker.textContent = presentation.kicker;
+  }
+  if (overlaySubtitle) {
+    overlaySubtitle.textContent = presentation.subtitle;
+  }
+  overlayActions.classList.toggle("hidden", !presentation.showActions);
+  if (overlayStartButton) {
+    overlayStartButton.textContent = presentation.startLabel;
+  }
+  overlayStartButton?.classList.toggle("hidden", !presentation.showStart);
+  if (overlayShareButton) {
+    overlayShareButton.textContent = presentation.shareLabel;
+  }
+  overlayShareButton?.classList.toggle("hidden", !presentation.showShare);
+  if (overlayRestartButton) {
+    overlayRestartButton.textContent = presentation.restartLabel;
+  }
+  overlayRestartButton?.classList.toggle("hidden", !presentation.showRestart);
+  if (addDoodleButton) {
+    addDoodleButton.textContent = presentation.doodleLabel;
+  }
+  addDoodleButton?.classList.toggle("hidden", !presentation.showDoodle);
+  if (!presentation.showActions) {
     setSharePanelVisible(false);
     setShareStatus("");
   }
 }
 
-function setOverlay(text: string, show = true, isError = false, mode: "start" | "status" | "end" = "status"): void {
+function setOverlay(text: string, show = true, isError = false, mode: OverlayMode = "status"): void {
   overlayMode = mode;
   updateOverlayActions();
   overlayText.textContent = text;
@@ -959,6 +982,16 @@ if (overlayShareButton) {
   overlayShareButton.addEventListener("click", (event) => {
     event.stopPropagation();
     void shareDemo();
+  });
+}
+
+if (overlayStartButton) {
+  overlayStartButton.addEventListener("click", (event) => {
+    event.stopPropagation();
+    if (overlayMode !== "start") {
+      return;
+    }
+    void startDemo();
   });
 }
 

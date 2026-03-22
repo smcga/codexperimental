@@ -26,10 +26,13 @@
       <canvas id="demo"></canvas>
       <div id="start-overlay" data-mode="start">
         <div class="overlay-panel">
-          <div class="start-text">CLICK TO START</div>
+          <div id="overlay-kicker" class="overlay-kicker">browser invitro // live signal</div>
+          <div class="start-text">Enter the signal</div>
+          <div id="overlay-subtitle" class="overlay-subtitle">Sound on. Click anywhere or punch Start to boot the demo.</div>
           <div id="share-status" class="share-status hidden" aria-live="polite"></div>
           <div class="overlay-actions" id="overlay-actions">
-            <button id="overlay-share-button" type="button">Share</button>
+            <button id="overlay-start-button" type="button">Start demo</button>
+            <button id="overlay-share-button" type="button">Spread the signal</button>
             <button id="overlay-restart-button" class="hidden" type="button">Restart</button>
             <button id="add-doodle-button" class="hidden" type="button">Add a doodle</button>
           </div>
