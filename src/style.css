@@ -28,7 +28,10 @@ body,
   inset: 0;
   display: grid;
   place-items: center;
-  background: #000;
+  background:
+    radial-gradient(circle at top, rgba(67, 18, 96, 0.28), transparent 42%),
+    radial-gradient(circle at bottom, rgba(0, 196, 255, 0.16), transparent 40%),
+    linear-gradient(180deg, rgba(2, 5, 10, 0.8) 0%, rgba(0, 0, 0, 0.94) 100%);
   color: #fff;
   font-size: clamp(1.3rem, 3vw, 2.8rem);
   letter-spacing: 0.2em;
@@ -38,10 +41,58 @@ body,
 }
 
 .overlay-panel {
+  position: relative;
   display: grid;
   gap: 1rem;
   justify-items: center;
-  padding: 1.5rem;
+  width: min(92vw, 48rem);
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+  border: 1px solid rgba(120, 220, 255, 0.28);
+  background:
+    linear-gradient(135deg, rgba(10, 14, 28, 0.92), rgba(2, 6, 10, 0.94)),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0));
+  box-shadow:
+    0 0 0 1px rgba(255, 0, 255, 0.08) inset,
+    0 0 48px rgba(0, 0, 0, 0.45),
+    0 0 90px rgba(28, 128, 255, 0.18);
+  overflow: hidden;
+}
+
+.overlay-panel::before,
+.overlay-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.overlay-panel::before {
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.05) 0,
+    rgba(255, 255, 255, 0.05) 1px,
+    transparent 1px,
+    transparent 5px
+  );
+  opacity: 0.08;
+}
+
+.overlay-panel::after {
+  inset: auto 1rem 1rem auto;
+  width: 6rem;
+  height: 6rem;
+  border-right: 1px solid rgba(142, 249, 255, 0.32);
+  border-bottom: 1px solid rgba(142, 249, 255, 0.32);
+  clip-path: polygon(40% 0, 100% 0, 100% 100%, 0 100%, 0 60%);
+}
+
+.overlay-kicker {
+  justify-self: stretch;
+  color: rgba(166, 238, 255, 0.78);
+  font-size: clamp(0.68rem, 1.4vw, 0.82rem);
+  letter-spacing: 0.32em;
+  text-align: center;
+  text-transform: uppercase;
 }
 
 #start-overlay.hidden {
@@ -55,9 +106,23 @@ body,
 }
 
 .start-text {
-  text-shadow: 0 0 12px rgba(0, 255, 255, 0.8);
+  font-size: clamp(1.8rem, 5vw, 4.6rem);
+  line-height: 0.96;
+  text-shadow:
+    0 0 12px rgba(0, 255, 255, 0.55),
+    0 0 28px rgba(255, 0, 255, 0.22);
   text-align: center;
-  padding: 0 2rem;
+  padding: 0 1rem;
+}
+
+.overlay-subtitle {
+  max-width: 34rem;
+  color: rgba(223, 252, 255, 0.82);
+  font-size: clamp(0.88rem, 1.7vw, 1rem);
+  line-height: 1.6;
+  letter-spacing: 0.14em;
+  text-align: center;
+  text-transform: none;
 }
 
 #debug-panels {
@@ -707,11 +772,83 @@ body,
   display: none;
 }
 
+#overlay-start-button,
 #overlay-share-button,
 #overlay-restart-button,
 #share-copy-button,
 .share-panel a,
-#add-doodle-button,
+#add-doodle-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 12rem;
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(20, 45, 72, 0.95), rgba(7, 14, 29, 0.96)),
+    rgba(8, 20, 36, 0.88);
+  color: #dffcff;
+  border: 1px solid rgba(142, 249, 255, 0.45);
+  clip-path: polygon(0.9rem 0, 100% 0, calc(100% - 0.9rem) 100%, 0 100%);
+  padding: 0.85rem 1.45rem;
+  font: inherit;
+  font-size: 0.9rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 0 18px rgba(0, 255, 255, 0.12);
+}
+
+#overlay-start-button::before,
+#overlay-share-button::before,
+#overlay-restart-button::before,
+#share-copy-button::before,
+.share-panel a::before,
+#add-doodle-button::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.08), transparent 45%, rgba(255, 255, 255, 0.08));
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+#overlay-start-button {
+  background:
+    linear-gradient(180deg, rgba(102, 28, 157, 0.96), rgba(20, 20, 76, 0.98)),
+    rgba(8, 20, 36, 0.88);
+  border-color: rgba(255, 110, 236, 0.58);
+  color: #fff4ff;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+    0 0 24px rgba(255, 0, 255, 0.18),
+    0 0 44px rgba(0, 208, 255, 0.12);
+}
+
+#overlay-share-button {
+  background:
+    linear-gradient(180deg, rgba(24, 80, 120, 0.95), rgba(8, 20, 46, 0.98)),
+    rgba(8, 20, 36, 0.88);
+}
+
+#overlay-share-button:hover,
+#overlay-share-button:focus-visible,
+#overlay-start-button:hover,
+#overlay-start-button:focus-visible,
+#overlay-restart-button:hover,
+#overlay-restart-button:focus-visible,
+#share-copy-button:hover,
+#share-copy-button:focus-visible,
+.share-panel a:hover,
+.share-panel a:focus-visible,
+#add-doodle-button:hover,
+#add-doodle-button:focus-visible {
+  outline: none;
+  border-color: rgba(142, 249, 255, 0.85);
+  box-shadow: 0 0 24px rgba(0, 255, 255, 0.22);
+}
+
 .doodle-actions button {
   display: inline-flex;
   align-items: center;
@@ -729,16 +866,6 @@ body,
   box-shadow: 0 0 18px rgba(0, 255, 255, 0.12);
 }
 
-#overlay-share-button:hover,
-#overlay-share-button:focus-visible,
-#overlay-restart-button:hover,
-#overlay-restart-button:focus-visible,
-#share-copy-button:hover,
-#share-copy-button:focus-visible,
-.share-panel a:hover,
-.share-panel a:focus-visible,
-#add-doodle-button:hover,
-#add-doodle-button:focus-visible,
 .doodle-actions button:hover,
 .doodle-actions button:focus-visible {
   outline: none;
@@ -751,7 +878,8 @@ body,
   min-height: 1.1rem;
   color: rgba(232, 247, 255, 0.8);
   font-size: 0.8rem;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
+  text-align: center;
   text-transform: none;
 }
 
@@ -772,7 +900,9 @@ body,
 }
 
 #overlay-restart-button {
-  background: rgba(28, 12, 24, 0.95);
+  background:
+    linear-gradient(180deg, rgba(80, 26, 59, 0.95), rgba(26, 9, 32, 0.98)),
+    rgba(28, 12, 24, 0.95);
 }
 
 .doodle-modal {
@@ -955,6 +1085,16 @@ body,
 }
 
 @media (max-width: 640px) {
+  .overlay-panel {
+    width: min(94vw, 32rem);
+    gap: 0.85rem;
+    padding: 1.2rem 1rem 1.3rem;
+  }
+
+  .overlay-actions > * {
+    width: 100%;
+  }
+
   .share-panel > * {
     flex: 1 1 calc(50% - 0.65rem);
     text-align: center;
