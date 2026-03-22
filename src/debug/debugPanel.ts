@@ -1,3 +1,19 @@
+import { SectionConfig, TextCue, TransitionType } from "../config/loadConfig";
+
+export type DebugTransitionState = {
+  from: SectionConfig;
+  to: SectionConfig;
+  progress: number;
+  type: TransitionType;
+};
+
+export type DebugRenderSelection = {
+  section: SectionConfig;
+  transition: DebugTransitionState | undefined;
+  textCues: TextCue[];
+  isolateEffect: boolean;
+};
+
 export function shouldShowEffectPanel(debugEnabled: boolean, forcedEffect: string | null): boolean {
   return debugEnabled && forcedEffect !== null;
 }
@@ -19,4 +35,43 @@ export function formatEffectSettingsForTimeline(effectName: string, params: Reco
     null,
     2
   );
+}
+
+export function buildDebugRenderSelection(options: {
+  section: SectionConfig;
+  transition?: DebugTransitionState;
+  textCues: TextCue[];
+  forcedEffect: string | null;
+  effectParams?: Record<string, number> | null;
+  transitionOverride: TransitionType | null;
+}): DebugRenderSelection {
+  const { section, transition, textCues, forcedEffect, effectParams, transitionOverride } = options;
+  const hasEffectOverrides = !!effectParams && Object.keys(effectParams).length > 0;
+
+  if (!forcedEffect) {
+    return {
+      section,
+      transition: transition
+        ? {
+            ...transition,
+            type: transitionOverride ?? transition.type
+          }
+        : undefined,
+      textCues,
+      isolateEffect: false
+    };
+  }
+
+  return {
+    section: {
+      ...section,
+      effect: forcedEffect,
+      params: hasEffectOverrides && effectParams ? { ...section.params, ...effectParams } : section.params,
+      automation: [],
+      layers: []
+    },
+    transition: undefined,
+    textCues: [],
+    isolateEffect: true
+  };
 }

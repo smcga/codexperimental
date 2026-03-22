@@ -27,6 +27,7 @@ import {
   getSecondHalfSkipTime
 } from "./controls";
 import {
+  buildDebugRenderSelection,
   formatEffectSettingsForTimeline,
   getDebugEffectSelectorOptions,
   getDebugEffectSelectorValue,
@@ -787,34 +788,22 @@ function loop(): void {
       config: introConfig
     });
   } else {
-    const effectParamOverrides = debugState.forcedEffect ? debugState.effectParams[debugState.forcedEffect] : null;
-    const effectParamOverridesRecord = effectParamOverrides as Record<string, number> | null;
-    const hasEffectOverrides = effectParamOverrides && Object.keys(effectParamOverrides).length > 0;
+    const effectParamOverrides = debugState.forcedEffect
+      ? (debugState.effectParams[debugState.forcedEffect] as Record<string, number> | null)
+      : null;
     const eraOverride = debugState.eraOverride;
-    let sectionOverride = debugState.forcedEffect
-      ? { ...state.section, effect: debugState.forcedEffect }
-      : state.section;
-    sectionOverride = applyEraOverride(sectionOverride, eraOverride);
-    if (hasEffectOverrides && effectParamOverridesRecord) {
-      sectionOverride = { ...sectionOverride, params: { ...sectionOverride.params, ...effectParamOverridesRecord } };
-    }
-    const transitionOverride = state.transition
-      ? {
-          ...state.transition,
-          to: debugState.forcedEffect
-            ? {
-                ...state.transition.to,
-                effect: debugState.forcedEffect,
-                params: hasEffectOverrides && effectParamOverridesRecord
-                  ? { ...state.transition.to.params, ...effectParamOverridesRecord }
-                  : state.transition.to.params
-              }
-            : state.transition.to,
-          type: debugState.transitionOverride ?? state.transition.type
-        }
-      : undefined;
-    const transitionOverrideWithEra = applyEraOverrideToTransition(transitionOverride, eraOverride);
-    const explosionTime = sectionOverride.era === "future" ? demoTime - sectionOverride.start : -1;
+    const debugRenderSelection = buildDebugRenderSelection({
+      section: state.section,
+      transition: state.transition,
+      textCues: state.activeTextCues,
+      forcedEffect: debugState.forcedEffect,
+      effectParams: effectParamOverrides,
+      transitionOverride: debugState.transitionOverride
+    });
+    const sectionOverride = applyEraOverride(debugRenderSelection.section, eraOverride);
+    const transitionOverrideWithEra = applyEraOverrideToTransition(debugRenderSelection.transition, eraOverride);
+    const explosionTime =
+      !debugRenderSelection.isolateEffect && sectionOverride.era === "future" ? demoTime - sectionOverride.start : -1;
     const explosionShake = getExplosionShake(explosionTime);
 
     renderer.render({
@@ -825,13 +814,15 @@ function loop(): void {
       delta,
       section: sectionOverride,
       transition: transitionOverrideWithEra,
-      textCues: state.activeTextCues,
+      textCues: debugRenderSelection.textCues,
       audio: audioFeatures,
       monochromeOverride: debugState.monochromeOverride,
       screenShake: explosionShake,
       framingOverride: debugState.framingOverride
     });
-    renderExplosion(ctx, canvas.width, canvas.height, explosionTime, explosionState, explosionShake);
+    if (!debugRenderSelection.isolateEffect) {
+      renderExplosion(ctx, canvas.width, canvas.height, explosionTime, explosionState, explosionShake);
+    }
   }
 
   debugTimestamp.textContent = formatTimestamp(demoTime);
