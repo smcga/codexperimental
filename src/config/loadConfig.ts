@@ -1,21 +1,8 @@
+import { transitionKeys } from "../renderer/transitions";
+import type { TransitionType } from "../renderer/transitions";
 import { EaseName, ParamAutomation } from "../timeline/automation";
 
-const TRANSITION_TYPES = [
-  "fade",
-  "wipe",
-  "slide-left",
-  "slide-right",
-  "slide-up",
-  "slide-down",
-  "iris",
-  "flash",
-  "shatter",
-  "signal-collapse",
-  "camera-punch-through",
-  "bitplane-wipe"
-] as const;
-
-export type TransitionType = (typeof TRANSITION_TYPES)[number];
+export type { TransitionType } from "../renderer/transitions";
 
 const ERA_PRESETS = ["8bit", "16bit", "ps1", "pcdemo", "future"] as const;
 
@@ -402,11 +389,11 @@ function normalizeTransition(transition?: RawSectionConfig["transition"]): Trans
   const incoming = transition?.in ?? DEFAULT_TRANSITION.in;
   const outgoing = transition?.out ?? DEFAULT_TRANSITION.out;
   const duration = transition?.duration ?? DEFAULT_TRANSITION.duration;
-  const allowedList = TRANSITION_TYPES.map((type) => `"${type}"`).join(", ");
-  if (!TRANSITION_TYPES.includes(incoming)) {
+  const allowedList = transitionKeys.map((type) => `"${type}"`).join(", ");
+  if (!transitionKeys.includes(incoming)) {
     throw new Error(`transition.in must be one of ${allowedList}`);
   }
-  if (!TRANSITION_TYPES.includes(outgoing)) {
+  if (!transitionKeys.includes(outgoing)) {
     throw new Error(`transition.out must be one of ${allowedList}`);
   }
   if (duration <= 0) {

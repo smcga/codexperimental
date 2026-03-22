@@ -9,6 +9,12 @@ import { computeFraming, FramingOverride, FramingState } from "./framing";
 import { resolveMonochrome } from "./monochrome";
 import { computePresentTransform, computeScreenSafeRect } from "./present";
 import { renderTextCues } from "./text/textRenderer";
+import {
+  MobileTransitionDrawContext,
+  TransitionDrawContext,
+  TransitionRendererApi,
+  transitionRegistry
+} from "./transitions";
 import { computeBitplaneWipeTransitionState } from "./transitions/bitplaneWipe";
 import { CameraPunchThroughTransitionState, computeCameraPunchThroughTransitionState } from "./transitions/cameraPunchThrough";
 import { computeShatterTransitionState } from "./transitions/shatter";
@@ -273,45 +279,17 @@ export class Renderer {
       this.mobileToCtx.fillRect(0, 0, width, height);
       this.renderSectionToMobileScreen(this.mobileFromCtx, transition.from, time, delta, audio, shakeX, shakeY, camera, framing);
       this.renderSectionToMobileScreen(this.mobileToCtx, transition.to, time, delta, audio, shakeX, shakeY, camera, framing);
-      if (transition.type === "camera-punch-through") {
-        this.drawCameraPunchThroughMobileTransition(targetCtx, transition.progress, width, height);
-        return;
+      const definition = transitionRegistry[transition.type];
+      definition.drawMobile?.(this.getTransitionRendererApi(), {
+        ctx: targetCtx,
+        progress: transition.progress,
+        width,
+        height,
+        audio
+      });
+      if (!definition.drawMobile) {
+        this.drawMobileDefaultCrossfade(targetCtx, transition.progress, width, height);
       }
-      if (transition.type === "shatter") {
-        this.drawShatterTransitionCanvas(
-          targetCtx,
-          this.mobileFromCanvas,
-          this.mobileToCanvas,
-          transition.progress,
-          0,
-          0,
-          width,
-          height,
-          audio,
-          { zoom: 1, panX: 0, panY: 0 },
-          true
-        );
-        return;
-      }
-      if (transition.type === "bitplane-wipe") {
-        this.drawBitplaneWipeTransitionCanvas(
-          targetCtx,
-          this.mobileFromCanvas,
-          this.mobileToCanvas,
-          transition.progress,
-          0,
-          0,
-          width,
-          height
-        );
-        return;
-      }
-      targetCtx.save();
-      targetCtx.globalAlpha = 1 - clamp(transition.progress, 0, 1);
-      targetCtx.drawImage(this.mobileFromCanvas, 0, 0, width, height);
-      targetCtx.globalAlpha = clamp(transition.progress, 0, 1);
-      targetCtx.drawImage(this.mobileToCanvas, 0, 0, width, height);
-      targetCtx.restore();
       return;
     }
 
@@ -603,97 +581,106 @@ export class Renderer {
     eraConstraints: EraConstraints,
     audio: AudioFeatures
   ): void {
-    const progress = transition.progress;
-    switch (transition.type) {
-      case "wipe": {
-        this.drawScaled(ctx, this.transitionCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1, camera, eraConstraints.smoothing);
-        ctx.save();
-        ctx.beginPath();
-        const wipeX = offsetX + (this.baseWidth * scale + shakeX) * progress;
-        ctx.rect(offsetX, offsetY, wipeX - offsetX, this.baseHeight * scale + shakeY * 2);
-        ctx.clip();
-        this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1, camera, eraConstraints.smoothing);
-        ctx.restore();
-        return;
-      }
-      case "slide-left":
-        this.drawSlideTransition(ctx, progress, -1, 0, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
-        return;
-      case "slide-right":
-        this.drawSlideTransition(ctx, progress, 1, 0, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
-        return;
-      case "slide-up":
-        this.drawSlideTransition(ctx, progress, 0, -1, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
-        return;
-      case "slide-down":
-        this.drawSlideTransition(ctx, progress, 0, 1, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
-        return;
-      case "iris":
-        this.drawIrisTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
-        return;
-      case "flash":
-        this.drawFlashTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
-        return;
-      case "shatter":
-        this.drawShatterTransition(
-          ctx,
-          progress,
-          scale,
-          offsetX,
-          offsetY,
-          shakeX,
-          shakeY,
-          camera,
-          eraConstraints.smoothing,
-          audio
-        );
-        return;
-      case "signal-collapse":
-        this.drawSignalCollapseTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
-        return;
-      case "camera-punch-through":
-        this.drawCameraPunchThroughTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
-        return;
-      case "bitplane-wipe":
-        this.drawBitplaneWipeTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
-        return;
-      case "fade":
-        this.drawFadeTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, eraConstraints.smoothing);
-        return;
-      default: {
-        const _exhaustiveCheck: never = transition.type;
-        return _exhaustiveCheck;
-      }
-    }
+    const definition = transitionRegistry[transition.type];
+    definition.draw(this.getTransitionRendererApi(), {
+      ctx,
+      progress: transition.progress,
+      scale,
+      offsetX,
+      offsetY,
+      shakeX,
+      shakeY,
+      width: this.baseWidth * scale,
+      height: this.baseHeight * scale,
+      camera,
+      smoothing: eraConstraints.smoothing,
+      audio
+    });
   }
 
-  private drawFadeTransition(
+  private getTransitionRendererApi(): TransitionRendererApi {
+    return {
+      drawFade: (context) => this.drawFadeTransition(context),
+      drawWipe: (context) => this.drawWipeTransition(context),
+      drawSlide: (context, directionX, directionY) => this.drawSlideTransition(context, directionX, directionY),
+      drawIris: (context) => this.drawIrisTransition(context),
+      drawFlash: (context) => this.drawFlashTransition(context),
+      drawSignalCollapse: (context) => this.drawSignalCollapseTransition(context),
+      drawShatter: (context) => this.drawShatterTransition(context),
+      drawCameraPunchThrough: (context) => this.drawCameraPunchThroughTransition(context),
+      drawBitplaneWipe: (context) => this.drawBitplaneWipeTransition(context),
+      drawMobileDefaultCrossfade: (context) => this.drawMobileDefaultCrossfade(context.ctx, context.progress, context.width, context.height),
+      drawMobileShatter: (context) => this.drawMobileShatterTransition(context),
+      drawMobileCameraPunchThrough: (context) =>
+        this.drawCameraPunchThroughMobileTransition(context.ctx, context.progress, context.width, context.height),
+      drawMobileBitplaneWipe: (context) => this.drawMobileBitplaneWipeTransition(context)
+    };
+  }
+
+  private drawWipeTransition(context: TransitionDrawContext): void {
+    const { ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, smoothing } = context;
+    this.drawScaled(ctx, this.transitionCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1, camera, smoothing);
+    ctx.save();
+    ctx.beginPath();
+    const wipeX = offsetX + (this.baseWidth * scale + shakeX) * progress;
+    ctx.rect(offsetX, offsetY, wipeX - offsetX, this.baseHeight * scale + shakeY * 2);
+    ctx.clip();
+    this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1, camera, smoothing);
+    ctx.restore();
+  }
+
+  private drawMobileDefaultCrossfade(
     ctx: CanvasRenderingContext2D,
     progress: number,
-    scale: number,
-    offsetX: number,
-    offsetY: number,
-    shakeX: number,
-    shakeY: number,
-    camera: CameraState,
-    smoothing: boolean
+    width: number,
+    height: number
   ): void {
+    ctx.save();
+    ctx.globalAlpha = 1 - clamp(progress, 0, 1);
+    ctx.drawImage(this.mobileFromCanvas, 0, 0, width, height);
+    ctx.globalAlpha = clamp(progress, 0, 1);
+    ctx.drawImage(this.mobileToCanvas, 0, 0, width, height);
+    ctx.restore();
+  }
+
+  private drawMobileShatterTransition(context: MobileTransitionDrawContext): void {
+    this.drawShatterTransitionCanvas(
+      context.ctx,
+      this.mobileFromCanvas,
+      this.mobileToCanvas,
+      context.progress,
+      0,
+      0,
+      context.width,
+      context.height,
+      context.audio,
+      { zoom: 1, panX: 0, panY: 0 },
+      true
+    );
+  }
+
+  private drawMobileBitplaneWipeTransition(context: MobileTransitionDrawContext): void {
+    this.drawBitplaneWipeTransitionCanvas(
+      context.ctx,
+      this.mobileFromCanvas,
+      this.mobileToCanvas,
+      context.progress,
+      0,
+      0,
+      context.width,
+      context.height
+    );
+  }
+
+  private drawFadeTransition({ ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, smoothing }: TransitionDrawContext): void {
     this.drawScaled(ctx, this.transitionCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1 - progress, camera, smoothing);
     this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shakeX, shakeY, progress, camera, smoothing);
   }
 
   private drawSlideTransition(
-    ctx: CanvasRenderingContext2D,
-    progress: number,
+    { ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, smoothing }: TransitionDrawContext,
     directionX: number,
-    directionY: number,
-    scale: number,
-    offsetX: number,
-    offsetY: number,
-    shakeX: number,
-    shakeY: number,
-    camera: CameraState,
-    smoothing: boolean
+    directionY: number
   ): void {
     const width = this.baseWidth * scale;
     const height = this.baseHeight * scale;
@@ -706,17 +693,17 @@ export class Renderer {
     this.drawScaled(ctx, this.baseCanvas, scale, toOffsetX, toOffsetY, shakeX, shakeY, 1, camera, smoothing);
   }
 
-  private drawIrisTransition(
-    ctx: CanvasRenderingContext2D,
-    progress: number,
-    scale: number,
-    offsetX: number,
-    offsetY: number,
-    shakeX: number,
-    shakeY: number,
-    camera: CameraState,
-    smoothing: boolean
-  ): void {
+  private drawIrisTransition({
+    ctx,
+    progress,
+    scale,
+    offsetX,
+    offsetY,
+    shakeX,
+    shakeY,
+    camera,
+    smoothing
+  }: TransitionDrawContext): void {
     this.drawScaled(ctx, this.transitionCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1, camera, smoothing);
     const width = this.baseWidth * scale;
     const height = this.baseHeight * scale;
@@ -731,18 +718,9 @@ export class Renderer {
     ctx.restore();
   }
 
-  private drawFlashTransition(
-    ctx: CanvasRenderingContext2D,
-    progress: number,
-    scale: number,
-    offsetX: number,
-    offsetY: number,
-    shakeX: number,
-    shakeY: number,
-    camera: CameraState,
-    smoothing: boolean
-  ): void {
-    this.drawFadeTransition(ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, smoothing);
+  private drawFlashTransition(context: TransitionDrawContext): void {
+    const { ctx, progress, scale, offsetX, offsetY, shakeX, shakeY } = context;
+    this.drawFadeTransition(context);
     const flashStrength = 1 - Math.abs(0.5 - progress) * 2;
     ctx.save();
     ctx.globalAlpha = flashStrength * 0.65;
@@ -751,17 +729,17 @@ export class Renderer {
     ctx.restore();
   }
 
-  private drawSignalCollapseTransition(
-    ctx: CanvasRenderingContext2D,
-    progress: number,
-    scale: number,
-    offsetX: number,
-    offsetY: number,
-    shakeX: number,
-    shakeY: number,
-    camera: CameraState,
-    smoothing: boolean
-  ): void {
+  private drawSignalCollapseTransition({
+    ctx,
+    progress,
+    scale,
+    offsetX,
+    offsetY,
+    shakeX,
+    shakeY,
+    camera,
+    smoothing
+  }: TransitionDrawContext): void {
     const width = this.baseWidth * scale;
     const height = this.baseHeight * scale;
     const safeProgress = clamp(progress, 0, 1);
@@ -816,18 +794,18 @@ export class Renderer {
     }
   }
 
-  private drawShatterTransition(
-    ctx: CanvasRenderingContext2D,
-    progress: number,
-    scale: number,
-    offsetX: number,
-    offsetY: number,
-    shakeX: number,
-    shakeY: number,
-    camera: CameraState,
-    smoothing: boolean,
-    audio: AudioFeatures
-  ): void {
+  private drawShatterTransition({
+    ctx,
+    progress,
+    scale,
+    offsetX,
+    offsetY,
+    shakeX,
+    shakeY,
+    camera,
+    smoothing,
+    audio
+  }: TransitionDrawContext): void {
     this.drawShatterTransitionCanvas(
       ctx,
       this.transitionCanvas,
@@ -996,17 +974,17 @@ export class Renderer {
     ctx.closePath();
   }
 
-  private drawCameraPunchThroughTransition(
-    ctx: CanvasRenderingContext2D,
-    progress: number,
-    scale: number,
-    offsetX: number,
-    offsetY: number,
-    shakeX: number,
-    shakeY: number,
-    camera: CameraState,
-    smoothing: boolean
-  ): void {
+  private drawCameraPunchThroughTransition({
+    ctx,
+    progress,
+    scale,
+    offsetX,
+    offsetY,
+    shakeX,
+    shakeY,
+    camera,
+    smoothing
+  }: TransitionDrawContext): void {
     const state = computeCameraPunchThroughTransitionState(progress);
     const width = this.baseWidth * scale;
     const height = this.baseHeight * scale;
@@ -1073,17 +1051,17 @@ export class Renderer {
     }
   }
 
-  private drawBitplaneWipeTransition(
-    ctx: CanvasRenderingContext2D,
-    progress: number,
-    scale: number,
-    offsetX: number,
-    offsetY: number,
-    shakeX: number,
-    shakeY: number,
-    camera: CameraState,
-    smoothing: boolean
-  ): void {
+  private drawBitplaneWipeTransition({
+    ctx,
+    progress,
+    scale,
+    offsetX,
+    offsetY,
+    shakeX,
+    shakeY,
+    camera,
+    smoothing
+  }: TransitionDrawContext): void {
     this.drawBitplaneWipeTransitionCanvas(
       ctx,
       this.transitionCanvas,
