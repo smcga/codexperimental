@@ -2360,6 +2360,18 @@
           "params": {
             "audioReactive": 0.2
           }
+        },
+        {
+          "effect": "taco_meteor_shower",
+          "blend": "screen",
+          "opacity": 0.14,
+          "params": {
+            "audioReact": 0.2,
+            "stardust": 0.84,
+            "burst": 0.92,
+            "toppingSpread": 0.88,
+            "seed": 23
+          }
         }
       ]
     },
