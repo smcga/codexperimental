@@ -122,6 +122,7 @@ describe("release timeline", () => {
       "fireworks_display",
       "lemmings_march",
       "prism_bloom",
+      "taco_meteor_shower",
       "tetris_matrix",
       "velvet_dreamscape",
       "water_drops"
