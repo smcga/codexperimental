@@ -217,6 +217,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `fractal_zoomer` | `setType`, `zoom`, `centerX`, `centerY`, `iterations`, `paletteSpeed`, `audioReact` | `setType` supports `mandelbrot`, `julia`, or `burningShip`. |
 | `explicitpixels` | `mode`, `speed`, `audioReact` | `mode` supports `explicit` (generated wall of byte assignments) or `procedural` (loop-driven animation). |
 | `raymarch_fractal` | `quality`, `fractal`, `cameraRadius`, `cameraHeight`, `cameraOrbitSpeed`, `paletteSpeed`, `audioReact`, `beatKick`, `fractalScale` | `fractal` supports `mandelbulb` or `mandelbox`. |
+| `taco_meteor_shower` | `shellCount`, `swirl`, `trail`, `toppingBurst`, `audioReact`, `hueShift`, `seed` | Swirling taco shells descend like meteors, shedding glitter trails before splashing into avocado, cilantro, and salsa bursts. |
 
 #### voxel_world_builder intended usage
 
