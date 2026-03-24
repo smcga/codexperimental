@@ -49,7 +49,27 @@
       <div id="doodle-modal" class="doodle-modal hidden" aria-hidden="true">
         <div class="doodle-panel">
           <div class="doodle-title">Add a doodle</div>
-          <p class="doodle-copy">Draw something quick, then submit it for approval before it can reach the doodle greetz wall.</p>
+          <p class="doodle-copy">Draw something quick, swap colours or brush sizes, then submit it for approval before it can reach the doodle greetz wall.</p>
+          <div class="doodle-toolbar" aria-label="Doodle tools">
+            <div class="doodle-tool-group">
+              <div class="doodle-tool-label">Colour</div>
+              <div class="doodle-swatches" id="doodle-color-swatches">
+                <button type="button" class="doodle-swatch active" data-doodle-color="#8ef9ff" aria-label="Cyan brush" aria-pressed="true"></button>
+                <button type="button" class="doodle-swatch" data-doodle-color="#ff7bd5" aria-label="Pink brush" aria-pressed="false"></button>
+                <button type="button" class="doodle-swatch" data-doodle-color="#ffe066" aria-label="Gold brush" aria-pressed="false"></button>
+                <button type="button" class="doodle-swatch" data-doodle-color="#9fffc5" aria-label="Mint brush" aria-pressed="false"></button>
+                <button type="button" class="doodle-swatch" data-doodle-color="#ff9b71" aria-label="Coral brush" aria-pressed="false"></button>
+                <button type="button" class="doodle-swatch" data-doodle-color="#f5f7ff" aria-label="White brush" aria-pressed="false"></button>
+              </div>
+            </div>
+            <label class="doodle-tool-group doodle-size-group" for="doodle-brush-size">
+              <span class="doodle-tool-label">Brush size</span>
+              <div class="doodle-size-row">
+                <input id="doodle-brush-size" type="range" min="2" max="24" step="1" value="8" />
+                <span id="doodle-brush-size-value" class="doodle-size-value">Medium · 8px</span>
+              </div>
+            </label>
+          </div>
           <canvas id="doodle-canvas" width="512" height="288" aria-label="Doodle canvas"></canvas>
           <div id="doodle-status" class="doodle-status">Draw on the canvas, then submit it for approval when you are ready.</div>
           <div class="doodle-actions">
