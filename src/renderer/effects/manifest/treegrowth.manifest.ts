@@ -10,22 +10,22 @@ export const treegrowthManifest = defineEffectManifest({
     title: "Tree Growth Controls",
     controls: [
       numberControl("speed", "Speed", 0.18, { min: 0, max: 1, step: 0.01 }),
-      numberControl("levels", "Levels", 6, { min: 3, max: 9, step: 1 }),
-      numberControl("trunkHeight", "Trunk Height", 0.45, { min: 0.25, max: 0.65, step: 0.01 }),
-      numberControl("branchScale", "Branch Scale", 0.72, { min: 0.5, max: 0.85, step: 0.01 }),
-      numberControl("branchAngle", "Branch Angle", 28, { min: 10, max: 60, step: 1 }),
-      numberControl("trunkWidth", "Trunk Width", 10, { min: 4, max: 24, step: 0.5 }),
-      numberControl("sway", "Sway", 0.35, { min: 0, max: 1.2, step: 0.01 }),
-      numberControl("leafSize", "Leaf Size", 3, { min: 0, max: 10, step: 0.5 }),
-      numberControl("jitter", "Jitter", 0.25, { min: 0, max: 0.6, step: 0.01 }),
+      numberControl("levels", "Levels", 8, { min: 4, max: 10, step: 1 }),
+      numberControl("trunkHeight", "Trunk Height", 0.52, { min: 0.25, max: 0.72, step: 0.01 }),
+      numberControl("branchScale", "Branch Scale", 0.69, { min: 0.45, max: 0.86, step: 0.01 }),
+      numberControl("branchAngle", "Branch Angle", 23, { min: 8, max: 55, step: 1 }),
+      numberControl("trunkWidth", "Trunk Width", 8, { min: 2, max: 24, step: 0.5 }),
+      numberControl("sway", "Sway", 0.26, { min: 0, max: 1.2, step: 0.01 }),
+      numberControl("leafSize", "Leaf Size", 2.4, { min: 0, max: 10, step: 0.1 }),
+      numberControl("jitter", "Jitter", 0.18, { min: 0, max: 0.65, step: 0.01 }),
       numberControl("seed", "Seed", 0, { min: 0, max: 10, step: 0.1 }),
-      numberControl("growth", "Growth Override", 1, { min: 0, max: 1, step: 0.01 })
+      numberControl("growth", "Growth Override (-1 = auto)", -1, { min: -1, max: 1, step: 0.01 })
     ]
   },
   docs: {
     parameters: "`speed`, `levels`, `trunkHeight`, `branchScale`, `branchAngle`, `trunkWidth`, `sway`, `leafSize`, `jitter`, `seed`, `growth`",
-    catalogNote: "`growth` overrides the automatic growth cycle (0-1).",
-    description: "`growth` overrides the automatic growth cycle (0-1)."
+    catalogNote: "Auto-cycles through yearly growth and seasons; set `growth` to `-1` for auto or `0-1` to override.",
+    description: "Auto-cycles through yearly growth and seasons; set `growth` to `-1` for auto or `0-1` to override."
   }
 });
 

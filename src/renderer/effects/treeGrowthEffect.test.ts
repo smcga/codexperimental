@@ -21,6 +21,7 @@ const createContext = () => {
     beginPath: vi.fn(),
     moveTo: vi.fn(),
     lineTo: vi.fn(),
+    quadraticCurveTo: vi.fn(),
     arc: vi.fn(),
     stroke: vi.fn(),
     fill: vi.fn(),
@@ -53,7 +54,7 @@ describe("TreeGrowthEffect", () => {
     expect(ctx.stroke).not.toHaveBeenCalled();
   });
 
-  it("draws branching strokes when fully grown", () => {
+  it("draws many branching curves and leaves when fully grown", () => {
     const effect = new TreeGrowthEffect();
     const ctx = createContext();
 
@@ -64,10 +65,54 @@ describe("TreeGrowthEffect", () => {
       time: 1,
       delta: 0.016,
       audio: createAudio(),
-      params: { growth: 1, levels: 5, seed: 2 }
+      params: { growth: 1, levels: 7, seed: 2 }
     });
 
-    expect(ctx.lineTo).toHaveBeenCalled();
+    expect(ctx.quadraticCurveTo).toHaveBeenCalled();
     expect(ctx.stroke).toHaveBeenCalled();
+    expect(ctx.arc).toHaveBeenCalled();
+    expect(ctx.quadraticCurveTo.mock.calls.length).toBeGreaterThan(30);
+  });
+
+  it("resets the automatic growth cycle back to a sapling", () => {
+    const effect = new TreeGrowthEffect();
+    effect.render({
+      ctx: createContext(),
+      width: 240,
+      height: 160,
+      time: 0,
+      delta: 0.016,
+      audio: createAudio(),
+      params: { growth: -1, speed: 0.22, levels: 8, seed: 1.5 }
+    });
+
+    const grownCtx = createContext();
+
+    effect.render({
+      ctx: grownCtx,
+      width: 240,
+      height: 160,
+      time: 24,
+      delta: 0.016,
+      audio: createAudio(),
+      params: { growth: -1, speed: 0.22, levels: 8, seed: 1.5 }
+    });
+
+    expect(grownCtx.stroke).toHaveBeenCalled();
+
+    effect.reset();
+
+    const resetCtx = createContext();
+    effect.render({
+      ctx: resetCtx,
+      width: 240,
+      height: 160,
+      time: 24,
+      delta: 0.016,
+      audio: createAudio(),
+      params: { growth: -1, speed: 0.22, levels: 8, seed: 1.5 }
+    });
+
+    expect(resetCtx.stroke).not.toHaveBeenCalled();
   });
 });
