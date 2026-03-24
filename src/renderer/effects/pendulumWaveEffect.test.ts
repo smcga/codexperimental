@@ -65,15 +65,53 @@ describe("PendulumWaveEffect", () => {
     const rig = buildPendulumRig({ width: 800, height: 450, count: 8, spread: 0.8, bobRadius: 1, seed: 5 });
     const startingAngles = rig.map((bob) => bob.angle);
 
+    const maxDeltas = startingAngles.map(() => 0);
     for (let i = 0; i < 120; i += 1) {
       stepPendulumRig({ rig, dt: 1 / 120, gravity: 0.9, damping: 0.12, coupling: 0.5, sway: 0.6, drive: 0.03, time: i / 120 });
+      rig.forEach((bob, index) => {
+        maxDeltas[index] = Math.max(maxDeltas[index], Math.abs(bob.angle - startingAngles[index]));
+      });
     }
 
     rig.forEach((bob, index) => {
       expect(Number.isFinite(bob.angle)).toBe(true);
       expect(Number.isFinite(bob.velocity)).toBe(true);
-      expect(Math.abs(bob.angle - startingAngles[index])).toBeGreaterThan(0.001);
+      expect(maxDeltas[index]).toBeGreaterThan(0.05);
     });
+  });
+
+  it("keeps swinging across debug-style renders even without beats", () => {
+    const effect = new PendulumWaveEffect();
+    const ctx = createCtx();
+
+    effect.render({
+      ctx,
+      width: 640,
+      height: 360,
+      time: 0,
+      delta: 1 / 60,
+      audio: makeAudio(false),
+      params: { seed: 5, sway: 0.6, audioReact: 0.4 }
+    });
+
+    const initialAngles = (effect as unknown as { rig: Array<{ angle: number }> }).rig.map((bob) => bob.angle);
+
+    for (let frame = 1; frame <= 90; frame += 1) {
+      effect.render({
+        ctx,
+        width: 640,
+        height: 360,
+        time: frame / 60,
+        delta: 1 / 60,
+        audio: makeAudio(false),
+        params: { seed: 5, sway: 0.6, audioReact: 0.4 }
+      });
+    }
+
+    const laterAngles = (effect as unknown as { rig: Array<{ angle: number }> }).rig.map((bob) => bob.angle);
+    const maxAngleDelta = laterAngles.reduce((max, angle, index) => Math.max(max, Math.abs(angle - initialAngles[index])), 0);
+
+    expect(maxAngleDelta).toBeGreaterThan(0.12);
   });
 
   it("renders strings and weighted bobs without throwing", () => {

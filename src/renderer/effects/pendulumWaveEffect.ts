@@ -74,8 +74,8 @@ export const buildPendulumRig = ({
       anchorY,
       length,
       restAngle,
-      angle: restAngle + lerp(-0.08, 0.08, pendulumWaveHash(t + 1.1)),
-      velocity: lerp(-0.18, 0.18, pendulumWaveHash(t + 1.4)),
+      angle: restAngle + lerp(-0.16, 0.16, pendulumWaveHash(t + 1.1)),
+      velocity: lerp(-0.65, 0.65, pendulumWaveHash(t + 1.4)),
       mass: lerp(0.8, 1.5, pendulumWaveHash(t + 1.8)),
       radius,
       hue: (190 + pendulumWaveHash(t + 2.4) * 135 + index * 9) % 360,
@@ -108,27 +108,29 @@ export const stepPendulumRig = ({
   }
 
   const nextVelocity = new Array<number>(rig.length);
-  const gravityStrength = lerp(4.4, 14.5, clamp(gravity, 0, 1.6));
-  const dampingStrength = lerp(0.06, 0.24, clamp(damping, 0, 1.2));
-  const couplingStrength = lerp(0.25, 2.2, clamp(coupling, 0, 1.4));
-  const swayStrength = lerp(0.08, 0.85, clamp(sway, 0, 1.4));
+  const gravityStrength = lerp(10, 28, clamp(gravity, 0, 1.6));
+  const dampingStrength = lerp(0.03, 0.16, clamp(damping, 0, 1.2));
+  const couplingStrength = lerp(0.55, 3.2, clamp(coupling, 0, 1.4));
+  const swayStrength = lerp(0.18, 1.6, clamp(sway, 0, 1.4));
 
   for (let index = 0; index < rig.length; index += 1) {
     const bob = rig[index];
     const left = rig[index - 1];
     const right = rig[index + 1];
-    const springToRest = (bob.restAngle - bob.angle) * 0.9;
+    const animatedRestAngle = bob.restAngle + Math.sin(time * (0.48 + swayStrength * 0.52) + bob.phase) * swayStrength * 0.16;
+    const springToRest = (animatedRestAngle - bob.angle) * (1.08 + swayStrength * 0.44);
     const neighborPull = ((left?.angle ?? bob.angle) + (right?.angle ?? bob.angle) - bob.angle * 2) * couplingStrength;
-    const gravityPull = (-gravityStrength / Math.max(40, bob.length)) * Math.sin(bob.angle);
-    const swayDrive = Math.sin(time * (0.8 + swayStrength * 0.5) + bob.phase) * swayStrength * 0.025;
-    const acceleration = (gravityPull + springToRest + neighborPull + swayDrive + drive / bob.mass) - bob.velocity * dampingStrength;
-    nextVelocity[index] = clamp(bob.velocity + acceleration * dt * 60, -3.4, 3.4);
+    const gravityPull = (-gravityStrength / Math.max(34, bob.length)) * Math.sin(bob.angle);
+    const swayDrive = Math.sin(time * (0.9 + swayStrength * 0.55) + bob.phase) * swayStrength * 0.06;
+    const audioDrive = Math.sin(time * (1.8 + drive * 8) + bob.phase * 1.7) * (0.035 + drive * 0.22);
+    const acceleration = (gravityPull + springToRest + neighborPull + swayDrive + audioDrive / bob.mass) - bob.velocity * dampingStrength;
+    nextVelocity[index] = clamp(bob.velocity + acceleration * dt * 60, -4.6, 4.6);
   }
 
   for (let index = 0; index < rig.length; index += 1) {
     const bob = rig[index];
     bob.velocity = nextVelocity[index] ?? bob.velocity;
-    bob.angle = clamp(bob.angle + bob.velocity * dt, -1.3, 1.3);
+    bob.angle = clamp(bob.angle + bob.velocity * dt, -1.45, 1.45);
   }
 };
 
@@ -199,7 +201,7 @@ export class PendulumWaveEffect implements Effect {
     const energy = clamp(audio.rms * 0.5 + audio.bass * 0.32 + audio.mid * 0.18, 0, 1);
     const beatPulse = audio.beat && !this.previousBeat ? audio.beatStrength : 0;
     this.previousBeat = audio.beat;
-    const drive = ((energy * 0.035 + beatPulse * 0.16) * audioReact) + (1 - audioReact) * 0.012;
+    const drive = ((energy * 0.08 + beatPulse * 0.3) * audioReact) + (1 - audioReact) * 0.05;
 
     this.accumulator = Math.min(this.accumulator + Math.max(0, delta), FIXED_STEP * MAX_STEPS);
     let steps = 0;
