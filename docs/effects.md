@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **77**.
+Total effects: **78**.
 
 ## Table of contents
 
@@ -68,6 +68,7 @@ Total effects: **77**.
 - [Effect: spherecloud](#effect-spherecloud)
 - [Effect: starfield](#effect-starfield)
 - [Effect: synthwaveSunset](#effect-synthwaveSunset)
+- [Effect: taco_meteor_shower](#effect-taco-meteor-shower)
 - [Effect: tetris_matrix](#effect-tetris-matrix)
 - [Effect: textmode_charset](#effect-textmode-charset)
 - [Effect: textured_cube](#effect-textured-cube)
@@ -103,11 +104,11 @@ Total effects: **77**.
 ### Common parameter patterns
 
 - `speed` (used in 42 effects)
-- `seed` (used in 33 effects)
-- `audioReact` (used in 32 effects)
+- `seed` (used in 34 effects)
+- `audioReact` (used in 33 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 11 effects)
-- `trail` (used in 9 effects)
+- `trail` (used in 10 effects)
 - `palette` (used in 9 effects)
 - `hueShift` (used in 7 effects)
 - `scanlines` (used in 7 effects)
@@ -2234,6 +2235,39 @@ Total effects: **77**.
 ```json
 {
   "effect": "synthwaveSunset",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: taco_meteor_shower
+
+- **Registry key:** `taco_meteor_shower`
+- **Implementation:** `src/renderer/effects/tacoMeteorShowerEffect.ts` (class `TacoMeteorShowerEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Luminescent taco shells spiral like meteors, trail glittering stardust, and explode into avocado, cilantro, salsa, and shell shards in sync with the music.
+- **Audio features:** bass, beat, beatStrength, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReact` | number | 0.7 | min 0, max 1 | Audio React | yes |
+| `params.colorHeat` | number | 0.36 | min 0, max 1 | Color Heat | yes |
+| `params.salsaChaos` | number | 0.58 | min 0, max 1.3 | Salsa Chaos | yes |
+| `params.seed` | number | 7 | min 0, max 999 | Seed | yes |
+| `params.shellCount` | number | 16 | min 6, max 32 | Shell Count | yes |
+| `params.swirl` | number | 0.68 | min 0, max 1.5 | Swirl | yes |
+| `params.toppingBurst` | number | 0.74 | min 0, max 1.4 | Topping Burst | yes |
+| `params.trail` | number | 0.72 | min 0, max 1 | Trail | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "taco_meteor_shower",
   "opacity": 1,
   "blend": "source-over",
   "params": {}

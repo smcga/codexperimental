@@ -182,6 +182,14 @@
           "blend": "screen",
           "opacity": 0.12,
           "params": {}
+        },
+        {
+          "effect": "taco_meteor_shower",
+          "blend": "screen",
+          "opacity": 0.08,
+          "params": {
+            "audioReact": 0.08
+          }
         }
       ],
       "fitAlign": "centre"
