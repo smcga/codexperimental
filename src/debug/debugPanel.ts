@@ -26,6 +26,17 @@ export function getDebugEffectSelectorOptions(effectNames: string[]): string[] {
   return ["timeline", ...effectNames];
 }
 
+export function getNextDebugEffectSelection(
+  currentForcedEffect: string | null,
+  selectedValue: string
+): { forcedEffect: string | null; shouldReset: boolean } {
+  const forcedEffect = selectedValue === "timeline" ? null : selectedValue;
+  return {
+    forcedEffect,
+    shouldReset: forcedEffect !== null && forcedEffect !== currentForcedEffect
+  };
+}
+
 export function formatEffectSettingsForTimeline(effectName: string, params: Record<string, unknown>): string {
   return JSON.stringify(
     {

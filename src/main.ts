@@ -32,6 +32,7 @@ import {
   formatEffectSettingsForTimeline,
   getDebugEffectSelectorOptions,
   getDebugEffectSelectorValue,
+  getNextDebugEffectSelection,
   shouldShowEffectPanel
 } from "./debug/debugPanel";
 import { applyEraOverride, applyEraOverrideToTransition } from "./debug/eraOverride";
@@ -547,7 +548,11 @@ function createEffectSelector(): void {
   });
 
   debugEffectSelect.addEventListener("change", () => {
-    debugState.forcedEffect = debugEffectSelect.value === "timeline" ? null : debugEffectSelect.value;
+    const selection = getNextDebugEffectSelection(debugState.forcedEffect, debugEffectSelect.value);
+    debugState.forcedEffect = selection.forcedEffect;
+    if (selection.shouldReset && selection.forcedEffect) {
+      effectRegistry[selection.forcedEffect]?.reset?.();
+    }
     updateEffectSelectorState();
   });
 
