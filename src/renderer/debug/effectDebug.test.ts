@@ -580,6 +580,19 @@ describe("effect debug params", () => {
     });
   });
 
+  it("provides defaults for taco meteor shower controls", () => {
+    expect(getEffectDebugDefaults("taco_meteor_shower")).toEqual({
+      shellCount: 16,
+      fallSpeed: 0.62,
+      swirl: 0.7,
+      burst: 0.78,
+      stardust: 0.72,
+      toppingSpread: 0.7,
+      audioReact: 0.68,
+      seed: 7
+    });
+  });
+
   it("provides defaults for textmode charset controls", () => {
     expect(getEffectDebugDefaults("textmode_charset")).toEqual({
       cols: 64,
