@@ -2383,8 +2383,8 @@ Total effects: **77**.
 - **Registry key:** `treegrowth`
 - **Implementation:** `src/renderer/effects/treeGrowthEffect.ts` (class `TreeGrowthEffect`)
 - **Renderer:** Canvas2D
-- **Description:** Auto-cycles through yearly growth and seasons; set `growth` to `-1` for auto or `0-1` to override.
-- **Audio features:** bass, mid, rms, treble
+- **Description:** Tree structure grows continuously across years while foliage cycles by season; set `growth` to `-1` for auto or `0-1` to override.
+- **Audio features:** bass, rms, treble
 - **Performance notes:** None noted.
 
 ### Parameters
@@ -2394,12 +2394,12 @@ Total effects: **77**.
 | `params.branchAngle` | number | 23 | min 8, max 55 | Branch Angle | yes |
 | `params.branchScale` | number | 0.69 | min 0.45, max 0.86 | Branch Scale | yes |
 | `params.growth` | number | -1 | min -1, max 1 | Growth Override (-1 = auto) | yes |
-| `params.jitter` | number | 0.18 | min 0, max 0.65 | Jitter | yes |
-| `params.leafSize` | number | 2.4 | min 0, max 10 | Leaf Size | yes |
+| `params.jitter` | number | 0.16 | min 0, max 0.65 | Jitter | yes |
+| `params.leafSize` | number | 2.2 | min 0, max 10 | Leaf Size | yes |
 | `params.levels` | number | 8 | min 4, max 10 | Levels | yes |
 | `params.seed` | number | 0 | min 0, max 10 | Seed | yes |
-| `params.speed` | number | 0.18 | min 0, max 1 | Speed | yes |
-| `params.sway` | number | 0.26 | min 0, max 1.2 | Sway | yes |
+| `params.speed` | number | 0.12 | min 0, max 1 | Speed | yes |
+| `params.sway` | number | 0.22 | min 0, max 1.2 | Sway | yes |
 | `params.trunkHeight` | number | 0.52 | min 0.25, max 0.72 | Trunk Height | yes |
 | `params.trunkWidth` | number | 8 | min 2, max 24 | Trunk Width | yes |
 

@@ -275,15 +275,15 @@ describe("effect debug params", () => {
 
   it("provides defaults for tree growth controls", () => {
     expect(getEffectDebugDefaults("treegrowth")).toEqual({
-      speed: 0.18,
+      speed: 0.12,
       levels: 8,
       trunkHeight: 0.52,
       branchScale: 0.69,
       branchAngle: 23,
       trunkWidth: 8,
-      sway: 0.26,
-      leafSize: 2.4,
-      jitter: 0.18,
+      sway: 0.22,
+      leafSize: 2.2,
+      jitter: 0.16,
       seed: 0,
       growth: -1
     });
