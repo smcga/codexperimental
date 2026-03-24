@@ -1063,6 +1063,19 @@
             "mode": 0,
             "audioReact": 0.2
           }
+        },
+        {
+          "effect": "pendulum_wave",
+          "blend": "screen",
+          "opacity": 0.72,
+          "params": {
+            "count": 10,
+            "spread": 0.74,
+            "coupling": 0.52,
+            "trail": 0.24,
+            "audioReact": 0.68,
+            "seed": 11
+          }
         }
       ]
     },
