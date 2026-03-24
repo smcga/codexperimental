@@ -64,6 +64,7 @@ Total effects: **78**.
 - [Effect: sine_distorter](#effect-sine-distorter)
 - [Effect: sine_scroller_logo](#effect-sine-scroller-logo)
 - [Effect: space_hangar](#effect-space-hangar)
+- [Effect: spectrum_analyzer](#effect-spectrum-analyzer)
 - [Effect: sphere3d](#effect-sphere3d)
 - [Effect: spherecloud](#effect-spherecloud)
 - [Effect: starfield](#effect-starfield)
@@ -107,7 +108,7 @@ Total effects: **78**.
 - `seed` (used in 34 effects)
 - `audioReact` (used in 33 effects)
 - `beatKick` (used in 14 effects)
-- `glow` (used in 11 effects)
+- `glow` (used in 12 effects)
 - `trail` (used in 9 effects)
 - `palette` (used in 9 effects)
 - `hueShift` (used in 7 effects)
@@ -2117,6 +2118,38 @@ Total effects: **78**.
 ```json
 {
   "effect": "space_hangar",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: spectrum_analyzer
+
+- **Registry key:** `spectrum_analyzer`
+- **Implementation:** `src/renderer/effects/spectrumAnalyzerEffect.ts` (class `SpectrumAnalyzerEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Parametric-EQ-style spectrum analyzer
+- **Audio features:** bass, beatStrength, frequency, mid, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.bands` | number | 96 | min 24, max 192 | Bands | yes |
+| `params.curve` | number | 1.18 | min 0.4, max 2.5 | Curve | yes |
+| `params.glow` | number | 0.85 | min 0, max 1 | Glow | yes |
+| `params.grid` | number | 0.55 | min 0, max 1 | Grid | yes |
+| `params.peakHold` | number | 0.78 | min 0, max 1 | Peak Hold | yes |
+| `params.smoothing` | number | 0.72 | min 0, max 0.95 | Smoothing | yes |
+| `params.tilt` | number | 0.18 | min -1, max 1 | Tilt | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "spectrum_analyzer",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
