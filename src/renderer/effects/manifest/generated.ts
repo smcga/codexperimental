@@ -23,6 +23,7 @@ import { fractalManifest } from "./fractal.manifest";
 import { fractal_zoomerManifest } from "./fractal_zoomer.manifest";
 import { gl_fractal_tunnelManifest } from "./gl_fractal_tunnel.manifest";
 import { gl_impossible_corridorManifest } from "./gl_impossible_corridor.manifest";
+import { glassManifest } from "./glass.manifest";
 import { glenz_vectorsManifest } from "./glenz_vectors.manifest";
 import { glitchManifest } from "./glitch.manifest";
 import { greets_wallManifest } from "./greets_wall.manifest";
@@ -102,6 +103,7 @@ export const generatedEffectManifests = [
   fractal_zoomerManifest,
   gl_fractal_tunnelManifest,
   gl_impossible_corridorManifest,
+  glassManifest,
   glenz_vectorsManifest,
   glitchManifest,
   greets_wallManifest,

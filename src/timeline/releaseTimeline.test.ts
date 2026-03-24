@@ -124,7 +124,8 @@ describe("release timeline", () => {
       "prism_bloom",
       "tetris_matrix",
       "velvet_dreamscape",
-      "water_drops"
+      "water_drops",
+      "glass"
     ]);
     documentedEffects.forEach((effectId) => {
       if (optionalEffects.has(effectId)) {
