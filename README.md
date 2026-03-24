@@ -161,6 +161,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `fractal` | `iterations`, `trebleBoost`, `speed`, `scale`, `alpha` |  |
 | `feedback` | `scale`, `wobble`, `rotation`, `trail`, `glow` |  |
 | `equalizer` | `bars`, `barWidth`, `height`, `bassBoost`, `alpha` |  |
+| `spectrum_analyzer` | `bands`, `smoothing`, `curve`, `tilt`, `peakHold`, `grid`, `glow` | Parametric-EQ-style spectrum trace with log-spaced bins and peak-hold markers. |
 | `isogrid` | `opacity`, `lineWidth`, `spacing`, `wave`, `speed` |  |
 | `neon` | `shapes`, `radius`, `radiusStep`, `speed`, `glow`, `lineWidth` |  |
 | `particles` | `trail`, `burst`, `burstAudio`, `force`, `forceAudio` |  |

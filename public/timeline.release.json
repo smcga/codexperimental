@@ -231,10 +231,14 @@
       },
       "layers": [
         {
-          "effect": "equalizer",
+          "effect": "spectrum_analyzer",
           "blend": "screen",
           "opacity": 0.16,
-          "params": {}
+          "params": {
+            "bands": 72,
+            "peakHold": 0.82,
+            "glow": 0.9
+          }
         },
         {
           "effect": "feedback",

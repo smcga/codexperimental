@@ -498,6 +498,27 @@ describe("effect debug params", () => {
     });
   });
 
+  it("clamps spectrum analyzer params within control bounds", () => {
+    const params = coerceEffectParams("spectrum_analyzer", {
+      bands: 400,
+      smoothing: -1,
+      curve: 99,
+      tilt: -4,
+      peakHold: 9,
+      grid: -2,
+      glow: 3
+    });
+    expect(params).toEqual({
+      bands: 192,
+      smoothing: 0,
+      curve: 2.5,
+      tilt: -1,
+      peakHold: 1,
+      grid: 0,
+      glow: 1
+    });
+  });
+
   it("provides defaults for poly morph showcase controls", () => {
     expect(getEffectDebugDefaults("poly_morph_showcase")).toEqual({
       lat: 16,
