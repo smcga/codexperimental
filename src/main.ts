@@ -37,6 +37,13 @@ import {
 import { applyEraOverride, applyEraOverrideToTransition } from "./debug/eraOverride";
 import { createEditorRoot, EditorController } from "./editor/EditorRoot";
 import { submitDoodle } from "./doodles";
+import {
+  clampDoodleBrushSize,
+  DEFAULT_DOODLE_BRUSH_COLOR,
+  DEFAULT_DOODLE_BRUSH_SIZE,
+  getDoodleBrushSizeLabel,
+  normalizeDoodleBrushColor
+} from "./doodleComposer";
 import { fetchViews, registerViewOncePerSession } from "./viewCounter";
 import { buildSharePayload, canUseNativeShare, getShareLink, ShareLinkPlatform } from "./share";
 import { getOverlayPresentation, OverlayMode } from "./overlayContent";
@@ -88,6 +95,9 @@ const viewCounter = document.querySelector<HTMLDivElement>("#view-counter");
 const doodleModal = document.querySelector<HTMLDivElement>("#doodle-modal");
 const doodleCanvas = document.querySelector<HTMLCanvasElement>("#doodle-canvas");
 const doodleStatus = document.querySelector<HTMLDivElement>("#doodle-status");
+const doodleBrushSizeInput = document.querySelector<HTMLInputElement>("#doodle-brush-size");
+const doodleBrushSizeValue = document.querySelector<HTMLSpanElement>("#doodle-brush-size-value");
+const doodleColorButtons = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-doodle-color]"));
 const doodleClearButton = document.querySelector<HTMLButtonElement>("#doodle-clear");
 const doodleCancelButton = document.querySelector<HTMLButtonElement>("#doodle-cancel");
 const doodleSubmitButton = document.querySelector<HTMLButtonElement>("#doodle-submit");
@@ -132,6 +142,8 @@ let doodleHasStroke = false;
 let doodleSubmitting = false;
 let doodleDrawing = false;
 let doodlePointerId: number | null = null;
+let doodleBrushColor = DEFAULT_DOODLE_BRUSH_COLOR;
+let doodleBrushSize = DEFAULT_DOODLE_BRUSH_SIZE;
 let sharePanelVisible = false;
 const debugState = {
   enabled: false,
@@ -150,6 +162,7 @@ const doodleCtx = doodleCanvas?.getContext("2d") ?? null;
 debugTransitionSelect.innerHTML = buildTransitionOptionMarkup({ includeAuto: true });
 
 updateOverlayActions();
+updateDoodleBrushControls();
 resetDoodleCanvas();
 syncShareLinks();
 
@@ -328,6 +341,31 @@ function updateDoodleSubmitState(): void {
   doodleSubmitButton.disabled = doodleSubmitting || !doodleHasStroke;
 }
 
+function updateDoodleBrushControls(): void {
+  doodleColorButtons.forEach((button) => {
+    const isActive = normalizeDoodleBrushColor(button.dataset.doodleColor) === doodleBrushColor;
+    button.classList.toggle("active", isActive);
+    button.setAttribute("aria-pressed", isActive ? "true" : "false");
+  });
+
+  if (doodleBrushSizeInput) {
+    doodleBrushSizeInput.value = String(doodleBrushSize);
+  }
+  if (doodleBrushSizeValue) {
+    doodleBrushSizeValue.textContent = `${getDoodleBrushSizeLabel(doodleBrushSize)} · ${doodleBrushSize}px`;
+  }
+}
+
+function applyDoodleBrush(): void {
+  if (!doodleCtx) {
+    return;
+  }
+  doodleCtx.strokeStyle = doodleBrushColor;
+  doodleCtx.lineWidth = doodleBrushSize;
+  doodleCtx.lineCap = "round";
+  doodleCtx.lineJoin = "round";
+}
+
 function resetDoodleCanvas(): void {
   if (!doodleCanvas || !doodleCtx) {
     return;
@@ -339,13 +377,11 @@ function resetDoodleCanvas(): void {
   gradient.addColorStop(1, "#03060b");
   doodleCtx.fillStyle = gradient;
   doodleCtx.fillRect(0, 0, doodleCanvas.width, doodleCanvas.height);
-  doodleCtx.strokeStyle = "#8ef9ff";
-  doodleCtx.lineWidth = 8;
-  doodleCtx.lineCap = "round";
-  doodleCtx.lineJoin = "round";
+  applyDoodleBrush();
   doodleHasStroke = false;
   doodleDrawing = false;
   doodlePointerId = null;
+  updateDoodleBrushControls();
   updateDoodleSubmitState();
   setDoodleStatus("Draw on the canvas, then submit it for approval when you are ready.");
 }
@@ -1033,12 +1069,32 @@ if (sharePanel) {
   });
 });
 
+doodleColorButtons.forEach((button) => {
+  button.style.setProperty("--doodle-swatch", normalizeDoodleBrushColor(button.dataset.doodleColor));
+  button.addEventListener("click", () => {
+    doodleBrushColor = normalizeDoodleBrushColor(button.dataset.doodleColor);
+    applyDoodleBrush();
+    updateDoodleBrushControls();
+    setDoodleStatus(`Brush colour set to ${button.getAttribute("aria-label")?.replace(/ brush$/u, "") ?? "custom"}.`);
+  });
+});
+
+if (doodleBrushSizeInput) {
+  doodleBrushSizeInput.addEventListener("input", () => {
+    doodleBrushSize = clampDoodleBrushSize(Number(doodleBrushSizeInput.value));
+    applyDoodleBrush();
+    updateDoodleBrushControls();
+    setDoodleStatus(`Brush size set to ${doodleBrushSize}px.`);
+  });
+}
+
 if (doodleCanvas && doodleCtx) {
   doodleCanvas.addEventListener("pointerdown", (event) => {
     const point = getDoodleCanvasPoint(event);
     if (!point) {
       return;
     }
+    applyDoodleBrush();
     doodleDrawing = true;
     doodlePointerId = event.pointerId;
     doodleCanvas.setPointerCapture(event.pointerId);
