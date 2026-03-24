@@ -31,6 +31,7 @@ Total effects: **78**.
 - [Effect: fractal_zoomer](#effect-fractal-zoomer)
 - [Effect: gl_fractal_tunnel](#effect-gl-fractal-tunnel)
 - [Effect: gl_impossible_corridor](#effect-gl-impossible-corridor)
+- [Effect: glass](#effect-glass)
 - [Effect: glenz_vectors](#effect-glenz-vectors)
 - [Effect: glitch](#effect-glitch)
 - [Effect: greets_wall](#effect-greets-wall)
@@ -951,6 +952,41 @@ Total effects: **78**.
 ```json
 {
   "effect": "gl_impossible_corridor",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: glass
+
+- **Registry key:** `glass`
+- **Implementation:** `src/renderer/effects/glassEffect.ts` (class `GlassEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Layered crystalline panes with frosted bloom, beveled highlights, and hairline crack refractions.
+- **Audio features:** beat, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReact` | number | 0.35 | min 0, max 1 | Audio React | yes |
+| `params.bevel` | number | 0.34 | min 0, max 1 | Bevel | yes |
+| `params.crackle` | number | 0.48 | min 0, max 1 | Crackle | yes |
+| `params.frost` | number | 0.42 | min 0, max 1 | Frost | yes |
+| `params.paneCount` | number | 14 | min 4, max 36 | Pane Count | yes |
+| `params.refraction` | number | 0.68 | min 0, max 1 | Refraction | yes |
+| `params.seed` | number | 0 | min 0, max 999 | Seed | yes |
+| `params.shimmer` | number | 0.55 | min 0, max 1 | Shimmer | yes |
+| `params.tint` | number | 198 | min 170, max 230 | Tint | yes |
+| `params.wobble` | number | 0.45 | min 0, max 1 | Wobble | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "glass",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
