@@ -84,6 +84,7 @@ Total effects: **78**.
 - [Effect: voxel_landscape](#effect-voxel-landscape)
 - [Effect: voxel_world_builder](#effect-voxel-world-builder)
 - [Effect: water_drops](#effect-water-drops)
+- [Effect: water_reflection](#effect-water-reflection)
 - [Effect: wireframeRide](#effect-wireframeRide)
 
 ## Cross-reference
@@ -2806,6 +2807,40 @@ Total effects: **78**.
 ```json
 {
   "effect": "water_drops",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: water_reflection
+
+- **Registry key:** `water_reflection`
+- **Implementation:** `src/renderer/effects/waterReflectionEffect.ts` (class `WaterReflectionEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Mirrors the current scene into the bottom third of the viewport with compressed reflections, shimmer bands, and ripple rings.
+- **Audio features:** rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReact` | number | 0.35 | min 0, max 1 | Audio React | yes |
+| `params.chop` | number | 0.42 | min 0, max 1 | Chop | yes |
+| `params.opacity` | number | 0.82 | min 0.15, max 1 | Opacity | yes |
+| `params.rippleAmp` | number | 14 | min 0, max 48 | Ripple Amplitude | yes |
+| `params.rippleFreq` | number | 2.4 | min 0.2, max 8 | Ripple Frequency | yes |
+| `params.rippleSpeed` | number | 1.35 | min 0, max 6 | Ripple Speed | yes |
+| `params.seed` | number | 7 | min 0, max 999 | Seed | yes |
+| `params.shimmer` | number | 0.58 | min 0, max 1 | Shimmer | yes |
+| `params.tint` | number | 198 | min 170, max 230 | Tint | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "water_reflection",
   "opacity": 1,
   "blend": "source-over",
   "params": {}

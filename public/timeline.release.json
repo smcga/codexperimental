@@ -933,6 +933,21 @@
           "blend": "screen",
           "opacity": 0.08,
           "params": {}
+        },
+        {
+          "effect": "water_reflection",
+          "blend": "screen",
+          "opacity": 0.9,
+          "params": {
+            "rippleAmp": 12,
+            "rippleFreq": 2.1,
+            "rippleSpeed": 1.1,
+            "shimmer": 0.62,
+            "chop": 0.38,
+            "opacity": 0.86,
+            "audioReact": 0.2,
+            "seed": 7
+          }
         }
       ]
     },

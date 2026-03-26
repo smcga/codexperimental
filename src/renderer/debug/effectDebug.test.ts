@@ -241,6 +241,20 @@ describe("effect debug params", () => {
     });
   });
 
+  it("provides defaults for water reflection controls", () => {
+    expect(getEffectDebugDefaults("water_reflection")).toEqual({
+      rippleAmp: 14,
+      rippleFreq: 2.4,
+      rippleSpeed: 1.35,
+      shimmer: 0.58,
+      chop: 0.42,
+      tint: 198,
+      opacity: 0.82,
+      audioReact: 0.35,
+      seed: 7
+    });
+  });
+
   it("coerces water drops params based on control constraints", () => {
     const params = coerceEffectParams("water_drops", {
       dropCount: 2,

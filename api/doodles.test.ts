@@ -93,6 +93,13 @@ describe("api/doodles handler", () => {
   });
 
   it("keeps new submissions pending until approved", async () => {
+    delete process.env.DOODLE_MODERATION_TOKEN;
+    delete process.env.DOODLE_ADMIN_TOKEN;
+    delete process.env.DOODLE_MODERATION_BASE_URL;
+    delete process.env.SITE_URL;
+    delete process.env.VERCEL_PROJECT_PRODUCTION_URL;
+    delete process.env.VERCEL_URL;
+
     const existingApproved = {
       id: "approved-1",
       imageData: "data:image/png;base64,YQ==",

@@ -76,6 +76,7 @@ import { volumetric_cloudsManifest } from "./volumetric_clouds.manifest";
 import { voxel_landscapeManifest } from "./voxel_landscape.manifest";
 import { voxel_world_builderManifest } from "./voxel_world_builder.manifest";
 import { water_dropsManifest } from "./water_drops.manifest";
+import { water_reflectionManifest } from "./water_reflection.manifest";
 import { wireframeRideManifest } from "./wireframeRide.manifest";
 
 export const generatedEffectManifests = [
@@ -157,5 +158,6 @@ export const generatedEffectManifests = [
   voxel_landscapeManifest,
   voxel_world_builderManifest,
   water_dropsManifest,
+  water_reflectionManifest,
   wireframeRideManifest,
 ];
