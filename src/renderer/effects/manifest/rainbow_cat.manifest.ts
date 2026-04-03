@@ -21,8 +21,8 @@ export const rainbow_catManifest = defineEffectManifest({
   },
   docs: {
     parameters: "`speed`, `rainbowLength`, `bounce`, `sparkle`, `trailAlpha`, `catScale`, `starDensity`, `seed`",
-    catalogNote: "Synth-night rainbow cat with a bobbing pixel body, glitter stars, and a configurable six-colour trail.",
-    description: "Synth-night rainbow cat with a bobbing pixel body, glitter stars, and a configurable six-colour trail."
+    catalogNote: "Synth-night rainbow cat silhouette with swishing tail, trotting paws, glitter stars, and a configurable six-colour trail.",
+    description: "Synth-night rainbow cat silhouette with swishing tail, trotting paws, glitter stars, and a configurable six-colour trail."
   }
 });
 

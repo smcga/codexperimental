@@ -2,7 +2,7 @@ import { clamp } from "../../util/math";
 import { Effect, EffectRenderContext } from "./types";
 
 /**
- * Cheerful synth-night rainbow cat with a chunky pixel body, scrolling stars, and an audio-reactive rainbow trail.
+ * Cheerful synth-night rainbow cat with a clearer cat silhouette, drifting starfield, and an audio-reactive rainbow trail.
  */
 export const RAINBOW_CAT_DEFAULTS = {
   speed: 0.9,
@@ -17,14 +17,16 @@ export const RAINBOW_CAT_DEFAULTS = {
 
 const RAINBOW_TRAIL_COLORS = ["#ff4f8b", "#ff8a3d", "#ffd84d", "#52e36d", "#53c9ff", "#8a68ff"] as const;
 
-const CAT_OUTLINE = "#3d274c";
-const CAT_FUR = "#9ca1b0";
-const CAT_FUR_SHADOW = "#747b8c";
-const CAT_TREAT = "#f6c78c";
-const CAT_TREAT_SPECK = "#ff6fa8";
-const CAT_CHEEK = "#ff9ecb";
-const NIGHT_SKY = "#090b1d";
-const HORIZON_GLOW = "#1a1f45";
+const CAT_OUTLINE = "#30203f";
+const CAT_FUR = "#aab0c0";
+const CAT_FUR_SHADE = "#7c8498";
+const CAT_BELLY = "#d7dce8";
+const CAT_NOSE = "#ff88bb";
+const CAT_CHEEK = "#ffb3d7";
+const CAT_EYE = "#181525";
+const NIGHT_SKY = "#080b1c";
+const HORIZON_GLOW = "#18224b";
+const MOON_GLOW = "rgba(138, 180, 255, 0.12)";
 
 const resolveNumberParam = (value: unknown, fallback: number): number =>
   typeof value === "number" && Number.isFinite(value) ? value : fallback;
@@ -41,7 +43,8 @@ export const computeRainbowCatPosition = ({
   speed,
   bounce,
   catScale,
-  audioLift
+  audioLift,
+  seed = 0
 }: {
   width: number;
   height: number;
@@ -50,47 +53,68 @@ export const computeRainbowCatPosition = ({
   bounce: number;
   catScale: number;
   audioLift: number;
+  seed?: number;
 }): { x: number; y: number; bob: number; pixelSize: number } => {
   const pixelSize = Math.max(2, Math.min(width, height) * 0.0075 * catScale);
-  const bob = Math.sin(time * (4.2 + speed * 0.8)) * (height * 0.03 * bounce + audioLift * height * 0.035);
-  const travel = ((time * speed * width * 0.18) % (width * 0.42)) - width * 0.21;
+  const phase = seed * 0.17;
+  const orbitX = Math.sin(time * (0.34 + speed * 0.08) + phase) * width * 0.18;
+  const meanderX = Math.sin(time * (0.13 + speed * 0.03) + phase * 1.9) * width * 0.1;
+  const floatY = Math.sin(time * (1.9 + speed * 0.3) + phase * 0.7) * height * (0.075 + bounce * 0.05);
+  const flutterY = Math.sin(time * (4.8 + speed * 0.75) + phase * 2.4) * height * (0.02 + bounce * 0.015);
+  const audioBob = Math.sin(time * 7.5 + phase * 0.5) * audioLift * height * 0.035;
+  const bob = floatY + flutterY + audioBob;
+
   return {
-    x: width * 0.48 + travel,
-    y: height * 0.5 + bob,
+    x: width * 0.5 + orbitX + meanderX,
+    y: height * 0.48 + bob,
     bob,
     pixelSize
   };
 };
 
-const drawPixelRect = (
+const fillGridRect = (
   ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
+  originX: number,
+  originY: number,
+  gridX: number,
+  gridY: number,
+  gridW: number,
+  gridH: number,
   pixelSize: number,
   color: string
 ): void => {
   ctx.fillStyle = color;
-  ctx.fillRect(x, y, w * pixelSize, h * pixelSize);
+  ctx.fillRect(originX + gridX * pixelSize, originY + gridY * pixelSize, gridW * pixelSize, gridH * pixelSize);
 };
 
-const drawRainbowTrail = (
-  ctx: CanvasRenderingContext2D,
-  width: number,
-  time: number,
-  catX: number,
-  catY: number,
-  pixelSize: number,
-  rainbowLength: number,
-  bounce: number,
-  trailAlpha: number,
-  sparkle: number
-): void => {
-  const segmentCount = Math.max(6, Math.floor(10 + rainbowLength * 24));
-  const segmentWidth = pixelSize * 4;
-  const stripeHeight = pixelSize * 1.45;
-  const startX = catX - segmentCount * segmentWidth;
+const drawRainbowTrail = ({
+  ctx,
+  time,
+  catX,
+  catY,
+  pixelSize,
+  rainbowLength,
+  bounce,
+  trailAlpha,
+  sparkle,
+  movingRight
+}: {
+  ctx: CanvasRenderingContext2D;
+  time: number;
+  catX: number;
+  catY: number;
+  pixelSize: number;
+  rainbowLength: number;
+  bounce: number;
+  trailAlpha: number;
+  sparkle: number;
+  movingRight: boolean;
+}): void => {
+  const segmentCount = Math.max(10, Math.floor(12 + rainbowLength * 26));
+  const segmentWidth = pixelSize * 3.6;
+  const stripeHeight = pixelSize * 1.4;
+  const direction = movingRight ? -1 : 1;
+  const anchorX = catX + direction * pixelSize * 3;
 
   ctx.save();
   ctx.globalCompositeOperation = "lighter";
@@ -99,25 +123,21 @@ const drawRainbowTrail = (
   for (let stripeIndex = 0; stripeIndex < RAINBOW_TRAIL_COLORS.length; stripeIndex += 1) {
     const color = RAINBOW_TRAIL_COLORS[stripeIndex];
     for (let segmentIndex = 0; segmentIndex < segmentCount; segmentIndex += 1) {
-      const wave = Math.sin(time * 7 + segmentIndex * 0.55 + stripeIndex * 0.7);
-      const jitter = wave * bounce * pixelSize * 0.9;
-      const x = startX + segmentIndex * segmentWidth;
-      const y = catY - pixelSize * 2.2 + stripeIndex * stripeHeight + jitter;
+      const wave = Math.sin(time * 6.5 + segmentIndex * 0.42 + stripeIndex * 0.7);
+      const flutter = Math.sin(time * 3.3 + segmentIndex * 0.16 + stripeIndex * 0.33);
+      const x = anchorX + direction * segmentIndex * segmentWidth;
+      const y = catY - pixelSize * 1.9 + stripeIndex * stripeHeight + (wave * 0.75 + flutter * 0.35) * bounce * pixelSize;
       ctx.fillStyle = color;
-      ctx.fillRect(x, y, segmentWidth + pixelSize, stripeHeight + pixelSize * 0.15);
+      ctx.fillRect(x, y, segmentWidth + pixelSize * 0.8, stripeHeight + pixelSize * 0.15);
 
-      if (sparkle > 0.02 && segmentIndex % 3 === stripeIndex % 3) {
-        ctx.fillStyle = `rgba(255,255,255,${0.08 + sparkle * 0.22})`;
-        ctx.fillRect(x + segmentWidth * 0.3, y + stripeHeight * 0.15, pixelSize, pixelSize);
+      if (sparkle > 0.02 && segmentIndex % 4 === stripeIndex % 4) {
+        ctx.fillStyle = `rgba(255,255,255,${0.06 + sparkle * 0.18})`;
+        ctx.fillRect(x + direction * segmentWidth * 0.35, y + stripeHeight * 0.18, pixelSize, pixelSize);
       }
     }
   }
 
   ctx.restore();
-
-  const trailEndX = Math.min(width, catX + pixelSize * 1.5);
-  ctx.fillStyle = `rgba(255,255,255,${0.04 + sparkle * 0.06})`;
-  ctx.fillRect(startX, catY - pixelSize * 2.5, trailEndX - startX, pixelSize * 8.5);
 };
 
 const drawStarfield = (
@@ -130,17 +150,17 @@ const drawStarfield = (
   starDensity: number,
   seed: number
 ): void => {
-  const starCount = Math.max(8, Math.floor(12 + starDensity * 34));
+  const starCount = Math.max(10, Math.floor(14 + starDensity * 34));
   for (let index = 0; index < starCount; index += 1) {
     const starSeed = seed * 1000 + index * 17.17;
     const xBase = rainbowCatHash01(starSeed + 1.1) * width;
-    const yBase = rainbowCatHash01(starSeed + 2.2) * height * 0.78;
-    const drift = (time * (16 + speed * 12) * (0.25 + rainbowCatHash01(starSeed + 3.7))) % (width + 24);
+    const yBase = rainbowCatHash01(starSeed + 2.2) * height * 0.82;
+    const drift = (time * (12 + speed * 8) * (0.25 + rainbowCatHash01(starSeed + 3.7))) % (width + 24);
     const x = (xBase - drift + width + 24) % (width + 24) - 12;
     const y = yBase + Math.sin(time * 1.8 + starSeed) * 3.2;
     const twinkle = 0.45 + 0.55 * Math.sin(time * (5.5 + sparkle * 2) + starSeed * 0.4);
-    const size = 1 + rainbowCatHash01(starSeed + 4.4) * (1.2 + sparkle * 2.5);
-    const alpha = 0.24 + twinkle * (0.2 + sparkle * 0.42);
+    const size = 1 + rainbowCatHash01(starSeed + 4.4) * (1.2 + sparkle * 2.4);
+    const alpha = 0.22 + twinkle * (0.22 + sparkle * 0.4);
 
     ctx.fillStyle = `rgba(255,255,255,${alpha})`;
     ctx.fillRect(x, y, size, size);
@@ -152,55 +172,88 @@ const drawStarfield = (
   }
 };
 
-const drawRainbowCat = (ctx: CanvasRenderingContext2D, x: number, y: number, pixelSize: number, beatPulse: number): void => {
-  const left = x - pixelSize * 8;
-  const top = y - pixelSize * 6;
+const drawRainbowCat = ({
+  ctx,
+  x,
+  y,
+  pixelSize,
+  beatPulse,
+  movingRight,
+  tailSwing,
+  stridePhase
+}: {
+  ctx: CanvasRenderingContext2D;
+  x: number;
+  y: number;
+  pixelSize: number;
+  beatPulse: number;
+  movingRight: boolean;
+  tailSwing: number;
+  stridePhase: number;
+}): void => {
+  const dir = movingRight ? 1 : -1;
+  const originX = x - pixelSize * 8;
+  const originY = y - pixelSize * 6;
+  const rearLegLift = Math.max(0, Math.sin(stridePhase)) * (0.6 + beatPulse * 0.35);
+  const frontLegLift = Math.max(0, Math.sin(stridePhase + Math.PI)) * (0.6 + beatPulse * 0.35);
 
-  drawPixelRect(ctx, left + pixelSize * 0, top + pixelSize * 2, 10, 8, 1, CAT_OUTLINE);
-  drawPixelRect(ctx, left + pixelSize * 1, top + pixelSize * 3, 8, 6, 1, CAT_FUR_SHADOW);
-  drawPixelRect(ctx, left + pixelSize * 2, top + pixelSize * 3, 6, 6, 1, CAT_TREAT);
+  fillGridRect(ctx, originX, originY, 2, 5, 7, 4, pixelSize, CAT_FUR_SHADE);
+  fillGridRect(ctx, originX, originY, 3, 4, 6, 4, pixelSize, CAT_FUR);
+  fillGridRect(ctx, originX, originY, 4, 5, 3, 2, pixelSize, CAT_BELLY);
+  fillGridRect(ctx, originX, originY, 2, 5, 1, 3, pixelSize, CAT_OUTLINE);
+  fillGridRect(ctx, originX, originY, 8, 4, 1, 4, pixelSize, CAT_OUTLINE);
+  fillGridRect(ctx, originX, originY, 3, 4, 5, 1, pixelSize, CAT_OUTLINE);
+  fillGridRect(ctx, originX, originY, 3, 8, 5, 1, pixelSize, CAT_OUTLINE);
 
-  ctx.fillStyle = CAT_TREAT_SPECK;
-  const sprinkles = [
-    [left + pixelSize * 2.8, top + pixelSize * 3.8],
-    [left + pixelSize * 4.1, top + pixelSize * 4.4],
-    [left + pixelSize * 6.3, top + pixelSize * 5.1],
-    [left + pixelSize * 3.5, top + pixelSize * 6.3],
-    [left + pixelSize * 5.7, top + pixelSize * 7.2],
-    [left + pixelSize * 7.1, top + pixelSize * 4.2]
-  ];
-  sprinkles.forEach(([sx, sy], index) => {
-    ctx.fillRect(sx, sy + (index % 2 === 0 ? 0 : pixelSize * 0.35), pixelSize, pixelSize * 0.55);
-  });
+  fillGridRect(ctx, originX, originY, 8.5, 2.3, 4, 4, pixelSize, CAT_FUR_SHADE);
+  fillGridRect(ctx, originX, originY, 9, 2.8, 3.1, 3.1, pixelSize, CAT_FUR);
+  fillGridRect(ctx, originX, originY, 9.2, 4.3, 1.6, 1.1, pixelSize, CAT_BELLY);
+  fillGridRect(ctx, originX, originY, 11.2, 4.3, 0.9, 1.1, pixelSize, CAT_BELLY);
+  fillGridRect(ctx, originX, originY, 9, 1.2, 1, 1.4, pixelSize, CAT_OUTLINE);
+  fillGridRect(ctx, originX, originY, 11.3, 1.2, 1, 1.4, pixelSize, CAT_OUTLINE);
+  fillGridRect(ctx, originX, originY, 9.2, 1.6, 0.8, 1, pixelSize, CAT_FUR);
+  fillGridRect(ctx, originX, originY, 11.3, 1.6, 0.8, 1, pixelSize, CAT_FUR);
 
-  drawPixelRect(ctx, left + pixelSize * 8, top + pixelSize * 1, 5, 5, 1, CAT_OUTLINE);
-  drawPixelRect(ctx, left + pixelSize * 9, top + pixelSize * 2, 3, 3, 1, CAT_FUR);
-  drawPixelRect(ctx, left + pixelSize * 9, top + pixelSize * 0, 1, 1, 1, CAT_OUTLINE);
-  drawPixelRect(ctx, left + pixelSize * 11, top + pixelSize * 0, 1, 1, 1, CAT_OUTLINE);
+  fillGridRect(ctx, originX, originY, 9.65, 3.5, 0.5, 0.55, pixelSize, CAT_EYE);
+  fillGridRect(ctx, originX, originY, 11.05, 3.5, 0.5, 0.55, pixelSize, CAT_EYE);
+  fillGridRect(ctx, originX, originY, 10.35, 4.2, 0.6, 0.45, pixelSize, CAT_NOSE);
+  fillGridRect(ctx, originX, originY, 9.35, 4.55, 0.8, 0.6, pixelSize, CAT_CHEEK);
+  fillGridRect(ctx, originX, originY, 11.05, 4.55, 0.8, 0.6, pixelSize, CAT_CHEEK);
+  fillGridRect(ctx, originX, originY, 10.35, 4.7, 0.08, 0.8, pixelSize, CAT_OUTLINE);
+  fillGridRect(ctx, originX, originY, 10.85, 4.7, 0.08, 0.8, pixelSize, CAT_OUTLINE);
 
-  ctx.fillStyle = CAT_CHEEK;
-  ctx.fillRect(left + pixelSize * 9.1, top + pixelSize * 3.8, pixelSize * 0.8, pixelSize * 0.8);
-  ctx.fillRect(left + pixelSize * 11.1, top + pixelSize * 3.8, pixelSize * 0.8, pixelSize * 0.8);
-
-  ctx.fillStyle = CAT_OUTLINE;
-  ctx.fillRect(left + pixelSize * 9.8, top + pixelSize * 2.7, pixelSize * 0.55, pixelSize * 0.55);
-  ctx.fillRect(left + pixelSize * 11.1, top + pixelSize * 2.7, pixelSize * 0.55, pixelSize * 0.55);
-  ctx.fillRect(left + pixelSize * 10.5, top + pixelSize * 3.4, pixelSize * 0.5, pixelSize * 0.5);
-  ctx.fillRect(left + pixelSize * 10.1, top + pixelSize * 4.2, pixelSize * 1.1, pixelSize * 0.4);
-
-  const pawLift = beatPulse * pixelSize * 0.9;
-  drawPixelRect(ctx, left + pixelSize * 1.3, top + pixelSize * (8.4 - pawLift * 0.05), 1.2, 2.4, 1, CAT_OUTLINE);
-  drawPixelRect(ctx, left + pixelSize * 3.5, top + pixelSize * 8.7, 1.2, 2.4, 1, CAT_OUTLINE);
-  drawPixelRect(ctx, left + pixelSize * 6.0, top + pixelSize * (8.4 - pawLift * 0.04), 1.2, 2.4, 1, CAT_OUTLINE);
-  drawPixelRect(ctx, left + pixelSize * 8.2, top + pixelSize * 8.7, 1.2, 2.4, 1, CAT_OUTLINE);
+  fillGridRect(ctx, originX, originY, 3.3, 8.1 - rearLegLift, 1, 2.1, pixelSize, CAT_OUTLINE);
+  fillGridRect(ctx, originX, originY, 5.3, 8.6 - frontLegLift * 0.35, 1, 2.1, pixelSize, CAT_OUTLINE);
+  fillGridRect(ctx, originX, originY, 6.8, 8.1 - frontLegLift, 1, 2.1, pixelSize, CAT_OUTLINE);
+  fillGridRect(ctx, originX, originY, 8.4, 8.6 - rearLegLift * 0.35, 1, 2.1, pixelSize, CAT_OUTLINE);
 
   ctx.strokeStyle = CAT_OUTLINE;
-  ctx.lineWidth = Math.max(1.2, pixelSize * 0.55);
+  ctx.lineWidth = Math.max(1.1, pixelSize * 0.42);
   ctx.lineCap = "round";
+
+  const tailBaseX = originX + pixelSize * 2.4;
+  const tailBaseY = originY + pixelSize * 6.4;
+  const tailTipX = tailBaseX - dir * pixelSize * (4.2 + tailSwing * 0.6);
+  const tailTipY = tailBaseY - pixelSize * (2.8 + tailSwing * 1.4);
   ctx.beginPath();
-  ctx.moveTo(left + pixelSize * 0.8, top + pixelSize * 5.7);
-  ctx.quadraticCurveTo(left - pixelSize * 2.8, top + pixelSize * 3.8, left - pixelSize * 2.3, top + pixelSize * 7.4);
+  ctx.moveTo(tailBaseX, tailBaseY);
+  ctx.quadraticCurveTo(
+    tailBaseX - dir * pixelSize * (2.2 + tailSwing * 0.6),
+    tailBaseY - pixelSize * (3.4 + tailSwing * 0.9),
+    tailTipX,
+    tailTipY
+  );
   ctx.stroke();
+
+  const whiskerStartX = originX + pixelSize * 10.5;
+  const whiskerStartY = originY + pixelSize * 4.55;
+  const whiskerDirection = dir;
+  [-0.65, 0, 0.65].forEach((offset) => {
+    ctx.beginPath();
+    ctx.moveTo(whiskerStartX, whiskerStartY + offset * pixelSize);
+    ctx.lineTo(whiskerStartX + whiskerDirection * pixelSize * 2.4, whiskerStartY + offset * pixelSize * 1.2);
+    ctx.stroke();
+  });
 };
 
 export class RainbowCatEffect implements Effect {
@@ -225,7 +278,9 @@ export class RainbowCatEffect implements Effect {
     ctx.fillStyle = NIGHT_SKY;
     ctx.fillRect(0, 0, width, height);
     ctx.fillStyle = HORIZON_GLOW;
-    ctx.fillRect(0, height * 0.58, width, height * 0.42);
+    ctx.fillRect(0, height * 0.56, width, height * 0.44);
+    ctx.fillStyle = MOON_GLOW;
+    ctx.fillRect(width * 0.08, height * 0.1, width * 0.18, height * 0.18);
 
     drawStarfield(ctx, width, height, time, speed, sparkle + audioLift * 0.35, starDensity, seed);
 
@@ -234,24 +289,48 @@ export class RainbowCatEffect implements Effect {
       height,
       time,
       speed,
-      bounce: bounce + audioLift * 0.35,
+      bounce: bounce + audioLift * 0.28,
       catScale,
-      audioLift
+      audioLift,
+      seed
+    });
+    const previousPosition = computeRainbowCatPosition({
+      width,
+      height,
+      time: time - 0.12,
+      speed,
+      bounce: bounce + audioLift * 0.28,
+      catScale,
+      audioLift,
+      seed
     });
 
-    drawRainbowTrail(
-      ctx,
-      width,
-      time,
-      position.x,
-      position.y,
-      position.pixelSize,
-      rainbowLength,
-      bounce + audioLift * 0.2,
-      trailAlpha,
-      sparkle + audioLift * 0.25
-    );
+    const movingRight = position.x >= previousPosition.x;
+    const tailSwing = Math.sin(time * (3.8 + speed * 0.45) + seed * 0.23) * (0.8 + audioLift * 0.45);
+    const stridePhase = time * (5.2 + speed * 0.9) + seed * 0.41;
 
-    drawRainbowCat(ctx, position.x, position.y, position.pixelSize, beatPulse + audioLift * 0.5);
+    drawRainbowTrail({
+      ctx,
+      time,
+      catX: position.x,
+      catY: position.y,
+      pixelSize: position.pixelSize,
+      rainbowLength,
+      bounce: bounce + audioLift * 0.22,
+      trailAlpha,
+      sparkle: sparkle + audioLift * 0.2,
+      movingRight
+    });
+
+    drawRainbowCat({
+      ctx,
+      x: position.x,
+      y: position.y,
+      pixelSize: position.pixelSize,
+      beatPulse: beatPulse + audioLift * 0.5,
+      movingRight,
+      tailSwing,
+      stridePhase
+    });
   }
 }

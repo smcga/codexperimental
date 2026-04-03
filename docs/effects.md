@@ -1756,7 +1756,7 @@ Total effects: **78**.
 - **Registry key:** `rainbow_cat`
 - **Implementation:** `src/renderer/effects/rainbowCatEffect.ts` (class `RainbowCatEffect`)
 - **Renderer:** Canvas2D
-- **Description:** Synth-night rainbow cat with a bobbing pixel body, glitter stars, and a configurable six-colour trail.
+- **Description:** Synth-night rainbow cat silhouette with swishing tail, trotting paws, glitter stars, and a configurable six-colour trail.
 - **Audio features:** beat, rms, treble
 - **Performance notes:** None noted.
 
