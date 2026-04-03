@@ -2,13 +2,13 @@ import { clamp } from "../../util/math";
 import { Effect, EffectRenderContext } from "./types";
 
 export const MATRIX_RAIN_DEFAULTS = {
-  speed: 1.1,
-  density: 0.78,
-  fontSize: 18,
-  trail: 0.72,
-  glow: 0.85,
-  brightness: 0.9,
-  jitter: 0.25,
+  speed: 1,
+  density: 0.7,
+  fontSize: 14,
+  trail: 0.82,
+  glow: 0.72,
+  brightness: 0.92,
+  jitter: 0.06,
   glyphSet: 0,
   seed: 1337
 };
@@ -42,8 +42,8 @@ export const hashMatrixValue = (value: number, seed: number): number => {
 export const resolveMatrixRainParams = (params: Record<string, number>): MatrixRainResolvedParams => ({
   speed: clamp(asFinite(params.speed, MATRIX_RAIN_DEFAULTS.speed), 0.2, 4),
   density: clamp(asFinite(params.density, MATRIX_RAIN_DEFAULTS.density), 0.1, 1),
-  fontSize: clamp(Math.round(asFinite(params.fontSize, MATRIX_RAIN_DEFAULTS.fontSize)), 10, 32),
-  trail: clamp(asFinite(params.trail, MATRIX_RAIN_DEFAULTS.trail), 0.15, 1),
+  fontSize: clamp(Math.round(asFinite(params.fontSize, MATRIX_RAIN_DEFAULTS.fontSize)), 8, 28),
+  trail: clamp(asFinite(params.trail, MATRIX_RAIN_DEFAULTS.trail), 0.2, 1),
   glow: clamp(asFinite(params.glow, MATRIX_RAIN_DEFAULTS.glow), 0, 1.5),
   brightness: clamp(asFinite(params.brightness, MATRIX_RAIN_DEFAULTS.brightness), 0.25, 1.4),
   jitter: clamp(asFinite(params.jitter, MATRIX_RAIN_DEFAULTS.jitter), 0, 1),
@@ -56,12 +56,12 @@ export const getMatrixGlyphBank = (glyphSet: number): string => MATRIX_GLYPH_SET
 export const isMatrixColumnActive = (column: number, seed: number, density: number): boolean =>
   hashMatrixValue(column * 1.918, seed) <= density;
 
-export const getMatrixColumnCount = (width: number, fontSize: number): number => Math.max(1, Math.floor(width / Math.max(10, fontSize * 0.78)));
+export const getMatrixColumnCount = (width: number, fontSize: number): number => Math.max(1, Math.floor(width / Math.max(8, fontSize * 0.75)));
 
-export const sampleMatrixGlyph = (column: number, row: number, time: number, glyphSet: number, seed: number): string => {
+export const sampleMatrixGlyph = (column: number, row: number, streamTime: number, glyphSet: number, seed: number): string => {
   const bank = getMatrixGlyphBank(glyphSet);
-  const glyphTime = Math.floor(time * 14 + row * 0.9);
-  const index = Math.floor(hashMatrixValue(column * 17 + row * 37 + glyphTime * 13, seed) * bank.length) % bank.length;
+  const symbolTick = Math.floor(streamTime * 3.2 + row * 0.5);
+  const index = Math.floor(hashMatrixValue(column * 17 + row * 37 + symbolTick * 11, seed) * bank.length) % bank.length;
   return bank[index] ?? bank[0] ?? "0";
 };
 
@@ -70,15 +70,15 @@ export class MatrixRainEffect implements Effect {
     const resolved = resolveMatrixRainParams(params);
     const columnCount = getMatrixColumnCount(width, resolved.fontSize);
     const cellWidth = width / columnCount;
-    const rowHeight = resolved.fontSize;
-    const rowCount = Math.max(1, Math.ceil(height / rowHeight) + 2);
-    const beatPulse = clamp((audio.beat ? 0.22 : 0) + (audio.rms ?? 0) * 0.65 + (audio.treble ?? 0) * 0.2, 0, 1);
-    const fallRate = (8 + resolved.density * 12) * resolved.speed * (0.85 + beatPulse * 0.35);
+    const rowHeight = resolved.fontSize * 1.02;
+    const beatPulse = clamp((audio.beat ? 0.2 : 0) + (audio.rms ?? 0) * 0.55 + (audio.treble ?? 0) * 0.15, 0, 1);
+    const baseFallSpeed = rowHeight * (8 + resolved.speed * 12) * (0.82 + beatPulse * 0.32);
 
     ctx.save();
-    ctx.fillStyle = "rgba(0, 5, 0, 1)";
+    ctx.fillStyle = "rgba(0, 4, 0, 1)";
     ctx.fillRect(0, 0, width, height);
-    ctx.fillStyle = `rgba(18, 255, 110, ${0.05 + resolved.glow * 0.08 + beatPulse * 0.04})`;
+
+    ctx.fillStyle = `rgba(20, 255, 120, ${0.04 + resolved.glow * 0.06 + beatPulse * 0.04})`;
     ctx.fillRect(0, 0, width, height);
 
     ctx.font = `${resolved.fontSize}px monospace`;
@@ -90,39 +90,41 @@ export class MatrixRainEffect implements Effect {
         continue;
       }
 
-      const columnSeed = resolved.seed + column * 97;
-      const speedScale = 0.65 + hashMatrixValue(column + 11, columnSeed) * 0.95 + beatPulse * 0.15;
-      const trailRows = Math.max(6, Math.round(rowCount * (0.08 + resolved.trail * 0.22 + hashMatrixValue(column + 5, columnSeed) * 0.05)));
-      const cycleLength = rowCount + trailRows + 6;
-      const headRow = Math.floor((time * fallRate * speedScale + hashMatrixValue(column + 23, columnSeed) * cycleLength) % cycleLength) - trailRows;
-      const xBase = (column + 0.5) * cellWidth;
-      const x = xBase + Math.sin(time * 1.2 + columnSeed * 0.03) * resolved.jitter * cellWidth * 0.35;
-      const startRow = Math.max(0, headRow - trailRows + 1);
-      const endRow = Math.min(rowCount - 1, headRow);
+      const columnSeed = resolved.seed + column * 101;
+      const speedScale = 0.7 + hashMatrixValue(column + 2, columnSeed) * 0.9 + beatPulse * 0.18;
+      const columnFallSpeed = baseFallSpeed * speedScale;
+      const trailRows = Math.max(7, Math.round(6 + resolved.trail * 22 + hashMatrixValue(column + 5, columnSeed) * 8));
+      const trailLengthPx = trailRows * rowHeight;
+      const cycleLength = height + trailLengthPx + rowHeight * 4;
+      const cycleOffset = hashMatrixValue(column + 17, columnSeed) * cycleLength;
+      const headY = (time * columnFallSpeed + cycleOffset) % cycleLength - trailLengthPx;
+      const x = (column + 0.5) * cellWidth + Math.sin(time * 0.9 + columnSeed * 0.014) * resolved.jitter * cellWidth * 0.35;
 
-      for (let row = startRow; row <= endRow; row += 1) {
-        const distance = headRow - row;
-        const life = 1 - distance / Math.max(1, trailRows);
-        const shimmer = 0.82 + hashMatrixValue(row + column * 3, columnSeed) * 0.35;
-        const alpha = clamp(Math.pow(Math.max(0, life), 1.45) * resolved.brightness * shimmer, 0, 1);
-        const isHead = distance <= 0;
-        const y = (row + 0.5) * rowHeight;
-        const glyph = sampleMatrixGlyph(column, row, time + beatPulse * 0.5, resolved.glyphSet, columnSeed);
-        const lightness = isHead ? 92 : 38 + life * 42;
-        const saturation = isHead ? 30 : 90;
+      for (let trailIndex = 0; trailIndex < trailRows; trailIndex += 1) {
+        const y = headY - trailIndex * rowHeight;
+        if (y < -rowHeight || y > height + rowHeight) {
+          continue;
+        }
 
-        ctx.shadowBlur = resolved.glow * (isHead ? 18 : 10) * (0.8 + beatPulse * 0.5);
-        ctx.shadowColor = isHead ? "rgba(225, 255, 235, 0.9)" : `rgba(54, 255, 145, ${0.2 + alpha * 0.45})`;
+        const life = 1 - trailIndex / Math.max(1, trailRows - 1);
+        const shimmer = 0.88 + hashMatrixValue(trailIndex + column * 3.7, columnSeed) * 0.2;
+        const alpha = clamp(Math.pow(life, 1.4) * resolved.brightness * shimmer, 0, 1);
+        const isHead = trailIndex === 0;
+        const rowSample = Math.floor((y + time * rowHeight) / rowHeight);
+        const glyph = sampleMatrixGlyph(column, rowSample, time + beatPulse * 0.25, resolved.glyphSet, columnSeed);
+
+        ctx.shadowBlur = resolved.glow * (isHead ? 16 : 9) * (0.82 + beatPulse * 0.45);
+        ctx.shadowColor = isHead ? "rgba(235, 255, 242, 0.9)" : `rgba(48, 255, 138, ${0.15 + alpha * 0.4})`;
         ctx.fillStyle = isHead
-          ? `rgba(230, 255, 238, ${Math.max(alpha, 0.85)})`
-          : `hsla(128, ${saturation}%, ${lightness}%, ${alpha})`;
+          ? `rgba(232, 255, 240, ${Math.max(alpha, 0.82)})`
+          : `hsla(126, 92%, ${34 + life * 43}%, ${alpha})`;
         ctx.fillText(glyph, x, y);
       }
     }
 
     ctx.shadowBlur = 0;
     ctx.shadowColor = "transparent";
-    ctx.fillStyle = `rgba(0, 0, 0, ${0.08 + (1 - resolved.brightness / 1.4) * 0.08})`;
+    ctx.fillStyle = `rgba(0, 0, 0, ${0.05 + (1 - resolved.brightness / 1.4) * 0.06})`;
     for (let y = 0; y < height; y += 3) {
       ctx.fillRect(0, y, width, 1);
     }

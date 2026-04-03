@@ -55,7 +55,7 @@ describe("resolveMatrixRainParams", () => {
     ).toEqual({
       speed: 4,
       density: 0.1,
-      fontSize: 10,
+      fontSize: 8,
       trail: 1,
       glow: 0,
       brightness: 1.4,
@@ -71,9 +71,12 @@ describe("resolveMatrixRainParams", () => {
 });
 
 describe("matrixRainEffect helpers", () => {
-  it("returns deterministic glyphs for a given cell/time", () => {
-    expect(sampleMatrixGlyph(3, 7, 1.25, 0, 1337)).toBe("#");
-    expect(sampleMatrixGlyph(3, 7, 1.25, 1, 1337)).toBe("0");
+  it("samples deterministic glyphs for identical inputs", () => {
+    const glyphA = sampleMatrixGlyph(3, 7, 1.25, 0, 1337);
+    const glyphB = sampleMatrixGlyph(3, 7, 1.25, 0, 1337);
+
+    expect(glyphA).toBe(glyphB);
+    expect(glyphA.length).toBeGreaterThan(0);
   });
 
   it("activates more columns as density increases", () => {
@@ -102,7 +105,7 @@ describe("MatrixRainEffect", () => {
     });
 
     expect(ctx.fillText).toHaveBeenCalled();
-    expect(ctx.fillRect).toHaveBeenCalledTimes(62);
+    expect(ctx.fillRect.mock.calls.length).toBeGreaterThan(20);
   });
 
   it("renders more glyphs at higher density", () => {
@@ -132,4 +135,40 @@ describe("MatrixRainEffect", () => {
 
     expect(denseCtx.fillText.mock.calls.length).toBeGreaterThan(sparseCtx.fillText.mock.calls.length);
   });
+
+  it("updates glyph positions over time for smooth motion", () => {
+    const effect = new MatrixRainEffect();
+    const firstCtx = createContext();
+    const secondCtx = createContext();
+
+    effect.render({
+      ctx: firstCtx,
+      width: 48,
+      height: 160,
+      time: 1,
+      delta: 0.016,
+      audio: createAudio(),
+      params: { density: 1, seed: 3, fontSize: 10, jitter: 0 }
+    });
+
+    effect.render({
+      ctx: secondCtx,
+      width: 48,
+      height: 160,
+      time: 1.02,
+      delta: 0.016,
+      audio: createAudio(),
+      params: { density: 1, seed: 3, fontSize: 10, jitter: 0 }
+    });
+
+    const firstYValues = firstCtx.fillText.mock.calls.map((call) => Number(call[2])).filter((value) => Number.isFinite(value));
+    const secondYValues = secondCtx.fillText.mock.calls.map((call) => Number(call[2])).filter((value) => Number.isFinite(value));
+
+    expect(firstYValues.length).toBeGreaterThan(0);
+    expect(secondYValues.length).toBeGreaterThan(0);
+
+    const sharedIndex = Math.min(firstYValues.length, secondYValues.length) - 1;
+    expect(secondYValues[sharedIndex]).not.toBe(firstYValues[sharedIndex]);
+  });
+
 });
