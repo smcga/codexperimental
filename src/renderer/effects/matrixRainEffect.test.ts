@@ -5,6 +5,7 @@ import {
   MatrixRainEffect,
   getMatrixColumnCount,
   isMatrixColumnActive,
+  resolveBaseFallSpeed,
   resolveMatrixRainParams,
   sampleMatrixGlyph
 } from "./matrixRainEffect";
@@ -87,6 +88,17 @@ describe("matrixRainEffect helpers", () => {
     expect(dense).toBeGreaterThan(sparse);
     expect(getMatrixColumnCount(320, 16)).toBeGreaterThan(0);
   });
+
+  it("keeps low speed in a slow cinematic range", () => {
+    const slow = resolveBaseFallSpeed(0.2);
+    const medium = resolveBaseFallSpeed(1);
+    const fast = resolveBaseFallSpeed(4);
+
+    expect(slow).toBeLessThan(20);
+    expect(medium).toBeGreaterThan(slow);
+    expect(fast).toBeGreaterThan(medium);
+    expect(fast).toBeLessThanOrEqual(95);
+  });
 });
 
 describe("MatrixRainEffect", () => {
@@ -136,33 +148,58 @@ describe("MatrixRainEffect", () => {
     expect(denseCtx.fillText.mock.calls.length).toBeGreaterThan(sparseCtx.fillText.mock.calls.length);
   });
 
+  it("keeps x-position stable when jitter is zero", () => {
+    const effect = new MatrixRainEffect();
+    const times = Array.from({ length: 81 }, (_, index) => index * 0.25);
+
+    const findXValues = (time: number): number[] => {
+      const ctx = createContext();
+      effect.render({
+        ctx,
+        width: 40,
+        height: 160,
+        time,
+        delta: 0.016,
+        audio: createAudio(),
+        params: { density: 1, seed: 3, fontSize: 10, jitter: 0 }
+      });
+      return ctx.fillText.mock.calls.map((call) => Number(call[1])).filter((value) => Number.isFinite(value));
+    };
+
+    const baseTime = times.find((value) => findXValues(value).length > 0);
+    expect(baseTime).not.toBeUndefined();
+
+    const firstXValues = findXValues(baseTime ?? 0);
+    const secondXValues = findXValues((baseTime ?? 0) + 0.4);
+
+    expect(firstXValues.length).toBeGreaterThan(0);
+    expect(secondXValues.length).toBeGreaterThan(0);
+    expect(secondXValues[0]).toBe(firstXValues[0]);
+  });
+
   it("updates glyph positions over time for smooth motion", () => {
     const effect = new MatrixRainEffect();
-    const firstCtx = createContext();
-    const secondCtx = createContext();
+    const times = [0, 0.4, 0.8, 1.2, 1.6];
 
-    effect.render({
-      ctx: firstCtx,
-      width: 48,
-      height: 160,
-      time: 1,
-      delta: 0.016,
-      audio: createAudio(),
-      params: { density: 1, seed: 3, fontSize: 10, jitter: 0 }
-    });
+    const findYValues = (time: number): number[] => {
+      const ctx = createContext();
+      effect.render({
+        ctx,
+        width: 80,
+        height: 220,
+        time,
+        delta: 0.016,
+        audio: createAudio(),
+        params: { density: 1, seed: 3, fontSize: 10, jitter: 0 }
+      });
+      return ctx.fillText.mock.calls.map((call) => Number(call[2])).filter((value) => Number.isFinite(value));
+    };
 
-    effect.render({
-      ctx: secondCtx,
-      width: 48,
-      height: 160,
-      time: 1.02,
-      delta: 0.016,
-      audio: createAudio(),
-      params: { density: 1, seed: 3, fontSize: 10, jitter: 0 }
-    });
+    const baseTime = times.find((value) => findYValues(value).length > 0);
+    expect(baseTime).not.toBeUndefined();
 
-    const firstYValues = firstCtx.fillText.mock.calls.map((call) => Number(call[2])).filter((value) => Number.isFinite(value));
-    const secondYValues = secondCtx.fillText.mock.calls.map((call) => Number(call[2])).filter((value) => Number.isFinite(value));
+    const firstYValues = findYValues(baseTime ?? 0);
+    const secondYValues = findYValues((baseTime ?? 0) + 0.08);
 
     expect(firstYValues.length).toBeGreaterThan(0);
     expect(secondYValues.length).toBeGreaterThan(0);
@@ -170,5 +207,4 @@ describe("MatrixRainEffect", () => {
     const sharedIndex = Math.min(firstYValues.length, secondYValues.length) - 1;
     expect(secondYValues[sharedIndex]).not.toBe(firstYValues[sharedIndex]);
   });
-
 });

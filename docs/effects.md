@@ -1307,7 +1307,7 @@ Total effects: **78**.
 - **Registry key:** `matrix_rain`
 - **Implementation:** `src/renderer/effects/matrixRainEffect.ts` (class `MatrixRainEffect`)
 - **Renderer:** Canvas2D
-- **Description:** Matrix-style falling code rain with smaller default glyphs, smoother continuous descent, and controllable trail persistence/glow.
+- **Description:** Matrix-style falling code rain tuned for slower, smoother descent with smaller glyphs and subtle default jitter.
 - **Audio features:** beat, rms, treble
 - **Performance notes:** None noted.
 
@@ -1316,14 +1316,14 @@ Total effects: **78**.
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
 | --- | --- | --- | --- | --- | --- |
 | `params.brightness` | number | 0.92 | min 0.25, max 1.4 | Brightness | yes |
-| `params.density` | number | 0.7 | min 0.1, max 1 | Density | yes |
-| `params.fontSize` | number | 14 | min 8, max 28 | Font Size | yes |
-| `params.glow` | number | 0.72 | min 0, max 1.5 | Glow | yes |
+| `params.density` | number | 0.66 | min 0.1, max 1 | Density | yes |
+| `params.fontSize` | number | 13 | min 8, max 28 | Font Size | yes |
+| `params.glow` | number | 0.7 | min 0, max 1.5 | Glow | yes |
 | `params.glyphSet` | number | 0 | min 0, max 2 | Glyph Set | yes |
-| `params.jitter` | number | 0.06 | min 0, max 1 | Jitter | yes |
+| `params.jitter` | number | 0.03 | min 0, max 1 | Jitter | yes |
 | `params.seed` | number | 1337 | min 0, max 9999 | Seed | yes |
-| `params.speed` | number | 1 | min 0.2, max 4 | Speed | yes |
-| `params.trail` | number | 0.82 | min 0.2, max 1 | Trail | yes |
+| `params.speed` | number | 0.9 | min 0.2, max 4 | Speed | yes |
+| `params.trail` | number | 0.84 | min 0.2, max 1 | Trail | yes |
 
 ### Minimal layer usage
 

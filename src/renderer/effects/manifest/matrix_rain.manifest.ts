@@ -22,8 +22,8 @@ export const matrix_rainManifest = defineEffectManifest({
   },
   docs: {
     parameters: "`speed`, `density`, `fontSize`, `trail`, `glow`, `brightness`, `jitter`, `glyphSet`, `seed`",
-    catalogNote: "Matrix-style falling code rain with smaller default glyphs, smoother continuous descent, and controllable trail persistence/glow.",
-    description: "Matrix-style falling code rain with smaller default glyphs, smoother continuous descent, and controllable trail persistence/glow."
+    catalogNote: "Matrix-style falling code rain tuned for slower, smoother descent with smaller glyphs and subtle default jitter.",
+    description: "Matrix-style falling code rain tuned for slower, smoother descent with smaller glyphs and subtle default jitter."
   }
 });
 
