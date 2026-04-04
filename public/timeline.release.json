@@ -182,6 +182,18 @@
           "blend": "screen",
           "opacity": 0.12,
           "params": {}
+        },
+        {
+          "effect": "caustics",
+          "blend": "screen",
+          "opacity": 0.08,
+          "params": {
+            "scale": 0.92,
+            "contrast": 0.85,
+            "intensity": 0.7,
+            "glow": 0.2,
+            "background": 0
+          }
         }
       ],
       "fitAlign": "centre"
