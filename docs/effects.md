@@ -81,6 +81,7 @@ Total effects: **82**.
 - [Effect: tetris_matrix](#effect-tetris-matrix)
 - [Effect: textmode_charset](#effect-textmode-charset)
 - [Effect: textured_cube](#effect-textured-cube)
+- [Effect: tilingMorph](#effect-tilingMorph)
 - [Effect: torus_orbit_3d](#effect-torus-orbit-3d)
 - [Effect: treegrowth](#effect-treegrowth)
 - [Effect: tunnel](#effect-tunnel)
@@ -2700,6 +2701,45 @@ Total effects: **82**.
 ```json
 {
   "effect": "textured_cube",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: tilingMorph
+
+- **Registry key:** `tilingMorph`
+- **Implementation:** `src/renderer/effects/tilingMorph.ts` (class `TilingMorphEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Seam-safe lattice tiling morph that cycles square, diamond, skewed, and rounded-interlocking phases; `mode` supports `mono`, `palette`, `neon`.
+- **Audio features:** bass, beat, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReactive` | number | 1 | min 0, max 1 | Audio Reactive | yes |
+| `params.backgroundAlpha` | number | 1 | min 0, max 1 | Background Alpha | yes |
+| `params.cellJitter` | number | 0.15 | min 0, max 0.45 | Cell Jitter | yes |
+| `params.contrast` | number | 1 | min 0.5, max 2.5 | Contrast | yes |
+| `params.fillAlpha` | number | 0.85 | min 0, max 1 | Fill Alpha | yes |
+| `params.lineWidth` | number | 1.5 | min 0.25, max 8 | Line Width | yes |
+| `params.mode` | string | "palette" | options: palette, mono, neon | Mode | no |
+| `params.morphAmount` | number | 0.85 | min 0, max 1 | Morph Amount | yes |
+| `params.morphSpeed` | number | 1 | min 0.1, max 4 | Morph Speed | yes |
+| `params.paletteShift` | number | 0 | min -2, max 2 | Palette Shift | yes |
+| `params.rotationSpeed` | number | 0.08 | min -1, max 1 | Rotation Speed | yes |
+| `params.roundedness` | number | 0.35 | min 0, max 1 | Roundedness | yes |
+| `params.scale` | number | 1 | min 0.35, max 3 | Scale | yes |
+| `params.seed` | number | 1 | min 0, max 9999 | Seed | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "tilingMorph",
   "opacity": 1,
   "blend": "source-over",
   "params": {}

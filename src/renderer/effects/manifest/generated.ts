@@ -73,6 +73,7 @@ import { taco_meteor_showerManifest } from "./taco_meteor_shower.manifest";
 import { tetris_matrixManifest } from "./tetris_matrix.manifest";
 import { textmode_charsetManifest } from "./textmode_charset.manifest";
 import { textured_cubeManifest } from "./textured_cube.manifest";
+import { tilingMorphManifest } from "./tilingMorph.manifest";
 import { torus_orbit_3dManifest } from "./torus_orbit_3d.manifest";
 import { treegrowthManifest } from "./treegrowth.manifest";
 import { tunnelManifest } from "./tunnel.manifest";
@@ -163,6 +164,7 @@ export const generatedEffectManifests = [
   tetris_matrixManifest,
   textmode_charsetManifest,
   textured_cubeManifest,
+  tilingMorphManifest,
   torus_orbit_3dManifest,
   treegrowthManifest,
   tunnelManifest,
