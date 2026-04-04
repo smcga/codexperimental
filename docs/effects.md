@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **81**.
+Total effects: **82**.
 
 ## Table of contents
 
@@ -34,6 +34,7 @@ Total effects: **81**.
 - [Effect: glenz_vectors](#effect-glenz-vectors)
 - [Effect: glitch](#effect-glitch)
 - [Effect: greets_wall](#effect-greets-wall)
+- [Effect: infinite_zoom_droste](#effect-infinite-zoom-droste)
 - [Effect: infinitycloud](#effect-infinitycloud)
 - [Effect: isogrid](#effect-isogrid)
 - [Effect: kefrens_bars](#effect-kefrens-bars)
@@ -106,11 +107,11 @@ Total effects: **81**.
 
 ### Common parameter patterns
 
-- `speed` (used in 44 effects)
-- `seed` (used in 36 effects)
+- `speed` (used in 45 effects)
+- `seed` (used in 37 effects)
 - `audioReact` (used in 34 effects)
+- `glow` (used in 14 effects)
 - `beatKick` (used in 14 effects)
-- `glow` (used in 13 effects)
 - `trail` (used in 10 effects)
 - `palette` (used in 9 effects)
 - `hueShift` (used in 7 effects)
@@ -1067,6 +1068,41 @@ Total effects: **81**.
 ```json
 {
   "effect": "greets_wall",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: infinite_zoom_droste
+
+- **Registry key:** `infinite_zoom_droste`
+- **Implementation:** `src/renderer/effects/infiniteZoomDroste.ts` (class `InfiniteZoomDrosteEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Infinite nested portal recursion with continuous logarithmic zoom and layered geometric accents.
+- **Audio features:** bass, beat, beatStrength, mid, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.detail` | number | 0.75 | min 0.1, max 1 | Detail | yes |
+| `params.fitMode` | string | "auto" | options: auto, safe | Fit Mode | no |
+| `params.glow` | number | 0.6 | min 0, max 1.2 | Glow | yes |
+| `params.pulse` | number | 0.5 | min 0, max 1 | Pulse | yes |
+| `params.rotationSpeed` | number | 0.18 | min -1.2, max 1.2 | Rotation Speed | yes |
+| `params.scaleBase` | number | 2 | min 1.2, max 3.8 | Scale Base | yes |
+| `params.seed` | number | 1 | min 0, max 9999 | Seed | yes |
+| `params.shape` | string | "portal" | options: portal, rings, grid | Shape | no |
+| `params.speed` | number | 0.35 | min -1.8, max 1.8 | Speed | yes |
+| `params.twist` | number | 0.25 | min -1, max 1 | Twist | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "infinite_zoom_droste",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
