@@ -160,7 +160,6 @@ let stateByCtx = new WeakMap<CanvasRenderingContext2D, ExplosionState>();
 export class ExplosionBurstEffect implements Effect {
   render({ ctx, width, height, time, delta, audio, params }: EffectRenderContext): void {
     const rawParams = params as Record<string, unknown>;
-    const startTime = resolveNumber(rawParams.startTime, 0);
     const duration = clamp(resolveNumber(rawParams.duration, EXPLOSION_BURST_DEFAULTS.duration), 1, 8);
     const intensity = clamp(resolveNumber(rawParams.intensity, EXPLOSION_BURST_DEFAULTS.intensity), 0.5, 2);
     const seed = Math.floor(resolveNumber(rawParams.seed, EXPLOSION_BURST_DEFAULTS.seed));
@@ -181,19 +180,23 @@ export class ExplosionBurstEffect implements Effect {
       resolveNumber(rawParams.debrisCount, EXPLOSION_BURST_DEFAULTS.debrisCount)
     );
 
-    const t = Math.max(0, time - startTime);
-    const normalized = clamp(t / duration, 0, 1);
-    if (t > duration) {
-      return;
-    }
-
     const beatStrength = audioReactive ? clamp(audio.beatStrength, 0, 2) : 0;
     const beatBoost = 1 + beatStrength * 0.5;
     const turbulence = turbulenceBase * (1 + beatStrength * 0.25);
     const cx = width * 0.5;
     const cy = height * 0.5;
 
+    const hasExplicitStartTime = typeof rawParams.startTime === "number" && Number.isFinite(rawParams.startTime);
     let state = stateByCtx.get(ctx);
+    let startTime = hasExplicitStartTime ? resolveNumber(rawParams.startTime, 0) : state?.startTime ?? time;
+    if (!hasExplicitStartTime && time - startTime > duration) {
+      startTime = time;
+    }
+    const t = Math.max(0, time - startTime);
+    const normalized = clamp(t / duration, 0, 1);
+    if (t > duration) {
+      return;
+    }
     const shouldReinitialize =
       !state || state.startTime !== startTime || state.seed !== seed || t < 0.01 || state.particles.length === 0;
 

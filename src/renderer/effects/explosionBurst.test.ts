@@ -86,4 +86,24 @@ describe("ExplosionBurstEffect", () => {
       })
     ).not.toThrow();
   });
+
+  it("auto-triggers when startTime is omitted in late timeline playback", () => {
+    const effect = new ExplosionBurstEffect();
+    const ctx = createContext();
+
+    effect.render({
+      ctx,
+      width: 320,
+      height: 180,
+      time: 180,
+      delta: 0.016,
+      audio: createAudio(0),
+      params: {
+        seed: 3,
+        duration: 5
+      }
+    });
+
+    expect(ctx.arc).toHaveBeenCalled();
+  });
 });
