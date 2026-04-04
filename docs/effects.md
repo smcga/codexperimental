@@ -52,6 +52,7 @@ Total effects: **90**.
 - [Effect: moving_shadow_map](#effect-moving-shadow-map)
 - [Effect: neon](#effect-neon)
 - [Effect: neon_alley](#effect-neon-alley)
+- [Effect: particleAttractors](#effect-particleAttractors)
 - [Effect: particles](#effect-particles)
 - [Effect: physics_pile](#effect-physics-pile)
 - [Effect: plasma](#effect-plasma)
@@ -127,7 +128,6 @@ Total effects: **90**.
 - `lineWidth` (used in 9 effects)
 - `hueShift` (used in 8 effects)
 - `scanlines` (used in 7 effects)
-- `count` (used in 6 effects)
 - `bufH` (used in 6 effects)
 
 ## Effects
@@ -1726,6 +1726,50 @@ Total effects: **90**.
 ```json
 {
   "effect": "neon_alley",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: particleAttractors
+
+- **Registry key:** `particleAttractors`
+- **Implementation:** `src/renderer/effects/particleAttractors.ts` (class `ParticleAttractorsEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Canvas2D gravity wells that pull and swirl particles into readable cosmic flow fields with tasteful audio pulse modulation.
+- **Audio features:** bass, beat, beatStrength, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.absorbRadius` | number | 10 | min 0, max 80 | Absorb Radius | yes |
+| `params.attractorCount` | number | 2 | min 1, max 4 | Attractor Count | yes |
+| `params.audioReactive` | number | 0.5 | min 0, max 1 | Audio Reactive | yes |
+| `params.backgroundFade` | number | 0.12 | min 0, max 0.5 | Background Fade | yes |
+| `params.beatPulse` | number | 0.7 | min 0, max 2 | Beat Pulse | yes |
+| `params.colorMode` | string | "era" | options: mono, era, heat | Color Mode | no |
+| `params.count` | number | 600 | min 50, max 3000 | Count | yes |
+| `params.damping` | number | 0.985 | min 0.85, max 0.9999 | Damping | yes |
+| `params.glow` | number | 0.8 | min 0, max 2.5 | Glow | yes |
+| `params.motion` | number | 0.35 | min 0, max 1.5 | Motion | yes |
+| `params.particleSize` | number | 1.6 | min 0.5, max 4 | Particle Size | yes |
+| `params.seed` | number | 1337 | min 0, max 999999 | Seed | yes |
+| `params.softening` | number | 24 | min 2, max 160 | Softening | yes |
+| `params.spawnMode` | string | "edges" | options: edges, ring, random | Spawn Mode | no |
+| `params.speedLimit` | number | 240 | min 30, max 900 | Speed Limit | yes |
+| `params.strength` | number | 1800 | min 100, max 6000 | Strength | yes |
+| `params.swirl` | number | 0.65 | min -2.5, max 2.5 | Swirl | yes |
+| `params.trailAlpha` | number | 0.14 | min 0.01, max 0.6 | Trail Alpha | yes |
+| `params.vignette` | number | 0.16 | min 0, max 0.6 | Vignette | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "particleAttractors",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
