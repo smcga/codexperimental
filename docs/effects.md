@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **90**.
+Total effects: **93**.
 
 ## Table of contents
 
@@ -119,16 +119,17 @@ Total effects: **90**.
 ### Common parameter patterns
 
 - `speed` (used in 47 effects)
-- `seed` (used in 41 effects)
+- `seed` (used in 43 effects)
 - `audioReact` (used in 34 effects)
-- `glow` (used in 15 effects)
+- `glow` (used in 16 effects)
 - `beatKick` (used in 14 effects)
 - `trail` (used in 10 effects)
 - `palette` (used in 9 effects)
 - `lineWidth` (used in 9 effects)
 - `hueShift` (used in 8 effects)
+- `count` (used in 7 effects)
 - `scanlines` (used in 7 effects)
-- `bufH` (used in 6 effects)
+- `audioReactive` (used in 7 effects)
 
 ## Effects
 

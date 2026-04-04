@@ -39,6 +39,13 @@ import { applyEraOverride, applyEraOverrideToTransition } from "./debug/eraOverr
 import { createEditorRoot, EditorController } from "./editor/EditorRoot";
 import { submitDoodle } from "./doodles";
 import {
+  compileRuntimeEffect,
+  EffectIdeaGenerationResult,
+  fetchApprovedEffects,
+  generateEffectIdea,
+  submitEffectIdea
+} from "./effectIdeas";
+import {
   clampDoodleBrushSize,
   DEFAULT_DOODLE_BRUSH_COLOR,
   DEFAULT_DOODLE_BRUSH_SIZE,
@@ -60,6 +67,7 @@ const overlayStartButton = document.querySelector<HTMLButtonElement>("#overlay-s
 const overlayShareButton = document.querySelector<HTMLButtonElement>("#overlay-share-button");
 const overlayRestartButton = document.querySelector<HTMLButtonElement>("#overlay-restart-button");
 const addDoodleButton = document.querySelector<HTMLButtonElement>("#add-doodle-button");
+const addEffectIdeaButton = document.querySelector<HTMLButtonElement>("#add-effect-idea-button");
 const shareStatus = document.querySelector<HTMLDivElement>("#share-status");
 const sharePanel = document.querySelector<HTMLDivElement>("#share-panel");
 const shareCopyButton = document.querySelector<HTMLButtonElement>("#share-copy-button");
@@ -102,6 +110,14 @@ const doodleColorButtons = Array.from(document.querySelectorAll<HTMLButtonElemen
 const doodleClearButton = document.querySelector<HTMLButtonElement>("#doodle-clear");
 const doodleCancelButton = document.querySelector<HTMLButtonElement>("#doodle-cancel");
 const doodleSubmitButton = document.querySelector<HTMLButtonElement>("#doodle-submit");
+const effectIdeaModal = document.querySelector<HTMLDivElement>("#effect-idea-modal");
+const effectIdeaInput = document.querySelector<HTMLTextAreaElement>("#effect-idea-input");
+const effectIdeaPreview = document.querySelector<HTMLCanvasElement>("#effect-idea-preview");
+const effectIdeaCode = document.querySelector<HTMLPreElement>("#effect-idea-code");
+const effectIdeaStatus = document.querySelector<HTMLDivElement>("#effect-idea-status");
+const effectIdeaCancelButton = document.querySelector<HTMLButtonElement>("#effect-idea-cancel");
+const effectIdeaGenerateButton = document.querySelector<HTMLButtonElement>("#effect-idea-generate");
+const effectIdeaSubmitButton = document.querySelector<HTMLButtonElement>("#effect-idea-submit");
 
 const queryParams = new URLSearchParams(window.location.search);
 const releaseMode = queryParams.get("release") === "1";
@@ -146,25 +162,44 @@ let doodlePointerId: number | null = null;
 let doodleBrushColor = DEFAULT_DOODLE_BRUSH_COLOR;
 let doodleBrushSize = DEFAULT_DOODLE_BRUSH_SIZE;
 let sharePanelVisible = false;
+let effectIdeasGenerating = false;
+let effectIdeasSubmitting = false;
+let generatedIdea: EffectIdeaGenerationResult | null = null;
+let generatedIdeaPrompt = "";
+let effectIdeaPreviewFrame = 0;
+let effectIdeaPreviewStart = 0;
+let effectIdeaPreviewEffect: ReturnType<typeof compileRuntimeEffect> | null = null;
+let availableEffectNames = getEffectRegistryKeys();
 const debugState = {
   enabled: false,
   forcedEffect: null as string | null,
   transitionOverride: null as TransitionType | null,
   eraOverride: null as EraPreset | null,
   monochromeOverride: null as boolean | null,
-  effectParams: Object.fromEntries(
-    getEffectRegistryKeys().map((effectName) => [effectName, getEffectDebugDefaults(effectName)])
-  ),
+  effectParams: Object.fromEntries(getEffectRegistryKeys().map((effectName) => [effectName, getEffectDebugDefaults(effectName)])),
   framingOverride: "auto" as FramingOverride
 };
 
 const doodleCtx = doodleCanvas?.getContext("2d") ?? null;
+const effectIdeaPreviewCtx = effectIdeaPreview?.getContext("2d") ?? null;
+const EMPTY_AUDIO_FEATURES: AudioFeatures = {
+  timeDomain: new Uint8Array(2048),
+  frequency: new Uint8Array(1024),
+  rms: 0,
+  bass: 0,
+  mid: 0,
+  treble: 0,
+  beat: false,
+  beatStrength: 0,
+  impactStrength: 0
+};
 
 debugTransitionSelect.innerHTML = buildTransitionOptionMarkup({ includeAuto: true });
 
 updateOverlayActions();
 updateDoodleBrushControls();
 resetDoodleCanvas();
+updateEffectIdeaButtons();
 syncShareLinks();
 
 function updateViewCounter(count: number): void {
@@ -238,6 +273,10 @@ function updateOverlayActions(): void {
     addDoodleButton.textContent = presentation.doodleLabel;
   }
   addDoodleButton?.classList.toggle("hidden", !presentation.showDoodle);
+  if (addEffectIdeaButton) {
+    addEffectIdeaButton.textContent = presentation.effectIdeaLabel;
+  }
+  addEffectIdeaButton?.classList.toggle("hidden", !presentation.showEffectIdea);
   if (!presentation.showActions) {
     setSharePanelVisible(false);
     setShareStatus("");
@@ -398,6 +437,70 @@ function setDoodleModalVisible(visible: boolean): void {
   }
 }
 
+function setEffectIdeaStatus(message: string, state: "idle" | "error" | "success" = "idle"): void {
+  if (!effectIdeaStatus) {
+    return;
+  }
+  effectIdeaStatus.textContent = message;
+  effectIdeaStatus.dataset.state = state;
+}
+
+function updateEffectIdeaButtons(): void {
+  if (effectIdeaGenerateButton) {
+    effectIdeaGenerateButton.disabled = effectIdeasGenerating;
+  }
+  if (effectIdeaSubmitButton) {
+    effectIdeaSubmitButton.disabled = effectIdeasSubmitting || generatedIdea === null;
+  }
+}
+
+function stopEffectIdeaPreview(): void {
+  if (effectIdeaPreviewFrame) {
+    cancelAnimationFrame(effectIdeaPreviewFrame);
+    effectIdeaPreviewFrame = 0;
+  }
+}
+
+function previewGeneratedIdea(): void {
+  if (!effectIdeaPreview || !effectIdeaPreviewCtx || !effectIdeaPreviewEffect) {
+    return;
+  }
+  const nowSeconds = performance.now() / 1000;
+  if (effectIdeaPreviewStart === 0) {
+    effectIdeaPreviewStart = nowSeconds;
+  }
+  effectIdeaPreviewEffect.render({
+    ctx: effectIdeaPreviewCtx,
+    width: effectIdeaPreview.width,
+    height: effectIdeaPreview.height,
+    time: nowSeconds - effectIdeaPreviewStart,
+    delta: 1 / 60,
+    audio: EMPTY_AUDIO_FEATURES,
+    params: {}
+  });
+  effectIdeaPreviewFrame = requestAnimationFrame(previewGeneratedIdea);
+}
+
+function setEffectIdeaModalVisible(visible: boolean): void {
+  if (!effectIdeaModal) {
+    return;
+  }
+  effectIdeaModal.classList.toggle("hidden", !visible);
+  effectIdeaModal.setAttribute("aria-hidden", visible ? "false" : "true");
+  if (!visible) {
+    stopEffectIdeaPreview();
+  }
+  if (visible && effectIdeaCode) {
+    effectIdeaCode.textContent = "";
+    setEffectIdeaStatus("Describe your idea, click Generate, and preview the result.");
+    generatedIdea = null;
+    generatedIdeaPrompt = "";
+    effectIdeaPreviewEffect = null;
+    effectIdeaPreviewStart = 0;
+    updateEffectIdeaButtons();
+  }
+}
+
 function getDoodleCanvasPoint(event: PointerEvent): { x: number; y: number } | null {
   if (!doodleCanvas) {
     return null;
@@ -430,6 +533,65 @@ async function submitCurrentDoodle(): Promise<void> {
   } finally {
     doodleSubmitting = false;
     updateDoodleSubmitState();
+  }
+}
+
+async function generateCurrentEffectIdea(): Promise<void> {
+  if (!effectIdeaInput || effectIdeasGenerating) {
+    return;
+  }
+  const prompt = effectIdeaInput.value.trim();
+  if (!prompt) {
+    setEffectIdeaStatus("Describe your effect idea first.", "error");
+    return;
+  }
+  effectIdeasGenerating = true;
+  updateEffectIdeaButtons();
+  setEffectIdeaStatus("Generating effect code with Codex…");
+  try {
+    const generation = await generateEffectIdea(prompt);
+    generatedIdea = generation;
+    generatedIdeaPrompt = prompt;
+    if (effectIdeaCode) {
+      effectIdeaCode.textContent = generation.typescriptCode;
+    }
+    effectIdeaPreviewEffect = compileRuntimeEffect(generation.runtimeCode);
+    effectIdeaPreviewStart = 0;
+    stopEffectIdeaPreview();
+    previewGeneratedIdea();
+    setEffectIdeaStatus("Preview ready. If it looks good, submit it for approval.", "success");
+  } catch {
+    generatedIdea = null;
+    effectIdeaPreviewEffect = null;
+    setEffectIdeaStatus("Generation failed. Please adjust the prompt and try again.", "error");
+  } finally {
+    effectIdeasGenerating = false;
+    updateEffectIdeaButtons();
+  }
+}
+
+async function submitCurrentEffectIdea(): Promise<void> {
+  if (!generatedIdea || effectIdeasSubmitting) {
+    return;
+  }
+  effectIdeasSubmitting = true;
+  updateEffectIdeaButtons();
+  setEffectIdeaStatus("Submitting for moderation…");
+  try {
+    await submitEffectIdea({
+      name: generatedIdea.name,
+      prompt: generatedIdeaPrompt,
+      typescriptCode: generatedIdea.typescriptCode,
+      runtimeCode: generatedIdea.runtimeCode
+    });
+    setEffectIdeaStatus("Submitted. Once approved, it will appear in effect selectors.", "success");
+    setEffectIdeaModalVisible(false);
+    await hydrateApprovedEffects();
+  } catch {
+    setEffectIdeaStatus("Submit failed. Please try again.", "error");
+  } finally {
+    effectIdeasSubmitting = false;
+    updateEffectIdeaButtons();
   }
 }
 
@@ -540,7 +702,7 @@ function createEffectSelector(): void {
 
   debugEffectSelect.innerHTML = "";
 
-  getDebugEffectSelectorOptions(getEffectRegistryKeys()).forEach((effectName) => {
+  getDebugEffectSelectorOptions(availableEffectNames).forEach((effectName) => {
     const option = document.createElement("option");
     option.value = effectName;
     option.textContent = effectName;
@@ -557,6 +719,26 @@ function createEffectSelector(): void {
   });
 
   updateEffectSelectorState();
+}
+
+async function hydrateApprovedEffects(): Promise<void> {
+  try {
+    const approved = await fetchApprovedEffects();
+    approved.forEach((entry) => {
+      try {
+        effectRegistry[entry.name] = compileRuntimeEffect(entry.runtimeCode);
+        if (!debugState.effectParams[entry.name]) {
+          debugState.effectParams[entry.name] = {};
+        }
+      } catch {
+        // Ignore invalid generated effect code.
+      }
+    });
+    availableEffectNames = Array.from(new Set([...getEffectRegistryKeys(), ...approved.map((entry) => entry.name)])).sort((a, b) => a.localeCompare(b));
+    createEffectSelector();
+  } catch {
+    availableEffectNames = getEffectRegistryKeys();
+  }
 }
 
 function syncEffectInputs(effectName: string, controls: EffectParamControl[]): void {
@@ -812,13 +994,17 @@ if (!releaseMode && debugSkipForwardButton) {
 }
 
 if (!releaseMode) {
-  createEffectSelector();
   setDebugOverlayVisible(false);
   updateDebugSkipButtonState(null);
-  if (editorRoot) {
+  void (async () => {
+    await hydrateApprovedEffects();
+    createEffectSelector();
+    if (!editorRoot) {
+      return;
+    }
     createEditorRoot({
       container: editorRoot,
-      effectNames: getEffectRegistryKeys(),
+      effectNames: availableEffectNames,
       applyTimeline: applyRawTimeline,
       play: async () => {
         if (!audioPlayer) {
@@ -845,7 +1031,7 @@ if (!releaseMode) {
       }
       controller.setVisible(debugEditorToggle?.checked ?? editorModeFromQuery);
     });
-  }
+  })();
 } else {
   setDebugOverlayVisible(false);
   if (mobileDebugButton) {
@@ -858,6 +1044,7 @@ async function startDemo(): Promise<void> {
     return;
   }
   setDoodleModalVisible(false);
+  setEffectIdeaModalVisible(false);
   setOverlay("Loading…", true, false, "status");
 
   try {
@@ -899,6 +1086,7 @@ async function restartDemo(): Promise<void> {
     return;
   }
   setDoodleModalVisible(false);
+  setEffectIdeaModalVisible(false);
   await audioPlayer.restart();
   renderer.reset();
   lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
@@ -1054,6 +1242,13 @@ if (addDoodleButton) {
   });
 }
 
+if (addEffectIdeaButton) {
+  addEffectIdeaButton.addEventListener("click", (event) => {
+    event.stopPropagation();
+    setEffectIdeaModalVisible(true);
+  });
+}
+
 if (shareCopyButton) {
   shareCopyButton.addEventListener("click", (event) => {
     event.stopPropagation();
@@ -1165,9 +1360,39 @@ if (doodleModal) {
   });
 }
 
+if (effectIdeaCancelButton) {
+  effectIdeaCancelButton.addEventListener("click", () => {
+    setEffectIdeaModalVisible(false);
+  });
+}
+
+if (effectIdeaGenerateButton) {
+  effectIdeaGenerateButton.addEventListener("click", () => {
+    void generateCurrentEffectIdea();
+  });
+}
+
+if (effectIdeaSubmitButton) {
+  effectIdeaSubmitButton.addEventListener("click", () => {
+    void submitCurrentEffectIdea();
+  });
+}
+
+if (effectIdeaModal) {
+  effectIdeaModal.addEventListener("click", (event) => {
+    if (event.target === effectIdeaModal) {
+      setEffectIdeaModalVisible(false);
+    }
+  });
+}
+
 window.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && doodleModal && !doodleModal.classList.contains("hidden")) {
     setDoodleModalVisible(false);
+    return;
+  }
+  if (event.key === "Escape" && effectIdeaModal && !effectIdeaModal.classList.contains("hidden")) {
+    setEffectIdeaModalVisible(false);
     return;
   }
   if (!releaseMode && event.key.toLowerCase() === "d") {

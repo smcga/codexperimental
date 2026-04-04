@@ -336,6 +336,7 @@ npm run preview
 - The start overlay and end overlay now pair that demoscene-styled call-to-action with a **Spread the signal** share control. On supported devices it opens the native share sheet; otherwise it reveals quick-share links for LinkedIn, X, Facebook, Reddit, email, plus a copy-link fallback.
 - `R` to restart
 - At the end screen, use **Add a doodle** to draw and submit a doodle for moderation; the modal now includes multiple brush colours plus an adjustable brush size slider, and approved doodles only appear in `doodle_greetz_wall` after someone opens the review page and approves them.
+- At the end screen, use **Got an effect idea? Make it real!** to open the effect-idea modal, describe a concept, generate TypeScript/runtime code through the OpenAI Codex API, preview it live, and submit it to a moderation queue before it can appear as an effect option.
 - `F` to toggle fullscreen (if supported)
 - `D` to toggle the debug overlay (timestamp, skip intro, skip to second half, transition selection, effect overrides, monochrome toggle)
 - The debug overlay shows WebGL status as `OK` or `FALLBACK` when available.
