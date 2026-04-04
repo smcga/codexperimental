@@ -312,17 +312,17 @@ describe("effect debug params", () => {
 
   it("provides defaults for tree growth controls", () => {
     expect(getEffectDebugDefaults("treegrowth")).toEqual({
-      speed: 0.18,
-      levels: 6,
-      trunkHeight: 0.45,
-      branchScale: 0.72,
-      branchAngle: 28,
-      trunkWidth: 10,
-      sway: 0.35,
-      leafSize: 3,
-      jitter: 0.25,
+      speed: 0.12,
+      levels: 8,
+      trunkHeight: 0.52,
+      branchScale: 0.69,
+      branchAngle: 23,
+      trunkWidth: 8,
+      sway: 0.22,
+      leafSize: 2.2,
+      jitter: 0.16,
       seed: 0,
-      growth: 1
+      growth: -1
     });
   });
 
@@ -535,6 +535,27 @@ describe("effect debug params", () => {
     });
   });
 
+  it("clamps spectrum analyzer params within control bounds", () => {
+    const params = coerceEffectParams("spectrum_analyzer", {
+      bands: 400,
+      smoothing: -1,
+      curve: 99,
+      tilt: -4,
+      peakHold: 9,
+      grid: -2,
+      glow: 3
+    });
+    expect(params).toEqual({
+      bands: 192,
+      smoothing: 0,
+      curve: 2.5,
+      tilt: -1,
+      peakHold: 1,
+      grid: 0,
+      glow: 1
+    });
+  });
+
   it("provides defaults for poly morph showcase controls", () => {
     expect(getEffectDebugDefaults("poly_morph_showcase")).toEqual({
       lat: 16,
@@ -614,6 +635,19 @@ describe("effect debug params", () => {
       beatPulseDecay: 2.2,
       audioReact: 0.45,
       title: "DOODLE GREETZ WALL"
+    });
+  });
+
+  it("provides defaults for taco meteor shower controls", () => {
+    expect(getEffectDebugDefaults("taco_meteor_shower")).toEqual({
+      shellCount: 16,
+      fallSpeed: 0.62,
+      swirl: 0.7,
+      burst: 0.78,
+      stardust: 0.72,
+      toppingSpread: 0.7,
+      audioReact: 0.68,
+      seed: 7
     });
   });
 

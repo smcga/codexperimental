@@ -41,6 +41,7 @@ Total effects: **78**.
 - [Effect: lens_wobbler](#effect-lens-wobbler)
 - [Effect: lightning](#effect-lightning)
 - [Effect: lissajous](#effect-lissajous)
+- [Effect: matrix_rain](#effect-matrix-rain)
 - [Effect: metaballs](#effect-metaballs)
 - [Effect: moire_grid](#effect-moire-grid)
 - [Effect: neon](#effect-neon)
@@ -65,10 +66,12 @@ Total effects: **78**.
 - [Effect: sine_distorter](#effect-sine-distorter)
 - [Effect: sine_scroller_logo](#effect-sine-scroller-logo)
 - [Effect: space_hangar](#effect-space-hangar)
+- [Effect: spectrum_analyzer](#effect-spectrum-analyzer)
 - [Effect: sphere3d](#effect-sphere3d)
 - [Effect: spherecloud](#effect-spherecloud)
 - [Effect: starfield](#effect-starfield)
 - [Effect: synthwaveSunset](#effect-synthwaveSunset)
+- [Effect: taco_meteor_shower](#effect-taco-meteor-shower)
 - [Effect: tetris_matrix](#effect-tetris-matrix)
 - [Effect: textmode_charset](#effect-textmode-charset)
 - [Effect: textured_cube](#effect-textured-cube)
@@ -105,10 +108,10 @@ Total effects: **78**.
 
 - `speed` (used in 43 effects)
 - `seed` (used in 34 effects)
-- `audioReact` (used in 32 effects)
+- `audioReact` (used in 33 effects)
 - `beatKick` (used in 14 effects)
-- `glow` (used in 11 effects)
-- `trail` (used in 9 effects)
+- `glow` (used in 12 effects)
+- `trail` (used in 10 effects)
 - `palette` (used in 9 effects)
 - `hueShift` (used in 7 effects)
 - `scanlines` (used in 7 effects)
@@ -1302,6 +1305,41 @@ Total effects: **78**.
 }
 ```
 
+## Effect: matrix_rain
+
+- **Registry key:** `matrix_rain`
+- **Implementation:** `src/renderer/effects/matrixRainEffect.ts` (class `MatrixRainEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Matrix-style falling code rain tuned for slower, smoother descent with smaller glyphs and subtle default jitter.
+- **Audio features:** beat, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReact` | number | 0.7 | min 0, max 1 | Audio React | yes |
+| `params.brightness` | number | 0.92 | min 0.25, max 1.4 | Brightness | yes |
+| `params.density` | number | 0.66 | min 0.1, max 1 | Density | yes |
+| `params.fontSize` | number | 13 | min 8, max 28 | Font Size | yes |
+| `params.glow` | number | 0.7 | min 0, max 1.5 | Glow | yes |
+| `params.glyphSet` | number | 0 | min 0, max 2 | Glyph Set | yes |
+| `params.jitter` | number | 0.03 | min 0, max 1 | Jitter | yes |
+| `params.seed` | number | 1337 | min 0, max 9999 | Seed | yes |
+| `params.speed` | number | 0.9 | min 0.2, max 4 | Speed | yes |
+| `params.trail` | number | 0.84 | min 0.2, max 1 | Trail | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "matrix_rain",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
 ## Effect: metaballs
 
 - **Registry key:** `metaballs`
@@ -2156,6 +2194,38 @@ Total effects: **78**.
 }
 ```
 
+## Effect: spectrum_analyzer
+
+- **Registry key:** `spectrum_analyzer`
+- **Implementation:** `src/renderer/effects/spectrumAnalyzerEffect.ts` (class `SpectrumAnalyzerEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Parametric-EQ-style spectrum analyzer
+- **Audio features:** bass, beatStrength, frequency, mid, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.bands` | number | 96 | min 24, max 192 | Bands | yes |
+| `params.curve` | number | 1.18 | min 0.4, max 2.5 | Curve | yes |
+| `params.glow` | number | 0.85 | min 0, max 1 | Glow | yes |
+| `params.grid` | number | 0.55 | min 0, max 1 | Grid | yes |
+| `params.peakHold` | number | 0.78 | min 0, max 1 | Peak Hold | yes |
+| `params.smoothing` | number | 0.72 | min 0, max 0.95 | Smoothing | yes |
+| `params.tilt` | number | 0.18 | min -1, max 1 | Tilt | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "spectrum_analyzer",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
 ## Effect: sphere3d
 
 - **Registry key:** `sphere3d`
@@ -2268,6 +2338,39 @@ Total effects: **78**.
 ```json
 {
   "effect": "synthwaveSunset",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: taco_meteor_shower
+
+- **Registry key:** `taco_meteor_shower`
+- **Implementation:** `src/renderer/effects/tacoMeteorShowerEffect.ts` (class `TacoMeteorShowerEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Luminescent taco shells cascade like meteors, shed sparkling stardust, and splat into avocado/cilantro/salsa confetti.
+- **Audio features:** beat, beatStrength, mid, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReact` | number | 0.68 | min 0, max 1 | Audio React | yes |
+| `params.burst` | number | 0.78 | min 0.2, max 1.4 | Burst | yes |
+| `params.fallSpeed` | number | 0.62 | min 0.2, max 1.6 | Fall Speed | yes |
+| `params.seed` | number | 7 | min 0, max 9999 | Seed | yes |
+| `params.shellCount` | number | 16 | min 6, max 32 | Shell Count | yes |
+| `params.stardust` | number | 0.72 | min 0, max 1.4 | Stardust | yes |
+| `params.swirl` | number | 0.7 | min 0, max 1.4 | Swirl | yes |
+| `params.toppingSpread` | number | 0.7 | min 0.2, max 1.4 | Topping Spread | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "taco_meteor_shower",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
@@ -2417,7 +2520,7 @@ Total effects: **78**.
 - **Registry key:** `treegrowth`
 - **Implementation:** `src/renderer/effects/treeGrowthEffect.ts` (class `TreeGrowthEffect`)
 - **Renderer:** Canvas2D
-- **Description:** `growth` overrides the automatic growth cycle (0-1).
+- **Description:** Tree structure grows continuously across years while foliage cycles by season; set `growth` to `-1` for auto or `0-1` to override.
 - **Audio features:** bass, rms, treble
 - **Performance notes:** None noted.
 
@@ -2425,17 +2528,17 @@ Total effects: **78**.
 
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
 | --- | --- | --- | --- | --- | --- |
-| `params.branchAngle` | number | 28 | min 10, max 60 | Branch Angle | yes |
-| `params.branchScale` | number | 0.72 | min 0.5, max 0.85 | Branch Scale | yes |
-| `params.growth` | number | 1 | min 0, max 1 | Growth Override | yes |
-| `params.jitter` | number | 0.25 | min 0, max 0.6 | Jitter | yes |
-| `params.leafSize` | number | 3 | min 0, max 10 | Leaf Size | yes |
-| `params.levels` | number | 6 | min 3, max 9 | Levels | yes |
+| `params.branchAngle` | number | 23 | min 8, max 55 | Branch Angle | yes |
+| `params.branchScale` | number | 0.69 | min 0.45, max 0.86 | Branch Scale | yes |
+| `params.growth` | number | -1 | min -1, max 1 | Growth Override (-1 = auto) | yes |
+| `params.jitter` | number | 0.16 | min 0, max 0.65 | Jitter | yes |
+| `params.leafSize` | number | 2.2 | min 0, max 10 | Leaf Size | yes |
+| `params.levels` | number | 8 | min 4, max 10 | Levels | yes |
 | `params.seed` | number | 0 | min 0, max 10 | Seed | yes |
-| `params.speed` | number | 0.18 | min 0, max 1 | Speed | yes |
-| `params.sway` | number | 0.35 | min 0, max 1.2 | Sway | yes |
-| `params.trunkHeight` | number | 0.45 | min 0.25, max 0.65 | Trunk Height | yes |
-| `params.trunkWidth` | number | 10 | min 4, max 24 | Trunk Width | yes |
+| `params.speed` | number | 0.12 | min 0, max 1 | Speed | yes |
+| `params.sway` | number | 0.22 | min 0, max 1.2 | Sway | yes |
+| `params.trunkHeight` | number | 0.52 | min 0.25, max 0.72 | Trunk Height | yes |
+| `params.trunkWidth` | number | 8 | min 2, max 24 | Trunk Width | yes |
 
 ### Minimal layer usage
 
