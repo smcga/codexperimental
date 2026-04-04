@@ -184,16 +184,15 @@
           "params": {}
         },
         {
-          "effect": "gameOfLife",
-          "blend": "screen",
-          "opacity": 0.08,
+          "effect": "moving_shadow_map",
+          "blend": "overlay",
+          "opacity": 0.18,
           "params": {
-            "cellSize": 9,
-            "stepRate": 8,
-            "patternMode": "mixed",
-            "paletteMode": "mono",
-            "safeFit": 1,
-            "seed": 1337
+            "objectCount": 5,
+            "lightSpeed": 0.55,
+            "shadowLength": 1.15,
+            "haze": 0.15,
+            "floorGrid": 0
           }
         }
       ],
