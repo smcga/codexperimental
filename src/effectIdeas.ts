@@ -37,7 +37,13 @@ export class EffectIdeaApiError extends Error {
 }
 
 function normalizeGeneratedCode(rawCode: string): string {
-  return rawCode
+  const hasEscapedNewlines = rawCode.includes("\\n");
+  const hasRealNewlines = rawCode.includes("\n");
+  const decodedCode = hasEscapedNewlines && !hasRealNewlines
+    ? rawCode.replace(/\\n/gu, "\n").replace(/\\r/gu, "\r").replace(/\\t/gu, "\t")
+    : rawCode;
+
+  return decodedCode
     .replace(/^\s*```[a-z]*\s*/iu, "")
     .replace(/\s*```\s*$/u, "")
     .replace(/^\s*type\s+[A-Za-z_$][A-Za-z0-9_$]*\s*=\s*[\s\S]*?;\s*$/gmu, "")

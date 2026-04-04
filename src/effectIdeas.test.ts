@@ -84,6 +84,12 @@ describe("effect ideas client", () => {
     expect(typeof effect.reset).toBe("function");
   });
 
+  it("compiles runtime code delivered with escaped newlines", () => {
+    const effect = compileRuntimeEffect("return {\\n  render(context) {\\n    context.ctx.fillRect(0, 0, context.width, context.height);\\n  },\\n  reset() {}\\n};");
+    expect(typeof effect.render).toBe("function");
+    expect(typeof effect.reset).toBe("function");
+  });
+
   it("surfaces API error messages for generation failures", async () => {
     globalThis.fetch = vi.fn(async () => ({
       ok: false,

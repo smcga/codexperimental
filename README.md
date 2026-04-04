@@ -407,3 +407,4 @@ Optional fallback token behavior:
 - If generation requests return `503` from `/api/effects?action=generate`, check that `OPENAI_API_KEY` is set in your deployed environment and redeploy so the serverless function picks it up.
 - If generation fails with `Unable to parse generated effect response.`, the modal now shows the raw model output in the code panel so you can inspect formatting mismatches.
 - The generator prompt now explicitly asks for `runtimeCode` as plain JavaScript (no TS annotations/import/export). The client still attempts to normalize module-style code (`export default function ...`) when possible.
+- The client also normalizes escaped code payloads (for example strings containing literal `\\n`) before compiling preview/runtime effects.
