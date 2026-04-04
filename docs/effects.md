@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **81**.
+Total effects: **82**.
 
 ## Table of contents
 
@@ -63,6 +63,7 @@ Total effects: **81**.
 - [Effect: roadDrive](#effect-roadDrive)
 - [Effect: rotozoom](#effect-rotozoom)
 - [Effect: shadebobs_bobs](#effect-shadebobs-bobs)
+- [Effect: shadowVolumes](#effect-shadowVolumes)
 - [Effect: sine_distorter](#effect-sine-distorter)
 - [Effect: sine_scroller_logo](#effect-sine-scroller-logo)
 - [Effect: space_hangar](#effect-space-hangar)
@@ -106,16 +107,16 @@ Total effects: **81**.
 
 ### Common parameter patterns
 
-- `speed` (used in 44 effects)
-- `seed` (used in 36 effects)
+- `speed` (used in 45 effects)
+- `seed` (used in 37 effects)
 - `audioReact` (used in 34 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 13 effects)
 - `trail` (used in 10 effects)
 - `palette` (used in 9 effects)
+- `count` (used in 7 effects)
 - `hueShift` (used in 7 effects)
 - `scanlines` (used in 7 effects)
-- `count` (used in 6 effects)
 - `bufH` (used in 6 effects)
 - `bufW` (used in 6 effects)
 
@@ -2074,6 +2075,45 @@ Total effects: **81**.
 ```json
 {
   "effect": "shadebobs_bobs",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: shadowVolumes
+
+- **Registry key:** `shadowVolumes`
+- **Implementation:** `src/renderer/effects/shadowVolumes.ts` (class `ShadowVolumesEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Canvas faux-3D hard-shadow scene with deterministic silhouette projections.
+- **Audio features:** bass, beat, beatStrength, mid, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.accent` | number | 0.32 | min 0, max 1 | Accent | yes |
+| `params.beatPunch` | number | 0.5 | min 0, max 1 | Beat Punch | yes |
+| `params.cameraDrift` | number | 0.3 | min 0, max 1 | Camera Drift | yes |
+| `params.contrast` | number | 0.86 | min 0.2, max 1.5 | Contrast | yes |
+| `params.count` | number | 6 | min 2, max 14 | Count | yes |
+| `params.groundGrid` | number | 0.45 | min 0, max 1 | Ground Grid | yes |
+| `params.lightHeight` | number | 1 | min 0.2, max 2 | Light Height | yes |
+| `params.lightYawAmp` | number | 1 | min 0.1, max 2.5 | Light Yaw Amp | yes |
+| `params.mobilePadding` | number | 0.05 | min 0, max 0.24 | Mobile Padding | yes |
+| `params.perspective` | number | 1 | min 0.45, max 1.8 | Perspective | yes |
+| `params.rotateOccluders` | boolean | 1 | unspecified | Rotate Occluders | unknown |
+| `params.seed` | number | 11 | min 0, max 9999 | Seed | yes |
+| `params.shadowLength` | number | 1 | min 0.4, max 3 | Shadow Length | yes |
+| `params.speed` | number | 1 | min 0.15, max 3 | Speed | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "shadowVolumes",
   "opacity": 1,
   "blend": "source-over",
   "params": {}

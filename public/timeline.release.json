@@ -1166,6 +1166,16 @@
           "params": {
             "audioReact": 0.2
           }
+        },
+        {
+          "effect": "shadowVolumes",
+          "blend": "multiply",
+          "opacity": 0.16,
+          "params": {
+            "count": 5,
+            "contrast": 0.82,
+            "accent": 0.14
+          }
         }
       ]
     },
