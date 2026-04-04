@@ -182,6 +182,16 @@
           "blend": "screen",
           "opacity": 0.12,
           "params": {}
+        },
+        {
+          "effect": "kaleidoscope_symmetry",
+          "blend": "screen",
+          "opacity": 0.08,
+          "params": {
+            "slices": 10,
+            "rotationSpeed": 0.08,
+            "audioReactive": 0.7
+          }
         }
       ],
       "fitAlign": "centre"

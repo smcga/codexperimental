@@ -163,6 +163,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `equalizer` | `bars`, `barWidth`, `height`, `bassBoost`, `alpha` |  |
 | `spectrum_analyzer` | `bands`, `smoothing`, `curve`, `tilt`, `peakHold`, `grid`, `glow` | Parametric-EQ-style spectrum trace with log-spaced bins and peak-hold markers. |
 | `isogrid` | `opacity`, `lineWidth`, `spacing`, `wave`, `speed` |  |
+| `kaleidoscope_symmetry` | `slices`, `rotationSpeed`, `radialZoom`, `mirror`, `patternScale`, `patternWarp`, `centreX`, `centreY`, `colorShift`, `glow`, `audioReactive`, `bassInfluence`, `trebleInfluence`, `spinOnBeat`, `ringDensity` | Mirrored radial wedges driven by a procedural source pattern for mandala/starburst motion. |
 | `neon` | `shapes`, `radius`, `radiusStep`, `speed`, `glow`, `lineWidth` |  |
 | `particles` | `trail`, `burst`, `burstAudio`, `force`, `forceAudio` |  |
 | `border_multiplex` | `hwSprites`, `totalSprites`, `bandHeight`, `spriteSize`, `speed`, `rasterJitter`, `borderMaskStrength`, `audioReact`, `seed` |  |
