@@ -21,9 +21,20 @@ type EffectsResponse = {
   moderationStatus?: "pending";
   generation?: EffectIdeaGenerationResult;
   error?: string;
+  rawResponse?: string;
 };
 
 let approvedCache: EffectIdeaRecord[] = [];
+
+export class EffectIdeaApiError extends Error {
+  rawResponse: string | null;
+
+  constructor(message: string, rawResponse: string | null = null) {
+    super(message);
+    this.name = "EffectIdeaApiError";
+    this.rawResponse = rawResponse;
+  }
+}
 
 function isRecord(value: unknown): value is EffectIdeaRecord {
   if (!value || typeof value !== "object") {
@@ -62,7 +73,8 @@ async function requestEffects(path = "/api/effects", init?: RequestInit): Promis
     const message = typeof payload.error === "string" && payload.error.trim().length > 0
       ? payload.error
       : `Effect idea request failed: ${response.status}`;
-    throw new Error(message);
+    const rawResponse = typeof payload.rawResponse === "string" && payload.rawResponse.length > 0 ? payload.rawResponse : null;
+    throw new EffectIdeaApiError(message, rawResponse);
   }
   return payload;
 }

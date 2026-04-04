@@ -111,4 +111,22 @@ describe("api/effects", () => {
     expect(res.response.statusCode).toBe(503);
     expect(JSON.parse(res.getBody()).error).toContain("OPENAI_API_KEY");
   });
+
+  it("returns raw model output when generation response cannot be parsed", async () => {
+    process.env.OPENAI_API_KEY = "sk-test";
+    globalThis.fetch = vi.fn(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ output_text: "I can help with that! First, let's discuss..." })
+    })) as typeof fetch;
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+    await handler({ method: "POST", url: "/api/effects?action=generate", body: JSON.stringify({ prompt: "make stars" }) }, res.response);
+    expect(res.response.statusCode).toBe(503);
+    const payload = JSON.parse(res.getBody());
+    expect(payload.error).toContain("Unable to parse generated effect response.");
+    expect(payload.rawResponse).toContain("I can help with that");
+  });
 });

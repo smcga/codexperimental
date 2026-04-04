@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
   clearApprovedEffectsCache,
+  EffectIdeaApiError,
   compileRuntimeEffect,
   fetchApprovedEffects,
   generateEffectIdea,
@@ -75,5 +76,21 @@ describe("effect ideas client", () => {
     })) as typeof fetch;
 
     await expect(generateEffectIdea("test")).rejects.toThrow("OPENAI_API_KEY is not configured.");
+  });
+
+  it("preserves raw model responses on API failures", async () => {
+    globalThis.fetch = vi.fn(async () => ({
+      ok: false,
+      status: 503,
+      json: async () => ({
+        error: "Unable to parse generated effect response.",
+        rawResponse: "Sure! Here is a markdown explanation first..."
+      })
+    })) as typeof fetch;
+
+    await expect(generateEffectIdea("test")).rejects.toMatchObject({
+      name: "EffectIdeaApiError",
+      rawResponse: "Sure! Here is a markdown explanation first..."
+    } satisfies Partial<EffectIdeaApiError>);
   });
 });

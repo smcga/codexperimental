@@ -44,6 +44,7 @@ type JsonResponse = {
     runtimeCode: string;
   };
   error?: string;
+  rawResponse?: string;
 };
 
 function sendJson(res: ResponseLike, status: number, body: JsonResponse): void {
@@ -176,6 +177,21 @@ function parseJsonBlock(text: string): { name: string; typescriptCode: string; r
   }
 }
 
+function extractOutputText(payload: unknown): string {
+  if (!payload || typeof payload !== "object") {
+    return "";
+  }
+  const typed = payload as { output_text?: unknown; output?: Array<{ content?: Array<{ text?: unknown }> }> };
+  if (typeof typed.output_text === "string" && typed.output_text.trim().length > 0) {
+    return typed.output_text;
+  }
+  const chunks = (typed.output ?? [])
+    .flatMap((entry) => entry.content ?? [])
+    .map((content) => (typeof content.text === "string" ? content.text : ""))
+    .filter((text) => text.length > 0);
+  return chunks.join("\n").trim();
+}
+
 async function generateWithOpenAi(prompt: string): Promise<{ name: string; typescriptCode: string; runtimeCode: string }> {
   const apiKey = normalizeEnvValue(process.env.OPENAI_API_KEY);
   if (!apiKey) {
@@ -213,11 +229,13 @@ async function generateWithOpenAi(prompt: string): Promise<{ name: string; types
     throw new Error(`OpenAI request failed (${response.status}).`);
   }
 
-  const payload = (await response.json()) as { output_text?: string };
-  const text = typeof payload.output_text === "string" ? payload.output_text : "";
+  const payload = (await response.json()) as unknown;
+  const text = extractOutputText(payload);
   const parsed = parseJsonBlock(text);
   if (!parsed) {
-    throw new Error("Unable to parse generated effect response.");
+    const error = new Error("Unable to parse generated effect response.") as Error & { rawResponse?: string };
+    error.rawResponse = text.slice(0, 4000);
+    throw error;
   }
   return parsed;
 }
@@ -297,7 +315,10 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
       sendJson(res, 200, { generation });
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unable to generate effect.";
-      sendJson(res, 503, { error: message });
+      const rawResponse = error instanceof Error && "rawResponse" in error && typeof (error as { rawResponse?: unknown }).rawResponse === "string"
+        ? (error as { rawResponse: string }).rawResponse
+        : undefined;
+      sendJson(res, 503, { error: message, rawResponse });
     }
     return;
   }

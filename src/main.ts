@@ -40,6 +40,7 @@ import { createEditorRoot, EditorController } from "./editor/EditorRoot";
 import { submitDoodle } from "./doodles";
 import {
   compileRuntimeEffect,
+  EffectIdeaApiError,
   EffectIdeaGenerationResult,
   fetchApprovedEffects,
   generateEffectIdea,
@@ -564,6 +565,9 @@ async function generateCurrentEffectIdea(): Promise<void> {
     generatedIdea = null;
     effectIdeaPreviewEffect = null;
     const message = error instanceof Error ? error.message : "Generation failed. Please adjust the prompt and try again.";
+    if (effectIdeaCode && error instanceof EffectIdeaApiError && error.rawResponse) {
+      effectIdeaCode.textContent = error.rawResponse;
+    }
     setEffectIdeaStatus(message, "error");
   } finally {
     effectIdeasGenerating = false;
