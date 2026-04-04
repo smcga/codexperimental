@@ -55,6 +55,7 @@ import { ribbonsManifest } from "./ribbons.manifest";
 import { roadDriveManifest } from "./roadDrive.manifest";
 import { rotozoomManifest } from "./rotozoom.manifest";
 import { shadebobs_bobsManifest } from "./shadebobs_bobs.manifest";
+import { skeletal_ribbonManifest } from "./skeletal_ribbon.manifest";
 import { sine_distorterManifest } from "./sine_distorter.manifest";
 import { sine_scroller_logoManifest } from "./sine_scroller_logo.manifest";
 import { space_hangarManifest } from "./space_hangar.manifest";
@@ -138,6 +139,7 @@ export const generatedEffectManifests = [
   roadDriveManifest,
   rotozoomManifest,
   shadebobs_bobsManifest,
+  skeletal_ribbonManifest,
   sine_distorterManifest,
   sine_scroller_logoManifest,
   space_hangarManifest,

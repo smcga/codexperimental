@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **81**.
+Total effects: **82**.
 
 ## Table of contents
 
@@ -65,6 +65,7 @@ Total effects: **81**.
 - [Effect: shadebobs_bobs](#effect-shadebobs-bobs)
 - [Effect: sine_distorter](#effect-sine-distorter)
 - [Effect: sine_scroller_logo](#effect-sine-scroller-logo)
+- [Effect: skeletal_ribbon](#effect-skeletal-ribbon)
 - [Effect: space_hangar](#effect-space-hangar)
 - [Effect: spectrum_analyzer](#effect-spectrum-analyzer)
 - [Effect: sphere3d](#effect-sphere3d)
@@ -109,11 +110,11 @@ Total effects: **81**.
 - `speed` (used in 44 effects)
 - `seed` (used in 36 effects)
 - `audioReact` (used in 34 effects)
+- `glow` (used in 14 effects)
 - `beatKick` (used in 14 effects)
-- `glow` (used in 13 effects)
 - `trail` (used in 10 effects)
 - `palette` (used in 9 effects)
-- `hueShift` (used in 7 effects)
+- `hueShift` (used in 8 effects)
 - `scanlines` (used in 7 effects)
 - `count` (used in 6 effects)
 - `bufH` (used in 6 effects)
@@ -2158,6 +2159,42 @@ Total effects: **81**.
 ```json
 {
   "effect": "sine_scroller_logo",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: skeletal_ribbon
+
+- **Registry key:** `skeletal_ribbon`
+- **Implementation:** `src/renderer/effects/skeletalRibbon.ts` (class `SkeletalRibbonEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Articulated spine/tentacle ribbon driven by chained bone kinematics with beat-reactive pulse thickness.
+- **Audio features:** bass, beat, mid, rms
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioInfluence` | number | 1 | min 0, max 2 | Audio Influence | yes |
+| `params.boneCount` | number | 24 | min 8, max 32 | Bone Count | yes |
+| `params.colorMode` | string | "gradient" | options: mono, gradient | Color Mode | no |
+| `params.debugSkeleton` | boolean | 0 | unspecified | Debug Skeleton | unknown |
+| `params.glow` | number | 0.4 | min 0, max 1 | Glow | yes |
+| `params.hueShift` | number | 0.2 | min -1, max 1 | Hue Shift | yes |
+| `params.length` | number | 300 | min 80, max 700 | Length | yes |
+| `params.stiffness` | number | 0.6 | min 0.05, max 1 | Stiffness | yes |
+| `params.thickness` | number | 18 | min 2, max 56 | Thickness | yes |
+| `params.waveAmp` | number | 0.6 | min 0, max 2 | Wave Amp | yes |
+| `params.waveFreq` | number | 1.5 | min 0.05, max 6 | Wave Freq | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "skeletal_ribbon",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
