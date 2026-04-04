@@ -182,6 +182,16 @@
           "blend": "screen",
           "opacity": 0.12,
           "params": {}
+        },
+        {
+          "effect": "polar_tunnel",
+          "blend": "screen",
+          "opacity": 0.08,
+          "params": {
+            "rotateSpeed": 0.6,
+            "wobbleAmount": 0.45,
+            "audioReact": 0.2
+          }
         }
       ],
       "fitAlign": "centre"
