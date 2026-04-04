@@ -34,6 +34,7 @@ Total effects: **82**.
 - [Effect: glenz_vectors](#effect-glenz-vectors)
 - [Effect: glitch](#effect-glitch)
 - [Effect: greets_wall](#effect-greets-wall)
+- [Effect: infiniteMirror](#effect-infiniteMirror)
 - [Effect: infinitycloud](#effect-infinitycloud)
 - [Effect: isogrid](#effect-isogrid)
 - [Effect: kefrens_bars](#effect-kefrens-bars)
@@ -110,8 +111,8 @@ Total effects: **82**.
 - `speed` (used in 45 effects)
 - `seed` (used in 37 effects)
 - `audioReact` (used in 34 effects)
+- `glow` (used in 14 effects)
 - `beatKick` (used in 14 effects)
-- `glow` (used in 13 effects)
 - `trail` (used in 10 effects)
 - `palette` (used in 9 effects)
 - `hueShift` (used in 7 effects)
@@ -1068,6 +1069,47 @@ Total effects: **82**.
 ```json
 {
   "effect": "greets_wall",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: infiniteMirror
+
+- **Registry key:** `infiniteMirror`
+- **Implementation:** `src/renderer/effects/infiniteMirror.ts` (class `InfiniteMirrorEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Self-referential portal recursion using a persistent feedback canvas and procedural base scenes.
+- **Audio features:** bass, beat, beatStrength, mid, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.baseScene` | string | "grid" | options: grid, rings, checker, bars, void | Base Scene | no |
+| `params.depth` | number | 18 | min 1, max 48 | Depth | yes |
+| `params.feedbackMix` | number | 0.82 | min 0.3, max 0.98 | Feedback Mix | yes |
+| `params.glow` | number | 0.35 | min 0, max 1.5 | Glow | yes |
+| `params.mirrorFrames` | boolean | 1 | unspecified | Mirror Frames | unknown |
+| `params.monochrome` | number | 0 | min 0, max 1 | Monochrome | yes |
+| `params.offsetX` | number | 0 | min -0.5, max 0.5 | Offset X | yes |
+| `params.offsetY` | number | 0 | min -0.5, max 0.5 | Offset Y | yes |
+| `params.pulse` | number | 0.2 | min 0, max 2 | Pulse | yes |
+| `params.rotation` | number | 0.08 | min -1.5, max 1.5 | Rotation | yes |
+| `params.scale` | number | 0.88 | min 0.6, max 0.98 | Scale | yes |
+| `params.softness` | number | 0.08 | min 0, max 0.5 | Softness | yes |
+| `params.strobeOnBeat` | number | 0.15 | min 0, max 1 | Strobe Beat | yes |
+| `params.symmetry` | number | 0 | min 0, max 1 | Symmetry | yes |
+| `params.twist` | number | 0.02 | min -0.5, max 0.5 | Twist | yes |
+| `params.vignette` | number | 0.2 | min 0, max 1 | Vignette | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "infiniteMirror",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
