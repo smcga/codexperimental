@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **81**.
+Total effects: **82**.
 
 ## Table of contents
 
@@ -83,6 +83,7 @@ Total effects: **81**.
 - [Effect: velvet_dreamscape](#effect-velvet-dreamscape)
 - [Effect: vga_fire](#effect-vga-fire)
 - [Effect: volumetric_clouds](#effect-volumetric-clouds)
+- [Effect: voronoi_cells](#effect-voronoi-cells)
 - [Effect: voxel_landscape](#effect-voxel-landscape)
 - [Effect: voxel_world_builder](#effect-voxel-world-builder)
 - [Effect: water_drops](#effect-water-drops)
@@ -106,8 +107,8 @@ Total effects: **81**.
 
 ### Common parameter patterns
 
-- `speed` (used in 44 effects)
-- `seed` (used in 36 effects)
+- `speed` (used in 45 effects)
+- `seed` (used in 37 effects)
 - `audioReact` (used in 34 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 13 effects)
@@ -115,9 +116,9 @@ Total effects: **81**.
 - `palette` (used in 9 effects)
 - `hueShift` (used in 7 effects)
 - `scanlines` (used in 7 effects)
+- `lineWidth` (used in 7 effects)
 - `count` (used in 6 effects)
 - `bufH` (used in 6 effects)
-- `bufW` (used in 6 effects)
 
 ## Effects
 
@@ -2765,6 +2766,45 @@ Total effects: **81**.
 ```json
 {
   "effect": "volumetric_clouds",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: voronoi_cells
+
+- **Registry key:** `voronoi_cells`
+- **Implementation:** `src/renderer/effects/voronoiCells.ts` (class `VoronoiCellsEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Animated Voronoi-style cellular mosaic with era-aware palette bias; `paletteMode` supports `mono`, `neon`, `heat`, or `era`.
+- **Audio features:** beat, beatStrength, rms
+- **Performance notes:** Uses ImageData per frame; CPU cost scales with resolution.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.beatPulse` | number | 0.55 | min 0, max 1.5 | Beat Pulse | yes |
+| `params.cellCount` | number | 24 | min 6, max 96 | Cell Count | yes |
+| `params.chromatic` | number | 0.2 | min 0, max 1 | Chromatic | yes |
+| `params.contrast` | number | 1 | min 0.4, max 2.5 | Contrast | yes |
+| `params.drift` | number | 0.55 | min 0, max 2 | Drift | yes |
+| `params.fillAlpha` | number | 0.7 | min 0, max 1 | Fill Alpha | yes |
+| `params.jitter` | number | 0.12 | min 0, max 1.5 | Jitter | yes |
+| `params.lineAlpha` | number | 0.9 | min 0, max 1 | Line Alpha | yes |
+| `params.lineWidth` | number | 1.5 | min 0.25, max 5 | Line Width | yes |
+| `params.paletteMode` | string | "era" | options: era, mono, neon, heat | Palette | no |
+| `params.pixelStep` | number | 4 | min 2, max 12 | Pixel Step | yes |
+| `params.seed` | number | 1 | min 0, max 9999 | Seed | yes |
+| `params.shade` | number | 0.45 | min 0, max 1 | Shade | yes |
+| `params.speed` | number | 1 | min 0, max 3 | Speed | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "voronoi_cells",
   "opacity": 1,
   "blend": "source-over",
   "params": {}

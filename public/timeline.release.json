@@ -182,6 +182,19 @@
           "blend": "screen",
           "opacity": 0.12,
           "params": {}
+        },
+        {
+          "effect": "voronoi_cells",
+          "blend": "overlay",
+          "opacity": 0.22,
+          "params": {
+            "cellCount": 18,
+            "lineAlpha": 0.85,
+            "fillAlpha": 0.45,
+            "pixelStep": 5,
+            "paletteMode": "era",
+            "seed": 7
+          }
         }
       ],
       "fitAlign": "centre"
