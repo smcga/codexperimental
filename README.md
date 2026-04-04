@@ -208,6 +208,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `tetris_matrix` | `speed`, `level`, `glow`, `contrast`, `ghost`, `seed` | Self-playing falling-block match with chunky monochrome shading and a dot-matrix handheld screen vibe. |
 | `matrix_rain` | `speed`, `density`, `fontSize`, `trail`, `glow`, `brightness`, `jitter`, `audioReact`, `glyphSet`, `seed` | Matrix-style falling code rain tuned for slower, smoother descent with smaller glyphs and subtle default jitter. |
 | `greets_wall` | `names`, `layout`, `transitionStyle`, `cycleSeconds`, `columns`, `padding`, `highlightPulse`, `beatPulseDecay`, `audioReact`, `title` | `layout` supports `grid` or `carousel`; `transitionStyle` supports `slide`, `fade`, or `pop`. |
+| `hexGridPulse` | `cellSize`, `speed`, `waveScale`, `rippleStrength`, `pulseStrength`, `lineWidth`, `fillAlpha`, `glowAlpha`, `audioReactive`, `paletteMix`, `invert` | Hexagonal lattice with travelling waves, radial ripples, and controlled audio-reactive pulse highlights across eras. |
 | `doodle_greetz_wall` | `layout`, `transitionStyle`, `cycleSeconds`, `columns`, `padding`, `highlightPulse`, `beatPulseDecay`, `audioReact`, `title` | Pulls approved PNG doodles from the doodle API and renders them in `grid` or `carousel` layouts. |
 | `lightning` | `trigger`, `chancePerSecond`, `cooldown`, `flashDuration`, `bolt`, `branches`, `seed` | `trigger` supports `beat`, `random`, `both`. |
 | `effect_evolution` | `density`, `motion`, `warp`, `trail`, `seed` | Reinterprets the same lattice across eras. |

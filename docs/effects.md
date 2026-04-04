@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **81**.
+Total effects: **82**.
 
 ## Table of contents
 
@@ -34,6 +34,7 @@ Total effects: **81**.
 - [Effect: glenz_vectors](#effect-glenz-vectors)
 - [Effect: glitch](#effect-glitch)
 - [Effect: greets_wall](#effect-greets-wall)
+- [Effect: hexGridPulse](#effect-hexGridPulse)
 - [Effect: infinitycloud](#effect-infinitycloud)
 - [Effect: isogrid](#effect-isogrid)
 - [Effect: kefrens_bars](#effect-kefrens-bars)
@@ -106,7 +107,7 @@ Total effects: **81**.
 
 ### Common parameter patterns
 
-- `speed` (used in 44 effects)
+- `speed` (used in 45 effects)
 - `seed` (used in 36 effects)
 - `audioReact` (used in 34 effects)
 - `beatKick` (used in 14 effects)
@@ -115,9 +116,9 @@ Total effects: **81**.
 - `palette` (used in 9 effects)
 - `hueShift` (used in 7 effects)
 - `scanlines` (used in 7 effects)
+- `lineWidth` (used in 7 effects)
 - `count` (used in 6 effects)
 - `bufH` (used in 6 effects)
-- `bufW` (used in 6 effects)
 
 ## Effects
 
@@ -1067,6 +1068,42 @@ Total effects: **81**.
 ```json
 {
   "effect": "greets_wall",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: hexGridPulse
+
+- **Registry key:** `hexGridPulse`
+- **Implementation:** `src/renderer/effects/hexGridPulseEffect.ts` (class `HexGridPulseEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Hex grid pulse lattice
+- **Audio features:** bass, beat, beatStrength, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReactive` | number | 0.5 | min 0, max 1 | Audio Reactive | yes |
+| `params.cellSize` | number | 24 | min 8, max 96 | Cell Size | yes |
+| `params.fillAlpha` | number | 0.52 | min 0, max 1 | Fill Alpha | yes |
+| `params.glowAlpha` | number | 0.35 | min 0, max 1 | Glow Alpha | yes |
+| `params.invert` | boolean | 0 | unspecified | Invert | unknown |
+| `params.lineWidth` | number | 1.2 | min 0, max 8 | Line Width | yes |
+| `params.paletteMix` | number | 0.65 | min 0, max 1 | Palette Mix | yes |
+| `params.pulseStrength` | number | 0.55 | min 0, max 1.5 | Pulse Strength | yes |
+| `params.rippleStrength` | number | 0.45 | min 0, max 1.5 | Ripple Strength | yes |
+| `params.speed` | number | 1 | min 0, max 4 | Speed | yes |
+| `params.waveScale` | number | 1.1 | min 0.1, max 4 | Wave Scale | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "hexGridPulse",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
