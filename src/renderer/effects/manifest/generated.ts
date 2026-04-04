@@ -30,6 +30,7 @@ import { infinitycloudManifest } from "./infinitycloud.manifest";
 import { isogridManifest } from "./isogrid.manifest";
 import { kefrens_barsManifest } from "./kefrens_bars.manifest";
 import { lemmings_marchManifest } from "./lemmings_march.manifest";
+import { lens_flareManifest } from "./lens_flare.manifest";
 import { lens_wobblerManifest } from "./lens_wobbler.manifest";
 import { lightningManifest } from "./lightning.manifest";
 import { lissajousManifest } from "./lissajous.manifest";
@@ -113,6 +114,7 @@ export const generatedEffectManifests = [
   isogridManifest,
   kefrens_barsManifest,
   lemmings_marchManifest,
+  lens_flareManifest,
   lens_wobblerManifest,
   lightningManifest,
   lissajousManifest,

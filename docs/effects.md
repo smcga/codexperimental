@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **81**.
+Total effects: **82**.
 
 ## Table of contents
 
@@ -38,6 +38,7 @@ Total effects: **81**.
 - [Effect: isogrid](#effect-isogrid)
 - [Effect: kefrens_bars](#effect-kefrens-bars)
 - [Effect: lemmings_march](#effect-lemmings-march)
+- [Effect: lens_flare](#effect-lens-flare)
 - [Effect: lens_wobbler](#effect-lens-wobbler)
 - [Effect: lightning](#effect-lightning)
 - [Effect: lissajous](#effect-lissajous)
@@ -107,7 +108,7 @@ Total effects: **81**.
 ### Common parameter patterns
 
 - `speed` (used in 44 effects)
-- `seed` (used in 36 effects)
+- `seed` (used in 37 effects)
 - `audioReact` (used in 34 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 13 effects)
@@ -1191,6 +1192,45 @@ Total effects: **81**.
 ```json
 {
   "effect": "lemmings_march",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: lens_flare
+
+- **Registry key:** `lens_flare`
+- **Implementation:** `src/renderer/effects/lensFlareEffect.ts` (class `LensFlareEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Cinematic lens flare
+- **Audio features:** beat, beatStrength, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReactive` | number | 0.6 | min 0, max 1 | Audio Reactive | yes |
+| `params.bgDim` | number | 0 | min 0, max 1 | Background Dim | yes |
+| `params.blendBias` | number | 1 | min 0, max 2 | Blend Bias | yes |
+| `params.chromatic` | number | 0.3 | min 0, max 1.2 | Chromatic | yes |
+| `params.ghostCount` | number | 6 | min 2, max 12 | Ghost Count | yes |
+| `params.ghostSpread` | number | 1.2 | min 0.3, max 2.4 | Ghost Spread | yes |
+| `params.haloRadius` | number | 0.18 | min 0.05, max 0.8 | Halo Radius | yes |
+| `params.intensity` | number | 1 | min 0, max 4 | Intensity | yes |
+| `params.ringStrength` | number | 0.35 | min 0, max 1.5 | Ring Strength | yes |
+| `params.seed` | number | 0 | min 0, max 999 | Seed | yes |
+| `params.shimmer` | number | 0.25 | min 0, max 1 | Shimmer | yes |
+| `params.sourceX` | number | 0.52 | min 0, max 1 | Source X | yes |
+| `params.sourceY` | number | 0.46 | min 0, max 1 | Source Y | yes |
+| `params.streakStrength` | number | 0.5 | min 0, max 2 | Streak Strength | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "lens_flare",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
