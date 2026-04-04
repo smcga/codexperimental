@@ -87,6 +87,8 @@ const fillGridRect = (
   ctx.fillRect(originX + gridX * pixelSize, originY + gridY * pixelSize, gridW * pixelSize, gridH * pixelSize);
 };
 
+export const getRainbowTrailDirection = (): -1 => -1;
+
 const drawRainbowTrail = ({
   ctx,
   time,
@@ -96,8 +98,7 @@ const drawRainbowTrail = ({
   rainbowLength,
   bounce,
   trailAlpha,
-  sparkle,
-  movingRight
+  sparkle
 }: {
   ctx: CanvasRenderingContext2D;
   time: number;
@@ -108,12 +109,11 @@ const drawRainbowTrail = ({
   bounce: number;
   trailAlpha: number;
   sparkle: number;
-  movingRight: boolean;
 }): void => {
   const segmentCount = Math.max(10, Math.floor(12 + rainbowLength * 26));
   const segmentWidth = pixelSize * 3.6;
   const stripeHeight = pixelSize * 1.4;
-  const direction = movingRight ? -1 : 1;
+  const direction = getRainbowTrailDirection();
   const anchorX = catX + direction * pixelSize * 3;
 
   ctx.save();
@@ -319,7 +319,6 @@ export class RainbowCatEffect implements Effect {
       bounce: bounce + audioLift * 0.22,
       trailAlpha,
       sparkle: sparkle + audioLift * 0.2,
-      movingRight
     });
 
     drawRainbowCat({

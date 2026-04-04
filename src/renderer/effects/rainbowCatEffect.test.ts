@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import {
   computeRainbowCatPosition,
   rainbowCatHash01,
+  getRainbowTrailDirection,
   RainbowCatEffect,
   RAINBOW_CAT_DEFAULTS
 } from "./rainbowCatEffect";
@@ -46,6 +47,11 @@ describe("RainbowCatEffect", () => {
     expect(rainbowCatHash01(0)).toBeLessThan(1);
     expect(rainbowCatHash01(12.34)).toBeCloseTo(0.8124, 4);
     expect(rainbowCatHash01(56.78)).toBeCloseTo(0.7037, 4);
+  });
+
+
+  it("always keeps the rainbow trail flowing to the left", () => {
+    expect(getRainbowTrailDirection()).toBe(-1);
   });
 
   it("computes a stable cat position and pixel size without teleporting", () => {
