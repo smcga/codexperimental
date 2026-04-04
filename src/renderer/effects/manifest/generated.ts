@@ -27,6 +27,7 @@ import { glenz_vectorsManifest } from "./glenz_vectors.manifest";
 import { glitchManifest } from "./glitch.manifest";
 import { greets_wallManifest } from "./greets_wall.manifest";
 import { infinitycloudManifest } from "./infinitycloud.manifest";
+import { infinite_mirrorManifest } from "./infinite_mirror.manifest";
 import { isogridManifest } from "./isogrid.manifest";
 import { kefrens_barsManifest } from "./kefrens_bars.manifest";
 import { lemmings_marchManifest } from "./lemmings_march.manifest";
@@ -110,6 +111,7 @@ export const generatedEffectManifests = [
   glitchManifest,
   greets_wallManifest,
   infinitycloudManifest,
+  infinite_mirrorManifest,
   isogridManifest,
   kefrens_barsManifest,
   lemmings_marchManifest,
