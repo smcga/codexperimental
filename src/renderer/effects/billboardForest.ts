@@ -17,6 +17,7 @@ type ForestPalette = {
 };
 
 type ForestTree = {
+  id: number;
   x: number;
   z: number;
   scale: number;
@@ -87,7 +88,7 @@ export const BILLBOARD_FOREST_DEFAULTS = {
   sway: 0.3,
   trunkHeight: 1,
   canopySize: 1,
-  palette: "dusk",
+  palette: "day",
   seed: 1337,
   layers: 4,
   groundMist: 0.45,
@@ -230,6 +231,7 @@ export const generateForestTrees = (seed: number, treeCount: number, spread: num
   const trees: ForestTree[] = new Array(treeCount);
   for (let i = 0; i < treeCount; i += 1) {
     trees[i] = {
+      id: i,
       x: (random() * 2 - 1) * spread,
       z: random() * depth + 0.25,
       scale: lerp(0.72, 1.35, random()),
@@ -332,7 +334,8 @@ export class BillboardForestEffect implements Effect {
       }
 
       const wobble = Math.sin(time * (0.8 + treble * 1.6) + tree.wobblePhase) * sway * 20;
-      const worldX = tree.x + wobble + yaw * (1 - tree.z / depth) * spread * 0.65;
+      const wobbleSoftened = wobble * 0.45;
+      const worldX = tree.x + wobbleSoftened + yaw * (1 - tree.z / depth) * spread * 0.65;
       const projection = projectBillboard(worldX, tree.z, width, height, horizonY, focal, baseScale * tree.scale);
       const depthN = clamp01(tree.z / depth);
       const draw = this.drawList[i];
@@ -342,7 +345,13 @@ export class BillboardForestEffect implements Effect {
       draw.depthN = depthN;
     }
 
-    this.drawList.sort((a, b) => b.tree.z - a.tree.z);
+    this.drawList.sort((a, b) => {
+      const depthDelta = b.tree.z - a.tree.z;
+      if (Math.abs(depthDelta) > 1e-6) {
+        return depthDelta;
+      }
+      return a.tree.id - b.tree.id;
+    });
 
     ctx.save();
     ctx.translate(0, Math.sin(time * 0.37) * tilt * 10 + this.beatPulse * tilt * 18);
@@ -372,8 +381,8 @@ export class BillboardForestEffect implements Effect {
       ctx.globalAlpha = alpha;
       ctx.drawImage(sprite, x, y, drawW, drawH);
 
-      ctx.globalCompositeOperation = "multiply";
-      ctx.fillStyle = colorToString(fogColor, clamp01(0.08 + fogMix * 0.44));
+      ctx.globalCompositeOperation = "source-atop";
+      ctx.fillStyle = colorToString(fogColor, clamp01(0.03 + fogMix * 0.2));
       ctx.fillRect(x, y, drawW, drawH);
       ctx.globalCompositeOperation = "source-over";
 
@@ -392,7 +401,7 @@ export class BillboardForestEffect implements Effect {
     ctx.restore();
 
     if (exposurePulse > 0.01) {
-      ctx.fillStyle = colorToString({ r: 255, g: 255, b: 255 }, exposurePulse * (paletteName === "neon" ? 0.2 : 0.12));
+      ctx.fillStyle = colorToString({ r: 255, g: 255, b: 255 }, exposurePulse * (paletteName === "neon" ? 0.08 : 0.05));
       ctx.fillRect(0, 0, width, height);
     }
   }

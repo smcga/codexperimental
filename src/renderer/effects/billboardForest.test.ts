@@ -6,6 +6,7 @@ describe("billboardForest helpers", () => {
     const a = generateForestTrees(42, 8, 100, 3);
     const b = generateForestTrees(42, 8, 100, 3);
     expect(a).toEqual(b);
+    expect(a.map((tree) => tree.id)).toEqual([0, 1, 2, 3, 4, 5, 6, 7]);
   });
 
   it("creates deterministic mulberry32 sequence", () => {

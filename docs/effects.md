@@ -183,7 +183,7 @@ Total effects: **82**.
 | `params.fog` | number | 0.62 | min 0, max 1 | Fog | yes |
 | `params.groundMist` | number | 0.45 | min 0, max 1 | Ground Mist | yes |
 | `params.layers` | number | 4 | min 1, max 6 | Layers | yes |
-| `params.palette` | string | "dusk" | options: day, dusk, night, neon | Palette | no |
+| `params.palette` | string | "day" | options: day, dusk, night, neon | Palette | no |
 | `params.parallax` | number | 0.25 | min 0, max 1 | Parallax | yes |
 | `params.seed` | number | 1337 | min 0, max 9999 | Seed | yes |
 | `params.speed` | number | 1 | min 0.1, max 3 | Speed | yes |
