@@ -124,6 +124,7 @@ describe("release timeline", () => {
       "prism_bloom",
       "tetris_matrix",
       "matrix_rain",
+      "marble",
       "velvet_dreamscape",
       "water_drops"
     ]);

@@ -156,6 +156,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `metaballs` | `bufW`, `bufH`, `count`, `baseRadius`, `radiusVar`, `baseThreshold`, `edgeSoftness`, `normalZ`, `ambient`, `diffuse`, `specStrength`, `shininess`, `rimStrength`, `palette`, `hueSpeed`, `smoothing`, `glow`, `audioReact`, `beatKick`, `seed` | Implicit surface metaballs with chrome/neon lighting; `palette` supports `chrome` or `neon`. |
 | `ribbons` | `count`, `speed`, `amplitude`, `audioBoost`, `offset`, `spacing`, `thickness` |  |
 | `lissajous` | `points`, `speed`, `a`, `b`, `radius`, `lineWidth` |  |
+| `marble` | `scale`, `veinScale`, `contrast`, `brightness`, `speed`, `turbulence`, `layers` | Animated marble veins using turbulent sine domain warping; audio subtly modulates turbulence, vein scale, and brightness. |
 | `glitch` | `sparkles`, `sparkleSize`, `sliceCount`, `sliceBoost`, `sliceHeight`, `sliceVariance`, `offset`, `shake`, `maxShake` |  |
 | `bokeh` | `count`, `speed`, `radius`, `alpha`, `hueShift` |  |
 | `fractal` | `iterations`, `trebleBoost`, `speed`, `scale`, `alpha` |  |

@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **81**.
+Total effects: **82**.
 
 ## Table of contents
 
@@ -41,6 +41,7 @@ Total effects: **81**.
 - [Effect: lens_wobbler](#effect-lens-wobbler)
 - [Effect: lightning](#effect-lightning)
 - [Effect: lissajous](#effect-lissajous)
+- [Effect: marble](#effect-marble)
 - [Effect: matrix_rain](#effect-matrix-rain)
 - [Effect: metaballs](#effect-metaballs)
 - [Effect: moire_grid](#effect-moire-grid)
@@ -106,7 +107,7 @@ Total effects: **81**.
 
 ### Common parameter patterns
 
-- `speed` (used in 44 effects)
+- `speed` (used in 45 effects)
 - `seed` (used in 36 effects)
 - `audioReact` (used in 34 effects)
 - `beatKick` (used in 14 effects)
@@ -1299,6 +1300,38 @@ Total effects: **81**.
 ```json
 {
   "effect": "lissajous",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: marble
+
+- **Registry key:** `marble`
+- **Implementation:** `src/renderer/effects/marbleEffect.ts` (class `MarbleEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Animated marble veins using turbulent sine domain warping
+- **Audio features:** bass, energy, mid, rms
+- **Performance notes:** Uses ImageData per frame; CPU cost scales with resolution.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.brightness` | number | 1 | min 0.2, max 2.5 | Brightness | yes |
+| `params.contrast` | number | 1.2 | min 0.2, max 4 | Contrast | yes |
+| `params.layers` | number | 4 | min 1, max 7 | Layers | yes |
+| `params.scale` | number | 3 | min 0.4, max 8 | Scale | yes |
+| `params.speed` | number | 0.15 | min 0, max 2 | Speed | yes |
+| `params.turbulence` | number | 0.8 | min 0, max 2.5 | Turbulence | yes |
+| `params.veinScale` | number | 2.5 | min 0.2, max 8 | Vein Scale | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "marble",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
