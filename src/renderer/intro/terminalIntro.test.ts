@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { getIntroExplosionProgress, getTypingReveal, INTRO_EXPLOSION_DURATION } from "./terminalIntro";
+import { getIntroExplosionProgress, getIntroLayoutMetrics, getTypingReveal, INTRO_EXPLOSION_DURATION } from "./terminalIntro";
 
 describe("getTypingReveal", () => {
   it("reveals characters based on cps and elapsed time", () => {
@@ -29,5 +29,42 @@ describe("getIntroExplosionProgress", () => {
 
   it("returns 0 for invalid duration", () => {
     expect(getIntroExplosionProgress(10, 10, 0)).toBe(0);
+  });
+});
+
+describe("getIntroLayoutMetrics", () => {
+  const theme = {
+    bg: "#000",
+    fg: "#fff",
+    dim: "#888",
+    accent: "#0f0",
+    fontFamily: "monospace",
+    fontSize: 40,
+    lineHeight: 48,
+    padding: 28,
+    window: {
+      chrome: true,
+      title: "demo@machine:~"
+    }
+  };
+
+  it("keeps desktop metrics unchanged on wide viewports", () => {
+    expect(getIntroLayoutMetrics(1280, 720, theme)).toMatchObject({
+      fontSize: 40,
+      lineHeight: 48,
+      padding: 28,
+      windowWidth: 920,
+      windowHeight: 518.4
+    });
+  });
+
+  it("shrinks typography and expands usable area on narrow viewports", () => {
+    expect(getIntroLayoutMetrics(390, 844, theme)).toMatchObject({
+      fontSize: 35,
+      lineHeight: 43,
+      padding: 20,
+      windowWidth: 358.8,
+      windowHeight: 520
+    });
   });
 });

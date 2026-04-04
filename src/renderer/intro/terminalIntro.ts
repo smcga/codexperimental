@@ -1,4 +1,4 @@
-import { IntroConfig, IntroScriptEvent } from "../../config/loadConfig";
+import { IntroConfig, IntroScriptEvent, IntroTheme } from "../../config/loadConfig";
 import { clamp } from "../../util/math";
 
 export const DEFAULT_TYPING_CPS = 28;
@@ -26,6 +26,31 @@ export function getIntroExplosionProgress(time: number, introEnd: number, durati
     return 0;
   }
   return clamp((time - (introEnd - duration)) / duration, 0, 1);
+}
+
+export type IntroLayoutMetrics = {
+  windowWidth: number;
+  windowHeight: number;
+  padding: number;
+  lineHeight: number;
+  fontSize: number;
+};
+
+export function getIntroLayoutMetrics(width: number, height: number, theme: IntroTheme): IntroLayoutMetrics {
+  const isNarrowViewport = width < 760;
+  const fontSize = isNarrowViewport ? Math.max(20, Math.round(theme.fontSize * 0.88)) : theme.fontSize;
+  const lineHeight = isNarrowViewport ? Math.max(fontSize + 6, Math.round(theme.lineHeight * 0.9)) : theme.lineHeight;
+  const padding = isNarrowViewport ? Math.max(16, Math.round(theme.padding * 0.72)) : theme.padding;
+  const windowWidth = Math.min(width * (isNarrowViewport ? 0.92 : 0.85), 920);
+  const windowHeight = Math.min(height * (isNarrowViewport ? 0.8 : 0.72), 520);
+
+  return {
+    windowWidth,
+    windowHeight,
+    padding,
+    lineHeight,
+    fontSize
+  };
 }
 
 function hashUnit(seed: number): number {
@@ -181,24 +206,25 @@ export class TerminalIntroRenderer {
     targetCtx.fillStyle = theme.bg;
     targetCtx.fillRect(0, 0, width, height);
 
-    const windowWidth = Math.min(width * 0.85, 920);
-    const windowHeight = Math.min(height * 0.72, 520);
+    const layout = getIntroLayoutMetrics(width, height, theme);
+    const { windowWidth, windowHeight, padding, lineHeight, fontSize } = layout;
     const windowX = (width - windowWidth) / 2;
     const windowY = (height - windowHeight) / 2;
     const radius = 8;
-    const titleBarHeight = theme.window.chrome ? theme.lineHeight + 20 : 0;
+    const titleBarHeight = theme.window.chrome ? lineHeight + 20 : 0;
 
-    const contentX = windowX + theme.padding;
-    const contentY = windowY + theme.padding + titleBarHeight;
-    const contentWidth = windowWidth - theme.padding * 2;
-    const contentHeight = windowHeight - theme.padding * 2 - titleBarHeight;
+    const contentX = windowX + padding;
+    const contentY = windowY + padding + titleBarHeight;
+    const contentWidth = windowWidth - padding * 2;
+    const contentHeight = windowHeight - padding * 2 - titleBarHeight;
 
     const buffer = buildTerminalBuffer(script, time);
+    targetCtx.font = `${fontSize}px ${theme.fontFamily}`;
     const charWidth = Math.max(1, targetCtx.measureText("M").width);
     const maxChars = Math.max(1, Math.floor(contentWidth / charWidth));
     const wrapped = wrapLines(buffer.lines, buffer.cursor, maxChars);
 
-    const maxLines = Math.max(1, Math.floor(contentHeight / theme.lineHeight));
+    const maxLines = Math.max(1, Math.floor(contentHeight / lineHeight));
     const totalLines = wrapped.lines.length;
     const startIndex = Math.max(0, totalLines - maxLines);
     const visibleLines = wrapped.lines.slice(startIndex);
@@ -234,7 +260,7 @@ export class TerminalIntroRenderer {
       targetCtx.stroke();
 
       targetCtx.fillStyle = theme.dim;
-      targetCtx.font = `600 ${theme.fontSize - 2}px ${theme.fontFamily}`;
+      targetCtx.font = `600 ${fontSize - 2}px ${theme.fontFamily}`;
       targetCtx.textBaseline = "middle";
       targetCtx.fillText(theme.window.title, windowX + 42, windowY + titleBarHeight / 2);
 
@@ -259,7 +285,7 @@ export class TerminalIntroRenderer {
     drawRoundedRect(targetCtx, windowX, windowY, windowWidth, windowHeight, radius);
     targetCtx.stroke();
 
-    targetCtx.font = `${theme.fontSize}px ${theme.fontFamily}`;
+    targetCtx.font = `${fontSize}px ${theme.fontFamily}`;
     targetCtx.textBaseline = "alphabetic";
     targetCtx.fillStyle = theme.fg;
     targetCtx.shadowColor = theme.accent;
@@ -267,18 +293,18 @@ export class TerminalIntroRenderer {
 
     visibleLines.forEach((line, index) => {
       const x = contentX;
-      const y = contentY + (index + 1) * theme.lineHeight;
+      const y = contentY + (index + 1) * lineHeight;
       targetCtx.fillText(line, x, y);
     });
 
     const cursorVisible = Math.floor(time * 2) % 2 === 0;
     if (cursorVisible && cursorLine >= 0 && cursorLine < visibleLines.length) {
       const cursorX = contentX + cursorColumn * charWidth;
-      const cursorY = contentY + cursorLine * theme.lineHeight;
+      const cursorY = contentY + cursorLine * lineHeight;
       targetCtx.fillStyle = theme.accent;
       targetCtx.shadowColor = theme.accent;
       targetCtx.shadowBlur = 8;
-      targetCtx.fillRect(cursorX, cursorY + 4, charWidth * 0.9, theme.lineHeight - 6);
+      targetCtx.fillRect(cursorX, cursorY + 4, charWidth * 0.9, lineHeight - 6);
     }
 
     targetCtx.restore();
@@ -313,7 +339,7 @@ export class TerminalIntroRenderer {
     }
 
     ctx.save();
-    ctx.font = `${theme.fontSize}px ${theme.fontFamily}`;
+    ctx.font = `${fontSize}px ${theme.fontFamily}`;
     ctx.textBaseline = "alphabetic";
     visibleLines.forEach((line, lineIndex) => {
       for (let charIndex = 0; charIndex < line.length; charIndex += 1) {
@@ -324,7 +350,7 @@ export class TerminalIntroRenderer {
         const particleSeed = lineIndex * 997 + charIndex * 37 + 11;
         const vector = getExplosionVector(particleSeed, explosionProgress, Math.min(width, height) * 0.32);
         const x = contentX + charIndex * charWidth + vector.x;
-        const y = contentY + (lineIndex + 1) * theme.lineHeight + vector.y;
+        const y = contentY + (lineIndex + 1) * lineHeight + vector.y;
         ctx.fillStyle = theme.accent;
         ctx.globalAlpha = Math.max(0, 1 - explosionProgress * 1.25);
         ctx.fillText(char, x, y);
