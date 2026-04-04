@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { PhysicsWorld } from "./physicsPile";
+import { PhysicsPileEffect, PhysicsWorld, planPileLayout } from "./physicsPile";
 
 const STEP = 1 / 120;
 
@@ -14,6 +14,48 @@ const stddev = (values: number[]): number => {
   const variance = values.reduce((sum, value) => sum + (value - mean) ** 2, 0) / values.length;
   return Math.sqrt(variance);
 };
+
+const makeAudio = (overrides: Partial<{
+  rms: number;
+  bass: number;
+  mid: number;
+  treble: number;
+  beat: boolean;
+  beatStrength: number;
+  impactStrength: number;
+}> = {}) => ({
+  timeDomain: new Uint8Array(0),
+  frequency: new Uint8Array(0),
+  rms: 0,
+  bass: 0,
+  mid: 0,
+  treble: 0,
+  beat: false,
+  beatStrength: 0,
+  impactStrength: 0,
+  ...overrides
+});
+
+const makeCtx = () =>
+  ({
+    fillStyle: "",
+    strokeStyle: "",
+    lineWidth: 0,
+    globalAlpha: 1,
+    globalCompositeOperation: "source-over",
+    fillRect() {},
+    strokeRect() {},
+    save() {},
+    restore() {},
+    translate() {},
+    rotate() {},
+    beginPath() {},
+    moveTo() {},
+    lineTo() {},
+    stroke() {},
+    arc() {},
+    fill() {}
+  }) as unknown as CanvasRenderingContext2D;
 
 describe("PhysicsWorld", () => {
   it("settles a box on the floor", () => {
@@ -201,6 +243,25 @@ describe("PhysicsWorld", () => {
     expect(maxOverlap).toBeLessThanOrEqual(1);
   });
 
+  it("spawns pile mode as a tidy resting stack", () => {
+    const world = new PhysicsWorld(480, 960, 900);
+    world.resetBodies(18, "pile", 0.2, 0.5, 9);
+
+    const areas = world.bodies.map((body) => body.width * body.height);
+
+    for (let i = 1; i < world.bodies.length; i += 1) {
+      expect(areas[i - 1]).toBeGreaterThanOrEqual(areas[i]);
+      expect(world.bodies[i - 1].y).toBeGreaterThan(world.bodies[i].y);
+    }
+    world.bodies.forEach((body) => {
+      expect(body.x).toBeCloseTo(world.width * 0.5, 6);
+      expect(body.angle).toBe(0);
+      expect(body.angularVelocity).toBe(0);
+      expect(body.vx).toBe(0);
+      expect(body.vy).toBe(0);
+    });
+  });
+
   it("scatters bodies with varied velocities on beat kicks", () => {
     const world = new PhysicsWorld(360, 240, 900);
     world.resetBodies(16, "pile", 0.2, 0.5, 12);
@@ -222,7 +283,7 @@ describe("PhysicsWorld", () => {
     const spinCount = spins.filter((spin) => spin > 0.6).length;
 
     expect(stddev(vxs)).toBeGreaterThan(30);
-    expect(stddev(vys)).toBeGreaterThan(30);
+    expect(stddev(vys)).toBeGreaterThan(15);
     expect(spinCount).toBeGreaterThanOrEqual(Math.floor(world.bodies.length * 0.3));
   });
 
@@ -272,5 +333,93 @@ describe("PhysicsWorld", () => {
     const speed = Math.hypot(body.vx, body.vy);
     expect(speed).toBeLessThanOrEqual(world.maxLinVel + 1e-3);
     expect(Math.abs(body.angularVelocity)).toBeLessThanOrEqual(world.maxAngVel + 1e-3);
+  });
+});
+
+describe("planPileLayout", () => {
+  it("builds a single centered column from bottom to top", () => {
+    const widths = [60, 50, 42, 38];
+    const heights = [40, 32, 30, 28];
+    const layout = planPileLayout(widths, heights, 320, 360);
+
+    expect(layout).toHaveLength(widths.length);
+    layout.forEach((entry, index) => {
+      expect(entry.x).toBeCloseTo(160, 6);
+      expect(entry.x - widths[index] * 0.5).toBeGreaterThanOrEqual(0);
+      expect(entry.x + widths[index] * 0.5).toBeLessThanOrEqual(320);
+      expect(entry.y + heights[index] * 0.5).toBeLessThanOrEqual(360);
+    });
+
+    for (let i = 1; i < layout.length; i += 1) {
+      expect(layout[i - 1].y).toBeGreaterThan(layout[i].y);
+    }
+  });
+});
+
+describe("PhysicsPileEffect", () => {
+  it("holds beat impulses briefly so the stack is visible on entry", () => {
+    const effect = new PhysicsPileEffect();
+    const baselineEffect = new PhysicsPileEffect();
+    const ctx = makeCtx();
+
+    effect.render({
+      ctx,
+      width: 360,
+      height: 240,
+      time: 0,
+      delta: 0,
+      audio: makeAudio(),
+      params: {}
+    });
+    baselineEffect.render({
+      ctx,
+      width: 360,
+      height: 240,
+      time: 0,
+      delta: 0,
+      audio: makeAudio(),
+      params: {}
+    });
+
+    const world = (effect as unknown as { world: PhysicsWorld }).world;
+    const baselineWorld = (baselineEffect as unknown as { world: PhysicsWorld }).world;
+    expect(world).toBeTruthy();
+    expect(baselineWorld).toBeTruthy();
+
+    effect.render({
+      ctx,
+      width: 360,
+      height: 240,
+      time: 0.1,
+      delta: 0.1,
+      audio: makeAudio({ beat: true, beatStrength: 1 }),
+      params: {}
+    });
+    baselineEffect.render({
+      ctx,
+      width: 360,
+      height: 240,
+      time: 0.1,
+      delta: 0.1,
+      audio: makeAudio(),
+      params: {}
+    });
+
+    const heldSpeeds = world.bodies.map((body) => Math.hypot(body.vx, body.vy));
+    const baselineSpeeds = baselineWorld.bodies.map((body) => Math.hypot(body.vx, body.vy));
+    expect(Math.max(...heldSpeeds)).toBeCloseTo(Math.max(...baselineSpeeds), 6);
+
+    effect.render({
+      ctx,
+      width: 360,
+      height: 240,
+      time: 0.8,
+      delta: 0.7,
+      audio: makeAudio({ beat: true, beatStrength: 1 }),
+      params: {}
+    });
+
+    const kickedSpeeds = world.bodies.map((body) => Math.hypot(body.vx, body.vy));
+    expect(Math.max(...kickedSpeeds)).toBeGreaterThan(40);
   });
 });

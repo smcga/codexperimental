@@ -85,6 +85,12 @@ const PALETTE = [
 const DEFAULT_TRAIL = 0.2;
 const DEFAULT_COUNT = 18;
 const DEFAULT_KICK_IMPULSE = 250;
+const DEFAULT_INTRO_HOLD = 0.65;
+
+type PileLayoutEntry = {
+  x: number;
+  y: number;
+};
 
 function mulberry32(seed: number): () => number {
   let t = seed >>> 0;
@@ -109,6 +115,34 @@ function resolveKickOriginMode(value: unknown): KickOriginMode {
 
 function resolveNumberParam(value: unknown, fallback: number): number {
   return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+}
+
+export function planPileLayout(
+  widths: number[],
+  heights: number[],
+  worldWidth: number,
+  worldHeight: number
+): PileLayoutEntry[] {
+  const count = Math.min(widths.length, heights.length);
+  if (count === 0) {
+    return [];
+  }
+
+  const layout: PileLayoutEntry[] = new Array(count);
+  const gapY = clamp(Math.min(worldWidth, worldHeight) * 0.008, 2, 8);
+  const floorY = worldHeight - Math.max(14, gapY * 3);
+  const centerX = worldWidth * 0.5;
+
+  let nextBottom = floorY;
+  for (let index = 0; index < count; index += 1) {
+    layout[index] = {
+      x: centerX,
+      y: nextBottom - heights[index] * 0.5
+    };
+    nextBottom -= heights[index] + gapY;
+  }
+
+  return layout;
 }
 
 export class PhysicsWorld {
@@ -207,7 +241,6 @@ export class PhysicsWorld {
     this.beatLoosenTimer = 0;
 
     const clamped = clamp(count, 5, MAX_BODIES);
-    const columns = Math.max(3, Math.floor(Math.sqrt(clamped)));
     const widths: number[] = new Array(clamped);
     const heights: number[] = new Array(clamped);
     let maxW = 0;
@@ -223,22 +256,32 @@ export class PhysicsWorld {
     }
 
     const maxExtent = Math.hypot(maxW, maxH);
+    const bodyOrder = Array.from({ length: clamped }, (_, index) => index);
+    if (spawnMode === "pile") {
+      bodyOrder.sort((a, b) => widths[b] * heights[b] - widths[a] * heights[a]);
+    }
+    const orderedWidths = bodyOrder.map((index) => widths[index]);
+    const orderedHeights = bodyOrder.map((index) => heights[index]);
+    const pileLayout = spawnMode === "pile"
+      ? planPileLayout(orderedWidths, orderedHeights, this.width, this.height)
+      : [];
+    const rainColumns = Math.max(3, Math.floor(Math.sqrt(clamped)));
     const spacingX = Math.max(this.width * 0.08, maxExtent * 1.05);
     const spacingY = Math.max(this.height * 0.06, maxExtent * 1.05);
-    const totalWidth = (columns - 1) * spacingX;
+    const totalWidth = (rainColumns - 1) * spacingX;
     const minBaseX = maxExtent * 0.5 + totalWidth * 0.5;
     const maxBaseX = this.width - maxExtent * 0.5 - totalWidth * 0.5;
     const baseX = clamp(this.width * 0.5, minBaseX, maxBaseX);
-    const baseY = Math.min(this.height * 0.78, this.height - maxExtent * 0.5);
 
     for (let i = 0; i < clamped; i += 1) {
-      const width = widths[i];
-      const height = heights[i];
+      const bodyIndex = bodyOrder[i];
+      const width = widths[bodyIndex];
+      const height = heights[bodyIndex];
       const palette = PALETTE[i % PALETTE.length];
-      const col = i % columns;
-      const row = Math.floor(i / columns);
-      const angle = (rng() - 0.5) * 0.6;
-      const angularVelocity = (rng() - 0.5) * 1.2;
+      const col = i % rainColumns;
+      const row = Math.floor(i / rainColumns);
+      const angle = spawnMode === "pile" ? 0 : (rng() - 0.5) * 0.6;
+      const angularVelocity = spawnMode === "pile" ? 0 : (rng() - 0.5) * 1.2;
 
       let x = 0;
       let y = 0;
@@ -247,27 +290,29 @@ export class PhysicsWorld {
 
       let placed = false;
       const target = { x: 0, y: 0 };
-      for (let attempt = 0; attempt < 16; attempt += 1) {
-        if (spawnMode === "rain") {
+      if (spawnMode === "pile") {
+        const planned = pileLayout[i];
+        if (planned) {
+          x = planned.x;
+          y = planned.y;
+          placed = true;
+        }
+      } else {
+        for (let attempt = 0; attempt < 16; attempt += 1) {
           x = rng() * this.width;
           y = -rng() * this.height * 0.6 - 40 - attempt * 8;
           vx = (rng() - 0.5) * 20;
           vy = rng() * 40;
-        } else {
-          x = baseX + (col - (columns - 1) / 2) * spacingX;
-          y = baseY - row * spacingY - attempt * 6;
-          vx = (rng() - 0.5) * 40;
-          vy = (rng() - 0.5) * 30;
-        }
-        if (this.resolveSpawnPosition(x, y, width, height, angle, target)) {
-          x = target.x;
-          y = target.y;
-          placed = true;
-          break;
+          if (this.resolveSpawnPosition(x, y, width, height, angle, target)) {
+            x = target.x;
+            y = target.y;
+            placed = true;
+            break;
+          }
         }
       }
       if (!placed) {
-        x = baseX + (col - (columns - 1) / 2) * spacingX;
+        x = baseX + (col - (rainColumns - 1) / 2) * spacingX;
         y = -height - i * height * 1.5;
       }
 
@@ -1020,6 +1065,7 @@ export class PhysicsPileEffect implements Effect {
   private shatterParticles: ShatterParticle[] = [];
   private shatterTimer = 0;
   private shatterActive = false;
+  private introHoldRemaining = 0;
 
   render({ ctx, width, height, time, audio, params }: EffectRenderContext): void {
     const count = clamp(resolveNumberParam(params.count, DEFAULT_COUNT), 5, MAX_BODIES);
@@ -1072,6 +1118,7 @@ export class PhysicsPileEffect implements Effect {
         this.lastConfig.seed
       );
       this.world.lastTime = time;
+      this.introHoldRemaining = DEFAULT_INTRO_HOLD;
     } else if (
       this.lastConfig.count !== count ||
       this.lastConfig.restitution !== restitution ||
@@ -1091,6 +1138,7 @@ export class PhysicsPileEffect implements Effect {
         friction,
         this.lastConfig.seed
       );
+      this.introHoldRemaining = DEFAULT_INTRO_HOLD;
     }
 
     if (trail !== this.trailAlpha) {
@@ -1140,7 +1188,8 @@ export class PhysicsPileEffect implements Effect {
       world.accumulator = 0;
     } else {
       world.update(frameDt);
-      if (audio.beat || audio.beatStrength > 0.2) {
+      this.introHoldRemaining = Math.max(0, this.introHoldRemaining - frameDt);
+      if (this.introHoldRemaining <= 0 && (audio.beat || audio.beatStrength > 0.2)) {
         world.applyBeatImpulse(kickImpulse, audio.beatStrength);
       }
 
@@ -1180,6 +1229,7 @@ export class PhysicsPileEffect implements Effect {
     this.shatterParticles = [];
     this.shatterTimer = 0;
     this.shatterActive = false;
+    this.introHoldRemaining = 0;
   }
 
   private startShatter(world: PhysicsWorld): void {
