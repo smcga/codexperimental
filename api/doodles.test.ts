@@ -285,6 +285,35 @@ describe("api/doodles handler", () => {
     );
   });
 
+  it("accepts Uint8Array JSON request bodies for doodle submissions", async () => {
+    const redis = createMockRedis();
+
+    vi.doMock("./kv.js", () => ({
+      createKvClients: () => ({ readClient: redis, writeClient: redis })
+    }));
+
+    const { default: handler } = await import("./doodles");
+    const response = createResponse();
+    const encodedBody = new TextEncoder().encode(JSON.stringify({ imageData: "data:image/png;base64,c3VibWl0dGVk" }));
+
+    await handler(
+      {
+        method: "POST",
+        body: encodedBody,
+        url: "/api/doodles"
+      },
+      response.response
+    );
+
+    expect(response.response.statusCode).toBe(200);
+    expect(JSON.parse(response.getBody())).toEqual(
+      expect.objectContaining({
+        doodle: expect.objectContaining({ imageData: "data:image/png;base64,c3VibWl0dGVk" }),
+        moderationStatus: "pending"
+      })
+    );
+  });
+
   it("rejects invalid doodle payloads", async () => {
     const redis = createMockRedis();
 

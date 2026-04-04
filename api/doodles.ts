@@ -55,6 +55,15 @@ function sendHtml(res: ResponseLike, status: number, title: string, message: str
 }
 
 async function readBody(req: RequestLike): Promise<JsonBody> {
+  if (req.body instanceof Uint8Array) {
+    const text = new TextDecoder().decode(req.body);
+    try {
+      return JSON.parse(text) as JsonBody;
+    } catch {
+      return {};
+    }
+  }
+
   if (typeof req.body === "string") {
     try {
       return JSON.parse(req.body) as JsonBody;
