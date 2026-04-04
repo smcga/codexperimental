@@ -22,6 +22,7 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 - The `volumetric_clouds` effect renders layered procedural cloud banks with parallax depth and audio-reactive density pulses; tune `params` like `density`, `layers`, `windSpeed`, `cloudScale`, `detail`, `sunlight`, `haze`, and `audioReact`.
 - The `flyover` effect renders a sky/sea flythrough with distant islands; tune `params` like `speed`, `horizon`, `seaDetail`, `islandSeed`, and `palette`.
 - The `synthwaveSunset` effect renders an outrun sunset with a striped sun, neon sky, and reflective sea; tune `params` like `horizon`, `sunRadius`, `stripeHeight`, `stripeGap`, and `seaSpeed`.
+- The `skyboxTransition` effect renders a panoramic atmospheric backdrop that smoothly evolves from day through sunset into surreal night; tune `params` like `speed`, `intensity`, `horizon`, `cloudAmount`, `starAmount`, `silhouetteAmount`, `surrealness`, `audioReactive`, `loop`, and `phaseOffset`.
 - The `border_multiplex` effect fakes border-breaking sprites and multiplexed raster reuse; tune `params` like `hwSprites`, `totalSprites`, `bandHeight`, `spriteSize`, `speed`, `rasterJitter`, `borderMaskStrength`, `audioReact`, and `seed`.
 - The `rain` effect renders layered storm rain with turbulence, optional ground splashes, and low mist bands; tune `params` like `intensity`, `wind`, `speed`, `streakLength`, `splash`, `hue`, `storm`, `turbulence`, `mist`, and `seed`.
 - The `lightning` effect renders brief flash overlays with optional bolt branches; tune `params` like `trigger`, `chancePerSecond`, `cooldown`, `flashDuration`, `bolt`, `branches`, and `seed`.
@@ -66,6 +67,21 @@ Automation example:
 ```
 
 Automation supports numeric params only; non-numeric values fall back to the base params.
+
+### Timeline runtime behavior (how playback works)
+
+- The timeline runs in two modes: `intro` and `sections`. While the current playback time is before `intro.end`, the app stays in `intro`; at `intro.end` and later it switches to `sections`.
+- During `intro`, the renderer still receives the first section as `section` context so post-intro visuals can warm up consistently, but transitions and text cues remain inactive.
+- Section lookup is start-time based: the active section is the last section whose `start` is less than or equal to the current time.
+- Transition blending is evaluated only at section boundaries:
+  - A transition is active for `section.transition.duration` seconds after a section starts.
+  - Transition progress is clamped from `0` to `1`.
+  - The transition type uses the incoming section `transition.in` (normalized to `fade` when omitted in JSON).
+- `textCues` are active only while `start <= currentTime <= end`.
+- If the final section omits an explicit `end`, it is treated as "until audio ends" and is finalized after audio metadata loads.
+- `introTime` is exposed in both modes:
+  - In `intro`, `introTime` equals absolute playback time.
+  - In `sections`, `introTime` equals elapsed time since `intro.end`.
 
 ### Timeline data schema
 
@@ -150,11 +166,14 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `tunnel` | `speed` |  |
 | `dotTunnel` | `ringCount`, `dotsPerRing`, `fov`, `speed`, `twist`, `palette`, `glow`, `seed` | Depth-sorted sprite/ring tunnel; `palette` selects built-in color ramps. |
 | `moire_grid` | `spacing`, `lineWidth`, `speed`, `warp`, `intensity`, `palette`, `audioReact` | Warped interference grid; `palette` supports `cyan`, `magenta`, or `amber`. |
+| `recursiveFracture` | `seed`, `shapeCount`, `maxDepth`, `splitBias`, `angleJitter`, `gap`, `strokeWidth`, `fillAlpha`, `lineAlpha`, `progressSpeed`, `progressMode`, `beatPunch`, `bassInfluence`, `trebleDetail`, `paletteMode`, `minFragmentSize` | Deterministic recursive subdivision panes; `progressMode` supports `outward`/`inward`, and `paletteMode` supports `mono`, `era`, or `heat`. |
+| `moving_shadow_map` | `seed`, `objectCount`, `lightCount`, `lightSpeed`, `lightHeightMin`, `lightHeightMax`, `shadowLength`, `shadowSoftness`, `floorGrid`, `paletteMode`, `contrast`, `haze`, `orbitRadius`, `colorA`, `colorB`, `lightColor` | Faux-3D Canvas2D scene with orbiting lights and projected moving shadows over a ground plane. |
 | `textmode_charset` | `cols`, `rows`, `glyphSet`, `mode`, `speed`, `palette`, `scanlines`, `seed` | Coarse character-grid renderer with glyph ramps (` .:-=+*#%@`) and palette-indexed tinting. |
 | `rotozoom` | `speed` |  |
 | `blobs` | `count`, `radius`, `orbit`, `speed`, `glow` |  |
 | `metaballs` | `bufW`, `bufH`, `count`, `baseRadius`, `radiusVar`, `baseThreshold`, `edgeSoftness`, `normalZ`, `ambient`, `diffuse`, `specStrength`, `shininess`, `rimStrength`, `palette`, `hueSpeed`, `smoothing`, `glow`, `audioReact`, `beatKick`, `seed` | Implicit surface metaballs with chrome/neon lighting; `palette` supports `chrome` or `neon`. |
 | `ribbons` | `count`, `speed`, `amplitude`, `audioBoost`, `offset`, `spacing`, `thickness` |  |
+| `skeletal_ribbon` | `boneCount`, `length`, `thickness`, `waveAmp`, `waveFreq`, `stiffness`, `audioInfluence`, `colorMode`, `hueShift`, `glow`, `debugSkeleton` | Articulated spine/tentacle ribbon driven by chained bone kinematics with beat-reactive pulse thickness. |
 | `lissajous` | `points`, `speed`, `a`, `b`, `radius`, `lineWidth` |  |
 | `marble` | `scale`, `veinScale`, `contrast`, `brightness`, `speed`, `turbulence`, `layers` | Animated marble veins using turbulent sine domain warping; audio subtly modulates turbulence, vein scale, and brightness. |
 | `glitch` | `sparkles`, `sparkleSize`, `sliceCount`, `sliceBoost`, `sliceHeight`, `sliceVariance`, `offset`, `shake`, `maxShake` |  |
@@ -166,6 +185,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `isogrid` | `opacity`, `lineWidth`, `spacing`, `wave`, `speed` |  |
 | `neon` | `shapes`, `radius`, `radiusStep`, `speed`, `glow`, `lineWidth` |  |
 | `particles` | `trail`, `burst`, `burstAudio`, `force`, `forceAudio` |  |
+| `particleAttractors` | `count`, `seed`, `attractorCount`, `strength`, `swirl`, `damping`, `speedLimit`, `softening`, `absorbRadius`, `spawnMode`, `trailAlpha`, `particleSize`, `glow`, `motion`, `audioReactive`, `beatPulse`, `colorMode`, `backgroundFade`, `vignette` | Gravity-well particle flow with swirling paths; `spawnMode` supports `edges`, `ring`, or `random`, and `colorMode` supports `mono`, `era`, or `heat`. |
 | `border_multiplex` | `hwSprites`, `totalSprites`, `bandHeight`, `spriteSize`, `speed`, `rasterJitter`, `borderMaskStrength`, `audioReact`, `seed` |  |
 | `fluid` | `speed`, `dissipation`, `splatCount`, `splatSize`, `turbulence`, `hueShift`, `seed` |  |
 | `boids_simulation` | `count`, `speed`, `cohesion`, `alignment`, `separation`, `neighborRadius`, `separationRadius`, `trail`, `size`, `seed` | Audio-reactive flocking simulation with wraparound space and neon boid trails. |
@@ -177,10 +197,13 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `sphere3d` | `speed` |  |
 | `spherecloud` | `speed` |  |
 | `infinitycloud` | `speed` |  |
+| `infiniteMirror` | `depth`, `scale`, `rotation`, `twist`, `offsetX`, `offsetY`, `pulse`, `glow`, `softness`, `vignette`, `monochrome`, `mirrorFrames`, `baseScene`, `symmetry`, `strobeOnBeat`, `feedbackMix` | Self-referential mirror corridor recursion using feedback; `baseScene` supports `grid`, `rings`, `checker`, `bars`, `void`. |
 | `volumetric_clouds` | `density`, `layers`, `windSpeed`, `cloudScale`, `detail`, `sunlight`, `haze`, `audioReact` | Layered procedural cloudscape with parallax and soft haze. |
+| `voronoi_cells` | `cellCount`, `drift`, `speed`, `lineWidth`, `lineAlpha`, `fillAlpha`, `contrast`, `jitter`, `paletteMode`, `beatPulse`, `shade`, `seed`, `pixelStep`, `chromatic` | Animated Voronoi-style cellular mosaic with era-aware palette bias; `paletteMode` supports `mono`, `neon`, `heat`, or `era`. |
 | `torus_orbit_3d` | `ringCount`, `pointsPerRing`, `majorRadius`, `minorRadius`, `spinSpeed`, `wobbleSpeed`, `depth`, `glow`, `palette`, `audioReact` | Orbiting 3D torus points; `palette` supports `teal`, `violet`, or `amber`. |
 | `raytrace_spheres` | `quality`, `bufW`, `bufH`, `sphereCount`, `maxDepth`, `floorReflect`, `shininess`, `diffuseStrength`, `specStrength`, `ambient`, `fov`, `cellSize`, `adaptive`, `refineThreshold`, `refineGrow`, `aa`, `aaMode`, `outputSmoothing`, `forceAA`, `audioReact`, `beatKick`, `scanlines`, `seed` | Low-res software raytraced spheres with reflections. |
 | `chess` | `speed`, `showHighlights`, `startTime` | Deterministic self-playing chess match with clearer silhouette-led pieces, distinctive major-piece markers, and move highlights. |
+| `cloth_sim` | `width`, `height`, `cols`, `rows`, `gravity`, `damping`, `stiffness`, `iterations`, `wind`, `flutter`, `audioReactive`, `pinMode`, `driftX`, `driftY`, `shading`, `seamAlpha`, `paletteMode`, `backgroundAlpha`, `mobileQuality`, `obstacle`, `obstacleSize` | Canvas2D verlet cloth mesh with pinned anchors, gust-driven folds, beat billows, and era-aware shading that can run as base or composited layer. |
 | `flyover` | `speed`, `horizon`, `seaDetail`, `waveSpeed`, `waveIntensity`, `islandCount`, `islandSeed`, `fog`, `palette`, `audioReactive` | `palette` supports `day`, `sunset`, `night`. |
 | `voxel_landscape` | `bufW`, `bufH`, `speed`, `turnRate`, `turnWobble`, `camH`, `heightBob`, `beatBump`, `fov`, `horizon`, `scale`, `maxDist`, `stepBase`, `stepGrow`, `fogStrength`, `audioReact`, `beatKick`, `scanlines`, `seed` | Heightfield voxel landscape flyover with portrait-aware camera framing. |
 | `voxel_world_builder` | `buildProgress`, `cityDensity`, `glow`, `cameraLift`, `seed` | WebGL2 instanced voxel city assembler (64x64 cubes); falls back to Canvas2D isometric voxels when WebGL2 is unavailable. |
@@ -195,7 +218,9 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `envmap_donut` | `bufW`, `bufH`, `segmentsU`, `segmentsV`, `R`, `r`, `camDist`, `focalMul`, `rotXSpeed`, `rotYSpeed`, `rotZSpeed`, `fresnelStrength`, `specStrength`, `shininess`, `chromeDesat`, `backfaceCull`, `scanlines`, `edge`, `audioReact`, `beatKick`, `seed` | Software environment-mapped chrome torus. |
 | `poly_morph_showcase` | `lat`, `lon`, `morphSpeed`, `styleSpeed`, `style`, `camDist`, `focalMul`, `rotXSpeed`, `rotYSpeed`, `rotZSpeed`, `sat`, `baseHue`, `hueSpeed`, `solidAlpha`, `glenzAlpha`, `shadedAlpha`, `edge`, `edgeAlpha`, `sortSolid`, `sortShaded`, `sortGlenz`, `audioReact`, `beatKick`, `seed` | `style` supports `auto`, `solid`, `glenz`, `shaded`. |
 | `glenz_vectors` | `model`, `instances`, `camDist`, `focal`, `rotXSpeed`, `rotYSpeed`, `rotZSpeed`, `baseHue`, `hueSpeed`, `sat`, `lightness`, `faceAlpha`, `edge`, `edgeAlpha`, `lineWidth`, `trailFade`, `sortFaces`, `audioReact`, `beatKick`, `seed` | `model` supports `cube`, `octa`, `icosa`; `sortFaces` supports `none` or `backToFront`. |
+| `god_rays` | `sourceX`, `sourceY`, `rayCount`, `spread`, `intensity`, `haze`, `occlusion`, `drift`, `pulse`, `warmth`, `dust`, `seed`, `style`, `sourceDriftX`, `sourceDriftY`, `shadowBands` | Atmospheric volumetric-style shafts with drifting haze, procedural occluders, and style variants (`sunbreak`, `window`, `cathedral`). |
 | `synthwaveSunset` | `horizon`, `sunRadius`, `stripeHeight`, `stripeGap`, `seaSpeed`, `starCount`, `glow`, `scanlines`, `audioReactive` |  |
+| `skyboxTransition` | `speed`, `intensity`, `horizon`, `cloudAmount`, `starAmount`, `silhouetteAmount`, `surrealness`, `audioReactive`, `loop`, `phaseOffset` | Evolving panoramic skybox backdrop that blends day, sunset, twilight, and surreal night moods. |
 | `taco_meteor_shower` | `shellCount`, `fallSpeed`, `swirl`, `burst`, `stardust`, `toppingSpread`, `audioReact`, `seed` | Luminescent taco shells cascade like meteors, shed sparkling stardust, and splat into avocado/cilantro/salsa confetti. |
 | `rain` | `intensity`, `wind`, `speed`, `streakLength`, `splash`, `hue`, `storm`, `turbulence`, `mist`, `seed` | `storm` controls downpour density/velocity, `turbulence` adds sideways sway, and `mist` controls near-ground fog bands. |
 | `rainbow_cat` | `speed`, `rainbowLength`, `bounce`, `sparkle`, `trailAlpha`, `catScale`, `starDensity`, `seed` | Synth-night rainbow cat silhouette with swishing tail, trotting paws, glitter stars, and a configurable six-colour trail. |
@@ -208,7 +233,10 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `platformerScroll` | `speed`, `seed`, `tileSize`, `groundRatio`, `parallaxFar`, `parallaxMid`, `parallaxFront`, `audioReact`, `beatKick`, `platformRate`, `platformMaxSteps` | Deterministic side-scrolling platformer parallax scene with looping platforms and a colorful cobalt mascot runner. |
 | `tetris_matrix` | `speed`, `level`, `glow`, `contrast`, `ghost`, `seed` | Self-playing falling-block match with chunky monochrome shading and a dot-matrix handheld screen vibe. |
 | `matrix_rain` | `speed`, `density`, `fontSize`, `trail`, `glow`, `brightness`, `jitter`, `audioReact`, `glyphSet`, `seed` | Matrix-style falling code rain tuned for slower, smoother descent with smaller glyphs and subtle default jitter. |
+| `tilingMorph` | `scale`, `morphSpeed`, `morphAmount`, `rotationSpeed`, `lineWidth`, `fillAlpha`, `paletteShift`, `audioReactive`, `cellJitter`, `roundedness`, `contrast`, `seed`, `backgroundAlpha`, `mode` | Seam-safe lattice tiling morph that cycles square, diamond, skewed, and rounded-interlocking phases; `mode` supports `mono`, `palette`, `neon`. |
+| `gameOfLife` | `cellSize`, `stepRate`, `seed`, `density`, `wrap`, `paletteMode`, `gridLines`, `fadeTrails`, `gliderRate`, `patternMode`, `burstOnBeat`, `survivalTint`, `safeFit` | Conway-style cellular automata with deterministic seeding, curated inserts, optional wrap edges, and restrained beat-triggered bursts/gliders. |
 | `greets_wall` | `names`, `layout`, `transitionStyle`, `cycleSeconds`, `columns`, `padding`, `highlightPulse`, `beatPulseDecay`, `audioReact`, `title` | `layout` supports `grid` or `carousel`; `transitionStyle` supports `slide`, `fade`, or `pop`. |
+| `hexGridPulse` | `cellSize`, `speed`, `waveScale`, `rippleStrength`, `pulseStrength`, `lineWidth`, `fillAlpha`, `glowAlpha`, `audioReactive`, `paletteMix`, `invert` | Hexagonal lattice with travelling waves, radial ripples, and controlled audio-reactive pulse highlights across eras. |
 | `doodle_greetz_wall` | `layout`, `transitionStyle`, `cycleSeconds`, `columns`, `padding`, `highlightPulse`, `beatPulseDecay`, `audioReact`, `title` | Pulls approved PNG doodles from the doodle API and renders them in `grid` or `carousel` layouts. |
 | `lightning` | `trigger`, `chancePerSecond`, `cooldown`, `flashDuration`, `bolt`, `branches`, `seed` | `trigger` supports `beat`, `random`, `both`. |
 | `effect_evolution` | `density`, `motion`, `warp`, `trail`, `seed` | Reinterprets the same lattice across eras. |

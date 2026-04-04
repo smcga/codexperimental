@@ -90,7 +90,7 @@ function buildTerminalBuffer(events: IntroScriptEvent[], time: number): Terminal
   return buffer;
 }
 
-function wrapLines(
+export function wrapLines(
   lines: string[],
   cursor: TypingCursor,
   maxChars: number
@@ -110,16 +110,43 @@ function wrapLines(
       }
       return;
     }
-    for (let i = 0; i < line.length; i += maxChars) {
-      const chunk = line.slice(i, i + maxChars);
+    const chunks: Array<{ start: number; end: number }> = [];
+    let start = 0;
+    while (start < line.length) {
+      const hardEnd = Math.min(line.length, start + maxChars);
+      if (hardEnd === line.length) {
+        chunks.push({ start, end: hardEnd });
+        break;
+      }
+
+      let softEnd = -1;
+      for (let index = hardEnd; index > start; index -= 1) {
+        if (/\s/.test(line[index - 1])) {
+          softEnd = index;
+          break;
+        }
+      }
+
+      const end = softEnd > start ? softEnd : hardEnd;
+      chunks.push({ start, end });
+      start = end;
+    }
+
+    chunks.forEach((chunkRange, chunkIndex) => {
+      const chunk = line.slice(chunkRange.start, chunkRange.end);
       wrapped.push(chunk);
-      if (lineIndex === cursor.line && cursor.column >= i && cursor.column <= i + maxChars) {
+      const isLastChunk = chunkIndex === chunks.length - 1;
+      if (
+        lineIndex === cursor.line
+        && cursor.column >= chunkRange.start
+        && (cursor.column < chunkRange.end || (isLastChunk && cursor.column === chunkRange.end))
+      ) {
         cursorLine = wrapped.length - 1;
-        cursorColumn = cursor.column - i;
+        cursorColumn = cursor.column - chunkRange.start;
       } else if (lineIndex < cursor.line) {
         cursorLine += 1;
       }
-    }
+    });
   });
 
   return { lines: wrapped, cursor: { line: cursorLine, column: cursorColumn } };
@@ -193,6 +220,7 @@ export class TerminalIntroRenderer {
     const contentWidth = windowWidth - theme.padding * 2;
     const contentHeight = windowHeight - theme.padding * 2 - titleBarHeight;
 
+    targetCtx.font = `${theme.fontSize}px ${theme.fontFamily}`;
     const buffer = buildTerminalBuffer(script, time);
     const charWidth = Math.max(1, targetCtx.measureText("M").width);
     const maxChars = Math.max(1, Math.floor(contentWidth / charWidth));
