@@ -34,6 +34,7 @@ export type EffectManifest = {
   className: string;
   sourcePath: string;
   createEffect: () => Effect;
+  debugPreview?: "replace" | "layer";
   debug: EffectDebugConfig;
   docs: EffectDocsConfig;
   defaults?: () => Record<string, EffectParamValue>;

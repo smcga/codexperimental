@@ -6,6 +6,7 @@ export const chromaticAberrationManifest = defineEffectManifest({
   className: "ChromaticAberrationEffect",
   sourcePath: "src/renderer/effects/chromaticAberration.ts",
   createEffect: () => new ChromaticAberrationEffect(),
+  debugPreview: "layer",
   debug: {
     title: "Chromatic Aberration Controls",
     controls: [
