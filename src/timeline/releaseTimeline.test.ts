@@ -126,6 +126,7 @@ describe("release timeline", () => {
       "matrix_rain",
       "velvet_dreamscape",
       "water_drops",
+      "recursiveFracture",
       "skeletal_ribbon",
       "infiniteMirror"
     ]);
