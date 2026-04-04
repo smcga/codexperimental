@@ -11,9 +11,10 @@
     "preview": "vite preview",
     "test": "vitest run",
     "docs:effects": "tsx scripts/generateEffectsDocs.ts",
-    "docs:check": "vitest run src/renderer/effects/effectsDocs.test.ts",
+    "docs:check": "vitest run src/renderer/effects/effectsDocs.test.ts src/renderer/transitions/transitionsDocs.test.ts",
     "gen:explicitpixels": "tsx scripts/generateExplicitPixels.ts",
-    "test:integration": "vitest run api/kv.integration.test.ts"
+    "test:integration": "vitest run api/kv.integration.test.ts",
+    "docs:transitions": "tsx scripts/generateTransitionsDocs.ts"
   },
   "dependencies": {
     "@upstash/redis": "^1.34.0"
