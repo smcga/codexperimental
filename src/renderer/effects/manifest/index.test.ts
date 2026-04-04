@@ -37,4 +37,24 @@ describe("effect manifests", () => {
     ]);
   });
 
+  it("exposes voronoi_cells controls and docs metadata", () => {
+    const manifest = getEffectManifest("voronoi_cells");
+    expect(manifest?.debug.controls.map((control) => control.key)).toEqual([
+      "cellCount",
+      "drift",
+      "speed",
+      "lineWidth",
+      "lineAlpha",
+      "fillAlpha",
+      "contrast",
+      "jitter",
+      "paletteMode",
+      "beatPulse",
+      "shade",
+      "seed",
+      "pixelStep",
+      "chromatic"
+    ]);
+    expect(manifest?.docs.catalogNote).toContain("Voronoi-style cellular mosaic");
+  });
 });

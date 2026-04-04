@@ -150,6 +150,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `tunnel` | `speed` |  |
 | `dotTunnel` | `ringCount`, `dotsPerRing`, `fov`, `speed`, `twist`, `palette`, `glow`, `seed` | Depth-sorted sprite/ring tunnel; `palette` selects built-in color ramps. |
 | `moire_grid` | `spacing`, `lineWidth`, `speed`, `warp`, `intensity`, `palette`, `audioReact` | Warped interference grid; `palette` supports `cyan`, `magenta`, or `amber`. |
+| `moving_shadow_map` | `seed`, `objectCount`, `lightCount`, `lightSpeed`, `lightHeightMin`, `lightHeightMax`, `shadowLength`, `shadowSoftness`, `floorGrid`, `paletteMode`, `contrast`, `haze`, `orbitRadius`, `colorA`, `colorB`, `lightColor` | Faux-3D Canvas2D scene with orbiting lights and projected moving shadows over a ground plane. |
 | `textmode_charset` | `cols`, `rows`, `glyphSet`, `mode`, `speed`, `palette`, `scanlines`, `seed` | Coarse character-grid renderer with glyph ramps (` .:-=+*#%@`) and palette-indexed tinting. |
 | `rotozoom` | `speed` |  |
 | `blobs` | `count`, `radius`, `orbit`, `speed`, `glow` |  |
@@ -177,7 +178,9 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `sphere3d` | `speed` |  |
 | `spherecloud` | `speed` |  |
 | `infinitycloud` | `speed` |  |
+| `infiniteMirror` | `depth`, `scale`, `rotation`, `twist`, `offsetX`, `offsetY`, `pulse`, `glow`, `softness`, `vignette`, `monochrome`, `mirrorFrames`, `baseScene`, `symmetry`, `strobeOnBeat`, `feedbackMix` | Self-referential mirror corridor recursion using feedback; `baseScene` supports `grid`, `rings`, `checker`, `bars`, `void`. |
 | `volumetric_clouds` | `density`, `layers`, `windSpeed`, `cloudScale`, `detail`, `sunlight`, `haze`, `audioReact` | Layered procedural cloudscape with parallax and soft haze. |
+| `voronoi_cells` | `cellCount`, `drift`, `speed`, `lineWidth`, `lineAlpha`, `fillAlpha`, `contrast`, `jitter`, `paletteMode`, `beatPulse`, `shade`, `seed`, `pixelStep`, `chromatic` | Animated Voronoi-style cellular mosaic with era-aware palette bias; `paletteMode` supports `mono`, `neon`, `heat`, or `era`. |
 | `torus_orbit_3d` | `ringCount`, `pointsPerRing`, `majorRadius`, `minorRadius`, `spinSpeed`, `wobbleSpeed`, `depth`, `glow`, `palette`, `audioReact` | Orbiting 3D torus points; `palette` supports `teal`, `violet`, or `amber`. |
 | `raytrace_spheres` | `quality`, `bufW`, `bufH`, `sphereCount`, `maxDepth`, `floorReflect`, `shininess`, `diffuseStrength`, `specStrength`, `ambient`, `fov`, `cellSize`, `adaptive`, `refineThreshold`, `refineGrow`, `aa`, `aaMode`, `outputSmoothing`, `forceAA`, `audioReact`, `beatKick`, `scanlines`, `seed` | Low-res software raytraced spheres with reflections. |
 | `chess` | `speed`, `showHighlights`, `startTime` | Deterministic self-playing chess match with clearer silhouette-led pieces, distinctive major-piece markers, and move highlights. |
