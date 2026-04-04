@@ -337,6 +337,7 @@ npm run preview
 - The start overlay and end overlay now pair that demoscene-styled call-to-action with a **Spread the signal** share control. On supported devices it opens the native share sheet; otherwise it reveals quick-share links for LinkedIn, X, Facebook, Reddit, email, plus a copy-link fallback.
 - `R` to restart
 - At the end screen, use **Add a doodle** to draw and submit a doodle for moderation; the modal now includes multiple brush colours plus an adjustable brush size slider, and approved doodles only appear in `doodle_greetz_wall` after someone opens the review page and approves them.
+- At the end screen, use **Got an effect idea? Make it real!** to open the effect-idea modal, describe a concept, generate TypeScript/runtime code through the OpenAI Codex API, preview it live, and submit it to a moderation queue before it can appear as an effect option.
 - `F` to toggle fullscreen (if supported)
 - `D` to toggle the debug overlay (timestamp, skip intro, skip to second half, transition selection, effect overrides, monochrome toggle)
 - The debug overlay shows WebGL status as `OK` or `FALLBACK` when available.
@@ -344,6 +345,8 @@ npm run preview
 - The serverless view/doodle APIs accept either the legacy `KV_*` Upstash variables or the newer `DB2_KV_*` prefixed variants. If any `DB2_*` variable is present, the API locks to the DB2 configuration and ignores legacy `KV_*` values. Use the REST URL/token variables (`*_KV_REST_API_URL`, `*_KV_REST_API_TOKEN`, and optionally `*_KV_REST_API_READ_ONLY_TOKEN`); copied values are trimmed, and raw `redis://` URLs are ignored by the REST client.
 - Doodle submissions now land in a pending moderation queue. The public doodle wall only reads approved doodles, while pending doodles stay hidden until approved via the signed review flow. Set `DOODLE_MODERATION_TOKEN` (or legacy `DOODLE_ADMIN_TOKEN`) to enable the review page at `/review.html?id=...&token=...`, direct moderation actions through `/api/doodles?action=approve|reject&id=...&token=...`, and queue inspection through `/api/doodles?includePending=1&token=...`.
 - To get fast phone notifications for new doodles, set `DOODLE_MODERATION_BASE_URL` to your public site URL and configure either `DOODLE_MODERATION_WEBHOOK_URL` for a custom JSON webhook payload or `DOODLE_MODERATION_NTFY_URL` (plus optional `DOODLE_MODERATION_NTFY_TOKEN`) to push a message through ntfy. The webhook payload includes the review URL plus direct moderation endpoints, while the ntfy notification sets a default click action that opens the signed doodle review page.
+- The effect-idea generator requires an OpenAI API key on the server. Set `OPENAI_API_KEY` and (optionally) `OPENAI_CODEX_MODEL` if you want to override the default model (`gpt-5-codex`), then redeploy.
+- Effect idea moderation uses `EFFECT_MODERATION_TOKEN` (falls back to `DOODLE_MODERATION_TOKEN` / `DOODLE_ADMIN_TOKEN`). Approve/reject links use `/api/effects?action=approve|reject&id=...&token=...`, and pending queue inspection uses `/api/effects?includePending=1&token=...`.
 - Run `npm run test:integration` in an environment with the DB2 secrets set to verify the live Upstash database exists and can be read/written. If the DB2 URL is malformed, the APIs now fail closed instead of crashing with a 500 during Redis client creation. The serverless API modules also use explicit `.js` ESM imports so Vercel can resolve the emitted files correctly.
 - Append `?editor=1` in dev builds to open the Scene + Timeline Editor (or toggle "Editor mode" in the debug overlay). The editor shows a live preview, edits hot-apply to the running demo, and changes persist to localStorage.
 - Playback now auto-syncs across same-origin tabs/windows via `BroadcastChannel`, so play/pause/seek/restart actions in one editor window mirror to the others (handy for running multiple preview sizes side-by-side).
@@ -386,3 +389,30 @@ curl -H "Title: ntfy doodle test" -d "If you can read this on your phone, ntfy i
 ```
 
 If that curl command appears on your phone but doodle submissions do not, double-check `DOODLE_MODERATION_BASE_URL`, `DOODLE_MODERATION_TOKEN`, and `DOODLE_MODERATION_NTFY_URL`, then redeploy.
+
+### Effect idea generator setup (OpenAI + moderation)
+
+To use **Got an effect idea? Make it real!** in deployed environments, configure these variables:
+
+```bash
+OPENAI_API_KEY=sk-...
+# Optional override; defaults to gpt-5-codex
+OPENAI_CODEX_MODEL=gpt-5-codex
+
+# Required if you want token-protected effect moderation endpoints
+EFFECT_MODERATION_TOKEN=replace-with-a-long-random-secret
+
+# Optional effect-specific moderation notifications
+EFFECT_MODERATION_BASE_URL=https://your-public-site.example.com
+EFFECT_MODERATION_NTFY_URL=https://ntfy.sh/effect-moderation-topic
+EFFECT_MODERATION_NTFY_TOKEN=your-ntfy-access-token
+```
+
+Optional fallback token behavior:
+- If `EFFECT_MODERATION_TOKEN` is not set, `/api/effects` moderation falls back to `DOODLE_MODERATION_TOKEN`, then `DOODLE_ADMIN_TOKEN`.
+- Effect moderation notifications can use their own ntfy feed (`EFFECT_MODERATION_NTFY_URL`) or fall back to doodle ntfy settings (`DOODLE_MODERATION_NTFY_URL`).
+- Generated effects are submitted into a pending queue; they only become selectable after approval via `/api/effects?action=approve&id=...&token=...`.
+- If generation requests return `503` from `/api/effects?action=generate`, check that `OPENAI_API_KEY` is set in your deployed environment and redeploy so the serverless function picks it up.
+- If generation fails with `Unable to parse generated effect response.`, the modal now shows the raw model output in the code panel so you can inspect formatting mismatches.
+- The generator prompt now explicitly asks for `runtimeCode` as plain JavaScript (no TS annotations/import/export). The client still attempts to normalize module-style code (`export default function ...`) when possible.
+- The client also normalizes escaped code payloads (for example strings containing literal `\\n`) before compiling preview/runtime effects.
