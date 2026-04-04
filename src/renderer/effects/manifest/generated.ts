@@ -27,6 +27,7 @@ import { glenz_vectorsManifest } from "./glenz_vectors.manifest";
 import { glitchManifest } from "./glitch.manifest";
 import { greets_wallManifest } from "./greets_wall.manifest";
 import { infinitycloudManifest } from "./infinitycloud.manifest";
+import { infinite_mirrorManifest } from "./infinite_mirror.manifest";
 import { isogridManifest } from "./isogrid.manifest";
 import { kefrens_barsManifest } from "./kefrens_bars.manifest";
 import { lemmings_marchManifest } from "./lemmings_march.manifest";
@@ -76,6 +77,7 @@ import { vector3d_ballsManifest } from "./vector3d_balls.manifest";
 import { velvet_dreamscapeManifest } from "./velvet_dreamscape.manifest";
 import { vga_fireManifest } from "./vga_fire.manifest";
 import { volumetric_cloudsManifest } from "./volumetric_clouds.manifest";
+import { voronoi_cellsManifest } from "./voronoi_cells.manifest";
 import { voxel_landscapeManifest } from "./voxel_landscape.manifest";
 import { voxel_world_builderManifest } from "./voxel_world_builder.manifest";
 import { water_dropsManifest } from "./water_drops.manifest";
@@ -111,6 +113,7 @@ export const generatedEffectManifests = [
   glitchManifest,
   greets_wallManifest,
   infinitycloudManifest,
+  infinite_mirrorManifest,
   isogridManifest,
   kefrens_barsManifest,
   lemmings_marchManifest,
@@ -160,6 +163,7 @@ export const generatedEffectManifests = [
   velvet_dreamscapeManifest,
   vga_fireManifest,
   volumetric_cloudsManifest,
+  voronoi_cellsManifest,
   voxel_landscapeManifest,
   voxel_world_builderManifest,
   water_dropsManifest,
