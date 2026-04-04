@@ -125,7 +125,9 @@ describe("release timeline", () => {
       "tetris_matrix",
       "matrix_rain",
       "velvet_dreamscape",
-      "water_drops"
+      "water_drops",
+      "skeletal_ribbon",
+      "infiniteMirror"
     ]);
     documentedEffects.forEach((effectId) => {
       if (optionalEffects.has(effectId)) {

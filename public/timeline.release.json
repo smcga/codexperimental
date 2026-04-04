@@ -182,6 +182,18 @@
           "blend": "screen",
           "opacity": 0.12,
           "params": {}
+        },
+        {
+          "effect": "moving_shadow_map",
+          "blend": "overlay",
+          "opacity": 0.18,
+          "params": {
+            "objectCount": 5,
+            "lightSpeed": 0.55,
+            "shadowLength": 1.15,
+            "haze": 0.15,
+            "floorGrid": 0
+          }
         }
       ],
       "fitAlign": "centre"
