@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **81**.
+Total effects: **82**.
 
 ## Table of contents
 
@@ -65,6 +65,7 @@ Total effects: **81**.
 - [Effect: shadebobs_bobs](#effect-shadebobs-bobs)
 - [Effect: sine_distorter](#effect-sine-distorter)
 - [Effect: sine_scroller_logo](#effect-sine-scroller-logo)
+- [Effect: smoke_simulation](#effect-smoke-simulation)
 - [Effect: space_hangar](#effect-space-hangar)
 - [Effect: spectrum_analyzer](#effect-spectrum-analyzer)
 - [Effect: sphere3d](#effect-sphere3d)
@@ -107,13 +108,13 @@ Total effects: **81**.
 ### Common parameter patterns
 
 - `speed` (used in 44 effects)
-- `seed` (used in 36 effects)
+- `seed` (used in 37 effects)
 - `audioReact` (used in 34 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 13 effects)
 - `trail` (used in 10 effects)
 - `palette` (used in 9 effects)
-- `hueShift` (used in 7 effects)
+- `hueShift` (used in 8 effects)
 - `scanlines` (used in 7 effects)
 - `count` (used in 6 effects)
 - `bufH` (used in 6 effects)
@@ -2158,6 +2159,48 @@ Total effects: **81**.
 ```json
 {
   "effect": "sine_scroller_logo",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: smoke_simulation
+
+- **Registry key:** `smoke_simulation`
+- **Implementation:** `src/renderer/effects/smokeSimulation.ts` (class `SmokeSimulationEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Low-res advection smoke with flow-field feedback and soft composited wisps.
+- **Audio features:** bass, beat, mid, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReactive` | number | 1 | min 0, max 1 | Audio Reactive | yes |
+| `params.bassInfluence` | number | 0.9 | min 0, max 2 | Bass Influence | yes |
+| `params.colorMode` | string | "mono" | options: mono, tinted | Color Mode | no |
+| `params.density` | number | 0.8 | min 0, max 1.3 | Density | yes |
+| `params.diffusion` | number | 0.92 | min 0, max 1 | Diffusion | yes |
+| `params.emission` | number | 0.5 | min 0, max 1.5 | Emission | yes |
+| `params.emitMode` | string | "bottom" | options: centre, bottom, random | Emit Mode | no |
+| `params.flowSpeed` | number | 0.6 | min 0, max 2 | Flow Speed | yes |
+| `params.highlights` | number | 0.45 | min 0, max 1 | Highlights | yes |
+| `params.hueShift` | number | 0 | min -180, max 180 | Hue Shift | yes |
+| `params.midInfluence` | number | 0.6 | min 0, max 2 | Mid Influence | yes |
+| `params.scale` | number | 1 | min 0.5, max 2.2 | Scale | yes |
+| `params.seed` | number | 0 | min 0, max 9999 | Seed | yes |
+| `params.softness` | number | 0.8 | min 0, max 1 | Softness | yes |
+| `params.swirl` | number | 0.8 | min 0, max 2 | Swirl | yes |
+| `params.trebleInfluence` | number | 0.5 | min 0, max 2 | Treble Influence | yes |
+| `params.turbulence` | number | 0.7 | min 0, max 2 | Turbulence | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "smoke_simulation",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
