@@ -165,6 +165,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `isogrid` | `opacity`, `lineWidth`, `spacing`, `wave`, `speed` |  |
 | `neon` | `shapes`, `radius`, `radiusStep`, `speed`, `glow`, `lineWidth` |  |
 | `particles` | `trail`, `burst`, `burstAudio`, `force`, `forceAudio` |  |
+| `particleAttractors` | `count`, `seed`, `attractorCount`, `strength`, `swirl`, `damping`, `speedLimit`, `softening`, `absorbRadius`, `spawnMode`, `trailAlpha`, `particleSize`, `glow`, `motion`, `audioReactive`, `beatPulse`, `colorMode`, `backgroundFade`, `vignette` | Gravity-well particle flow with swirling paths; `spawnMode` supports `edges`, `ring`, or `random`, and `colorMode` supports `mono`, `era`, or `heat`. |
 | `border_multiplex` | `hwSprites`, `totalSprites`, `bandHeight`, `spriteSize`, `speed`, `rasterJitter`, `borderMaskStrength`, `audioReact`, `seed` |  |
 | `fluid` | `speed`, `dissipation`, `splatCount`, `splatSize`, `turbulence`, `hueShift`, `seed` |  |
 | `boids_simulation` | `count`, `speed`, `cohesion`, `alignment`, `separation`, `neighborRadius`, `separationRadius`, `trail`, `size`, `seed` | Audio-reactive flocking simulation with wraparound space and neon boid trails. |

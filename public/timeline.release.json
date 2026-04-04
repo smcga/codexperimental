@@ -182,6 +182,21 @@
           "blend": "screen",
           "opacity": 0.12,
           "params": {}
+        },
+        {
+          "effect": "particleAttractors",
+          "blend": "screen",
+          "opacity": 0.14,
+          "params": {
+            "count": 280,
+            "attractorCount": 2,
+            "strength": 1500,
+            "swirl": 0.48,
+            "trailAlpha": 0.2,
+            "motion": 0.24,
+            "audioReactive": 0.35,
+            "glow": 0.5
+          }
         }
       ],
       "fitAlign": "centre"

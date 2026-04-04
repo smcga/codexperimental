@@ -39,6 +39,7 @@ import { moire_gridManifest } from "./moire_grid.manifest";
 import { neonManifest } from "./neon.manifest";
 import { neon_alleyManifest } from "./neon_alley.manifest";
 import { particlesManifest } from "./particles.manifest";
+import { particleAttractorsManifest } from "./particleAttractors.manifest";
 import { physics_pileManifest } from "./physics_pile.manifest";
 import { plasmaManifest } from "./plasma.manifest";
 import { platformerScrollManifest } from "./platformerScroll.manifest";
@@ -122,6 +123,7 @@ export const generatedEffectManifests = [
   neonManifest,
   neon_alleyManifest,
   particlesManifest,
+  particleAttractorsManifest,
   physics_pileManifest,
   plasmaManifest,
   platformerScrollManifest,
