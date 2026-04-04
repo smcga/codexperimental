@@ -156,6 +156,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `blobs` | `count`, `radius`, `orbit`, `speed`, `glow` |  |
 | `metaballs` | `bufW`, `bufH`, `count`, `baseRadius`, `radiusVar`, `baseThreshold`, `edgeSoftness`, `normalZ`, `ambient`, `diffuse`, `specStrength`, `shininess`, `rimStrength`, `palette`, `hueSpeed`, `smoothing`, `glow`, `audioReact`, `beatKick`, `seed` | Implicit surface metaballs with chrome/neon lighting; `palette` supports `chrome` or `neon`. |
 | `ribbons` | `count`, `speed`, `amplitude`, `audioBoost`, `offset`, `spacing`, `thickness` |  |
+| `skeletal_ribbon` | `boneCount`, `length`, `thickness`, `waveAmp`, `waveFreq`, `stiffness`, `audioInfluence`, `colorMode`, `hueShift`, `glow`, `debugSkeleton` | Articulated spine/tentacle ribbon driven by chained bone kinematics with beat-reactive pulse thickness. |
 | `lissajous` | `points`, `speed`, `a`, `b`, `radius`, `lineWidth` |  |
 | `glitch` | `sparkles`, `sparkleSize`, `sliceCount`, `sliceBoost`, `sliceHeight`, `sliceVariance`, `offset`, `shake`, `maxShake` |  |
 | `bokeh` | `count`, `speed`, `radius`, `alpha`, `hueShift` |  |

@@ -126,6 +126,7 @@ describe("release timeline", () => {
       "matrix_rain",
       "velvet_dreamscape",
       "water_drops",
+      "skeletal_ribbon",
       "infiniteMirror"
     ]);
     documentedEffects.forEach((effectId) => {
