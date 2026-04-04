@@ -167,6 +167,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `particles` | `trail`, `burst`, `burstAudio`, `force`, `forceAudio` |  |
 | `border_multiplex` | `hwSprites`, `totalSprites`, `bandHeight`, `spriteSize`, `speed`, `rasterJitter`, `borderMaskStrength`, `audioReact`, `seed` |  |
 | `fluid` | `speed`, `dissipation`, `splatCount`, `splatSize`, `turbulence`, `hueShift`, `seed` |  |
+| `reactionDiffusion` | `scale`, `simScale`, `feed`, `kill`, `diffA`, `diffB`, `steps`, `seed`, `contrast`, `brightness`, `invert`, `paletteMix`, `audioReactivity`, `beatPulse`, `drift`, `reseedCue` | Gray–Scott style reaction-diffusion simulation with evolving spots/stripes, subtle audio pulse response, and era-aware output shaping. |
 | `boids_simulation` | `count`, `speed`, `cohesion`, `alignment`, `separation`, `neighborRadius`, `separationRadius`, `trail`, `size`, `seed` | Audio-reactive flocking simulation with wraparound space and neon boid trails. |
 | `finale` | `trail`, `starSpeed`, `starWarp`, `starTurn`, `particleCount`, `particleForce`, `bars`, `barHeight` |  |
 | `proper3d` | `speed` |  |

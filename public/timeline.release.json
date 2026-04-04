@@ -182,6 +182,17 @@
           "blend": "screen",
           "opacity": 0.12,
           "params": {}
+        },
+        {
+          "effect": "reactionDiffusion",
+          "blend": "overlay",
+          "opacity": 0.08,
+          "params": {
+            "simScale": 0.2,
+            "steps": 4,
+            "paletteMix": 0.18,
+            "audioReactivity": 0.1
+          }
         }
       ],
       "fitAlign": "centre"

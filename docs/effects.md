@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **81**.
+Total effects: **82**.
 
 ## Table of contents
 
@@ -59,6 +59,7 @@ Total effects: **81**.
 - [Effect: raster_bars](#effect-raster-bars)
 - [Effect: raymarch_fractal](#effect-raymarch-fractal)
 - [Effect: raytrace_spheres](#effect-raytrace-spheres)
+- [Effect: reactionDiffusion](#effect-reactionDiffusion)
 - [Effect: ribbons](#effect-ribbons)
 - [Effect: roadDrive](#effect-roadDrive)
 - [Effect: rotozoom](#effect-rotozoom)
@@ -107,7 +108,7 @@ Total effects: **81**.
 ### Common parameter patterns
 
 - `speed` (used in 44 effects)
-- `seed` (used in 36 effects)
+- `seed` (used in 37 effects)
 - `audioReact` (used in 34 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 13 effects)
@@ -1937,6 +1938,47 @@ Total effects: **81**.
 ```json
 {
   "effect": "raytrace_spheres",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: reactionDiffusion
+
+- **Registry key:** `reactionDiffusion`
+- **Implementation:** `src/renderer/effects/reactionDiffusion.ts` (class `ReactionDiffusionEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Reaction Diffusion
+- **Audio features:** beat, beatStrength, mid, rms, treble
+- **Performance notes:** Uses ImageData per frame; CPU cost scales with resolution.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReactivity` | number | 0.2 | min 0, max 1 | Audio Reactivity | yes |
+| `params.beatPulse` | number | 0.15 | min 0, max 1 | Beat Pulse | yes |
+| `params.brightness` | number | 1 | min 0.2, max 2.5 | Brightness | yes |
+| `params.contrast` | number | 1.4 | min 0.4, max 3.2 | Contrast | yes |
+| `params.diffA` | number | 1 | min 0.2, max 1.6 | Diffusion A | yes |
+| `params.diffB` | number | 0.5 | min 0.1, max 1.2 | Diffusion B | yes |
+| `params.drift` | number | 0.05 | min 0, max 0.5 | Drift | yes |
+| `params.feed` | number | 0.042 | min 0.01, max 0.09 | Feed | yes |
+| `params.invert` | boolean | 0 | unspecified | Invert | unknown |
+| `params.kill` | number | 0.06 | min 0.03, max 0.09 | Kill | yes |
+| `params.paletteMix` | number | 0.35 | min 0, max 1 | Palette Mix | yes |
+| `params.reseedCue` | number | 0 | min 0, max 1 | Reseed Cue | yes |
+| `params.scale` | number | 1 | min 0.5, max 3 | Scale | yes |
+| `params.seed` | number | 1 | min 0, max 999999 | Seed | yes |
+| `params.simScale` | number | 0.25 | min 0.08, max 0.7 | Simulation Scale | yes |
+| `params.steps` | number | 6 | min 1, max 18 | Substeps | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "reactionDiffusion",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
