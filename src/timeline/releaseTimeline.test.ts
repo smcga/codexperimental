@@ -126,7 +126,9 @@ describe("release timeline", () => {
       "matrix_rain",
       "velvet_dreamscape",
       "water_drops",
-      "recursiveFracture"
+      "recursiveFracture",
+      "skeletal_ribbon",
+      "infiniteMirror"
     ]);
     documentedEffects.forEach((effectId) => {
       if (optionalEffects.has(effectId)) {
