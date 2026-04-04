@@ -49,6 +49,7 @@ import { fetchViews, registerViewOncePerSession } from "./viewCounter";
 import { buildSharePayload, canUseNativeShare, getShareLink, ShareLinkPlatform } from "./share";
 import { getOverlayPresentation, OverlayMode } from "./overlayContent";
 import { buildTransitionOptionMarkup } from "./renderer/transitions";
+import { createPlaybackSyncController, shouldApplyRemoteState } from "./playbackSync";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
@@ -146,6 +147,62 @@ let doodlePointerId: number | null = null;
 let doodleBrushColor = DEFAULT_DOODLE_BRUSH_COLOR;
 let doodleBrushSize = DEFAULT_DOODLE_BRUSH_SIZE;
 let sharePanelVisible = false;
+let playbackSyncSuppressBroadcast = false;
+let lastPlaybackSyncStateSentAt = 0;
+const playbackSync = createPlaybackSyncController(
+  {
+    onRemoteTransport: (action, time) => {
+      if (playbackSyncSuppressBroadcast) {
+        return;
+      }
+      playbackSyncSuppressBroadcast = true;
+      try {
+        if (action === "start") {
+          void startDemo();
+          return;
+        }
+        if (action === "restart") {
+          void restartDemo();
+          return;
+        }
+        if (!audioPlayer) {
+          return;
+        }
+        if (action === "play") {
+          void audioPlayer.play();
+          return;
+        }
+        if (action === "pause") {
+          audioPlayer.pause();
+          return;
+        }
+        if (action === "seek" && typeof time === "number") {
+          audioPlayer.seek(time);
+        }
+      } finally {
+        setTimeout(() => {
+          playbackSyncSuppressBroadcast = false;
+        }, 0);
+      }
+    },
+    onRemoteState: ({ playing, time }) => {
+      if (!audioPlayer) {
+        return;
+      }
+      if (playing !== !audioPlayer.paused) {
+        if (playing) {
+          void audioPlayer.play();
+        } else {
+          audioPlayer.pause();
+        }
+      }
+      if (shouldApplyRemoteState(audioPlayer.currentTime, time, 0.35)) {
+        audioPlayer.seek(time);
+      }
+    }
+  },
+  { sourceId: `${window.location.pathname}-${Math.random().toString(36).slice(2)}` }
+);
 const debugState = {
   enabled: false,
   forcedEffect: null as string | null,
@@ -184,6 +241,9 @@ async function handlePlaybackStarted(): Promise<void> {
 function attachAudioPlayerHandlers(player: AudioPlayer): void {
   player.onStarted = () => {
     void handlePlaybackStarted();
+    if (!playbackSyncSuppressBroadcast) {
+      playbackSync.broadcastTransport("play");
+    }
   };
 }
 
@@ -778,6 +838,9 @@ if (!releaseMode && debugSkipIntroButton) {
     }
     const targetTime = getIntroSkipTime(introConfig.end, timeline.getAudioOffset(), audioPlayer.currentTime);
     audioPlayer.seek(targetTime);
+    if (!playbackSyncSuppressBroadcast) {
+      playbackSync.broadcastTransport("seek", targetTime);
+    }
   });
 }
 
@@ -788,6 +851,9 @@ if (!releaseMode && debugSkipSecondHalfButton) {
     }
     const targetTime = getSecondHalfSkipTime(SECOND_HALF_START, timeline.getAudioOffset(), audioPlayer.currentTime);
     audioPlayer.seek(targetTime);
+    if (!playbackSyncSuppressBroadcast) {
+      playbackSync.broadcastTransport("seek", targetTime);
+    }
   });
 }
 
@@ -798,6 +864,9 @@ if (!releaseMode && debugSkipBackButton) {
     }
     const targetTime = getRelativeSeekTime(audioPlayer.currentTime, -10, audioPlayer.duration);
     audioPlayer.seek(targetTime);
+    if (!playbackSyncSuppressBroadcast) {
+      playbackSync.broadcastTransport("seek", targetTime);
+    }
   });
 }
 
@@ -808,6 +877,9 @@ if (!releaseMode && debugSkipForwardButton) {
     }
     const targetTime = getRelativeSeekTime(audioPlayer.currentTime, 10, audioPlayer.duration);
     audioPlayer.seek(targetTime);
+    if (!playbackSyncSuppressBroadcast) {
+      playbackSync.broadcastTransport("seek", targetTime);
+    }
   });
 }
 
@@ -826,12 +898,21 @@ if (!releaseMode) {
           return;
         }
         await audioPlayer.play();
+        if (!playbackSyncSuppressBroadcast) {
+          playbackSync.broadcastTransport("play");
+        }
       },
       pause: () => {
         audioPlayer?.pause();
+        if (!playbackSyncSuppressBroadcast) {
+          playbackSync.broadcastTransport("pause");
+        }
       },
       seek: (time: number) => {
         audioPlayer?.seek(time);
+        if (!playbackSyncSuppressBroadcast) {
+          playbackSync.broadcastTransport("seek", time);
+        }
       },
       getAudioOffset: () => timeline?.getAudioOffset() ?? 0,
       getAudioDuration: () => audioPlayer?.duration ?? 0
@@ -876,6 +957,9 @@ async function startDemo(): Promise<void> {
     timeline.setAudioDuration(audioPlayer.duration);
 
     await audioPlayer.play();
+    if (!playbackSyncSuppressBroadcast) {
+      playbackSync.broadcastTransport("start");
+    }
     renderer.reset();
     isRunning = true;
     lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
@@ -900,6 +984,9 @@ async function restartDemo(): Promise<void> {
   }
   setDoodleModalVisible(false);
   await audioPlayer.restart();
+  if (!playbackSyncSuppressBroadcast) {
+    playbackSync.broadcastTransport("restart");
+  }
   renderer.reset();
   lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
   lastFrameTimestamp = performance.now();
@@ -1013,6 +1100,10 @@ function loop(): void {
     return;
   }
 
+  if (now - lastPlaybackSyncStateSentAt >= 120) {
+    playbackSync.broadcastState({ playing: !audioPlayer.paused, time: audioPlayer.currentTime });
+    lastPlaybackSyncStateSentAt = now;
+  }
   animationFrame = requestAnimationFrame(loop);
 }
 
@@ -1179,6 +1270,10 @@ window.addEventListener("keydown", (event) => {
   if (event.key.toLowerCase() === "f" && document.fullscreenEnabled) {
     toggleFullscreen();
   }
+});
+
+window.addEventListener("beforeunload", () => {
+  playbackSync.destroy();
 });
 
 if (!releaseMode && mobileControls && mobileDebugButton) {
