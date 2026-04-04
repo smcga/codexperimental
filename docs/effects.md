@@ -70,6 +70,7 @@ Total effects: **82**.
 - [Effect: shadebobs_bobs](#effect-shadebobs-bobs)
 - [Effect: sine_distorter](#effect-sine-distorter)
 - [Effect: sine_scroller_logo](#effect-sine-scroller-logo)
+- [Effect: skyboxTransition](#effect-skyboxTransition)
 - [Effect: skeletal_ribbon](#effect-skeletal-ribbon)
 - [Effect: space_hangar](#effect-space-hangar)
 - [Effect: spectrum_analyzer](#effect-spectrum-analyzer)
@@ -2368,6 +2369,27 @@ Total effects: **82**.
 
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
 | --- | --- | --- | --- | --- | --- |
+| `params.audioReactive` | number | 0.4 | min 0, max 1 | Audio Reactive | yes |
+| `params.cloudAmount` | number | 0.55 | min 0, max 1.2 | Cloud Amount | yes |
+| `params.horizon` | number | 0.62 | min 0.3, max 0.85 | Horizon | yes |
+| `params.intensity` | number | 1 | min 0.3, max 1.8 | Intensity | yes |
+| `params.loop` | boolean | 1 | unspecified | Loop | unknown |
+| `params.phaseOffset` | number | 0 | min -1, max 1 | Phase Offset | yes |
+| `params.silhouetteAmount` | number | 0.5 | min 0, max 1.2 | Silhouette Amount | yes |
+| `params.speed` | number | 1 | min 0.05, max 3 | Speed | yes |
+| `params.starAmount` | number | 0.7 | min 0, max 1.2 | Star Amount | yes |
+| `params.surrealness` | number | 0.35 | min 0, max 1.4 | Surrealness | yes |
+
+## Effect: skyboxTransition
+
+- **Registry key:** `skyboxTransition`
+- **Implementation:** `src/renderer/effects/skyboxTransition.ts` (class `SkyboxTransitionEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Evolving panoramic skybox backdrop that glides from day to surreal night with layered haze, silhouettes, and late-phase stars.
+- **Audio features:** bass, beat, beatStrength, rms, treble
+
+### Parameters
+
 | `params.audioInfluence` | number | 1 | min 0, max 2 | Audio Influence | yes |
 | `params.boneCount` | number | 24 | min 8, max 32 | Bone Count | yes |
 | `params.colorMode` | string | "gradient" | options: mono, gradient | Color Mode | no |
@@ -2384,7 +2406,7 @@ Total effects: **82**.
 
 ```json
 {
-  "effect": "skeletal_ribbon",
+  "effect": "skyboxTransition",
   "opacity": 1,
   "blend": "source-over",
   "params": {}

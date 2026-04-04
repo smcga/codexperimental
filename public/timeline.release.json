@@ -941,6 +941,22 @@
           "params": {}
         },
         {
+          "effect": "skyboxTransition",
+          "blend": "soft-light",
+          "opacity": 0.26,
+          "params": {
+            "speed": 0.72,
+            "intensity": 0.9,
+            "horizon": 0.64,
+            "cloudAmount": 0.5,
+            "starAmount": 0.62,
+            "silhouetteAmount": 0.42,
+            "surrealness": 0.3,
+            "audioReactive": 0.2,
+            "phaseOffset": 0.18
+          }
+        },
+        {
           "effect": "rain",
           "blend": "screen",
           "opacity": 0.08,
@@ -1724,6 +1740,22 @@
           "blend": "screen",
           "opacity": 0.11,
           "params": {}
+        },
+        {
+          "effect": "skyboxTransition",
+          "blend": "soft-light",
+          "opacity": 0.26,
+          "params": {
+            "speed": 0.72,
+            "intensity": 0.9,
+            "horizon": 0.64,
+            "cloudAmount": 0.5,
+            "starAmount": 0.62,
+            "silhouetteAmount": 0.42,
+            "surrealness": 0.3,
+            "audioReactive": 0.2,
+            "phaseOffset": 0.18
+          }
         },
         {
           "effect": "volumetric_clouds",
