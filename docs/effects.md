@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **78**.
+Total effects: **82**.
 
 ## Table of contents
 
@@ -29,6 +29,7 @@ Total effects: **78**.
 - [Effect: flyover](#effect-flyover)
 - [Effect: fractal](#effect-fractal)
 - [Effect: fractal_zoomer](#effect-fractal-zoomer)
+- [Effect: gl_crystal_cathedral](#effect-gl-crystal-cathedral)
 - [Effect: gl_fractal_tunnel](#effect-gl-fractal-tunnel)
 - [Effect: gl_impossible_corridor](#effect-gl-impossible-corridor)
 - [Effect: glenz_vectors](#effect-glenz-vectors)
@@ -106,18 +107,18 @@ Total effects: **78**.
 
 ### Common parameter patterns
 
-- `speed` (used in 43 effects)
-- `seed` (used in 34 effects)
-- `audioReact` (used in 33 effects)
-- `beatKick` (used in 14 effects)
-- `glow` (used in 12 effects)
+- `speed` (used in 45 effects)
+- `seed` (used in 37 effects)
+- `audioReact` (used in 35 effects)
+- `beatKick` (used in 15 effects)
+- `glow` (used in 14 effects)
 - `trail` (used in 10 effects)
 - `palette` (used in 9 effects)
-- `hueShift` (used in 7 effects)
+- `hueShift` (used in 8 effects)
 - `scanlines` (used in 7 effects)
+- `quality` (used in 7 effects)
 - `count` (used in 6 effects)
 - `bufH` (used in 6 effects)
-- `bufW` (used in 6 effects)
 
 ## Effects
 
@@ -891,6 +892,44 @@ Total effects: **78**.
 ```json
 {
   "effect": "fractal_zoomer",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: gl_crystal_cathedral
+
+- **Registry key:** `gl_crystal_cathedral`
+- **Implementation:** `src/renderer/effects/gl/crystalCathedralEffect.ts` (class `CrystalCathedralEffect`)
+- **Renderer:** WebGL2
+- **Description:** Raymarched crystalline cathedral with reflective floor, repeating arches, and audio-reactive emissive geometry. Falls back to a stylised Canvas2D cathedral pass when WebGL2 is unavailable.
+- **Audio features:** bass, beat, beatStrength, mid, rms, treble
+- **Performance notes:** WebGL2 shader pipeline; performance depends on GPU.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReact` | number | 0.7 | min 0, max 1 | Audio React | yes |
+| `params.beatKick` | number | 0.55 | min 0, max 1 | Beat Kick | yes |
+| `params.crystalDensity` | number | 0.7 | min 0.2, max 1.4 | Crystal Density | yes |
+| `params.exposure` | number | 1.15 | min 0.5, max 2 | Exposure | yes |
+| `params.facetSharpness` | number | 0.6 | min 0.1, max 1.5 | Facet Sharpness | yes |
+| `params.fog` | number | 0.35 | min 0, max 1 | Fog | yes |
+| `params.glow` | number | 0.8 | min 0, max 2 | Glow | yes |
+| `params.hueShift` | number | 0.08 | min 0, max 1 | Hue Shift | yes |
+| `params.quality` | number | 2 | min 1, max 3 | Quality | yes |
+| `params.reflectivity` | number | 0.45 | min 0, max 1 | Reflectivity | yes |
+| `params.seed` | number | 21 | min 0, max 9999 | Seed | yes |
+| `params.speed` | number | 0.65 | min 0.1, max 2 | Speed | yes |
+| `params.symmetry` | number | 0.85 | min 0, max 1 | Symmetry | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "gl_crystal_cathedral",
   "opacity": 1,
   "blend": "source-over",
   "params": {}

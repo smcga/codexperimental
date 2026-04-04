@@ -26,6 +26,12 @@ export type WebGLUniformPayload = {
   audioReact?: number;
   beatKick?: number;
   fractalScale?: number;
+  crystalDensity?: number;
+  symmetry?: number;
+  reflectivity?: number;
+  fog?: number;
+  glow?: number;
+  facetSharpness?: number;
 };
 
 const VERTEX_SHADER_SOURCE = `#version 300 es
@@ -184,7 +190,13 @@ export class WebGLEffectBase {
       u_paletteSpeed: gl.getUniformLocation(program, "u_paletteSpeed"),
       u_audioReact: gl.getUniformLocation(program, "u_audioReact"),
       u_beatKick: gl.getUniformLocation(program, "u_beatKick"),
-      u_fractalScale: gl.getUniformLocation(program, "u_fractalScale")
+      u_fractalScale: gl.getUniformLocation(program, "u_fractalScale"),
+      u_crystalDensity: gl.getUniformLocation(program, "u_crystalDensity"),
+      u_symmetry: gl.getUniformLocation(program, "u_symmetry"),
+      u_reflectivity: gl.getUniformLocation(program, "u_reflectivity"),
+      u_fog: gl.getUniformLocation(program, "u_fog"),
+      u_glow: gl.getUniformLocation(program, "u_glow"),
+      u_facetSharpness: gl.getUniformLocation(program, "u_facetSharpness")
     };
 
     gl.disable(gl.BLEND);
@@ -257,6 +269,12 @@ export class WebGLEffectBase {
     set1f("u_audioReact", payload.audioReact);
     set1f("u_beatKick", payload.beatKick);
     set1f("u_fractalScale", payload.fractalScale);
+    set1f("u_crystalDensity", payload.crystalDensity);
+    set1f("u_symmetry", payload.symmetry);
+    set1f("u_reflectivity", payload.reflectivity);
+    set1f("u_fog", payload.fog);
+    set1f("u_glow", payload.glow);
+    set1f("u_facetSharpness", payload.facetSharpness);
 
     const modeLocation = this.uniformLocations.u_mode;
     if (modeLocation && Number.isFinite(payload.mode)) {
