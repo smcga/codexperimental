@@ -44,6 +44,8 @@ type FitAlignDebug = {
   layerFitAligns: FitAlign[];
 };
 
+const POST_PROCESS_EFFECTS = new Set(["ssao_post"]);
+
 export class Renderer {
   private baseCanvas: HTMLCanvasElement;
   private baseCtx: CanvasRenderingContext2D;
@@ -397,6 +399,9 @@ export class Renderer {
     section.layers.forEach((layer) => {
       this.layerCtx.clearRect(0, 0, this.layerCanvas.width, this.layerCanvas.height);
       const layerParams = resolveAutomatedParams(time, layer.params, layer.automation);
+      if (POST_PROCESS_EFFECTS.has(layer.effect)) {
+        this.layerCtx.drawImage(this.sceneCanvas, 0, 0, this.layerCanvas.width, this.layerCanvas.height);
+      }
       this.renderEffectTo(
         this.layerCtx,
         layer.effect,
@@ -502,6 +507,9 @@ export class Renderer {
       section.layers.forEach((layer) => {
         this.layerCtx.clearRect(0, 0, this.layerCanvas.width, this.layerCanvas.height);
         const layerParams = resolveAutomatedParams(time, layer.params, layer.automation);
+        if (POST_PROCESS_EFFECTS.has(layer.effect)) {
+          this.layerCtx.drawImage(this.sceneCanvas, 0, 0, this.layerCanvas.width, this.layerCanvas.height);
+        }
         this.renderEffectTo(
           this.layerCtx,
           layer.effect,

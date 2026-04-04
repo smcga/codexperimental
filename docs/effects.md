@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **81**.
+Total effects: **82**.
 
 ## Table of contents
 
@@ -69,6 +69,7 @@ Total effects: **81**.
 - [Effect: spectrum_analyzer](#effect-spectrum-analyzer)
 - [Effect: sphere3d](#effect-sphere3d)
 - [Effect: spherecloud](#effect-spherecloud)
+- [Effect: ssao_post](#effect-ssao-post)
 - [Effect: starfield](#effect-starfield)
 - [Effect: synthwaveSunset](#effect-synthwaveSunset)
 - [Effect: taco_meteor_shower](#effect-taco-meteor-shower)
@@ -2272,6 +2273,38 @@ Total effects: **81**.
 ```json
 {
   "effect": "spherecloud",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: ssao_post
+
+- **Registry key:** `ssao_post`
+- **Implementation:** `src/renderer/effects/ssaoPostEffect.ts` (class `SsaoPostEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Single-pass SSAO-style post shading with WebGL2 path and Canvas2D fallback.
+- **Audio features:** None detected
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params` | number | no explicit default | unspecified | Used in effect render logic. | yes |
+| `params.bias` | number | 0.1 | min -1, max 1 | Bias | yes |
+| `params.edgeBoost` | number | 0.5 | min 0, max 2 | Edge Boost | yes |
+| `params.intensity` | number | 0.6 | min 0, max 1.2 | Intensity | yes |
+| `params.luminanceInfluence` | number | 0.7 | min 0, max 1 | Luminance Influence | yes |
+| `params.radius` | number | 6 | min 1, max 20 | Radius | yes |
+| `params.samples` | number | 8 | min 1, max 8 | Samples | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "ssao_post",
   "opacity": 1,
   "blend": "source-over",
   "params": {}

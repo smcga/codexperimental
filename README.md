@@ -220,6 +220,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `sine_distorter` | `mode`, `amp`, `freq`, `speed`, `slice`, `phase`, `sourceScale`, `edges`, `source`, `logoText`, `audioReact`, `beatBoost`, `glow` | Wavy glass distorter (scanline or column sine shifts). |
 | `fractal_zoomer` | `setType`, `zoom`, `centerX`, `centerY`, `iterations`, `paletteSpeed`, `audioReact` | `setType` supports `mandelbrot`, `julia`, or `burningShip`. |
 | `explicitpixels` | `mode`, `speed`, `audioReact` | `mode` supports `explicit` (generated wall of byte assignments) or `procedural` (loop-driven animation). |
+| `ssao_post` | `radius`, `intensity`, `bias`, `samples`, `luminanceInfluence`, `edgeBoost` | Single-pass SSAO-style post shading with WebGL2 path and Canvas2D fallback. |
 | `raymarch_fractal` | `quality`, `fractal`, `cameraRadius`, `cameraHeight`, `cameraOrbitSpeed`, `paletteSpeed`, `audioReact`, `beatKick`, `fractalScale` | `fractal` supports `mandelbulb` or `mandelbox`. |
 
 #### voxel_world_builder intended usage

@@ -57,6 +57,7 @@ import { rotozoomManifest } from "./rotozoom.manifest";
 import { shadebobs_bobsManifest } from "./shadebobs_bobs.manifest";
 import { sine_distorterManifest } from "./sine_distorter.manifest";
 import { sine_scroller_logoManifest } from "./sine_scroller_logo.manifest";
+import { ssao_postManifest } from "./ssao_post.manifest";
 import { space_hangarManifest } from "./space_hangar.manifest";
 import { spectrum_analyzerManifest } from "./spectrum_analyzer.manifest";
 import { sphere3dManifest } from "./sphere3d.manifest";
@@ -140,6 +141,7 @@ export const generatedEffectManifests = [
   shadebobs_bobsManifest,
   sine_distorterManifest,
   sine_scroller_logoManifest,
+  ssao_postManifest,
   space_hangarManifest,
   spectrum_analyzerManifest,
   sphere3dManifest,
