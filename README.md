@@ -153,6 +153,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `textmode_charset` | `cols`, `rows`, `glyphSet`, `mode`, `speed`, `palette`, `scanlines`, `seed` | Coarse character-grid renderer with glyph ramps (` .:-=+*#%@`) and palette-indexed tinting. |
 | `rotozoom` | `speed` |  |
 | `blobs` | `count`, `radius`, `orbit`, `speed`, `glow` |  |
+| `billboard_forest` | `treeCount`, `speed`, `spread`, `depth`, `fog`, `sway`, `trunkHeight`, `canopySize`, `palette`, `seed`, `layers`, `groundMist`, `beatPulse`, `tilt`, `parallax` | Faux-3D billboard forest flythrough with seeded tree placement, fog layering, and palette moods (`day`, `dusk`, `night`, `neon`). |
 | `metaballs` | `bufW`, `bufH`, `count`, `baseRadius`, `radiusVar`, `baseThreshold`, `edgeSoftness`, `normalZ`, `ambient`, `diffuse`, `specStrength`, `shininess`, `rimStrength`, `palette`, `hueSpeed`, `smoothing`, `glow`, `audioReact`, `beatKick`, `seed` | Implicit surface metaballs with chrome/neon lighting; `palette` supports `chrome` or `neon`. |
 | `ribbons` | `count`, `speed`, `amplitude`, `audioBoost`, `offset`, `spacing`, `thickness` |  |
 | `lissajous` | `points`, `speed`, `a`, `b`, `radius`, `lineWidth` |  |

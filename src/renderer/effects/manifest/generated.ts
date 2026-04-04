@@ -1,5 +1,6 @@
 import { amiga_showcaseManifest } from "./amiga_showcase.manifest";
 import { blobsManifest } from "./blobs.manifest";
+import { billboard_forestManifest } from "./billboard_forest.manifest";
 import { boids_simulationManifest } from "./boids_simulation.manifest";
 import { bokehManifest } from "./bokeh.manifest";
 import { border_multiplexManifest } from "./border_multiplex.manifest";
@@ -83,6 +84,7 @@ import { wireframeRideManifest } from "./wireframeRide.manifest";
 export const generatedEffectManifests = [
   amiga_showcaseManifest,
   blobsManifest,
+  billboard_forestManifest,
   boids_simulationManifest,
   bokehManifest,
   border_multiplexManifest,

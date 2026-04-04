@@ -182,6 +182,18 @@
           "blend": "screen",
           "opacity": 0.12,
           "params": {}
+        },
+        {
+          "effect": "billboard_forest",
+          "blend": "screen",
+          "opacity": 0.14,
+          "params": {
+            "treeCount": 180,
+            "speed": 0.84,
+            "fog": 0.72,
+            "palette": "night",
+            "groundMist": 0.52
+          }
         }
       ],
       "fitAlign": "centre"

@@ -2,11 +2,12 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **81**.
+Total effects: **82**.
 
 ## Table of contents
 
 - [Effect: amiga_showcase](#effect-amiga-showcase)
+- [Effect: billboard_forest](#effect-billboard-forest)
 - [Effect: blobs](#effect-blobs)
 - [Effect: boids_simulation](#effect-boids-simulation)
 - [Effect: bokeh](#effect-bokeh)
@@ -106,13 +107,13 @@ Total effects: **81**.
 
 ### Common parameter patterns
 
-- `speed` (used in 44 effects)
-- `seed` (used in 36 effects)
+- `speed` (used in 45 effects)
+- `seed` (used in 37 effects)
 - `audioReact` (used in 34 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 13 effects)
+- `palette` (used in 10 effects)
 - `trail` (used in 10 effects)
-- `palette` (used in 9 effects)
 - `hueShift` (used in 7 effects)
 - `scanlines` (used in 7 effects)
 - `count` (used in 6 effects)
@@ -157,6 +158,46 @@ Total effects: **81**.
 ```json
 {
   "effect": "amiga_showcase",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: billboard_forest
+
+- **Registry key:** `billboard_forest`
+- **Implementation:** `src/renderer/effects/billboardForest.ts` (class `BillboardForestEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Canvas2D faux-3D billboard forest flythrough with seeded trees, palette moods, and atmospheric fog.
+- **Audio features:** bass, beat, beatStrength, mid, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.beatPulse` | number | 0.4 | min 0, max 1 | Beat Pulse | yes |
+| `params.canopySize` | number | 1 | min 0.7, max 1.5 | Canopy Size | yes |
+| `params.depth` | number | 1 | min 0.5, max 2.2 | Depth | yes |
+| `params.fog` | number | 0.62 | min 0, max 1 | Fog | yes |
+| `params.groundMist` | number | 0.45 | min 0, max 1 | Ground Mist | yes |
+| `params.layers` | number | 4 | min 1, max 6 | Layers | yes |
+| `params.palette` | string | "dusk" | options: day, dusk, night, neon | Palette | no |
+| `params.parallax` | number | 0.25 | min 0, max 1 | Parallax | yes |
+| `params.seed` | number | 1337 | min 0, max 9999 | Seed | yes |
+| `params.speed` | number | 1 | min 0.1, max 3 | Speed | yes |
+| `params.spread` | number | 1 | min 0.4, max 1.8 | Spread | yes |
+| `params.sway` | number | 0.3 | min 0, max 1.2 | Sway | yes |
+| `params.tilt` | number | 0.12 | min -0.6, max 0.6 | Tilt | yes |
+| `params.treeCount` | number | 260 | min 80, max 520 | Tree Count | yes |
+| `params.trunkHeight` | number | 1 | min 0.65, max 1.5 | Trunk Height | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "billboard_forest",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
