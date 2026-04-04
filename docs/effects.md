@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **81**.
+Total effects: **82**.
 
 ## Table of contents
 
@@ -44,6 +44,7 @@ Total effects: **81**.
 - [Effect: matrix_rain](#effect-matrix-rain)
 - [Effect: metaballs](#effect-metaballs)
 - [Effect: moire_grid](#effect-moire-grid)
+- [Effect: moving_shadow_map](#effect-moving-shadow-map)
 - [Effect: neon](#effect-neon)
 - [Effect: neon_alley](#effect-neon-alley)
 - [Effect: particles](#effect-particles)
@@ -107,7 +108,7 @@ Total effects: **81**.
 ### Common parameter patterns
 
 - `speed` (used in 44 effects)
-- `seed` (used in 36 effects)
+- `seed` (used in 37 effects)
 - `audioReact` (used in 34 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 13 effects)
@@ -1411,6 +1412,47 @@ Total effects: **81**.
 ```json
 {
   "effect": "moire_grid",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: moving_shadow_map
+
+- **Registry key:** `moving_shadow_map`
+- **Implementation:** `src/renderer/effects/movingShadowMap.ts` (class `MovingShadowMapEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Canvas2D faux-3D scene with orbiting lights and projected moving shadows.
+- **Audio features:** bass, beat, beatStrength, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.colorA` | number | no explicit default | unspecified | Used in effect render logic. | yes |
+| `params.colorB` | number | no explicit default | unspecified | Used in effect render logic. | yes |
+| `params.contrast` | number | 1 | min 0.6, max 1.8 | Contrast | yes |
+| `params.floorGrid` | number | 1 | min 0, max 1 | Floor Grid | yes |
+| `params.haze` | number | 0.24 | min 0, max 1 | Haze | yes |
+| `params.lightColor` | number | no explicit default | unspecified | Used in effect render logic. | yes |
+| `params.lightCount` | number | 1 | min 1, max 2 | Light Count | yes |
+| `params.lightHeightMax` | number | 4.4 | min 1.2, max 9 | Light Height Max | yes |
+| `params.lightHeightMin` | number | 1.6 | min 0.8, max 7 | Light Height Min | yes |
+| `params.lightSpeed` | number | 0.75 | min 0.1, max 3 | Light Speed | yes |
+| `params.objectCount` | number | 6 | min 4, max 8 | Object Count | yes |
+| `params.orbitRadius` | number | 4.2 | min 1.8, max 8 | Orbit Radius | yes |
+| `params.paletteMode` | string | "dusk" | options: dusk, mono, neon | Palette | no |
+| `params.seed` | number | 7 | min 0, max 9999 | Seed | yes |
+| `params.shadowLength` | number | 1.35 | min 0.4, max 3 | Shadow Length | yes |
+| `params.shadowSoftness` | number | 0.45 | min 0, max 1 | Shadow Softness | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "moving_shadow_map",
   "opacity": 1,
   "blend": "source-over",
   "params": {}

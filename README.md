@@ -150,6 +150,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `tunnel` | `speed` |  |
 | `dotTunnel` | `ringCount`, `dotsPerRing`, `fov`, `speed`, `twist`, `palette`, `glow`, `seed` | Depth-sorted sprite/ring tunnel; `palette` selects built-in color ramps. |
 | `moire_grid` | `spacing`, `lineWidth`, `speed`, `warp`, `intensity`, `palette`, `audioReact` | Warped interference grid; `palette` supports `cyan`, `magenta`, or `amber`. |
+| `moving_shadow_map` | `seed`, `objectCount`, `lightCount`, `lightSpeed`, `lightHeightMin`, `lightHeightMax`, `shadowLength`, `shadowSoftness`, `floorGrid`, `paletteMode`, `contrast`, `haze`, `orbitRadius`, `colorA`, `colorB`, `lightColor` | Faux-3D Canvas2D scene with orbiting lights and projected moving shadows over a ground plane. |
 | `textmode_charset` | `cols`, `rows`, `glyphSet`, `mode`, `speed`, `palette`, `scanlines`, `seed` | Coarse character-grid renderer with glyph ramps (` .:-=+*#%@`) and palette-indexed tinting. |
 | `rotozoom` | `speed` |  |
 | `blobs` | `count`, `radius`, `orbit`, `speed`, `glow` |  |
