@@ -26,6 +26,7 @@ import { gl_impossible_corridorManifest } from "./gl_impossible_corridor.manifes
 import { glenz_vectorsManifest } from "./glenz_vectors.manifest";
 import { glitchManifest } from "./glitch.manifest";
 import { greets_wallManifest } from "./greets_wall.manifest";
+import { hexGridPulseManifest } from "./hexGridPulse.manifest";
 import { infinitycloudManifest } from "./infinitycloud.manifest";
 import { infinite_mirrorManifest } from "./infinite_mirror.manifest";
 import { isogridManifest } from "./isogrid.manifest";
@@ -113,6 +114,7 @@ export const generatedEffectManifests = [
   glenz_vectorsManifest,
   glitchManifest,
   greets_wallManifest,
+  hexGridPulseManifest,
   infinitycloudManifest,
   infinite_mirrorManifest,
   isogridManifest,

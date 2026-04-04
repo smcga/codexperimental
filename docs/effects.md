@@ -34,6 +34,7 @@ Total effects: **82**.
 - [Effect: glenz_vectors](#effect-glenz-vectors)
 - [Effect: glitch](#effect-glitch)
 - [Effect: greets_wall](#effect-greets-wall)
+- [Effect: hexGridPulse](#effect-hexGridPulse)
 - [Effect: infiniteMirror](#effect-infiniteMirror)
 - [Effect: infinitycloud](#effect-infinitycloud)
 - [Effect: isogrid](#effect-isogrid)
@@ -1077,6 +1078,31 @@ Total effects: **82**.
 }
 ```
 
+## Effect: hexGridPulse
+
+- **Registry key:** `hexGridPulse`
+- **Implementation:** `src/renderer/effects/hexGridPulseEffect.ts` (class `HexGridPulseEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Hex grid pulse lattice
+- **Audio features:** bass, beat, beatStrength, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReactive` | number | 0.5 | min 0, max 1 | Audio Reactive | yes |
+| `params.cellSize` | number | 24 | min 8, max 96 | Cell Size | yes |
+| `params.fillAlpha` | number | 0.52 | min 0, max 1 | Fill Alpha | yes |
+| `params.glowAlpha` | number | 0.35 | min 0, max 1 | Glow Alpha | yes |
+| `params.invert` | boolean | 0 | unspecified | Invert | unknown |
+| `params.lineWidth` | number | 1.2 | min 0, max 8 | Line Width | yes |
+| `params.paletteMix` | number | 0.65 | min 0, max 1 | Palette Mix | yes |
+| `params.pulseStrength` | number | 0.55 | min 0, max 1.5 | Pulse Strength | yes |
+| `params.rippleStrength` | number | 0.45 | min 0, max 1.5 | Ripple Strength | yes |
+| `params.speed` | number | 1 | min 0, max 4 | Speed | yes |
+| `params.waveScale` | number | 1.1 | min 0.1, max 4 | Wave Scale | yes |
+
 ## Effect: infiniteMirror
 
 - **Registry key:** `infiniteMirror`
@@ -1084,12 +1110,9 @@ Total effects: **82**.
 - **Renderer:** Canvas2D
 - **Description:** Self-referential portal recursion using a persistent feedback canvas and procedural base scenes.
 - **Audio features:** bass, beat, beatStrength, mid, rms, treble
-- **Performance notes:** None noted.
 
 ### Parameters
 
-| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
-| --- | --- | --- | --- | --- | --- |
 | `params.baseScene` | string | "grid" | options: grid, rings, checker, bars, void | Base Scene | no |
 | `params.depth` | number | 18 | min 1, max 48 | Depth | yes |
 | `params.feedbackMix` | number | 0.82 | min 0.3, max 0.98 | Feedback Mix | yes |
