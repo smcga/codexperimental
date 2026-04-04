@@ -100,4 +100,15 @@ describe("api/effects", () => {
     expect(res.response.statusCode).toBe(200);
     expect(JSON.parse(res.getBody()).generation.name).toBe("Nebula");
   });
+
+  it("returns an error when OpenAI key is missing for generation", async () => {
+    delete process.env.OPENAI_API_KEY;
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+    await handler({ method: "POST", url: "/api/effects?action=generate", body: JSON.stringify({ prompt: "make stars" }) }, res.response);
+    expect(res.response.statusCode).toBe(503);
+    expect(JSON.parse(res.getBody()).error).toContain("OPENAI_API_KEY");
+  });
 });
