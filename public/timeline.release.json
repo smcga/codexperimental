@@ -182,6 +182,17 @@
           "blend": "screen",
           "opacity": 0.12,
           "params": {}
+        },
+        {
+          "effect": "hexGridPulse",
+          "blend": "screen",
+          "opacity": 0.2,
+          "params": {
+            "cellSize": 22,
+            "fillAlpha": 0.38,
+            "glowAlpha": 0.22,
+            "audioReactive": 0.18
+          }
         }
       ],
       "fitAlign": "centre"
