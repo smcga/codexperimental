@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **81**.
+Total effects: **82**.
 
 ## Table of contents
 
@@ -34,6 +34,7 @@ Total effects: **81**.
 - [Effect: glenz_vectors](#effect-glenz-vectors)
 - [Effect: glitch](#effect-glitch)
 - [Effect: greets_wall](#effect-greets-wall)
+- [Effect: heat_haze](#effect-heat-haze)
 - [Effect: infinitycloud](#effect-infinitycloud)
 - [Effect: isogrid](#effect-isogrid)
 - [Effect: kefrens_bars](#effect-kefrens-bars)
@@ -106,8 +107,8 @@ Total effects: **81**.
 
 ### Common parameter patterns
 
-- `speed` (used in 44 effects)
-- `seed` (used in 36 effects)
+- `speed` (used in 45 effects)
+- `seed` (used in 37 effects)
 - `audioReact` (used in 34 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 13 effects)
@@ -1067,6 +1068,46 @@ Total effects: **81**.
 ```json
 {
   "effect": "greets_wall",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: heat_haze
+
+- **Registry key:** `heat_haze`
+- **Implementation:** `src/renderer/effects/heatHaze.ts` (class `HeatHazeEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Localized refractive hot-air shimmer using strip displacement with upward drift, turbulent micro-jitter, and optional warm glow.
+- **Audio features:** bass, beat, rms
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReactive` | boolean | 1 | unspecified | Audio Reactive | unknown |
+| `params.bassInfluence` | number | 0.25 | min 0, max 1 | Bass Influence | yes |
+| `params.beatBoost` | number | 0.35 | min 0, max 1.2 | Beat Boost | yes |
+| `params.blurHint` | number | 0.15 | min 0, max 0.6 | Blur Hint | yes |
+| `params.centerY` | number | 0.75 | min 0, max 1 | Center Y | yes |
+| `params.drift` | number | 1 | min 0, max 2 | Drift | yes |
+| `params.feather` | number | 0.2 | min 0.01, max 0.5 | Feather | yes |
+| `params.height` | number | 0.35 | min 0.05, max 1 | Height | yes |
+| `params.intensity` | number | 0.8 | min 0, max 2 | Intensity | yes |
+| `params.region` | string | "bottom" | options: bottom, band, full | Region | no |
+| `params.scale` | number | 1 | min 0.35, max 3 | Scale | yes |
+| `params.seed` | number | 1 | min 0, max 999 | Seed | yes |
+| `params.shimmer` | number | 0.6 | min 0, max 1.5 | Shimmer | yes |
+| `params.speed` | number | 1 | min 0, max 3 | Speed | yes |
+| `params.tint` | number | 0.08 | min 0, max 0.4 | Tint | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "heat_haze",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
