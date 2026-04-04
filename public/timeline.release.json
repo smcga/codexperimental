@@ -182,6 +182,18 @@
           "blend": "screen",
           "opacity": 0.12,
           "params": {}
+        },
+        {
+          "effect": "tilingMorph",
+          "blend": "soft-light",
+          "opacity": 0.08,
+          "params": {
+            "scale": 1.1,
+            "morphSpeed": 0.9,
+            "lineWidth": 1.1,
+            "fillAlpha": 0.7,
+            "audioReactive": 0.2
+          }
         }
       ],
       "fitAlign": "centre"

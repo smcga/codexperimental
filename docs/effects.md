@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **81**.
+Total effects: **82**.
 
 ## Table of contents
 
@@ -75,6 +75,7 @@ Total effects: **81**.
 - [Effect: tetris_matrix](#effect-tetris-matrix)
 - [Effect: textmode_charset](#effect-textmode-charset)
 - [Effect: textured_cube](#effect-textured-cube)
+- [Effect: tilingMorph](#effect-tilingMorph)
 - [Effect: torus_orbit_3d](#effect-torus-orbit-3d)
 - [Effect: treegrowth](#effect-treegrowth)
 - [Effect: tunnel](#effect-tunnel)
@@ -107,7 +108,7 @@ Total effects: **81**.
 ### Common parameter patterns
 
 - `speed` (used in 44 effects)
-- `seed` (used in 36 effects)
+- `seed` (used in 37 effects)
 - `audioReact` (used in 34 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 13 effects)
@@ -115,9 +116,9 @@ Total effects: **81**.
 - `palette` (used in 9 effects)
 - `hueShift` (used in 7 effects)
 - `scanlines` (used in 7 effects)
+- `lineWidth` (used in 7 effects)
 - `count` (used in 6 effects)
 - `bufH` (used in 6 effects)
-- `bufW` (used in 6 effects)
 
 ## Effects
 
@@ -2474,6 +2475,45 @@ Total effects: **81**.
 ```json
 {
   "effect": "textured_cube",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: tilingMorph
+
+- **Registry key:** `tilingMorph`
+- **Implementation:** `src/renderer/effects/tilingMorph.ts` (class `TilingMorphEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Seam-safe lattice tiling morph that cycles square, diamond, skewed, and rounded-interlocking phases; `mode` supports `mono`, `palette`, `neon`.
+- **Audio features:** bass, beat, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReactive` | number | 1 | min 0, max 1 | Audio Reactive | yes |
+| `params.backgroundAlpha` | number | 1 | min 0, max 1 | Background Alpha | yes |
+| `params.cellJitter` | number | 0.15 | min 0, max 0.45 | Cell Jitter | yes |
+| `params.contrast` | number | 1 | min 0.5, max 2.5 | Contrast | yes |
+| `params.fillAlpha` | number | 0.85 | min 0, max 1 | Fill Alpha | yes |
+| `params.lineWidth` | number | 1.5 | min 0.25, max 8 | Line Width | yes |
+| `params.mode` | string | "palette" | options: palette, mono, neon | Mode | no |
+| `params.morphAmount` | number | 0.85 | min 0, max 1 | Morph Amount | yes |
+| `params.morphSpeed` | number | 1 | min 0.1, max 4 | Morph Speed | yes |
+| `params.paletteShift` | number | 0 | min -2, max 2 | Palette Shift | yes |
+| `params.rotationSpeed` | number | 0.08 | min -1, max 1 | Rotation Speed | yes |
+| `params.roundedness` | number | 0.35 | min 0, max 1 | Roundedness | yes |
+| `params.scale` | number | 1 | min 0.35, max 3 | Scale | yes |
+| `params.seed` | number | 1 | min 0, max 9999 | Seed | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "tilingMorph",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
