@@ -66,4 +66,14 @@ describe("effect ideas client", () => {
     const effect = compileRuntimeEffect("return { render() { return; } };");
     expect(typeof effect.render).toBe("function");
   });
+
+  it("surfaces API error messages for generation failures", async () => {
+    globalThis.fetch = vi.fn(async () => ({
+      ok: false,
+      status: 503,
+      json: async () => ({ error: "OPENAI_API_KEY is not configured." })
+    })) as typeof fetch;
+
+    await expect(generateEffectIdea("test")).rejects.toThrow("OPENAI_API_KEY is not configured.");
+  });
 });

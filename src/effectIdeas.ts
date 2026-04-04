@@ -20,6 +20,7 @@ type EffectsResponse = {
   effect?: EffectIdeaRecord;
   moderationStatus?: "pending";
   generation?: EffectIdeaGenerationResult;
+  error?: string;
 };
 
 let approvedCache: EffectIdeaRecord[] = [];
@@ -56,11 +57,14 @@ async function requestEffects(path = "/api/effects", init?: RequestInit): Promis
     ...init
   });
 
+  const payload = (await response.json()) as EffectsResponse;
   if (!response.ok) {
-    throw new Error(`Effect idea request failed: ${response.status}`);
+    const message = typeof payload.error === "string" && payload.error.trim().length > 0
+      ? payload.error
+      : `Effect idea request failed: ${response.status}`;
+    throw new Error(message);
   }
-
-  return (await response.json()) as EffectsResponse;
+  return payload;
 }
 
 export function compileRuntimeEffect(runtimeCode: string): Effect {

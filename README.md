@@ -404,3 +404,4 @@ EFFECT_MODERATION_TOKEN=replace-with-a-long-random-secret
 Optional fallback token behavior:
 - If `EFFECT_MODERATION_TOKEN` is not set, `/api/effects` moderation falls back to `DOODLE_MODERATION_TOKEN`, then `DOODLE_ADMIN_TOKEN`.
 - Generated effects are submitted into a pending queue; they only become selectable after approval via `/api/effects?action=approve&id=...&token=...`.
+- If generation requests return `503` from `/api/effects?action=generate`, check that `OPENAI_API_KEY` is set in your deployed environment and redeploy so the serverless function picks it up.

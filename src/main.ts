@@ -560,10 +560,11 @@ async function generateCurrentEffectIdea(): Promise<void> {
     stopEffectIdeaPreview();
     previewGeneratedIdea();
     setEffectIdeaStatus("Preview ready. If it looks good, submit it for approval.", "success");
-  } catch {
+  } catch (error) {
     generatedIdea = null;
     effectIdeaPreviewEffect = null;
-    setEffectIdeaStatus("Generation failed. Please adjust the prompt and try again.", "error");
+    const message = error instanceof Error ? error.message : "Generation failed. Please adjust the prompt and try again.";
+    setEffectIdeaStatus(message, "error");
   } finally {
     effectIdeasGenerating = false;
     updateEffectIdeaButtons();
