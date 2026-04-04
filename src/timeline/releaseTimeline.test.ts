@@ -116,6 +116,7 @@ describe("release timeline", () => {
     const documentedEffects = Array.from(docs.matchAll(/^## Effect: (.+)$/gm), (match) => match[1]);
 
     const optionalEffects = new Set([
+      "chromaticAberration",
       "portrait",
       "voxel_world_builder",
       "cosmic_voyage",

@@ -378,7 +378,8 @@ export class Renderer {
       this.sceneCanvas.width,
       this.sceneCanvas.height,
       section.era,
-      framing
+      framing,
+      undefined
     );
     this.copyRenderToPass(this.sceneCanvas, eraConstraints);
     this.presentPassToScreen(
@@ -407,7 +408,8 @@ export class Renderer {
         this.layerCanvas.width,
         this.layerCanvas.height,
         section.era,
-        framing
+        framing,
+        this.sceneCanvas
       );
       this.copyRenderToPass(this.layerCanvas, eraConstraints);
       this.presentPassToScreen(
@@ -495,7 +497,8 @@ export class Renderer {
       this.sceneCanvas.width,
       this.sceneCanvas.height,
       section.era,
-      framing
+      framing,
+      undefined
     );
 
     if (section.layers.length > 0) {
@@ -512,7 +515,8 @@ export class Renderer {
           this.layerCanvas.width,
           this.layerCanvas.height,
           section.era,
-          framing
+          framing,
+          this.sceneCanvas
         );
         this.sceneCtx.save();
         this.sceneCtx.globalCompositeOperation = layer.blend;
@@ -545,7 +549,8 @@ export class Renderer {
     width: number,
     height: number,
     era: string,
-    framing: FramingState
+    framing: FramingState,
+    sourceCanvas?: HTMLCanvasElement
   ): void {
     const effect = effectRegistry[effectName];
     if (!effect) {
@@ -565,6 +570,7 @@ export class Renderer {
       params,
       era,
       framing,
+      sourceCanvas,
       safeRect: this.mapSafeRectToRenderSpace(framing.safe, framing, width, height)
     });
   }
