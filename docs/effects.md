@@ -29,11 +29,15 @@ Total effects: **82**.
 - [Effect: flyover](#effect-flyover)
 - [Effect: fractal](#effect-fractal)
 - [Effect: fractal_zoomer](#effect-fractal-zoomer)
+- [Effect: gameOfLife](#effect-gameOfLife)
 - [Effect: gl_fractal_tunnel](#effect-gl-fractal-tunnel)
 - [Effect: gl_impossible_corridor](#effect-gl-impossible-corridor)
 - [Effect: glenz_vectors](#effect-glenz-vectors)
 - [Effect: glitch](#effect-glitch)
+- [Effect: god_rays](#effect-god-rays)
 - [Effect: greets_wall](#effect-greets-wall)
+- [Effect: hexGridPulse](#effect-hexGridPulse)
+- [Effect: infiniteMirror](#effect-infiniteMirror)
 - [Effect: infinitycloud](#effect-infinitycloud)
 - [Effect: isogrid](#effect-isogrid)
 - [Effect: kefrens_bars](#effect-kefrens-bars)
@@ -44,6 +48,7 @@ Total effects: **82**.
 - [Effect: matrix_rain](#effect-matrix-rain)
 - [Effect: metaballs](#effect-metaballs)
 - [Effect: moire_grid](#effect-moire-grid)
+- [Effect: moving_shadow_map](#effect-moving-shadow-map)
 - [Effect: neon](#effect-neon)
 - [Effect: neon_alley](#effect-neon-alley)
 - [Effect: particles](#effect-particles)
@@ -65,6 +70,7 @@ Total effects: **82**.
 - [Effect: shadebobs_bobs](#effect-shadebobs-bobs)
 - [Effect: sine_distorter](#effect-sine-distorter)
 - [Effect: sine_scroller_logo](#effect-sine-scroller-logo)
+- [Effect: skeletal_ribbon](#effect-skeletal-ribbon)
 - [Effect: space_hangar](#effect-space-hangar)
 - [Effect: spectrum_analyzer](#effect-spectrum-analyzer)
 - [Effect: sphere3d](#effect-sphere3d)
@@ -84,6 +90,7 @@ Total effects: **82**.
 - [Effect: velvet_dreamscape](#effect-velvet-dreamscape)
 - [Effect: vga_fire](#effect-vga-fire)
 - [Effect: volumetric_clouds](#effect-volumetric-clouds)
+- [Effect: voronoi_cells](#effect-voronoi-cells)
 - [Effect: voxel_landscape](#effect-voxel-landscape)
 - [Effect: voxel_world_builder](#effect-voxel-world-builder)
 - [Effect: water_drops](#effect-water-drops)
@@ -107,14 +114,14 @@ Total effects: **82**.
 
 ### Common parameter patterns
 
-- `speed` (used in 44 effects)
+- `speed` (used in 45 effects)
 - `seed` (used in 37 effects)
 - `audioReact` (used in 34 effects)
+- `glow` (used in 14 effects)
 - `beatKick` (used in 14 effects)
-- `glow` (used in 13 effects)
 - `trail` (used in 10 effects)
 - `palette` (used in 9 effects)
-- `hueShift` (used in 7 effects)
+- `hueShift` (used in 8 effects)
 - `scanlines` (used in 7 effects)
 - `lineWidth` (used in 7 effects)
 - `count` (used in 6 effects)
@@ -898,6 +905,44 @@ Total effects: **82**.
 }
 ```
 
+## Effect: gameOfLife
+
+- **Registry key:** `gameOfLife`
+- **Implementation:** `src/renderer/effects/gameOfLifeEffect.ts` (class `GameOfLifeEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Conway-style cellular automata with deterministic seeding, curated pattern inserts, optional wrap, and restrained beat-triggered bursts/gliders.
+- **Audio features:** beat, beatStrength, impactStrength, rms
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.burstOnBeat` | number | 0.25 | min 0, max 1 | Burst On Beat | yes |
+| `params.cellSize` | number | 8 | min 4, max 24 | Cell Size | yes |
+| `params.density` | number | 0.22 | min 0.01, max 0.9 | Density | yes |
+| `params.fadeTrails` | number | 0.12 | min 0, max 1 | Fade Trails | yes |
+| `params.gliderRate` | number | 0 | min 0, max 1 | Glider Rate | yes |
+| `params.gridLines` | boolean | false | unspecified | Grid Lines | unknown |
+| `params.paletteMode` | string | "mono" | options: mono, heat, era | Palette | no |
+| `params.patternMode` | string | "mixed" | options: random, curated, mixed | Pattern Mode | no |
+| `params.safeFit` | boolean | true | unspecified | Safe Fit | unknown |
+| `params.seed` | string | "auto" | min 0, max 999999 | Seed | no |
+| `params.stepRate` | number | 8 | min 1, max 30 | Step Rate | yes |
+| `params.survivalTint` | number | 0.42 | min 0, max 1 | Survival Tint | yes |
+| `params.wrap` | boolean | true | unspecified | Wrap | unknown |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "gameOfLife",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
 ## Effect: gl_fractal_tunnel
 
 - **Registry key:** `gl_fractal_tunnel`
@@ -1039,6 +1084,47 @@ Total effects: **82**.
 }
 ```
 
+## Effect: god_rays
+
+- **Registry key:** `god_rays`
+- **Implementation:** `src/renderer/effects/godRaysEffect.ts` (class `GodRaysEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Atmospheric volumetric-style shafts with drifting haze, procedural occluders, and style variants (`sunbreak`, `window`, `cathedral`).
+- **Audio features:** bass, beat, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.drift` | number | 0.25 | min 0, max 2 | Drift | yes |
+| `params.dust` | number | 0.25 | min 0, max 1 | Dust | yes |
+| `params.haze` | number | 0.6 | min 0, max 1.2 | Haze | yes |
+| `params.intensity` | number | 1 | min 0, max 3 | Intensity | yes |
+| `params.occlusion` | number | 0.5 | min 0, max 1 | Occlusion | yes |
+| `params.pulse` | number | 0.35 | min 0, max 1.5 | Pulse | yes |
+| `params.rayCount` | number | 24 | min 8, max 56 | Ray Count | yes |
+| `params.seed` | number | 0 | min 0, max 9999 | Seed | yes |
+| `params.shadowBands` | number | 0.5 | min 0, max 1 | Shadow Bands | yes |
+| `params.sourceDriftX` | number | 0 | min -1, max 1 | Source Drift X | yes |
+| `params.sourceDriftY` | number | 0 | min -1, max 1 | Source Drift Y | yes |
+| `params.sourceX` | number | 0.5 | min -0.5, max 1.5 | Source X | yes |
+| `params.sourceY` | number | 0.2 | min -0.5, max 1.2 | Source Y | yes |
+| `params.spread` | number | 0.55 | min 0.1, max 1 | Spread | yes |
+| `params.style` | string | "sunbreak" | options: sunbreak, window, cathedral | Style | no |
+| `params.warmth` | number | 0.65 | min 0, max 1 | Warmth | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "god_rays",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
 ## Effect: greets_wall
 
 - **Registry key:** `greets_wall`
@@ -1068,6 +1154,69 @@ Total effects: **82**.
 ```json
 {
   "effect": "greets_wall",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: hexGridPulse
+
+- **Registry key:** `hexGridPulse`
+- **Implementation:** `src/renderer/effects/hexGridPulseEffect.ts` (class `HexGridPulseEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Hex grid pulse lattice
+- **Audio features:** bass, beat, beatStrength, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReactive` | number | 0.5 | min 0, max 1 | Audio Reactive | yes |
+| `params.cellSize` | number | 24 | min 8, max 96 | Cell Size | yes |
+| `params.fillAlpha` | number | 0.52 | min 0, max 1 | Fill Alpha | yes |
+| `params.glowAlpha` | number | 0.35 | min 0, max 1 | Glow Alpha | yes |
+| `params.invert` | boolean | 0 | unspecified | Invert | unknown |
+| `params.lineWidth` | number | 1.2 | min 0, max 8 | Line Width | yes |
+| `params.paletteMix` | number | 0.65 | min 0, max 1 | Palette Mix | yes |
+| `params.pulseStrength` | number | 0.55 | min 0, max 1.5 | Pulse Strength | yes |
+| `params.rippleStrength` | number | 0.45 | min 0, max 1.5 | Ripple Strength | yes |
+| `params.speed` | number | 1 | min 0, max 4 | Speed | yes |
+| `params.waveScale` | number | 1.1 | min 0.1, max 4 | Wave Scale | yes |
+
+## Effect: infiniteMirror
+
+- **Registry key:** `infiniteMirror`
+- **Implementation:** `src/renderer/effects/infiniteMirror.ts` (class `InfiniteMirrorEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Self-referential portal recursion using a persistent feedback canvas and procedural base scenes.
+- **Audio features:** bass, beat, beatStrength, mid, rms, treble
+
+### Parameters
+
+| `params.baseScene` | string | "grid" | options: grid, rings, checker, bars, void | Base Scene | no |
+| `params.depth` | number | 18 | min 1, max 48 | Depth | yes |
+| `params.feedbackMix` | number | 0.82 | min 0.3, max 0.98 | Feedback Mix | yes |
+| `params.glow` | number | 0.35 | min 0, max 1.5 | Glow | yes |
+| `params.mirrorFrames` | boolean | 1 | unspecified | Mirror Frames | unknown |
+| `params.monochrome` | number | 0 | min 0, max 1 | Monochrome | yes |
+| `params.offsetX` | number | 0 | min -0.5, max 0.5 | Offset X | yes |
+| `params.offsetY` | number | 0 | min -0.5, max 0.5 | Offset Y | yes |
+| `params.pulse` | number | 0.2 | min 0, max 2 | Pulse | yes |
+| `params.rotation` | number | 0.08 | min -1.5, max 1.5 | Rotation | yes |
+| `params.scale` | number | 0.88 | min 0.6, max 0.98 | Scale | yes |
+| `params.softness` | number | 0.08 | min 0, max 0.5 | Softness | yes |
+| `params.strobeOnBeat` | number | 0.15 | min 0, max 1 | Strobe Beat | yes |
+| `params.symmetry` | number | 0 | min 0, max 1 | Symmetry | yes |
+| `params.twist` | number | 0.02 | min -0.5, max 0.5 | Twist | yes |
+| `params.vignette` | number | 0.2 | min 0, max 1 | Vignette | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "infiniteMirror",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
@@ -1412,6 +1561,47 @@ Total effects: **82**.
 ```json
 {
   "effect": "moire_grid",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: moving_shadow_map
+
+- **Registry key:** `moving_shadow_map`
+- **Implementation:** `src/renderer/effects/movingShadowMap.ts` (class `MovingShadowMapEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Canvas2D faux-3D scene with orbiting lights and projected moving shadows.
+- **Audio features:** bass, beat, beatStrength, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.colorA` | number | no explicit default | unspecified | Used in effect render logic. | yes |
+| `params.colorB` | number | no explicit default | unspecified | Used in effect render logic. | yes |
+| `params.contrast` | number | 1 | min 0.6, max 1.8 | Contrast | yes |
+| `params.floorGrid` | number | 1 | min 0, max 1 | Floor Grid | yes |
+| `params.haze` | number | 0.24 | min 0, max 1 | Haze | yes |
+| `params.lightColor` | number | no explicit default | unspecified | Used in effect render logic. | yes |
+| `params.lightCount` | number | 1 | min 1, max 2 | Light Count | yes |
+| `params.lightHeightMax` | number | 4.4 | min 1.2, max 9 | Light Height Max | yes |
+| `params.lightHeightMin` | number | 1.6 | min 0.8, max 7 | Light Height Min | yes |
+| `params.lightSpeed` | number | 0.75 | min 0.1, max 3 | Light Speed | yes |
+| `params.objectCount` | number | 6 | min 4, max 8 | Object Count | yes |
+| `params.orbitRadius` | number | 4.2 | min 1.8, max 8 | Orbit Radius | yes |
+| `params.paletteMode` | string | "dusk" | options: dusk, mono, neon | Palette | no |
+| `params.seed` | number | 7 | min 0, max 9999 | Seed | yes |
+| `params.shadowLength` | number | 1.35 | min 0.4, max 3 | Shadow Length | yes |
+| `params.shadowSoftness` | number | 0.45 | min 0, max 1 | Shadow Softness | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "moving_shadow_map",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
@@ -2165,6 +2355,42 @@ Total effects: **82**.
 }
 ```
 
+## Effect: skeletal_ribbon
+
+- **Registry key:** `skeletal_ribbon`
+- **Implementation:** `src/renderer/effects/skeletalRibbon.ts` (class `SkeletalRibbonEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Articulated spine/tentacle ribbon driven by chained bone kinematics with beat-reactive pulse thickness.
+- **Audio features:** bass, beat, mid, rms
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioInfluence` | number | 1 | min 0, max 2 | Audio Influence | yes |
+| `params.boneCount` | number | 24 | min 8, max 32 | Bone Count | yes |
+| `params.colorMode` | string | "gradient" | options: mono, gradient | Color Mode | no |
+| `params.debugSkeleton` | boolean | 0 | unspecified | Debug Skeleton | unknown |
+| `params.glow` | number | 0.4 | min 0, max 1 | Glow | yes |
+| `params.hueShift` | number | 0.2 | min -1, max 1 | Hue Shift | yes |
+| `params.length` | number | 300 | min 80, max 700 | Length | yes |
+| `params.stiffness` | number | 0.6 | min 0.05, max 1 | Stiffness | yes |
+| `params.thickness` | number | 18 | min 2, max 56 | Thickness | yes |
+| `params.waveAmp` | number | 0.6 | min 0, max 2 | Wave Amp | yes |
+| `params.waveFreq` | number | 1.5 | min 0.05, max 6 | Wave Freq | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "skeletal_ribbon",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
 ## Effect: space_hangar
 
 - **Registry key:** `space_hangar`
@@ -2805,6 +3031,45 @@ Total effects: **82**.
 ```json
 {
   "effect": "volumetric_clouds",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: voronoi_cells
+
+- **Registry key:** `voronoi_cells`
+- **Implementation:** `src/renderer/effects/voronoiCells.ts` (class `VoronoiCellsEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Animated Voronoi-style cellular mosaic with era-aware palette bias; `paletteMode` supports `mono`, `neon`, `heat`, or `era`.
+- **Audio features:** beat, beatStrength, rms
+- **Performance notes:** Uses ImageData per frame; CPU cost scales with resolution.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.beatPulse` | number | 0.55 | min 0, max 1.5 | Beat Pulse | yes |
+| `params.cellCount` | number | 24 | min 6, max 96 | Cell Count | yes |
+| `params.chromatic` | number | 0.2 | min 0, max 1 | Chromatic | yes |
+| `params.contrast` | number | 1 | min 0.4, max 2.5 | Contrast | yes |
+| `params.drift` | number | 0.55 | min 0, max 2 | Drift | yes |
+| `params.fillAlpha` | number | 0.7 | min 0, max 1 | Fill Alpha | yes |
+| `params.jitter` | number | 0.12 | min 0, max 1.5 | Jitter | yes |
+| `params.lineAlpha` | number | 0.9 | min 0, max 1 | Line Alpha | yes |
+| `params.lineWidth` | number | 1.5 | min 0.25, max 5 | Line Width | yes |
+| `params.paletteMode` | string | "era" | options: era, mono, neon, heat | Palette | no |
+| `params.pixelStep` | number | 4 | min 2, max 12 | Pixel Step | yes |
+| `params.seed` | number | 1 | min 0, max 9999 | Seed | yes |
+| `params.shade` | number | 0.45 | min 0, max 1 | Shade | yes |
+| `params.speed` | number | 1 | min 0, max 3 | Speed | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "voronoi_cells",
   "opacity": 1,
   "blend": "source-over",
   "params": {}

@@ -184,15 +184,15 @@
           "params": {}
         },
         {
-          "effect": "tilingMorph",
-          "blend": "soft-light",
-          "opacity": 0.08,
+          "effect": "moving_shadow_map",
+          "blend": "overlay",
+          "opacity": 0.18,
           "params": {
-            "scale": 1.1,
-            "morphSpeed": 0.9,
-            "lineWidth": 1.1,
-            "fillAlpha": 0.7,
-            "audioReactive": 0.2
+            "objectCount": 5,
+            "lightSpeed": 0.55,
+            "shadowLength": 1.15,
+            "haze": 0.15,
+            "floorGrid": 0
           }
         }
       ],

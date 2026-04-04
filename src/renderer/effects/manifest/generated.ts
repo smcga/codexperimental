@@ -23,10 +23,14 @@ import { fractalManifest } from "./fractal.manifest";
 import { fractal_zoomerManifest } from "./fractal_zoomer.manifest";
 import { gl_fractal_tunnelManifest } from "./gl_fractal_tunnel.manifest";
 import { gl_impossible_corridorManifest } from "./gl_impossible_corridor.manifest";
+import { god_raysManifest } from "./god_rays.manifest";
 import { glenz_vectorsManifest } from "./glenz_vectors.manifest";
 import { glitchManifest } from "./glitch.manifest";
+import { game_of_lifeManifest } from "./game_of_life.manifest";
 import { greets_wallManifest } from "./greets_wall.manifest";
+import { hexGridPulseManifest } from "./hexGridPulse.manifest";
 import { infinitycloudManifest } from "./infinitycloud.manifest";
+import { infinite_mirrorManifest } from "./infinite_mirror.manifest";
 import { isogridManifest } from "./isogrid.manifest";
 import { kefrens_barsManifest } from "./kefrens_bars.manifest";
 import { lemmings_marchManifest } from "./lemmings_march.manifest";
@@ -36,6 +40,7 @@ import { lissajousManifest } from "./lissajous.manifest";
 import { matrix_rainManifest } from "./matrix_rain.manifest";
 import { metaballsManifest } from "./metaballs.manifest";
 import { moire_gridManifest } from "./moire_grid.manifest";
+import { moving_shadow_mapManifest } from "./moving_shadow_map.manifest";
 import { neonManifest } from "./neon.manifest";
 import { neon_alleyManifest } from "./neon_alley.manifest";
 import { particlesManifest } from "./particles.manifest";
@@ -55,6 +60,7 @@ import { ribbonsManifest } from "./ribbons.manifest";
 import { roadDriveManifest } from "./roadDrive.manifest";
 import { rotozoomManifest } from "./rotozoom.manifest";
 import { shadebobs_bobsManifest } from "./shadebobs_bobs.manifest";
+import { skeletal_ribbonManifest } from "./skeletal_ribbon.manifest";
 import { sine_distorterManifest } from "./sine_distorter.manifest";
 import { sine_scroller_logoManifest } from "./sine_scroller_logo.manifest";
 import { space_hangarManifest } from "./space_hangar.manifest";
@@ -76,6 +82,7 @@ import { vector3d_ballsManifest } from "./vector3d_balls.manifest";
 import { velvet_dreamscapeManifest } from "./velvet_dreamscape.manifest";
 import { vga_fireManifest } from "./vga_fire.manifest";
 import { volumetric_cloudsManifest } from "./volumetric_clouds.manifest";
+import { voronoi_cellsManifest } from "./voronoi_cells.manifest";
 import { voxel_landscapeManifest } from "./voxel_landscape.manifest";
 import { voxel_world_builderManifest } from "./voxel_world_builder.manifest";
 import { water_dropsManifest } from "./water_drops.manifest";
@@ -107,10 +114,14 @@ export const generatedEffectManifests = [
   fractal_zoomerManifest,
   gl_fractal_tunnelManifest,
   gl_impossible_corridorManifest,
+  god_raysManifest,
   glenz_vectorsManifest,
   glitchManifest,
+  game_of_lifeManifest,
   greets_wallManifest,
+  hexGridPulseManifest,
   infinitycloudManifest,
+  infinite_mirrorManifest,
   isogridManifest,
   kefrens_barsManifest,
   lemmings_marchManifest,
@@ -120,6 +131,7 @@ export const generatedEffectManifests = [
   matrix_rainManifest,
   metaballsManifest,
   moire_gridManifest,
+  moving_shadow_mapManifest,
   neonManifest,
   neon_alleyManifest,
   particlesManifest,
@@ -139,6 +151,7 @@ export const generatedEffectManifests = [
   roadDriveManifest,
   rotozoomManifest,
   shadebobs_bobsManifest,
+  skeletal_ribbonManifest,
   sine_distorterManifest,
   sine_scroller_logoManifest,
   space_hangarManifest,
@@ -160,6 +173,7 @@ export const generatedEffectManifests = [
   velvet_dreamscapeManifest,
   vga_fireManifest,
   volumetric_cloudsManifest,
+  voronoi_cellsManifest,
   voxel_landscapeManifest,
   voxel_world_builderManifest,
   water_dropsManifest,
