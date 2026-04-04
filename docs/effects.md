@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **81**.
+Total effects: **82**.
 
 ## Table of contents
 
@@ -65,6 +65,7 @@ Total effects: **81**.
 - [Effect: shadebobs_bobs](#effect-shadebobs-bobs)
 - [Effect: sine_distorter](#effect-sine-distorter)
 - [Effect: sine_scroller_logo](#effect-sine-scroller-logo)
+- [Effect: skyboxTransition](#effect-skyboxTransition)
 - [Effect: space_hangar](#effect-space-hangar)
 - [Effect: spectrum_analyzer](#effect-spectrum-analyzer)
 - [Effect: sphere3d](#effect-sphere3d)
@@ -106,7 +107,7 @@ Total effects: **81**.
 
 ### Common parameter patterns
 
-- `speed` (used in 44 effects)
+- `speed` (used in 45 effects)
 - `seed` (used in 36 effects)
 - `audioReact` (used in 34 effects)
 - `beatKick` (used in 14 effects)
@@ -2158,6 +2159,41 @@ Total effects: **81**.
 ```json
 {
   "effect": "sine_scroller_logo",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: skyboxTransition
+
+- **Registry key:** `skyboxTransition`
+- **Implementation:** `src/renderer/effects/skyboxTransition.ts` (class `SkyboxTransitionEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Evolving panoramic skybox backdrop that glides from day to surreal night with layered haze, silhouettes, and late-phase stars.
+- **Audio features:** bass, beat, beatStrength, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReactive` | number | 0.4 | min 0, max 1 | Audio Reactive | yes |
+| `params.cloudAmount` | number | 0.55 | min 0, max 1.2 | Cloud Amount | yes |
+| `params.horizon` | number | 0.62 | min 0.3, max 0.85 | Horizon | yes |
+| `params.intensity` | number | 1 | min 0.3, max 1.8 | Intensity | yes |
+| `params.loop` | boolean | 1 | unspecified | Loop | unknown |
+| `params.phaseOffset` | number | 0 | min -1, max 1 | Phase Offset | yes |
+| `params.silhouetteAmount` | number | 0.5 | min 0, max 1.2 | Silhouette Amount | yes |
+| `params.speed` | number | 1 | min 0.05, max 3 | Speed | yes |
+| `params.starAmount` | number | 0.7 | min 0, max 1.2 | Star Amount | yes |
+| `params.surrealness` | number | 0.35 | min 0, max 1.4 | Surrealness | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "skyboxTransition",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
