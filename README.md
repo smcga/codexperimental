@@ -68,6 +68,21 @@ Automation example:
 
 Automation supports numeric params only; non-numeric values fall back to the base params.
 
+### Timeline runtime behavior (how playback works)
+
+- The timeline runs in two modes: `intro` and `sections`. While the current playback time is before `intro.end`, the app stays in `intro`; at `intro.end` and later it switches to `sections`.
+- During `intro`, the renderer still receives the first section as `section` context so post-intro visuals can warm up consistently, but transitions and text cues remain inactive.
+- Section lookup is start-time based: the active section is the last section whose `start` is less than or equal to the current time.
+- Transition blending is evaluated only at section boundaries:
+  - A transition is active for `section.transition.duration` seconds after a section starts.
+  - Transition progress is clamped from `0` to `1`.
+  - The transition type uses the incoming section `transition.in` (normalized to `fade` when omitted in JSON).
+- `textCues` are active only while `start <= currentTime <= end`.
+- If the final section omits an explicit `end`, it is treated as "until audio ends" and is finalized after audio metadata loads.
+- `introTime` is exposed in both modes:
+  - In `intro`, `introTime` equals absolute playback time.
+  - In `sections`, `introTime` equals elapsed time since `intro.end`.
+
 ### Timeline data schema
 
 `public/timeline.json` and `public/timeline.release.json` follow this top-level shape:
