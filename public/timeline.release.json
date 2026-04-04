@@ -184,16 +184,15 @@
           "params": {}
         },
         {
-          "effect": "voronoi_cells",
+          "effect": "moving_shadow_map",
           "blend": "overlay",
-          "opacity": 0.22,
+          "opacity": 0.18,
           "params": {
-            "cellCount": 18,
-            "lineAlpha": 0.85,
-            "fillAlpha": 0.45,
-            "pixelStep": 5,
-            "paletteMode": "era",
-            "seed": 7
+            "objectCount": 5,
+            "lightSpeed": 0.55,
+            "shadowLength": 1.15,
+            "haze": 0.15,
+            "floorGrid": 0
           }
         }
       ],

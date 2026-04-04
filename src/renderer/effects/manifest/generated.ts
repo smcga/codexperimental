@@ -37,6 +37,7 @@ import { lissajousManifest } from "./lissajous.manifest";
 import { matrix_rainManifest } from "./matrix_rain.manifest";
 import { metaballsManifest } from "./metaballs.manifest";
 import { moire_gridManifest } from "./moire_grid.manifest";
+import { moving_shadow_mapManifest } from "./moving_shadow_map.manifest";
 import { neonManifest } from "./neon.manifest";
 import { neon_alleyManifest } from "./neon_alley.manifest";
 import { particlesManifest } from "./particles.manifest";
@@ -122,6 +123,7 @@ export const generatedEffectManifests = [
   matrix_rainManifest,
   metaballsManifest,
   moire_gridManifest,
+  moving_shadow_mapManifest,
   neonManifest,
   neon_alleyManifest,
   particlesManifest,
