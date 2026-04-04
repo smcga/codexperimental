@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **81**.
+Total effects: **82**.
 
 ## Table of contents
 
@@ -13,6 +13,7 @@ Total effects: **81**.
 - [Effect: border_multiplex](#effect-border-multiplex)
 - [Effect: bumpmap_plane](#effect-bumpmap-plane)
 - [Effect: chess](#effect-chess)
+- [Effect: cloth_sim](#effect-cloth-sim)
 - [Effect: copper_gradient_splits](#effect-copper-gradient-splits)
 - [Effect: cosmic_voyage](#effect-cosmic-voyage)
 - [Effect: doodle_greetz_wall](#effect-doodle-greetz-wall)
@@ -360,6 +361,52 @@ Total effects: **81**.
 ```json
 {
   "effect": "chess",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: cloth_sim
+
+- **Registry key:** `cloth_sim`
+- **Implementation:** `src/renderer/effects/clothSimEffect.ts` (class `ClothSimEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Canvas2D verlet cloth mesh with pinned anchors, gust-driven folds, beat billows, and era-aware shading that can run as base or composited layer.
+- **Audio features:** bass, beat, beatStrength, mid, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReactive` | number | 0.62 | min 0, max 1 | Audio Reactive | yes |
+| `params.backgroundAlpha` | number | 0.18 | min 0, max 1 | Background Alpha | yes |
+| `params.cols` | number | 24 | min 8, max 52 | Columns | yes |
+| `params.damping` | number | 0.984 | min 0.85, max 0.999 | Damping | yes |
+| `params.driftX` | number | 0 | min -1, max 1 | Drift X | yes |
+| `params.driftY` | number | -0.1 | min -1, max 1 | Drift Y | yes |
+| `params.flutter` | number | 0.35 | min 0, max 1.4 | Flutter | yes |
+| `params.gravity` | number | 0.58 | min 0, max 2 | Gravity | yes |
+| `params.height` | number | 0.58 | min 0.2, max 1 | Cloth Height | yes |
+| `params.iterations` | number | 4 | min 1, max 10 | Iterations | yes |
+| `params.mobileQuality` | number | 0.82 | min 0.35, max 1 | Mobile Quality | yes |
+| `params.obstacle` | string | "none" | options: none, sphere, pillar | Obstacle | no |
+| `params.obstacleSize` | number | 0.18 | min 0.08, max 0.45 | Obstacle Size | yes |
+| `params.paletteMode` | string | "era" | options: era, mono, neon | Palette | no |
+| `params.pinMode` | string | "corners" | options: corners, top | Pin Mode | no |
+| `params.rows` | number | 16 | min 6, max 36 | Rows | yes |
+| `params.seamAlpha` | number | 0.24 | min 0, max 0.7 | Seam Alpha | yes |
+| `params.shading` | number | 0.8 | min 0, max 1.5 | Shading | yes |
+| `params.stiffness` | number | 0.9 | min 0.35, max 1 | Stiffness | yes |
+| `params.width` | number | 0.74 | min 0.2, max 1 | Cloth Width | yes |
+| `params.wind` | number | 0.58 | min 0, max 2 | Wind | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "cloth_sim",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
