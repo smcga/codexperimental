@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **81**.
+Total effects: **82**.
 
 ## Table of contents
 
@@ -59,6 +59,7 @@ Total effects: **81**.
 - [Effect: raster_bars](#effect-raster-bars)
 - [Effect: raymarch_fractal](#effect-raymarch-fractal)
 - [Effect: raytrace_spheres](#effect-raytrace-spheres)
+- [Effect: recursiveFracture](#effect-recursiveFracture)
 - [Effect: ribbons](#effect-ribbons)
 - [Effect: roadDrive](#effect-roadDrive)
 - [Effect: rotozoom](#effect-rotozoom)
@@ -107,7 +108,7 @@ Total effects: **81**.
 ### Common parameter patterns
 
 - `speed` (used in 44 effects)
-- `seed` (used in 36 effects)
+- `seed` (used in 37 effects)
 - `audioReact` (used in 34 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 13 effects)
@@ -1937,6 +1938,50 @@ Total effects: **81**.
 ```json
 {
   "effect": "raytrace_spheres",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: recursiveFracture
+
+- **Registry key:** `recursiveFracture`
+- **Implementation:** `src/renderer/effects/recursiveFracture.ts` (class `RecursiveFractureEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Deterministic recursive subdivision panes; `progressMode` supports `outward`/`inward`, and `paletteMode` supports `mono`, `era`, or `heat`.
+- **Audio features:** bass, beat, beatStrength, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.angleJitter` | number | 0.22 | min 0, max 1 | Angle Jitter | yes |
+| `params.angleJitter.toFixed` | number | no explicit default | unspecified | Used in effect render logic. | yes |
+| `params.bassInfluence` | number | 0.2 | min 0, max 1 | Bass Influence | yes |
+| `params.beatPunch` | number | 0.35 | min 0, max 1.5 | Beat Punch | yes |
+| `params.fillAlpha` | number | 0.18 | min 0, max 1 | Fill Alpha | yes |
+| `params.gap` | number | 2 | min 0, max 8 | Gap | yes |
+| `params.lineAlpha` | number | 0.9 | min 0, max 1 | Line Alpha | yes |
+| `params.maxDepth` | number | 6 | min 1, max 8 | Max Depth | yes |
+| `params.minFragmentSize` | number | 24 | min 8, max 80 | Min Fragment | yes |
+| `params.minFragmentSize.toFixed` | number | no explicit default | unspecified | Used in effect render logic. | yes |
+| `params.paletteMode` | string | "heat" | options: heat, era, mono | Palette | no |
+| `params.progressMode` | string | "outward" | options: outward, inward | Progress Mode | no |
+| `params.progressSpeed` | number | 0.11 | min 0.01, max 0.8 | Progress Speed | yes |
+| `params.seed` | number | 7 | min 0, max 9999 | Seed | yes |
+| `params.shapeCount` | number | 3 | min 1, max 6 | Shape Count | yes |
+| `params.splitBias` | number | 0.65 | min 0, max 1 | Split Bias | yes |
+| `params.splitBias.toFixed` | number | no explicit default | unspecified | Used in effect render logic. | yes |
+| `params.strokeWidth` | number | 1.25 | min 0.2, max 4 | Stroke Width | yes |
+| `params.trebleDetail` | number | 0.3 | min 0, max 1 | Treble Detail | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "recursiveFracture",
   "opacity": 1,
   "blend": "source-over",
   "params": {}

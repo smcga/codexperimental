@@ -150,6 +150,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `tunnel` | `speed` |  |
 | `dotTunnel` | `ringCount`, `dotsPerRing`, `fov`, `speed`, `twist`, `palette`, `glow`, `seed` | Depth-sorted sprite/ring tunnel; `palette` selects built-in color ramps. |
 | `moire_grid` | `spacing`, `lineWidth`, `speed`, `warp`, `intensity`, `palette`, `audioReact` | Warped interference grid; `palette` supports `cyan`, `magenta`, or `amber`. |
+| `recursiveFracture` | `seed`, `shapeCount`, `maxDepth`, `splitBias`, `angleJitter`, `gap`, `strokeWidth`, `fillAlpha`, `lineAlpha`, `progressSpeed`, `progressMode`, `beatPunch`, `bassInfluence`, `trebleDetail`, `paletteMode`, `minFragmentSize` | Deterministic recursive subdivision panes; `progressMode` supports `outward`/`inward`, and `paletteMode` supports `mono`, `era`, or `heat`. |
 | `textmode_charset` | `cols`, `rows`, `glyphSet`, `mode`, `speed`, `palette`, `scanlines`, `seed` | Coarse character-grid renderer with glyph ramps (` .:-=+*#%@`) and palette-indexed tinting. |
 | `rotozoom` | `speed` |  |
 | `blobs` | `count`, `radius`, `orbit`, `speed`, `glow` |  |
