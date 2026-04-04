@@ -41,6 +41,7 @@ Total effects: **78**.
 - [Effect: lens_wobbler](#effect-lens-wobbler)
 - [Effect: lightning](#effect-lightning)
 - [Effect: lissajous](#effect-lissajous)
+- [Effect: matrix_rain](#effect-matrix-rain)
 - [Effect: metaballs](#effect-metaballs)
 - [Effect: moire_grid](#effect-moire-grid)
 - [Effect: neon](#effect-neon)
@@ -104,12 +105,12 @@ Total effects: **78**.
 
 ### Common parameter patterns
 
-- `speed` (used in 42 effects)
+- `speed` (used in 43 effects)
 - `seed` (used in 34 effects)
 - `audioReact` (used in 33 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 12 effects)
-- `trail` (used in 9 effects)
+- `trail` (used in 10 effects)
 - `palette` (used in 9 effects)
 - `hueShift` (used in 7 effects)
 - `scanlines` (used in 7 effects)
@@ -1297,6 +1298,41 @@ Total effects: **78**.
 ```json
 {
   "effect": "lissajous",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: matrix_rain
+
+- **Registry key:** `matrix_rain`
+- **Implementation:** `src/renderer/effects/matrixRainEffect.ts` (class `MatrixRainEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Matrix-style falling code rain tuned for slower, smoother descent with smaller glyphs and subtle default jitter.
+- **Audio features:** beat, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReact` | number | 0.7 | min 0, max 1 | Audio React | yes |
+| `params.brightness` | number | 0.92 | min 0.25, max 1.4 | Brightness | yes |
+| `params.density` | number | 0.66 | min 0.1, max 1 | Density | yes |
+| `params.fontSize` | number | 13 | min 8, max 28 | Font Size | yes |
+| `params.glow` | number | 0.7 | min 0, max 1.5 | Glow | yes |
+| `params.glyphSet` | number | 0 | min 0, max 2 | Glyph Set | yes |
+| `params.jitter` | number | 0.03 | min 0, max 1 | Jitter | yes |
+| `params.seed` | number | 1337 | min 0, max 9999 | Seed | yes |
+| `params.speed` | number | 0.9 | min 0.2, max 4 | Speed | yes |
+| `params.trail` | number | 0.84 | min 0.2, max 1 | Trail | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "matrix_rain",
   "opacity": 1,
   "blend": "source-over",
   "params": {}

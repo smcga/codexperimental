@@ -21,4 +21,20 @@ describe("effect manifests", () => {
       "colorShift"
     ]);
   });
+  it("exposes full matrix_rain debug controls", () => {
+    const manifest = getEffectManifest("matrix_rain");
+    expect(manifest?.debug.controls.map((control) => control.key)).toEqual([
+      "speed",
+      "density",
+      "fontSize",
+      "trail",
+      "glow",
+      "brightness",
+      "jitter",
+      "audioReact",
+      "glyphSet",
+      "seed"
+    ]);
+  });
+
 });
