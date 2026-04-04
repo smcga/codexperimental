@@ -1,4 +1,5 @@
 import { SectionConfig, TextCue, TransitionType } from "../config/loadConfig";
+import { getEffectManifest } from "../renderer/effects/manifest";
 
 export type DebugTransitionState = {
   from: SectionConfig;
@@ -70,6 +71,29 @@ export function buildDebugRenderSelection(options: {
         : undefined,
       textCues,
       isolateEffect: false
+    };
+  }
+
+  const manifest = getEffectManifest(forcedEffect);
+  if (manifest?.debugPreview === "layer") {
+    return {
+      section: {
+        ...section,
+        automation: [],
+        layers: [
+          {
+            effect: forcedEffect,
+            opacity: 1,
+            blend: "source-over",
+            params: hasEffectOverrides && effectParams ? { ...effectParams } : {},
+            automation: [],
+            fitAlign: "fill"
+          }
+        ]
+      },
+      transition: undefined,
+      textCues: [],
+      isolateEffect: true
     };
   }
 

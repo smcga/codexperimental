@@ -5,6 +5,7 @@ import { bokehManifest } from "./bokeh.manifest";
 import { border_multiplexManifest } from "./border_multiplex.manifest";
 import { bumpmap_planeManifest } from "./bumpmap_plane.manifest";
 import { chessManifest } from "./chess.manifest";
+import { chromaticAberrationManifest } from "./chromaticAberration.manifest";
 import { copper_gradient_splitsManifest } from "./copper_gradient_splits.manifest";
 import { cosmic_voyageManifest } from "./cosmic_voyage.manifest";
 import { doodle_greetz_wallManifest } from "./doodle_greetz_wall.manifest";
@@ -90,6 +91,7 @@ export const generatedEffectManifests = [
   border_multiplexManifest,
   bumpmap_planeManifest,
   chessManifest,
+  chromaticAberrationManifest,
   copper_gradient_splitsManifest,
   cosmic_voyageManifest,
   doodle_greetz_wallManifest,

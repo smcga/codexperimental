@@ -177,4 +177,38 @@ describe("buildDebugRenderSelection", () => {
       isolateEffect: true
     });
   });
+
+  it("previews post-process debug effects as a single forced layer over the timeline base effect", () => {
+    const result = buildDebugRenderSelection({
+      section: baseSection,
+      transition: undefined,
+      textCues: [activeCue],
+      forcedEffect: "chromaticAberration",
+      effectParams: { strength: 0.01, alpha: 0.8 },
+      transitionOverride: null
+    });
+
+    expect(result).toEqual({
+      section: {
+        ...baseSection,
+        automation: [],
+        layers: [
+          {
+            effect: "chromaticAberration",
+            opacity: 1,
+            blend: "source-over",
+            params: {
+              strength: 0.01,
+              alpha: 0.8
+            },
+            automation: [],
+            fitAlign: "fill"
+          }
+        ]
+      },
+      transition: undefined,
+      textCues: [],
+      isolateEffect: true
+    });
+  });
 });

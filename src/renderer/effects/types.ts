@@ -5,6 +5,7 @@ export type EffectRenderContext = {
   ctx: CanvasRenderingContext2D;
   width: number;
   height: number;
+  sourceCanvas?: HTMLCanvasElement;
   time: number;
   delta: number;
   audio: AudioFeatures;

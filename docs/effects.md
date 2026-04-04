@@ -13,6 +13,7 @@ Total effects: **82**.
 - [Effect: border_multiplex](#effect-border-multiplex)
 - [Effect: bumpmap_plane](#effect-bumpmap-plane)
 - [Effect: chess](#effect-chess)
+- [Effect: chromaticAberration](#effect-chromaticAberration)
 - [Effect: copper_gradient_splits](#effect-copper-gradient-splits)
 - [Effect: cosmic_voyage](#effect-cosmic-voyage)
 - [Effect: doodle_greetz_wall](#effect-doodle-greetz-wall)
@@ -362,6 +363,41 @@ Total effects: **82**.
 ```json
 {
   "effect": "chess",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: chromaticAberration
+
+- **Registry key:** `chromaticAberration`
+- **Implementation:** `src/renderer/effects/chromaticAberration.ts` (class `ChromaticAberrationEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Post-process RGB channel separation that grows from center to edges.
+- **Audio features:** None detected
+- **Performance notes:** Uses ImageData per frame; CPU cost scales with resolution.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.alpha` | number | 1 | min 0, max 1 | Alpha | yes |
+| `params.angle` | number | 0 | min -3.14, max 3.14 | Angle | yes |
+| `params.animate` | number | 0 | min 0, max 4 | Animate | yes |
+| `params.centerX` | number | 0.5 | min 0, max 1 | Center X | yes |
+| `params.centerY` | number | 0.5 | min 0, max 1 | Center Y | yes |
+| `params.edgeBoost` | number | 0 | min 0, max 3 | Edge Boost | yes |
+| `params.falloff` | number | 1.6 | min 0.2, max 4 | Falloff | yes |
+| `params.mode` | string | "rgb" | options: rgb, rg, rb, gb | Mode | no |
+| `params.sampleStep` | number | 1 | min 1, max 6 | Sample Step | yes |
+| `params.strength` | number | 0.006 | min 0, max 0.05 | Strength | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "chromaticAberration",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
