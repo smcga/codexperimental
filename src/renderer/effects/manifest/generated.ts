@@ -47,6 +47,7 @@ import { portraitManifest } from "./portrait.manifest";
 import { prism_bloomManifest } from "./prism_bloom.manifest";
 import { proper3dManifest } from "./proper3d.manifest";
 import { rainManifest } from "./rain.manifest";
+import { rainbow_catManifest } from "./rainbow_cat.manifest";
 import { raster_barsManifest } from "./raster_bars.manifest";
 import { raymarch_fractalManifest } from "./raymarch_fractal.manifest";
 import { raytrace_spheresManifest } from "./raytrace_spheres.manifest";
@@ -129,6 +130,7 @@ export const generatedEffectManifests = [
   prism_bloomManifest,
   proper3dManifest,
   rainManifest,
+  rainbow_catManifest,
   raster_barsManifest,
   raymarch_fractalManifest,
   raytrace_spheresManifest,

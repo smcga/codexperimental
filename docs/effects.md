@@ -55,6 +55,7 @@ Total effects: **78**.
 - [Effect: prism_bloom](#effect-prism-bloom)
 - [Effect: proper3d](#effect-proper3d)
 - [Effect: rain](#effect-rain)
+- [Effect: rainbow_cat](#effect-rainbow-cat)
 - [Effect: raster_bars](#effect-raster-bars)
 - [Effect: raymarch_fractal](#effect-raymarch-fractal)
 - [Effect: raytrace_spheres](#effect-raytrace-spheres)
@@ -1782,6 +1783,39 @@ Total effects: **78**.
 ```json
 {
   "effect": "rain",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: rainbow_cat
+
+- **Registry key:** `rainbow_cat`
+- **Implementation:** `src/renderer/effects/rainbowCatEffect.ts` (class `RainbowCatEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Synth-night rainbow cat silhouette with swishing tail, trotting paws, glitter stars, and a configurable six-colour trail.
+- **Audio features:** beat, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.bounce` | number | 0.45 | min 0, max 1.2 | Bounce | yes |
+| `params.catScale` | number | 1 | min 0.6, max 1.8 | Cat Scale | yes |
+| `params.rainbowLength` | number | 0.72 | min 0.2, max 1 | Rainbow Length | yes |
+| `params.seed` | number | 0 | min 0, max 999 | Seed | yes |
+| `params.sparkle` | number | 0.6 | min 0, max 1 | Sparkle | yes |
+| `params.speed` | number | 0.9 | min 0.2, max 2.5 | Speed | yes |
+| `params.starDensity` | number | 0.65 | min 0, max 1 | Star Density | yes |
+| `params.trailAlpha` | number | 0.82 | min 0.1, max 1 | Trail Alpha | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "rainbow_cat",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
