@@ -33,6 +33,7 @@ Total effects: **82**.
 - [Effect: gl_impossible_corridor](#effect-gl-impossible-corridor)
 - [Effect: glenz_vectors](#effect-glenz-vectors)
 - [Effect: glitch](#effect-glitch)
+- [Effect: god_rays](#effect-god-rays)
 - [Effect: greets_wall](#effect-greets-wall)
 - [Effect: hexGridPulse](#effect-hexGridPulse)
 - [Effect: infiniteMirror](#effect-infiniteMirror)
@@ -1037,6 +1038,47 @@ Total effects: **82**.
 ```json
 {
   "effect": "glitch",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: god_rays
+
+- **Registry key:** `god_rays`
+- **Implementation:** `src/renderer/effects/godRaysEffect.ts` (class `GodRaysEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Atmospheric volumetric-style shafts with drifting haze, procedural occluders, and style variants (`sunbreak`, `window`, `cathedral`).
+- **Audio features:** bass, beat, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.drift` | number | 0.25 | min 0, max 2 | Drift | yes |
+| `params.dust` | number | 0.25 | min 0, max 1 | Dust | yes |
+| `params.haze` | number | 0.6 | min 0, max 1.2 | Haze | yes |
+| `params.intensity` | number | 1 | min 0, max 3 | Intensity | yes |
+| `params.occlusion` | number | 0.5 | min 0, max 1 | Occlusion | yes |
+| `params.pulse` | number | 0.35 | min 0, max 1.5 | Pulse | yes |
+| `params.rayCount` | number | 24 | min 8, max 56 | Ray Count | yes |
+| `params.seed` | number | 0 | min 0, max 9999 | Seed | yes |
+| `params.shadowBands` | number | 0.5 | min 0, max 1 | Shadow Bands | yes |
+| `params.sourceDriftX` | number | 0 | min -1, max 1 | Source Drift X | yes |
+| `params.sourceDriftY` | number | 0 | min -1, max 1 | Source Drift Y | yes |
+| `params.sourceX` | number | 0.5 | min -0.5, max 1.5 | Source X | yes |
+| `params.sourceY` | number | 0.2 | min -0.5, max 1.2 | Source Y | yes |
+| `params.spread` | number | 0.55 | min 0.1, max 1 | Spread | yes |
+| `params.style` | string | "sunbreak" | options: sunbreak, window, cathedral | Style | no |
+| `params.warmth` | number | 0.65 | min 0, max 1 | Warmth | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "god_rays",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
