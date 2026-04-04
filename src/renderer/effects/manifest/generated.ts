@@ -54,6 +54,7 @@ import { raytrace_spheresManifest } from "./raytrace_spheres.manifest";
 import { ribbonsManifest } from "./ribbons.manifest";
 import { roadDriveManifest } from "./roadDrive.manifest";
 import { rotozoomManifest } from "./rotozoom.manifest";
+import { sdf_textManifest } from "./sdf_text.manifest";
 import { shadebobs_bobsManifest } from "./shadebobs_bobs.manifest";
 import { sine_distorterManifest } from "./sine_distorter.manifest";
 import { sine_scroller_logoManifest } from "./sine_scroller_logo.manifest";
@@ -137,6 +138,7 @@ export const generatedEffectManifests = [
   ribbonsManifest,
   roadDriveManifest,
   rotozoomManifest,
+  sdf_textManifest,
   shadebobs_bobsManifest,
   sine_distorterManifest,
   sine_scroller_logoManifest,

@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **81**.
+Total effects: **82**.
 
 ## Table of contents
 
@@ -62,6 +62,7 @@ Total effects: **81**.
 - [Effect: ribbons](#effect-ribbons)
 - [Effect: roadDrive](#effect-roadDrive)
 - [Effect: rotozoom](#effect-rotozoom)
+- [Effect: sdf_text](#effect-sdf-text)
 - [Effect: shadebobs_bobs](#effect-shadebobs-bobs)
 - [Effect: sine_distorter](#effect-sine-distorter)
 - [Effect: sine_scroller_logo](#effect-sine-scroller-logo)
@@ -2031,6 +2032,64 @@ Total effects: **81**.
 ```json
 {
   "effect": "rotozoom",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: sdf_text
+
+- **Registry key:** `sdf_text`
+- **Implementation:** `src/renderer/effects/sdfTextEffect.ts` (class `SdfTextEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Runtime Canvas2D signed-distance-field style text for crisp hero typography with fill/outline/glow shaping and audio-reactive pulses. Example: {"id":"title-card-sdf","effect":"sdf_text","start":12,"duration":6,"params":{"text":"BEYOND REALTIME","fontScale":0.24,"fillColor":"#ffffff","outlineColor":"#8b5cf6","glowColor":"#22d3ee","glowWidth":0.28,"audioGlow":0.8,"beatFlash":0.5}}
+- **Audio features:** beat, beatStrength, rms
+- **Performance notes:** Uses ImageData per frame; CPU cost scales with resolution.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.align` | string | "center" | options: left, center, right | Align | no |
+| `params.audioGlow` | number | 0.5 | min 0, max 2 | Audio Glow | yes |
+| `params.audioOutline` | number | 0.2 | min 0, max 1 | Audio Outline | yes |
+| `params.audioScale` | number | 0.04 | min 0, max 0.3 | Audio Scale | yes |
+| `params.beatFlash` | number | 0.35 | min 0, max 1 | Beat Flash | yes |
+| `params.chromaticAberration` | number | 0 | min 0, max 1 | Chromatic | yes |
+| `params.debugField` | boolean | false | unspecified | Debug Field | unknown |
+| `params.driftX` | number | 0 | min -2, max 2 | Drift X | yes |
+| `params.driftY` | number | 0 | min -2, max 2 | Drift Y | yes |
+| `params.fieldResolution` | number | 256 | min 96, max 512 | Field Resolution | yes |
+| `params.fillAlpha` | number | 1 | min 0, max 1 | Fill Alpha | yes |
+| `params.fillColor` | string | "#ffffff" | options: #ffffff | Fill Color | no |
+| `params.fontFamily` | string | "Arial, sans-serif" | options: Arial, sans-serif | Font Family | no |
+| `params.fontScale` | number | 0.22 | min 0.05, max 0.8 | Font Scale | yes |
+| `params.fontWeight` | string | "700" | options: 700 | Font Weight | no |
+| `params.glowAlpha` | number | 0.6 | min 0, max 1 | Glow Alpha | yes |
+| `params.glowColor` | string | "#60a5fa" | options: #60a5fa | Glow Color | no |
+| `params.glowPulse` | number | 0.35 | min 0, max 2 | Glow Pulse | yes |
+| `params.glowWidth` | number | 0.22 | min 0, max 1.3 | Glow Width | yes |
+| `params.lineGap` | number | 0.16 | min 0, max 0.8 | Line Gap | yes |
+| `params.maxFieldResolution` | number | 512 | min 128, max 512 | Max Resolution | yes |
+| `params.offsetX` | number | 0 | min -1, max 1 | Offset X | yes |
+| `params.offsetY` | number | 0 | min -1, max 1 | Offset Y | yes |
+| `params.outlineAlpha` | number | 0.9 | min 0, max 1 | Outline Alpha | yes |
+| `params.outlineColor` | string | "#7dd3fc" | options: #7dd3fc | Outline Color | no |
+| `params.outlinePulse` | number | 0 | min 0, max 2 | Outline Pulse | yes |
+| `params.outlineWidth` | number | 0.08 | min 0, max 0.8 | Outline Width | yes |
+| `params.pulse` | number | 0 | min 0, max 1.5 | Pulse | yes |
+| `params.shadowColor` | string | "#000000" | options: #000000 | Shadow Color | no |
+| `params.softness` | number | 0.08 | min 0.01, max 0.6 | Softness | yes |
+| `params.text` | string | "SDF TEXT" | options: SDF TEXT | Text | no |
+| `params.verticalAlign` | string | "middle" | options: top, middle, bottom | Vertical | no |
+| `params.wobble` | number | 0 | min 0, max 1 | Wobble | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "sdf_text",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
