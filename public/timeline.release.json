@@ -184,14 +184,15 @@
           "params": {}
         },
         {
-          "effect": "hexGridPulse",
-          "blend": "screen",
-          "opacity": 0.2,
+          "effect": "moving_shadow_map",
+          "blend": "overlay",
+          "opacity": 0.18,
           "params": {
-            "cellSize": 22,
-            "fillAlpha": 0.38,
-            "glowAlpha": 0.22,
-            "audioReactive": 0.18
+            "objectCount": 5,
+            "lightSpeed": 0.55,
+            "shadowLength": 1.15,
+            "haze": 0.15,
+            "floorGrid": 0
           }
         }
       ],
