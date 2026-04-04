@@ -36,6 +36,24 @@ export class EffectIdeaApiError extends Error {
   }
 }
 
+function normalizeGeneratedCode(rawCode: string): string {
+  return rawCode
+    .replace(/^\s*```[a-z]*\s*/iu, "")
+    .replace(/\s*```\s*$/u, "")
+    .replace(/^\s*type\s+[A-Za-z_$][A-Za-z0-9_$]*\s*=\s*[\s\S]*?;\s*$/gmu, "")
+    .replace(/^\s*interface\s+[A-Za-z_$][A-Za-z0-9_$]*\s*\{[\s\S]*?\}\s*$/gmu, "")
+    .replace(/\bexport\s+default\s+/gu, "")
+    .replace(/\bexport\s+/gu, "")
+    .replace(/\)\s*:\s*[A-Za-z_$][A-Za-z0-9_$<>\[\]\|, \t]*(?=\s*\{)/gu, ")")
+    .replace(/\(([^()]*)\)/gu, (match, params: string) => {
+      if (!params.includes(":")) {
+        return match;
+      }
+      const stripped = params.replace(/([A-Za-z_$][A-Za-z0-9_$]*)\s*\??:\s*[^,)=]+/gu, "$1");
+      return `(${stripped})`;
+    });
+}
+
 function isRecord(value: unknown): value is EffectIdeaRecord {
   if (!value || typeof value !== "object") {
     return false;
@@ -80,7 +98,26 @@ async function requestEffects(path = "/api/effects", init?: RequestInit): Promis
 }
 
 export function compileRuntimeEffect(runtimeCode: string): Effect {
-  const factory = new Function(`"use strict";${runtimeCode}`) as () => Effect;
+  const normalizedCode = normalizeGeneratedCode(runtimeCode);
+  const factory = new Function(
+    `"use strict";
+${normalizedCode}
+const candidate =
+  (typeof createEffect === "function" ? createEffect
+    : typeof createDemo === "function" ? createDemo
+    : typeof effectFactory === "function" ? effectFactory
+    : typeof demoFactory === "function" ? demoFactory
+    : typeof effect === "object" && effect ? effect
+    : typeof demo === "object" && demo ? demo
+    : null);
+if (typeof candidate === "function") {
+  return candidate();
+}
+if (candidate && typeof candidate === "object") {
+  return candidate;
+}
+return (() => {${normalizedCode}})();`
+  ) as () => Effect;
   const effect = factory();
   if (!effect || typeof effect.render !== "function") {
     throw new Error("Generated effect is missing a render function.");

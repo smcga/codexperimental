@@ -68,6 +68,22 @@ describe("effect ideas client", () => {
     expect(typeof effect.render).toBe("function");
   });
 
+  it("compiles module-style generated code with export default factory", () => {
+    const effect = compileRuntimeEffect(`
+      type Demo = { render: (context: CanvasRenderingContext2D) => void; reset?: () => void; };
+      export default function createDemo(): Demo {
+        return {
+          render(context: CanvasRenderingContext2D) {
+            context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+          },
+          reset() {}
+        };
+      }
+    `);
+    expect(typeof effect.render).toBe("function");
+    expect(typeof effect.reset).toBe("function");
+  });
+
   it("surfaces API error messages for generation failures", async () => {
     globalThis.fetch = vi.fn(async () => ({
       ok: false,

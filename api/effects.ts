@@ -213,7 +213,16 @@ async function generateWithOpenAi(prompt: string): Promise<{ name: string; types
           content: [
             {
               type: "input_text",
-              text: "You generate canvas demoscene effects. Return strict JSON with keys name, typescriptCode, runtimeCode. runtimeCode MUST be executable JS that returns an object with render(context) and optional reset()."
+              text: [
+                "You generate canvas demoscene effects.",
+                "Return STRICT JSON only with keys: name, typescriptCode, runtimeCode.",
+                "typescriptCode can use TypeScript syntax.",
+                "runtimeCode MUST be plain JavaScript (no TypeScript annotations).",
+                "runtimeCode MUST NOT include markdown fences.",
+                "runtimeCode MUST NOT include export/import statements.",
+                "runtimeCode MUST evaluate to an effect object with render(context) and optional reset().",
+                "Preferred runtimeCode shape: `return { render(context) { ... }, reset() { ... } };`"
+              ].join(" ")
             }
           ]
         },

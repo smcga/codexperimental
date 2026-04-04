@@ -99,6 +99,13 @@ describe("api/effects", () => {
     await handler({ method: "POST", url: "/api/effects?action=generate", body: JSON.stringify({ prompt: "make stars" }) }, res.response);
     expect(res.response.statusCode).toBe(200);
     expect(JSON.parse(res.getBody()).generation.name).toBe("Nebula");
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      "https://api.openai.com/v1/responses",
+      expect.objectContaining({
+        method: "POST",
+        body: expect.stringContaining("runtimeCode MUST be plain JavaScript")
+      })
+    );
   });
 
   it("returns an error when OpenAI key is missing for generation", async () => {
