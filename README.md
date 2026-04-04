@@ -399,10 +399,16 @@ OPENAI_CODEX_MODEL=gpt-5-codex
 
 # Required if you want token-protected effect moderation endpoints
 EFFECT_MODERATION_TOKEN=replace-with-a-long-random-secret
+
+# Optional effect-specific moderation notifications
+EFFECT_MODERATION_BASE_URL=https://your-public-site.example.com
+EFFECT_MODERATION_NTFY_URL=https://ntfy.sh/effect-moderation-topic
+EFFECT_MODERATION_NTFY_TOKEN=your-ntfy-access-token
 ```
 
 Optional fallback token behavior:
 - If `EFFECT_MODERATION_TOKEN` is not set, `/api/effects` moderation falls back to `DOODLE_MODERATION_TOKEN`, then `DOODLE_ADMIN_TOKEN`.
+- Effect moderation notifications can use their own ntfy feed (`EFFECT_MODERATION_NTFY_URL`) or fall back to doodle ntfy settings (`DOODLE_MODERATION_NTFY_URL`).
 - Generated effects are submitted into a pending queue; they only become selectable after approval via `/api/effects?action=approve&id=...&token=...`.
 - If generation requests return `503` from `/api/effects?action=generate`, check that `OPENAI_API_KEY` is set in your deployed environment and redeploy so the serverless function picks it up.
 - If generation fails with `Unable to parse generated effect response.`, the modal now shows the raw model output in the code panel so you can inspect formatting mismatches.

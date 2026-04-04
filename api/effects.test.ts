@@ -136,4 +136,37 @@ describe("api/effects", () => {
     expect(payload.error).toContain("Unable to parse generated effect response.");
     expect(payload.rawResponse).toContain("I can help with that");
   });
+
+  it("sends ntfy moderation notifications for effect submissions", async () => {
+    process.env.EFFECT_MODERATION_TOKEN = "secret-token";
+    process.env.EFFECT_MODERATION_BASE_URL = "https://demo.example.com";
+    process.env.EFFECT_MODERATION_NTFY_URL = "https://ntfy.sh/effect-topic";
+    process.env.EFFECT_MODERATION_NTFY_TOKEN = "ntfy-token";
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+
+    await handler(
+      {
+        method: "POST",
+        url: "/api/effects",
+        body: JSON.stringify({ name: "Tunnel", prompt: "Fast tunnel", typescriptCode: "ts", runtimeCode: "return { render() {} };" })
+      },
+      res.response
+    );
+
+    expect(res.response.statusCode).toBe(200);
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      "https://ntfy.sh/effect-topic",
+      expect.objectContaining({
+        method: "POST",
+        headers: expect.objectContaining({
+          "Title": "Effect idea awaiting approval",
+          "Click": expect.stringContaining("/api/effects?includePending=1")
+        }),
+        body: expect.stringContaining("Approve: https://demo.example.com/api/effects?action=approve")
+      })
+    );
+  });
 });

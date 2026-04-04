@@ -7,6 +7,13 @@ const PENDING_EFFECTS_KEY = "effects:pending";
 const MAX_EFFECTS = 128;
 const MAX_PENDING_EFFECTS = 128;
 const MODERATION_TOKEN_ENV_KEYS = ["EFFECT_MODERATION_TOKEN", "DOODLE_MODERATION_TOKEN", "DOODLE_ADMIN_TOKEN"];
+const MODERATION_BASE_URL_ENV_KEYS = [
+  "EFFECT_MODERATION_BASE_URL",
+  "DOODLE_MODERATION_BASE_URL",
+  "SITE_URL",
+  "VERCEL_PROJECT_PRODUCTION_URL",
+  "VERCEL_URL"
+];
 
 type RequestLike = {
   method?: string;
@@ -112,6 +119,18 @@ function isAuthorized(url: URL): boolean {
   return Boolean(token && url.searchParams.get("token") === token);
 }
 
+function getModerationBaseUrl(requestUrl: URL): string | null {
+  for (const key of MODERATION_BASE_URL_ENV_KEYS) {
+    const value = normalizeEnvValue(process.env[key]);
+    if (!value) {
+      continue;
+    }
+    const candidate = new URL(value.startsWith("http") ? value : `https://${value}`);
+    return `${candidate.protocol}//${candidate.host}`;
+  }
+  return `${requestUrl.protocol}//${requestUrl.host}`;
+}
+
 function isEffectRecord(value: unknown): value is EffectRecord {
   if (!value || typeof value !== "object") {
     return false;
@@ -157,6 +176,71 @@ async function readPendingEffects(client: { get: (key: string) => Promise<unknow
 
 async function writePendingEffects(client: { set: (key: string, value: unknown) => Promise<unknown> }, effects: EffectRecord[]): Promise<void> {
   await client.set(PENDING_EFFECTS_KEY, effects.slice(0, MAX_PENDING_EFFECTS));
+}
+
+async function sendModerationNotification(effect: EffectRecord, requestUrl: URL): Promise<void> {
+  const moderationBaseUrl = getModerationBaseUrl(requestUrl);
+  const moderationToken = getModerationToken();
+  const webhookUrl = normalizeEnvValue(process.env.EFFECT_MODERATION_WEBHOOK_URL) ?? normalizeEnvValue(process.env.DOODLE_MODERATION_WEBHOOK_URL);
+  const ntfyUrl = normalizeEnvValue(process.env.EFFECT_MODERATION_NTFY_URL) ?? normalizeEnvValue(process.env.DOODLE_MODERATION_NTFY_URL);
+  const ntfyToken = normalizeEnvValue(process.env.EFFECT_MODERATION_NTFY_TOKEN) ?? normalizeEnvValue(process.env.DOODLE_MODERATION_NTFY_TOKEN);
+
+  if (!moderationBaseUrl || !moderationToken || (!webhookUrl && !ntfyUrl)) {
+    return;
+  }
+
+  const withAction = (decision: "approve" | "reject"): string => {
+    const url = new URL("/api/effects", moderationBaseUrl);
+    url.searchParams.set("action", decision);
+    url.searchParams.set("id", effect.id);
+    url.searchParams.set("token", moderationToken);
+    return url.toString();
+  };
+
+  const approveUrl = withAction("approve");
+  const rejectUrl = withAction("reject");
+  const pendingQueueUrl = `${new URL("/api/effects?includePending=1", moderationBaseUrl).toString()}&token=${encodeURIComponent(moderationToken)}`;
+  const createdAtIso = new Date(effect.createdAt).toISOString();
+  const tasks: Promise<unknown>[] = [];
+
+  if (webhookUrl) {
+    tasks.push(
+      fetch(webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          event: "effect_submitted",
+          effect,
+          createdAtIso,
+          moderation: { approveUrl, rejectUrl, pendingQueueUrl }
+        })
+      })
+    );
+  }
+
+  if (ntfyUrl) {
+    tasks.push(
+      fetch(ntfyUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain; charset=utf-8",
+          "Title": "Effect idea awaiting approval",
+          "Priority": "high",
+          "Click": pendingQueueUrl,
+          ...(ntfyToken ? { Authorization: `Bearer ${ntfyToken}` } : {})
+        },
+        body: [
+          `New effect idea submitted at ${createdAtIso}.`,
+          `Name: ${effect.name}`,
+          `Approve: ${approveUrl}`,
+          `Reject: ${rejectUrl}`,
+          `Queue API: ${pendingQueueUrl}`
+        ].join("\n")
+      })
+    );
+  }
+
+  await Promise.allSettled(tasks);
 }
 
 function parseJsonBlock(text: string): { name: string; typescriptCode: string; runtimeCode: string } | null {
@@ -357,6 +441,7 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
 
     const pending = await readPendingEffects(writeClient);
     await writePendingEffects(writeClient, [effect, ...pending]);
+    await sendModerationNotification(effect, url);
     sendJson(res, 200, { effect, moderationStatus: "pending" });
     return;
   }
