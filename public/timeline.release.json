@@ -184,18 +184,15 @@
           "params": {}
         },
         {
-          "effect": "god_rays",
-          "blend": "screen",
+          "effect": "moving_shadow_map",
+          "blend": "overlay",
           "opacity": 0.18,
           "params": {
-            "style": "sunbreak",
-            "intensity": 0.78,
-            "haze": 0.58,
-            "occlusion": 0.42,
-            "rayCount": 18,
-            "sourceX": 0.46,
-            "sourceY": 0.18,
-            "seed": 11
+            "objectCount": 5,
+            "lightSpeed": 0.55,
+            "shadowLength": 1.15,
+            "haze": 0.15,
+            "floorGrid": 0
           }
         }
       ],
