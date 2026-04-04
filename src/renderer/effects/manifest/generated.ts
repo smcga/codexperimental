@@ -71,6 +71,7 @@ import { torus_orbit_3dManifest } from "./torus_orbit_3d.manifest";
 import { treegrowthManifest } from "./treegrowth.manifest";
 import { tunnelManifest } from "./tunnel.manifest";
 import { twisterManifest } from "./twister.manifest";
+import { uv_unwrapManifest } from "./uv_unwrap.manifest";
 import { vector3d_ballsManifest } from "./vector3d_balls.manifest";
 import { velvet_dreamscapeManifest } from "./velvet_dreamscape.manifest";
 import { vga_fireManifest } from "./vga_fire.manifest";
@@ -154,6 +155,7 @@ export const generatedEffectManifests = [
   treegrowthManifest,
   tunnelManifest,
   twisterManifest,
+  uv_unwrapManifest,
   vector3d_ballsManifest,
   velvet_dreamscapeManifest,
   vga_fireManifest,

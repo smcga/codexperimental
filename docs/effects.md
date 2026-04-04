@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **81**.
+Total effects: **82**.
 
 ## Table of contents
 
@@ -79,6 +79,7 @@ Total effects: **81**.
 - [Effect: treegrowth](#effect-treegrowth)
 - [Effect: tunnel](#effect-tunnel)
 - [Effect: twister](#effect-twister)
+- [Effect: uv_unwrap](#effect-uv-unwrap)
 - [Effect: vector3d_balls](#effect-vector3d-balls)
 - [Effect: velvet_dreamscape](#effect-velvet-dreamscape)
 - [Effect: vga_fire](#effect-vga-fire)
@@ -2614,6 +2615,37 @@ Total effects: **81**.
 ```json
 {
   "effect": "twister",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: uv_unwrap
+
+- **Registry key:** `uv_unwrap`
+- **Implementation:** `src/renderer/effects/uvUnwrapEffect.ts` (class `UvUnwrapEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Faux-3D cube that morphs into a UV cross layout with seam-forward edge rendering.
+- **Audio features:** bass, beat
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.cameraDist` | number | 3 | min 2.2, max 6 | Camera Distance | yes |
+| `params.edgeStrength` | number | 1 | min 0.2, max 2.5 | Edge Strength | yes |
+| `params.explode` | number | 0.15 | min 0, max 1 | Explode | yes |
+| `params.rotationSpeed` | number | 0.6 | min -2, max 2 | Rotation Speed | yes |
+| `params.unwrap` | number | 0 | min 0, max 1 | Unwrap | yes |
+| `params.uvScale` | number | 2 | min 1, max 3.5 | UV Scale | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "uv_unwrap",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
