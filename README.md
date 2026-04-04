@@ -175,6 +175,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `ribbons` | `count`, `speed`, `amplitude`, `audioBoost`, `offset`, `spacing`, `thickness` |  |
 | `skeletal_ribbon` | `boneCount`, `length`, `thickness`, `waveAmp`, `waveFreq`, `stiffness`, `audioInfluence`, `colorMode`, `hueShift`, `glow`, `debugSkeleton` | Articulated spine/tentacle ribbon driven by chained bone kinematics with beat-reactive pulse thickness. |
 | `lissajous` | `points`, `speed`, `a`, `b`, `radius`, `lineWidth` |  |
+| `marble` | `scale`, `veinScale`, `contrast`, `brightness`, `speed`, `turbulence`, `layers` | Animated marble veins using turbulent sine domain warping; audio subtly modulates turbulence, vein scale, and brightness. |
 | `glitch` | `sparkles`, `sparkleSize`, `sliceCount`, `sliceBoost`, `sliceHeight`, `sliceVariance`, `offset`, `shake`, `maxShake` |  |
 | `bokeh` | `count`, `speed`, `radius`, `alpha`, `hueShift` |  |
 | `fractal` | `iterations`, `trebleBoost`, `speed`, `scale`, `alpha` |  |
