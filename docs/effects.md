@@ -105,7 +105,7 @@ Total effects: **78**.
 
 - `speed` (used in 43 effects)
 - `seed` (used in 34 effects)
-- `audioReact` (used in 32 effects)
+- `audioReact` (used in 33 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 12 effects)
 - `trail` (used in 10 effects)
@@ -1315,6 +1315,7 @@ Total effects: **78**.
 
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
 | --- | --- | --- | --- | --- | --- |
+| `params.audioReact` | number | 0.7 | min 0, max 1 | Audio React | yes |
 | `params.brightness` | number | 0.92 | min 0.25, max 1.4 | Brightness | yes |
 | `params.density` | number | 0.66 | min 0.1, max 1 | Density | yes |
 | `params.fontSize` | number | 13 | min 8, max 28 | Font Size | yes |

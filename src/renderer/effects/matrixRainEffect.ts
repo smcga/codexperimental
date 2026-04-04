@@ -14,6 +14,7 @@ export const MATRIX_RAIN_DEFAULTS = {
   glow: 0.7,
   brightness: 0.92,
   jitter: 0.03,
+  audioReact: 0.7,
   glyphSet: 0,
   seed: 1337
 };
@@ -32,6 +33,7 @@ export type MatrixRainResolvedParams = {
   glow: number;
   brightness: number;
   jitter: number;
+  audioReact: number;
   glyphSet: number;
   seed: number;
 };
@@ -52,6 +54,7 @@ export const resolveMatrixRainParams = (params: Record<string, number>): MatrixR
   glow: clamp(asFinite(params.glow, MATRIX_RAIN_DEFAULTS.glow), 0, 1.5),
   brightness: clamp(asFinite(params.brightness, MATRIX_RAIN_DEFAULTS.brightness), 0.25, 1.4),
   jitter: clamp(asFinite(params.jitter, MATRIX_RAIN_DEFAULTS.jitter), 0, 1),
+  audioReact: clamp(asFinite(params.audioReact, MATRIX_RAIN_DEFAULTS.audioReact), 0, 1),
   glyphSet: Math.abs(Math.round(asFinite(params.glyphSet, MATRIX_RAIN_DEFAULTS.glyphSet))),
   seed: Math.abs(Math.round(asFinite(params.seed, MATRIX_RAIN_DEFAULTS.seed)))
 });
@@ -75,13 +78,22 @@ export const sampleMatrixGlyph = (column: number, row: number, streamTime: numbe
   return bank[index] ?? bank[0] ?? "0";
 };
 
+
+export const resolveMatrixAudioDrive = (audio: { beat?: boolean; rms?: number; treble?: number }, audioReact: number): number => {
+  if (audioReact <= 0) {
+    return 0;
+  }
+  const rawPulse = (audio.beat ? 0.2 : 0) + (audio.rms ?? 0) * 0.4 + (audio.treble ?? 0) * 0.08;
+  return clamp(rawPulse * audioReact, 0, 1);
+};
+
 export class MatrixRainEffect implements Effect {
   render({ ctx, width, height, time, audio, params }: EffectRenderContext): void {
     const resolved = resolveMatrixRainParams(params);
     const columnCount = getMatrixColumnCount(width, resolved.fontSize);
     const cellWidth = width / columnCount;
     const rowHeight = resolved.fontSize * 1.05;
-    const beatPulse = clamp((audio.beat ? 0.2 : 0) + (audio.rms ?? 0) * 0.4 + (audio.treble ?? 0) * 0.08, 0, 1);
+    const beatPulse = resolveMatrixAudioDrive(audio, resolved.audioReact);
     const baseFallSpeed = resolveBaseFallSpeed(resolved.speed) * (1 + beatPulse * 0.12);
 
     ctx.save();

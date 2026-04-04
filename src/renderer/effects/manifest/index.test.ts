@@ -31,6 +31,7 @@ describe("effect manifests", () => {
       "glow",
       "brightness",
       "jitter",
+      "audioReact",
       "glyphSet",
       "seed"
     ]);

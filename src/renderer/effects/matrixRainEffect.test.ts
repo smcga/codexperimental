@@ -6,6 +6,7 @@ import {
   getMatrixColumnCount,
   isMatrixColumnActive,
   resolveBaseFallSpeed,
+  resolveMatrixAudioDrive,
   resolveMatrixRainParams,
   sampleMatrixGlyph
 } from "./matrixRainEffect";
@@ -50,6 +51,7 @@ describe("resolveMatrixRainParams", () => {
         glow: -1,
         brightness: 5,
         jitter: -2,
+        audioReact: 2,
         glyphSet: -3,
         seed: -17
       })
@@ -61,6 +63,7 @@ describe("resolveMatrixRainParams", () => {
       glow: 0,
       brightness: 1.4,
       jitter: 0,
+      audioReact: 1,
       glyphSet: 3,
       seed: 17
     });
@@ -87,6 +90,13 @@ describe("matrixRainEffect helpers", () => {
 
     expect(dense).toBeGreaterThan(sparse);
     expect(getMatrixColumnCount(320, 16)).toBeGreaterThan(0);
+  });
+
+
+  it("can disable audio-reactive drive", () => {
+    const audio = { beat: true, rms: 1, treble: 1 };
+    expect(resolveMatrixAudioDrive(audio, 0)).toBe(0);
+    expect(resolveMatrixAudioDrive(audio, 1)).toBeGreaterThan(0);
   });
 
   it("keeps low speed in a slow cinematic range", () => {

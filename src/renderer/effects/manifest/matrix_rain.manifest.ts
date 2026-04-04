@@ -16,12 +16,13 @@ export const matrix_rainManifest = defineEffectManifest({
       numberControl("glow", "Glow", MATRIX_RAIN_DEFAULTS.glow, { min: 0, max: 1.5, step: 0.05 }),
       numberControl("brightness", "Brightness", MATRIX_RAIN_DEFAULTS.brightness, { min: 0.25, max: 1.4, step: 0.05 }),
       numberControl("jitter", "Jitter", MATRIX_RAIN_DEFAULTS.jitter, { min: 0, max: 1, step: 0.05 }),
+      numberControl("audioReact", "Audio React", MATRIX_RAIN_DEFAULTS.audioReact, { min: 0, max: 1, step: 0.05 }),
       numberControl("glyphSet", "Glyph Set", MATRIX_RAIN_DEFAULTS.glyphSet, { min: 0, max: 2, step: 1 }),
       numberControl("seed", "Seed", MATRIX_RAIN_DEFAULTS.seed, { min: 0, max: 9999, step: 1 })
     ]
   },
   docs: {
-    parameters: "`speed`, `density`, `fontSize`, `trail`, `glow`, `brightness`, `jitter`, `glyphSet`, `seed`",
+    parameters: "`speed`, `density`, `fontSize`, `trail`, `glow`, `brightness`, `jitter`, `audioReact`, `glyphSet`, `seed`",
     catalogNote: "Matrix-style falling code rain tuned for slower, smoother descent with smaller glyphs and subtle default jitter.",
     description: "Matrix-style falling code rain tuned for slower, smoother descent with smaller glyphs and subtle default jitter."
   }
