@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **81**.
+Total effects: **82**.
 
 ## Table of contents
 
@@ -21,6 +21,7 @@ Total effects: **81**.
 - [Effect: envmap_donut](#effect-envmap-donut)
 - [Effect: equalizer](#effect-equalizer)
 - [Effect: explicitpixels](#effect-explicitpixels)
+- [Effect: explosionBurst](#effect-explosionBurst)
 - [Effect: fake3d](#effect-fake3d)
 - [Effect: feedback](#effect-feedback)
 - [Effect: finale](#effect-finale)
@@ -107,7 +108,7 @@ Total effects: **81**.
 ### Common parameter patterns
 
 - `speed` (used in 44 effects)
-- `seed` (used in 36 effects)
+- `seed` (used in 37 effects)
 - `audioReact` (used in 34 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 13 effects)
@@ -639,6 +640,45 @@ Total effects: **81**.
 ```json
 {
   "effect": "explicitpixels",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: explosionBurst
+
+- **Registry key:** `explosionBurst`
+- **Implementation:** `src/renderer/effects/explosionBurst.ts` (class `ExplosionBurstEffect`)
+- **Renderer:** Canvas2D
+- **Description:** One-shot seeded explosion burst with flash ignition, turbulent flames, debris streaks, and lingering smoke dissipation.
+- **Audio features:** beatStrength
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReactive` | boolean | 1 | unspecified | Audio Reactive | unknown |
+| `params.debrisCount` | number | 60 | min 0, max 180 | Debris Count | yes |
+| `params.drag` | number | 0.985 | min 0.8, max 0.999 | Drag | yes |
+| `params.duration` | number | 5 | min 1, max 8 | Duration | yes |
+| `params.fade` | number | 0.98 | min 0.8, max 0.999 | Fade | yes |
+| `params.gravity` | number | 0.02 | min 0, max 0.2 | Gravity | yes |
+| `params.intensity` | number | 1 | min 0.5, max 2 | Intensity | yes |
+| `params.particleCount` | number | 180 | min 0, max 300 | Fire Count | yes |
+| `params.radius` | number | 72 | min 12, max 420 | Radius | yes |
+| `params.seed` | number | 1 | min 0, max 9999 | Seed | yes |
+| `params.smokeCount` | number | 120 | min 0, max 300 | Smoke Count | yes |
+| `params.startTime` | number | 0 | min 0, max 600 | Start Time | yes |
+| `params.turbulence` | number | 0.6 | min 0, max 2 | Turbulence | yes |
+| `params.turbulenceScale` | number | 0.002 | min 0.0005, max 0.01 | Turbulence Scale | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "explosionBurst",
   "opacity": 1,
   "blend": "source-over",
   "params": {}

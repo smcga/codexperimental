@@ -11,6 +11,7 @@ import { doodle_greetz_wallManifest } from "./doodle_greetz_wall.manifest";
 import { dotTunnelManifest } from "./dotTunnel.manifest";
 import { effect_evolutionManifest } from "./effect_evolution.manifest";
 import { envmap_donutManifest } from "./envmap_donut.manifest";
+import { explosionBurstManifest } from "./explosionBurst.manifest";
 import { equalizerManifest } from "./equalizer.manifest";
 import { explicitpixelsManifest } from "./explicitpixels.manifest";
 import { fake3dManifest } from "./fake3d.manifest";
@@ -94,6 +95,7 @@ export const generatedEffectManifests = [
   dotTunnelManifest,
   effect_evolutionManifest,
   envmap_donutManifest,
+  explosionBurstManifest,
   equalizerManifest,
   explicitpixelsManifest,
   fake3dManifest,
