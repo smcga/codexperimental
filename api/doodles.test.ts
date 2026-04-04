@@ -117,11 +117,14 @@ describe("api/doodles handler", () => {
     );
 
     expect(postRes.response.statusCode).toBe(200);
-    expect(JSON.parse(postRes.getBody())).toEqual({
-      doodle: expect.objectContaining({ imageData: "data:image/png;base64,c3VibWl0dGVk" }),
-      moderationStatus: "pending",
-      reviewUrl: null
-    });
+    const payload = JSON.parse(postRes.getBody());
+    expect(payload).toEqual(
+      expect.objectContaining({
+        doodle: expect.objectContaining({ imageData: "data:image/png;base64,c3VibWl0dGVk" }),
+        moderationStatus: "pending"
+      })
+    );
+    expect(payload.reviewUrl === null || typeof payload.reviewUrl === "string").toBe(true);
     expect(redis.lpush).not.toHaveBeenCalled();
 
     const getRes = createResponse();

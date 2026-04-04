@@ -4,6 +4,7 @@ import {
   formatEffectSettingsForTimeline,
   getDebugEffectSelectorOptions,
   getDebugEffectSelectorValue,
+  getNextDebugEffectSelection,
   shouldShowEffectPanel
 } from "./debugPanel";
 import { getRegistryEffectNames } from "../renderer/effects/effectsDocGenerator";
@@ -97,6 +98,21 @@ describe("debug effect selector helpers", () => {
     "density": 120
   }
 }`);
+  });
+
+  it("flags newly selected debug effects for reset", () => {
+    expect(getNextDebugEffectSelection(null, "treegrowth")).toEqual({
+      forcedEffect: "treegrowth",
+      shouldReset: true
+    });
+    expect(getNextDebugEffectSelection("treegrowth", "treegrowth")).toEqual({
+      forcedEffect: "treegrowth",
+      shouldReset: false
+    });
+    expect(getNextDebugEffectSelection("treegrowth", "timeline")).toEqual({
+      forcedEffect: null,
+      shouldReset: false
+    });
   });
 });
 
