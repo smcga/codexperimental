@@ -182,6 +182,19 @@
           "blend": "screen",
           "opacity": 0.12,
           "params": {}
+        },
+        {
+          "effect": "gameOfLife",
+          "blend": "screen",
+          "opacity": 0.08,
+          "params": {
+            "cellSize": 9,
+            "stepRate": 8,
+            "patternMode": "mixed",
+            "paletteMode": "mono",
+            "safeFit": 1,
+            "seed": 1337
+          }
         }
       ],
       "fitAlign": "centre"

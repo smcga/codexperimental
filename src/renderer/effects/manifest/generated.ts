@@ -25,6 +25,7 @@ import { gl_fractal_tunnelManifest } from "./gl_fractal_tunnel.manifest";
 import { gl_impossible_corridorManifest } from "./gl_impossible_corridor.manifest";
 import { glenz_vectorsManifest } from "./glenz_vectors.manifest";
 import { glitchManifest } from "./glitch.manifest";
+import { game_of_lifeManifest } from "./game_of_life.manifest";
 import { greets_wallManifest } from "./greets_wall.manifest";
 import { infinitycloudManifest } from "./infinitycloud.manifest";
 import { isogridManifest } from "./isogrid.manifest";
@@ -108,6 +109,7 @@ export const generatedEffectManifests = [
   gl_impossible_corridorManifest,
   glenz_vectorsManifest,
   glitchManifest,
+  game_of_lifeManifest,
   greets_wallManifest,
   infinitycloudManifest,
   isogridManifest,

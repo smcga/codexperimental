@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **81**.
+Total effects: **82**.
 
 ## Table of contents
 
@@ -29,6 +29,7 @@ Total effects: **81**.
 - [Effect: flyover](#effect-flyover)
 - [Effect: fractal](#effect-fractal)
 - [Effect: fractal_zoomer](#effect-fractal-zoomer)
+- [Effect: gameOfLife](#effect-gameOfLife)
 - [Effect: gl_fractal_tunnel](#effect-gl-fractal-tunnel)
 - [Effect: gl_impossible_corridor](#effect-gl-impossible-corridor)
 - [Effect: glenz_vectors](#effect-glenz-vectors)
@@ -107,7 +108,7 @@ Total effects: **81**.
 ### Common parameter patterns
 
 - `speed` (used in 44 effects)
-- `seed` (used in 36 effects)
+- `seed` (used in 37 effects)
 - `audioReact` (used in 34 effects)
 - `beatKick` (used in 14 effects)
 - `glow` (used in 13 effects)
@@ -891,6 +892,44 @@ Total effects: **81**.
 ```json
 {
   "effect": "fractal_zoomer",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: gameOfLife
+
+- **Registry key:** `gameOfLife`
+- **Implementation:** `src/renderer/effects/gameOfLifeEffect.ts` (class `GameOfLifeEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Conway-style cellular automata with deterministic seeding, curated pattern inserts, optional wrap, and restrained beat-triggered bursts/gliders.
+- **Audio features:** beat, beatStrength, impactStrength, rms
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.burstOnBeat` | number | 0.25 | min 0, max 1 | Burst On Beat | yes |
+| `params.cellSize` | number | 8 | min 4, max 24 | Cell Size | yes |
+| `params.density` | number | 0.22 | min 0.01, max 0.9 | Density | yes |
+| `params.fadeTrails` | number | 0.12 | min 0, max 1 | Fade Trails | yes |
+| `params.gliderRate` | number | 0 | min 0, max 1 | Glider Rate | yes |
+| `params.gridLines` | boolean | false | unspecified | Grid Lines | unknown |
+| `params.paletteMode` | string | "mono" | options: mono, heat, era | Palette | no |
+| `params.patternMode` | string | "mixed" | options: random, curated, mixed | Pattern Mode | no |
+| `params.safeFit` | boolean | true | unspecified | Safe Fit | unknown |
+| `params.seed` | string | "auto" | min 0, max 999999 | Seed | no |
+| `params.stepRate` | number | 8 | min 1, max 30 | Step Rate | yes |
+| `params.survivalTint` | number | 0.42 | min 0, max 1 | Survival Tint | yes |
+| `params.wrap` | boolean | true | unspecified | Wrap | unknown |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "gameOfLife",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
