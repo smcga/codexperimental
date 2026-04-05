@@ -11,6 +11,8 @@ import {
   getScenePlayingAtTime,
   isWithinSceneStartThreshold,
   isEditorParamToggleChecked,
+  clampEditorNumberParam,
+  stepEditorNumberParam,
   parseEditorParamInputValue,
   splitCueWords,
   generateWordTextCues
@@ -240,6 +242,28 @@ describe("isEditorParamToggleChecked", () => {
     expect(isEditorParamToggleChecked(1)).toBe(true);
     expect(isEditorParamToggleChecked(false)).toBe(false);
     expect(isEditorParamToggleChecked(0)).toBe(false);
+  });
+});
+
+describe("clampEditorNumberParam", () => {
+  it("clamps values to configured min/max", () => {
+    expect(clampEditorNumberParam(12, { min: 0, max: 10 })).toBe(10);
+    expect(clampEditorNumberParam(-2, { min: 0, max: 10 })).toBe(0);
+  });
+
+  it("uses fallback when value is not finite", () => {
+    expect(clampEditorNumberParam("oops", { min: 0, max: 10, fallback: 3 })).toBe(3);
+  });
+});
+
+describe("stepEditorNumberParam", () => {
+  it("increments using control step while respecting bounds", () => {
+    expect(stepEditorNumberParam(0.5, 1, { min: 0, max: 1, step: 0.25 })).toBe(0.75);
+    expect(stepEditorNumberParam(0.9, 1, { min: 0, max: 1, step: 0.25 })).toBe(1);
+  });
+
+  it("decrements using a default step when none is provided", () => {
+    expect(stepEditorNumberParam(1, -1, { min: 0, max: 2 })).toBeCloseTo(0.99);
   });
 });
 

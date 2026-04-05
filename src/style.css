@@ -728,6 +728,35 @@ body,
   margin-top: 0.4rem;
 }
 
+.editor-param-number {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.editor-param-stepper {
+  display: grid;
+  grid-template-columns: auto minmax(72px, 1fr) auto;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.editor-param-stepper button {
+  min-height: 30px;
+  min-width: 30px;
+  padding: 0 0.55rem;
+}
+
+.editor-param-stepper [data-param-value-number] {
+  width: 100%;
+  min-height: 30px;
+  font-variant-numeric: tabular-nums;
+}
+
+.editor-param-number [data-param-value-range] {
+  width: 100%;
+  accent-color: #66f3ff;
+}
+
 .editor-note {
   font-size: 0.7rem;
   color: rgba(215, 247, 255, 0.7);

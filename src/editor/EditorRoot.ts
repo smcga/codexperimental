@@ -323,6 +323,42 @@ export const parseEditorParamInputValue = (input: string): EditorParamValue => {
 
 export const isEditorParamToggleChecked = (value: unknown): boolean => value === true || value === 1;
 
+const toFiniteNumber = (value: unknown, fallback: number): number => {
+  const numeric = typeof value === "number" ? value : Number(value);
+  return Number.isFinite(numeric) ? numeric : fallback;
+};
+
+export const clampEditorNumberParam = (
+  value: unknown,
+  options: { min?: number; max?: number; fallback?: number }
+): number => {
+  const fallback = options.fallback ?? 0;
+  const numeric = toFiniteNumber(value, fallback);
+  const min = Number.isFinite(options.min) ? (options.min as number) : Number.NEGATIVE_INFINITY;
+  const max = Number.isFinite(options.max) ? (options.max as number) : Number.POSITIVE_INFINITY;
+  return Math.min(max, Math.max(min, numeric));
+};
+
+export const stepEditorNumberParam = (
+  value: unknown,
+  direction: -1 | 1,
+  options: { min?: number; max?: number; step?: number; fallback?: number }
+): number => {
+  const fallback = options.fallback ?? 0;
+  const base = clampEditorNumberParam(value, {
+    min: options.min,
+    max: options.max,
+    fallback
+  });
+  const step = Number.isFinite(options.step) && (options.step as number) > 0 ? (options.step as number) : 0.01;
+  const nextValue = base + direction * step;
+  return clampEditorNumberParam(nextValue, {
+    min: options.min,
+    max: options.max,
+    fallback
+  });
+};
+
 export const splitCueWords = (value: string): string[] => {
   return value
     .split(/\s+/)
@@ -1202,6 +1238,45 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           .join("")}</select>`;
         return;
       }
+      if (control?.type === "number") {
+        const fallback = typeof control.defaultValue === "number" ? control.defaultValue : 0;
+        const min = Number.isFinite(control.min) ? (control.min as number) : undefined;
+        const max = Number.isFinite(control.max) ? (control.max as number) : undefined;
+        const step = Number.isFinite(control.step) && (control.step as number) > 0 ? (control.step as number) : 0.01;
+        const currentValue = clampEditorNumberParam(value, { min, max, fallback });
+        const hasRange = Number.isFinite(min) && Number.isFinite(max) && (max as number) > (min as number);
+        valueSlot.innerHTML = `
+          <div class="editor-param-number" ${hasRange ? `data-has-range="true"` : ""}>
+            <div class="editor-param-stepper" role="group" aria-label="${control.label}">
+              <button type="button" data-action="param-step" data-direction="-1" aria-label="Decrease ${control.label}">−</button>
+              <input
+                type="number"
+                data-param-value-number
+                value="${String(currentValue)}"
+                ${min !== undefined ? `min="${min}"` : ""}
+                ${max !== undefined ? `max="${max}"` : ""}
+                step="${step}"
+                inputmode="decimal"
+              />
+              <button type="button" data-action="param-step" data-direction="1" aria-label="Increase ${control.label}">+</button>
+            </div>
+            ${
+              hasRange
+                ? `<input
+                    type="range"
+                    data-param-value-range
+                    value="${String(currentValue)}"
+                    min="${min as number}"
+                    max="${max as number}"
+                    step="${step}"
+                    aria-label="${control.label} slider"
+                  />`
+                : ""
+            }
+          </div>
+        `;
+        return;
+      }
       valueSlot.innerHTML = `<input type="text" data-param-value value="${String(value)}" />`;
     });
 
@@ -1216,13 +1291,20 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           const control = controlsByKey.get(key);
           const toggleInput = item.querySelector<HTMLInputElement>("[data-param-value-toggle]");
           const selectInput = item.querySelector<HTMLSelectElement>("[data-param-value-select]");
+          const numberInput = item.querySelector<HTMLInputElement>("[data-param-value-number]");
           const textInput = item.querySelector<HTMLInputElement>("[data-param-value]");
           const value: EditorParamValue =
             control?.type === "toggle"
               ? toggleInput?.checked ?? false
               : control?.type === "select"
                 ? selectInput?.value ?? ""
-                : parseEditorParamInputValue(textInput?.value ?? "");
+                : control?.type === "number"
+                  ? clampEditorNumberParam(numberInput?.value ?? "", {
+                      min: control.min,
+                      max: control.max,
+                      fallback: typeof control.defaultValue === "number" ? control.defaultValue : 0
+                    })
+                  : parseEditorParamInputValue(textInput?.value ?? "");
           return [key, value] as const;
         });
         const nextParams: Record<string, number> = {};
@@ -1235,8 +1317,62 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       };
 
       keyInput?.addEventListener("change", updateParams);
-      row.querySelectorAll<HTMLInputElement | HTMLSelectElement>("[data-param-value], [data-param-value-toggle], [data-param-value-select]").forEach((input) => {
+      const syncNumberInputs = (): void => {
+        const numberInput = row.querySelector<HTMLInputElement>("[data-param-value-number]");
+        const rangeInput = row.querySelector<HTMLInputElement>("[data-param-value-range]");
+        if (!numberInput || !rangeInput) {
+          return;
+        }
+        rangeInput.value = numberInput.value;
+      };
+
+      const syncRangeInputs = (): void => {
+        const numberInput = row.querySelector<HTMLInputElement>("[data-param-value-number]");
+        const rangeInput = row.querySelector<HTMLInputElement>("[data-param-value-range]");
+        if (!numberInput || !rangeInput) {
+          return;
+        }
+        numberInput.value = rangeInput.value;
+      };
+
+      row.querySelectorAll<HTMLInputElement | HTMLSelectElement>("[data-param-value], [data-param-value-toggle], [data-param-value-select], [data-param-value-number]").forEach((input) => {
         input.addEventListener("change", updateParams);
+      });
+      row.querySelectorAll<HTMLInputElement>("[data-param-value-range]").forEach((input) => {
+        input.addEventListener("input", () => {
+          syncRangeInputs();
+          updateParams();
+        });
+        input.addEventListener("change", () => {
+          syncRangeInputs();
+          updateParams();
+        });
+      });
+      row.querySelectorAll<HTMLInputElement>("[data-param-value-number]").forEach((input) => {
+        input.addEventListener("input", () => {
+          syncNumberInputs();
+        });
+      });
+      row.querySelectorAll<HTMLButtonElement>("[data-action='param-step']").forEach((button) => {
+        button.addEventListener("click", () => {
+          const key = row.querySelector<HTMLInputElement>("[data-param-key]")?.value ?? "";
+          const control = controlsByKey.get(key);
+          const numberInput = row.querySelector<HTMLInputElement>("[data-param-value-number]");
+          const directionRaw = Number(button.dataset.direction);
+          if (!control || control.type !== "number" || !numberInput || !Number.isFinite(directionRaw) || directionRaw === 0) {
+            return;
+          }
+          const direction = directionRaw > 0 ? 1 : -1;
+          const nextValue = stepEditorNumberParam(numberInput.value, direction, {
+            min: control.min,
+            max: control.max,
+            step: control.step,
+            fallback: typeof control.defaultValue === "number" ? control.defaultValue : 0
+          });
+          numberInput.value = String(nextValue);
+          syncNumberInputs();
+          updateParams();
+        });
       });
       removeButton?.addEventListener("click", () => {
         const nextEntries = Object.entries(params).filter((_, paramIndex) => paramIndex !== index);
