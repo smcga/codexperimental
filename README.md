@@ -183,6 +183,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `equalizer` | `bars`, `barWidth`, `height`, `bassBoost`, `alpha` |  |
 | `spectrum_analyzer` | `bands`, `smoothing`, `curve`, `tilt`, `peakHold`, `grid`, `glow` | Parametric-EQ-style spectrum trace with log-spaced bins and peak-hold markers. |
 | `isogrid` | `opacity`, `lineWidth`, `spacing`, `wave`, `speed` |  |
+| `kaleidoscope_symmetry` | `slices`, `rotationSpeed`, `radialZoom`, `mirror`, `patternScale`, `patternWarp`, `centreX`, `centreY`, `colorShift`, `glow`, `audioReactive`, `bassInfluence`, `trebleInfluence`, `spinOnBeat`, `ringDensity` | Mirrored radial wedges driven by a procedural source pattern for mandala/starburst motion. |
 | `neon` | `shapes`, `radius`, `radiusStep`, `speed`, `glow`, `lineWidth` |  |
 | `particles` | `trail`, `burst`, `burstAudio`, `force`, `forceAudio` |  |
 | `particleAttractors` | `count`, `seed`, `attractorCount`, `strength`, `swirl`, `damping`, `speedLimit`, `softening`, `absorbRadius`, `spawnMode`, `trailAlpha`, `particleSize`, `glow`, `motion`, `audioReactive`, `beatPulse`, `colorMode`, `backgroundFade`, `vignette` | Gravity-well particle flow with swirling paths; `spawnMode` supports `edges`, `ring`, or `random`, and `colorMode` supports `mono`, `era`, or `heat`. |

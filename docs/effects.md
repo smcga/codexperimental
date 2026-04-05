@@ -43,6 +43,7 @@ Total effects: **93**.
 - [Effect: infiniteMirror](#effect-infiniteMirror)
 - [Effect: infinitycloud](#effect-infinitycloud)
 - [Effect: isogrid](#effect-isogrid)
+- [Effect: kaleidoscope_symmetry](#effect-kaleidoscope-symmetry)
 - [Effect: kefrens_bars](#effect-kefrens-bars)
 - [Effect: lemmings_march](#effect-lemmings-march)
 - [Effect: lens_flare](#effect-lens-flare)
@@ -1407,6 +1408,47 @@ Total effects: **93**.
 ```json
 {
   "effect": "isogrid",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: kaleidoscope_symmetry
+
+- **Registry key:** `kaleidoscope_symmetry`
+- **Implementation:** `src/renderer/effects/kaleidoscopeSymmetry.ts` (class `KaleidoscopeSymmetryEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Kaleidoscope Symmetry
+- **Audio features:** bass, beat, beatStrength, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params` | number | no explicit default | unspecified | Used in effect render logic. | yes |
+| `params.audioReactive` | number | 1 | min 0, max 1 | Audio Reactive | yes |
+| `params.bassInfluence` | number | 0.8 | min 0, max 1.5 | Bass Influence | yes |
+| `params.centreX` | number | 0.5 | min 0, max 1 | Centre X | yes |
+| `params.centreY` | number | 0.5 | min 0, max 1 | Centre Y | yes |
+| `params.colorShift` | number | 0.4 | min 0, max 1 | Color Shift | yes |
+| `params.glow` | number | 0.2 | min 0, max 1 | Glow | yes |
+| `params.mirror` | boolean | 1 | unspecified | Mirror | unknown |
+| `params.patternScale` | number | 1 | min 0.35, max 3 | Pattern Scale | yes |
+| `params.patternWarp` | number | 0.5 | min 0, max 1.6 | Pattern Warp | yes |
+| `params.radialZoom` | number | 1 | min 0.45, max 2.8 | Radial Zoom | yes |
+| `params.ringDensity` | number | 0.5 | min 0.2, max 1.2 | Ring Density | yes |
+| `params.rotationSpeed` | number | 0.15 | min -1, max 1 | Rotation Speed | yes |
+| `params.slices` | number | 8 | min 3, max 24 | Slices | yes |
+| `params.spinOnBeat` | number | 0.35 | min 0, max 1.5 | Spin On Beat | yes |
+| `params.trebleInfluence` | number | 0.6 | min 0, max 1.5 | Treble Influence | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "kaleidoscope_symmetry",
   "opacity": 1,
   "blend": "source-over",
   "params": {}

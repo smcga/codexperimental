@@ -35,6 +35,7 @@ import { infinitycloudManifest } from "./infinitycloud.manifest";
 import { infinite_zoom_drosteManifest } from "./infinite_zoom_droste.manifest";
 import { infinite_mirrorManifest } from "./infinite_mirror.manifest";
 import { isogridManifest } from "./isogrid.manifest";
+import { kaleidoscope_symmetryManifest } from "./kaleidoscope_symmetry.manifest";
 import { kefrens_barsManifest } from "./kefrens_bars.manifest";
 import { lemmings_marchManifest } from "./lemmings_march.manifest";
 import { lens_flareManifest } from "./lens_flare.manifest";
@@ -137,6 +138,7 @@ export const generatedEffectManifests = [
   infinite_zoom_drosteManifest,
   infinite_mirrorManifest,
   isogridManifest,
+  kaleidoscope_symmetryManifest,
   kefrens_barsManifest,
   lemmings_marchManifest,
   lens_flareManifest,
