@@ -42,3 +42,37 @@ export function getFullscreenAction(
 
   return fullscreenElement ? "exit" : "enter";
 }
+
+type EventTargetLike = {
+  tagName?: unknown;
+  isContentEditable?: unknown;
+  closest?: unknown;
+};
+
+const EDITABLE_TARGET_SELECTOR =
+  "input, textarea, select, [contenteditable=''], [contenteditable='true'], [contenteditable='plaintext-only']";
+
+export function shouldHandleGlobalShortcut(target: EventTarget | null): boolean {
+  if (!target || typeof target !== "object") {
+    return true;
+  }
+
+  const targetLike = target as EventTargetLike;
+  const tagName = typeof targetLike.tagName === "string" ? targetLike.tagName.toLowerCase() : "";
+  if (tagName === "input" || tagName === "textarea" || tagName === "select") {
+    return false;
+  }
+
+  if (targetLike.isContentEditable === true) {
+    return false;
+  }
+
+  if (typeof targetLike.closest === "function") {
+    const ancestor = (targetLike.closest as (selector: string) => unknown)(EDITABLE_TARGET_SELECTOR);
+    if (ancestor) {
+      return false;
+    }
+  }
+
+  return true;
+}

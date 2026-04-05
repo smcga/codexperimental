@@ -26,7 +26,8 @@ import {
   getIntroSkipTime,
   getNextDebugOverlayVisibility,
   getRelativeSeekTime,
-  getSecondHalfSkipTime
+  getSecondHalfSkipTime,
+  shouldHandleGlobalShortcut
 } from "./controls";
 import {
   buildDebugRenderSelection,
@@ -1504,6 +1505,9 @@ if (effectIdeaModal) {
 }
 
 window.addEventListener("keydown", (event) => {
+  if (!shouldHandleGlobalShortcut(event.target)) {
+    return;
+  }
   if (event.key === "Escape" && doodleModal && !doodleModal.classList.contains("hidden")) {
     setDoodleModalVisible(false);
     return;

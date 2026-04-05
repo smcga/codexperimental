@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { getEndSkipTime, getRelativeSeekTime, getSecondHalfSkipTime } from "./controls";
+import { getEndSkipTime, getRelativeSeekTime, getSecondHalfSkipTime, shouldHandleGlobalShortcut } from "./controls";
 
 describe("getSecondHalfSkipTime", () => {
   it("skips forward to the configured second-half time", () => {
@@ -45,5 +45,29 @@ describe("getEndSkipTime", () => {
 
   it("returns current time when duration is unknown", () => {
     expect(getEndSkipTime(42, 0)).toBe(42);
+  });
+});
+
+describe("shouldHandleGlobalShortcut", () => {
+  it("allows shortcuts when keydown does not target an editable element", () => {
+    expect(shouldHandleGlobalShortcut({ tagName: "div" } as EventTarget)).toBe(true);
+  });
+
+  it("blocks shortcuts while typing in native form controls", () => {
+    expect(shouldHandleGlobalShortcut({ tagName: "input" } as EventTarget)).toBe(false);
+    expect(shouldHandleGlobalShortcut({ tagName: "textarea" } as EventTarget)).toBe(false);
+    expect(shouldHandleGlobalShortcut({ tagName: "select" } as EventTarget)).toBe(false);
+  });
+
+  it("blocks shortcuts while typing in contenteditable regions", () => {
+    expect(shouldHandleGlobalShortcut({ tagName: "div", isContentEditable: true } as EventTarget)).toBe(false);
+  });
+
+  it("blocks shortcuts when the target is nested inside editable content", () => {
+    const target = {
+      tagName: "span",
+      closest: (selector: string) => (selector.includes("contenteditable") ? {} : null)
+    } as EventTarget;
+    expect(shouldHandleGlobalShortcut(target)).toBe(false);
   });
 });
