@@ -35,7 +35,6 @@ const approveLink = typeof document !== "undefined" ? document.querySelector<HTM
 const denyLink = typeof document !== "undefined" ? document.querySelector<HTMLAnchorElement>("#effect-review-deny") : null;
 
 let previewFrame = 0;
-let previewStartTime = 0;
 let activeEffect: ReturnType<typeof compileRuntimeEffect> | null = null;
 const previewAudio = new EffectPreviewAudioController("/song.mp3");
 
@@ -111,16 +110,11 @@ function startPreview(): void {
     if (!previewCanvas || !previewContext || !activeEffect) {
       return;
     }
-    const nowSeconds = performance.now() / 1000;
-    if (previewStartTime === 0) {
-      previewStartTime = nowSeconds;
-    }
-
     activeEffect.render({
       ctx: previewContext,
       width: previewCanvas.width,
       height: previewCanvas.height,
-      time: nowSeconds - previewStartTime,
+      time: previewAudio.getPlaybackTime(),
       delta: 1 / 60,
       audio: previewAudio.getFeatures(),
       params: {}
@@ -129,7 +123,6 @@ function startPreview(): void {
   };
 
   stopPreview();
-  previewStartTime = 0;
   void previewAudio.start();
   draw();
 }

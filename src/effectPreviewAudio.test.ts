@@ -4,6 +4,7 @@ import {
   EFFECT_PREVIEW_AUDIO_LOOP_END_TIME,
   EFFECT_PREVIEW_AUDIO_LOOP_START_TIME,
   EFFECT_PREVIEW_AUDIO_START_TIME,
+  EffectPreviewAudioController,
   getEffectPreviewLoopTime
 } from "./effectPreviewAudio";
 
@@ -20,5 +21,10 @@ describe("effect preview audio loop", () => {
   it("rewinds to loop start when loop end is reached", () => {
     expect(getEffectPreviewLoopTime(EFFECT_PREVIEW_AUDIO_LOOP_END_TIME)).toBe(EFFECT_PREVIEW_AUDIO_LOOP_START_TIME);
     expect(getEffectPreviewLoopTime(EFFECT_PREVIEW_AUDIO_LOOP_END_TIME + 4)).toBe(EFFECT_PREVIEW_AUDIO_LOOP_START_TIME);
+  });
+
+  it("reports the start anchor before audio is initialized", () => {
+    const controller = new EffectPreviewAudioController("/song.mp3");
+    expect(controller.getPlaybackTime()).toBe(EFFECT_PREVIEW_AUDIO_START_TIME);
   });
 });

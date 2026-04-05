@@ -192,7 +192,6 @@ let effectIdeasSubmitting = false;
 let generatedIdea: EffectIdeaGenerationResult | null = null;
 let generatedIdeaPrompt = "";
 let effectIdeaPreviewFrame = 0;
-let effectIdeaPreviewStart = 0;
 let effectIdeaPreviewEffect: ReturnType<typeof compileRuntimeEffect> | null = null;
 let effectIdeaPreviewParams: Record<string, number | string> = {};
 let effectIdeaAudioPreview = new EffectPreviewAudioController("/song.mp3");
@@ -621,15 +620,11 @@ function previewGeneratedIdea(): void {
   if (!effectIdeaPreview || !effectIdeaPreviewCtx || !effectIdeaPreviewEffect) {
     return;
   }
-  const nowSeconds = performance.now() / 1000;
-  if (effectIdeaPreviewStart === 0) {
-    effectIdeaPreviewStart = nowSeconds;
-  }
   effectIdeaPreviewEffect.render({
     ctx: effectIdeaPreviewCtx,
     width: effectIdeaPreview.width,
     height: effectIdeaPreview.height,
-    time: nowSeconds - effectIdeaPreviewStart,
+    time: effectIdeaAudioPreview.getPlaybackTime(),
     delta: 1 / 60,
     audio: effectIdeaAudioPreview.getFeatures(),
     params: effectIdeaPreviewParams
@@ -656,7 +651,6 @@ function setEffectIdeaModalVisible(visible: boolean): void {
     effectIdeaPreviewParams = {};
     generatedIdeaPrompt = "";
     effectIdeaPreviewEffect = null;
-    effectIdeaPreviewStart = 0;
     renderGeneratedEffectIdeaControls();
     updateEffectIdeaButtons();
   }
@@ -719,7 +713,6 @@ async function generateCurrentEffectIdea(): Promise<void> {
     }
     renderGeneratedEffectIdeaControls();
     effectIdeaPreviewEffect = compileRuntimeEffect(generation.runtimeCode);
-    effectIdeaPreviewStart = 0;
     stopEffectIdeaPreview();
     previewGeneratedIdea();
     setEffectIdeaStatus("Preview ready. If it looks good, submit it for approval.", "success");

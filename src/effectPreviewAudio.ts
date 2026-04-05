@@ -66,6 +66,13 @@ export class EffectPreviewAudioController {
     this.destroyPlayer();
   }
 
+  getPlaybackTime(): number {
+    if (!this.player) {
+      return EFFECT_PREVIEW_AUDIO_START_TIME;
+    }
+    return getEffectPreviewLoopTime(this.player.currentTime);
+  }
+
   getFeatures(): AudioFeatures {
     if (!this.player) {
       return EMPTY_AUDIO_FEATURES;
