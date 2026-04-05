@@ -1,11 +1,35 @@
 import { Effect } from "./renderer/effects/types";
 
+export type GeneratedEffectParamOption = {
+  label: string;
+  value: string;
+};
+
+export type GeneratedEffectParam = {
+  key: string;
+  label: string;
+  type: "number" | "select" | "toggle";
+  defaultValue: number | string;
+  min?: number;
+  max?: number;
+  step?: number;
+  options?: GeneratedEffectParamOption[];
+  description?: string;
+};
+
+export type GeneratedEffectDocs = {
+  description: string;
+  parameters: string;
+};
+
 export type EffectIdeaRecord = {
   id: string;
   name: string;
   prompt: string;
   typescriptCode: string;
   runtimeCode: string;
+  params?: GeneratedEffectParam[];
+  docs?: GeneratedEffectDocs;
   createdAt: number;
 };
 
@@ -13,6 +37,8 @@ export type EffectIdeaGenerationResult = {
   name: string;
   typescriptCode: string;
   runtimeCode: string;
+  params?: GeneratedEffectParam[];
+  docs?: GeneratedEffectDocs;
 };
 
 type EffectsResponse = {
@@ -72,6 +98,16 @@ function isRecord(value: unknown): value is EffectIdeaRecord {
     && typeof entry.prompt === "string"
     && typeof entry.typescriptCode === "string"
     && typeof entry.runtimeCode === "string"
+    && (entry.params === undefined || Array.isArray(entry.params))
+    && (
+      entry.docs === undefined
+      || (
+        entry.docs !== null
+        && typeof entry.docs === "object"
+        && typeof (entry.docs as GeneratedEffectDocs).description === "string"
+        && typeof (entry.docs as GeneratedEffectDocs).parameters === "string"
+      )
+    )
     && typeof entry.createdAt === "number"
     && Number.isFinite(entry.createdAt)
   );

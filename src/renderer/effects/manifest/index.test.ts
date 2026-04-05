@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { effectManifests, getEffectManifest, getEffectRegistryKeys } from "./index";
+import {
+  clearRuntimeEffectManifests,
+  effectManifests,
+  getEffectManifest,
+  getEffectRegistryKeys,
+  registerRuntimeEffectManifest
+} from "./index";
 
 describe("effect manifests", () => {
   it("keeps a deterministic key order", () => {
@@ -56,5 +62,37 @@ describe("effect manifests", () => {
       "chromatic"
     ]);
     expect(manifest?.docs.catalogNote).toContain("Voronoi-style cellular mosaic");
+  });
+
+  it("supports runtime effect manifests for generated effects", () => {
+    clearRuntimeEffectManifests();
+    registerRuntimeEffectManifest({
+      key: "Generated Test",
+      className: "GeneratedEffect",
+      sourcePath: "generated/effectIdeas",
+      createEffect: () => ({ render: () => undefined }),
+      debug: {
+        title: "Generated Test Controls",
+        controls: [{
+          key: "speed",
+          label: "Speed",
+          type: "number",
+          defaultValue: 1,
+          min: 0,
+          max: 2,
+          step: 0.1
+        }]
+      },
+      docs: {
+        description: "Generated docs",
+        parameters: "- speed: movement speed",
+        catalogNote: "Generated"
+      }
+    });
+
+    const manifest = getEffectManifest("Generated Test");
+    expect(manifest?.debug.controls.map((control) => control.key)).toEqual(["speed"]);
+    expect(getEffectRegistryKeys()).toContain("Generated Test");
+    clearRuntimeEffectManifests();
   });
 });

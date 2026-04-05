@@ -13,7 +13,12 @@ import { Timeline } from "./timeline/timeline";
 import { Renderer } from "./renderer/renderer";
 import { FramingOverride } from "./renderer/framing";
 import { effectRegistry } from "./renderer/effects";
-import { getEffectRegistryKeys, getManifestDebugConfig, EffectParamControl } from "./renderer/effects/manifest";
+import {
+  getEffectRegistryKeys,
+  getManifestDebugConfig,
+  registerRuntimeEffectManifest,
+  EffectParamControl
+} from "./renderer/effects/manifest";
 import { coerceEffectParams, getEffectDebugDefaults } from "./renderer/debug/effectDebug";
 import { getWebGLStatusLabel } from "./renderer/effects/gl/webglStatus";
 import { TerminalIntroRenderer } from "./renderer/intro/terminalIntro";
@@ -44,6 +49,7 @@ import {
   compileRuntimeEffect,
   EffectIdeaApiError,
   EffectIdeaGenerationResult,
+  GeneratedEffectParam,
   fetchApprovedEffects,
   generateEffectIdea,
   submitEffectIdea
@@ -650,7 +656,9 @@ async function submitCurrentEffectIdea(): Promise<void> {
       name: generatedIdea.name,
       prompt: generatedIdeaPrompt,
       typescriptCode: generatedIdea.typescriptCode,
-      runtimeCode: generatedIdea.runtimeCode
+      runtimeCode: generatedIdea.runtimeCode,
+      params: generatedIdea.params,
+      docs: generatedIdea.docs
     });
     setEffectIdeaStatus("Submitted. Once approved, it will appear in effect selectors.", "success");
     setEffectIdeaModalVisible(false);
@@ -795,12 +803,78 @@ function createEffectSelector(): void {
   updateEffectSelectorState();
 }
 
+function buildGeneratedEffectControls(params: GeneratedEffectParam[] | undefined): EffectParamControl[] {
+  if (!params || params.length === 0) {
+    return [];
+  }
+  return params.flatMap((param) => {
+    if (!param.key || !param.label) {
+      return [];
+    }
+    if (param.type === "select") {
+      const options = (param.options ?? [])
+        .filter((option) => option.value.trim().length > 0)
+        .map((option) => ({
+          value: option.value,
+          label: option.label || option.value
+        }));
+      if (options.length === 0) {
+        return [];
+      }
+      const defaultValue = typeof param.defaultValue === "string" && options.some((option) => option.value === param.defaultValue)
+        ? param.defaultValue
+        : options[0].value;
+      return [{
+        key: param.key,
+        label: param.label,
+        type: "select" as const,
+        defaultValue,
+        options
+      }];
+    }
+    if (param.type === "toggle") {
+      const defaultValue = Number(param.defaultValue) !== 0 ? 1 : 0;
+      return [{
+        key: param.key,
+        label: param.label,
+        type: "toggle" as const,
+        defaultValue
+      }];
+    }
+    return [{
+      key: param.key,
+      label: param.label,
+      type: "number" as const,
+      defaultValue: typeof param.defaultValue === "number" ? param.defaultValue : 0,
+      min: param.min,
+      max: param.max,
+      step: param.step
+    }];
+  });
+}
+
 async function hydrateApprovedEffects(): Promise<void> {
   try {
     const approved = await fetchApprovedEffects();
     approved.forEach((entry) => {
       try {
-        effectRegistry[entry.name] = compileRuntimeEffect(entry.runtimeCode);
+        const runtimeEffect = compileRuntimeEffect(entry.runtimeCode);
+        effectRegistry[entry.name] = runtimeEffect;
+        registerRuntimeEffectManifest({
+          key: entry.name,
+          className: "GeneratedEffect",
+          sourcePath: "generated/effectIdeas",
+          createEffect: () => runtimeEffect,
+          debug: {
+            title: `${entry.name} Controls`,
+            controls: buildGeneratedEffectControls(entry.params)
+          },
+          docs: {
+            description: entry.docs?.description ?? "Community-generated effect created with the effect idea generator.",
+            parameters: entry.docs?.parameters ?? "Parameter docs not provided for this generated effect.",
+            catalogNote: "Generated via effect idea workflow."
+          }
+        });
         if (!debugState.effectParams[entry.name]) {
           debugState.effectParams[entry.name] = {};
         }

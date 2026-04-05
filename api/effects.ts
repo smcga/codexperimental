@@ -40,7 +40,31 @@ type EffectRecord = {
   prompt: string;
   typescriptCode: string;
   runtimeCode: string;
+  params?: GeneratedEffectParam[];
+  docs?: GeneratedEffectDocs;
   createdAt: number;
+};
+
+type GeneratedEffectParamOption = {
+  label: string;
+  value: string;
+};
+
+type GeneratedEffectParam = {
+  key: string;
+  label: string;
+  type: "number" | "select" | "toggle";
+  defaultValue: number | string;
+  min?: number;
+  max?: number;
+  step?: number;
+  options?: GeneratedEffectParamOption[];
+  description?: string;
+};
+
+type GeneratedEffectDocs = {
+  description: string;
+  parameters: string;
 };
 
 type JsonBody = Record<string, unknown>;
@@ -55,6 +79,8 @@ type JsonResponse = {
     name: string;
     typescriptCode: string;
     runtimeCode: string;
+    params?: GeneratedEffectParam[];
+    docs?: GeneratedEffectDocs;
   };
   error?: string;
   rawResponse?: string;
@@ -509,18 +535,109 @@ async function sendModerationNotification(effect: EffectRecord, requestUrl: URL)
   await Promise.allSettled(tasks);
 }
 
-function parseJsonBlock(text: string): { name: string; typescriptCode: string; runtimeCode: string } | null {
+function isFiniteNumber(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+function sanitizeGeneratedParams(value: unknown): GeneratedEffectParam[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  return value.flatMap((entry) => {
+    if (!entry || typeof entry !== "object") {
+      return [];
+    }
+    const typed = entry as Partial<GeneratedEffectParam>;
+    const key = typeof typed.key === "string" ? typed.key.trim() : "";
+    const label = typeof typed.label === "string" ? typed.label.trim() : "";
+    const type = typed.type;
+    if (!key || !label || (type !== "number" && type !== "select" && type !== "toggle")) {
+      return [];
+    }
+    if (type === "number" && !isFiniteNumber(typed.defaultValue)) {
+      return [];
+    }
+    if (type === "toggle" && !isFiniteNumber(typed.defaultValue)) {
+      return [];
+    }
+    if (type === "select" && typeof typed.defaultValue !== "string") {
+      return [];
+    }
+    const options = Array.isArray(typed.options)
+      ? typed.options.flatMap((option) => {
+        if (!option || typeof option !== "object") {
+          return [];
+        }
+        const typedOption = option as Partial<GeneratedEffectParamOption>;
+        if (typeof typedOption.value !== "string" || typeof typedOption.label !== "string") {
+          return [];
+        }
+        return [{
+          value: typedOption.value.slice(0, 96),
+          label: typedOption.label.slice(0, 96)
+        }];
+      })
+      : undefined;
+    return [{
+      key: key.slice(0, 64),
+      label: label.slice(0, 96),
+      type,
+      defaultValue: type === "select"
+        ? (typed.defaultValue as string).slice(0, 96)
+        : Number(typed.defaultValue),
+      ...(isFiniteNumber(typed.min) ? { min: typed.min } : {}),
+      ...(isFiniteNumber(typed.max) ? { max: typed.max } : {}),
+      ...(isFiniteNumber(typed.step) ? { step: typed.step } : {}),
+      ...(options && options.length > 0 ? { options } : {}),
+      ...(typeof typed.description === "string" && typed.description.trim().length > 0
+        ? { description: typed.description.trim().slice(0, 200) }
+        : {})
+    }];
+  });
+}
+
+function sanitizeGeneratedDocs(value: unknown): GeneratedEffectDocs | undefined {
+  if (!value || typeof value !== "object") {
+    return undefined;
+  }
+  const typed = value as Partial<GeneratedEffectDocs>;
+  if (typeof typed.description !== "string" || typeof typed.parameters !== "string") {
+    return undefined;
+  }
+  return {
+    description: typed.description.trim().slice(0, 400),
+    parameters: typed.parameters.trim().slice(0, 1600)
+  };
+}
+
+function parseJsonBlock(text: string): {
+  name: string;
+  typescriptCode: string;
+  runtimeCode: string;
+  params?: GeneratedEffectParam[];
+  docs?: GeneratedEffectDocs;
+} | null {
   const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
   const source = fenced?.[1] ?? text;
   try {
-    const parsed = JSON.parse(source) as Partial<{ name: string; typescriptCode: string; runtimeCode: string }>;
+    const parsed = JSON.parse(source) as Partial<{
+      name: string;
+      typescriptCode: string;
+      runtimeCode: string;
+      params: unknown;
+      docs: unknown;
+    }>;
     if (typeof parsed.name !== "string" || typeof parsed.typescriptCode !== "string" || typeof parsed.runtimeCode !== "string") {
       return null;
     }
+    const params = sanitizeGeneratedParams(parsed.params);
+    const docs = sanitizeGeneratedDocs(parsed.docs);
     return {
       name: parsed.name.slice(0, 96),
       typescriptCode: parsed.typescriptCode,
-      runtimeCode: parsed.runtimeCode
+      runtimeCode: parsed.runtimeCode,
+      ...(params.length > 0 ? { params } : {}),
+      ...(docs ? { docs } : {})
     };
   } catch {
     return null;
@@ -542,7 +659,13 @@ function extractOutputText(payload: unknown): string {
   return chunks.join("\n").trim();
 }
 
-async function generateWithOpenAi(prompt: string): Promise<{ name: string; typescriptCode: string; runtimeCode: string }> {
+async function generateWithOpenAi(prompt: string): Promise<{
+  name: string;
+  typescriptCode: string;
+  runtimeCode: string;
+  params?: GeneratedEffectParam[];
+  docs?: GeneratedEffectDocs;
+}> {
   const apiKey = normalizeEnvValue(process.env.OPENAI_API_KEY);
   if (!apiKey) {
     throw new Error("OPENAI_API_KEY is not configured.");
@@ -565,13 +688,18 @@ async function generateWithOpenAi(prompt: string): Promise<{ name: string; types
               type: "input_text",
               text: [
                 "You generate canvas demoscene effects.",
-                "Return STRICT JSON only with keys: name, typescriptCode, runtimeCode.",
+                "Return STRICT JSON only with keys: name, typescriptCode, runtimeCode, params, docs.",
                 "typescriptCode can use TypeScript syntax.",
                 "runtimeCode MUST be plain JavaScript (no TypeScript annotations).",
                 "runtimeCode MUST NOT include markdown fences.",
                 "runtimeCode MUST NOT include export/import statements.",
                 "runtimeCode MUST evaluate to an effect object with render(context) and optional reset().",
-                "Preferred runtimeCode shape: `return { render(context) { ... }, reset() { ... } };`"
+                "Preferred runtimeCode shape: `return { render(context) { ... }, reset() { ... } };`",
+                "params MUST be an array of UI control metadata using keys: key,label,type,defaultValue,min,max,step,options,description.",
+                "Use type=number with numeric defaults and optional min/max/step.",
+                "Use type=toggle with numeric defaultValue of 0 or 1.",
+                "Use type=select with string defaultValue and options array of {label,value}.",
+                "docs MUST be { description, parameters } where parameters is concise markdown describing each param."
               ].join(" ")
             }
           ]
@@ -785,6 +913,8 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
     const prompt = typeof body.prompt === "string" ? body.prompt.trim() : "";
     const typescriptCode = typeof body.typescriptCode === "string" ? body.typescriptCode : "";
     const runtimeCode = typeof body.runtimeCode === "string" ? body.runtimeCode : "";
+    const params = sanitizeGeneratedParams(body.params);
+    const docs = sanitizeGeneratedDocs(body.docs);
     if (!name || !prompt || !typescriptCode || !runtimeCode) {
       sendJson(res, 400, { error: "name, prompt, typescriptCode, and runtimeCode are required." });
       return;
@@ -795,6 +925,8 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
       prompt: prompt.slice(0, 3000),
       typescriptCode: typescriptCode.slice(0, 20000),
       runtimeCode: runtimeCode.slice(0, 20000),
+      ...(params.length > 0 ? { params } : {}),
+      ...(docs ? { docs } : {}),
       createdAt: Date.now()
     };
 

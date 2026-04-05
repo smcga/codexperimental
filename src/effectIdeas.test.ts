@@ -28,7 +28,9 @@ describe("effect ideas client", () => {
         generation: {
           name: "Nebula Pulse",
           typescriptCode: "export const name='Nebula Pulse';",
-          runtimeCode: "return { render() {} };"
+          runtimeCode: "return { render() {} };",
+          params: [{ key: "speed", label: "Speed", type: "number", defaultValue: 1 }],
+          docs: { description: "Generated effect", parameters: "- speed: speed." }
         }
       })
     })) as typeof fetch;
@@ -36,7 +38,9 @@ describe("effect ideas client", () => {
     await expect(generateEffectIdea("nebula pulses")).resolves.toEqual({
       name: "Nebula Pulse",
       typescriptCode: "export const name='Nebula Pulse';",
-      runtimeCode: "return { render() {} };"
+      runtimeCode: "return { render() {} };",
+      params: [{ key: "speed", label: "Speed", type: "number", defaultValue: 1 }],
+      docs: { description: "Generated effect", parameters: "- speed: speed." }
     });
   });
 
