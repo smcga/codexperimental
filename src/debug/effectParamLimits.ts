@@ -1,15 +1,11 @@
 import { EffectParamControl } from "../renderer/effects/manifest";
 
-export const EFFECT_PARAM_LIMITS_STORAGE_KEY = "debug.effectParamLimits.v1";
-
 export type EffectParamLimitOverride = {
   min?: number;
   max?: number;
 };
 
 export type EffectParamLimitsByEffect = Record<string, Record<string, EffectParamLimitOverride>>;
-
-type StorageLike = Pick<Storage, "getItem" | "setItem">;
 
 const toFiniteNumber = (value: unknown): number | undefined =>
   typeof value === "number" && Number.isFinite(value) ? value : undefined;
@@ -52,29 +48,6 @@ export const sanitizeEffectParamLimits = (value: unknown): EffectParamLimitsByEf
     }
     return effectsAcc;
   }, {});
-};
-
-export const loadPersistedEffectParamLimits = (storage: StorageLike | null | undefined): EffectParamLimitsByEffect => {
-  if (!storage) {
-    return {};
-  }
-  const raw = storage.getItem(EFFECT_PARAM_LIMITS_STORAGE_KEY);
-  if (!raw) {
-    return {};
-  }
-  try {
-    const parsed = JSON.parse(raw) as unknown;
-    return sanitizeEffectParamLimits(parsed);
-  } catch {
-    return {};
-  }
-};
-
-export const persistEffectParamLimits = (limits: EffectParamLimitsByEffect, storage: StorageLike | null | undefined): void => {
-  if (!storage) {
-    return;
-  }
-  storage.setItem(EFFECT_PARAM_LIMITS_STORAGE_KEY, JSON.stringify(sanitizeEffectParamLimits(limits)));
 };
 
 export const applyLimitOverridesToControls = (

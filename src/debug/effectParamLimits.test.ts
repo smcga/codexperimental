@@ -2,9 +2,6 @@ import { describe, expect, it } from "vitest";
 import {
   applyLimitOverridesToControls,
   autoExpandDraftLimit,
-  EFFECT_PARAM_LIMITS_STORAGE_KEY,
-  loadPersistedEffectParamLimits,
-  persistEffectParamLimits,
   sanitizeEffectParamLimits
 } from "./effectParamLimits";
 import { EffectParamControl } from "../renderer/effects/manifest";
@@ -30,34 +27,6 @@ describe("sanitizeEffectParamLimits", () => {
       starfield: {
         speed: { min: -2, max: 5 },
         warp: { min: undefined, max: 3 }
-      }
-    });
-  });
-});
-
-describe("limit persistence", () => {
-  it("loads and saves persisted limits", () => {
-    const storage = new Map<string, string>();
-    const storageLike = {
-      getItem: (key: string) => storage.get(key) ?? null,
-      setItem: (key: string, value: string) => {
-        storage.set(key, value);
-      }
-    };
-
-    persistEffectParamLimits(
-      {
-        flyover: {
-          speed: { min: -3, max: 8 }
-        }
-      },
-      storageLike
-    );
-
-    expect(storage.get(EFFECT_PARAM_LIMITS_STORAGE_KEY)).toBeTruthy();
-    expect(loadPersistedEffectParamLimits(storageLike)).toEqual({
-      flyover: {
-        speed: { min: -3, max: 8 }
       }
     });
   });

@@ -97,6 +97,43 @@ describe("api/effects", () => {
     expect(JSON.parse(res.getBody()).effects).toHaveLength(1);
   });
 
+  it("stores and returns shared effect param limits", async () => {
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+
+    const saveRes = createResponse();
+    await handler({
+      method: "POST",
+      url: "/api/effects?action=paramLimits",
+      body: JSON.stringify({
+        paramLimits: {
+          starfield: {
+            speed: { min: -3, max: 9 },
+            warp: { min: "bad", max: 4 }
+          }
+        }
+      })
+    }, saveRes.response);
+    expect(saveRes.response.statusCode).toBe(200);
+    expect(JSON.parse(saveRes.getBody()).paramLimits).toEqual({
+      starfield: {
+        speed: { min: -3, max: 9 },
+        warp: { min: undefined, max: 4 }
+      }
+    });
+
+    const readRes = createResponse();
+    await handler({ method: "GET", url: "/api/effects?action=paramLimits" }, readRes.response);
+    expect(readRes.response.statusCode).toBe(200);
+    expect(JSON.parse(readRes.getBody()).paramLimits).toEqual({
+      starfield: {
+        speed: { min: -3, max: 9 },
+        warp: { min: undefined, max: 4 }
+      }
+    });
+  });
+
   it("stores submissions as pending", async () => {
     const redis = createMockRedis();
     vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));

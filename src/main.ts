@@ -52,10 +52,9 @@ import {
   applyLimitOverridesToControls,
   autoExpandDraftLimit,
   EffectParamLimitOverride,
-  EffectParamLimitsByEffect,
-  loadPersistedEffectParamLimits,
-  persistEffectParamLimits
+  EffectParamLimitsByEffect
 } from "./debug/effectParamLimits";
+import { fetchGlobalEffectParamLimits, saveGlobalEffectParamLimits } from "./effectParamLimitsApi";
 import { createEditorRoot, EditorController } from "./editor/EditorRoot";
 import { submitDoodle } from "./doodles";
 import {
@@ -277,7 +276,7 @@ const debugState = {
   eraOverride: null as EraPreset | null,
   monochromeOverride: null as boolean | null,
   effectParams: Object.fromEntries(getEffectRegistryKeys().map((effectName) => [effectName, getEffectDebugDefaults(effectName)])),
-  effectParamLimits: loadPersistedEffectParamLimits(window.localStorage),
+  effectParamLimits: {} as EffectParamLimitsByEffect,
   effectParamLimitDrafts: {} as EffectParamLimitsByEffect,
   editingParamLimits: false,
   framingOverride: "auto" as FramingOverride
@@ -948,6 +947,20 @@ function createEffectSelector(): void {
   updateEffectSelectorState();
 }
 
+async function hydrateGlobalParamLimits(): Promise<void> {
+  try {
+    debugState.effectParamLimits = await fetchGlobalEffectParamLimits();
+    debugState.effectParamLimitDrafts = {};
+    if (debugState.forcedEffect) {
+      renderEffectPanel(debugState.forcedEffect);
+    } else {
+      updateEffectPanelVisibility();
+    }
+  } catch {
+    // Keep defaults when central limits are unavailable.
+  }
+}
+
 function buildGeneratedEffectControls(params: GeneratedEffectParam[] | undefined): EffectParamControl[] {
   if (!params || params.length === 0) {
     return [];
@@ -1360,11 +1373,7 @@ if (!releaseMode && debugEffectCopyButton) {
 if (!releaseMode && debugEditParamLimitsToggle) {
   debugEditParamLimitsToggle.addEventListener("change", () => {
     debugState.editingParamLimits = debugEditParamLimitsToggle.checked;
-    if (debugState.forcedEffect) {
-      renderEffectPanel(debugState.forcedEffect);
-    } else {
-      updateEffectPanelVisibility();
-    }
+    updateEffectPanelVisibility();
   });
 }
 
@@ -1378,9 +1387,20 @@ if (!releaseMode && debugApplyParamLimitsButton) {
     if (!draft) {
       return;
     }
-    debugState.effectParamLimits[effectName] = { ...draft };
-    persistEffectParamLimits(debugState.effectParamLimits, window.localStorage);
-    renderEffectPanel(effectName);
+    void (async () => {
+      try {
+        const updatedLimits = {
+          ...debugState.effectParamLimits,
+          [effectName]: { ...draft }
+        };
+        debugState.effectParamLimits = await saveGlobalEffectParamLimits(updatedLimits);
+        debugState.effectParamLimitDrafts = {};
+      } catch {
+        setCopyStatus("Failed to save limits to shared store.", true);
+      }
+      renderEffectPanel(effectName);
+      updateEffectPanelVisibility();
+    })();
   });
 }
 
@@ -1456,6 +1476,7 @@ if (!releaseMode) {
   void (async () => {
     await hydrateApprovedEffects();
     createEffectSelector();
+    await hydrateGlobalParamLimits();
     if (!editorRoot) {
       return;
     }
