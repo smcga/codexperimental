@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { buildTransitionOptionMarkup, transitionOptions } from "../renderer/transitions";
 import {
   computeSceneSeekTime,
+  getMainSlotSelection,
+  applyMainSlotSelection,
   getNewSceneTimeRange,
   getNextNewSectionName,
   getRandomEffectParams,
@@ -47,6 +49,54 @@ describe("getScenePlayingAtTime", () => {
   it("returns null when no scene matches", () => {
     expect(getScenePlayingAtTime(scenes, 30)).toBeNull();
     expect(getScenePlayingAtTime(scenes, Number.NaN)).toBeNull();
+  });
+});
+
+describe("main slot selection helpers", () => {
+  it("derives top/centre/bottom slot effects from scene and source-over full-opacity layers", () => {
+    const selection = getMainSlotSelection({
+      id: "scene-1",
+      start: 0,
+      end: 10,
+      effect: "starfield",
+      fitAlign: "centre",
+      layers: [
+        { effect: "plasma", fitAlign: "top", blend: "source-over", opacity: 1 },
+        { effect: "rain", fitAlign: "bottom", blend: "source-over", opacity: 1 },
+        { effect: "tunnel", fitAlign: "top", blend: "screen", opacity: 0.7 }
+      ]
+    });
+
+    expect(selection).toEqual({
+      top: "plasma",
+      centre: "starfield",
+      bottom: "rain"
+    });
+  });
+
+  it("applies slot selection by setting the primary scene effect and generating secondary slot layers", () => {
+    const scene = {
+      id: "scene-2",
+      start: 0,
+      end: 10,
+      effect: "starfield",
+      fitAlign: "fill",
+      layers: [{ effect: "custom", fitAlign: "fill", blend: "screen", opacity: 0.6 }]
+    };
+
+    applyMainSlotSelection(scene, {
+      top: "plasma",
+      centre: "tunnel",
+      bottom: "rain"
+    });
+
+    expect(scene.effect).toBe("tunnel");
+    expect(scene.fitAlign).toBe("centre");
+    expect(scene.layers).toEqual([
+      { effect: "plasma", opacity: 1, blend: "source-over", params: {}, automation: [], fitAlign: "top" },
+      { effect: "rain", opacity: 1, blend: "source-over", params: {}, automation: [], fitAlign: "bottom" },
+      { effect: "custom", fitAlign: "fill", blend: "screen", opacity: 0.6 }
+    ]);
   });
 });
 

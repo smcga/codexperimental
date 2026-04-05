@@ -23,12 +23,13 @@ export function computePresentTransform(
     return computeDesktopCinematicTransform(screenW, screenH, srcW, srcH);
   }
 
-  const scale = Math.min(screenW / srcW, screenH / srcH);
+  const slotHeight = screenH / 3;
+  const scale = Math.min(screenW / srcW, slotHeight / srcH);
   const drawW = srcW * scale;
   const drawH = srcH * scale;
   const dx = (screenW - drawW) / 2;
-  const dy =
-    align === "top" ? 0 : align === "bottom" ? screenH - drawH : (screenH - drawH) / 2;
+  const slotOffsetY = align === "top" ? 0 : align === "bottom" ? slotHeight * 2 : slotHeight;
+  const dy = slotOffsetY + (slotHeight - drawH) / 2;
 
   return { scale, dx, dy };
 }
