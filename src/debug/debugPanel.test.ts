@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildDebugRenderSelection,
   formatEffectSettingsForTimeline,
+  getDebugPanelSection,
   getDebugEffectSelectorOptions,
   getDebugEffectSelectorValue,
   getNextDebugEffectSelection,
@@ -113,6 +114,20 @@ describe("debug effect selector helpers", () => {
       forcedEffect: null,
       shouldReset: false
     });
+  });
+});
+
+describe("getDebugPanelSection", () => {
+  it("falls back to transport for unknown or missing sections", () => {
+    expect(getDebugPanelSection(undefined)).toBe("transport");
+    expect(getDebugPanelSection(null)).toBe("transport");
+    expect(getDebugPanelSection("unknown")).toBe("transport");
+  });
+
+  it("accepts known debug panel section ids", () => {
+    expect(getDebugPanelSection("transport")).toBe("transport");
+    expect(getDebugPanelSection("effects")).toBe("effects");
+    expect(getDebugPanelSection("render")).toBe("render");
   });
 });
 
