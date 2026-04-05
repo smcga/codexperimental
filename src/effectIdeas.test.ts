@@ -1,9 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
+  buildEffectModerationActionUrl,
   clearApprovedEffectsCache,
   EffectIdeaApiError,
   compileRuntimeEffect,
+  fetchPendingEffect,
   fetchApprovedEffects,
   generateEffectIdea,
   submitEffectIdea
@@ -61,6 +63,35 @@ describe("effect ideas client", () => {
     await expect(fetchApprovedEffects()).resolves.toHaveLength(1);
     await expect(fetchApprovedEffects()).resolves.toHaveLength(1);
     expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("fetches a pending effect for the review page", async () => {
+    globalThis.fetch = vi.fn(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        effect: { id: "pending-2", name: "Tunnel", prompt: "Fast", typescriptCode: "ts", runtimeCode: "return { render() {} };", createdAt: 3 },
+        reviewUrl: "/effect-review.html?id=pending-2&token=secret-token"
+      })
+    })) as typeof fetch;
+
+    await expect(fetchPendingEffect("pending-2", "secret-token")).resolves.toEqual({
+      effect: { id: "pending-2", name: "Tunnel", prompt: "Fast", typescriptCode: "ts", runtimeCode: "return { render() {} };", createdAt: 3 },
+      reviewUrl: "/effect-review.html?id=pending-2&token=secret-token"
+    });
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      "/api/effects?pendingId=pending-2&token=secret-token",
+      expect.objectContaining({ method: "GET" })
+    );
+  });
+
+  it("builds moderation action URLs for effect review buttons", () => {
+    expect(buildEffectModerationActionUrl("approve", "pending-3", "secret token")).toBe(
+      "/api/effects?action=approve&id=pending-3&token=secret+token"
+    );
+    expect(buildEffectModerationActionUrl("reject", "pending-3", "secret token")).toBe(
+      "/api/effects?action=reject&id=pending-3&token=secret+token"
+    );
   });
 
   it("compiles runtime effects", () => {

@@ -1,0 +1,186 @@
+import "./style.css";
+
+import { type AudioFeatures } from "./audio/audioPlayer";
+import { buildEffectModerationActionUrl, compileRuntimeEffect, fetchPendingEffect } from "./effectIdeas";
+
+export type EffectReviewPageParams = {
+  id: string | null;
+  token: string | null;
+};
+
+export function getEffectReviewPageParams(search: string): EffectReviewPageParams {
+  const params = new URLSearchParams(search);
+  return {
+    id: params.get("id"),
+    token: params.get("token")
+  };
+}
+
+export function formatEffectReviewTimestamp(timestamp: number): string {
+  return new Date(timestamp).toLocaleString(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short"
+  });
+}
+
+const EMPTY_AUDIO_FEATURES: AudioFeatures = {
+  timeDomain: new Uint8Array(1024),
+  frequency: new Uint8Array(1024),
+  rms: 0,
+  bass: 0,
+  mid: 0,
+  treble: 0,
+  beat: false,
+  beatStrength: 0,
+  impactStrength: 0
+};
+
+const previewCanvas = typeof document !== "undefined" ? document.querySelector<HTMLCanvasElement>("#effect-review-preview") : null;
+const previewContext = previewCanvas?.getContext("2d") ?? null;
+const reviewCopy = typeof document !== "undefined" ? document.querySelector<HTMLParagraphElement>("#effect-review-copy") : null;
+const reviewMeta = typeof document !== "undefined" ? document.querySelector<HTMLParagraphElement>("#effect-review-meta") : null;
+const reviewStatus = typeof document !== "undefined" ? document.querySelector<HTMLDivElement>("#effect-review-status") : null;
+const reviewTypescript = typeof document !== "undefined" ? document.querySelector<HTMLPreElement>("#effect-review-typescript") : null;
+const reviewRuntime = typeof document !== "undefined" ? document.querySelector<HTMLPreElement>("#effect-review-runtime") : null;
+const approveLink = typeof document !== "undefined" ? document.querySelector<HTMLAnchorElement>("#effect-review-approve") : null;
+const denyLink = typeof document !== "undefined" ? document.querySelector<HTMLAnchorElement>("#effect-review-deny") : null;
+
+let previewFrame = 0;
+let previewStartTime = 0;
+let activeEffect: ReturnType<typeof compileRuntimeEffect> | null = null;
+
+function setStatus(message: string, state: "idle" | "error" | "success" = "idle"): void {
+  if (!reviewStatus) {
+    return;
+  }
+  reviewStatus.textContent = message;
+  reviewStatus.dataset.state = state;
+}
+
+function setActionState(enabled: boolean, id: string | null, token: string | null): void {
+  const links = [
+    { element: approveLink, action: "approve" as const },
+    { element: denyLink, action: "reject" as const }
+  ];
+
+  for (const { element, action } of links) {
+    if (!element) {
+      continue;
+    }
+
+    if (enabled && id && token) {
+      element.href = buildEffectModerationActionUrl(action, id, token);
+      element.classList.remove("disabled");
+      element.setAttribute("aria-disabled", "false");
+    } else {
+      element.href = "#";
+      element.classList.add("disabled");
+      element.setAttribute("aria-disabled", "true");
+    }
+  }
+}
+
+function stopPreview(): void {
+  if (previewFrame) {
+    cancelAnimationFrame(previewFrame);
+    previewFrame = 0;
+  }
+}
+
+function startPreview(): void {
+  if (!previewCanvas || !previewContext || !activeEffect) {
+    return;
+  }
+
+  const draw = (): void => {
+    if (!previewCanvas || !previewContext || !activeEffect) {
+      return;
+    }
+    const nowSeconds = performance.now() / 1000;
+    if (previewStartTime === 0) {
+      previewStartTime = nowSeconds;
+    }
+
+    activeEffect.render({
+      ctx: previewContext,
+      width: previewCanvas.width,
+      height: previewCanvas.height,
+      time: nowSeconds - previewStartTime,
+      delta: 1 / 60,
+      audio: EMPTY_AUDIO_FEATURES,
+      params: {}
+    });
+    previewFrame = requestAnimationFrame(draw);
+  };
+
+  stopPreview();
+  previewStartTime = 0;
+  draw();
+}
+
+async function initEffectReviewPage(): Promise<void> {
+  const { id, token } = getEffectReviewPageParams(window.location.search);
+  if (!id || !token) {
+    setStatus("This review link is missing the effect id or moderation token.", "error");
+    if (reviewCopy) {
+      reviewCopy.textContent = "Please reopen the effect review page from a fresh moderation notification.";
+    }
+    if (reviewTypescript) {
+      reviewTypescript.textContent = "Review link incomplete.";
+    }
+    if (reviewRuntime) {
+      reviewRuntime.textContent = "Review link incomplete.";
+    }
+    setActionState(false, null, null);
+    return;
+  }
+
+  try {
+    const { effect } = await fetchPendingEffect(id, token);
+    if (!effect) {
+      throw new Error("missing");
+    }
+
+    if (reviewTypescript) {
+      reviewTypescript.textContent = effect.typescriptCode;
+    }
+    if (reviewRuntime) {
+      reviewRuntime.textContent = effect.runtimeCode;
+    }
+    if (reviewMeta) {
+      reviewMeta.textContent = `Submitted ${formatEffectReviewTimestamp(effect.createdAt)} · ${effect.name}`;
+      reviewMeta.classList.remove("hidden");
+    }
+
+    activeEffect = compileRuntimeEffect(effect.runtimeCode);
+    startPreview();
+
+    setActionState(true, effect.id, token);
+    setStatus("Ready for moderation.", "success");
+  } catch {
+    setStatus("This effect is no longer waiting for review, or the link has expired.", "error");
+    if (reviewCopy) {
+      reviewCopy.textContent = "If someone already approved or denied it, this review page will stop loading that effect.";
+    }
+    if (reviewTypescript) {
+      reviewTypescript.textContent = "Effect unavailable.";
+    }
+    if (reviewRuntime) {
+      reviewRuntime.textContent = "Effect unavailable.";
+    }
+    if (previewContext && previewCanvas) {
+      previewContext.fillStyle = "#040812";
+      previewContext.fillRect(0, 0, previewCanvas.width, previewCanvas.height);
+      previewContext.fillStyle = "rgba(232, 247, 255, 0.75)";
+      previewContext.font = "28px monospace";
+      previewContext.textAlign = "center";
+      previewContext.fillText("Preview unavailable", previewCanvas.width / 2, previewCanvas.height / 2);
+    }
+    setActionState(false, null, null);
+  }
+}
+
+if (typeof window !== "undefined" && typeof document !== "undefined") {
+  window.addEventListener("beforeunload", stopPreview);
+  void initEffectReviewPage();
+}

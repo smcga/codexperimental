@@ -7,7 +7,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, "index.html"),
-        review: resolve(__dirname, "review.html")
+        review: resolve(__dirname, "review.html"),
+        effectReview: resolve(__dirname, "effect-review.html")
       }
     }
   },

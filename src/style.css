@@ -1180,6 +1180,38 @@ body,
   pointer-events: none;
 }
 
+.effect-review-preview {
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 1px solid rgba(142, 249, 255, 0.22);
+  background: #040812;
+}
+
+.effect-review-code-grid {
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.effect-review-code-panel {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.effect-review-code-title {
+  margin: 0;
+  color: rgba(232, 247, 255, 0.86);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.effect-review-code {
+  margin: 0;
+  max-height: 20rem;
+}
+
 .hidden {
   display: none !important;
 }
@@ -1210,5 +1242,9 @@ body,
 
   .doodle-actions button {
     flex: 1 1 100%;
+  }
+
+  .effect-review-code-grid {
+    grid-template-columns: 1fr;
   }
 }
