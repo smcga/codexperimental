@@ -2594,8 +2594,8 @@
       "effect": "textured_cube",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "camera-punch-through",
+        "out": "slide-left",
         "duration": 0.8
       },
       "params": {
@@ -2629,8 +2629,8 @@
       "effect": "envmap_donut",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "wipe",
+        "out": "slide-right",
         "duration": 0.8
       },
       "params": {
@@ -2648,8 +2648,8 @@
       "effect": "dotTunnel",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-right",
+        "out": "camera-punch-through",
         "duration": 0.8
       },
       "params": {
@@ -2692,8 +2692,8 @@
       "effect": "blobs",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "iris",
+        "out": "wipe",
         "duration": 0.8
       },
       "params": {
@@ -2733,8 +2733,8 @@
       "effect": "bokeh",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "bitplane-wipe",
+        "out": "slide-down",
         "duration": 0.8
       },
       "params": {
@@ -2776,8 +2776,8 @@
       "effect": "bumpmap_plane",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-left",
+        "out": "flash",
         "duration": 0.8
       },
       "params": {
@@ -2813,8 +2813,8 @@
       "effect": "caustics",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-up",
+        "out": "iris",
         "duration": 0.8
       },
       "params": {
@@ -2850,8 +2850,8 @@
       "effect": "hexGridPulse",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "flash",
+        "out": "slide-up",
         "duration": 0.8
       },
       "params": {
@@ -2889,8 +2889,8 @@
       "effect": "flyover",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-down",
+        "out": "shatter",
         "duration": 0.8
       },
       "params": {
@@ -2935,8 +2935,8 @@
       "effect": "marble",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "shatter",
+        "out": "bitplane-wipe",
         "duration": 0.8
       },
       "params": {
@@ -2980,7 +2980,7 @@
       "effect": "amiga_showcase",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
+        "in": "signal-collapse",
         "out": "fade",
         "duration": 0.8
       },
@@ -3042,7 +3042,7 @@
       "era": "pcdemo",
       "transition": {
         "in": "fade",
-        "out": "fade",
+        "out": "signal-collapse",
         "duration": 0.8
       },
       "params": {
@@ -3094,8 +3094,8 @@
       "effect": "cloth_sim",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "camera-punch-through",
+        "out": "slide-left",
         "duration": 0.8
       },
       "params": {
@@ -3150,8 +3150,8 @@
       "effect": "smoke_simulation",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-right",
+        "out": "camera-punch-through",
         "duration": 0.8
       },
       "params": {
@@ -3206,8 +3206,8 @@
       "effect": "volumetric_clouds",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "iris",
+        "out": "slide-right",
         "duration": 0.8
       },
       "params": {
@@ -3250,8 +3250,8 @@
       "effect": "soft_shadows",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "wipe",
+        "out": "slide-down",
         "duration": 0.8
       },
       "params": {
@@ -3306,8 +3306,8 @@
       "effect": "moving_shadow_map",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-left",
+        "out": "flash",
         "duration": 0.8
       },
       "params": {
@@ -3350,8 +3350,8 @@
       "effect": "feedback",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "flash",
+        "out": "wipe",
         "duration": 0.8
       },
       "params": {
@@ -3391,8 +3391,8 @@
       "effect": "water_drops",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-up",
+        "out": "iris",
         "duration": 0.8
       },
       "params": {
@@ -3432,8 +3432,8 @@
       "effect": "voronoi_cells",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-down",
+        "out": "slide-up",
         "duration": 0.8
       },
       "params": {
@@ -3473,8 +3473,8 @@
       "effect": "polar_tunnel",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "shatter",
+        "out": "signal-collapse",
         "duration": 0.8
       },
       "params": {
@@ -3516,8 +3516,8 @@
       "effect": "infinite_zoom_droste",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "signal-collapse",
+        "out": "shatter",
         "duration": 0.8
       },
       "params": {
@@ -3565,7 +3565,7 @@
       "effect": "infiniteMirror",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
+        "in": "bitplane-wipe",
         "out": "fade",
         "duration": 0.8
       },
@@ -3619,7 +3619,7 @@
       "era": "pcdemo",
       "transition": {
         "in": "fade",
-        "out": "fade",
+        "out": "bitplane-wipe",
         "duration": 0.8
       },
       "params": {
@@ -3655,8 +3655,8 @@
       "effect": "lissajous",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "wipe",
+        "out": "slide-right",
         "duration": 0.8
       },
       "params": {
@@ -3697,8 +3697,8 @@
       "effect": "raymarch_fractal",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "camera-punch-through",
+        "out": "slide-left",
         "duration": 0.8
       },
       "params": {
@@ -3738,8 +3738,8 @@
       "effect": "god_rays",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-right",
+        "out": "camera-punch-through",
         "duration": 0.8
       },
       "params": {
@@ -3779,8 +3779,8 @@
       "effect": "lens_flare",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "iris",
+        "out": "flash",
         "duration": 0.8
       },
       "params": {
@@ -3824,8 +3824,8 @@
       "effect": "roadDrive",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-left",
+        "out": "wipe",
         "duration": 0.8
       },
       "params": {
@@ -3871,8 +3871,8 @@
       "effect": "explosionBurst",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "flash",
+        "out": "slide-down",
         "duration": 0.8
       },
       "params": {
@@ -3915,8 +3915,8 @@
       "effect": "fireworks_display",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-up",
+        "out": "iris",
         "duration": 0.8
       },
       "params": {
@@ -3958,8 +3958,8 @@
       "effect": "copper_gradient_splits",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-down",
+        "out": "slide-up",
         "duration": 0.8
       },
       "params": {
@@ -4012,8 +4012,8 @@
       "effect": "textured_cube",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "shatter",
+        "out": "signal-collapse",
         "duration": 0.8
       },
       "params": {
@@ -4062,8 +4062,8 @@
       "effect": "skeletal_ribbon",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "signal-collapse",
+        "out": "shatter",
         "duration": 0.8
       },
       "params": {
@@ -4118,7 +4118,7 @@
       "effect": "prism_bloom",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
+        "in": "bitplane-wipe",
         "out": "fade",
         "duration": 0.8
       },
@@ -4165,7 +4165,7 @@
       "era": "pcdemo",
       "transition": {
         "in": "fade",
-        "out": "fade",
+        "out": "bitplane-wipe",
         "duration": 0.8
       },
       "params": {
@@ -4209,8 +4209,8 @@
       "effect": "textmode_charset",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "bitplane-wipe",
+        "out": "wipe",
         "duration": 0.8
       },
       "params": {
@@ -4253,8 +4253,8 @@
       "effect": "recursiveFracture",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "wipe",
+        "out": "slide-right",
         "duration": 0.8
       },
       "params": {
@@ -4309,8 +4309,8 @@
       "effect": "taco_meteor_shower",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-left",
+        "out": "slide-down",
         "duration": 0.8
       },
       "params": {
@@ -4361,8 +4361,8 @@
       "effect": "raytrace_spheres",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "camera-punch-through",
+        "out": "slide-left",
         "duration": 0.8
       },
       "params": {
@@ -4420,8 +4420,8 @@
       "effect": "cosmic_voyage",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-right",
+        "out": "flash",
         "duration": 0.8
       },
       "params": {
@@ -4476,8 +4476,8 @@
       "effect": "voxel_world_builder",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "flash",
+        "out": "shatter",
         "duration": 0.8
       },
       "params": {
@@ -4513,8 +4513,8 @@
       "effect": "velvet_dreamscape",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "iris",
+        "out": "slide-up",
         "duration": 0.8
       },
       "params": {
@@ -4557,8 +4557,8 @@
       "effect": "volumetric_clouds",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-up",
+        "out": "iris",
         "duration": 0.8
       },
       "params": {
@@ -4601,8 +4601,8 @@
       "effect": "lemmings_march",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-down",
+        "out": "signal-collapse",
         "duration": 0.8
       },
       "params": {
@@ -4656,8 +4656,8 @@
       "effect": "platformerScroll",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "shatter",
+        "out": "camera-punch-through",
         "duration": 0.8
       },
       "params": {
@@ -4693,8 +4693,8 @@
       "effect": "particleAttractors",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "signal-collapse",
+        "out": "bitplane-wipe",
         "duration": 0.8
       },
       "params": {
@@ -4789,8 +4789,8 @@
       "effect": "matrix_rain",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "bitplane-wipe",
+        "out": "wipe",
         "duration": 0.8
       },
       "params": {
@@ -4832,8 +4832,8 @@
       "effect": "equalizer",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "wipe",
+        "out": "slide-right",
         "duration": 0.8
       },
       "params": {
@@ -4873,8 +4873,8 @@
       "effect": "rainbow_cat",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "signal-collapse",
+        "out": "flash",
         "duration": 0.8
       },
       "params": {
@@ -4918,8 +4918,8 @@
       "effect": "tetris_matrix",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-left",
+        "out": "slide-down",
         "duration": 0.8
       },
       "params": {
@@ -4960,8 +4960,8 @@
       "effect": "portrait",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-right",
+        "out": "slide-left",
         "duration": 0.8
       },
       "params": {
@@ -5017,8 +5017,8 @@
       "effect": "vga_fire",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "iris",
+        "out": "slide-up",
         "duration": 0.8
       },
       "params": {
@@ -5069,8 +5069,8 @@
       "effect": "treegrowth",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-up",
+        "out": "iris",
         "duration": 0.8
       },
       "params": {
@@ -5116,8 +5116,8 @@
       "effect": "twister",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "flash",
+        "out": "shatter",
         "duration": 0.8
       },
       "params": {
@@ -5173,8 +5173,8 @@
       "effect": "doodle_greetz_wall",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-down",
+        "out": "signal-collapse",
         "duration": 0.8
       },
       "params": {
@@ -5219,8 +5219,8 @@
       "effect": "amiga_showcase",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "shatter",
+        "out": "bitplane-wipe",
         "duration": 0.8
       },
       "params": {
@@ -5272,7 +5272,7 @@
       "effect": "sine_scroller_logo",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
+        "in": "camera-punch-through",
         "out": "fade",
         "duration": 0.8
       },
@@ -5328,7 +5328,7 @@
       "era": "pcdemo",
       "transition": {
         "in": "fade",
-        "out": "fade",
+        "out": "camera-punch-through",
         "duration": 0.8
       },
       "params": {
@@ -5383,8 +5383,8 @@
       "effect": "lightning",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "camera-punch-through",
+        "out": "slide-left",
         "duration": 0.8
       },
       "params": {
@@ -5433,8 +5433,8 @@
       "effect": "flyover",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-right",
+        "out": "camera-punch-through",
         "duration": 0.8
       },
       "params": {
@@ -5479,8 +5479,8 @@
       "effect": "spectrum_analyzer",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "iris",
+        "out": "slide-right",
         "duration": 0.8
       },
       "params": {
@@ -5520,8 +5520,8 @@
       "effect": "finale",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "wipe",
+        "out": "slide-down",
         "duration": 0.8
       },
       "params": {
@@ -5564,8 +5564,8 @@
       "effect": "boids_simulation",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-left",
+        "out": "wipe",
         "duration": 0.8
       },
       "params": {
@@ -5610,8 +5610,8 @@
       "effect": "textmode_charset",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "bitplane-wipe",
+        "out": "slide-up",
         "duration": 0.8
       },
       "params": {
@@ -5654,8 +5654,8 @@
       "effect": "treegrowth",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-up",
+        "out": "iris",
         "duration": 0.8
       },
       "params": {
@@ -5701,8 +5701,8 @@
       "effect": "effect_evolution",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "flash",
+        "out": "shatter",
         "duration": 0.8
       },
       "params": {
@@ -5742,8 +5742,8 @@
       "effect": "rain",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-down",
+        "out": "flash",
         "duration": 0.8
       },
       "params": {
@@ -5788,8 +5788,8 @@
       "effect": "lissajous",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "shatter",
+        "out": "signal-collapse",
         "duration": 0.8
       },
       "params": {
@@ -5830,8 +5830,8 @@
       "effect": "wireframeRide",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "signal-collapse",
+        "out": "bitplane-wipe",
         "duration": 0.8
       },
       "params": {
@@ -5924,8 +5924,8 @@
       "effect": "volumetric_clouds",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "iris",
+        "out": "slide-right",
         "duration": 0.8
       },
       "params": {
@@ -5968,8 +5968,8 @@
       "effect": "tunnel",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "camera-punch-through",
+        "out": "slide-left",
         "duration": 0.8
       },
       "params": {
@@ -6005,8 +6005,8 @@
       "effect": "particles",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "wipe",
+        "out": "slide-down",
         "duration": 0.8
       },
       "params": {
@@ -6046,8 +6046,8 @@
       "effect": "tunnel",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-right",
+        "out": "camera-punch-through",
         "duration": 0.8
       },
       "params": {
@@ -6083,8 +6083,8 @@
       "effect": "textured_cube",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-left",
+        "out": "flash",
         "duration": 0.8
       },
       "params": {
@@ -6133,8 +6133,8 @@
       "effect": "effect_evolution",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "flash",
+        "out": "wipe",
         "duration": 0.8
       },
       "params": {
@@ -6174,8 +6174,8 @@
       "effect": "sphere3d",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-up",
+        "out": "iris",
         "duration": 0.8
       },
       "params": {
@@ -6211,8 +6211,8 @@
       "effect": "glenz_vectors",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-down",
+        "out": "slide-up",
         "duration": 0.8
       },
       "params": {
@@ -6267,8 +6267,8 @@
       "effect": "voxel_landscape",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "shatter",
+        "out": "signal-collapse",
         "duration": 0.8
       },
       "params": {
@@ -6322,8 +6322,8 @@
       "effect": "fluid",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "signal-collapse",
+        "out": "shatter",
         "duration": 0.8
       },
       "params": {
@@ -6365,7 +6365,7 @@
       "effect": "rain",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
+        "in": "bitplane-wipe",
         "out": "fade",
         "duration": 0.8
       },
@@ -6412,7 +6412,7 @@
       "era": "pcdemo",
       "transition": {
         "in": "fade",
-        "out": "fade",
+        "out": "bitplane-wipe",
         "duration": 0.8
       },
       "params": {
@@ -6463,8 +6463,8 @@
       "effect": "gl_fractal_tunnel",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "camera-punch-through",
+        "out": "slide-left",
         "duration": 0.8
       },
       "params": {
@@ -6504,8 +6504,8 @@
       "effect": "fractal_zoomer",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-right",
+        "out": "camera-punch-through",
         "duration": 0.8
       },
       "params": {
@@ -6547,8 +6547,8 @@
       "effect": "shadebobs_bobs",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "wipe",
+        "out": "slide-right",
         "duration": 0.8
       },
       "params": {
@@ -6601,8 +6601,8 @@
       "effect": "wireframeRide",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-left",
+        "out": "wipe",
         "duration": 0.8
       },
       "params": {
@@ -6651,8 +6651,8 @@
       "effect": "voxel_landscape",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "iris",
+        "out": "slide-down",
         "duration": 0.8
       },
       "params": {
@@ -6706,8 +6706,8 @@
       "effect": "gl_impossible_corridor",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "flash",
+        "out": "slide-up",
         "duration": 0.8
       },
       "params": {
@@ -6749,8 +6749,8 @@
       "effect": "lens_wobbler",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-up",
+        "out": "flash",
         "duration": 0.8
       },
       "params": {
@@ -6805,8 +6805,8 @@
       "effect": "border_multiplex",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-down",
+        "out": "iris",
         "duration": 0.8
       },
       "params": {
@@ -6850,8 +6850,8 @@
       "effect": "equalizer",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "shatter",
+        "out": "signal-collapse",
         "duration": 0.8
       },
       "params": {
@@ -6891,8 +6891,8 @@
       "effect": "voxel_landscape",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "signal-collapse",
+        "out": "shatter",
         "duration": 0.8
       },
       "params": {
@@ -6946,7 +6946,7 @@
       "effect": "moire_grid",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
+        "in": "bitplane-wipe",
         "out": "fade",
         "duration": 0.8
       },
@@ -6990,7 +6990,7 @@
       "era": "pcdemo",
       "transition": {
         "in": "fade",
-        "out": "fade",
+        "out": "bitplane-wipe",
         "duration": 0.8
       },
       "params": {
@@ -7030,8 +7030,8 @@
       "effect": "tunnel",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "camera-punch-through",
+        "out": "slide-left",
         "duration": 0.8
       },
       "params": {
@@ -7067,8 +7067,8 @@
       "effect": "raytrace_spheres",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-right",
+        "out": "camera-punch-through",
         "duration": 0.8
       },
       "params": {
@@ -7126,8 +7126,8 @@
       "effect": "raytrace_spheres",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "iris",
+        "out": "flash",
         "duration": 0.8
       },
       "params": {
@@ -7185,8 +7185,8 @@
       "effect": "kefrens_bars",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "bitplane-wipe",
+        "out": "wipe",
         "duration": 0.8
       },
       "params": {
@@ -7227,8 +7227,8 @@
       "effect": "glenz_vectors",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "wipe",
+        "out": "slide-right",
         "duration": 0.8
       },
       "params": {
@@ -7283,8 +7283,8 @@
       "effect": "feedback",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-left",
+        "out": "slide-down",
         "duration": 0.8
       },
       "params": {
@@ -7324,8 +7324,8 @@
       "effect": "vector3d_balls",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-up",
+        "out": "iris",
         "duration": 0.8
       },
       "params": {
@@ -7379,8 +7379,8 @@
       "effect": "metaballs",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "flash",
+        "out": "slide-up",
         "duration": 0.8
       },
       "params": {
@@ -7421,8 +7421,8 @@
       "effect": "lens_wobbler",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-down",
+        "out": "shatter",
         "duration": 0.8
       },
       "params": {
@@ -7477,8 +7477,8 @@
       "effect": "roadDrive",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "shatter",
+        "out": "signal-collapse",
         "duration": 0.8
       },
       "params": {
@@ -7524,8 +7524,8 @@
       "effect": "textured_cube",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "signal-collapse",
+        "out": "bitplane-wipe",
         "duration": 0.8
       },
       "params": {
@@ -7616,8 +7616,8 @@
       "effect": "roadDrive",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "wipe",
+        "out": "slide-right",
         "duration": 0.8
       },
       "params": {
@@ -7663,8 +7663,8 @@
       "effect": "poly_morph_showcase",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "camera-punch-through",
+        "out": "slide-left",
         "duration": 0.8
       },
       "params": {
@@ -7723,8 +7723,8 @@
       "effect": "raster_bars",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "bitplane-wipe",
+        "out": "wipe",
         "duration": 0.8
       },
       "params": {
@@ -7772,8 +7772,8 @@
       "effect": "spherecloud",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-right",
+        "out": "camera-punch-through",
         "duration": 0.8
       },
       "params": {
@@ -7809,8 +7809,8 @@
       "effect": "textmode_charset",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "iris",
+        "out": "bitplane-wipe",
         "duration": 0.8
       },
       "params": {
@@ -7853,8 +7853,8 @@
       "effect": "starfield",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-left",
+        "out": "slide-down",
         "duration": 0.8
       },
       "params": {
@@ -7896,8 +7896,8 @@
       "effect": "gl_fractal_tunnel",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-up",
+        "out": "flash",
         "duration": 0.8
       },
       "params": {
@@ -7937,8 +7937,8 @@
       "effect": "vga_fire",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "flash",
+        "out": "slide-up",
         "duration": 0.8
       },
       "params": {
@@ -7989,8 +7989,8 @@
       "effect": "rain",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-down",
+        "out": "iris",
         "duration": 0.8
       },
       "params": {
@@ -8035,8 +8035,8 @@
       "effect": "spherecloud",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "shatter",
+        "out": "signal-collapse",
         "duration": 0.8
       },
       "params": {
@@ -8072,8 +8072,8 @@
       "effect": "fractal",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "signal-collapse",
+        "out": "shatter",
         "duration": 0.8
       },
       "params": {
@@ -8159,8 +8159,8 @@
       "effect": "lissajous",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "wipe",
+        "out": "slide-right",
         "duration": 0.8
       },
       "params": {
@@ -8201,8 +8201,8 @@
       "effect": "explicitpixels",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-left",
+        "out": "wipe",
         "duration": 0.8
       },
       "params": {
@@ -8240,8 +8240,8 @@
       "effect": "raymarch_fractal",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "camera-punch-through",
+        "out": "slide-left",
         "duration": 0.8
       },
       "params": {
@@ -8281,8 +8281,8 @@
       "effect": "voxel_landscape",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-right",
+        "out": "slide-down",
         "duration": 0.8
       },
       "params": {
@@ -8336,8 +8336,8 @@
       "effect": "space_hangar",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "iris",
+        "out": "flash",
         "duration": 0.8
       },
       "params": {
@@ -8377,8 +8377,8 @@
       "effect": "effect_evolution",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "flash",
+        "out": "slide-up",
         "duration": 0.8
       },
       "params": {
@@ -8418,8 +8418,8 @@
       "effect": "starfield",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-up",
+        "out": "iris",
         "duration": 0.8
       },
       "params": {
@@ -8461,8 +8461,8 @@
       "effect": "infinitycloud",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "slide-down",
+        "out": "shatter",
         "duration": 0.8
       },
       "params": {
@@ -8498,8 +8498,8 @@
       "effect": "particles",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "shatter",
+        "out": "signal-collapse",
         "duration": 0.8
       },
       "params": {
@@ -8539,8 +8539,8 @@
       "effect": "lens_wobbler",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
-        "out": "fade",
+        "in": "signal-collapse",
+        "out": "camera-punch-through",
         "duration": 0.8
       },
       "params": {
@@ -8595,7 +8595,7 @@
       "effect": "roadDrive",
       "era": "pcdemo",
       "transition": {
-        "in": "fade",
+        "in": "bitplane-wipe",
         "out": "fade",
         "duration": 0.8
       },
@@ -8643,7 +8643,7 @@
       "era": "pcdemo",
       "transition": {
         "in": "fade",
-        "out": "fade",
+        "out": "bitplane-wipe",
         "duration": 0.8
       },
       "params": {
