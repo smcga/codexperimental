@@ -514,7 +514,7 @@ function setDoodleModalVisible(visible: boolean): void {
   }
 }
 
-function setEffectIdeaStatus(message: string, state: "idle" | "error" | "success" = "idle"): void {
+function setEffectIdeaStatus(message: string, state: "idle" | "busy" | "error" | "success" = "idle"): void {
   if (!effectIdeaStatus) {
     return;
   }
@@ -525,6 +525,9 @@ function setEffectIdeaStatus(message: string, state: "idle" | "error" | "success
 function updateEffectIdeaButtons(): void {
   if (effectIdeaGenerateButton) {
     effectIdeaGenerateButton.disabled = effectIdeasGenerating;
+    effectIdeaGenerateButton.classList.toggle("is-busy", effectIdeasGenerating);
+    effectIdeaGenerateButton.setAttribute("aria-busy", effectIdeasGenerating ? "true" : "false");
+    effectIdeaGenerateButton.textContent = effectIdeasGenerating ? "Generating" : "Generate";
   }
   if (effectIdeaSubmitButton) {
     effectIdeaSubmitButton.disabled = effectIdeasSubmitting || generatedIdea === null;
@@ -704,7 +707,7 @@ async function generateCurrentEffectIdea(): Promise<void> {
   }
   effectIdeasGenerating = true;
   updateEffectIdeaButtons();
-  setEffectIdeaStatus("Generating effect code with Codex…");
+  setEffectIdeaStatus("Generating effect code with Codex…", "busy");
   try {
     const generation = await generateEffectIdea(prompt);
     generatedIdea = generation;
