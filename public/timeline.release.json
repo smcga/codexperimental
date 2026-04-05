@@ -1076,7 +1076,7 @@
     {
       "id": "spoken-word-c",
       "start": "02:23.6",
-      "end": "02:29.85",
+      "end": "02:25.9",
       "effect": "voxel_landscape",
       "params": {
         "speed": 0.36,
@@ -1103,8 +1103,8 @@
     },
     {
       "id": "cool-hold",
-      "start": "02:29.85",
-      "end": "02:32.5",
+      "start": "02:25.9",
+      "end": "02:27.0",
       "effect": "space_hangar",
       "params": {
         "speed": 0.62,
@@ -1124,7 +1124,7 @@
     },
     {
       "id": "drop-hit",
-      "start": "02:32.5",
+      "start": "02:27.0",
       "end": "02:43.5",
       "effect": "gl_fractal_tunnel",
       "params": {
@@ -1136,7 +1136,7 @@
           "param": "intensity",
           "from": 0.52,
           "to": 0.78,
-          "t0": "02:32.5",
+          "t0": "02:27.0",
           "t1": "02:43.5",
           "ease": "easeInOutQuad"
         },
@@ -1144,7 +1144,7 @@
           "param": "speed",
           "from": 0,
           "to": 2.1,
-          "t0": 152.5,
+          "t0": 147,
           "t1": 163.5,
           "ease": "linear"
         }
@@ -8813,8 +8813,8 @@
     },
     {
       "id": "this-hit-02525",
-      "start": "02:32.5",
-      "end": "02:32.62",
+      "start": "02:27.0",
+      "end": "02:27.12",
       "text": "THIS",
       "x": 0.5,
       "y": 0.5,
