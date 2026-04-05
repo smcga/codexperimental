@@ -10,6 +10,15 @@ describe("effect idea modal styling", () => {
     expect(css).toContain("overflow-y: auto;");
     expect(css).toContain("overscroll-behavior: contain;");
   });
+
+  it("shows a clear animated busy state for generating effect ideas", () => {
+    const css = readFileSync(new URL("./style.css", import.meta.url), "utf8");
+
+    expect(css).toContain(".doodle-actions button:disabled");
+    expect(css).toContain("#effect-idea-generate.is-busy::after");
+    expect(css).toContain("#effect-idea-status[data-state=\"busy\"]::after");
+    expect(css).toContain("@keyframes effect-idea-button-spin");
+  });
 });
 
 describe("start overlay organic link", () => {
