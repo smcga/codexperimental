@@ -718,14 +718,70 @@ body,
 .editor-automation-row {
   display: grid;
   gap: 0.4rem;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
-  align-items: center;
+  grid-template-columns: minmax(150px, 1fr) minmax(210px, 1.35fr) auto;
+  align-items: end;
+}
+
+.editor-param-key-field,
+.editor-param-value-field {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.editor-param-meta {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: rgba(215, 247, 255, 0.72);
 }
 
 .editor-param-add {
   display: grid;
   gap: 0.5rem;
   margin-top: 0.4rem;
+}
+
+.editor-param-number {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.editor-param-stepper {
+  display: grid;
+  grid-template-columns: auto minmax(72px, 1fr) auto;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.editor-param-value-field [data-param-value-slot] {
+  display: block;
+}
+
+.editor-param-stepper button {
+  min-height: 30px;
+  min-width: 30px;
+  padding: 0 0.55rem;
+}
+
+.editor-param-stepper [data-param-value-number] {
+  width: 100%;
+  min-height: 30px;
+  font-variant-numeric: tabular-nums;
+}
+
+.editor-param-number [data-param-value-range] {
+  width: 100%;
+  accent-color: #66f3ff;
+}
+
+@media (max-width: 760px) {
+  .editor-param-row {
+    grid-template-columns: 1fr;
+  }
+
+  .editor-param-row > button[data-action="remove-param"] {
+    justify-self: end;
+  }
 }
 
 .editor-note {

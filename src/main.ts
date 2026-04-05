@@ -74,6 +74,7 @@ import {
   getGeneratedEffectDefaultParams,
   getRandomGeneratedEffectParams
 } from "./generatedEffectControls";
+import { installGlobalNumberInputWheelGuard } from "./numberInputWheel";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
@@ -149,6 +150,7 @@ const releaseMode = queryParams.get("release") === "1";
 const editorModeFromQuery = queryParams.get("editor") === "1";
 const renderSettings = getRenderSettings(queryParams);
 const qualityState = createQualityState(renderSettings.qualityScale, renderSettings.autoQuality);
+installGlobalNumberInputWheelGuard();
 
 if (!canvas || !overlay || !overlayText || !debugOverlay || !debugTimestamp || !debugTransitionSelect || !debugEraSelect) {
   throw new Error("Missing canvas or overlay element");
