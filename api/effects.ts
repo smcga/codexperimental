@@ -45,6 +45,7 @@ type JsonResponse = {
   effect?: EffectRecord;
   pendingEffects?: EffectRecord[];
   moderationStatus?: "pending" | "approved" | "rejected";
+  reviewUrl?: string | null;
   generation?: {
     name: string;
     typescriptCode: string;
@@ -59,6 +60,13 @@ function sendJson(res: ResponseLike, status: number, body: JsonResponse): void {
   res.setHeader("Content-Type", "application/json");
   res.setHeader("Cache-Control", "no-store");
   res.end(JSON.stringify(body));
+}
+
+function sendHtml(res: ResponseLike, status: number, title: string, message: string): void {
+  res.statusCode = status;
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  res.setHeader("Cache-Control", "no-store");
+  res.end(`<!doctype html><html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>${title}</title><style>body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#05070f;color:#e8f7ff;display:grid;place-items:center;min-height:100vh;padding:24px}.card{max-width:520px;padding:24px;border:1px solid rgba(142,249,255,.25);background:rgba(2,6,10,.95);box-shadow:0 0 32px rgba(0,0,0,.45)}h1{margin:0 0 12px;font-size:1.4rem;letter-spacing:.06em;text-transform:uppercase}p{margin:0;color:rgba(232,247,255,.82);line-height:1.6}</style></head><body><div class="card"><h1>${title}</h1><p>${message}</p></div></body></html>`);
 }
 
 async function readBody(req: RequestLike): Promise<JsonBody> {
@@ -131,6 +139,16 @@ function getModerationBaseUrl(requestUrl: URL): string | null {
   return `${requestUrl.protocol}//${requestUrl.host}`;
 }
 
+function getReviewUrl(effectId: string, moderationBaseUrl: string | null, moderationToken: string | null): string | null {
+  if (!moderationBaseUrl || !moderationToken) {
+    return null;
+  }
+  const url = new URL("/effect-review.html", moderationBaseUrl);
+  url.searchParams.set("id", effectId);
+  url.searchParams.set("token", moderationToken);
+  return url.toString();
+}
+
 function isEffectRecord(value: unknown): value is EffectRecord {
   if (!value || typeof value !== "object") {
     return false;
@@ -200,6 +218,7 @@ async function sendModerationNotification(effect: EffectRecord, requestUrl: URL)
   const approveUrl = withAction("approve");
   const rejectUrl = withAction("reject");
   const pendingQueueUrl = `${new URL("/api/effects?includePending=1", moderationBaseUrl).toString()}&token=${encodeURIComponent(moderationToken)}`;
+  const reviewUrl = getReviewUrl(effect.id, moderationBaseUrl, moderationToken);
   const createdAtIso = new Date(effect.createdAt).toISOString();
   const tasks: Promise<unknown>[] = [];
 
@@ -212,7 +231,7 @@ async function sendModerationNotification(effect: EffectRecord, requestUrl: URL)
           event: "effect_submitted",
           effect,
           createdAtIso,
-          moderation: { approveUrl, rejectUrl, pendingQueueUrl }
+          moderation: { approveUrl, rejectUrl, pendingQueueUrl, reviewUrl }
         })
       })
     );
@@ -226,12 +245,13 @@ async function sendModerationNotification(effect: EffectRecord, requestUrl: URL)
           "Content-Type": "text/plain; charset=utf-8",
           "Title": "Effect idea awaiting approval",
           "Priority": "high",
-          "Click": pendingQueueUrl,
+          "Click": reviewUrl ?? pendingQueueUrl,
           ...(ntfyToken ? { Authorization: `Bearer ${ntfyToken}` } : {})
         },
         body: [
           `New effect idea submitted at ${createdAtIso}.`,
           `Name: ${effect.name}`,
+          ...(reviewUrl ? [`Review: ${reviewUrl}`] : []),
           `Approve: ${approveUrl}`,
           `Reject: ${rejectUrl}`,
           `Queue API: ${pendingQueueUrl}`
@@ -339,23 +359,23 @@ async function handleModerationAction(res: ResponseLike, url: URL): Promise<bool
     return false;
   }
   if (!isAuthorized(url)) {
-    sendJson(res, 401, { error: "Unauthorized moderation action." });
+    sendHtml(res, 401, "Unauthorized", "This moderation link is invalid or missing a valid token.");
     return true;
   }
   if (!writeClient) {
-    sendJson(res, 503, { error: "Moderation storage unavailable." });
+    sendHtml(res, 503, "Moderation unavailable", "Effect moderation storage is currently unavailable.");
     return true;
   }
   const id = url.searchParams.get("id");
   if (!id) {
-    sendJson(res, 400, { error: "Missing effect id." });
+    sendHtml(res, 400, "Missing effect", "No effect id was provided for this moderation action.");
     return true;
   }
 
   const pending = await readPendingEffects(writeClient);
   const target = pending.find((entry) => entry.id === id);
   if (!target) {
-    sendJson(res, 404, { error: "Pending effect not found." });
+    sendHtml(res, 404, "Already handled", "That effect was already approved or rejected.");
     return true;
   }
 
@@ -366,10 +386,14 @@ async function handleModerationAction(res: ResponseLike, url: URL): Promise<bool
     await writeClient.ltrim(EFFECTS_KEY, 0, MAX_EFFECTS - 1);
   }
 
-  sendJson(res, 200, {
-    effect: target,
-    moderationStatus: action === "approve" ? "approved" : "rejected"
-  });
+  sendHtml(
+    res,
+    200,
+    action === "approve" ? "Effect approved" : "Effect rejected",
+    action === "approve"
+      ? `The effect "${target.name}" is approved and can now appear in effect selectors.`
+      : `The effect "${target.name}" was rejected and will not be shown in effect selectors.`
+  );
   return true;
 }
 
@@ -383,6 +407,25 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
 
   if (method === "GET") {
     const effects = await readApprovedEffects();
+    if (url.searchParams.has("pendingId")) {
+      if (!isAuthorized(url)) {
+        sendJson(res, 401, { error: "Unauthorized." });
+        return;
+      }
+      const pendingId = url.searchParams.get("pendingId");
+      if (!pendingId) {
+        sendJson(res, 400, { error: "A pending effect id is required." });
+        return;
+      }
+      const pendingEffects = await readPendingEffects(readClient ?? writeClient);
+      const effect = pendingEffects.find((entry) => entry.id === pendingId);
+      if (!effect) {
+        sendJson(res, 404, { error: "That pending effect could not be found." });
+        return;
+      }
+      sendJson(res, 200, { effect, reviewUrl: getReviewUrl(effect.id, getModerationBaseUrl(url), getModerationToken()) });
+      return;
+    }
     if (url.searchParams.get("includePending") === "1") {
       if (!isAuthorized(url)) {
         sendJson(res, 401, { error: "Unauthorized." });
@@ -442,7 +485,7 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
     const pending = await readPendingEffects(writeClient);
     await writePendingEffects(writeClient, [effect, ...pending]);
     await sendModerationNotification(effect, url);
-    sendJson(res, 200, { effect, moderationStatus: "pending" });
+    sendJson(res, 200, { effect, moderationStatus: "pending", reviewUrl: getReviewUrl(effect.id, getModerationBaseUrl(url), getModerationToken()) });
     return;
   }
 

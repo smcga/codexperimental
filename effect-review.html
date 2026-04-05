@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Review effect idea</title>
+  </head>
+  <body class="review-page-body">
+    <main class="review-page">
+      <section class="review-card">
+        <p class="review-eyebrow">Moderation</p>
+        <h1 class="review-title">Review effect idea</h1>
+        <p id="effect-review-copy" class="review-copy">Open this page from your notification to inspect the generated effect before deciding.</p>
+        <canvas id="effect-review-preview" class="effect-review-preview" width="960" height="540" aria-label="Generated effect preview"></canvas>
+        <p id="effect-review-meta" class="review-meta hidden"></p>
+        <div class="effect-review-code-grid">
+          <div class="effect-review-code-panel">
+            <h2 class="effect-review-code-title">TypeScript</h2>
+            <pre id="effect-review-typescript" class="effect-idea-code effect-review-code">Loading code…</pre>
+          </div>
+          <div class="effect-review-code-panel">
+            <h2 class="effect-review-code-title">Runtime JavaScript</h2>
+            <pre id="effect-review-runtime" class="effect-idea-code effect-review-code">Loading code…</pre>
+          </div>
+        </div>
+        <div id="effect-review-status" class="doodle-status">Checking moderation link…</div>
+        <div class="doodle-actions review-actions">
+          <a id="effect-review-deny" class="review-button review-button-secondary disabled" href="#" aria-disabled="true">Deny</a>
+          <a id="effect-review-approve" class="review-button disabled" href="#" aria-disabled="true">Approve</a>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/src/effectReview.ts"></script>
+  </body>
+</html>

@@ -163,10 +163,50 @@ describe("api/effects", () => {
         method: "POST",
         headers: expect.objectContaining({
           "Title": "Effect idea awaiting approval",
-          "Click": expect.stringContaining("/api/effects?includePending=1")
+          "Click": expect.stringContaining("/effect-review.html?id=")
         }),
-        body: expect.stringContaining("Approve: https://demo.example.com/api/effects?action=approve")
+        body: expect.stringContaining("Review: https://demo.example.com/effect-review.html?id=")
       })
+    );
+  });
+
+  it("returns a single pending effect for the review page", async () => {
+    process.env.EFFECT_MODERATION_TOKEN = "secret-token";
+    process.env.EFFECT_MODERATION_BASE_URL = "https://demo.example.com";
+    const redis = createMockRedis([], [{ id: "pending-1", name: "Tunnel", prompt: "Fast", typescriptCode: "ts", runtimeCode: "return { render() {} };", createdAt: 1 }]);
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+
+    await handler(
+      { method: "GET", url: "/api/effects?pendingId=pending-1&token=secret-token" },
+      res.response
+    );
+
+    expect(res.response.statusCode).toBe(200);
+    expect(JSON.parse(res.getBody())).toEqual({
+      effect: { id: "pending-1", name: "Tunnel", prompt: "Fast", typescriptCode: "ts", runtimeCode: "return { render() {} };", createdAt: 1 },
+      reviewUrl: "https://demo.example.com/effect-review.html?id=pending-1&token=secret-token"
+    });
+  });
+
+  it("approves a pending effect through a signed one-tap link with HTML response", async () => {
+    process.env.EFFECT_MODERATION_TOKEN = "secret-token";
+    const redis = createMockRedis([], [{ id: "pending-1", name: "Tunnel", prompt: "Fast", typescriptCode: "ts", runtimeCode: "return { render() {} };", createdAt: 1 }]);
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+
+    await handler(
+      { method: "GET", url: "/api/effects?action=approve&id=pending-1&token=secret-token" },
+      res.response
+    );
+
+    expect(res.response.statusCode).toBe(200);
+    expect(res.getBody()).toContain("Effect approved");
+    expect(redis.lpush).toHaveBeenCalledWith(
+      "effects:items",
+      expect.objectContaining({ id: "pending-1" })
     );
   });
 });

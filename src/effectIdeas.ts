@@ -19,6 +19,7 @@ type EffectsResponse = {
   effects?: EffectIdeaRecord[];
   effect?: EffectIdeaRecord;
   moderationStatus?: "pending";
+  reviewUrl?: string | null;
   generation?: EffectIdeaGenerationResult;
   error?: string;
   rawResponse?: string;
@@ -147,6 +148,20 @@ export async function submitEffectIdea(idea: Omit<EffectIdeaRecord, "id" | "crea
     method: "POST",
     body: JSON.stringify(idea)
   });
+}
+
+export function buildEffectModerationActionUrl(action: "approve" | "reject", id: string, token: string): string {
+  const params = new URLSearchParams({ action, id, token });
+  return `/api/effects?${params.toString()}`;
+}
+
+export async function fetchPendingEffect(id: string, token: string): Promise<{ effect: EffectIdeaRecord | null; reviewUrl: string | null }> {
+  const params = new URLSearchParams({ pendingId: id, token });
+  const payload = await requestEffects(`/api/effects?${params.toString()}`, { method: "GET" });
+  return {
+    effect: isRecord(payload.effect) ? payload.effect : null,
+    reviewUrl: payload.reviewUrl ?? null
+  };
 }
 
 export async function fetchApprovedEffects(forceRefresh = false): Promise<EffectIdeaRecord[]> {
