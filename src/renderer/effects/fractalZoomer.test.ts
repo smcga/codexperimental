@@ -20,7 +20,6 @@ const audio = {
 describe("fractalZoomer params", () => {
   it("normalizes params with defaults and clamps", () => {
     const params = normalizeFractalZoomerParams({
-      setType: "invalid",
       zoom: 99,
       centerX: -12,
       centerY: 9,
@@ -29,7 +28,6 @@ describe("fractalZoomer params", () => {
       audioReact: 2
     });
 
-    expect(params.setType).toBe("mandelbrot");
     expect(params.zoom).toBe(8);
     expect(params.centerX).toBe(-2.5);
     expect(params.centerY).toBe(1.8);
@@ -40,7 +38,6 @@ describe("fractalZoomer params", () => {
 
   it("maps normalized params to deterministic state", () => {
     const params = normalizeFractalZoomerParams({
-      setType: "julia",
       zoom: 2,
       centerX: -0.2,
       centerY: 0.3,
@@ -53,9 +50,26 @@ describe("fractalZoomer params", () => {
     const second = buildFractalZoomerState(10, audio, params);
 
     expect(first).toEqual(second);
-    expect(first.setType).toBe("julia");
     expect(first.zoomScale).toBeGreaterThan(4);
     expect(first.iterations).toBeGreaterThanOrEqual(120);
     expect(first.palettePhase).toBeGreaterThan(4);
+  });
+
+  it("automatically animates zoom and center without manual zoom changes", () => {
+    const params = normalizeFractalZoomerParams({
+      zoom: 1.8,
+      centerX: -0.6,
+      centerY: 0.1,
+      iterations: 140,
+      paletteSpeed: 0.4,
+      audioReact: 0
+    });
+
+    const first = buildFractalZoomerState(0, audio, params);
+    const later = buildFractalZoomerState(6, audio, params);
+
+    expect(later.zoomScale).not.toBe(first.zoomScale);
+    expect(later.centerX).not.toBe(first.centerX);
+    expect(later.centerY).not.toBe(first.centerY);
   });
 });

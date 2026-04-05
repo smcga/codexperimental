@@ -1,4 +1,4 @@
-import { defineEffectManifest, numberControl, selectControl, toggleControl } from "./shared";
+import { defineEffectManifest, numberControl } from "./shared";
 import { FRACTAL_ZOOMER_DEFAULTS, FractalZoomerEffect } from "../fractalZoomer";
 
 export const fractal_zoomerManifest = defineEffectManifest({
@@ -9,11 +9,6 @@ export const fractal_zoomerManifest = defineEffectManifest({
   debug: {
     title: "Fractal Zoomer Controls",
     controls: [
-      selectControl("setType", "Set", FRACTAL_ZOOMER_DEFAULTS.setType, [
-        { label: "Mandelbrot", value: "mandelbrot" },
-        { label: "Julia", value: "julia" },
-        { label: "Burning Ship", value: "burningShip" }
-      ]),
       numberControl("zoom", "Zoom", FRACTAL_ZOOMER_DEFAULTS.zoom, { min: 0.4, max: 8, step: 0.05 }),
       numberControl("centerX", "Center X", FRACTAL_ZOOMER_DEFAULTS.centerX, { min: -2.5, max: 1.5, step: 0.01 }),
       numberControl("centerY", "Center Y", FRACTAL_ZOOMER_DEFAULTS.centerY, { min: -1.8, max: 1.8, step: 0.01 }),
@@ -23,9 +18,9 @@ export const fractal_zoomerManifest = defineEffectManifest({
     ]
   },
   docs: {
-    parameters: "`setType`, `zoom`, `centerX`, `centerY`, `iterations`, `paletteSpeed`, `audioReact`",
-    catalogNote: "`setType` supports `mandelbrot`, `julia`, or `burningShip`.",
-    description: "`setType` supports `mandelbrot`, `julia`, or `burningShip`."
+    parameters: "`zoom`, `centerX`, `centerY`, `iterations`, `paletteSpeed`, `audioReact`",
+    catalogNote: "Mandelbrot zoom with built-in continuous zoom motion.",
+    description: "Mandelbrot zoom with built-in continuous zoom motion."
   }
 });
 

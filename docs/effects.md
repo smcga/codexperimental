@@ -1126,7 +1126,7 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 - **Registry key:** `fractal_zoomer`
 - **Implementation:** `src/renderer/effects/fractalZoomer.ts` (class `FractalZoomerEffect`)
 - **Renderer:** Canvas2D
-- **Description:** `setType` supports `mandelbrot`, `julia`, or `burningShip`.
+- **Description:** Mandelbrot zoom with built-in continuous zoom motion.
 - **Audio features:** bass, beat, beatStrength, rms
 - **Performance notes:** Uses ImageData per frame; CPU cost scales with resolution.
 
@@ -1139,7 +1139,6 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 | `params.centerY` | number | 0 | min -1.8, max 1.8 | Center Y | yes |
 | `params.iterations` | number | 140 | min 24, max 600 | Iterations | yes |
 | `params.paletteSpeed` | number | 0.18 | min 0, max 2 | Palette Speed | yes |
-| `params.setType` | string | "mandelbrot" | options: mandelbrot, julia, burningShip | Set | no |
 | `params.zoom` | number | 1.6 | min 0.4, max 8 | Zoom | yes |
 
 ### Minimal layer usage

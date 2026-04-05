@@ -6,7 +6,6 @@ const MIN_INTERNAL_SIZE = 96;
 const MAX_INTERNAL_SIZE = 360;
 
 export const FRACTAL_ZOOMER_DEFAULTS = {
-  setType: "mandelbrot",
   zoom: 1.6,
   centerX: -0.72,
   centerY: 0,
@@ -15,16 +14,7 @@ export const FRACTAL_ZOOMER_DEFAULTS = {
   audioReact: 0.55
 } as const;
 
-const SET_TYPE_MODES = {
-  mandelbrot: "mandelbrot",
-  julia: "julia",
-  burningShip: "burningShip"
-} as const;
-
-export type FractalZoomerSetType = keyof typeof SET_TYPE_MODES;
-
 export type FractalZoomerParams = {
-  setType: FractalZoomerSetType;
   zoom: number;
   centerX: number;
   centerY: number;
@@ -34,29 +24,18 @@ export type FractalZoomerParams = {
 };
 
 export type FractalZoomerState = {
-  setType: FractalZoomerSetType;
   escapeRadiusSq: number;
   zoomScale: number;
   centerX: number;
   centerY: number;
   iterations: number;
   palettePhase: number;
-  juliaCx: number;
-  juliaCy: number;
 };
 
 const toFiniteNumber = (value: unknown, fallback: number): number =>
   typeof value === "number" && Number.isFinite(value) ? value : fallback;
 
-const resolveSetType = (value: unknown): FractalZoomerSetType => {
-  if (value === "julia" || value === "burningShip") {
-    return value;
-  }
-  return "mandelbrot";
-};
-
 export const normalizeFractalZoomerParams = (params: Record<string, unknown>): FractalZoomerParams => ({
-  setType: resolveSetType(params.setType),
   zoom: clamp(toFiniteNumber(params.zoom, FRACTAL_ZOOMER_DEFAULTS.zoom), 0.4, 8),
   centerX: clamp(toFiniteNumber(params.centerX, FRACTAL_ZOOMER_DEFAULTS.centerX), -2.5, 1.5),
   centerY: clamp(toFiniteNumber(params.centerY, FRACTAL_ZOOMER_DEFAULTS.centerY), -1.8, 1.8),
@@ -72,19 +51,20 @@ export const buildFractalZoomerState = (
 ): FractalZoomerState => {
   const beatPulse = audio.beat ? clamp(audio.beatStrength, 0, 1) : 0;
   const audioBoost = (clamp(audio.bass, 0, 1) * 0.7 + clamp(audio.rms, 0, 1) * 0.3) * params.audioReact;
-  const zoomScale = Math.pow(2, params.zoom + audioBoost * 0.75 + beatPulse * 0.2);
+  const zoomMotion = time * (0.2 + params.paletteSpeed * 0.35);
+  const autoZoom = Math.sin(zoomMotion) * 0.7 + Math.sin(zoomMotion * 0.43) * 0.45;
+  const zoomScale = Math.pow(2, params.zoom + autoZoom + audioBoost * 0.75 + beatPulse * 0.2);
+  const centerX = params.centerX + Math.sin(zoomMotion * 0.19) * 0.018;
+  const centerY = params.centerY + Math.cos(zoomMotion * 0.23) * 0.015;
   const palettePhase = time * params.paletteSpeed + audioBoost * 0.8;
 
   return {
-    setType: params.setType,
     escapeRadiusSq: 4,
     zoomScale,
-    centerX: params.centerX,
-    centerY: params.centerY,
+    centerX,
+    centerY,
     iterations: Math.round(params.iterations * (1 + audioBoost * 0.35)),
-    palettePhase,
-    juliaCx: -0.8 + Math.sin(time * 0.31) * 0.18,
-    juliaCy: 0.156 + Math.cos(time * 0.23) * 0.22
+    palettePhase
   };
 };
 
@@ -128,11 +108,6 @@ export class FractalZoomerEffect implements Effect {
       let cx = zx;
       let cy = zy;
 
-      if (state.setType === "julia") {
-        cx = state.juliaCx;
-        cy = state.juliaCy;
-      }
-
       let iter = 0;
       while (iter < state.iterations) {
         const zxSq = zx * zx;
@@ -140,17 +115,10 @@ export class FractalZoomerEffect implements Effect {
         if (zxSq + zySq > state.escapeRadiusSq) {
           break;
         }
-        if (state.setType === "burningShip") {
-          const nextX = zxSq - zySq + cx;
-          const nextY = Math.abs(2 * zx * zy) + cy;
-          zx = Math.abs(nextX);
-          zy = Math.abs(nextY);
-        } else {
-          const nextX = zxSq - zySq + cx;
-          const nextY = 2 * zx * zy + cy;
-          zx = nextX;
-          zy = nextY;
-        }
+        const nextX = zxSq - zySq + cx;
+        const nextY = 2 * zx * zy + cy;
+        zx = nextX;
+        zy = nextY;
         iter += 1;
       }
 
