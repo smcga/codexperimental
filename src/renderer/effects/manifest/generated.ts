@@ -4,6 +4,7 @@ import { boids_simulationManifest } from "./boids_simulation.manifest";
 import { bokehManifest } from "./bokeh.manifest";
 import { border_multiplexManifest } from "./border_multiplex.manifest";
 import { bumpmap_planeManifest } from "./bumpmap_plane.manifest";
+import { causticsManifest } from "./caustics.manifest";
 import { chessManifest } from "./chess.manifest";
 import { cloth_simManifest } from "./cloth_sim.manifest";
 import { copper_gradient_splitsManifest } from "./copper_gradient_splits.manifest";
@@ -100,6 +101,7 @@ export const generatedEffectManifests = [
   bokehManifest,
   border_multiplexManifest,
   bumpmap_planeManifest,
+  causticsManifest,
   chessManifest,
   cloth_simManifest,
   copper_gradient_splitsManifest,

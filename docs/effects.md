@@ -12,6 +12,7 @@ Total effects: **93**.
 - [Effect: bokeh](#effect-bokeh)
 - [Effect: border_multiplex](#effect-border-multiplex)
 - [Effect: bumpmap_plane](#effect-bumpmap-plane)
+- [Effect: caustics](#effect-caustics)
 - [Effect: chess](#effect-chess)
 - [Effect: cloth_sim](#effect-cloth-sim)
 - [Effect: copper_gradient_splits](#effect-copper-gradient-splits)
@@ -130,6 +131,9 @@ Total effects: **93**.
 - `hueShift` (used in 8 effects)
 - `count` (used in 7 effects)
 - `scanlines` (used in 7 effects)
+- `warp` (used in 7 effects)
+- `count` (used in 6 effects)
+- `bufH` (used in 6 effects)
 - `audioReactive` (used in 7 effects)
 
 ## Effects
@@ -345,6 +349,44 @@ Total effects: **93**.
 ```json
 {
   "effect": "bumpmap_plane",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: caustics
+
+- **Registry key:** `caustics`
+- **Implementation:** `src/renderer/effects/causticsEffect.ts` (class `CausticsEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Procedural water/glass caustics rendered on a low-resolution buffer with warped intersecting ridges, evolving bright convergence patches, and optional bloom glow.
+- **Audio features:** bass, beat, rms
+- **Performance notes:** Uses ImageData per frame; CPU cost scales with resolution.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReactive` | number | 0.35 | min 0, max 1 | Audio Reactive | yes |
+| `params.background` | string | "#071018" | min 0, max 1 | Background | no |
+| `params.color` | string | "#8fd6ff" | unspecified | Used in effect render logic. | no |
+| `params.contrast` | number | 1 | min 0.2, max 3 | Contrast | yes |
+| `params.detail` | number | 0.55 | min 0, max 1.5 | Detail | yes |
+| `params.driftX` | number | 0.015 | min -1, max 1 | Drift X | yes |
+| `params.driftY` | number | 0.01 | min -1, max 1 | Drift Y | yes |
+| `params.glow` | number | 0.42 | min 0, max 1.5 | Glow | yes |
+| `params.intensity` | number | 1 | min 0, max 3 | Intensity | yes |
+| `params.scale` | number | 1 | min 0.35, max 3 | Scale | yes |
+| `params.seed` | number | 1 | min 0, max 9999 | Seed | yes |
+| `params.speed` | number | 1 | min 0, max 3 | Speed | yes |
+| `params.warp` | number | 0.45 | min 0, max 2 | Warp | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "caustics",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
