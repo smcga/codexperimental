@@ -57,26 +57,50 @@ function setStatus(message: string, state: "idle" | "error" | "success" = "idle"
   reviewStatus.dataset.state = state;
 }
 
+export type EffectReviewActionState = {
+  action: "approve" | "reject";
+  href: string;
+  disabled: boolean;
+};
+
+export function getEffectReviewActionStates(enabled: boolean, id: string | null, token: string | null): EffectReviewActionState[] {
+  const actions: Array<"approve" | "reject"> = ["approve", "reject"];
+  return actions.map((action) => {
+    if (enabled && id && token) {
+      return {
+        action,
+        href: buildEffectModerationActionUrl(action, id, token),
+        disabled: false
+      };
+    }
+    return {
+      action,
+      href: "#",
+      disabled: true
+    };
+  });
+}
+
 function setActionState(enabled: boolean, id: string | null, token: string | null): void {
-  const links = [
+  const states = getEffectReviewActionStates(enabled, id, token);
+  const links = new Map(states.map((state) => [state.action, state]));
+  const elements = [
     { element: approveLink, action: "approve" as const },
     { element: denyLink, action: "reject" as const }
   ];
 
-  for (const { element, action } of links) {
+  for (const { element, action } of elements) {
     if (!element) {
       continue;
     }
 
-    if (enabled && id && token) {
-      element.href = buildEffectModerationActionUrl(action, id, token);
-      element.classList.remove("disabled");
-      element.setAttribute("aria-disabled", "false");
-    } else {
-      element.href = "#";
-      element.classList.add("disabled");
-      element.setAttribute("aria-disabled", "true");
+    const state = links.get(action);
+    if (!state) {
+      continue;
     }
+    element.href = state.href;
+    element.classList.toggle("disabled", state.disabled);
+    element.setAttribute("aria-disabled", state.disabled ? "true" : "false");
   }
 }
 

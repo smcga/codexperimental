@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { formatEffectReviewTimestamp, getEffectReviewPageParams } from "./effectReview";
+import { formatEffectReviewTimestamp, getEffectReviewActionStates, getEffectReviewPageParams } from "./effectReview";
 
 describe("effect review page helpers", () => {
   it("reads id and token from the query string", () => {
@@ -8,6 +8,21 @@ describe("effect review page helpers", () => {
       id: "effect-1",
       token: "secret-token"
     });
+  });
+
+
+  it("builds approve and deny action links when moderation can proceed", () => {
+    expect(getEffectReviewActionStates(true, "effect-1", "secret token")).toEqual([
+      { action: "approve", href: "/api/effects?action=approve&id=effect-1&token=secret+token", disabled: false },
+      { action: "reject", href: "/api/effects?action=reject&id=effect-1&token=secret+token", disabled: false }
+    ]);
+  });
+
+  it("disables approve and deny actions when moderation context is missing", () => {
+    expect(getEffectReviewActionStates(false, null, null)).toEqual([
+      { action: "approve", href: "#", disabled: true },
+      { action: "reject", href: "#", disabled: true }
+    ]);
   });
 
   it("formats timestamps for moderation metadata", () => {
