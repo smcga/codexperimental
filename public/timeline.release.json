@@ -291,6 +291,7 @@
           "blend": "screen",
           "opacity": 0.08,
           "params": {
+            "audioReactive": 0.2,
             "emitMode": "bottom",
             "softness": 0.42,
             "turbulence": 0.6,

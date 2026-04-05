@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **93**.
+Total effects: **103**.
 
 ## Table of contents
 
@@ -39,9 +39,9 @@ Total effects: **93**.
 - [Effect: glitch](#effect-glitch)
 - [Effect: god_rays](#effect-god-rays)
 - [Effect: greets_wall](#effect-greets-wall)
-- [Effect: infinite_zoom_droste](#effect-infinite-zoom-droste)
 - [Effect: hexGridPulse](#effect-hexGridPulse)
 - [Effect: infiniteMirror](#effect-infiniteMirror)
+- [Effect: infinite_zoom_droste](#effect-infinite-zoom-droste)
 - [Effect: infinitycloud](#effect-infinitycloud)
 - [Effect: isogrid](#effect-isogrid)
 - [Effect: kaleidoscope_symmetry](#effect-kaleidoscope-symmetry)
@@ -81,10 +81,10 @@ Total effects: **93**.
 - [Effect: shadebobs_bobs](#effect-shadebobs-bobs)
 - [Effect: sine_distorter](#effect-sine-distorter)
 - [Effect: sine_scroller_logo](#effect-sine-scroller-logo)
-- [Effect: soft_shadows](#effect-soft-shadows)
-- [Effect: smoke_simulation](#effect-smoke-simulation)
 - [Effect: skeletal_ribbon](#effect-skeletal-ribbon)
 - [Effect: skyboxTransition](#effect-skyboxTransition)
+- [Effect: smoke_simulation](#effect-smoke-simulation)
+- [Effect: soft_shadows](#effect-soft-shadows)
 - [Effect: space_hangar](#effect-space-hangar)
 - [Effect: spectrum_analyzer](#effect-spectrum-analyzer)
 - [Effect: sphere3d](#effect-sphere3d)
@@ -128,26 +128,18 @@ Total effects: **93**.
 
 ### Common parameter patterns
 
-- `speed` (used in 47 effects)
-- `seed` (used in 43 effects)
-- `audioReact` (used in 34 effects)
-- `glow` (used in 16 effects)
+- `speed` (used in 50 effects)
+- `seed` (used in 49 effects)
+- `audioReact` (used in 35 effects)
+- `glow` (used in 19 effects)
 - `beatKick` (used in 14 effects)
+- `audioReactive` (used in 13 effects)
 - `trail` (used in 10 effects)
+- `scale` (used in 10 effects)
 - `palette` (used in 10 effects)
-- `count` (used in 7 effects)
-- `hueShift` (used in 7 effects)
-- `scanlines` (used in 7 effects)
-- `palette` (used in 9 effects)
-- `hueShift` (used in 8 effects)
+- `hueShift` (used in 9 effects)
 - `lineWidth` (used in 9 effects)
-- `hueShift` (used in 8 effects)
-- `count` (used in 7 effects)
-- `scanlines` (used in 7 effects)
-- `warp` (used in 7 effects)
-- `count` (used in 6 effects)
-- `bufH` (used in 6 effects)
-- `audioReactive` (used in 7 effects)
+- `count` (used in 8 effects)
 
 ## Effects
 
@@ -1305,12 +1297,6 @@ Total effects: **93**.
 }
 ```
 
-## Effect: infinite_zoom_droste
-
-- **Registry key:** `infinite_zoom_droste`
-- **Implementation:** `src/renderer/effects/infiniteZoomDroste.ts` (class `InfiniteZoomDrosteEffect`)
-- **Renderer:** Canvas2D
-- **Description:** Infinite nested portal recursion with continuous logarithmic zoom and layered geometric accents.
 ## Effect: hexGridPulse
 
 - **Registry key:** `hexGridPulse`
@@ -1360,16 +1346,6 @@ Total effects: **93**.
 
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
 | --- | --- | --- | --- | --- | --- |
-| `params.detail` | number | 0.75 | min 0.1, max 1 | Detail | yes |
-| `params.fitMode` | string | "auto" | options: auto, safe | Fit Mode | no |
-| `params.glow` | number | 0.6 | min 0, max 1.2 | Glow | yes |
-| `params.pulse` | number | 0.5 | min 0, max 1 | Pulse | yes |
-| `params.rotationSpeed` | number | 0.18 | min -1.2, max 1.2 | Rotation Speed | yes |
-| `params.scaleBase` | number | 2 | min 1.2, max 3.8 | Scale Base | yes |
-| `params.seed` | number | 1 | min 0, max 9999 | Seed | yes |
-| `params.shape` | string | "portal" | options: portal, rings, grid | Shape | no |
-| `params.speed` | number | 0.35 | min -1.8, max 1.8 | Speed | yes |
-| `params.twist` | number | 0.25 | min -1, max 1 | Twist | yes |
 | `params.baseScene` | string | "grid" | options: grid, rings, checker, bars, void | Base Scene | no |
 | `params.depth` | number | 18 | min 1, max 48 | Depth | yes |
 | `params.feedbackMix` | number | 0.82 | min 0.3, max 0.98 | Feedback Mix | yes |
@@ -1391,8 +1367,42 @@ Total effects: **93**.
 
 ```json
 {
-  "effect": "infinite_zoom_droste",
   "effect": "infiniteMirror",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: infinite_zoom_droste
+
+- **Registry key:** `infinite_zoom_droste`
+- **Implementation:** `src/renderer/effects/infiniteZoomDroste.ts` (class `InfiniteZoomDrosteEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Infinite nested portal recursion with continuous logarithmic zoom and layered geometric accents.
+- **Audio features:** bass, beat, beatStrength, mid, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.detail` | number | 0.75 | min 0.1, max 1 | Detail | yes |
+| `params.fitMode` | string | "auto" | options: auto, safe | Fit Mode | no |
+| `params.glow` | number | 0.6 | min 0, max 1.2 | Glow | yes |
+| `params.pulse` | number | 0.5 | min 0, max 1 | Pulse | yes |
+| `params.rotationSpeed` | number | 0.18 | min -1.2, max 1.2 | Rotation Speed | yes |
+| `params.scaleBase` | number | 2 | min 1.2, max 3.8 | Scale Base | yes |
+| `params.seed` | number | 1 | min 0, max 9999 | Seed | yes |
+| `params.shape` | string | "portal" | options: portal, rings, grid | Shape | no |
+| `params.speed` | number | 0.35 | min -1.8, max 1.8 | Speed | yes |
+| `params.twist` | number | 0.25 | min -1, max 1 | Twist | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "infinite_zoom_droste",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
@@ -2532,6 +2542,17 @@ Total effects: **93**.
 | `params.simScale` | number | 0.25 | min 0.08, max 0.7 | Simulation Scale | yes |
 | `params.steps` | number | 6 | min 1, max 18 | Substeps | yes |
 
+### Minimal layer usage
+
+```json
+{
+  "effect": "reactionDiffusion",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
 ## Effect: recursiveFracture
 
 - **Registry key:** `recursiveFracture`
@@ -2543,6 +2564,8 @@ Total effects: **93**.
 
 ### Parameters
 
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
 | `params.angleJitter` | number | 0.22 | min 0, max 1 | Angle Jitter | yes |
 | `params.angleJitter.toFixed` | number | no explicit default | unspecified | Used in effect render logic. | yes |
 | `params.bassInfluence` | number | 0.2 | min 0, max 1 | Bass Influence | yes |
@@ -2795,57 +2818,6 @@ Total effects: **93**.
 }
 ```
 
-## Effect: soft_shadows
-
-- **Registry key:** `soft_shadows`
-- **Implementation:** `src/renderer/effects/softShadowsEffect.ts` (class `SoftShadowsEffect`)
-- **Renderer:** Canvas2D
-- **Description:** Canvas2D soft-shadow stage with floating casters and deterministic multi-pass penumbra rendering.
-- **Audio features:** bass, rms
-## Effect: smoke_simulation
-
-- **Registry key:** `smoke_simulation`
-- **Implementation:** `src/renderer/effects/smokeSimulation.ts` (class `SmokeSimulationEffect`)
-- **Renderer:** Canvas2D
-- **Description:** Low-res advection smoke with flow-field feedback and soft composited wisps.
-- **Audio features:** bass, beat, mid, rms, treble
-- **Performance notes:** None noted.
-
-### Parameters
-
-| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
-| --- | --- | --- | --- | --- | --- |
-| `params.audioReactive` | number | 0.35 | min 0, max 1 | Audio Reactive | yes |
-| `params.contactHardness` | number | 0.7 | min 0, max 1 | Contact Hardness | yes |
-| `params.count` | number | 3 | min 1, max 6 | Caster Count | yes |
-| `params.floorGlow` | number | 0.2 | min 0, max 1 | Floor Glow | yes |
-| `params.height` | number | 0.32 | min 0.05, max 0.9 | Height | yes |
-| `params.lightAngle` | number | 0.8 | min -3.14, max 3.14 | Light Angle | yes |
-| `params.lightSweep` | number | 0.35 | min 0, max 1 | Light Sweep | yes |
-| `params.motion` | number | 0.4 | min 0, max 1.5 | Motion | yes |
-| `params.objectSize` | number | 0.12 | min 0.05, max 0.25 | Object Size | yes |
-| `params.palette` | string | "studio" | options: studio, sunset, mono | Palette | no |
-| `params.passCount` | number | 6 | min 1, max 12 | Pass Count | yes |
-| `params.shadowLength` | number | 1.2 | min 0.2, max 2.2 | Shadow Length | yes |
-| `params.softness` | number | 0.6 | min 0, max 1.5 | Softness | yes |
-| `params.audioReactive` | number | 1 | min 0, max 1 | Audio Reactive | yes |
-| `params.bassInfluence` | number | 0.9 | min 0, max 2 | Bass Influence | yes |
-| `params.colorMode` | string | "mono" | options: mono, tinted | Color Mode | no |
-| `params.density` | number | 0.8 | min 0, max 1.3 | Density | yes |
-| `params.diffusion` | number | 0.92 | min 0, max 1 | Diffusion | yes |
-| `params.emission` | number | 0.5 | min 0, max 1.5 | Emission | yes |
-| `params.emitMode` | string | "bottom" | options: centre, bottom, random | Emit Mode | no |
-| `params.flowSpeed` | number | 0.6 | min 0, max 2 | Flow Speed | yes |
-| `params.highlights` | number | 0.45 | min 0, max 1 | Highlights | yes |
-| `params.hueShift` | number | 0 | min -180, max 180 | Hue Shift | yes |
-| `params.midInfluence` | number | 0.6 | min 0, max 2 | Mid Influence | yes |
-| `params.scale` | number | 1 | min 0.5, max 2.2 | Scale | yes |
-| `params.seed` | number | 0 | min 0, max 9999 | Seed | yes |
-| `params.softness` | number | 0.8 | min 0, max 1 | Softness | yes |
-| `params.swirl` | number | 0.8 | min 0, max 2 | Swirl | yes |
-| `params.trebleInfluence` | number | 0.5 | min 0, max 2 | Treble Influence | yes |
-| `params.turbulence` | number | 0.7 | min 0, max 2 | Turbulence | yes |
-
 ## Effect: skeletal_ribbon
 
 - **Registry key:** `skeletal_ribbon`
@@ -2853,9 +2825,12 @@ Total effects: **93**.
 - **Renderer:** Canvas2D
 - **Description:** Articulated spine/tentacle ribbon driven by chained bone kinematics with beat-reactive pulse thickness.
 - **Audio features:** bass, beat, mid, rms
+- **Performance notes:** None noted.
 
 ### Parameters
 
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
 | `params.audioInfluence` | number | 1 | min 0, max 2 | Audio Influence | yes |
 | `params.boneCount` | number | 24 | min 8, max 32 | Bone Count | yes |
 | `params.colorMode` | string | "gradient" | options: mono, gradient | Color Mode | no |
@@ -2907,8 +2882,87 @@ Total effects: **93**.
 
 ```json
 {
-  "effect": "soft_shadows",
   "effect": "skyboxTransition",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: smoke_simulation
+
+- **Registry key:** `smoke_simulation`
+- **Implementation:** `src/renderer/effects/smokeSimulation.ts` (class `SmokeSimulationEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Low-res advection smoke with flow-field feedback and soft composited wisps.
+- **Audio features:** bass, beat, mid, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReactive` | number | 1 | min 0, max 1 | Audio Reactive | yes |
+| `params.bassInfluence` | number | 0.9 | min 0, max 2 | Bass Influence | yes |
+| `params.colorMode` | string | "mono" | options: mono, tinted | Color Mode | no |
+| `params.density` | number | 0.8 | min 0, max 1.3 | Density | yes |
+| `params.diffusion` | number | 0.92 | min 0, max 1 | Diffusion | yes |
+| `params.emission` | number | 0.5 | min 0, max 1.5 | Emission | yes |
+| `params.emitMode` | string | "bottom" | options: centre, bottom, random | Emit Mode | no |
+| `params.flowSpeed` | number | 0.6 | min 0, max 2 | Flow Speed | yes |
+| `params.highlights` | number | 0.45 | min 0, max 1 | Highlights | yes |
+| `params.hueShift` | number | 0 | min -180, max 180 | Hue Shift | yes |
+| `params.midInfluence` | number | 0.6 | min 0, max 2 | Mid Influence | yes |
+| `params.scale` | number | 1 | min 0.5, max 2.2 | Scale | yes |
+| `params.seed` | number | 0 | min 0, max 9999 | Seed | yes |
+| `params.softness` | number | 0.8 | min 0, max 1 | Softness | yes |
+| `params.swirl` | number | 0.8 | min 0, max 2 | Swirl | yes |
+| `params.trebleInfluence` | number | 0.5 | min 0, max 2 | Treble Influence | yes |
+| `params.turbulence` | number | 0.7 | min 0, max 2 | Turbulence | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "smoke_simulation",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: soft_shadows
+
+- **Registry key:** `soft_shadows`
+- **Implementation:** `src/renderer/effects/softShadowsEffect.ts` (class `SoftShadowsEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Canvas2D soft-shadow stage with floating casters and deterministic multi-pass penumbra rendering.
+- **Audio features:** bass, rms
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReactive` | number | 0.35 | min 0, max 1 | Audio Reactive | yes |
+| `params.contactHardness` | number | 0.7 | min 0, max 1 | Contact Hardness | yes |
+| `params.count` | number | 3 | min 1, max 6 | Caster Count | yes |
+| `params.floorGlow` | number | 0.2 | min 0, max 1 | Floor Glow | yes |
+| `params.height` | number | 0.32 | min 0.05, max 0.9 | Height | yes |
+| `params.lightAngle` | number | 0.8 | min -3.14, max 3.14 | Light Angle | yes |
+| `params.lightSweep` | number | 0.35 | min 0, max 1 | Light Sweep | yes |
+| `params.motion` | number | 0.4 | min 0, max 1.5 | Motion | yes |
+| `params.objectSize` | number | 0.12 | min 0.05, max 0.25 | Object Size | yes |
+| `params.palette` | string | "studio" | options: studio, sunset, mono | Palette | no |
+| `params.passCount` | number | 6 | min 1, max 12 | Pass Count | yes |
+| `params.shadowLength` | number | 1.2 | min 0.2, max 2.2 | Shadow Length | yes |
+| `params.softness` | number | 0.6 | min 0, max 1.5 | Softness | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "soft_shadows",
   "opacity": 1,
   "blend": "source-over",
   "params": {}

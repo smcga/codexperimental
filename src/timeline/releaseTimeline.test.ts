@@ -133,7 +133,18 @@ describe("release timeline", () => {
       "cloth_sim",
       "recursiveFracture",
       "skeletal_ribbon",
-      "infiniteMirror"
+      "infiniteMirror",
+      "caustics",
+      "gameOfLife",
+      "god_rays",
+      "hexGridPulse",
+      "kaleidoscope_symmetry",
+      "lens_flare",
+      "particleAttractors",
+      "polar_tunnel",
+      "reactionDiffusion",
+      "tilingMorph",
+      "voronoi_cells"
     ]);
     documentedEffects.forEach((effectId) => {
       if (optionalEffects.has(effectId)) {
