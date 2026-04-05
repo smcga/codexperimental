@@ -287,6 +287,17 @@
           "params": {}
         },
         {
+          "effect": "smoke_simulation",
+          "blend": "screen",
+          "opacity": 0.08,
+          "params": {
+            "emitMode": "bottom",
+            "softness": 0.42,
+            "turbulence": 0.6,
+            "diffusion": 0.94
+          }
+        },
+        {
           "effect": "equalizer",
           "opacity": 0.05,
           "blend": "soft-light",

@@ -188,6 +188,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `particleAttractors` | `count`, `seed`, `attractorCount`, `strength`, `swirl`, `damping`, `speedLimit`, `softening`, `absorbRadius`, `spawnMode`, `trailAlpha`, `particleSize`, `glow`, `motion`, `audioReactive`, `beatPulse`, `colorMode`, `backgroundFade`, `vignette` | Gravity-well particle flow with swirling paths; `spawnMode` supports `edges`, `ring`, or `random`, and `colorMode` supports `mono`, `era`, or `heat`. |
 | `border_multiplex` | `hwSprites`, `totalSprites`, `bandHeight`, `spriteSize`, `speed`, `rasterJitter`, `borderMaskStrength`, `audioReact`, `seed` |  |
 | `fluid` | `speed`, `dissipation`, `splatCount`, `splatSize`, `turbulence`, `hueShift`, `seed` |  |
+| `smoke_simulation` | `density`, `flowSpeed`, `turbulence`, `swirl`, `diffusion`, `softness`, `emission`, `emitMode`, `scale`, `colorMode`, `hueShift`, `audioReactive`, `bassInfluence`, `midInfluence`, `trebleInfluence`, `seed`, `highlights` | `emitMode` supports `centre`, `bottom`, `random`; `colorMode` supports `mono` or `tinted`. |
 | `boids_simulation` | `count`, `speed`, `cohesion`, `alignment`, `separation`, `neighborRadius`, `separationRadius`, `trail`, `size`, `seed` | Audio-reactive flocking simulation with wraparound space and neon boid trails. |
 | `finale` | `trail`, `starSpeed`, `starWarp`, `starTurn`, `particleCount`, `particleForce`, `bars`, `barHeight` |  |
 | `proper3d` | `speed` |  |

@@ -69,6 +69,7 @@ import { shadebobs_bobsManifest } from "./shadebobs_bobs.manifest";
 import { skeletal_ribbonManifest } from "./skeletal_ribbon.manifest";
 import { sine_distorterManifest } from "./sine_distorter.manifest";
 import { sine_scroller_logoManifest } from "./sine_scroller_logo.manifest";
+import { smoke_simulationManifest } from "./smoke_simulation.manifest";
 import { space_hangarManifest } from "./space_hangar.manifest";
 import { spectrum_analyzerManifest } from "./spectrum_analyzer.manifest";
 import { sphere3dManifest } from "./sphere3d.manifest";
@@ -167,6 +168,7 @@ export const generatedEffectManifests = [
   skeletal_ribbonManifest,
   sine_distorterManifest,
   sine_scroller_logoManifest,
+  smoke_simulationManifest,
   space_hangarManifest,
   spectrum_analyzerManifest,
   sphere3dManifest,
