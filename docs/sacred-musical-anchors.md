@@ -9,6 +9,12 @@ These anchors are **non-negotiable timing constraints** for the demo arrangement
 3. If any anchor must change in a future revision, update this document, `README.md`, and `AGENTS.md` in the same commit with an explicit reason.
 4. Keep the total runtime locked at **06:22.87** unless there is an intentional audio recut.
 
+## Priority order for timing decisions
+
+1. **Primary priority (absolute):** sacred anchors in [Anchor list (source of truth)](#anchor-list-source-of-truth).
+2. **Secondary priority (advisory):** suggested effect-switch timestamps in [Secondary effect-switch timing cues](#secondary-effect-switch-timing-cues).
+3. **Creative priority:** if a secondary switch cue conflicts with a chilled breakdown, deliberate artistic sequence, or a clearly-defined section identity, skip that secondary cue and preserve musical/visual intent.
+
 ## Anchor list (source of truth)
 
 - **00:00** — intro, slow melancholy synths.
@@ -48,3 +54,62 @@ These anchors are **non-negotiable timing constraints** for the demo arrangement
 - **06:00.4** — music returns after fake ending.
 - **06:12.8** — calm outro starts.
 - **06:22.87** — end.
+
+## Secondary effect-switch timing cues
+
+These are **advisory** micro-switch candidates from an earlier cut of the song. Use them only when they still land inside an appropriate energetic section (drop, buildup, verse momentum) and do not conflict with the primary anchors or intentional art direction.
+
+- **00:59.90**
+- **01:05.1** (`this`)
+- **01:13.2**
+- **01:15.2**
+- **01:15.56**
+- **01:16.62** (`this`)
+- **01:22.07**
+- **01:26.8**
+- **01:27.07**
+- **01:24.47** (`this`, out-of-order note preserved from source)
+- **01:30.17**
+- **01:32.93**
+- **01:35.6** (`fucking`)
+- **01:36.9** (`cool`)
+- **01:37.47**
+- **01:38.3**
+- **01:41.0**
+- **01:43.7**
+- **01:44.2**
+- **01:44.7**
+- **01:45.26**
+- **01:45.76**
+- **01:46.09**
+- **01:46.27** (then change ~16 times until **01:48.56**)
+- **01:49.16**
+- **01:53.61**
+- **02:00.03**
+- **02:04.7**
+- **02:06.81**
+- **02:08.24**
+- **02:10.8**
+- **02:16.2**
+- **02:19.5**
+- **02:22.4** (especially cool effect target)
+- **02:29.85**
+- **02:32.5**
+- **02:35.14**
+- **02:37.6** (`this`)
+- **02:37.99**
+- **02:40.7**
+- **02:43.4** (`this`)
+- **02:46.07**
+- **02:48.5** (`this`)
+- **02:49.3**
+- **02:49.8**
+- **02:50.3**
+- **02:50.8**
+- **02:51.1** (then change ~16 times until **02:53.8**)
+- **03:25.14**
+- **03:26.1**
+- **03:42.36**
+- **04:00.4**
+- **04:01.3**
+- **04:25.7**
