@@ -2,6 +2,18 @@ Try your best, never give up, nothing is impossible, believe in yourself.
 
 Keep the "Effect catalog" section in README.md up to date whenever adding or changing effects.
 
+
+## Sacred musical anchors (absolute priority)
+
+The demo timeline is locked to sacred musical anchors documented in `docs/sacred-musical-anchors.md`.
+
+- These anchors are **mandatory** and **must not drift**.
+- Treat every listed timestamp as musically exact (not approximate).
+- For any timeline edit (`public/timeline.json`, `public/timeline.release.json`, cue timings, intro timings, section boundaries, transition timing), re-check and preserve all anchors.
+- If an intentional recut ever requires anchor changes, update `docs/sacred-musical-anchors.md`, `README.md`, and this file in the same commit and clearly explain why.
+- Do not merge timeline edits that violate or ignore anchor constraints.
+- Treat secondary effect-switch cues in `docs/sacred-musical-anchors.md` as advisory only; they never override sacred anchors or clearly intentional section art direction.
+
 ## Effect documentation guardrails
 - Do not add, remove, or rename any effect without:
   - Updating its metadata or ensuring `scripts/generateEffectsDocs.ts` can extract its params.
