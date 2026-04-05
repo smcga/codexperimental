@@ -23,7 +23,7 @@ export function clearTimelineDraft(): void {
   localStorage.removeItem(DRAFT_KEY);
 }
 
-export function downloadTimeline(timeline: RawTimelineConfig, filename = "timeline.json"): void {
+export function downloadTimeline(timeline: RawTimelineConfig, filename = "timeline.release.json"): void {
   const blob = new Blob([serializeTimeline(timeline)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");

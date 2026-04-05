@@ -638,7 +638,7 @@ export function normalizeTimelineConfig(raw: RawTimelineConfig): TimelineConfig 
   };
 }
 
-export async function loadConfig(path = "/timeline.json"): Promise<TimelineConfig> {
+export async function loadConfig(path = "/timeline.release.json"): Promise<TimelineConfig> {
   const response = await fetch(path, { cache: "no-cache" });
   if (!response.ok) {
     throw new Error(`Failed to load timeline config (${response.status})`);

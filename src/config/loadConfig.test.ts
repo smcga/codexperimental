@@ -139,8 +139,8 @@ describe("normalizeTimelineConfig", () => {
     });
   });
 
-  it("uses rain and lightning as layered effects in the main timeline", () => {
-    const timelinePath = new URL("../../public/timeline.json", import.meta.url);
+  it("uses rain and lightning as layered effects in the release timeline", () => {
+    const timelinePath = new URL("../../public/timeline.release.json", import.meta.url);
     const raw = JSON.parse(readFileSync(timelinePath, "utf-8")) as RawTimelineConfig;
     const normalized = normalizeTimelineConfig(raw);
 
@@ -160,8 +160,8 @@ describe("normalizeTimelineConfig", () => {
     expect(lightningSections[0]?.start ?? Number.POSITIVE_INFINITY).toBeLessThan(180);
   });
 
-  it("keeps generated scene naming/layering polished in the main timeline", () => {
-    const timelinePath = new URL("../../public/timeline.json", import.meta.url);
+  it("keeps generated scene naming/layering polished in the release timeline", () => {
+    const timelinePath = new URL("../../public/timeline.release.json", import.meta.url);
     const raw = JSON.parse(readFileSync(timelinePath, "utf-8")) as RawTimelineConfig;
     const normalized = normalizeTimelineConfig(raw);
 
@@ -179,7 +179,7 @@ describe("normalizeTimelineConfig", () => {
   });
 
   it("keeps rap chapter cues visually varied without retiming lyrics", () => {
-    const timelinePath = new URL("../../public/timeline.json", import.meta.url);
+    const timelinePath = new URL("../../public/timeline.release.json", import.meta.url);
     const raw = JSON.parse(readFileSync(timelinePath, "utf-8")) as RawTimelineConfig;
     const normalized = normalizeTimelineConfig(raw);
 

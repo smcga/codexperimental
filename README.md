@@ -9,9 +9,9 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 ## Audio + timeline configuration
 
 - Place an MP3 at `public/song.mp3` (replace the placeholder file).
-- Edit `public/timeline.json` to change the intro terminal script, section timings, transitions, or text cues. Use `mm:ss` or `mm:ss.s` time strings for section and cue start/end values (for example, `01:44.5`).
+- Edit `public/timeline.release.json` to change the intro terminal script, section timings, transitions, or text cues. Use `mm:ss` or `mm:ss.s` time strings for section and cue start/end values (for example, `01:44.5`).
 - **Sacred anchor policy:** before changing timeline timings, read `docs/sacred-musical-anchors.md`. The listed musical anchor timestamps are mandatory and must remain locked unless the soundtrack itself is intentionally recut; secondary effect-switch cues in that doc are advisory and must never override the sacred anchors.
-- `public/timeline.release.json` is a release-cut timeline that adds per-section era presets and a curated arc for the graphics-history progression. Load it with the release URL flag described below.
+- `public/timeline.release.json` is the canonical timeline and adds per-section era presets plus a curated arc for the graphics-history progression.
 - The bundled timeline includes lyric-style overlays in `textCues`; adjust or replace those cues to change the on-screen callouts synced to the music.
 - Transition types include `fade`, `wipe`, `slide-left`, `slide-right`, `slide-up`, `slide-down`, `iris`, `flash`, `shatter`, `signal-collapse`, `camera-punch-through`, and `bitplane-wipe` (vertical VGA-style bands with staggered timing).
 - Effect sections can include a `params` object to tune effect-specific settings such as starfield speed, warp, or turning intensity.
@@ -47,7 +47,7 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 - The `intro` block controls the terminal presentation from `t=0` until `intro.end`; the first section must start exactly at the same time so the colour pipeline can take over. Script events are time-coded, so you can align story lines with audio or prior text cue timings.
 - Visuals include subtle camera zoom and panning that respond to audio energy.
 - Post-intro effects render on a 16:9 base canvas; landscape uses letterboxing, while portrait screens scale to fill the height and crop the sides.
-- Append `?release=1` to the URL to load the release timeline and disable the debug overlay/keybinds.
+- Append `?release=1` to the URL to disable the debug overlay/keybinds.
 - Rendering quality can be tuned via URL query params:
   - `?baseScale=2` multiplies the base canvas size (default `1`, clamped to `1`-`4`).
   - `?baseW=640&baseH=360` overrides the base canvas dimensions (must be 16:9 and between `320×180` and `1920×1080`).
@@ -86,7 +86,7 @@ Automation supports numeric params only; non-numeric values fall back to the bas
 
 ### Timeline data schema
 
-`public/timeline.json` and `public/timeline.release.json` follow this top-level shape:
+`public/timeline.release.json` follows this top-level shape:
 
 ```json
 {

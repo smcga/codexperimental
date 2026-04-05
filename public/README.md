@@ -1,7 +1,7 @@
 # Public assets
 - `song.mp3` must be placed in this folder.
-- `timeline.json` controls the audio source, section timings, transitions, text cues, and layered effect mixes (supported transition types include `fade`, `wipe`, `slide-left`, `slide-right`, `slide-up`, `slide-down`, `iris`, `flash`, `shatter`, `signal-collapse`, `camera-punch-through`, and `bitplane-wipe`; layers support blend modes like `screen`, `overlay`, `multiply`, and `difference`).
-- `timeline.release.json` stores the release-ready schedule aligned to the final audio cut.
+- `timeline.release.json` controls the audio source, section timings, transitions, text cues, and layered effect mixes (supported transition types include `fade`, `wipe`, `slide-left`, `slide-right`, `slide-up`, `slide-down`, `iris`, `flash`, `shatter`, `signal-collapse`, `camera-punch-through`, and `bitplane-wipe`; layers support blend modes like `screen`, `overlay`, `multiply`, and `difference`).
+- This timeline stores the release-ready schedule aligned to the final audio cut.
 
 
 # Billy’s rules for working on `timeline.release.json`
