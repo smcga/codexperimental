@@ -184,6 +184,110 @@ describe("api/effects", () => {
     expect(payload.rawResponse).toContain("I can help with that");
   });
 
+  it("records generation failures in monitoring metrics and exposes them via authorized endpoint", async () => {
+    process.env.EFFECT_MODERATION_TOKEN = "secret-token";
+    delete process.env.OPENAI_API_KEY;
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+
+    const generate = createResponse();
+    await handler(
+      {
+        method: "POST",
+        url: "/api/effects?action=generate",
+        headers: { "x-forwarded-for": "127.0.0.1" },
+        body: JSON.stringify({ prompt: "make stars" })
+      },
+      generate.response
+    );
+    expect(generate.response.statusCode).toBe(503);
+
+    const metrics = createResponse();
+    await handler(
+      { method: "GET", url: "/api/effects?action=generateMetrics&token=secret-token" },
+      metrics.response
+    );
+    expect(metrics.response.statusCode).toBe(200);
+    const payload = JSON.parse(metrics.getBody());
+    expect(payload.generateMetrics).toEqual(
+      expect.objectContaining({
+        totalRequests: 1,
+        failedRequests: 1,
+        acceptedRequests: 0
+      })
+    );
+    expect(payload.generateMetrics.failureCategoryCounts.openai_config).toBe(1);
+    expect(payload.recentGenerateErrors).toHaveLength(1);
+    expect(payload.recentGenerateErrors[0]).toEqual(
+      expect.objectContaining({
+        httpStatus: 503,
+        category: "openai_config"
+      })
+    );
+  });
+
+  it("requires authorization for generate monitoring endpoint", async () => {
+    process.env.EFFECT_MODERATION_TOKEN = "secret-token";
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+    await handler({ method: "GET", url: "/api/effects?action=generateMetrics" }, res.response);
+    expect(res.response.statusCode).toBe(401);
+    expect(JSON.parse(res.getBody()).error).toBe("Unauthorized.");
+  });
+
+  it("sends a generation failure alert and applies category cooldown", async () => {
+    process.env.EFFECT_MODERATION_TOKEN = "secret-token";
+    process.env.EFFECT_GENERATE_ALERT_NTFY_URL = "https://ntfy.sh/effect-generate-alerts";
+    process.env.EFFECT_GENERATE_ALERT_NTFY_TOKEN = "alert-token";
+    process.env.EFFECT_GENERATE_ALERT_COOLDOWN_MS = "600000";
+    delete process.env.OPENAI_API_KEY;
+    globalThis.fetch = vi.fn(async () => ({ ok: true, status: 200, json: async () => ({}) })) as typeof fetch;
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+
+    const first = createResponse();
+    await handler(
+      {
+        method: "POST",
+        url: "/api/effects?action=generate",
+        headers: { "x-forwarded-for": "127.0.0.1" },
+        body: JSON.stringify({ prompt: "make stars" })
+      },
+      first.response
+    );
+    expect(first.response.statusCode).toBe(503);
+    expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      "https://ntfy.sh/effect-generate-alerts",
+      expect.objectContaining({
+        method: "POST",
+        headers: expect.objectContaining({
+          Title: "Effect generate alert (openai_config)",
+          Priority: "high",
+          Authorization: "Bearer alert-token"
+        }),
+        body: expect.stringContaining("Category: openai_config")
+      })
+    );
+
+    const second = createResponse();
+    await handler(
+      {
+        method: "POST",
+        url: "/api/effects?action=generate",
+        headers: { "x-forwarded-for": "127.0.0.1" },
+        body: JSON.stringify({ prompt: "make stars again" })
+      },
+      second.response
+    );
+    expect(second.response.statusCode).toBe(503);
+    expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+  });
+
   it("sends ntfy moderation notifications for effect submissions", async () => {
     process.env.EFFECT_MODERATION_TOKEN = "secret-token";
     process.env.EFFECT_MODERATION_BASE_URL = "https://demo.example.com";
