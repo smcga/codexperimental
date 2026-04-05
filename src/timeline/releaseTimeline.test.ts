@@ -101,6 +101,27 @@ describe("release timeline", () => {
     expect(rapTextCues.length).toBeGreaterThanOrEqual(2);
   });
 
+  it("splits the pre-rap callout into buildup, DnB return, and drum-fill lead-in anchors", () => {
+    const byId = new Map(timeline.sections.map((section) => [section.id, section]));
+    const preRapBuildup = byId.get("this-callout-pre-rap-buildup");
+    const dnbReturn = byId.get("this-callout-dnb-return");
+    const drumFillLeadIn = byId.get("this-callout-drum-fill-lead-in");
+    const rapLaunch = byId.get("rap-launch-03130");
+
+    expect(preRapBuildup).toBeDefined();
+    expect(dnbReturn).toBeDefined();
+    expect(drumFillLeadIn).toBeDefined();
+    expect(rapLaunch).toBeDefined();
+
+    expect(toSeconds(preRapBuildup?.start ?? 0)).toBeCloseTo(3 * 60 + 9.6, 5);
+    expect(toSeconds(preRapBuildup?.end ?? 0)).toBeCloseTo(3 * 60 + 15.7, 5);
+    expect(toSeconds(dnbReturn?.start ?? 0)).toBeCloseTo(3 * 60 + 15.7, 5);
+    expect(toSeconds(dnbReturn?.end ?? 0)).toBeCloseTo(3 * 60 + 24, 5);
+    expect(toSeconds(drumFillLeadIn?.start ?? 0)).toBeCloseTo(3 * 60 + 24, 5);
+    expect(toSeconds(drumFillLeadIn?.end ?? 0)).toBeCloseTo(3 * 60 + 25.14, 5);
+    expect(toSeconds(rapLaunch?.start ?? 0)).toBeCloseTo(3 * 60 + 25.14, 5);
+  });
+
   it("uses every registered effect at least once as base or layer", () => {
     const usedEffects = new Set<string>();
 
