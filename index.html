@@ -29,6 +29,14 @@
           <div id="overlay-kicker" class="overlay-kicker">browser invitro // live signal</div>
           <div class="start-text">Enter the signal</div>
           <div id="overlay-subtitle" class="overlay-subtitle">Sound on. Click anywhere or punch Start to boot the demo.</div>
+          <label class="overlay-quality" for="overlay-quality-select">
+            <span class="overlay-quality-label">Rendering quality</span>
+            <select id="overlay-quality-select">
+              <option value="performance">Best performance</option>
+              <option value="balanced" selected>Balanced</option>
+              <option value="quality">Best quality</option>
+            </select>
+          </label>
           <div id="share-status" class="share-status hidden" aria-live="polite"></div>
           <div class="overlay-actions" id="overlay-actions">
             <button id="overlay-start-button" type="button">Start demo</button>
