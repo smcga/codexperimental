@@ -63,7 +63,7 @@ import {
   getDoodleBrushSizeLabel,
   normalizeDoodleBrushColor
 } from "./doodleComposer";
-import { fetchViews, registerViewOncePerSession } from "./viewCounter";
+import { registerViewOncePerSession, subscribeToLiveViews } from "./viewCounter";
 import { buildSharePayload, canUseNativeShare, getShareLink, ShareLinkPlatform } from "./share";
 import { getOverlayPresentation, OverlayMode } from "./overlayContent";
 import { buildTransitionOptionMarkup } from "./renderer/transitions";
@@ -325,7 +325,7 @@ function resize(): void {
 resize();
 window.addEventListener("resize", resize);
 
-void fetchViews().then((count) => {
+subscribeToLiveViews((count) => {
   updateViewCounter(count);
 });
 
