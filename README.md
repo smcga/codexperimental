@@ -6,7 +6,7 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 
 ## Requirements
 
-- Node.js 18+ recommended
+- Node.js 18+ recommended.
 
 ## Audio + timeline configuration
 
