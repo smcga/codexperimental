@@ -5,8 +5,12 @@ const { readClient, writeClient } = createKvClients();
 const EFFECTS_KEY = "effects:items";
 const PENDING_EFFECTS_KEY = "effects:pending";
 const GENERATE_RATE_LIMIT_PREFIX = "effects:generate:rl";
+const GENERATE_METRICS_KEY = "effects:generate:metrics";
+const GENERATE_ERROR_SAMPLES_KEY = "effects:generate:error-samples";
+const GENERATE_ALERT_COOLDOWN_PREFIX = "effects:generate:alert-cooldown";
 const MAX_EFFECTS = 128;
 const MAX_PENDING_EFFECTS = 128;
+const MAX_GENERATE_ERROR_SAMPLES = 200;
 const MAX_GENERATE_PROMPT_LENGTH = 3000;
 const DEFAULT_GENERATE_RATE_LIMIT_MAX = 8;
 const DEFAULT_GENERATE_RATE_LIMIT_WINDOW_MS = 60_000;
@@ -82,12 +86,36 @@ type JsonResponse = {
     params?: GeneratedEffectParam[];
     docs?: GeneratedEffectDocs;
   };
+  generateMetrics?: GenerateMetrics;
+  recentGenerateErrors?: GenerateErrorSample[];
   error?: string;
   rawResponse?: string;
 };
 
 type GenerateRateLimitState = {
   hits: number[];
+};
+
+type GenerateFailureCategory = "rate_limited" | "validation" | "openai_config" | "model_parse" | "upstream" | "unknown";
+
+type GenerateErrorSample = {
+  timestamp: string;
+  requestId: string;
+  httpStatus: number;
+  category: GenerateFailureCategory;
+  message: string;
+  promptLength: number;
+  authMode: string;
+};
+
+type GenerateMetrics = {
+  totalRequests: number;
+  acceptedRequests: number;
+  failedRequests: number;
+  statusCounts: Record<string, number>;
+  failureCategoryCounts: Record<string, number>;
+  lastSuccessAt: string | null;
+  lastFailureAt: string | null;
 };
 
 function sendJson(res: ResponseLike, status: number, body: JsonResponse): void {
@@ -320,6 +348,18 @@ function getGenerateDailyCap(): number {
   return parsed;
 }
 
+function getGenerateAlertCooldownMs(): number {
+  const raw = normalizeEnvValue(process.env.EFFECT_GENERATE_ALERT_COOLDOWN_MS);
+  if (!raw) {
+    return 5 * 60_000;
+  }
+  const parsed = Number.parseInt(raw, 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return 5 * 60_000;
+  }
+  return parsed;
+}
+
 function getUtcDayKey(now: number): string {
   return new Date(now).toISOString().slice(0, 10);
 }
@@ -389,6 +429,219 @@ function logGenerateRequest(details: {
     ...details,
     timestamp: new Date().toISOString()
   }));
+}
+
+function getDefaultGenerateMetrics(): GenerateMetrics {
+  return {
+    totalRequests: 0,
+    acceptedRequests: 0,
+    failedRequests: 0,
+    statusCounts: {},
+    failureCategoryCounts: {},
+    lastSuccessAt: null,
+    lastFailureAt: null
+  };
+}
+
+function toFiniteNonNegativeInt(value: unknown): number | null {
+  if (typeof value === "number" && Number.isFinite(value) && value >= 0) {
+    return Math.floor(value);
+  }
+  if (typeof value === "string") {
+    const parsed = Number.parseInt(value, 10);
+    if (Number.isFinite(parsed) && parsed >= 0) {
+      return parsed;
+    }
+  }
+  return null;
+}
+
+function normalizeCounts(value: unknown): Record<string, number> {
+  if (!value || typeof value !== "object") {
+    return {};
+  }
+  return Object.entries(value)
+    .reduce<Record<string, number>>((acc, [key, raw]) => {
+      const normalized = toFiniteNonNegativeInt(raw);
+      if (normalized !== null && key.trim().length > 0) {
+        acc[key] = normalized;
+      }
+      return acc;
+    }, {});
+}
+
+function sanitizeGenerateMetrics(value: unknown): GenerateMetrics {
+  if (!value || typeof value !== "object") {
+    return getDefaultGenerateMetrics();
+  }
+  const candidate = value as Partial<GenerateMetrics>;
+  return {
+    totalRequests: toFiniteNonNegativeInt(candidate.totalRequests) ?? 0,
+    acceptedRequests: toFiniteNonNegativeInt(candidate.acceptedRequests) ?? 0,
+    failedRequests: toFiniteNonNegativeInt(candidate.failedRequests) ?? 0,
+    statusCounts: normalizeCounts(candidate.statusCounts),
+    failureCategoryCounts: normalizeCounts(candidate.failureCategoryCounts),
+    lastSuccessAt: typeof candidate.lastSuccessAt === "string" ? candidate.lastSuccessAt : null,
+    lastFailureAt: typeof candidate.lastFailureAt === "string" ? candidate.lastFailureAt : null
+  };
+}
+
+function sanitizeGenerateErrorSamples(value: unknown): GenerateErrorSample[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  return value.flatMap((entry) => {
+    if (!entry || typeof entry !== "object") {
+      return [];
+    }
+    const sample = entry as Partial<GenerateErrorSample>;
+    const timestamp = typeof sample.timestamp === "string" ? sample.timestamp : null;
+    const requestId = typeof sample.requestId === "string" ? sample.requestId : null;
+    const status = toFiniteNonNegativeInt(sample.httpStatus);
+    const category = typeof sample.category === "string" ? sample.category : null;
+    const message = typeof sample.message === "string" ? sample.message : null;
+    const promptLength = toFiniteNonNegativeInt(sample.promptLength);
+    const authMode = typeof sample.authMode === "string" ? sample.authMode : null;
+    if (!timestamp || !requestId || status === null || !category || !message || promptLength === null || !authMode) {
+      return [];
+    }
+    return [{
+      timestamp,
+      requestId,
+      httpStatus: status,
+      category: category as GenerateFailureCategory,
+      message,
+      promptLength,
+      authMode
+    }];
+  });
+}
+
+function categorizeGenerateFailure(outcome: "rejected" | "rate_limited" | "error", httpStatus: number, message: string | undefined): GenerateFailureCategory {
+  if (outcome === "rate_limited" || httpStatus === 429) {
+    return "rate_limited";
+  }
+  if (outcome === "rejected" || httpStatus === 400) {
+    return "validation";
+  }
+  const normalizedMessage = (message ?? "").toLowerCase();
+  if (normalizedMessage.includes("openai_api_key")) {
+    return "openai_config";
+  }
+  if (normalizedMessage.includes("parse generated effect response")) {
+    return "model_parse";
+  }
+  if (httpStatus >= 500) {
+    return "upstream";
+  }
+  return "unknown";
+}
+
+async function recordGenerateMonitoring(details: {
+  outcome: "accepted" | "rejected" | "rate_limited" | "error";
+  httpStatus: number;
+  requestId: string;
+  promptLength: number;
+  authMode: string;
+  requestPath: string;
+  error?: string;
+}): Promise<void> {
+  if (!writeClient) {
+    return;
+  }
+  const nowIso = new Date().toISOString();
+  try {
+    const existing = await writeClient.get(GENERATE_METRICS_KEY);
+    const metrics = sanitizeGenerateMetrics(existing);
+    metrics.totalRequests += 1;
+    const statusKey = String(details.httpStatus);
+    metrics.statusCounts[statusKey] = (metrics.statusCounts[statusKey] ?? 0) + 1;
+
+    if (details.outcome === "accepted") {
+      metrics.acceptedRequests += 1;
+      metrics.lastSuccessAt = nowIso;
+    } else {
+      metrics.failedRequests += 1;
+      metrics.lastFailureAt = nowIso;
+      const category = categorizeGenerateFailure(details.outcome, details.httpStatus, details.error);
+      metrics.failureCategoryCounts[category] = (metrics.failureCategoryCounts[category] ?? 0) + 1;
+
+      const existingSamples = await writeClient.get(GENERATE_ERROR_SAMPLES_KEY);
+      const samples = sanitizeGenerateErrorSamples(existingSamples);
+      const nextSample: GenerateErrorSample = {
+        timestamp: nowIso,
+        requestId: details.requestId,
+        httpStatus: details.httpStatus,
+        category,
+        message: details.error ?? "Effect generation request failed.",
+        promptLength: details.promptLength,
+        authMode: details.authMode
+      };
+      await writeClient.set(GENERATE_ERROR_SAMPLES_KEY, [nextSample, ...samples].slice(0, MAX_GENERATE_ERROR_SAMPLES));
+      await sendGenerateAlertIfNeeded(nextSample, metrics, details.requestPath);
+    }
+
+    await writeClient.set(GENERATE_METRICS_KEY, metrics);
+  } catch {
+    // Monitoring should never break effect generation responses.
+  }
+}
+
+async function sendGenerateAlertIfNeeded(sample: GenerateErrorSample, metrics: GenerateMetrics, requestPath: string): Promise<void> {
+  const ntfyUrl = normalizeEnvValue(process.env.EFFECT_GENERATE_ALERT_NTFY_URL)
+    ?? normalizeEnvValue(process.env.EFFECT_MODERATION_NTFY_URL)
+    ?? normalizeEnvValue(process.env.DOODLE_MODERATION_NTFY_URL);
+  if (!ntfyUrl || !writeClient) {
+    return;
+  }
+
+  const cooldownMs = getGenerateAlertCooldownMs();
+  const cooldownKey = `${GENERATE_ALERT_COOLDOWN_PREFIX}:${sample.category}`;
+  try {
+    const existing = await writeClient.get(cooldownKey);
+    const lastSentAt = toFiniteNonNegativeInt(existing);
+    if (lastSentAt !== null && Date.now() - lastSentAt < cooldownMs) {
+      return;
+    }
+  } catch {
+    // Ignore cooldown check failures and continue with alert delivery attempt.
+  }
+
+  const ntfyToken = normalizeEnvValue(process.env.EFFECT_GENERATE_ALERT_NTFY_TOKEN)
+    ?? normalizeEnvValue(process.env.EFFECT_MODERATION_NTFY_TOKEN)
+    ?? normalizeEnvValue(process.env.DOODLE_MODERATION_NTFY_TOKEN);
+
+  const lines = [
+    `Effect generation failure detected at ${sample.timestamp}.`,
+    `Category: ${sample.category}`,
+    `Status: ${sample.httpStatus}`,
+    `Message: ${sample.message}`,
+    `Request ID: ${sample.requestId}`,
+    `Path: ${requestPath}`,
+    `Prompt length: ${sample.promptLength}`,
+    `Auth mode: ${sample.authMode}`,
+    `Failed requests (all-time): ${metrics.failedRequests}`,
+    `Total generate requests (all-time): ${metrics.totalRequests}`
+  ];
+
+  try {
+    const response = await fetch(ntfyUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Title": `Effect generate alert (${sample.category})`,
+        "Priority": "high",
+        ...(ntfyToken ? { Authorization: `Bearer ${ntfyToken}` } : {})
+      },
+      body: lines.join("\n")
+    });
+    if (!response.ok) {
+      return;
+    }
+    await writeClient.set(cooldownKey, Date.now());
+  } catch {
+    // Ignore alert send failures; monitoring must remain non-blocking.
+  }
 }
 
 function formatRetryWait(retryAfterSec: number): string {
@@ -780,6 +1033,16 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
   }
 
   if (method === "GET") {
+    if (url.searchParams.get("action") === "generateMetrics") {
+      if (!isAuthorized(url)) {
+        sendJson(res, 401, { error: "Unauthorized." });
+        return;
+      }
+      const metrics = sanitizeGenerateMetrics(writeClient ? await writeClient.get(GENERATE_METRICS_KEY) : null);
+      const samples = sanitizeGenerateErrorSamples(writeClient ? await writeClient.get(GENERATE_ERROR_SAMPLES_KEY) : null);
+      sendJson(res, 200, { generateMetrics: metrics, recentGenerateErrors: samples.slice(0, 50) });
+      return;
+    }
     const effects = await readApprovedEffects();
     if (url.searchParams.has("pendingId")) {
       if (!isAuthorized(url)) {
@@ -831,6 +1094,15 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
         requestId
       });
       sendJson(res, 429, { error: `Rate limit exceeded. Please wait ${waitText} before trying again.` });
+      await recordGenerateMonitoring({
+        outcome: "rate_limited",
+        httpStatus: 429,
+        requestId,
+        promptLength: prompt.length,
+        authMode: access.reason,
+        requestPath: url.pathname,
+        error: `Rate limit exceeded. Please wait ${waitText} before trying again.`
+      });
       return;
     }
     const globalCap = await consumeGlobalGenerateCap();
@@ -847,6 +1119,15 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
         error: `global_daily_cap:${globalCap.limit}`
       });
       sendJson(res, 429, { error: `Daily generation limit reached (${globalCap.limit}/day). Please wait ${waitText} before trying again.` });
+      await recordGenerateMonitoring({
+        outcome: "rate_limited",
+        httpStatus: 429,
+        requestId,
+        promptLength: prompt.length,
+        authMode: access.reason,
+        requestPath: url.pathname,
+        error: `Daily generation limit reached (${globalCap.limit}/day). Please wait ${waitText} before trying again.`
+      });
       return;
     }
     if (!prompt) {
@@ -859,6 +1140,15 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
         requestId
       });
       sendJson(res, 400, { error: "A prompt is required." });
+      await recordGenerateMonitoring({
+        outcome: "rejected",
+        httpStatus: 400,
+        requestId,
+        promptLength: 0,
+        authMode: access.reason,
+        requestPath: url.pathname,
+        error: "A prompt is required."
+      });
       return;
     }
     if (prompt.length > MAX_GENERATE_PROMPT_LENGTH) {
@@ -871,6 +1161,15 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
         requestId
       });
       sendJson(res, 400, { error: `Prompt must be ${MAX_GENERATE_PROMPT_LENGTH} characters or fewer.` });
+      await recordGenerateMonitoring({
+        outcome: "rejected",
+        httpStatus: 400,
+        requestId,
+        promptLength: prompt.length,
+        authMode: access.reason,
+        requestPath: url.pathname,
+        error: `Prompt must be ${MAX_GENERATE_PROMPT_LENGTH} characters or fewer.`
+      });
       return;
     }
     try {
@@ -884,6 +1183,14 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
         requestId
       });
       sendJson(res, 200, { generation });
+      await recordGenerateMonitoring({
+        outcome: "accepted",
+        httpStatus: 200,
+        requestId,
+        promptLength: prompt.length,
+        authMode: access.reason,
+        requestPath: url.pathname
+      });
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unable to generate effect.";
       const rawResponse = error instanceof Error && "rawResponse" in error && typeof (error as { rawResponse?: unknown }).rawResponse === "string"
@@ -899,6 +1206,15 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
         error: message
       });
       sendJson(res, 503, { error: message, rawResponse });
+      await recordGenerateMonitoring({
+        outcome: "error",
+        httpStatus: 503,
+        requestId,
+        promptLength: prompt.length,
+        authMode: access.reason,
+        requestPath: url.pathname,
+        error: message
+      });
     }
     return;
   }
