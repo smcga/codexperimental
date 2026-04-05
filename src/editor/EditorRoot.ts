@@ -102,6 +102,16 @@ type CueTypography = {
   size: number;
 };
 
+type MainSlot = "top" | "centre" | "bottom";
+type MainSlotSelection = Record<MainSlot, string | null>;
+
+const MAIN_SLOT_ORDER: MainSlot[] = ["centre", "top", "bottom"];
+const MAIN_SLOT_LABELS: Array<{ slot: MainSlot; label: string }> = [
+  { slot: "top", label: "Top" },
+  { slot: "centre", label: "Centre" },
+  { slot: "bottom", label: "Bottom" }
+];
+
 type EditorInit = {
   container: HTMLElement;
   effectNames: string[];
@@ -124,6 +134,66 @@ export type EditorController = {
 export const computeSceneSeekTime = (sceneStart: number | string, audioOffset: number): number => {
   return Math.max(0, parseTimelineTimeValue(sceneStart) - audioOffset);
 };
+
+function isMainSlotLayer(layer: RawSectionConfig["layers"][number]): boolean {
+  const fitAlign = layer.fitAlign ?? "fill";
+  return (
+    (fitAlign === "top" || fitAlign === "centre" || fitAlign === "bottom") &&
+    (layer.blend ?? "source-over") === "source-over" &&
+    Math.abs((layer.opacity ?? 1) - 1) < 0.0001
+  );
+}
+
+export function getMainSlotSelection(scene: RawSectionConfig): MainSlotSelection {
+  const selection: MainSlotSelection = {
+    top: null,
+    centre: null,
+    bottom: null
+  };
+  const sceneAlign = scene.fitAlign ?? "fill";
+  if (sceneAlign === "top" || sceneAlign === "centre" || sceneAlign === "bottom") {
+    selection[sceneAlign] = scene.effect;
+  }
+  (scene.layers ?? []).forEach((layer) => {
+    if (!isMainSlotLayer(layer)) {
+      return;
+    }
+    const slot = layer.fitAlign as MainSlot;
+    if (!selection[slot]) {
+      selection[slot] = layer.effect;
+    }
+  });
+  if (!selection.centre && sceneAlign === "fill") {
+    selection.centre = scene.effect;
+  }
+  return selection;
+}
+
+export function applyMainSlotSelection(scene: RawSectionConfig, selection: MainSlotSelection): void {
+  const orderedSlots = MAIN_SLOT_ORDER.filter((slot) => Boolean(selection[slot]));
+  if (orderedSlots.length === 0) {
+    return;
+  }
+  const primarySlot = orderedSlots[0];
+  const primaryEffect = selection[primarySlot] ?? scene.effect;
+  scene.effect = primaryEffect;
+  scene.fitAlign = primarySlot;
+
+  const preservedLayers = (scene.layers ?? []).filter((layer) => !isMainSlotLayer(layer));
+  const slotLayers = orderedSlots
+    .filter((slot) => slot !== primarySlot)
+    .map((slot) => {
+      return {
+        effect: selection[slot] as string,
+        opacity: 1,
+        blend: "source-over" as BlendMode,
+        params: {},
+        automation: [],
+        fitAlign: slot as FitAlign
+      };
+    });
+  scene.layers = [...slotLayers, ...preservedLayers];
+}
 
 export const getScenePlayingAtTime = (
   scenes: RawSectionConfig[],
@@ -773,6 +843,27 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         </label>
       </div>
       <div class="editor-group">
+        <div class="editor-group-title">Main Slots (Top/Centre/Bottom)</div>
+        <div class="editor-note">Use these to stage up to three simultaneous “main” effects in mobile-fit mode.</div>
+        ${(() => {
+          const selection = getMainSlotSelection(scene);
+          return MAIN_SLOT_LABELS.map(({ slot, label }) => {
+            const selected = selection[slot];
+            return `
+              <label>
+                <span>${label} slot</span>
+                <select data-main-slot="${slot}">
+                  <option value="">None</option>
+                  ${init.effectNames
+                    .map((name) => `<option value="${name}" ${name === selected ? "selected" : ""}>${name}</option>`)
+                    .join("")}
+                </select>
+              </label>
+            `;
+          }).join("");
+        })()}
+      </div>
+      <div class="editor-group">
         <div class="editor-group-title">Transition</div>
         <label>
           <span>In</span>
@@ -944,6 +1035,31 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         }
       });
     });
+
+    const slotInputs = Array.from(inspector.querySelectorAll<HTMLSelectElement>("[data-main-slot]"));
+    const applySlotControls = (): void => {
+      const selection: MainSlotSelection = {
+        top: null,
+        centre: null,
+        bottom: null
+      };
+      slotInputs.forEach((input) => {
+        const slot = input.dataset.mainSlot as MainSlot;
+        if (!slot) {
+          return;
+        }
+        const nextValue = input.value.trim();
+        selection[slot] = nextValue.length > 0 ? nextValue : null;
+      });
+      updateTimeline((draft) => {
+        const target = draft.sections.find((section) => section.id === scene.id);
+        if (!target) {
+          return;
+        }
+        applyMainSlotSelection(target, selection);
+      });
+    };
+    slotInputs.forEach((input) => input.addEventListener("change", applySlotControls));
 
     const addCueButton = inspector.querySelector<HTMLButtonElement>("[data-action='add-cue']");
     addCueButton?.addEventListener("click", () => {
