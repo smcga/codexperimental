@@ -22,6 +22,7 @@ import { createQualityState, updateQualityState } from "./renderer/qualityContro
 import { getRenderSettings } from "./renderer/renderSettings";
 import {
   getFullscreenAction,
+  getEndSkipTime,
   getIntroSkipTime,
   getNextDebugOverlayVisibility,
   getRelativeSeekTime,
@@ -95,6 +96,7 @@ const debugEffectCopyStatus = document.querySelector<HTMLDivElement>("#debug-eff
 const debugMonochromeToggle = document.querySelector<HTMLInputElement>("#debug-monochrome");
 const debugSkipIntroButton = document.querySelector<HTMLButtonElement>("#debug-skip-intro");
 const debugSkipSecondHalfButton = document.querySelector<HTMLButtonElement>("#debug-skip-second-half");
+const debugSkipEndButton = document.querySelector<HTMLButtonElement>("#debug-skip-end");
 const debugSkipBackButton = document.querySelector<HTMLButtonElement>("#debug-skip-back");
 const debugSkipForwardButton = document.querySelector<HTMLButtonElement>("#debug-skip-forward");
 const debugEditorToggle = document.querySelector<HTMLInputElement>("#debug-editor-toggle");
@@ -746,6 +748,9 @@ function updateDebugSkipButtonState(demoTime: number | null): void {
     if (debugSkipForwardButton) {
       debugSkipForwardButton.disabled = true;
     }
+    if (debugSkipEndButton) {
+      debugSkipEndButton.disabled = true;
+    }
     return;
   }
   debugSkipIntroButton.disabled = demoTime >= introConfig.end;
@@ -757,6 +762,9 @@ function updateDebugSkipButtonState(demoTime: number | null): void {
   }
   if (debugSkipForwardButton) {
     debugSkipForwardButton.disabled = false;
+  }
+  if (debugSkipEndButton) {
+    debugSkipEndButton.disabled = audioPlayer.duration <= 0 || demoTime >= getEndSkipTime(demoTime, audioPlayer.duration);
   }
 }
 
@@ -1063,6 +1071,19 @@ if (!releaseMode && debugSkipForwardButton) {
       return;
     }
     const targetTime = getRelativeSeekTime(audioPlayer.currentTime, 10, audioPlayer.duration);
+    audioPlayer.seek(targetTime);
+    if (!playbackSyncSuppressBroadcast) {
+      playbackSync.broadcastTransport("seek", targetTime);
+    }
+  });
+}
+
+if (!releaseMode && debugSkipEndButton) {
+  debugSkipEndButton.addEventListener("click", () => {
+    if (!audioPlayer) {
+      return;
+    }
+    const targetTime = getEndSkipTime(audioPlayer.currentTime, audioPlayer.duration);
     audioPlayer.seek(targetTime);
     if (!playbackSyncSuppressBroadcast) {
       playbackSync.broadcastTransport("seek", targetTime);

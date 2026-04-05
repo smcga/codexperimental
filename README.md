@@ -339,7 +339,7 @@ npm run preview
 - At the end screen, use **Add a doodle** to draw and submit a doodle for moderation; the modal now includes multiple brush colours plus an adjustable brush size slider, and approved doodles only appear in `doodle_greetz_wall` after someone opens the review page and approves them.
 - At the end screen, use **Got an effect idea? Make it real!** to open the effect-idea modal, describe a concept, generate TypeScript/runtime code through the OpenAI Codex API, preview it live, and submit it to a moderation queue before it can appear as an effect option.
 - `F` to toggle fullscreen (if supported)
-- `D` to toggle the debug overlay (timestamp, skip intro, skip to second half, transition selection, effect overrides, monochrome toggle)
+- `D` to toggle the debug overlay (timestamp, skip intro, skip to second half, skip to end, transition selection, effect overrides, monochrome toggle)
 - The debug overlay shows WebGL status as `OK` or `FALLBACK` when available.
 - When the debug overlay is visible, selecting an effect reveals a secondary panel with effect-specific controls (or a note when none are available).
 - The serverless view/doodle APIs accept either the legacy `KV_*` Upstash variables or the newer `DB2_KV_*` prefixed variants. If any `DB2_*` variable is present, the API locks to the DB2 configuration and ignores legacy `KV_*` values. Use the REST URL/token variables (`*_KV_REST_API_URL`, `*_KV_REST_API_TOKEN`, and optionally `*_KV_REST_API_READ_ONLY_TOKEN`); copied values are trimmed, and raw `redis://` URLs are ignored by the REST client.
