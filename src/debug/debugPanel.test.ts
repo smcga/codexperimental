@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  DEBUG_PANEL_SECTIONS,
   buildDebugRenderSelection,
   formatEffectSettingsForTimeline,
   getDebugPanelSection,
@@ -118,6 +119,10 @@ describe("debug effect selector helpers", () => {
 });
 
 describe("getDebugPanelSection", () => {
+  it("keeps tab sections aligned with the debug panel tab order", () => {
+    expect(DEBUG_PANEL_SECTIONS).toEqual(["transport", "effects", "render"]);
+  });
+
   it("falls back to transport for unknown or missing sections", () => {
     expect(getDebugPanelSection(undefined)).toBe("transport");
     expect(getDebugPanelSection(null)).toBe("transport");
