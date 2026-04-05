@@ -36,7 +36,6 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 | `dotTunnel` | 1990 | medium |  |
 | `envmap_donut` | 1990 | medium |  |
 | `fractal` | 1990 | medium |  |
-| `fractal_zoomer` | 1990 | medium |  |
 | `glenz_vectors` | 1990 | high |  |
 | `glitch` | 1990 | low |  |
 | `lens_flare` | 1990 | low |  |
