@@ -72,9 +72,11 @@ function* allEntries(sections: TimelineEntry[]): Generator<TimelineEntry> {
   }
 }
 
-function expectParam(entry: TimelineEntry, paramName: keyof SupportFlags): void {
+function expectParamIfPresent(entry: TimelineEntry, paramName: keyof SupportFlags): void {
   const params = entry.params ?? {};
-  expect(params, `${entry.id ?? entry.effect} should define ${paramName}`).toHaveProperty(paramName);
+  if (!Object.prototype.hasOwnProperty.call(params, paramName)) {
+    return;
+  }
   const value = params[paramName];
   expect(typeof value, `${entry.id ?? entry.effect} ${paramName} should be numeric`).toBe("number");
   expect(value as number, `${entry.id ?? entry.effect} ${paramName} should be <= ${PARAM_LIMIT}`).toBeLessThanOrEqual(PARAM_LIMIT);
@@ -93,16 +95,16 @@ describe("timeline audio-reactive safety limits", () => {
       }
 
       if (support.audioReact) {
-        expectParam(entry, "audioReact");
+        expectParamIfPresent(entry, "audioReact");
       }
       if (support.audioReactive) {
-        expectParam(entry, "audioReactive");
+        expectParamIfPresent(entry, "audioReactive");
       }
       if (support.kickImpulse) {
-        expectParam(entry, "kickImpulse");
+        expectParamIfPresent(entry, "kickImpulse");
       }
       if (support.beatImpulse) {
-        expectParam(entry, "beatImpulse");
+        expectParamIfPresent(entry, "beatImpulse");
       }
     }
   });

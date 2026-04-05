@@ -69,7 +69,6 @@ export const effectChronologyEntries: EffectChronologyEntry[] = [
   { key: "platformerScroll", yearFit: 1991, confidence: "medium", lineage: 'retro sidescroller homage' },
   { key: "polar_tunnel", yearFit: 1990, confidence: "low", lineage: '' },
   { key: "poly_morph_showcase", yearFit: 1990, confidence: "low", lineage: '' },
-  { key: "portrait", yearFit: 1987, confidence: "low", lineage: '' },
   { key: "prism_bloom", yearFit: 2018, confidence: "low", lineage: 'painterly bloom composition' },
   { key: "proper3d", yearFit: 1987, confidence: "medium", lineage: '' },
   { key: "rain", yearFit: 1993, confidence: "low", lineage: '' },

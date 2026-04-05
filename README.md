@@ -47,7 +47,6 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 - The `prism_bloom` effect renders painterly spectral petals, soft bloom clouds, and drifting dust for a lush AI-art tableau; tune `params` like `bloom`, `flow`, `petalCount`, `smear`, `prismShift`, `vignette`, `audioReact`, and `seed`.
 - The `velvet_dreamscape` effect renders flowing silk ribbons, luminous gallery blooms, and subtle film grain for an unabashedly tasteful AI-art hero shot; tune `params` like `bloom`, `flow`, `ribbonCount`, `grain`, `hueDrift`, `focus`, `audioReact`, and `seed`.
 - The `tetris_matrix` effect renders a self-playing falling-block match with a monochrome handheld LCD vibe; tune `params` like `speed`, `level`, `glow`, `contrast`, `ghost`, and `seed`.
-- The `portrait` effect pulls in `img/94B53814-80C3-4851-A6D3-A590FBB6022F.png` for a full-frame image glow; replace that file if you want a different portrait.
 - The `intro` block controls the terminal presentation from `t=0` until `intro.end`; the first section must start exactly at the same time so the colour pipeline can take over. Script events are time-coded, so you can align story lines with audio or prior text cue timings.
 - Visuals include subtle camera zoom and panning that respond to audio energy.
 - While the demo is running, tapping/clicking the main canvas injects an extra-strong manual beat pulse so audio-reactive effects (especially `physics_pile`) thump like a kick hit.
@@ -206,7 +205,6 @@ The curated `public/timeline.release.json` pass now gives every registry effect 
 | `proper3d` | `speed` |  |
 | `fake3d` | `speed` |  |
 | `textured_cube` | `scale`, `camDist`, `focalMul`, `rotXSpeed`, `rotYSpeed`, `rotZSpeed`, `backfaceCull`, `perspectiveCorrect`, `edge`, `edgeAlpha`, `shadeStrength`, `audioReact`, `beatKick`, `textureAnim` | Software-textured cube with optional affine/perspective mapping. |
-| `portrait` | `zoom`, `drift` |  |
 | `sphere3d` | `speed` |  |
 | `spherecloud` | `speed` |  |
 | `infinitycloud` | `speed` |  |

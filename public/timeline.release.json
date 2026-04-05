@@ -4957,7 +4957,7 @@
       "id": "Scene 051 - Envmap Donut",
       "start": 243.023543,
       "end": 243.6,
-      "effect": "portrait",
+      "effect": "envmap_donut",
       "era": "pcdemo",
       "transition": {
         "in": "slide-right",
