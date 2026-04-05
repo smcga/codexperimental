@@ -4,8 +4,12 @@ const { readClient, writeClient } = createKvClients();
 
 const EFFECTS_KEY = "effects:items";
 const PENDING_EFFECTS_KEY = "effects:pending";
+const GENERATE_RATE_LIMIT_PREFIX = "effects:generate:rl";
 const MAX_EFFECTS = 128;
 const MAX_PENDING_EFFECTS = 128;
+const MAX_GENERATE_PROMPT_LENGTH = 3000;
+const DEFAULT_GENERATE_RATE_LIMIT_MAX = 8;
+const DEFAULT_GENERATE_RATE_LIMIT_WINDOW_MS = 60_000;
 const MODERATION_TOKEN_ENV_KEYS = ["EFFECT_MODERATION_TOKEN", "DOODLE_MODERATION_TOKEN", "DOODLE_ADMIN_TOKEN"];
 const MODERATION_BASE_URL_ENV_KEYS = [
   "EFFECT_MODERATION_BASE_URL",
@@ -53,6 +57,10 @@ type JsonResponse = {
   };
   error?: string;
   rawResponse?: string;
+};
+
+type GenerateRateLimitState = {
+  hits: number[];
 };
 
 function sendJson(res: ResponseLike, status: number, body: JsonResponse): void {
@@ -105,6 +113,14 @@ function getHeaderValue(value: string | string[] | undefined): string | null {
   return typeof value === "string" ? value : null;
 }
 
+function getHeader(req: RequestLike, key: string): string | null {
+  const direct = getHeaderValue(req.headers?.[key]);
+  if (direct) {
+    return direct;
+  }
+  return getHeaderValue(req.headers?.[key.toLowerCase()]);
+}
+
 function getRequestUrl(req: RequestLike): URL {
   const rawUrl = req.url ?? "/api/effects";
   const proto = getHeaderValue(req.headers?.["x-forwarded-proto"]) ?? "https";
@@ -125,6 +141,164 @@ function getModerationToken(): string | null {
 function isAuthorized(url: URL): boolean {
   const token = getModerationToken();
   return Boolean(token && url.searchParams.get("token") === token);
+}
+
+function parseCookieHeader(cookieHeader: string | null): Map<string, string> {
+  if (!cookieHeader) {
+    return new Map();
+  }
+  return new Map(
+    cookieHeader
+      .split(";")
+      .map((entry) => entry.trim())
+      .filter((entry) => entry.includes("="))
+      .map((entry) => {
+        const [name, ...valueParts] = entry.split("=");
+        return [name.trim(), valueParts.join("=").trim()];
+      })
+  );
+}
+
+function getClientIp(req: RequestLike): string {
+  const forwardedFor = getHeader(req, "x-forwarded-for");
+  if (forwardedFor) {
+    return forwardedFor.split(",")[0]?.trim() ?? "unknown";
+  }
+  return getHeader(req, "x-real-ip") ?? "unknown";
+}
+
+function getSessionIdentity(req: RequestLike): string | null {
+  const assertedIdentity = getHeader(req, "x-user-id") ?? getHeader(req, "x-auth-request-user");
+  if (assertedIdentity && assertedIdentity.trim().length > 0) {
+    return assertedIdentity.trim().slice(0, 128);
+  }
+  const cookieNames = (
+    normalizeEnvValue(process.env.EFFECT_GENERATE_SESSION_COOKIE_NAMES)
+    ?? "__session,next-auth.session-token,__Secure-next-auth.session-token"
+  )
+    .split(",")
+    .map((entry) => entry.trim())
+    .filter((entry) => entry.length > 0);
+  const cookieMap = parseCookieHeader(getHeader(req, "cookie"));
+  for (const cookieName of cookieNames) {
+    const value = cookieMap.get(cookieName);
+    if (typeof value === "string" && value.trim().length > 0) {
+      return `cookie:${cookieName}`;
+    }
+  }
+  return null;
+}
+
+function hasSignedAdminToken(req: RequestLike, url: URL): boolean {
+  const token = getModerationToken();
+  if (!token) {
+    return false;
+  }
+  if (url.searchParams.get("token") === token) {
+    return true;
+  }
+  if (getHeader(req, "x-moderation-token") === token) {
+    return true;
+  }
+  const auth = getHeader(req, "authorization");
+  if (auth?.startsWith("Bearer ") && auth.slice("Bearer ".length).trim() === token) {
+    return true;
+  }
+  return false;
+}
+
+function parseAllowlist(value: string | null): Set<string> {
+  if (!value) {
+    return new Set();
+  }
+  return new Set(
+    value
+      .split(",")
+      .map((entry) => entry.trim())
+      .filter((entry) => entry.length > 0)
+  );
+}
+
+function getGenerateAccess(req: RequestLike, url: URL): { allowed: boolean; reason: "admin_token" | "session_auth" | "allowlist" | "none"; identity: string } {
+  if (hasSignedAdminToken(req, url)) {
+    return { allowed: true, reason: "admin_token", identity: "admin-token" };
+  }
+  const sessionIdentity = getSessionIdentity(req);
+  if (sessionIdentity) {
+    return { allowed: true, reason: "session_auth", identity: sessionIdentity };
+  }
+  const ip = getClientIp(req);
+  const ipAllowlist = parseAllowlist(normalizeEnvValue(process.env.EFFECT_GENERATE_ALLOWLIST_IPS));
+  if (ipAllowlist.has(ip)) {
+    return { allowed: true, reason: "allowlist", identity: `ip:${ip}` };
+  }
+  const userAllowlist = parseAllowlist(normalizeEnvValue(process.env.EFFECT_GENERATE_ALLOWLIST_USERS));
+  const assertedUser = getHeader(req, "x-user-id");
+  if (assertedUser && userAllowlist.has(assertedUser.trim())) {
+    return { allowed: true, reason: "allowlist", identity: `user:${assertedUser.trim().slice(0, 128)}` };
+  }
+  return { allowed: false, reason: "none", identity: ip === "unknown" ? "anonymous" : `ip:${ip}` };
+}
+
+function getRateLimitConfig(): { max: number; windowMs: number } {
+  const max = Number.parseInt(normalizeEnvValue(process.env.EFFECT_GENERATE_RATE_LIMIT_MAX) ?? `${DEFAULT_GENERATE_RATE_LIMIT_MAX}`, 10);
+  const windowMs = Number.parseInt(
+    normalizeEnvValue(process.env.EFFECT_GENERATE_RATE_LIMIT_WINDOW_MS) ?? `${DEFAULT_GENERATE_RATE_LIMIT_WINDOW_MS}`,
+    10
+  );
+  return {
+    max: Number.isFinite(max) && max > 0 ? max : DEFAULT_GENERATE_RATE_LIMIT_MAX,
+    windowMs: Number.isFinite(windowMs) && windowMs > 0 ? windowMs : DEFAULT_GENERATE_RATE_LIMIT_WINDOW_MS
+  };
+}
+
+async function consumeGenerateRateLimit(key: string, now = Date.now()): Promise<{ allowed: boolean; retryAfterSec: number; remaining: number }> {
+  if (!writeClient) {
+    return { allowed: true, retryAfterSec: 0, remaining: getRateLimitConfig().max };
+  }
+  const { max, windowMs } = getRateLimitConfig();
+  const redisKey = `${GENERATE_RATE_LIMIT_PREFIX}:${key}`;
+  let state: GenerateRateLimitState = { hits: [] };
+  try {
+    const raw = await writeClient.get(redisKey);
+    if (raw && typeof raw === "object" && Array.isArray((raw as GenerateRateLimitState).hits)) {
+      state = {
+        hits: (raw as GenerateRateLimitState).hits.filter((hit) => typeof hit === "number" && Number.isFinite(hit))
+      };
+    }
+  } catch {
+    return { allowed: true, retryAfterSec: 0, remaining: max };
+  }
+  const cutoff = now - windowMs;
+  const recentHits = state.hits.filter((hit) => hit > cutoff);
+  if (recentHits.length >= max) {
+    const oldest = recentHits[0] ?? now;
+    const retryAfterSec = Math.max(1, Math.ceil((oldest + windowMs - now) / 1000));
+    return { allowed: false, retryAfterSec, remaining: 0 };
+  }
+  recentHits.push(now);
+  try {
+    await writeClient.set(redisKey, { hits: recentHits });
+  } catch {
+    return { allowed: true, retryAfterSec: 0, remaining: Math.max(0, max - recentHits.length) };
+  }
+  return { allowed: true, retryAfterSec: 0, remaining: Math.max(0, max - recentHits.length) };
+}
+
+function logGenerateRequest(details: {
+  outcome: "accepted" | "rejected" | "rate_limited" | "error";
+  httpStatus: number;
+  authMode: string;
+  identity: string;
+  promptLength: number;
+  requestId: string;
+  error?: string;
+}): void {
+  console.info(JSON.stringify({
+    event: "effect_generate_request",
+    ...details,
+    timestamp: new Date().toISOString()
+  }));
 }
 
 function getModerationBaseUrl(requestUrl: URL): string | null {
@@ -442,18 +616,83 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
   if (method === "POST" && url.searchParams.get("action") === "generate") {
     const body = await readBody(req);
     const prompt = typeof body.prompt === "string" ? body.prompt.trim() : "";
+    const requestId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+    const access = getGenerateAccess(req, url);
+    if (!access.allowed) {
+      logGenerateRequest({
+        outcome: "rejected",
+        httpStatus: 401,
+        authMode: access.reason,
+        identity: access.identity,
+        promptLength: prompt.length,
+        requestId
+      });
+      sendJson(res, 401, { error: "Unauthorized. Generate requires moderation token, authenticated session, or allowlisted identity." });
+      return;
+    }
+    const limiter = await consumeGenerateRateLimit(access.identity);
+    if (!limiter.allowed) {
+      res.setHeader("Retry-After", `${limiter.retryAfterSec}`);
+      logGenerateRequest({
+        outcome: "rate_limited",
+        httpStatus: 429,
+        authMode: access.reason,
+        identity: access.identity,
+        promptLength: prompt.length,
+        requestId
+      });
+      sendJson(res, 429, { error: "Rate limit exceeded. Please retry later." });
+      return;
+    }
     if (!prompt) {
+      logGenerateRequest({
+        outcome: "rejected",
+        httpStatus: 400,
+        authMode: access.reason,
+        identity: access.identity,
+        promptLength: 0,
+        requestId
+      });
       sendJson(res, 400, { error: "A prompt is required." });
+      return;
+    }
+    if (prompt.length > MAX_GENERATE_PROMPT_LENGTH) {
+      logGenerateRequest({
+        outcome: "rejected",
+        httpStatus: 400,
+        authMode: access.reason,
+        identity: access.identity,
+        promptLength: prompt.length,
+        requestId
+      });
+      sendJson(res, 400, { error: `Prompt must be ${MAX_GENERATE_PROMPT_LENGTH} characters or fewer.` });
       return;
     }
     try {
       const generation = await generateWithOpenAi(prompt);
+      logGenerateRequest({
+        outcome: "accepted",
+        httpStatus: 200,
+        authMode: access.reason,
+        identity: access.identity,
+        promptLength: prompt.length,
+        requestId
+      });
       sendJson(res, 200, { generation });
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unable to generate effect.";
       const rawResponse = error instanceof Error && "rawResponse" in error && typeof (error as { rawResponse?: unknown }).rawResponse === "string"
         ? (error as { rawResponse: string }).rawResponse
         : undefined;
+      logGenerateRequest({
+        outcome: "error",
+        httpStatus: 503,
+        authMode: access.reason,
+        identity: access.identity,
+        promptLength: prompt.length,
+        requestId,
+        error: message
+      });
       sendJson(res, 503, { error: message, rawResponse });
     }
     return;

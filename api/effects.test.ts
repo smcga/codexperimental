@@ -28,12 +28,20 @@ const createResponse = () => {
 function createMockRedis(initialApproved: unknown[] = [], initialPending: unknown[] = []): MockRedis {
   const approved = [...initialApproved];
   let pending = [...initialPending];
+  const kv = new Map<string, unknown>();
   return {
-    get: vi.fn(async (key: string) => (key === "effects:pending" ? pending : null)),
+    get: vi.fn(async (key: string) => {
+      if (key === "effects:pending") {
+        return pending;
+      }
+      return kv.has(key) ? kv.get(key) : null;
+    }),
     set: vi.fn(async (key: string, value: unknown) => {
       if (key === "effects:pending") {
         pending = Array.isArray(value) ? [...value] : [];
+        return "OK";
       }
+      kv.set(key, value);
       return "OK";
     }),
     lrange: vi.fn(async (key: string) => (key === "effects:items" ? approved : [])),
@@ -57,6 +65,7 @@ describe("api/effects", () => {
   beforeEach(() => {
     vi.resetModules();
     process.env = { ...originalEnv };
+    process.env.EFFECT_GENERATE_ALLOWLIST_IPS = "127.0.0.1";
     globalThis.fetch = vi.fn(async () => ({
       ok: true,
       status: 200,
@@ -96,7 +105,12 @@ describe("api/effects", () => {
     vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
     const { default: handler } = await import("./effects");
     const res = createResponse();
-    await handler({ method: "POST", url: "/api/effects?action=generate", body: JSON.stringify({ prompt: "make stars" }) }, res.response);
+    await handler({
+      method: "POST",
+      url: "/api/effects?action=generate",
+      headers: { "x-forwarded-for": "127.0.0.1" },
+      body: JSON.stringify({ prompt: "make stars" })
+    }, res.response);
     expect(res.response.statusCode).toBe(200);
     expect(JSON.parse(res.getBody()).generation.name).toBe("Nebula");
     expect(globalThis.fetch).toHaveBeenCalledWith(
@@ -114,7 +128,12 @@ describe("api/effects", () => {
     vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
     const { default: handler } = await import("./effects");
     const res = createResponse();
-    await handler({ method: "POST", url: "/api/effects?action=generate", body: JSON.stringify({ prompt: "make stars" }) }, res.response);
+    await handler({
+      method: "POST",
+      url: "/api/effects?action=generate",
+      headers: { "x-forwarded-for": "127.0.0.1" },
+      body: JSON.stringify({ prompt: "make stars" })
+    }, res.response);
     expect(res.response.statusCode).toBe(503);
     expect(JSON.parse(res.getBody()).error).toContain("OPENAI_API_KEY");
   });
@@ -130,7 +149,12 @@ describe("api/effects", () => {
     vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
     const { default: handler } = await import("./effects");
     const res = createResponse();
-    await handler({ method: "POST", url: "/api/effects?action=generate", body: JSON.stringify({ prompt: "make stars" }) }, res.response);
+    await handler({
+      method: "POST",
+      url: "/api/effects?action=generate",
+      headers: { "x-forwarded-for": "127.0.0.1" },
+      body: JSON.stringify({ prompt: "make stars" })
+    }, res.response);
     expect(res.response.statusCode).toBe(503);
     const payload = JSON.parse(res.getBody());
     expect(payload.error).toContain("Unable to parse generated effect response.");
@@ -208,5 +232,104 @@ describe("api/effects", () => {
       "effects:items",
       expect.objectContaining({ id: "pending-1" })
     );
+  });
+
+  it("rejects generate when token/session/allowlist checks fail", async () => {
+    process.env.EFFECT_GENERATE_ALLOWLIST_IPS = "203.0.113.10";
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+
+    await handler(
+      {
+        method: "POST",
+        url: "/api/effects?action=generate",
+        headers: { "x-forwarded-for": "127.0.0.1" },
+        body: JSON.stringify({ prompt: "make stars" })
+      },
+      res.response
+    );
+
+    expect(res.response.statusCode).toBe(401);
+    expect(JSON.parse(res.getBody()).error).toContain("Unauthorized");
+  });
+
+  it("allows generate via moderation bearer token", async () => {
+    process.env.OPENAI_API_KEY = "sk-test";
+    process.env.EFFECT_MODERATION_TOKEN = "secret-token";
+    process.env.EFFECT_GENERATE_ALLOWLIST_IPS = "";
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+
+    await handler(
+      {
+        method: "POST",
+        url: "/api/effects?action=generate",
+        headers: { authorization: "Bearer secret-token" },
+        body: JSON.stringify({ prompt: "make stars" })
+      },
+      res.response
+    );
+
+    expect(res.response.statusCode).toBe(200);
+    expect(JSON.parse(res.getBody()).generation.name).toBe("Nebula");
+  });
+
+  it("rate limits generate requests by identity", async () => {
+    process.env.OPENAI_API_KEY = "sk-test";
+    process.env.EFFECT_GENERATE_RATE_LIMIT_MAX = "1";
+    process.env.EFFECT_GENERATE_RATE_LIMIT_WINDOW_MS = "60000";
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+
+    const first = createResponse();
+    await handler(
+      {
+        method: "POST",
+        url: "/api/effects?action=generate",
+        headers: { "x-forwarded-for": "127.0.0.1" },
+        body: JSON.stringify({ prompt: "make stars" })
+      },
+      first.response
+    );
+    expect(first.response.statusCode).toBe(200);
+
+    const second = createResponse();
+    await handler(
+      {
+        method: "POST",
+        url: "/api/effects?action=generate",
+        headers: { "x-forwarded-for": "127.0.0.1" },
+        body: JSON.stringify({ prompt: "make stars again" })
+      },
+      second.response
+    );
+    expect(second.response.statusCode).toBe(429);
+    expect(JSON.parse(second.getBody()).error).toContain("Rate limit exceeded");
+  });
+
+  it("enforces explicit generate prompt length limits", async () => {
+    process.env.OPENAI_API_KEY = "sk-test";
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+
+    await handler(
+      {
+        method: "POST",
+        url: "/api/effects?action=generate",
+        headers: { "x-forwarded-for": "127.0.0.1" },
+        body: JSON.stringify({ prompt: "x".repeat(3001) })
+      },
+      res.response
+    );
+
+    expect(res.response.statusCode).toBe(400);
+    expect(JSON.parse(res.getBody()).error).toContain("3000");
   });
 });
