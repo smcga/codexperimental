@@ -10,6 +10,7 @@ const MAX_PENDING_EFFECTS = 128;
 const MAX_GENERATE_PROMPT_LENGTH = 3000;
 const DEFAULT_GENERATE_RATE_LIMIT_MAX = 8;
 const DEFAULT_GENERATE_RATE_LIMIT_WINDOW_MS = 60_000;
+const DEFAULT_GENERATE_DAILY_CAP = 100;
 const MODERATION_TOKEN_ENV_KEYS = ["EFFECT_MODERATION_TOKEN", "DOODLE_MODERATION_TOKEN", "DOODLE_ADMIN_TOKEN"];
 const MODERATION_BASE_URL_ENV_KEYS = [
   "EFFECT_MODERATION_BASE_URL",
@@ -283,6 +284,69 @@ async function consumeGenerateRateLimit(key: string, now = Date.now()): Promise<
     return { allowed: true, retryAfterSec: 0, remaining: Math.max(0, max - recentHits.length) };
   }
   return { allowed: true, retryAfterSec: 0, remaining: Math.max(0, max - recentHits.length) };
+}
+
+function getGenerateDailyCap(): number {
+  const parsed = Number.parseInt(normalizeEnvValue(process.env.EFFECT_GENERATE_DAILY_CAP) ?? `${DEFAULT_GENERATE_DAILY_CAP}`, 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return DEFAULT_GENERATE_DAILY_CAP;
+  }
+  return parsed;
+}
+
+function getUtcDayKey(now: number): string {
+  return new Date(now).toISOString().slice(0, 10);
+}
+
+function getSecondsUntilUtcMidnight(now: number): number {
+  const date = new Date(now);
+  const nextMidnight = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + 1, 0, 0, 0, 0);
+  return Math.max(1, Math.ceil((nextMidnight - now) / 1000));
+}
+
+async function consumeGlobalGenerateCap(now = Date.now()): Promise<{ allowed: boolean; retryAfterSec: number; remaining: number; limit: number }> {
+  const limit = getGenerateDailyCap();
+  if (!writeClient) {
+    return { allowed: true, retryAfterSec: 0, remaining: limit, limit };
+  }
+  const day = getUtcDayKey(now);
+  const key = `${GENERATE_RATE_LIMIT_PREFIX}:global:${day}`;
+  let count = 0;
+  try {
+    const raw = await writeClient.get(key);
+    if (typeof raw === "number" && Number.isFinite(raw) && raw >= 0) {
+      count = Math.floor(raw);
+    } else if (typeof raw === "string") {
+      const parsed = Number.parseInt(raw, 10);
+      if (Number.isFinite(parsed) && parsed >= 0) {
+        count = parsed;
+      }
+    } else if (raw && typeof raw === "object" && "count" in raw && typeof (raw as { count?: unknown }).count === "number") {
+      const candidate = (raw as { count: number }).count;
+      if (Number.isFinite(candidate) && candidate >= 0) {
+        count = Math.floor(candidate);
+      }
+    }
+  } catch {
+    return { allowed: true, retryAfterSec: 0, remaining: limit, limit };
+  }
+
+  if (count >= limit) {
+    return {
+      allowed: false,
+      retryAfterSec: getSecondsUntilUtcMidnight(now),
+      remaining: 0,
+      limit
+    };
+  }
+
+  const next = count + 1;
+  try {
+    await writeClient.set(key, next);
+  } catch {
+    return { allowed: true, retryAfterSec: 0, remaining: Math.max(0, limit - next), limit };
+  }
+  return { allowed: true, retryAfterSec: 0, remaining: Math.max(0, limit - next), limit };
 }
 
 function logGenerateRequest(details: {
@@ -639,6 +703,22 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
         requestId
       });
       sendJson(res, 429, { error: `Rate limit exceeded. Please wait ${waitText} before trying again.` });
+      return;
+    }
+    const globalCap = await consumeGlobalGenerateCap();
+    if (!globalCap.allowed) {
+      res.setHeader("Retry-After", `${globalCap.retryAfterSec}`);
+      const waitText = formatRetryWait(globalCap.retryAfterSec);
+      logGenerateRequest({
+        outcome: "rate_limited",
+        httpStatus: 429,
+        authMode: access.reason,
+        identity: access.identity,
+        promptLength: prompt.length,
+        requestId,
+        error: `global_daily_cap:${globalCap.limit}`
+      });
+      sendJson(res, 429, { error: `Daily generation limit reached (${globalCap.limit}/day). Please wait ${waitText} before trying again.` });
       return;
     }
     if (!prompt) {

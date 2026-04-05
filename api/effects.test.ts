@@ -333,4 +333,39 @@ describe("api/effects", () => {
     expect(res.response.statusCode).toBe(400);
     expect(JSON.parse(res.getBody()).error).toContain("3000");
   });
+
+  it("enforces a global daily generation cap", async () => {
+    process.env.OPENAI_API_KEY = "sk-test";
+    process.env.EFFECT_GENERATE_DAILY_CAP = "1";
+    process.env.EFFECT_GENERATE_RATE_LIMIT_MAX = "10";
+    process.env.EFFECT_GENERATE_RATE_LIMIT_WINDOW_MS = "60000";
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+
+    const first = createResponse();
+    await handler(
+      {
+        method: "POST",
+        url: "/api/effects?action=generate",
+        headers: { "x-forwarded-for": "127.0.0.1" },
+        body: JSON.stringify({ prompt: "first request" })
+      },
+      first.response
+    );
+    expect(first.response.statusCode).toBe(200);
+
+    const second = createResponse();
+    await handler(
+      {
+        method: "POST",
+        url: "/api/effects?action=generate",
+        headers: { "x-forwarded-for": "198.51.100.10" },
+        body: JSON.stringify({ prompt: "second request" })
+      },
+      second.response
+    );
+    expect(second.response.statusCode).toBe(429);
+    expect(JSON.parse(second.getBody()).error).toContain("Daily generation limit reached (1/day)");
+  });
 });
