@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { buildTransitionOptionMarkup, transitionOptions } from "../renderer/transitions";
 import {
   computeSceneSeekTime,
+  clampPlaylistViewportStart,
   getMainSlotSelection,
   applyMainSlotSelection,
   getNewSceneTimeRange,
@@ -66,6 +67,15 @@ describe("getScenePlayingAtTime", () => {
       { id: "b", start: 10, end: 20, effect: "rain" }
     ];
     expect(getScenePlayingAtTime(overlapping, 12)?.id).toBe("b");
+  });
+
+  it("works with unsorted sections by sorting before selection", () => {
+    const unsorted = [
+      { id: "late", start: 20, effect: "rain" },
+      { id: "early", start: 0, effect: "starfield" },
+      { id: "mid", start: 10, effect: "plasma" }
+    ];
+    expect(getScenePlayingAtTime(unsorted, 11)?.id).toBe("mid");
   });
 });
 
@@ -271,6 +281,18 @@ describe("playlist helpers", () => {
     expect(panPlaylistViewport(5, -20, 80, 20)).toBe(0);
     expect(panPlaylistViewport(65, 40, 80, 20)).toBe(60);
   });
+
+  it("clamps viewport start against zoom window and timeline duration", () => {
+    expect(clampPlaylistViewportStart(-8, 120, 30)).toBe(0);
+    expect(clampPlaylistViewportStart(500, 120, 30)).toBe(90);
+  });
+
+  it("clamps zoom duration to the allowed range", () => {
+    const zoomedIn = zoomPlaylistViewport(0, 8, 0.1, 1, 120);
+    const zoomedOut = zoomPlaylistViewport(0, 40, 10, 1, 120);
+    expect(zoomedIn.duration).toBeGreaterThanOrEqual(15);
+    expect(zoomedOut.duration).toBe(120);
+  });
 });
 
 describe("stripSceneEnds", () => {
@@ -284,6 +306,12 @@ describe("stripSceneEnds", () => {
       { id: "a", start: 0, effect: "starfield" },
       { id: "b", start: 4, effect: "rain" }
     ]);
+  });
+
+  it("is safe to run when sections already omit end", () => {
+    const sections = [{ id: "a", start: 0, effect: "starfield" }];
+    stripSceneEnds(sections);
+    expect(sections).toEqual([{ id: "a", start: 0, effect: "starfield" }]);
   });
 });
 
