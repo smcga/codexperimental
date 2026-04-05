@@ -651,6 +651,31 @@ body,
     rgba(0, 0, 0, 0.28);
 }
 
+.editor-playlist-scrollbar {
+  position: relative;
+  height: 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.editor-playlist-scrollbar-thumb {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  min-width: 6%;
+  border-radius: 999px;
+  background: rgba(142, 249, 255, 0.45);
+  border: 1px solid rgba(142, 249, 255, 0.8);
+  cursor: grab;
+}
+
+.editor-playlist-scrollbar-thumb:active {
+  cursor: grabbing;
+}
+
 .editor-playlist-tracks {
   position: relative;
   min-height: calc(var(--playlist-track-count, 1) * var(--editor-playlist-track-height));

@@ -3,6 +3,7 @@ import { buildTransitionOptionMarkup, transitionOptions } from "../renderer/tran
 import {
   computeSceneSeekTime,
   clampPlaylistViewportStart,
+  getPlaylistScrollbarMetrics,
   getMainSlotSelection,
   applyMainSlotSelection,
   getNewSceneTimeRange,
@@ -292,6 +293,17 @@ describe("playlist helpers", () => {
     const zoomedOut = zoomPlaylistViewport(0, 40, 10, 1, 120);
     expect(zoomedIn.duration).toBeGreaterThanOrEqual(15);
     expect(zoomedOut.duration).toBe(120);
+  });
+
+  it("computes scrollbar thumb size/start from viewport ratios", () => {
+    const metrics = getPlaylistScrollbarMetrics(120, 30, 20);
+    expect(metrics.thumbSizeRatio).toBeCloseTo(1 / 6);
+    expect(metrics.thumbStartRatio).toBeCloseTo(0.25);
+  });
+
+  it("clamps scrollbar thumb to minimum visible size", () => {
+    const metrics = getPlaylistScrollbarMetrics(300, 10, 1);
+    expect(metrics.thumbSizeRatio).toBe(0.05);
   });
 });
 

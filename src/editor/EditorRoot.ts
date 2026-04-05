@@ -378,6 +378,25 @@ export const panPlaylistViewport = (
   return clampPlaylistViewportStart(viewportStart + deltaSeconds, totalDuration, viewportDuration);
 };
 
+export const getPlaylistScrollbarMetrics = (
+  totalDuration: number,
+  viewportStart: number,
+  viewportDuration: number
+): { thumbStartRatio: number; thumbSizeRatio: number } => {
+  if (!Number.isFinite(totalDuration) || totalDuration <= 0) {
+    return { thumbStartRatio: 0, thumbSizeRatio: 1 };
+  }
+  const normalizedViewportDuration = Math.min(totalDuration, Math.max(0, viewportDuration));
+  const rawSizeRatio = normalizedViewportDuration / totalDuration;
+  const thumbSizeRatio = Math.min(1, Math.max(0.05, rawSizeRatio));
+  const maxStart = Math.max(0, totalDuration - normalizedViewportDuration);
+  const startRatio = maxStart > 0 ? Math.min(1, Math.max(0, viewportStart / maxStart)) : 0;
+  return {
+    thumbStartRatio: startRatio * (1 - thumbSizeRatio),
+    thumbSizeRatio
+  };
+};
+
 export const parseEditorParamInputValue = (input: string): EditorParamValue => {
   const trimmed = input.trim();
   if (!trimmed) {
@@ -540,6 +559,13 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   let playlistViewportStart = 0;
   let playlistViewportDuration = 45;
   let activePlaylistPan:
+    | {
+        pointerId: number;
+        startX: number;
+        startViewport: number;
+      }
+    | null = null;
+  let activeScrollbarDrag:
     | {
         pointerId: number;
         startX: number;
@@ -893,11 +919,16 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       <div class="editor-playlist-scroll" data-region="playlist-scroll">
         <div class="editor-playlist-tracks" data-region="playlist-tracks"></div>
       </div>
+      <div class="editor-playlist-scrollbar" data-region="playlist-scrollbar">
+        <div class="editor-playlist-scrollbar-thumb" data-region="playlist-scrollbar-thumb"></div>
+      </div>
     `;
 
     const tracks = view.querySelector<HTMLDivElement>("[data-region='playlist-tracks']");
     const scroll = view.querySelector<HTMLDivElement>("[data-region='playlist-scroll']");
-    if (!tracks || !scroll) {
+    const scrollbar = view.querySelector<HTMLDivElement>("[data-region='playlist-scrollbar']");
+    const scrollbarThumb = view.querySelector<HTMLDivElement>("[data-region='playlist-scrollbar-thumb']");
+    if (!tracks || !scroll || !scrollbar || !scrollbarThumb) {
       return;
     }
     tracks.style.setProperty("--playlist-track-count", String(layout.trackCount));
@@ -1015,6 +1046,28 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       }
       renderTimelineView();
     });
+    const scrollbarMetrics = getPlaylistScrollbarMetrics(duration, playlistViewportStart, playlistViewportDuration);
+    scrollbarThumb.style.width = `${scrollbarMetrics.thumbSizeRatio * 100}%`;
+    scrollbarThumb.style.left = `${scrollbarMetrics.thumbStartRatio * 100}%`;
+    scrollbar.addEventListener("pointerdown", (event) => {
+      const target = event.target as HTMLElement;
+      if (target.closest("[data-region='playlist-scrollbar-thumb']")) {
+        activeScrollbarDrag = {
+          pointerId: event.pointerId,
+          startX: event.clientX,
+          startViewport: playlistViewportStart
+        };
+        return;
+      }
+      const rect = scrollbar.getBoundingClientRect();
+      if (rect.width <= 0) {
+        return;
+      }
+      const ratio = (event.clientX - rect.left) / rect.width;
+      const desiredStart = ratio * duration - playlistViewportDuration / 2;
+      playlistViewportStart = clampPlaylistViewportStart(desiredStart, duration, playlistViewportDuration);
+      renderTimelineView();
+    });
 
     view.querySelector<HTMLButtonElement>("[data-action='playlist-zoom-in']")?.addEventListener("click", () => {
       const zoomed = zoomPlaylistViewport(
@@ -1071,15 +1124,46 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     renderTimelineView();
   };
 
+  const handleGlobalScrollbarDrag = (event: PointerEvent): void => {
+    if (!activeScrollbarDrag || event.pointerId !== activeScrollbarDrag.pointerId) {
+      return;
+    }
+    const scrollbar = init.container.querySelector<HTMLDivElement>("[data-region='playlist-scrollbar']");
+    if (!scrollbar) {
+      return;
+    }
+    const rect = scrollbar.getBoundingClientRect();
+    if (rect.width <= 0) {
+      return;
+    }
+    const scenes = getScenesByTime();
+    const duration = Math.max(5, scenes.reduce((max, scene) => Math.max(max, getSceneEnd(scene)), 0));
+    const secondsPerPixel = duration / rect.width;
+    const deltaSeconds = (event.clientX - activeScrollbarDrag.startX) * secondsPerPixel;
+    playlistViewportStart = clampPlaylistViewportStart(
+      activeScrollbarDrag.startViewport + deltaSeconds,
+      duration,
+      playlistViewportDuration
+    );
+    renderTimelineView();
+  };
+
   window.addEventListener("pointermove", handleGlobalPlaylistPan);
+  window.addEventListener("pointermove", handleGlobalScrollbarDrag);
   window.addEventListener("pointerup", (event) => {
     if (activePlaylistPan && event.pointerId === activePlaylistPan.pointerId) {
       activePlaylistPan = null;
+    }
+    if (activeScrollbarDrag && event.pointerId === activeScrollbarDrag.pointerId) {
+      activeScrollbarDrag = null;
     }
   });
   window.addEventListener("pointercancel", (event) => {
     if (activePlaylistPan && event.pointerId === activePlaylistPan.pointerId) {
       activePlaylistPan = null;
+    }
+    if (activeScrollbarDrag && event.pointerId === activeScrollbarDrag.pointerId) {
+      activeScrollbarDrag = null;
     }
   });
 
