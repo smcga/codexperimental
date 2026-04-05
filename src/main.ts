@@ -556,7 +556,7 @@ function renderGeneratedEffectIdeaControls(): void {
 
   params.forEach((param) => {
     const field = document.createElement("label");
-    field.classList.add("debug-field");
+    field.classList.add("effect-idea-field");
     const label = document.createElement("span");
     label.textContent = param.label;
     field.appendChild(label);
