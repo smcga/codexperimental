@@ -1,5 +1,5 @@
 import { Effect, EffectRenderContext } from "./types";
-import { H, W, applyExplicit } from "../../generated/explicitPixelsFrame";
+import { H, W, applyExplicit_frameBytes } from "../../generated/explicitPixelsFrame";
 
 const EXPLICIT_PIXELS_DEFAULTS = {
   mode: "explicit",
@@ -26,6 +26,7 @@ export class ExplicitPixelsEffect implements Effect {
     }
     this.ctx = ctx;
     this.imageData = ctx.createImageData(W, H);
+    applyExplicit_frameBytes(this.imageData.data);
   }
 
   render({ ctx, width, height, time, audio, params }: EffectRenderContext): void {
@@ -34,8 +35,6 @@ export class ExplicitPixelsEffect implements Effect {
 
     if (mode === "procedural") {
       this.renderProcedural(data, time, audio, params);
-    } else {
-      applyExplicit(data);
     }
 
     this.ctx.putImageData(this.imageData, 0, 0);
