@@ -13,7 +13,6 @@ import {
   isEditorParamToggleChecked,
   clampEditorNumberParam,
   stepEditorNumberParam,
-  stepEditorNumberParamFromWheel,
   parseEditorParamInputValue,
   splitCueWords,
   generateWordTextCues
@@ -267,19 +266,6 @@ describe("stepEditorNumberParam", () => {
     expect(stepEditorNumberParam(1, -1, { min: 0, max: 2 })).toBeCloseTo(0.99);
   });
 });
-
-describe("stepEditorNumberParamFromWheel", () => {
-  it("maps wheel direction to increment/decrement", () => {
-    expect(stepEditorNumberParamFromWheel(0.5, -100, { min: 0, max: 1, step: 0.1 })).toBeCloseTo(0.6);
-    expect(stepEditorNumberParamFromWheel(0.5, 100, { min: 0, max: 1, step: 0.1 })).toBeCloseTo(0.4);
-  });
-
-  it("returns clamped value when wheel delta is neutral/invalid", () => {
-    expect(stepEditorNumberParamFromWheel(3, 0, { min: 0, max: 2 })).toBe(2);
-    expect(stepEditorNumberParamFromWheel(1, Number.NaN, { min: 0, max: 2 })).toBe(1);
-  });
-});
-
 
 describe("splitCueWords", () => {
   it("splits on whitespace and ignores empty tokens", () => {

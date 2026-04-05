@@ -359,17 +359,6 @@ export const stepEditorNumberParam = (
   });
 };
 
-export const stepEditorNumberParamFromWheel = (
-  value: unknown,
-  deltaY: number,
-  options: { min?: number; max?: number; step?: number; fallback?: number }
-): number => {
-  if (!Number.isFinite(deltaY) || deltaY === 0) {
-    return clampEditorNumberParam(value, options);
-  }
-  return stepEditorNumberParam(value, deltaY < 0 ? 1 : -1, options);
-};
-
 export const splitCueWords = (value: string): string[] => {
   return value
     .split(/\s+/)
@@ -1369,27 +1358,6 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         input.addEventListener("input", () => {
           syncNumberInputs();
         });
-        input.addEventListener(
-          "wheel",
-          (event) => {
-            const key = row.querySelector<HTMLInputElement>("[data-param-key]")?.value ?? "";
-            const control = controlsByKey.get(key);
-            if (!control || control.type !== "number") {
-              return;
-            }
-            event.preventDefault();
-            const nextValue = stepEditorNumberParamFromWheel(input.value, event.deltaY, {
-              min: control.min,
-              max: control.max,
-              step: control.step,
-              fallback: typeof control.defaultValue === "number" ? control.defaultValue : 0
-            });
-            input.value = String(nextValue);
-            syncNumberInputs();
-            updateParams();
-          },
-          { passive: false }
-        );
       });
       row.querySelectorAll<HTMLButtonElement>("[data-action='param-step']").forEach((button) => {
         button.addEventListener("click", () => {
