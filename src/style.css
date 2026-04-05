@@ -152,6 +152,7 @@ body,
 
 .debug-panel {
   width: min(320px, 90vw);
+  max-height: min(80vh, 46rem);
   padding: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.2);
   background: rgba(0, 0, 0, 0.7);
@@ -210,6 +211,46 @@ body,
   text-transform: uppercase;
 }
 
+.debug-panel-tabs {
+  display: none;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.4rem;
+}
+
+.debug-tab {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  color: inherit;
+  padding: 0.45rem 0.35rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.debug-tab.active {
+  border-color: rgba(142, 249, 255, 0.7);
+  background: rgba(142, 249, 255, 0.14);
+}
+
+.debug-panel-scroll {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 0.15rem;
+}
+
+.debug-panel-section {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.debug-panel[data-mobile-section="transport"] .debug-panel-section:not([data-debug-section="transport"]),
+.debug-panel[data-mobile-section="effects"] .debug-panel-section:not([data-debug-section="effects"]),
+.debug-panel[data-mobile-section="render"] .debug-panel-section:not([data-debug-section="render"]) {
+  display: none;
+}
+
 .debug-row {
   display: flex;
   align-items: center;
@@ -244,6 +285,7 @@ body,
   text-transform: uppercase;
   letter-spacing: 0.08em;
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 .debug-row button:disabled {
@@ -343,6 +385,53 @@ body,
 .debug-error {
   font-size: 0.7rem;
   color: #ff7b7b;
+}
+
+@media (pointer: coarse), (max-width: 900px) {
+  #debug-panels {
+    top: 0.75rem;
+    left: 0.75rem;
+    right: 0.75rem;
+  }
+
+  .debug-panel {
+    width: min(100%, 28rem);
+    max-height: min(72vh, 38rem);
+    gap: 0.55rem;
+    padding: 0.75rem;
+  }
+
+  .debug-panel-tabs {
+    display: grid;
+  }
+
+  .debug-panel-scroll {
+    padding-bottom: 0.2rem;
+  }
+
+  .debug-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .debug-row button,
+  .debug-row select {
+    width: 100%;
+    min-width: 0;
+    min-height: 2.5rem;
+    font-size: 0.9rem;
+  }
+
+  .debug-row-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .debug-tab,
+  #debug-effect-copy {
+    min-height: 2.25rem;
+  }
 }
 
 .editor {

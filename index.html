@@ -101,82 +101,95 @@
       <div id="debug-panels">
         <div id="debug-overlay" class="debug-panel hidden">
           <div class="debug-title">Debug Controls</div>
-          <div class="debug-row">
-            <span>Time</span>
-            <span id="debug-timestamp">00:00.0</span>
+          <div class="debug-panel-tabs" role="tablist" aria-label="Debug panel sections">
+            <button id="debug-tab-transport" class="debug-tab active" type="button" data-debug-tab="transport" role="tab" aria-selected="true">Transport</button>
+            <button id="debug-tab-effects" class="debug-tab" type="button" data-debug-tab="effects" role="tab" aria-selected="false">Effects</button>
+            <button id="debug-tab-render" class="debug-tab" type="button" data-debug-tab="render" role="tab" aria-selected="false">Render</button>
           </div>
-          <div class="debug-row">
-            <span>WebGL</span>
-            <span id="debug-webgl-status">OK</span>
+          <div class="debug-panel-scroll">
+            <section class="debug-panel-section" data-debug-section="transport">
+              <div class="debug-row">
+                <span>Time</span>
+                <span id="debug-timestamp">00:00.0</span>
+              </div>
+              <div class="debug-row">
+                <span>WebGL</span>
+                <span id="debug-webgl-status">OK</span>
+              </div>
+              <div class="debug-row">
+                <span>Intro</span>
+                <button id="debug-skip-intro" type="button">Skip intro</button>
+              </div>
+              <div class="debug-row">
+                <span>Second half</span>
+                <button id="debug-skip-second-half" type="button">Skip to second half</button>
+              </div>
+              <div class="debug-row">
+                <span>End</span>
+                <button id="debug-skip-end" type="button">Skip to end</button>
+              </div>
+              <div class="debug-row">
+                <span>Skip 10s</span>
+                <div class="debug-row-actions">
+                  <button id="debug-skip-back" type="button">Back</button>
+                  <button id="debug-skip-forward" type="button">Forward</button>
+                </div>
+              </div>
+            </section>
+            <section class="debug-panel-section" data-debug-section="effects">
+              <div class="debug-section">
+                <div class="debug-section-title">Effects</div>
+                <label class="debug-field" for="debug-effect-select">
+                  <span>Override</span>
+                  <select id="debug-effect-select"></select>
+                </label>
+              </div>
+              <div id="debug-effect-panel" class="debug-section hidden">
+                <div id="debug-effect-title" class="debug-section-title">Effect Controls</div>
+                <button id="debug-effect-copy" type="button">Copy timeline JSON</button>
+                <div id="debug-effect-copy-status" class="debug-empty"></div>
+                <div id="debug-effect-controls" class="debug-grid"></div>
+                <div id="debug-effect-empty" class="debug-empty hidden">No debug controls available for this effect.</div>
+              </div>
+            </section>
+            <section class="debug-panel-section" data-debug-section="render">
+              <label class="debug-row">
+                <span>Transition</span>
+                <select id="debug-transition"></select>
+              </label>
+              <label class="debug-row">
+                <span>Era</span>
+                <select id="debug-era">
+                  <option value="auto">Auto</option>
+                  <option value="8bit">8-bit</option>
+                  <option value="16bit">16-bit</option>
+                  <option value="ps1">PS1</option>
+                  <option value="pcdemo">PC demo</option>
+                  <option value="future">Future</option>
+                </select>
+              </label>
+              <label class="debug-row">
+                <span>Framing</span>
+                <select id="debug-framing">
+                  <option value="auto">Auto</option>
+                  <option value="desktopCinematic">Desktop cinematic</option>
+                  <option value="mobileFit">Mobile fit</option>
+                </select>
+              </label>
+              <div class="debug-row">
+                <span>Frame</span>
+                <span id="debug-framing-state">auto</span>
+              </div>
+              <label class="debug-row debug-toggle">
+                <input type="checkbox" id="debug-editor-toggle" />
+                <span>Editor mode</span>
+              </label>
+              <label class="debug-row debug-toggle">
+                <input type="checkbox" id="debug-monochrome" />
+                <span>Force monochrome</span>
+              </label>
+            </section>
           </div>
-          <div class="debug-row">
-            <span>Intro</span>
-            <button id="debug-skip-intro" type="button">Skip intro</button>
-          </div>
-          <div class="debug-row">
-            <span>Second half</span>
-            <button id="debug-skip-second-half" type="button">Skip to second half</button>
-          </div>
-          <div class="debug-row">
-            <span>End</span>
-            <button id="debug-skip-end" type="button">Skip to end</button>
-          </div>
-          <div class="debug-row">
-            <span>Skip 10s</span>
-            <div class="debug-row-actions">
-              <button id="debug-skip-back" type="button">Back</button>
-              <button id="debug-skip-forward" type="button">Forward</button>
-            </div>
-          </div>
-          <label class="debug-row">
-            <span>Transition</span>
-            <select id="debug-transition"></select>
-          </label>
-          <label class="debug-row">
-            <span>Era</span>
-            <select id="debug-era">
-              <option value="auto">Auto</option>
-              <option value="8bit">8-bit</option>
-              <option value="16bit">16-bit</option>
-              <option value="ps1">PS1</option>
-              <option value="pcdemo">PC demo</option>
-              <option value="future">Future</option>
-            </select>
-          </label>
-          <label class="debug-row">
-            <span>Framing</span>
-            <select id="debug-framing">
-              <option value="auto">Auto</option>
-              <option value="desktopCinematic">Desktop cinematic</option>
-              <option value="mobileFit">Mobile fit</option>
-            </select>
-          </label>
-          <div class="debug-row">
-            <span>Frame</span>
-            <span id="debug-framing-state">auto</span>
-          </div>
-          <label class="debug-row debug-toggle">
-            <input type="checkbox" id="debug-editor-toggle" />
-            <span>Editor mode</span>
-          </label>
-          <div class="debug-section">
-            <div class="debug-section-title">Effects</div>
-            <label class="debug-field" for="debug-effect-select">
-              <span>Override</span>
-              <select id="debug-effect-select"></select>
-            </label>
-          </div>
-          <label class="debug-row debug-toggle">
-            <input type="checkbox" id="debug-monochrome" />
-            <span>Force monochrome</span>
-          </label>
-        </div>
-        <div id="debug-effect-panel" class="debug-panel debug-section hidden">
-          <div id="debug-effect-title" class="debug-section-title">Effect Controls</div>
-          <button id="debug-effect-copy" type="button">Copy timeline JSON</button>
-          <div id="debug-effect-copy-status" class="debug-empty"></div>
-          <div id="debug-effect-controls" class="debug-grid"></div>
-          <div id="debug-effect-empty" class="debug-empty hidden">No debug controls available for this effect.</div>
         </div>
       </div>
       <div id="view-counter" class="view-counter">Views: --</div>

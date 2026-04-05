@@ -30,10 +30,12 @@ import {
   shouldHandleGlobalShortcut
 } from "./controls";
 import {
+  DebugPanelSection,
   buildDebugRenderSelection,
   formatEffectSettingsForTimeline,
   getDebugEffectSelectorOptions,
   getDebugEffectSelectorValue,
+  getDebugPanelSection,
   getNextDebugEffectSelection,
   shouldShowEffectPanel
 } from "./debug/debugPanel";
@@ -101,6 +103,7 @@ const debugSkipEndButton = document.querySelector<HTMLButtonElement>("#debug-ski
 const debugSkipBackButton = document.querySelector<HTMLButtonElement>("#debug-skip-back");
 const debugSkipForwardButton = document.querySelector<HTMLButtonElement>("#debug-skip-forward");
 const debugEditorToggle = document.querySelector<HTMLInputElement>("#debug-editor-toggle");
+const debugTabButtons = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-debug-tab]"));
 const editorRoot = document.querySelector<HTMLDivElement>("#editor-root");
 const mobileControls = document.querySelector<HTMLDivElement>("#mobile-controls");
 const mobileDebugButton = document.querySelector<HTMLButtonElement>("#mobile-debug");
@@ -240,6 +243,7 @@ const debugState = {
   effectParams: Object.fromEntries(getEffectRegistryKeys().map((effectName) => [effectName, getEffectDebugDefaults(effectName)])),
   framingOverride: "auto" as FramingOverride
 };
+let mobileDebugSection: DebugPanelSection = "transport";
 
 const doodleCtx = doodleCanvas?.getContext("2d") ?? null;
 const effectIdeaPreviewCtx = effectIdeaPreview?.getContext("2d") ?? null;
@@ -681,6 +685,19 @@ function setDebugOverlayVisible(visible: boolean): void {
   updateEffectPanelVisibility();
 }
 
+function setDebugMobileSection(section: string): void {
+  if (!debugOverlay) {
+    return;
+  }
+  mobileDebugSection = getDebugPanelSection(section);
+  debugOverlay.dataset.mobileSection = mobileDebugSection;
+  debugTabButtons.forEach((button) => {
+    const isActive = button.dataset.debugTab === mobileDebugSection;
+    button.classList.toggle("active", isActive);
+    button.setAttribute("aria-selected", isActive ? "true" : "false");
+  });
+}
+
 function toggleDebugOverlay(): void {
   setDebugOverlayVisible(getNextDebugOverlayVisibility(debugState.enabled));
 }
@@ -788,6 +805,7 @@ function createEffectSelector(): void {
     debugState.forcedEffect = selection.forcedEffect;
     if (selection.shouldReset && selection.forcedEffect) {
       effectRegistry[selection.forcedEffect]?.reset?.();
+      setDebugMobileSection("effects");
     }
     updateEffectSelectorState();
   });
@@ -1093,6 +1111,7 @@ if (!releaseMode && debugSkipEndButton) {
 }
 
 if (!releaseMode) {
+  setDebugMobileSection("transport");
   setDebugOverlayVisible(false);
   updateDebugSkipButtonState(null);
   void (async () => {
@@ -1534,6 +1553,14 @@ window.addEventListener("beforeunload", () => {
 if (!releaseMode && mobileControls && mobileDebugButton) {
   mobileDebugButton.addEventListener("click", () => {
     toggleDebugOverlay();
+  });
+}
+
+if (!releaseMode && debugTabButtons.length > 0) {
+  debugTabButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      setDebugMobileSection(button.dataset.debugTab ?? "transport");
+    });
   });
 }
 

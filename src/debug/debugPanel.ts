@@ -14,6 +14,9 @@ export type DebugRenderSelection = {
   isolateEffect: boolean;
 };
 
+export const DEBUG_PANEL_SECTIONS = ["transport", "effects", "render"] as const;
+export type DebugPanelSection = (typeof DEBUG_PANEL_SECTIONS)[number];
+
 export function shouldShowEffectPanel(debugEnabled: boolean, forcedEffect: string | null): boolean {
   return debugEnabled && forcedEffect !== null;
 }
@@ -24,6 +27,13 @@ export function getDebugEffectSelectorValue(forcedEffect: string | null): string
 
 export function getDebugEffectSelectorOptions(effectNames: string[]): string[] {
   return ["timeline", ...effectNames];
+}
+
+export function getDebugPanelSection(selected: string | null | undefined): DebugPanelSection {
+  if (selected && (DEBUG_PANEL_SECTIONS as readonly string[]).includes(selected)) {
+    return selected as DebugPanelSection;
+  }
+  return "transport";
 }
 
 export function getNextDebugEffectSelection(
