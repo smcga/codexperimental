@@ -62,10 +62,20 @@ describe("lemmingsMarchEffect helpers", () => {
     expect(["walker", "climber", "digger", "basher", "builder", "floater"]).toContain(pickLemmingAbility(8, 73));
   });
 
-  it("builds terrain with a goal zone and bridge landing", () => {
+  it("biases the colony toward bashers/builders for route editing", () => {
+    const abilities = Array.from({ length: 120 }, (_, id) => pickLemmingAbility(id, 73));
+    const routeEditors = abilities.filter((ability) => ability === "basher" || ability === "builder").length;
+    expect(routeEditors).toBeGreaterThan(65);
+  });
+
+  it("builds repeating pillar-and-pit terrain with a goal zone", () => {
     const terrain = buildLemmingsTerrain(180, 240, 16, 73, 0.65, 0.2);
+    const dropCount = terrain.surfaceY.slice(1).filter((y, idx) => y - terrain.surfaceY[idx] > 14).length;
+    const majorWalls = terrain.wallHeight.filter((height) => height > 28).length;
 
     expect(terrain.surfaceY).toHaveLength(180);
+    expect(dropCount).toBeGreaterThanOrEqual(2);
+    expect(majorWalls).toBeGreaterThanOrEqual(5);
     expect(terrain.wallHeight[terrain.goalCol]).toBe(0);
     expect(Number.isFinite(terrain.bridgeY[terrain.goalCol])).toBe(true);
   });

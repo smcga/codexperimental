@@ -1656,7 +1656,7 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 - **Registry key:** `lemmings_march`
 - **Implementation:** `src/renderer/effects/lemmingsMarchEffect.ts` (class `LemmingsMarchEffect`)
 - **Renderer:** Canvas2D
-- **Description:** Tiny colony sim with contextual climber/digger/basher/builder/floater behaviour, deformable terrain, and a rescue portal score.
+- **Description:** Origins-and-Lemmings-inspired colony march through repeating classical pillars, bash/build route edits, and a rescue portal score.
 - **Audio features:** bass, beat, beatStrength
 - **Performance notes:** None noted.
 
@@ -1666,15 +1666,15 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 | --- | --- | --- | --- | --- | --- |
 | `params.bashRate` | number | 28 | min 2, max 40 | Bash Rate | yes |
 | `params.bridgeRate` | number | 6 | min 1, max 12 | Bridge Rate | yes |
-| `params.colonySize` | number | 18 | min 4, max 48 | Colony Size | yes |
+| `params.colonySize` | number | 22 | min 4, max 48 | Colony Size | yes |
 | `params.digRate` | number | 18 | min 2, max 40 | Dig Rate | yes |
 | `params.floatiness` | number | 0.45 | min 0, max 1 | Floatiness | yes |
-| `params.hilliness` | number | 0.65 | min 0, max 1.4 | Hilliness | yes |
+| `params.hilliness` | number | 0.35 | min 0, max 1.4 | Hilliness | yes |
 | `params.scrollFollow` | number | 0.22 | min 0, max 1 | Scroll Follow | yes |
 | `params.seed` | number | 73 | min 0, max 9999 | Seed | yes |
 | `params.spawnInterval` | number | 0.9 | min 0.2, max 3 | Spawn Interval | yes |
-| `params.wallRate` | number | 0.22 | min 0, max 0.5 | Wall Rate | yes |
-| `params.worldLength` | number | 320 | min 120, max 640 | World Length | yes |
+| `params.wallRate` | number | 0.28 | min 0, max 0.5 | Wall Rate | yes |
+| `params.worldLength` | number | 300 | min 120, max 640 | World Length | yes |
 
 ### Minimal layer usage
 
