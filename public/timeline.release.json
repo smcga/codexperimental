@@ -182,6 +182,18 @@
           "blend": "screen",
           "opacity": 0.12,
           "params": {}
+        },
+        {
+          "effect": "moving_shadow_map",
+          "blend": "overlay",
+          "opacity": 0.18,
+          "params": {
+            "objectCount": 5,
+            "lightSpeed": 0.55,
+            "shadowLength": 1.15,
+            "haze": 0.15,
+            "floorGrid": 0
+          }
         }
       ],
       "fitAlign": "centre"
@@ -273,6 +285,17 @@
           "blend": "screen",
           "opacity": 0.09,
           "params": {}
+        },
+        {
+          "effect": "smoke_simulation",
+          "blend": "screen",
+          "opacity": 0.08,
+          "params": {
+            "emitMode": "bottom",
+            "softness": 0.42,
+            "turbulence": 0.6,
+            "diffusion": 0.94
+          }
         },
         {
           "effect": "equalizer",
@@ -927,6 +950,22 @@
           "blend": "screen",
           "opacity": 0.11,
           "params": {}
+        },
+        {
+          "effect": "skyboxTransition",
+          "blend": "soft-light",
+          "opacity": 0.26,
+          "params": {
+            "speed": 0.72,
+            "intensity": 0.9,
+            "horizon": 0.64,
+            "cloudAmount": 0.5,
+            "starAmount": 0.62,
+            "silhouetteAmount": 0.42,
+            "surrealness": 0.3,
+            "audioReactive": 0.2,
+            "phaseOffset": 0.18
+          }
         },
         {
           "effect": "rain",
@@ -1712,6 +1751,22 @@
           "blend": "screen",
           "opacity": 0.11,
           "params": {}
+        },
+        {
+          "effect": "skyboxTransition",
+          "blend": "soft-light",
+          "opacity": 0.26,
+          "params": {
+            "speed": 0.72,
+            "intensity": 0.9,
+            "horizon": 0.64,
+            "cloudAmount": 0.5,
+            "starAmount": 0.62,
+            "silhouetteAmount": 0.42,
+            "surrealness": 0.3,
+            "audioReactive": 0.2,
+            "phaseOffset": 0.18
+          }
         },
         {
           "effect": "volumetric_clouds",

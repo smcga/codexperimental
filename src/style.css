@@ -777,7 +777,8 @@ body,
 #overlay-restart-button,
 #share-copy-button,
 .share-panel a,
-#add-doodle-button {
+#add-doodle-button,
+#add-effect-idea-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -805,7 +806,8 @@ body,
 #overlay-restart-button::before,
 #share-copy-button::before,
 .share-panel a::before,
-#add-doodle-button::before {
+#add-doodle-button::before,
+#add-effect-idea-button::before {
   content: "";
   position: absolute;
   inset: 1px;
@@ -843,7 +845,9 @@ body,
 .share-panel a:hover,
 .share-panel a:focus-visible,
 #add-doodle-button:hover,
-#add-doodle-button:focus-visible {
+#add-doodle-button:focus-visible,
+#add-effect-idea-button:hover,
+#add-effect-idea-button:focus-visible {
   outline: none;
   border-color: rgba(142, 249, 255, 0.85);
   box-shadow: 0 0 24px rgba(0, 255, 255, 0.22);
@@ -1028,6 +1032,38 @@ body,
   background: linear-gradient(180deg, #08101f 0%, #03060b 100%);
   cursor: crosshair;
   touch-action: none;
+}
+
+#effect-idea-input,
+#effect-idea-preview {
+  width: 100%;
+  max-width: 100%;
+}
+
+#effect-idea-input {
+  border: 1px solid rgba(142, 249, 255, 0.22);
+  background: rgba(6, 12, 20, 0.9);
+  color: #e8f7ff;
+  font: inherit;
+  padding: 0.7rem;
+  resize: vertical;
+}
+
+#effect-idea-preview {
+  aspect-ratio: 16 / 9;
+  border: 1px solid rgba(142, 249, 255, 0.22);
+  background: #040812;
+}
+
+.effect-idea-code {
+  margin: 0;
+  max-height: 10rem;
+  overflow: auto;
+  padding: 0.7rem;
+  border: 1px solid rgba(142, 249, 255, 0.12);
+  background: rgba(9, 17, 28, 0.72);
+  color: rgba(215, 247, 255, 0.85);
+  font-size: 0.75rem;
 }
 
 .doodle-actions {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { getIntroExplosionProgress, getTypingReveal, INTRO_EXPLOSION_DURATION } from "./terminalIntro";
+import { getIntroExplosionProgress, getTypingReveal, INTRO_EXPLOSION_DURATION, wrapLines } from "./terminalIntro";
 
 describe("getTypingReveal", () => {
   it("reveals characters based on cps and elapsed time", () => {
@@ -29,5 +29,17 @@ describe("getIntroExplosionProgress", () => {
 
   it("returns 0 for invalid duration", () => {
     expect(getIntroExplosionProgress(10, 10, 0)).toBe(0);
+  });
+});
+
+describe("wrapLines", () => {
+  it("prefers wrapping at whitespace so words are not split", () => {
+    const wrapped = wrapLines(["we write outcomes"], { line: 0, column: 17 }, 8);
+    expect(wrapped.lines).toEqual(["we ", "write ", "outcomes"]);
+  });
+
+  it("falls back to hard wrapping when no whitespace exists", () => {
+    const wrapped = wrapLines(["abcdefghij"], { line: 0, column: 10 }, 4);
+    expect(wrapped.lines).toEqual(["abcd", "efgh", "ij"]);
   });
 });
