@@ -11,8 +11,10 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 - Place an MP3 at `public/song.mp3` (replace the placeholder file).
 - Edit `public/timeline.release.json` to change the intro terminal script, section timings, transitions, or text cues. Use `mm:ss` or `mm:ss.s` time strings for section and cue start/end values (for example, `01:44.5`).
 - **Sacred anchor policy:** before changing timeline timings, read `docs/sacred-musical-anchors.md`. The listed musical anchor timestamps are mandatory and must remain locked unless the soundtrack itself is intentionally recut; secondary effect-switch cues in that doc are advisory and must never override the sacred anchors.
+- Rap lyric cue timing is also locked: the rap starts at **03:25.012** on the word **“All”**, and the detailed lyric cue anchors in `docs/sacred-musical-anchors.md` must be preserved when editing `textCues`.
 - `public/timeline.release.json` is the canonical timeline and adds per-section era presets plus a curated arc for the graphics-history progression.
 - The bundled timeline includes lyric-style overlays in `textCues`; adjust or replace those cues to change the on-screen callouts synced to the music.
+- Timeline playback now applies `audio.offset: -0.128` in `public/timeline.release.json` so the in-app timeline clock matches manual MP3 timing checks (e.g., Audacity) instead of drifting late.
 - Transition types include `fade`, `wipe`, `slide-left`, `slide-right`, `slide-up`, `slide-down`, `iris`, `flash`, `shatter`, `signal-collapse`, `camera-punch-through`, and `bitplane-wipe` (vertical VGA-style bands with staggered timing).
 - Effect sections can include a `params` object to tune effect-specific settings such as starfield speed, warp, or turning intensity.
 - Effects can animate numeric params with an `automation` array on a section or a layer; entries are applied in array order (last wins) and ease over absolute demo time.

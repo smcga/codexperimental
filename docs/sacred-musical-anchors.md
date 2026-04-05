@@ -8,6 +8,7 @@ These anchors are **non-negotiable timing constraints** for the demo arrangement
 2. If a timeline edit is required, validate every listed anchor against the soundtrack and preserve the same musical hit point.
 3. If any anchor must change in a future revision, update this document, `README.md`, and `AGENTS.md` in the same commit with an explicit reason.
 4. Keep the total runtime locked at **06:22.87** unless there is an intentional audio recut.
+5. Keep timeline playback aligned to MP3 waveform timing by preserving `audio.offset: -0.128` in `public/timeline.release.json` (this compensates the observed in-browser clock skew versus manual Audacity timing checks).
 
 ## Priority order for timing decisions
 
@@ -41,7 +42,7 @@ These anchors are **non-negotiable timing constraints** for the demo arrangement
 - **03:09.6** — pre-rap buildup ("this, and this, and this, and this").
 - **03:15.7** — DnB-style drums return ("and thiiiiiissssss is").
 - **03:24** — drum fill.
-- **03:25.14** — rap starts.
+- **03:25.012** — rap starts (the word **“All”** hits exactly here).
 - **04:25.7** — rap ends, breakdown.
 - **04:30.9** — buildup.
 - **04:40.7** — big drop.
@@ -107,9 +108,71 @@ These are **advisory** micro-switch candidates from an earlier cut of the song. 
 - **02:50.3**
 - **02:50.8**
 - **02:51.1** (then change ~16 times until **02:53.8**)
-- **03:25.14**
+- **03:25.012**
 - **03:26.1**
 - **03:42.36**
 - **04:00.4**
 - **04:01.3**
 - **04:25.7**
+
+## Rap lyric cue anchors (source-of-truth for text cue timing)
+
+These timestamps are the locked lyric cue hit points for the rap text sequence in `public/timeline.release.json`. They must stay musically exact.
+
+- **03:25.012** — `All`
+- **03:26.217** — `now`
+- **03:26.605** — `it`
+- **03:26.907** — `From`
+- **03:27.772** — `I` (in “I spawned this.”)
+- **03:28.441** — `Wanna`
+- **03:29.629** — `Now`
+- **03:31.110** — `Feed`
+- **03:31.470** — `fake`
+- **03:32.477** — `clickbait?`
+- **03:33.151** — `That`
+- **03:34.173** — `before`
+- **03:35.168** — `trained`
+- **03:36.033** — `You`
+- **03:37.043** — `no`
+- **03:38.577** — `Why`
+- **03:38.948** — `hate,`
+- **03:39.779** — `I've`
+- **03:41.457** — `And`
+- **03:42.308** — `Why`
+- **03:43.830** — `I`
+- **03:46.028** — `own`
+- **03:46.712** — `If`
+- **03:49.266** — `Then`
+- **03:52.477** — `Would`
+- **03:53.491** — `‘cause`
+- **03:54.426** — `crap?`
+- **03:55.190** — `Would`
+- **03:56.207** — `‘cause`
+- **03:57.177** — `flat?`
+- **03:57.898** — `Would`
+- **03:58.910** — `'cos`
+- **03:59.900** — `chopped?`
+- **04:00.342** — `Nah,`
+- **04:00.656** — `so`
+- **04:01.255** — `blame`
+- **04:02.588** — `slop?`
+- **04:03.334** — `This`
+- **04:04.346** — `this`
+- **04:05.697** — `Why`
+- **04:06.736** — `have`
+- **04:08.922** — `I`
+- **04:09.759** — `“where’s`
+- **04:10.780** — `“where’s`
+- **04:11.633** — `I`
+- **04:12.474** — `cos`
+- **04:13.113** — `true`
+- **04:14.510** — `A.I.`
+- **04:15.707** — `it`
+- **04:17.241** — `It`
+- **04:18.580** — `nah,`
+- **04:20.433** — `It’s`
+- **04:21.453** — `from`
+- **04:22.292** — `random`
+- **04:22.984** — `We`
+- **04:23.996** — `all`
+- **04:26.790** — lyric runout marker

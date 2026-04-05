@@ -80,6 +80,14 @@ describe("normalizeTimelineConfig", () => {
     expect(last.end).toBeGreaterThan(normalized.sections[0].start);
   });
 
+  it("keeps release audio offset aligned with manual MP3 timing checks", () => {
+    const releasePath = new URL("../../public/timeline.release.json", import.meta.url);
+    const raw = JSON.parse(readFileSync(releasePath, "utf-8")) as RawTimelineConfig;
+    const normalized = normalizeTimelineConfig(raw);
+
+    expect(normalized.audio.offset).toBeCloseTo(-0.128, 5);
+  });
+
   it("includes hook hit sections and text cues in the release timeline", () => {
     const releasePath = new URL("../../public/timeline.release.json", import.meta.url);
     const raw = JSON.parse(readFileSync(releasePath, "utf-8")) as RawTimelineConfig;
@@ -183,7 +191,7 @@ describe("normalizeTimelineConfig", () => {
     const raw = JSON.parse(readFileSync(timelinePath, "utf-8")) as RawTimelineConfig;
     const normalized = normalizeTimelineConfig(raw);
 
-    const rapStart = 3 * 60 + 25.14;
+    const rapStart = 3 * 60 + 25.012;
     const rapEnd = 4 * 60 + 25.7;
     const rapCues = normalized.textCues.filter((cue) => cue.end > rapStart && cue.start < rapEnd);
 
