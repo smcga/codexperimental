@@ -1,7 +1,7 @@
 import { AudioPlayer, AudioFeatures } from "./audio/audioPlayer";
 
 export const EFFECT_PREVIEW_AUDIO_START_TIME = 5 * 60 + 12.85;
-export const EFFECT_PREVIEW_AUDIO_LOOP_START_TIME = 5 * 60 + 39.94;
+export const EFFECT_PREVIEW_AUDIO_LOOP_START_TIME = 5 * 60 + 39.934;
 export const EFFECT_PREVIEW_AUDIO_LOOP_END_TIME = 5 * 60 + 50.786;
 export const EFFECT_PREVIEW_AUDIO_VOLUME = 0.2;
 const LOOP_SYNC_INTERVAL_MS = 120;

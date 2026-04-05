@@ -14,6 +14,10 @@ describe("effect preview audio loop", () => {
     expect(EFFECT_PREVIEW_AUDIO_START_TIME).toBeCloseTo(312.85, 3);
   });
 
+  it("uses the precise loop start anchor timestamp", () => {
+    expect(EFFECT_PREVIEW_AUDIO_LOOP_START_TIME).toBeCloseTo(339.934, 3);
+  });
+
   it("keeps playback time unchanged before loop end", () => {
     const sampleTime = EFFECT_PREVIEW_AUDIO_LOOP_END_TIME - 0.05;
     expect(getEffectPreviewLoopTime(sampleTime)).toBe(sampleTime);
