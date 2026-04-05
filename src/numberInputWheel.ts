@@ -48,7 +48,6 @@ export const installGlobalNumberInputWheelGuard = (doc: Document = document): vo
       }
       target.value = String(nextValue);
       target.dispatchEvent(new Event("input", { bubbles: true }));
-      target.dispatchEvent(new Event("change", { bubbles: true }));
     },
     { passive: false, capture: true }
   );

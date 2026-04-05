@@ -42,4 +42,14 @@ describe("getWheelSteppedNumberValue", () => {
     expect(getWheelSteppedNumberValue(input, 0)).toBe(5);
     expect(getWheelSteppedNumberValue(input, Number.NaN)).toBe(5);
   });
+
+  it("treats empty current values as zero before stepping", () => {
+    const input = {
+      value: "",
+      min: "-2",
+      max: "2",
+      step: "0.5"
+    };
+    expect(getWheelSteppedNumberValue(input, -100)).toBe(0.5);
+  });
 });
