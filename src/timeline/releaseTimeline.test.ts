@@ -101,6 +101,43 @@ describe("release timeline", () => {
     expect(rapTextCues.length).toBeGreaterThanOrEqual(2);
   });
 
+  it("includes the fake-news bar with the restored lines in order", () => {
+    const cueWindow = timeline.textCues.filter((cue) => {
+      const start = toSeconds(cue.start);
+      const end = toSeconds(cue.end);
+      return end > 210 && start < 216;
+    });
+
+    const words = cueWindow.map((cue) => cue.text);
+    expect(words).toEqual(
+      expect.arrayContaining([
+        "Feed",
+        "full",
+        "of",
+        "fake",
+        "news,",
+        "lies,",
+        "slop",
+        "and",
+        "clickbait?",
+        "That",
+        "shit",
+        "was",
+        "a",
+        "problem",
+        "before",
+        "any",
+        "models",
+        "trained",
+        "mate."
+      ])
+    );
+
+    expect(words.indexOf("clickbait?")).toBeLessThan(words.indexOf("That"));
+    expect(words.indexOf("problem")).toBeLessThan(words.indexOf("before"));
+    expect(words.indexOf("any")).toBeLessThan(words.indexOf("models"));
+  });
+
   it("splits the pre-rap callout into buildup, DnB return, and drum-fill lead-in anchors", () => {
     const byId = new Map(timeline.sections.map((section) => [section.id, section]));
     const preRapBuildup = byId.get("this-callout-pre-rap-buildup");

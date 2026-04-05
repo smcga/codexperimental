@@ -9743,12 +9743,389 @@
       ]
     },
     {
+      "id": "scene-024-c64-raster-bars-1",
+      "start": 210,
+      "end": 210.3,
+      "text": "Feed",
+      "x": 0.84,
+      "y": 0.42,
+      "align": "right",
+      "size": 42,
+      "color": "#f7e9a4",
+      "units": "normalized",
+      "effects": {
+        "shadow": true,
+        "scanlineMask": 0.16,
+        "glitchIn": false
+      },
+      "spans": [
+        {
+          "text": "Feed",
+          "color": "#f7e9a4",
+          "size": 42,
+          "weight": "bold",
+          "font": "Courier New"
+        }
+      ]
+    },
+    {
+      "id": "scene-024-c64-raster-bars-2",
+      "start": 210.3,
+      "end": 210.6,
+      "text": "full",
+      "x": 0.828,
+      "y": 0.45,
+      "align": "right",
+      "size": 38,
+      "color": "#7ee787",
+      "units": "normalized",
+      "effects": {
+        "shadow": true,
+        "scanlineMask": 0.2,
+        "glitchIn": true
+      },
+      "spans": [
+        {
+          "text": "full",
+          "color": "#7ee787",
+          "size": 38,
+          "weight": "bold",
+          "font": "Courier New"
+        }
+      ]
+    },
+    {
+      "id": "scene-024-c64-raster-bars-3",
+      "start": 210.6,
+      "end": 210.9,
+      "text": "of",
+      "x": 0.816,
+      "y": 0.48,
+      "align": "right",
+      "size": 35,
+      "color": "#ffb86c",
+      "units": "normalized",
+      "effects": {
+        "shadow": true,
+        "scanlineMask": 0.12,
+        "typewriter": {
+          "speed": 40
+        }
+      },
+      "spans": [
+        {
+          "text": "of",
+          "color": "#ffb86c",
+          "size": 35,
+          "weight": "bold",
+          "font": "Courier New"
+        }
+      ]
+    },
+    {
+      "id": "scene-024-c64-raster-bars-4",
+      "start": 210.9,
+      "end": 211.2,
+      "text": "fake",
+      "x": 0.804,
+      "y": 0.51,
+      "align": "right",
+      "size": 47,
+      "color": "#ff7ad9",
+      "units": "normalized",
+      "effects": {
+        "shadow": true,
+        "scanlineMask": 0.16,
+        "glitchIn": true
+      },
+      "spans": [
+        {
+          "text": "fake",
+          "color": "#ff7ad9",
+          "size": 51,
+          "weight": "900",
+          "font": "Courier New"
+        }
+      ]
+    },
+    {
+      "id": "scene-024-c64-raster-bars-5",
+      "start": 211.2,
+      "end": 211.5,
+      "text": "news,",
+      "x": 0.792,
+      "y": 0.54,
+      "align": "right",
+      "size": 44,
+      "color": "#a5b4fc",
+      "units": "normalized",
+      "effects": {
+        "shadow": true,
+        "scanlineMask": 0.2,
+        "glitchIn": false
+      },
+      "spans": [
+        {
+          "text": "news,",
+          "color": "#a5b4fc",
+          "size": 44,
+          "weight": "bold",
+          "font": "Courier New"
+        }
+      ]
+    },
+    {
+      "id": "scene-024-c64-raster-bars-6",
+      "start": 211.5,
+      "end": 211.8,
+      "text": "lies,",
+      "x": 0.78,
+      "y": 0.57,
+      "align": "right",
+      "size": 41,
+      "color": "#9ef0ff",
+      "units": "normalized",
+      "effects": {
+        "shadow": true,
+        "scanlineMask": 0.12,
+        "typewriter": {
+          "speed": 44
+        }
+      },
+      "spans": [
+        {
+          "text": "lies,",
+          "color": "#9ef0ff",
+          "size": 41,
+          "weight": "bold",
+          "font": "Courier New"
+        }
+      ]
+    },
+    {
+      "id": "scene-024-c64-raster-bars-7",
+      "start": 211.8,
+      "end": 212.1,
+      "text": "slop",
+      "x": 0.768,
+      "y": 0.6,
+      "align": "right",
+      "size": 50,
+      "color": "#ff7ad9",
+      "units": "normalized",
+      "effects": {
+        "shadow": true,
+        "scanlineMask": 0.2,
+        "glitchIn": true
+      },
+      "spans": [
+        {
+          "text": "slop",
+          "color": "#ff7ad9",
+          "size": 54,
+          "weight": "900",
+          "font": "Courier New"
+        }
+      ]
+    },
+    {
+      "id": "scene-024-c64-raster-bars-8",
+      "start": 212.1,
+      "end": 212.4,
+      "text": "and",
+      "x": 0.756,
+      "y": 0.63,
+      "align": "right",
+      "size": 36,
+      "color": "#f7e9a4",
+      "units": "normalized",
+      "effects": {
+        "shadow": true,
+        "scanlineMask": 0.16,
+        "glitchIn": false
+      },
+      "spans": [
+        {
+          "text": "and",
+          "color": "#f7e9a4",
+          "size": 36,
+          "weight": "bold",
+          "font": "Courier New"
+        }
+      ]
+    },
+    {
+      "id": "scene-024-c64-raster-bars-9",
+      "start": 212.4,
+      "end": 212.7,
+      "text": "clickbait?",
+      "x": 0.744,
+      "y": 0.72,
+      "align": "right",
+      "size": 40,
+      "color": "#7ee787",
+      "units": "normalized",
+      "effects": {
+        "shadow": true,
+        "scanlineMask": 0.2,
+        "glitchIn": true,
+        "typewriter": {
+          "speed": 40
+        }
+      },
+      "spans": [
+        {
+          "text": "clickbait?",
+          "color": "#7ee787",
+          "size": 40,
+          "weight": "bold",
+          "font": "Courier New"
+        }
+      ]
+    },
+    {
+      "id": "scene-024-c64-raster-bars-10",
+      "start": 212.7,
+      "end": 213,
+      "text": "That",
+      "x": 0.732,
+      "y": 0.2,
+      "align": "right",
+      "size": 42,
+      "color": "#9ef0ff",
+      "units": "normalized",
+      "effects": {
+        "shadow": true,
+        "scanlineMask": 0.12,
+        "glitchIn": false
+      },
+      "spans": [
+        {
+          "text": "That",
+          "color": "#9ef0ff",
+          "size": 42,
+          "weight": "bold",
+          "font": "Courier New"
+        }
+      ]
+    },
+    {
+      "id": "scene-024-c64-raster-bars-11",
+      "start": 213,
+      "end": 213.3,
+      "text": "shit",
+      "x": 0.72,
+      "y": 0.3,
+      "align": "right",
+      "size": 46,
+      "color": "#ffb86c",
+      "units": "normalized",
+      "effects": {
+        "shadow": true,
+        "scanlineMask": 0.16,
+        "glitchIn": true
+      },
+      "spans": [
+        {
+          "text": "shit",
+          "color": "#ffb86c",
+          "size": 50,
+          "weight": "900",
+          "font": "Courier New"
+        }
+      ]
+    },
+    {
+      "id": "scene-024-c64-raster-bars-12",
+      "start": 213.3,
+      "end": 213.6,
+      "text": "was",
+      "x": 0.708,
+      "y": 0.4,
+      "align": "right",
+      "size": 39,
+      "color": "#a5b4fc",
+      "units": "normalized",
+      "effects": {
+        "shadow": true,
+        "scanlineMask": 0.2,
+        "glitchIn": false,
+        "typewriter": {
+          "speed": 38
+        }
+      },
+      "spans": [
+        {
+          "text": "was",
+          "color": "#a5b4fc",
+          "size": 39,
+          "weight": "bold",
+          "font": "Courier New"
+        }
+      ]
+    },
+    {
+      "id": "scene-024-c64-raster-bars-13",
+      "start": 213.6,
+      "end": 213.9,
+      "text": "a",
+      "x": 0.696,
+      "y": 0.5,
+      "align": "right",
+      "size": 34,
+      "color": "#f7e9a4",
+      "units": "normalized",
+      "effects": {
+        "shadow": true,
+        "scanlineMask": 0.12,
+        "glitchIn": true
+      },
+      "spans": [
+        {
+          "text": "a",
+          "color": "#f7e9a4",
+          "size": 34,
+          "weight": "bold",
+          "font": "Courier New"
+        }
+      ]
+    },
+    {
+      "id": "scene-024-c64-raster-bars-14",
+      "start": 213.9,
+      "end": 214.2,
+      "text": "problem",
+      "x": 0.684,
+      "y": 0.6,
+      "align": "right",
+      "size": 45,
+      "color": "#ff7ad9",
+      "units": "normalized",
+      "effects": {
+        "shadow": true,
+        "scanlineMask": 0.16,
+        "glitchIn": false,
+        "typewriter": {
+          "speed": 46
+        }
+      },
+      "spans": [
+        {
+          "text": "problem",
+          "color": "#ff7ad9",
+          "size": 49,
+          "weight": "900",
+          "font": "Courier New"
+        }
+      ]
+    },
+    {
       "id": "scene-030-copper-gradient-splits-1",
       "start": 214.2,
       "end": 214.5,
       "text": "before",
       "x": 0.836,
-      "y": 0.426,
+      "y": 0.7,
       "align": "right",
       "size": 43,
       "color": "#f7e9a4",
@@ -9774,7 +10151,7 @@
       "end": 214.8,
       "text": "any",
       "x": 0.824,
-      "y": 0.514,
+      "y": 0.78,
       "align": "right",
       "size": 36,
       "color": "#7ee787",
@@ -9795,12 +10172,41 @@
       ]
     },
     {
+      "id": "scene-030-copper-gradient-splits-2-5",
+      "start": 214.8,
+      "end": 215.2,
+      "text": "models",
+      "x": 0.818,
+      "y": 0.86,
+      "align": "right",
+      "size": 40,
+      "color": "#9ef0ff",
+      "units": "normalized",
+      "effects": {
+        "shadow": true,
+        "scanlineMask": 0.16,
+        "glitchIn": true,
+        "typewriter": {
+          "speed": 40
+        }
+      },
+      "spans": [
+        {
+          "text": "models",
+          "color": "#9ef0ff",
+          "size": 40,
+          "weight": "bold",
+          "font": "Courier New"
+        }
+      ]
+    },
+    {
       "id": "scene-031-textured-cube-1",
       "start": 215.2,
       "end": 215.75,
       "text": "trained",
       "x": 0.813,
-      "y": 0.603,
+      "y": 0.93,
       "align": "right",
       "size": 47,
       "color": "#ffb86c",
@@ -9828,7 +10234,7 @@
       "end": 215.475,
       "text": "trained",
       "x": 0.801,
-      "y": 0.691,
+      "y": 0.96,
       "align": "right",
       "size": 50,
       "color": "#ff7ad9",
@@ -9857,7 +10263,7 @@
       "end": 215.75,
       "text": "mate.",
       "x": 0.79,
-      "y": 0.78,
+      "y": 0.99,
       "align": "right",
       "size": 43,
       "color": "#a5b4fc",
