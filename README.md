@@ -416,13 +416,40 @@ EFFECT_MODERATION_TOKEN=replace-with-a-long-random-secret
 EFFECT_MODERATION_BASE_URL=https://your-public-site.example.com
 EFFECT_MODERATION_NTFY_URL=https://ntfy.sh/effect-moderation-topic
 EFFECT_MODERATION_NTFY_TOKEN=your-ntfy-access-token
+
+# Optional: allow trusted authenticated sessions by cookie/header identity
+# Defaults: "__session,next-auth.session-token,__Secure-next-auth.session-token"
+EFFECT_GENERATE_SESSION_COOKIE_NAMES=__session,next-auth.session-token,__Secure-next-auth.session-token
+
+# Optional strict allowlists (comma-separated)
+EFFECT_GENERATE_ALLOWLIST_IPS=203.0.113.10,198.51.100.17
+EFFECT_GENERATE_ALLOWLIST_USERS=alice,moderator-42
+
+# Optional rate limit tuning (defaults: 8 requests / 60 seconds per identity)
+EFFECT_GENERATE_RATE_LIMIT_MAX=8
+EFFECT_GENERATE_RATE_LIMIT_WINDOW_MS=60000
+
+# Optional global daily cap (defaults to 100 generations/day across all users, UTC day boundary)
+EFFECT_GENERATE_DAILY_CAP=100
 ```
 
 Optional fallback token behavior:
 - If `EFFECT_MODERATION_TOKEN` is not set, `/api/effects` moderation falls back to `DOODLE_MODERATION_TOKEN`, then `DOODLE_ADMIN_TOKEN`.
 - Effect moderation notifications can use their own ntfy feed (`EFFECT_MODERATION_NTFY_URL`) or fall back to doodle ntfy settings (`DOODLE_MODERATION_NTFY_URL`).
 - Generated effects are submitted into a pending queue; they only become selectable after approval via the signed review page (`/effect-review.html?id=...&token=...`) or direct API link (`/api/effects?action=approve&id=...&token=...`).
+- `POST /api/effects?action=generate` is open by default (no auth friction), but it still recognizes trusted identities in this order for rate-limit keys and audit logs: signed moderation token, session identity, allowlisted user/IP, then fallback public IP.
+- Generation prompts are trimmed and hard-capped at 3000 characters.
+- Generate requests are rate limited per identity (`user`/`session`/`IP`) via KV-backed sliding window and return `429` with a friendly wait-time message (for example, “Please wait 5 minutes before trying again.”).
+- Generate requests also enforce a global daily cap (default `100/day`, configurable via `EFFECT_GENERATE_DAILY_CAP`) and return `429` when the day budget is exhausted.
 - If generation requests return `503` from `/api/effects?action=generate`, check that `OPENAI_API_KEY` is set in your deployed environment and redeploy so the serverless function picks it up.
 - If generation fails with `Unable to parse generated effect response.`, the modal now shows the raw model output in the code panel so you can inspect formatting mismatches.
 - The generator prompt now explicitly asks for `runtimeCode` as plain JavaScript (no TS annotations/import/export). The client still attempts to normalize module-style code (`export default function ...`) when possible.
 - The client also normalizes escaped code payloads (for example strings containing literal `\\n`) before compiling preview/runtime effects.
+
+Expected `POST /api/effects?action=generate` failure codes:
+
+| Status | Cause |
+| --- | --- |
+| `400` | Missing prompt or prompt exceeds 3000 characters. |
+| `429` | Rate limit exceeded (either per-identity window or global daily cap). |
+| `503` | OpenAI unavailable/misconfigured (for example missing `OPENAI_API_KEY`) or model response parse failure. |
