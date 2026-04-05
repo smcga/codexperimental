@@ -27,4 +27,12 @@ describe("effect preview audio loop", () => {
     const controller = new EffectPreviewAudioController("/song.mp3");
     expect(controller.getPlaybackTime()).toBe(EFFECT_PREVIEW_AUDIO_START_TIME);
   });
+
+  it("returns silent audio features before playback is initialized", () => {
+    const controller = new EffectPreviewAudioController("/song.mp3");
+    const features = controller.getFeatures();
+    expect(features.rms).toBe(0);
+    expect(features.bass).toBe(0);
+    expect(features.beat).toBe(false);
+  });
 });

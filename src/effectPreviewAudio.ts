@@ -23,7 +23,9 @@ export function getEffectPreviewLoopTime(currentTime: number): number {
 
 export class EffectPreviewAudioController {
   private player: AudioPlayer | null = null;
-  private rafHandle = 0;
+  private loopIntervalHandle: number | null = null;
+  private cachedFeatures: AudioFeatures = EMPTY_AUDIO_FEATURES;
+  private lastFeaturesSampleAt = 0;
 
   constructor(private src: string) {}
 
@@ -32,6 +34,8 @@ export class EffectPreviewAudioController {
       return;
     }
     this.src = src;
+    this.lastFeaturesSampleAt = 0;
+    this.cachedFeatures = EMPTY_AUDIO_FEATURES;
     this.destroyPlayer();
   }
 
@@ -41,6 +45,8 @@ export class EffectPreviewAudioController {
       await this.player.load();
       this.player.setVolume(EFFECT_PREVIEW_AUDIO_VOLUME);
     }
+    this.lastFeaturesSampleAt = 0;
+    this.cachedFeatures = EMPTY_AUDIO_FEATURES;
 
     this.player.seek(EFFECT_PREVIEW_AUDIO_START_TIME);
 
@@ -54,9 +60,9 @@ export class EffectPreviewAudioController {
   }
 
   stop(): void {
-    if (this.rafHandle) {
-      cancelAnimationFrame(this.rafHandle);
-      this.rafHandle = 0;
+    if (this.loopIntervalHandle !== null) {
+      globalThis.clearInterval(this.loopIntervalHandle);
+      this.loopIntervalHandle = null;
     }
     this.player?.pause();
   }
@@ -77,16 +83,21 @@ export class EffectPreviewAudioController {
     if (!this.player) {
       return EMPTY_AUDIO_FEATURES;
     }
-    return this.player.updateFeatures();
+    const now = performance.now();
+    if (now - this.lastFeaturesSampleAt >= 50) {
+      this.cachedFeatures = this.player.updateFeatures();
+      this.lastFeaturesSampleAt = now;
+    }
+    return this.cachedFeatures;
   }
 
   private startLoopWatch(): void {
-    if (this.rafHandle) {
-      cancelAnimationFrame(this.rafHandle);
-      this.rafHandle = 0;
+    if (this.loopIntervalHandle !== null) {
+      globalThis.clearInterval(this.loopIntervalHandle);
+      this.loopIntervalHandle = null;
     }
 
-    const tick = (): void => {
+    this.loopIntervalHandle = globalThis.setInterval(() => {
       if (!this.player) {
         return;
       }
@@ -94,10 +105,7 @@ export class EffectPreviewAudioController {
       if (loopedTime !== this.player.currentTime) {
         this.player.seek(loopedTime);
       }
-      this.rafHandle = requestAnimationFrame(tick);
-    };
-
-    this.rafHandle = requestAnimationFrame(tick);
+    }, 80);
   }
 
   private destroyPlayer(): void {
@@ -106,5 +114,7 @@ export class EffectPreviewAudioController {
     }
     this.player.destroy();
     this.player = null;
+    this.lastFeaturesSampleAt = 0;
+    this.cachedFeatures = EMPTY_AUDIO_FEATURES;
   }
 }
