@@ -219,25 +219,25 @@ function parseAllowlist(value: string | null): Set<string> {
   );
 }
 
-function getGenerateAccess(req: RequestLike, url: URL): { allowed: boolean; reason: "admin_token" | "session_auth" | "allowlist" | "none"; identity: string } {
+function getGenerateAccess(req: RequestLike, url: URL): { reason: "admin_token" | "session_auth" | "allowlist" | "public"; identity: string } {
   if (hasSignedAdminToken(req, url)) {
-    return { allowed: true, reason: "admin_token", identity: "admin-token" };
+    return { reason: "admin_token", identity: "admin-token" };
   }
   const sessionIdentity = getSessionIdentity(req);
   if (sessionIdentity) {
-    return { allowed: true, reason: "session_auth", identity: sessionIdentity };
+    return { reason: "session_auth", identity: sessionIdentity };
   }
   const ip = getClientIp(req);
   const ipAllowlist = parseAllowlist(normalizeEnvValue(process.env.EFFECT_GENERATE_ALLOWLIST_IPS));
   if (ipAllowlist.has(ip)) {
-    return { allowed: true, reason: "allowlist", identity: `ip:${ip}` };
+    return { reason: "allowlist", identity: `ip:${ip}` };
   }
   const userAllowlist = parseAllowlist(normalizeEnvValue(process.env.EFFECT_GENERATE_ALLOWLIST_USERS));
   const assertedUser = getHeader(req, "x-user-id");
   if (assertedUser && userAllowlist.has(assertedUser.trim())) {
-    return { allowed: true, reason: "allowlist", identity: `user:${assertedUser.trim().slice(0, 128)}` };
+    return { reason: "allowlist", identity: `user:${assertedUser.trim().slice(0, 128)}` };
   }
-  return { allowed: false, reason: "none", identity: ip === "unknown" ? "anonymous" : `ip:${ip}` };
+  return { reason: "public", identity: ip === "unknown" ? "anonymous" : `ip:${ip}` };
 }
 
 function getRateLimitConfig(): { max: number; windowMs: number } {
@@ -299,6 +299,14 @@ function logGenerateRequest(details: {
     ...details,
     timestamp: new Date().toISOString()
   }));
+}
+
+function formatRetryWait(retryAfterSec: number): string {
+  if (retryAfterSec >= 60) {
+    const mins = Math.max(1, Math.ceil(retryAfterSec / 60));
+    return `${mins} minute${mins === 1 ? "" : "s"}`;
+  }
+  return `${Math.max(1, retryAfterSec)} second${retryAfterSec === 1 ? "" : "s"}`;
 }
 
 function getModerationBaseUrl(requestUrl: URL): string | null {
@@ -618,21 +626,10 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
     const prompt = typeof body.prompt === "string" ? body.prompt.trim() : "";
     const requestId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
     const access = getGenerateAccess(req, url);
-    if (!access.allowed) {
-      logGenerateRequest({
-        outcome: "rejected",
-        httpStatus: 401,
-        authMode: access.reason,
-        identity: access.identity,
-        promptLength: prompt.length,
-        requestId
-      });
-      sendJson(res, 401, { error: "Unauthorized. Generate requires moderation token, authenticated session, or allowlisted identity." });
-      return;
-    }
     const limiter = await consumeGenerateRateLimit(access.identity);
     if (!limiter.allowed) {
       res.setHeader("Retry-After", `${limiter.retryAfterSec}`);
+      const waitText = formatRetryWait(limiter.retryAfterSec);
       logGenerateRequest({
         outcome: "rate_limited",
         httpStatus: 429,
@@ -641,7 +638,7 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
         promptLength: prompt.length,
         requestId
       });
-      sendJson(res, 429, { error: "Rate limit exceeded. Please retry later." });
+      sendJson(res, 429, { error: `Rate limit exceeded. Please wait ${waitText} before trying again.` });
       return;
     }
     if (!prompt) {

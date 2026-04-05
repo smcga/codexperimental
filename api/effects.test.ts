@@ -234,8 +234,9 @@ describe("api/effects", () => {
     );
   });
 
-  it("rejects generate when token/session/allowlist checks fail", async () => {
-    process.env.EFFECT_GENERATE_ALLOWLIST_IPS = "203.0.113.10";
+  it("allows generate for public users without auth gating", async () => {
+    process.env.OPENAI_API_KEY = "sk-test";
+    process.env.EFFECT_GENERATE_ALLOWLIST_IPS = "";
     const redis = createMockRedis();
     vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
     const { default: handler } = await import("./effects");
@@ -251,8 +252,8 @@ describe("api/effects", () => {
       res.response
     );
 
-    expect(res.response.statusCode).toBe(401);
-    expect(JSON.parse(res.getBody()).error).toContain("Unauthorized");
+    expect(res.response.statusCode).toBe(200);
+    expect(JSON.parse(res.getBody()).generation.name).toBe("Nebula");
   });
 
   it("allows generate via moderation bearer token", async () => {
@@ -281,7 +282,7 @@ describe("api/effects", () => {
   it("rate limits generate requests by identity", async () => {
     process.env.OPENAI_API_KEY = "sk-test";
     process.env.EFFECT_GENERATE_RATE_LIMIT_MAX = "1";
-    process.env.EFFECT_GENERATE_RATE_LIMIT_WINDOW_MS = "60000";
+    process.env.EFFECT_GENERATE_RATE_LIMIT_WINDOW_MS = "300000";
     const redis = createMockRedis();
     vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
     const { default: handler } = await import("./effects");
@@ -309,7 +310,7 @@ describe("api/effects", () => {
       second.response
     );
     expect(second.response.statusCode).toBe(429);
-    expect(JSON.parse(second.getBody()).error).toContain("Rate limit exceeded");
+    expect(JSON.parse(second.getBody()).error).toContain("wait 5 minutes");
   });
 
   it("enforces explicit generate prompt length limits", async () => {
