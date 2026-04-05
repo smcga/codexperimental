@@ -16,6 +16,14 @@ export function getSecondHalfSkipTime(secondHalfStart: number, audioOffset: numb
   return Math.max(currentTime, targetTime);
 }
 
+export function getEndSkipTime(currentTime: number, duration: number, endPadding = 0.1): number {
+  if (duration <= 0) {
+    return currentTime;
+  }
+  const targetTime = Math.max(0, duration - endPadding);
+  return Math.max(currentTime, targetTime);
+}
+
 export function getRelativeSeekTime(currentTime: number, deltaSeconds: number, duration: number): number {
   const nextTime = currentTime + deltaSeconds;
   if (duration > 0) {
