@@ -1,8 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import docs from "../../docs/effects.md?raw";
-import timeline from "../../public/timeline.json";
-import releaseTimeline from "../../public/timeline.release.json";
+import timeline from "../../public/timeline.release.json";
 
 type SupportFlags = {
   audioReact: boolean;
@@ -85,8 +84,7 @@ describe("timeline audio-reactive safety limits", () => {
   const supportMap = readSupportedParamsFromDocs();
 
   it.each([
-    ["public/timeline.json", timeline.sections as TimelineEntry[]],
-    ["public/timeline.release.json", releaseTimeline.sections as TimelineEntry[]],
+    ["public/timeline.release.json", timeline.sections as TimelineEntry[]],
   ])("keeps supported params explicit and <= 0.2 in %s", (_file, sections) => {
     for (const entry of allEntries(sections)) {
       const support = supportMap.get(entry.effect);

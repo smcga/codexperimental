@@ -1155,7 +1155,7 @@ async function startDemo(): Promise<void> {
   setOverlay("Loading…", true, false, "status");
 
   try {
-    const config = pendingConfig ?? (await loadConfig(releaseMode ? "/timeline.release.json" : "/timeline.json"));
+    const config = pendingConfig ?? (await loadConfig("/timeline.release.json"));
     pendingConfig = null;
     introConfig = config.intro;
     if (audioPlayer) {

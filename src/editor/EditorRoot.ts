@@ -377,7 +377,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
 
   const loadFromFile = async (): Promise<void> => {
     try {
-      const response = await fetch("/timeline.json", { cache: "no-cache" });
+      const response = await fetch("/timeline.release.json", { cache: "no-cache" });
       if (!response.ok) {
         throw new Error(`Failed to load timeline JSON (${response.status})`);
       }
@@ -1598,7 +1598,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
 
     init.container.querySelector<HTMLButtonElement>("[data-action='export']")?.addEventListener("click", () => {
       if (state.timeline) {
-        downloadTimeline(state.timeline, "timeline.json");
+        downloadTimeline(state.timeline, "timeline.release.json");
       }
     });
 
