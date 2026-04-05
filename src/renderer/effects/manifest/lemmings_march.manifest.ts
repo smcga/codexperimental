@@ -24,8 +24,10 @@ export const lemmings_marchManifest = defineEffectManifest({
   },
   docs: {
     parameters: "`spawnInterval`, `colonySize`, `worldLength`, `hilliness`, `wallRate`, `digRate`, `bashRate`, `bridgeRate`, `floatiness`, `scrollFollow`, `seed`",
-    catalogNote: "Tiny colony sim with contextual climber/digger/basher/builder/floater behaviour, deformable terrain, and a rescue portal score.",
-    description: "Tiny colony sim with contextual climber/digger/basher/builder/floater behaviour, deformable terrain, and a rescue portal score."
+    catalogNote:
+      "Origins-and-Lemmings-inspired colony march through repeating classical pillars, bash/build route edits, and a rescue portal score.",
+    description:
+      "Origins-and-Lemmings-inspired colony march through repeating classical pillars, bash/build route edits, and a rescue portal score."
   }
 });
 

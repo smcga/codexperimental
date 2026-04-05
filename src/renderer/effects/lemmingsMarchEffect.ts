@@ -5,10 +5,10 @@ import { Effect, EffectRenderContext } from "./types";
 
 export const LEMMINGS_MARCH_DEFAULTS = {
   spawnInterval: 0.9,
-  colonySize: 18,
-  worldLength: 320,
-  hilliness: 0.65,
-  wallRate: 0.22,
+  colonySize: 22,
+  worldLength: 300,
+  hilliness: 0.35,
+  wallRate: 0.28,
   digRate: 18,
   bashRate: 28,
   bridgeRate: 6,
@@ -68,19 +68,19 @@ export const lemmingsHash01 = (index: number, seed: number): number => {
 
 export const pickLemmingAbility = (id: number, seed: number): LemmingAbility => {
   const roll = lemmingsHash01(id * 1.37 + 5.1, seed);
-  if (roll < 0.18) {
-    return "climber";
-  }
   if (roll < 0.36) {
-    return "digger";
-  }
-  if (roll < 0.54) {
     return "basher";
   }
   if (roll < 0.72) {
     return "builder";
   }
-  if (roll < 0.9) {
+  if (roll < 0.82) {
+    return "digger";
+  }
+  if (roll < 0.92) {
+    return "climber";
+  }
+  if (roll < 0.98) {
     return "floater";
   }
   return "walker";
@@ -105,32 +105,67 @@ export function buildLemmingsTerrain(
   const surfaceY: number[] = [];
   const wallHeight: number[] = [];
   const bridgeY = Array.from({ length: safeCols }, () => Number.POSITIVE_INFINITY);
-  const heightRange = tileSize * (3 + hilliness * 4);
-  let current = baseY;
+  const terraceStep = Math.max(2, Math.round(tileSize * 0.2));
 
   for (let col = 0; col < safeCols; col += 1) {
-    const noiseA = lemmingsHash01(col * 0.29 + 9, seed);
-    const noiseB = lemmingsHash01(col * 0.073 + 21, seed + 17);
-    const slope = (noiseA - 0.5) * tileSize * 0.55 + Math.sin(col * 0.11 + seed * 0.03) * hilliness * 1.4;
-    current += slope;
-    current = clamp(current, baseY - heightRange, baseY + tileSize * 1.5);
-    const terraced = Math.round(current / 2) * 2;
-    surfaceY.push(terraced);
-
-    let wall = 0;
-    const wallCluster = lemmingsHash01(col * 0.41 + 3, seed);
-    if (col > 12 && col < safeCols - 18 && wallCluster < wallRate) {
-      wall = tileSize * (1.4 + noiseB * 2.8);
-    }
-    if (col % 47 >= 3 && col % 47 <= 6) {
-      wall = 0;
-    }
-    wallHeight.push(wall);
+    const gentleWave = Math.sin(col * 0.043 + seed * 0.012) * hilliness * tileSize * 0.42;
+    const jitter = (lemmingsHash01(col * 0.17 + 2.7, seed) - 0.5) * hilliness * tileSize * 0.22;
+    const terraced = Math.round((baseY + gentleWave + jitter) / terraceStep) * terraceStep;
+    surfaceY.push(clamp(terraced, baseY - tileSize * 1.8, baseY + tileSize * 1.2));
+    wallHeight.push(0);
   }
+
+  const stageStride = Math.max(20, Math.round(safeCols / 7));
+  const firstPillar = 14;
+  const stages = [0, 1, 2];
+  for (const stage of stages) {
+    const stageBase = firstPillar + stage * stageStride;
+    const pillarCols = [stageBase, stageBase + 1];
+    const wallStrength = tileSize * (2.3 + stage * 0.4 + hilliness * 0.5);
+    pillarCols.forEach((col) => {
+      if (col >= 0 && col < safeCols) {
+        wallHeight[col] = Math.max(wallHeight[col], wallStrength);
+      }
+    });
+
+    const pitStart = stageBase + 4;
+    const pitEnd = pitStart + 7;
+    const pitDepth = tileSize * (1.35 + stage * 0.2);
+    for (let col = pitStart; col <= pitEnd && col < safeCols; col += 1) {
+      surfaceY[col] += pitDepth;
+      if (col === pitStart) {
+        wallHeight[col] = Math.max(wallHeight[col], tileSize * 1.25);
+      }
+      if (col > pitStart && col < pitEnd && lemmingsHash01(col * 0.71 + stage, seed) < wallRate * 0.45) {
+        wallHeight[col] = Math.max(wallHeight[col], tileSize * 0.9);
+      }
+    }
+
+    const riseStart = pitEnd + 1;
+    for (let col = riseStart; col <= riseStart + 8 && col < safeCols; col += 1) {
+      const riseProgress = (col - riseStart) / 8;
+      surfaceY[col] -= tileSize * 0.95 * riseProgress;
+    }
+  }
+
+  for (let col = 8; col < safeCols - 12; col += 1) {
+    if (wallHeight[col] > 0) {
+      continue;
+    }
+    if (lemmingsHash01(col * 0.53 + 7, seed) < wallRate * 0.12) {
+      wallHeight[col] = tileSize * (1.1 + lemmingsHash01(col * 0.13 + 99, seed) * 0.9);
+    }
+  }
+
+  const finalPillar = clamp(firstPillar + stageStride * 3, 0, safeCols - 12);
+  wallHeight[finalPillar] = tileSize * 2.9;
+  wallHeight[finalPillar + 1] = tileSize * 2.2;
 
   const goalCol = safeCols - 10;
   wallHeight[goalCol] = 0;
   wallHeight[goalCol - 1] = 0;
+  surfaceY[goalCol] = Math.min(surfaceY[goalCol], baseY - tileSize * 1.6);
+  surfaceY[goalCol - 1] = Math.min(surfaceY[goalCol - 1], baseY - tileSize * 1.5);
   bridgeY[goalCol] = surfaceY[goalCol] - tileSize * 0.4;
   bridgeY[goalCol - 1] = surfaceY[goalCol] - tileSize * 0.4;
 
@@ -382,7 +417,7 @@ const drawTerrain = (ctx: CanvasRenderingContext2D, state: EffectState, cameraX:
     ctx.fill();
   }
 
-  ctx.fillStyle = "#223149";
+  ctx.fillStyle = "#2f2a3a";
   ctx.beginPath();
   ctx.moveTo(-4, height);
   for (let col = startCol; col <= endCol; col += 1) {
@@ -393,7 +428,7 @@ const drawTerrain = (ctx: CanvasRenderingContext2D, state: EffectState, cameraX:
   ctx.closePath();
   ctx.fill();
 
-  ctx.fillStyle = "#5a4f3a";
+  ctx.fillStyle = "#8d7a5a";
   ctx.beginPath();
   ctx.moveTo(-4, height);
   for (let col = startCol; col <= endCol; col += 1) {
@@ -404,20 +439,29 @@ const drawTerrain = (ctx: CanvasRenderingContext2D, state: EffectState, cameraX:
   ctx.closePath();
   ctx.fill();
 
-  ctx.fillStyle = "#7b6f52";
+  ctx.fillStyle = "#d8c59d";
   for (let col = startCol; col <= endCol; col += 1) {
     const x = col * tileSize - cameraX;
     ctx.fillRect(x, state.terrain.surfaceY[col], tileSize + 1, 3);
     const wallHeight = state.terrain.wallHeight[col];
     if (wallHeight > 0.4) {
-      ctx.fillStyle = "#40372c";
-      ctx.fillRect(x + tileSize * 0.18, state.terrain.surfaceY[col] - wallHeight, tileSize * 0.64, wallHeight);
-      ctx.fillStyle = "#7b6f52";
+      const columnW = tileSize * 0.72;
+      const columnX = x + (tileSize - columnW) * 0.5;
+      const columnY = state.terrain.surfaceY[col] - wallHeight;
+      ctx.fillStyle = "#bca67f";
+      ctx.fillRect(columnX, columnY, columnW, wallHeight);
+      ctx.fillStyle = "#e8d6b2";
+      ctx.fillRect(columnX + columnW * 0.1, columnY + tileSize * 0.2, columnW * 0.18, Math.max(2, wallHeight - tileSize * 0.4));
+      ctx.fillRect(columnX + columnW * 0.42, columnY + tileSize * 0.2, columnW * 0.16, Math.max(2, wallHeight - tileSize * 0.4));
+      ctx.fillStyle = "#8f7858";
+      ctx.fillRect(columnX - 1, columnY, columnW + 2, 2);
+      ctx.fillRect(columnX - 1, state.terrain.surfaceY[col] - 2, columnW + 2, 2);
+      ctx.fillStyle = "#d8c59d";
     }
     if (Number.isFinite(state.terrain.bridgeY[col])) {
-      ctx.fillStyle = "#a68557";
+      ctx.fillStyle = "#b9935d";
       ctx.fillRect(x - 1, state.terrain.bridgeY[col], tileSize + 2, 3);
-      ctx.fillStyle = "#7b6f52";
+      ctx.fillStyle = "#d8c59d";
     }
   }
 };
