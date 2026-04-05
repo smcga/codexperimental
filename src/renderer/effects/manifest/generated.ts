@@ -57,7 +57,6 @@ import { polar_tunnelManifest } from "./polar_tunnel.manifest";
 import { plasmaManifest } from "./plasma.manifest";
 import { platformerScrollManifest } from "./platformerScroll.manifest";
 import { poly_morph_showcaseManifest } from "./poly_morph_showcase.manifest";
-import { portraitManifest } from "./portrait.manifest";
 import { prism_bloomManifest } from "./prism_bloom.manifest";
 import { proper3dManifest } from "./proper3d.manifest";
 import { rainManifest } from "./rain.manifest";
@@ -162,7 +161,6 @@ export const generatedEffectManifests = [
   plasmaManifest,
   platformerScrollManifest,
   poly_morph_showcaseManifest,
-  portraitManifest,
   prism_bloomManifest,
   proper3dManifest,
   rainManifest,

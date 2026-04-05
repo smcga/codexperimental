@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **103**.
+Total effects: **102**.
 
 ## Table of contents
 
@@ -65,7 +65,6 @@ Total effects: **103**.
 - [Effect: platformerScroll](#effect-platformerScroll)
 - [Effect: polar_tunnel](#effect-polar-tunnel)
 - [Effect: poly_morph_showcase](#effect-poly-morph-showcase)
-- [Effect: portrait](#effect-portrait)
 - [Effect: prism_bloom](#effect-prism-bloom)
 - [Effect: proper3d](#effect-proper3d)
 - [Effect: rain](#effect-rain)
@@ -161,7 +160,6 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 | `greets_wall` | 1986 | low | greets-wall presentation |
 | `fake3d` | 1987 | medium |  |
 | `gameOfLife` | 1987 | high | cellular automata part |
-| `portrait` | 1987 | low |  |
 | `proper3d` | 1987 | medium |  |
 | `kaleidoscope_symmetry` | 1988 | medium |  |
 | `kefrens_bars` | 1988 | high |  |
@@ -2344,33 +2342,6 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 ```json
 {
   "effect": "poly_morph_showcase",
-  "opacity": 1,
-  "blend": "source-over",
-  "params": {}
-}
-```
-
-## Effect: portrait
-
-- **Registry key:** `portrait`
-- **Implementation:** `src/renderer/effects/portraitGlowEffect.ts` (class `PortraitGlowEffect`)
-- **Renderer:** Canvas2D
-- **Description:** Portrait
-- **Audio features:** bass, beat, beatStrength, mid, treble
-- **Performance notes:** None noted.
-
-### Parameters
-
-| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
-| --- | --- | --- | --- | --- | --- |
-| `params.drift` | number | 1 | min 0, max ? | Drift | yes |
-| `params.zoom` | number | 1.05 | min 0.5, max ? | Zoom | yes |
-
-### Minimal layer usage
-
-```json
-{
-  "effect": "portrait",
   "opacity": 1,
   "blend": "source-over",
   "params": {}

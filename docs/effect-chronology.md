@@ -16,7 +16,6 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 | `greets_wall` | 1986 | low | greets-wall presentation |
 | `fake3d` | 1987 | medium |  |
 | `gameOfLife` | 1987 | high | cellular automata part |
-| `portrait` | 1987 | low |  |
 | `proper3d` | 1987 | medium |  |
 | `kaleidoscope_symmetry` | 1988 | medium |  |
 | `kefrens_bars` | 1988 | high |  |

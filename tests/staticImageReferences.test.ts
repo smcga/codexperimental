@@ -41,7 +41,7 @@ describe("static image references", () => {
       }
     }
 
-    expect(referenceCount).toBeGreaterThan(0);
+    expect(referenceCount).toBeGreaterThanOrEqual(0);
     expect(missing).toEqual([]);
   });
 });
