@@ -11,3 +11,16 @@ describe("effect idea modal styling", () => {
     expect(css).toContain("overscroll-behavior: contain;");
   });
 });
+
+describe("start overlay organic link", () => {
+  it("includes a subtle link to the human-crafted version", () => {
+    const indexHtml = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+    const css = readFileSync(new URL("./style.css", import.meta.url), "utf8");
+
+    expect(indexHtml).toContain("overlay-organic-banner");
+    expect(indexHtml).toContain('id="overlay-organic-link"');
+    expect(indexHtml).toContain('href="human-stuff/index.html"');
+    expect(css).toContain(".overlay-organic-banner");
+    expect(css).toContain(".overlay-organic-banner a");
+  });
+});

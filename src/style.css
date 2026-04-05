@@ -861,6 +861,29 @@ body,
   display: none;
 }
 
+.overlay-organic-banner {
+  margin: 0;
+  max-width: 34rem;
+  color: rgba(224, 240, 250, 0.72);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-align: center;
+  line-height: 1.45;
+  z-index: 1;
+}
+
+.overlay-organic-banner a {
+  color: rgba(158, 234, 245, 0.92);
+  text-underline-offset: 0.18em;
+  transition: color 140ms ease, text-shadow 140ms ease;
+}
+
+.overlay-organic-banner a:hover,
+.overlay-organic-banner a:focus-visible {
+  color: #dffcff;
+  text-shadow: 0 0 12px rgba(142, 249, 255, 0.35);
+}
+
 #overlay-start-button,
 #overlay-share-button,
 #overlay-restart-button,
