@@ -78,6 +78,7 @@ Total effects: **93**.
 - [Effect: shadebobs_bobs](#effect-shadebobs-bobs)
 - [Effect: sine_distorter](#effect-sine-distorter)
 - [Effect: sine_scroller_logo](#effect-sine-scroller-logo)
+- [Effect: soft_shadows](#effect-soft-shadows)
 - [Effect: smoke_simulation](#effect-smoke-simulation)
 - [Effect: skeletal_ribbon](#effect-skeletal-ribbon)
 - [Effect: skyboxTransition](#effect-skyboxTransition)
@@ -130,6 +131,10 @@ Total effects: **93**.
 - `glow` (used in 16 effects)
 - `beatKick` (used in 14 effects)
 - `trail` (used in 10 effects)
+- `palette` (used in 10 effects)
+- `count` (used in 7 effects)
+- `hueShift` (used in 7 effects)
+- `scanlines` (used in 7 effects)
 - `palette` (used in 9 effects)
 - `hueShift` (used in 8 effects)
 - `lineWidth` (used in 9 effects)
@@ -2671,6 +2676,13 @@ Total effects: **93**.
 }
 ```
 
+## Effect: soft_shadows
+
+- **Registry key:** `soft_shadows`
+- **Implementation:** `src/renderer/effects/softShadowsEffect.ts` (class `SoftShadowsEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Canvas2D soft-shadow stage with floating casters and deterministic multi-pass penumbra rendering.
+- **Audio features:** bass, rms
 ## Effect: smoke_simulation
 
 - **Registry key:** `smoke_simulation`
@@ -2684,6 +2696,19 @@ Total effects: **93**.
 
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
 | --- | --- | --- | --- | --- | --- |
+| `params.audioReactive` | number | 0.35 | min 0, max 1 | Audio Reactive | yes |
+| `params.contactHardness` | number | 0.7 | min 0, max 1 | Contact Hardness | yes |
+| `params.count` | number | 3 | min 1, max 6 | Caster Count | yes |
+| `params.floorGlow` | number | 0.2 | min 0, max 1 | Floor Glow | yes |
+| `params.height` | number | 0.32 | min 0.05, max 0.9 | Height | yes |
+| `params.lightAngle` | number | 0.8 | min -3.14, max 3.14 | Light Angle | yes |
+| `params.lightSweep` | number | 0.35 | min 0, max 1 | Light Sweep | yes |
+| `params.motion` | number | 0.4 | min 0, max 1.5 | Motion | yes |
+| `params.objectSize` | number | 0.12 | min 0.05, max 0.25 | Object Size | yes |
+| `params.palette` | string | "studio" | options: studio, sunset, mono | Palette | no |
+| `params.passCount` | number | 6 | min 1, max 12 | Pass Count | yes |
+| `params.shadowLength` | number | 1.2 | min 0.2, max 2.2 | Shadow Length | yes |
+| `params.softness` | number | 0.6 | min 0, max 1.5 | Softness | yes |
 | `params.audioReactive` | number | 1 | min 0, max 1 | Audio Reactive | yes |
 | `params.bassInfluence` | number | 0.9 | min 0, max 2 | Bass Influence | yes |
 | `params.colorMode` | string | "mono" | options: mono, tinted | Color Mode | no |
@@ -2763,6 +2788,7 @@ Total effects: **93**.
 
 ```json
 {
+  "effect": "soft_shadows",
   "effect": "skyboxTransition",
   "opacity": 1,
   "blend": "source-over",
