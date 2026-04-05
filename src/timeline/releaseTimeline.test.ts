@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 
 import timeline from "../../public/timeline.release.json";
 import { getEffectRegistryKeys } from "../renderer/effects/manifest";
+import { transitionKeys } from "../renderer/transitions";
 
 const toSeconds = (value: string | number): number => {
   if (typeof value === "number") {
@@ -14,6 +15,36 @@ const toSeconds = (value: string | number): number => {
 };
 
 describe("release timeline", () => {
+  it("balances transition usage across all available transition types", () => {
+    const sectionsWithTransition = timeline.sections.filter((section) => section.transition);
+    expect(sectionsWithTransition.length).toBeGreaterThan(0);
+
+    const countUsage = (phase: "in" | "out"): Map<string, number> => {
+      const counts = new Map<string, number>(transitionKeys.map((key) => [key, 0]));
+      sectionsWithTransition.forEach((section) => {
+        const key = section.transition?.[phase];
+        if (key) {
+          counts.set(key, (counts.get(key) ?? 0) + 1);
+        }
+      });
+      return counts;
+    };
+
+    const assertRoughBalance = (counts: Map<string, number>, phase: "in" | "out"): void => {
+      transitionKeys.forEach((key) => {
+        expect(counts.get(key)).toBeGreaterThan(0);
+      });
+
+      const values = [...counts.values()];
+      const min = Math.min(...values);
+      const max = Math.max(...values);
+      expect(max - min, `${phase} transition spread should stay within one use`).toBeLessThanOrEqual(1);
+    };
+
+    assertRoughBalance(countUsage("in"), "in");
+    assertRoughBalance(countUsage("out"), "out");
+  });
+
   it("applies the MP3 sync compensation offset used for sacred anchor playback timing", () => {
     expect(timeline.audio.offset).toBeCloseTo(-0.128, 5);
   });
