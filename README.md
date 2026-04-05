@@ -452,6 +452,7 @@ Optional fallback token behavior:
 - The generator prompt now explicitly asks for `runtimeCode` as plain JavaScript (no TS annotations/import/export). The client still attempts to normalize module-style code (`export default function ...`) when possible.
 - Generated effect payloads now also include optional parameter control metadata (`params`) and concise docs (`docs`). After approval, these generated controls are exposed in the debug panel + editor parameter pickers just like built-in effects.
 - The effect generator modal now renders generated params as editable controls immediately in preview, with **Set current as defaults** (persist defaults into submitted metadata) and **Randomize everything** buttons for rapid iteration.
+- Effect generation and moderation preview now play a low-volume background song reference from **05:12.850**, then loop **05:39.940 → 05:50.786** while previewing so audio-reactive effects animate consistently.
 - The client also normalizes escaped code payloads (for example strings containing literal `\\n`) before compiling preview/runtime effects.
 
 Expected `POST /api/effects?action=generate` failure codes:

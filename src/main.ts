@@ -9,6 +9,7 @@ import {
   normalizeTimelineConfig
 } from "./config/loadConfig";
 import { AudioPlayer, AudioFeatures } from "./audio/audioPlayer";
+import { EffectPreviewAudioController } from "./effectPreviewAudio";
 import { Timeline } from "./timeline/timeline";
 import { Renderer } from "./renderer/renderer";
 import { FramingOverride } from "./renderer/framing";
@@ -191,9 +192,9 @@ let effectIdeasSubmitting = false;
 let generatedIdea: EffectIdeaGenerationResult | null = null;
 let generatedIdeaPrompt = "";
 let effectIdeaPreviewFrame = 0;
-let effectIdeaPreviewStart = 0;
 let effectIdeaPreviewEffect: ReturnType<typeof compileRuntimeEffect> | null = null;
 let effectIdeaPreviewParams: Record<string, number | string> = {};
+let effectIdeaAudioPreview = new EffectPreviewAudioController("/song.mp3");
 let availableEffectNames = getEffectRegistryKeys();
 let playbackSyncSuppressBroadcast = false;
 let lastPlaybackSyncStateSentAt = 0;
@@ -264,17 +265,6 @@ let mobileDebugSection: DebugPanelSection = "transport";
 
 const doodleCtx = doodleCanvas?.getContext("2d") ?? null;
 const effectIdeaPreviewCtx = effectIdeaPreview?.getContext("2d") ?? null;
-const EMPTY_AUDIO_FEATURES: AudioFeatures = {
-  timeDomain: new Uint8Array(2048),
-  frequency: new Uint8Array(1024),
-  rms: 0,
-  bass: 0,
-  mid: 0,
-  treble: 0,
-  beat: false,
-  beatStrength: 0,
-  impactStrength: 0
-};
 
 debugTransitionSelect.innerHTML = buildTransitionOptionMarkup({ includeAuto: true });
 
@@ -630,17 +620,13 @@ function previewGeneratedIdea(): void {
   if (!effectIdeaPreview || !effectIdeaPreviewCtx || !effectIdeaPreviewEffect) {
     return;
   }
-  const nowSeconds = performance.now() / 1000;
-  if (effectIdeaPreviewStart === 0) {
-    effectIdeaPreviewStart = nowSeconds;
-  }
   effectIdeaPreviewEffect.render({
     ctx: effectIdeaPreviewCtx,
     width: effectIdeaPreview.width,
     height: effectIdeaPreview.height,
-    time: nowSeconds - effectIdeaPreviewStart,
+    time: effectIdeaAudioPreview.getPlaybackTime(),
     delta: 1 / 60,
-    audio: EMPTY_AUDIO_FEATURES,
+    audio: effectIdeaAudioPreview.getFeatures(),
     params: effectIdeaPreviewParams
   });
   effectIdeaPreviewFrame = requestAnimationFrame(previewGeneratedIdea);
@@ -654,15 +640,17 @@ function setEffectIdeaModalVisible(visible: boolean): void {
   effectIdeaModal.setAttribute("aria-hidden", visible ? "false" : "true");
   if (!visible) {
     stopEffectIdeaPreview();
+    effectIdeaAudioPreview.stop();
   }
   if (visible && effectIdeaCode) {
+    effectIdeaAudioPreview.setSource(currentAudioSrc || "/song.mp3");
+    void effectIdeaAudioPreview.start();
     effectIdeaCode.textContent = "";
     setEffectIdeaStatus("Describe your idea, click Generate, and preview the result.");
     generatedIdea = null;
     effectIdeaPreviewParams = {};
     generatedIdeaPrompt = "";
     effectIdeaPreviewEffect = null;
-    effectIdeaPreviewStart = 0;
     renderGeneratedEffectIdeaControls();
     updateEffectIdeaButtons();
   }
@@ -725,7 +713,6 @@ async function generateCurrentEffectIdea(): Promise<void> {
     }
     renderGeneratedEffectIdeaControls();
     effectIdeaPreviewEffect = compileRuntimeEffect(generation.runtimeCode);
-    effectIdeaPreviewStart = 0;
     stopEffectIdeaPreview();
     previewGeneratedIdea();
     setEffectIdeaStatus("Preview ready. If it looks good, submit it for approval.", "success");
@@ -832,6 +819,7 @@ async function applyTimelineConfig(config: TimelineConfig): Promise<void> {
     attachAudioPlayerHandlers(audioPlayer);
     await audioPlayer.load();
     currentAudioSrc = config.audio.src;
+    effectIdeaAudioPreview.setSource(currentAudioSrc);
   }
   timeline = new Timeline(config);
   timeline.setAudioDuration(audioPlayer.duration);
@@ -1356,6 +1344,7 @@ async function startDemo(): Promise<void> {
     attachAudioPlayerHandlers(audioPlayer);
     await audioPlayer.load();
     currentAudioSrc = config.audio.src;
+    effectIdeaAudioPreview.setSource(currentAudioSrc);
 
     timeline = new Timeline(config);
     timeline.setAudioDuration(audioPlayer.duration);
@@ -1744,6 +1733,7 @@ window.addEventListener("keydown", (event) => {
 
 window.addEventListener("beforeunload", () => {
   playbackSync.destroy();
+  effectIdeaAudioPreview.destroy();
 });
 
 if (!releaseMode && mobileControls && mobileDebugButton) {

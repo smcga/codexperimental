@@ -1,7 +1,7 @@
 import "./style.css";
 
-import { type AudioFeatures } from "./audio/audioPlayer";
 import { buildEffectModerationActionUrl, compileRuntimeEffect, fetchPendingEffect } from "./effectIdeas";
+import { EffectPreviewAudioController } from "./effectPreviewAudio";
 
 export type EffectReviewPageParams = {
   id: string | null;
@@ -23,17 +23,6 @@ export function formatEffectReviewTimestamp(timestamp: number): string {
   });
 }
 
-const EMPTY_AUDIO_FEATURES: AudioFeatures = {
-  timeDomain: new Uint8Array(1024),
-  frequency: new Uint8Array(1024),
-  rms: 0,
-  bass: 0,
-  mid: 0,
-  treble: 0,
-  beat: false,
-  beatStrength: 0,
-  impactStrength: 0
-};
 
 const previewCanvas = typeof document !== "undefined" ? document.querySelector<HTMLCanvasElement>("#effect-review-preview") : null;
 const previewContext = previewCanvas?.getContext("2d") ?? null;
@@ -46,8 +35,8 @@ const approveLink = typeof document !== "undefined" ? document.querySelector<HTM
 const denyLink = typeof document !== "undefined" ? document.querySelector<HTMLAnchorElement>("#effect-review-deny") : null;
 
 let previewFrame = 0;
-let previewStartTime = 0;
 let activeEffect: ReturnType<typeof compileRuntimeEffect> | null = null;
+const previewAudio = new EffectPreviewAudioController("/song.mp3");
 
 function setStatus(message: string, state: "idle" | "error" | "success" = "idle"): void {
   if (!reviewStatus) {
@@ -109,6 +98,7 @@ function stopPreview(): void {
     cancelAnimationFrame(previewFrame);
     previewFrame = 0;
   }
+  previewAudio.stop();
 }
 
 function startPreview(): void {
@@ -120,25 +110,20 @@ function startPreview(): void {
     if (!previewCanvas || !previewContext || !activeEffect) {
       return;
     }
-    const nowSeconds = performance.now() / 1000;
-    if (previewStartTime === 0) {
-      previewStartTime = nowSeconds;
-    }
-
     activeEffect.render({
       ctx: previewContext,
       width: previewCanvas.width,
       height: previewCanvas.height,
-      time: nowSeconds - previewStartTime,
+      time: previewAudio.getPlaybackTime(),
       delta: 1 / 60,
-      audio: EMPTY_AUDIO_FEATURES,
+      audio: previewAudio.getFeatures(),
       params: {}
     });
     previewFrame = requestAnimationFrame(draw);
   };
 
   stopPreview();
-  previewStartTime = 0;
+  void previewAudio.start();
   draw();
 }
 
@@ -205,6 +190,9 @@ async function initEffectReviewPage(): Promise<void> {
 }
 
 if (typeof window !== "undefined" && typeof document !== "undefined") {
-  window.addEventListener("beforeunload", stopPreview);
+  window.addEventListener("beforeunload", () => {
+    stopPreview();
+    previewAudio.destroy();
+  });
   void initEffectReviewPage();
 }
