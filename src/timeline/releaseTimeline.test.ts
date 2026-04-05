@@ -99,6 +99,8 @@ describe("release timeline", () => {
       return end > rapStart && start < rapEnd;
     });
     expect(rapTextCues.length).toBeGreaterThanOrEqual(2);
+    const earliestRapCueStart = Math.min(...rapTextCues.map((cue) => toSeconds(cue.start)));
+    expect(earliestRapCueStart).toBeCloseTo(rapStart, 5);
   });
 
   it("includes the fake-news bar with the restored lines in order", () => {
