@@ -156,6 +156,7 @@ Automation supports numeric params only; non-numeric values fall back to the bas
 ### Effect catalog
 
 Each timeline section `effect` maps to one of the entries below. Include any of the parameters in a section `params` object; omit or set to defaults to use the built-in values.
+The curated `public/timeline.release.json` pass now gives every registry effect at least one primary section spotlight while preserving the historical-to-impossible era arc.
 
 | Effect | Parameters | Notes |
 | --- | --- | --- |

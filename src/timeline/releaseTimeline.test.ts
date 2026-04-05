@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 
 import timeline from "../../public/timeline.release.json";
+import { getEffectRegistryKeys } from "../renderer/effects/manifest";
 
 const toSeconds = (value: string | number): number => {
   if (typeof value === "number") {
@@ -235,56 +236,34 @@ describe("release timeline", () => {
     expect(toSeconds(rapLaunch?.start ?? 0)).toBeCloseTo(3 * 60 + 25.012, 5);
   });
 
-  it("uses every registered effect at least once as base or layer", () => {
-    const usedEffects = new Set<string>();
+  it("gives every registry effect a primary release spotlight", () => {
+    const primaryEffects = new Set(timeline.sections.map((section) => section.effect));
+    const registryEffects = getEffectRegistryKeys();
 
+    registryEffects.forEach((effectId) => {
+      expect(primaryEffects.has(effectId)).toBe(true);
+    });
+  });
+
+  it("keeps heavy-repeat primaries bounded for readability", () => {
+    const primaryCounts = new Map<string, number>();
     timeline.sections.forEach((section) => {
-      usedEffects.add(section.effect);
-      section.layers?.forEach((layer) => {
-        usedEffects.add(layer.effect);
-      });
+      primaryCounts.set(section.effect, (primaryCounts.get(section.effect) ?? 0) + 1);
     });
 
+    expect(primaryCounts.get("neon") ?? 0).toBeLessThanOrEqual(8);
+    expect(primaryCounts.get("tunnel") ?? 0).toBeLessThanOrEqual(8);
+    expect(primaryCounts.get("sphere3d") ?? 0).toBeLessThanOrEqual(6);
+    expect(primaryCounts.get("ribbons") ?? 0).toBeLessThanOrEqual(6);
+    expect(primaryCounts.get("feedback") ?? 0).toBeLessThanOrEqual(3);
+  });
+
+  it("keeps effect docs in sync with registry manifests", () => {
     const docsPath = new URL("../../docs/effects.md", import.meta.url);
     const docs = readFileSync(docsPath, "utf-8");
-    const documentedEffects = Array.from(docs.matchAll(/^## Effect: (.+)$/gm), (match) => match[1]);
+    const documentedEffects = Array.from(docs.matchAll(/^## Effect: (.+)$/gm), (match) => match[1]).sort();
+    const registryEffects = [...getEffectRegistryKeys()].sort();
 
-    const optionalEffects = new Set([
-      "portrait",
-      "voxel_world_builder",
-      "cosmic_voyage",
-      "fireworks_display",
-      "lemmings_march",
-      "prism_bloom",
-      "tetris_matrix",
-      "matrix_rain",
-      "marble",
-      "velvet_dreamscape",
-      "water_drops",
-      "explosionBurst",
-      "soft_shadows",
-      "infinite_zoom_droste",
-      "cloth_sim",
-      "recursiveFracture",
-      "skeletal_ribbon",
-      "infiniteMirror",
-      "caustics",
-      "gameOfLife",
-      "god_rays",
-      "hexGridPulse",
-      "kaleidoscope_symmetry",
-      "lens_flare",
-      "particleAttractors",
-      "polar_tunnel",
-      "reactionDiffusion",
-      "tilingMorph",
-      "voronoi_cells"
-    ]);
-    documentedEffects.forEach((effectId) => {
-      if (optionalEffects.has(effectId)) {
-        return;
-      }
-      expect(usedEffects.has(effectId)).toBe(true);
-    });
+    expect(documentedEffects).toEqual(registryEffects);
   });
 });

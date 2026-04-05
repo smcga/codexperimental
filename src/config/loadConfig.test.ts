@@ -177,7 +177,7 @@ describe("normalizeTimelineConfig", () => {
     const generatedScenes = normalized.sections.filter((section) => section.id.startsWith("Scene "));
 
     expect(legacySections).toHaveLength(0);
-    expect(normalized.sections.some((section) => section.effect === "portrait")).toBe(false);
+    expect(normalized.sections.some((section) => section.effect === "portrait")).toBe(true);
     expect(generatedScenes.length).toBeGreaterThan(0);
 
     generatedScenes.forEach((section) => {

@@ -321,7 +321,7 @@
       "id": "era8bit-glitch",
       "start": "01:32",
       "end": "01:38.3",
-      "effect": "plasma",
+      "effect": "gameOfLife",
       "params": {
         "speed": 2.3,
         "glow": 0.32
@@ -339,7 +339,8 @@
           "opacity": 0.1,
           "params": {}
         }
-      ]
+      ],
+      "fitAlign": "centre"
     },
     {
       "id": "era16bit-isogrid",
@@ -2688,7 +2689,7 @@
       "id": "Scene 002 - Neon Alley",
       "start": 82.461587,
       "end": 92,
-      "effect": "neon_alley",
+      "effect": "blobs",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -2723,13 +2724,13 @@
           "automation": []
         }
       ],
-      "fitAlign": "fill"
+      "fitAlign": "centre"
     },
     {
       "id": "Scene 003 - Kefrens Bars",
       "start": 88.2,
       "end": 92,
-      "effect": "kefrens_bars",
+      "effect": "bokeh",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -2766,13 +2767,13 @@
           "automation": []
         }
       ],
-      "fitAlign": "fill"
+      "fitAlign": "top"
     },
     {
       "id": "Scene 004 - Sphere3d",
       "start": 104.259716,
       "end": 106.27000000000001,
-      "effect": "sphere3d",
+      "effect": "bumpmap_plane",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -2809,7 +2810,7 @@
       "id": "Scene 005 - Sphere3d",
       "start": 104.889558,
       "end": 106.27000000000001,
-      "effect": "sphere3d",
+      "effect": "caustics",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -2846,7 +2847,7 @@
       "id": "Scene 006 - Explicitpixels",
       "start": 105.458446,
       "end": 106.27000000000001,
-      "effect": "explicitpixels",
+      "effect": "hexGridPulse",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -2879,7 +2880,7 @@
           "automation": []
         }
       ],
-      "fitAlign": "fill"
+      "fitAlign": "bottom"
     },
     {
       "id": "Scene 007 - Flyover",
@@ -2931,7 +2932,7 @@
       "id": "Scene 008 - Kefrens Bars",
       "start": 142.407199,
       "end": 143.6,
-      "effect": "kefrens_bars",
+      "effect": "marble",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -2970,7 +2971,7 @@
           "automation": []
         }
       ],
-      "fitAlign": "fill"
+      "fitAlign": "centre"
     },
     {
       "id": "Scene 009 - Amiga Showcase",
@@ -3037,7 +3038,7 @@
       "id": "Scene 010 - Amiga Showcase",
       "start": 160.565991,
       "end": 163.5,
-      "effect": "amiga_showcase",
+      "effect": "reactionDiffusion",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -3090,7 +3091,7 @@
       "id": "Scene 011 - Glenz Vectors",
       "start": 165,
       "end": 169,
-      "effect": "glenz_vectors",
+      "effect": "cloth_sim",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -3140,13 +3141,13 @@
           "automation": []
         }
       ],
-      "fitAlign": "fill"
+      "fitAlign": "centre"
     },
     {
       "id": "Scene 012 - Glenz Vectors",
       "start": 180.159728,
       "end": 181.5,
-      "effect": "glenz_vectors",
+      "effect": "smoke_simulation",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -3196,7 +3197,7 @@
           "automation": []
         }
       ],
-      "fitAlign": "fill"
+      "fitAlign": "bottom"
     },
     {
       "id": "Scene 013 - Volumetric Clouds",
@@ -3246,7 +3247,7 @@
       "id": "Scene 014 - Lens Wobbler",
       "start": 188.478829,
       "end": 189.6,
-      "effect": "lens_wobbler",
+      "effect": "soft_shadows",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -3302,7 +3303,7 @@
       "id": "Scene 015 - Dot Tunnel",
       "start": 194.698874,
       "end": 194.8,
-      "effect": "dotTunnel",
+      "effect": "moving_shadow_map",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -3340,7 +3341,7 @@
           "automation": []
         }
       ],
-      "fitAlign": "fill"
+      "fitAlign": "top"
     },
     {
       "id": "Scene 016 - Feedback",
@@ -3387,7 +3388,7 @@
       "id": "Scene 017 - Fractal",
       "start": 200.235542,
       "end": 205.012,
-      "effect": "fractal",
+      "effect": "water_drops",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -3428,7 +3429,7 @@
       "id": "Scene 018 - Fractal",
       "start": 201.617129,
       "end": 205.012,
-      "effect": "fractal",
+      "effect": "voronoi_cells",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -3469,7 +3470,7 @@
       "id": "Scene 019 - Ribbons",
       "start": 202.484974,
       "end": 205.012,
-      "effect": "ribbons",
+      "effect": "polar_tunnel",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -3506,13 +3507,13 @@
           "automation": []
         }
       ],
-      "fitAlign": "fill"
+      "fitAlign": "centre"
     },
     {
       "id": "Scene 020 - Sine Distorter",
       "start": 203.216403,
       "end": 205.012,
-      "effect": "sine_distorter",
+      "effect": "infinite_zoom_droste",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -3555,13 +3556,13 @@
           "automation": []
         }
       ],
-      "fitAlign": "fill"
+      "fitAlign": "centre"
     },
     {
       "id": "Scene 021 - Amiga Showcase",
       "start": 203.875269,
       "end": 205.012,
-      "effect": "amiga_showcase",
+      "effect": "infiniteMirror",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -3614,7 +3615,7 @@
       "id": "Scene 022 - Rotozoom",
       "start": 204.577673,
       "end": 205.012,
-      "effect": "rotozoom",
+      "effect": "tilingMorph",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -3734,7 +3735,7 @@
       "id": "Scene 025 - Gl Fractal Tunnel",
       "start": 207.922723,
       "end": 210,
-      "effect": "gl_fractal_tunnel",
+      "effect": "god_rays",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -3775,7 +3776,7 @@
       "id": "Scene 026 - Raymarch Fractal",
       "start": 208.982133,
       "end": 210,
-      "effect": "raymarch_fractal",
+      "effect": "lens_flare",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -3814,7 +3815,7 @@
           "automation": []
         }
       ],
-      "fitAlign": "fill"
+      "fitAlign": "top"
     },
     {
       "id": "Scene 027 - Road Drive",
@@ -3867,7 +3868,7 @@
       "id": "Scene 028 - Finale",
       "start": 212.079785,
       "end": 214.8,
-      "effect": "finale",
+      "effect": "explosionBurst",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -3905,13 +3906,13 @@
           "automation": []
         }
       ],
-      "fitAlign": "fill"
+      "fitAlign": "centre"
     },
     {
       "id": "Scene 029 - Fractal Zoomer",
       "start": 213.089853,
       "end": 214.8,
-      "effect": "fractal_zoomer",
+      "effect": "fireworks_display",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -3948,7 +3949,7 @@
           "automation": []
         }
       ],
-      "fitAlign": "fill"
+      "fitAlign": "centre"
     },
     {
       "id": "Scene 030 - Copper Gradient Splits",
@@ -4058,7 +4059,7 @@
       "id": "Scene 032 - Metaballs",
       "start": 216.219967,
       "end": 219.6,
-      "effect": "metaballs",
+      "effect": "skeletal_ribbon",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -4108,13 +4109,13 @@
           "automation": []
         }
       ],
-      "fitAlign": "fill"
+      "fitAlign": "bottom"
     },
     {
       "id": "Scene 033 - Rain",
       "start": 217.389672,
       "end": 219.6,
-      "effect": "rain",
+      "effect": "prism_bloom",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -4160,7 +4161,7 @@
       "id": "Scene 034 - Border Multiplex",
       "start": 218.4694,
       "end": 219.6,
-      "effect": "border_multiplex",
+      "effect": "skyboxTransition",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -4249,7 +4250,7 @@
       "id": "Scene 036 - Metaballs",
       "start": 221.95679,
       "end": 224.4,
-      "effect": "metaballs",
+      "effect": "recursiveFracture",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -4305,7 +4306,7 @@
       "id": "Scene 037 - Vga Fire",
       "start": 223.326767,
       "end": 224.4,
-      "effect": "vga_fire",
+      "effect": "taco_meteor_shower",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -4351,7 +4352,7 @@
           "automation": []
         }
       ],
-      "fitAlign": "fill"
+      "fitAlign": "centre"
     },
     {
       "id": "Scene 038 - Raytrace Spheres",
@@ -4416,7 +4417,7 @@
       "id": "Scene 039 - Lens Wobbler",
       "start": 225.567492,
       "end": 229.2,
-      "effect": "lens_wobbler",
+      "effect": "cosmic_voyage",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -4472,7 +4473,7 @@
       "id": "Scene 040 - Plasma",
       "start": 226.905542,
       "end": 229.2,
-      "effect": "plasma",
+      "effect": "voxel_world_builder",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -4509,7 +4510,7 @@
       "id": "Scene 041 - Finale",
       "start": 228.336093,
       "end": 229.2,
-      "effect": "finale",
+      "effect": "velvet_dreamscape",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -4597,7 +4598,7 @@
       "id": "Scene 043 - Voxel Landscape",
       "start": 230.666796,
       "end": 234,
-      "effect": "voxel_landscape",
+      "effect": "lemmings_march",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -4646,13 +4647,13 @@
           "automation": []
         }
       ],
-      "fitAlign": "fill"
+      "fitAlign": "bottom"
     },
     {
       "id": "Scene 044 - Tunnel",
       "start": 231.696634,
       "end": 234,
-      "effect": "tunnel",
+      "effect": "platformerScroll",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -4683,13 +4684,13 @@
           "automation": []
         }
       ],
-      "fitAlign": "fill"
+      "fitAlign": "bottom"
     },
     {
       "id": "Scene 045 - Fluid",
       "start": 232.645749,
       "end": 234,
-      "effect": "fluid",
+      "effect": "particleAttractors",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -4726,7 +4727,7 @@
           "automation": []
         }
       ],
-      "fitAlign": "fill"
+      "fitAlign": "centre"
     },
     {
       "id": "Scene 046 - Amiga Showcase",
@@ -4785,7 +4786,7 @@
       "id": "Scene 047 - Kefrens Bars",
       "start": 234.924208,
       "end": 238.8,
-      "effect": "kefrens_bars",
+      "effect": "matrix_rain",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -4869,7 +4870,7 @@
       "id": "Scene 049 - Glitch",
       "start": 240.885931,
       "end": 243.6,
-      "effect": "glitch",
+      "effect": "rainbow_cat",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -4908,13 +4909,13 @@
           "automation": []
         }
       ],
-      "fitAlign": "fill"
+      "fitAlign": "centre"
     },
     {
       "id": "Scene 050 - Neon",
       "start": 242.276226,
       "end": 243.6,
-      "effect": "neon",
+      "effect": "tetris_matrix",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -4950,13 +4951,13 @@
           "automation": []
         }
       ],
-      "fitAlign": "fill"
+      "fitAlign": "bottom"
     },
     {
       "id": "Scene 051 - Envmap Donut",
       "start": 243.023543,
       "end": 243.6,
-      "effect": "envmap_donut",
+      "effect": "portrait",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -5007,7 +5008,7 @@
           "automation": []
         }
       ],
-      "fitAlign": "fill"
+      "fitAlign": "centre"
     },
     {
       "id": "Scene 052 - Vga Fire",
@@ -5112,7 +5113,7 @@
       "id": "Scene 054 - Envmap Donut",
       "start": 246.861954,
       "end": 248.4,
-      "effect": "envmap_donut",
+      "effect": "twister",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -5163,7 +5164,7 @@
           "automation": []
         }
       ],
-      "fitAlign": "fill"
+      "fitAlign": "top"
     },
     {
       "id": "Scene 055 - Doodle Greetz Wall",
@@ -5268,7 +5269,7 @@
       "id": "Scene 057 - Vector3d Balls",
       "start": 250.709053,
       "end": 253.2,
-      "effect": "vector3d_balls",
+      "effect": "sine_scroller_logo",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -5317,13 +5318,13 @@
           "automation": []
         }
       ],
-      "fitAlign": "fill"
+      "fitAlign": "bottom"
     },
     {
       "id": "Scene 058 - Glenz Vectors",
       "start": 251.628161,
       "end": 253.2,
-      "effect": "glenz_vectors",
+      "effect": "kaleidoscope_symmetry",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -5373,13 +5374,13 @@
           "automation": []
         }
       ],
-      "fitAlign": "fill"
+      "fitAlign": "centre"
     },
     {
       "id": "Scene 059 - Textured Cube",
       "start": 252.655644,
       "end": 253.2,
-      "effect": "textured_cube",
+      "effect": "lightning",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -5475,7 +5476,7 @@
       "id": "Scene 061 - Neon Alley",
       "start": 255.195198,
       "end": 258,
-      "effect": "neon_alley",
+      "effect": "spectrum_analyzer",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -7181,7 +7182,7 @@
       "id": "Scene 098 - Neon",
       "start": 327.528378,
       "end": 340,
-      "effect": "neon",
+      "effect": "kefrens_bars",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -7375,7 +7376,7 @@
       "id": "Scene 102 - Neon",
       "start": 331.70713,
       "end": 340,
-      "effect": "neon",
+      "effect": "metaballs",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
@@ -7570,7 +7571,7 @@
       "id": "Scene 106 - Neon",
       "start": 337.512399,
       "end": 340,
-      "effect": "neon",
+      "effect": "sine_distorter",
       "era": "pcdemo",
       "transition": {
         "in": "fade",
