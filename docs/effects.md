@@ -69,6 +69,7 @@ Total effects: **93**.
 - [Effect: raster_bars](#effect-raster-bars)
 - [Effect: raymarch_fractal](#effect-raymarch-fractal)
 - [Effect: raytrace_spheres](#effect-raytrace-spheres)
+- [Effect: reactionDiffusion](#effect-reactionDiffusion)
 - [Effect: recursiveFracture](#effect-recursiveFracture)
 - [Effect: ribbons](#effect-ribbons)
 - [Effect: roadDrive](#effect-roadDrive)
@@ -2359,6 +2360,36 @@ Total effects: **93**.
 }
 ```
 
+## Effect: reactionDiffusion
+
+- **Registry key:** `reactionDiffusion`
+- **Implementation:** `src/renderer/effects/reactionDiffusion.ts` (class `ReactionDiffusionEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Reaction Diffusion
+- **Audio features:** beat, beatStrength, mid, rms, treble
+- **Performance notes:** Uses ImageData per frame; CPU cost scales with resolution.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReactivity` | number | 0.2 | min 0, max 1 | Audio Reactivity | yes |
+| `params.beatPulse` | number | 0.15 | min 0, max 1 | Beat Pulse | yes |
+| `params.brightness` | number | 1 | min 0.2, max 2.5 | Brightness | yes |
+| `params.contrast` | number | 1.4 | min 0.4, max 3.2 | Contrast | yes |
+| `params.diffA` | number | 1 | min 0.2, max 1.6 | Diffusion A | yes |
+| `params.diffB` | number | 0.5 | min 0.1, max 1.2 | Diffusion B | yes |
+| `params.drift` | number | 0.05 | min 0, max 0.5 | Drift | yes |
+| `params.feed` | number | 0.042 | min 0.01, max 0.09 | Feed | yes |
+| `params.invert` | boolean | 0 | unspecified | Invert | unknown |
+| `params.kill` | number | 0.06 | min 0.03, max 0.09 | Kill | yes |
+| `params.paletteMix` | number | 0.35 | min 0, max 1 | Palette Mix | yes |
+| `params.reseedCue` | number | 0 | min 0, max 1 | Reseed Cue | yes |
+| `params.scale` | number | 1 | min 0.5, max 3 | Scale | yes |
+| `params.seed` | number | 1 | min 0, max 999999 | Seed | yes |
+| `params.simScale` | number | 0.25 | min 0.08, max 0.7 | Simulation Scale | yes |
+| `params.steps` | number | 6 | min 1, max 18 | Substeps | yes |
+
 ## Effect: recursiveFracture
 
 - **Registry key:** `recursiveFracture`
@@ -2370,8 +2401,6 @@ Total effects: **93**.
 
 ### Parameters
 
-| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
-| --- | --- | --- | --- | --- | --- |
 | `params.angleJitter` | number | 0.22 | min 0, max 1 | Angle Jitter | yes |
 | `params.angleJitter.toFixed` | number | no explicit default | unspecified | Used in effect render logic. | yes |
 | `params.bassInfluence` | number | 0.2 | min 0, max 1 | Bass Influence | yes |
