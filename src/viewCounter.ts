@@ -2,6 +2,11 @@ type ViewsResponse = {
   count?: number;
 };
 
+export type LiveViewSubscriptionOptions = {
+  intervalMs?: number;
+  fetchOnStart?: boolean;
+};
+
 function isValidCount(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
 }
@@ -22,6 +27,27 @@ export async function fetchViews(): Promise<number> {
   } catch {
     return 0;
   }
+}
+
+export function subscribeToLiveViews(onCount: (count: number) => void, options: LiveViewSubscriptionOptions = {}): () => void {
+  const intervalMs = Math.max(500, options.intervalMs ?? 5000);
+  const fetchOnStart = options.fetchOnStart ?? true;
+
+  const tick = () => {
+    void fetchViews().then((count) => {
+      onCount(count);
+    });
+  };
+
+  if (fetchOnStart) {
+    tick();
+  }
+
+  const timerId = globalThis.setInterval(tick, intervalMs);
+
+  return () => {
+    globalThis.clearInterval(timerId);
+  };
 }
 
 export async function registerViewOncePerSession(): Promise<number | null> {

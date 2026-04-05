@@ -2,6 +2,8 @@
 
 Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, and Web Audio API.
 
+- The on-page view counter fetches `/api/views` continuously (default every 5 seconds) so audience totals can update live while the page is open.
+
 ## Requirements
 
 - Node.js 18+ recommended

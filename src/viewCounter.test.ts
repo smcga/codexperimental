@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { fetchViews, registerViewOncePerSession } from "./viewCounter";
+import { fetchViews, registerViewOncePerSession, subscribeToLiveViews } from "./viewCounter";
 
 const createStorage = (): Storage => {
   const store = new Map<string, string>();
@@ -32,6 +32,7 @@ describe("viewCounter", () => {
   afterEach(() => {
     globalThis.fetch = originalFetch;
     globalThis.sessionStorage = originalStorage;
+    vi.useRealTimers();
     vi.restoreAllMocks();
   });
 
@@ -51,6 +52,30 @@ describe("viewCounter", () => {
     })) as typeof fetch;
 
     await expect(fetchViews()).resolves.toBe(0);
+  });
+
+  it("subscribeToLiveViews fetches immediately and on every interval until unsubscribed", async () => {
+    vi.useFakeTimers();
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ count: 4 }) })
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ count: 5 }) })
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ count: 6 }) }) as typeof fetch;
+
+    const counts: number[] = [];
+    const unsubscribe = subscribeToLiveViews((count) => {
+      counts.push(count);
+    }, { intervalMs: 1000 });
+
+    await vi.advanceTimersByTimeAsync(0);
+    expect(counts).toEqual([4]);
+
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(counts).toEqual([4, 5]);
+
+    unsubscribe();
+    await vi.advanceTimersByTimeAsync(2000);
+    expect(counts).toEqual([4, 5]);
   });
 
   it("registerViewOncePerSession does not set the flag when POST fails and retries on subsequent calls", async () => {
