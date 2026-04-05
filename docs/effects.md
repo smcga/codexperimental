@@ -772,26 +772,26 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
 | --- | --- | --- | --- | --- | --- |
 | `params.R` | number | 1.2 | min 0.6, max 2 | Major Radius | yes |
-| `params.audioReact` | number | 0.7 | min 0, max 1 | Audio React | yes |
-| `params.backfaceCull` | boolean | true | unspecified | Backface Cull | unknown |
-| `params.beatKick` | number | 0.7 | min 0, max 1 | Beat Kick | yes |
+| `params.audioReact` | number | 0.0005 | min 0, max 1 | Audio React | yes |
+| `params.backfaceCull` | boolean | false | unspecified | Backface Cull | unknown |
+| `params.beatKick` | number | 0 | min 0, max 1 | Beat Kick | yes |
 | `params.bufH` | number | 180 | min 90, max 240 | Buffer Height | yes |
 | `params.bufW` | number | 240 | min 120, max 320 | Buffer Width | yes |
-| `params.camDist` | number | 3.4 | min 2, max 5 | Camera Distance | yes |
-| `params.chromeDesat` | number | 0.35 | min 0, max 1 | Chrome Desat | yes |
+| `params.camDist` | number | 5 | min 2, max 15 | Camera Distance | yes |
+| `params.chromeDesat` | number | 0.14 | min 0, max 1 | Chrome Desat | yes |
 | `params.edge` | boolean | false | unspecified | Edge Overlay | unknown |
 | `params.focalMul` | number | 1.2 | min 0.6, max 2 | Focal Multiplier | yes |
-| `params.fresnelStrength` | number | 0.35 | min 0, max 1.5 | Fresnel | yes |
+| `params.fresnelStrength` | number | 0.05 | min 0, max 1.5 | Fresnel | yes |
 | `params.r` | number | 0.55 | min 0.25, max 1 | Minor Radius | yes |
-| `params.rotXSpeed` | number | 0.35 | min 0, max 2 | Rotate X | yes |
+| `params.rotXSpeed` | number | 0.15 | min 0, max 2 | Rotate X | yes |
 | `params.rotYSpeed` | number | 0.75 | min 0, max 2 | Rotate Y | yes |
 | `params.rotZSpeed` | number | 0.15 | min 0, max 2 | Rotate Z | yes |
 | `params.scanlines` | boolean | false | unspecified | Scanlines | unknown |
 | `params.seed` | number | 0 | min 0, max 50 | Seed | yes |
 | `params.segmentsU` | number | 64 | min 16, max 128 | Segments U | yes |
 | `params.segmentsV` | number | 32 | min 12, max 96 | Segments V | yes |
-| `params.shininess` | number | 24 | min 2, max 64 | Shininess | yes |
-| `params.specStrength` | number | 0.45 | min 0, max 1.5 | Specular | yes |
+| `params.shininess` | number | 5 | min 2, max 64 | Shininess | yes |
+| `params.specStrength` | number | 0.8 | min 0, max 1.5 | Specular | yes |
 
 ### Minimal layer usage
 
