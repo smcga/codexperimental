@@ -36,6 +36,37 @@ describe("effect debug params", () => {
     });
   });
 
+  it("supports custom numeric limits and optional unclamped edit mode", () => {
+    const withOverrideLimits = coerceEffectParams(
+      "starfield",
+      {
+        speed: -3,
+        warp: 8
+      },
+      {
+        controlOverrides: {
+          speed: { min: -5, max: 9 },
+          warp: { min: 0, max: 10 }
+        }
+      }
+    );
+
+    expect(withOverrideLimits.speed).toBe(-3);
+    expect(withOverrideLimits.warp).toBe(8);
+
+    const unclamped = coerceEffectParams(
+      "starfield",
+      {
+        speed: -99,
+        warp: 123
+      },
+      { disableNumberClamp: true }
+    );
+
+    expect(unclamped.speed).toBe(-99);
+    expect(unclamped.warp).toBe(123);
+  });
+
   it("coerces toggle params to numeric values", () => {
     const params = coerceEffectParams("chess", { showHighlights: 0 });
     expect(params.showHighlights).toBe(0);

@@ -1,0 +1,34 @@
+import { EffectParamLimitsByEffect, sanitizeEffectParamLimits } from "./debug/effectParamLimits";
+
+type EffectParamLimitsResponse = {
+  paramLimits?: unknown;
+  error?: string;
+};
+
+async function requestParamLimits(path: string, init?: RequestInit): Promise<EffectParamLimitsResponse> {
+  const response = await fetch(path, {
+    headers: {
+      Accept: "application/json",
+      ...(init?.body ? { "Content-Type": "application/json" } : {})
+    },
+    ...init
+  });
+  const payload = (await response.json()) as EffectParamLimitsResponse;
+  if (!response.ok) {
+    throw new Error(typeof payload.error === "string" && payload.error ? payload.error : "Unable to load param limits.");
+  }
+  return payload;
+}
+
+export async function fetchGlobalEffectParamLimits(): Promise<EffectParamLimitsByEffect> {
+  const payload = await requestParamLimits("/api/effects?action=paramLimits", { method: "GET" });
+  return sanitizeEffectParamLimits(payload.paramLimits);
+}
+
+export async function saveGlobalEffectParamLimits(paramLimits: EffectParamLimitsByEffect): Promise<EffectParamLimitsByEffect> {
+  const payload = await requestParamLimits("/api/effects?action=paramLimits", {
+    method: "POST",
+    body: JSON.stringify({ paramLimits })
+  });
+  return sanitizeEffectParamLimits(payload.paramLimits);
+}

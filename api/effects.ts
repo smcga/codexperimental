@@ -8,6 +8,7 @@ const GENERATE_RATE_LIMIT_PREFIX = "effects:generate:rl";
 const GENERATE_METRICS_KEY = "effects:generate:metrics";
 const GENERATE_ERROR_SAMPLES_KEY = "effects:generate:error-samples";
 const GENERATE_ALERT_COOLDOWN_PREFIX = "effects:generate:alert-cooldown";
+const PARAM_LIMITS_KEY = "effects:param-limits";
 const MAX_EFFECTS = 128;
 const MAX_PENDING_EFFECTS = 128;
 const MAX_GENERATE_ERROR_SAMPLES = 200;
@@ -88,9 +89,17 @@ type JsonResponse = {
   };
   generateMetrics?: GenerateMetrics;
   recentGenerateErrors?: GenerateErrorSample[];
+  paramLimits?: EffectParamLimitsRecord;
   error?: string;
   rawResponse?: string;
 };
+
+type EffectParamLimitRange = {
+  min?: number;
+  max?: number;
+};
+
+type EffectParamLimitsRecord = Record<string, Record<string, EffectParamLimitRange>>;
 
 type GenerateRateLimitState = {
   hits: number[];
@@ -863,6 +872,38 @@ function sanitizeGeneratedDocs(value: unknown): GeneratedEffectDocs | undefined 
   };
 }
 
+function sanitizeEffectParamLimits(value: unknown): EffectParamLimitsRecord {
+  if (!value || typeof value !== "object") {
+    return {};
+  }
+  const raw = value as Record<string, unknown>;
+  return Object.entries(raw).reduce<EffectParamLimitsRecord>((effectsAcc, [effectName, effectValue]) => {
+    if (!effectValue || typeof effectValue !== "object") {
+      return effectsAcc;
+    }
+    const controlLimits = Object.entries(effectValue as Record<string, unknown>).reduce<Record<string, EffectParamLimitRange>>(
+      (limitsAcc, [controlKey, controlValue]) => {
+        if (!controlValue || typeof controlValue !== "object") {
+          return limitsAcc;
+        }
+        const typed = controlValue as { min?: unknown; max?: unknown };
+        const min = isFiniteNumber(typed.min) ? typed.min : undefined;
+        const max = isFiniteNumber(typed.max) ? typed.max : undefined;
+        if (min === undefined && max === undefined) {
+          return limitsAcc;
+        }
+        limitsAcc[controlKey] = { min, max };
+        return limitsAcc;
+      },
+      {}
+    );
+    if (Object.keys(controlLimits).length > 0) {
+      effectsAcc[effectName] = controlLimits;
+    }
+    return effectsAcc;
+  }, {});
+}
+
 function parseJsonBlock(text: string): {
   name: string;
   typescriptCode: string;
@@ -1033,6 +1074,12 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
   }
 
   if (method === "GET") {
+    if (url.searchParams.get("action") === "paramLimits") {
+      const sourceClient = readClient ?? writeClient;
+      const paramLimits = sanitizeEffectParamLimits(sourceClient ? await sourceClient.get(PARAM_LIMITS_KEY) : null);
+      sendJson(res, 200, { paramLimits });
+      return;
+    }
     if (url.searchParams.get("action") === "generateMetrics") {
       if (!isAuthorized(url)) {
         sendJson(res, 401, { error: "Unauthorized." });
@@ -1220,6 +1267,18 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
   }
 
   if (method === "POST") {
+    if (url.searchParams.get("action") === "paramLimits") {
+      if (!writeClient) {
+        sendJson(res, 503, { error: "Effect storage unavailable." });
+        return;
+      }
+      const body = await readBody(req);
+      const payload = body.paramLimits ?? body;
+      const paramLimits = sanitizeEffectParamLimits(payload);
+      await writeClient.set(PARAM_LIMITS_KEY, paramLimits);
+      sendJson(res, 200, { paramLimits });
+      return;
+    }
     if (!writeClient) {
       sendJson(res, 503, { error: "Effect storage unavailable." });
       return;
