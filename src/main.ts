@@ -25,6 +25,7 @@ import { getWebGLStatusLabel } from "./renderer/effects/gl/webglStatus";
 import { TerminalIntroRenderer } from "./renderer/intro/terminalIntro";
 import { createExplosionState, getExplosionShake, renderExplosion } from "./renderer/overlays/explosion";
 import { createQualityState, updateQualityState } from "./renderer/qualityController";
+import { getQualityPresetById, resolveInitialQualityPresetId, QualityPresetId } from "./renderer/qualityPresets";
 import { getRenderSettings } from "./renderer/renderSettings";
 import {
   getFullscreenAction,
@@ -85,6 +86,7 @@ const overlayActions = document.querySelector<HTMLDivElement>("#overlay-actions"
 const overlayStartButton = document.querySelector<HTMLButtonElement>("#overlay-start-button");
 const overlayShareButton = document.querySelector<HTMLButtonElement>("#overlay-share-button");
 const overlayRestartButton = document.querySelector<HTMLButtonElement>("#overlay-restart-button");
+const overlayQualitySelect = document.querySelector<HTMLSelectElement>("#overlay-quality-select");
 const addDoodleButton = document.querySelector<HTMLButtonElement>("#add-doodle-button");
 const addEffectIdeaButton = document.querySelector<HTMLButtonElement>("#add-effect-idea-button");
 const shareStatus = document.querySelector<HTMLDivElement>("#share-status");
@@ -150,6 +152,7 @@ const releaseMode = queryParams.get("release") === "1";
 const editorModeFromQuery = queryParams.get("editor") === "1";
 const renderSettings = getRenderSettings(queryParams);
 const qualityState = createQualityState(renderSettings.qualityScale, renderSettings.autoQuality);
+const initialQualityPresetId = resolveInitialQualityPresetId(qualityState.qualityScale, qualityState.autoQuality);
 installGlobalNumberInputWheelGuard();
 
 if (!canvas || !overlay || !overlayText || !debugOverlay || !debugTimestamp || !debugTransitionSelect || !debugEraSelect) {
@@ -182,6 +185,7 @@ let editorController: EditorController | null = null;
 let lastFrameTimestamp = performance.now();
 let currentViewCount = 0;
 let overlayMode: OverlayMode = "start";
+let selectedQualityPresetId: QualityPresetId = initialQualityPresetId;
 let doodleHasStroke = false;
 let doodleSubmitting = false;
 let doodleDrawing = false;
@@ -275,6 +279,10 @@ updateDoodleBrushControls();
 resetDoodleCanvas();
 updateEffectIdeaButtons();
 syncShareLinks();
+if (overlayQualitySelect) {
+  overlayQualitySelect.value = initialQualityPresetId;
+}
+applyQualityPreset(initialQualityPresetId);
 
 function updateViewCounter(count: number): void {
   currentViewCount = count;
@@ -309,6 +317,16 @@ function applyQualityScale(): void {
   renderer.setBaseSize(effectiveBaseWidth, effectiveBaseHeight);
 }
 
+function applyQualityPreset(id: QualityPresetId): void {
+  const preset = getQualityPresetById(id);
+  selectedQualityPresetId = id;
+  qualityState.qualityScale = preset.qualityScale;
+  qualityState.autoQuality = preset.autoQuality;
+  qualityState.emaFrameMs = 0;
+  qualityState.lastAdjustmentMs = performance.now();
+  applyQualityScale();
+}
+
 function resize(): void {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -332,6 +350,10 @@ function updateOverlayActions(): void {
   }
   if (overlaySubtitle) {
     overlaySubtitle.textContent = presentation.subtitle;
+  }
+  if (overlayQualitySelect) {
+    overlayQualitySelect.value = selectedQualityPresetId;
+    overlayQualitySelect.disabled = overlayMode !== "start";
   }
   overlayActions.classList.toggle("hidden", !presentation.showActions);
   if (overlayStartButton) {
@@ -1558,6 +1580,20 @@ if (shareCopyButton) {
 if (sharePanel) {
   sharePanel.addEventListener("click", (event) => {
     event.stopPropagation();
+  });
+}
+
+if (overlayQualitySelect) {
+  overlayQualitySelect.addEventListener("click", (event) => {
+    event.stopPropagation();
+  });
+  overlayQualitySelect.addEventListener("change", (event) => {
+    event.stopPropagation();
+    const value = overlayQualitySelect.value;
+    if (value !== "performance" && value !== "balanced" && value !== "quality") {
+      return;
+    }
+    applyQualityPreset(value);
   });
 }
 
