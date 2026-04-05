@@ -69,7 +69,15 @@ describe("api/effects", () => {
     globalThis.fetch = vi.fn(async () => ({
       ok: true,
       status: 200,
-      json: async () => ({ output_text: '{"name":"Nebula","typescriptCode":"ts","runtimeCode":"return { render() {} };"}' })
+      json: async () => ({
+        output_text: JSON.stringify({
+          name: "Nebula",
+          typescriptCode: "ts",
+          runtimeCode: "return { render() {} };",
+          params: [{ key: "speed", label: "Speed", type: "number", defaultValue: 0.5, min: 0, max: 1 }],
+          docs: { description: "Generated effect", parameters: "- speed: movement speed." }
+        })
+      })
     })) as typeof fetch;
   });
 
@@ -94,9 +102,21 @@ describe("api/effects", () => {
     vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
     const { default: handler } = await import("./effects");
     const res = createResponse();
-    await handler({ method: "POST", url: "/api/effects", body: JSON.stringify({ name: "A", prompt: "p", typescriptCode: "ts", runtimeCode: "return { render() {} };" }) }, res.response);
+    await handler({
+      method: "POST",
+      url: "/api/effects",
+      body: JSON.stringify({
+        name: "A",
+        prompt: "p",
+        typescriptCode: "ts",
+        runtimeCode: "return { render() {} };",
+        params: [{ key: "speed", label: "Speed", type: "number", defaultValue: 1 }],
+        docs: { description: "Doc", parameters: "- speed: speed." }
+      })
+    }, res.response);
     expect(res.response.statusCode).toBe(200);
     expect(JSON.parse(res.getBody()).moderationStatus).toBe("pending");
+    expect(JSON.parse(res.getBody()).effect.params).toEqual([{ key: "speed", label: "Speed", type: "number", defaultValue: 1 }]);
   });
 
   it("generates via OpenAI", async () => {
@@ -113,6 +133,9 @@ describe("api/effects", () => {
     }, res.response);
     expect(res.response.statusCode).toBe(200);
     expect(JSON.parse(res.getBody()).generation.name).toBe("Nebula");
+    expect(JSON.parse(res.getBody()).generation.params).toEqual([
+      { key: "speed", label: "Speed", type: "number", defaultValue: 0.5, min: 0, max: 1 }
+    ]);
     expect(globalThis.fetch).toHaveBeenCalledWith(
       "https://api.openai.com/v1/responses",
       expect.objectContaining({
