@@ -8,11 +8,13 @@ export interface OverlayPresentation {
   shareLabel: string;
   restartLabel: string;
   doodleLabel: string;
+  effectIdeaLabel: string;
   showActions: boolean;
   showStart: boolean;
   showShare: boolean;
   showRestart: boolean;
   showDoodle: boolean;
+  showEffectIdea: boolean;
 }
 
 const OVERLAY_PRESENTATIONS: Record<OverlayMode, OverlayPresentation> = {
@@ -24,11 +26,13 @@ const OVERLAY_PRESENTATIONS: Record<OverlayMode, OverlayPresentation> = {
     shareLabel: "Spread the signal",
     restartLabel: "Restart demo",
     doodleLabel: "Add a doodle",
+    effectIdeaLabel: "Got an effect idea? Make it real!",
     showActions: true,
     showStart: true,
     showShare: true,
     showRestart: false,
-    showDoodle: false
+    showDoodle: false,
+    showEffectIdea: false
   },
   status: {
     kicker: "system status",
@@ -38,11 +42,13 @@ const OVERLAY_PRESENTATIONS: Record<OverlayMode, OverlayPresentation> = {
     shareLabel: "Spread the signal",
     restartLabel: "Restart demo",
     doodleLabel: "Add a doodle",
+    effectIdeaLabel: "Got an effect idea? Make it real!",
     showActions: false,
     showStart: false,
     showShare: false,
     showRestart: false,
-    showDoodle: false
+    showDoodle: false,
+    showEffectIdea: false
   },
   end: {
     kicker: "signal complete",
@@ -52,11 +58,13 @@ const OVERLAY_PRESENTATIONS: Record<OverlayMode, OverlayPresentation> = {
     shareLabel: "Spread the signal",
     restartLabel: "Restart demo",
     doodleLabel: "Add a doodle",
+    effectIdeaLabel: "Got an effect idea? Make it real!",
     showActions: true,
     showStart: false,
     showShare: true,
     showRestart: true,
-    showDoodle: true
+    showDoodle: true,
+    showEffectIdea: true
   }
 };
 
