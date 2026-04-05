@@ -645,10 +645,17 @@ body,
   min-height: 9rem;
   max-height: 14rem;
   overflow: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 40%),
     rgba(0, 0, 0, 0.28);
+}
+
+.editor-playlist-scroll::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 
 .editor-playlist-scrollbar {

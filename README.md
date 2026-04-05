@@ -372,6 +372,7 @@ npm run preview
 - While zoomed in, use **Shift + mouse wheel** (or horizontal trackpad scroll) to pan left/right across the playlist without resetting zoom.
 - Playlist quick controls: mouse wheel = zoom to cursor, Shift+wheel/horizontal scroll = pan timeline, drag empty lane = scrub pan, drag clip = retime selected scene start.
 - The playlist now includes a dedicated timeline scrollbar under the lanes; the thumb shrinks as you zoom in and can be dragged/clicked for coarse navigation across the full song length.
+- Native browser scrollbars for the playlist lane are intentionally hidden so the custom timeline scrollbar is the single visible navigation control.
 - In editor mode, scene duration is now derived from the next scene start (the End field is display-only), so looping and active-scene selection match runtime behavior where the newest started scene is the one that renders.
 - Scene/layer parameter editing now uses control-aware numeric inputs with clearer `Param`/`Value` labels: bounded params get a slider + numeric spinner with +/- nudge buttons, while unbounded numeric params get touch-friendly spinner controls. Focused `input[type=number]` fields now consume the mouse wheel globally (no page scroll) and step by their configured bounds/step values.
 - Playback now auto-syncs across same-origin tabs/windows via `BroadcastChannel`, so play/pause/seek/restart actions in one editor window mirror to the others (handy for running multiple preview sizes side-by-side).
