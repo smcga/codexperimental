@@ -10,6 +10,9 @@ import {
   getRandomEffectSelection,
   getScenePlayingAtTime,
   isWithinSceneStartThreshold,
+  layoutPlaylistTracks,
+  panPlaylistViewport,
+  zoomPlaylistViewport,
   isEditorParamToggleChecked,
   clampEditorNumberParam,
   stepEditorNumberParam,
@@ -219,6 +222,35 @@ describe("isWithinSceneStartThreshold", () => {
 
   it("returns false when playback time is outside the threshold", () => {
     expect(isWithinSceneStartThreshold(scenes, 2.11)).toBe(false);
+  });
+});
+
+describe("playlist helpers", () => {
+  it("packs overlapping clips into multiple tracks", () => {
+    const scenes = [
+      { id: "intro", start: 0, end: 10, effect: "starfield" },
+      { id: "overlap", start: 4, end: 8, effect: "plasma" },
+      { id: "next", start: 10, end: 14, effect: "rain" }
+    ];
+
+    const layout = layoutPlaylistTracks(scenes, (scene) => Number(scene.end ?? scene.start));
+    expect(layout.trackCount).toBe(2);
+    expect(layout.clips.map((clip) => ({ id: clip.sceneId, track: clip.track }))).toEqual([
+      { id: "intro", track: 0 },
+      { id: "overlap", track: 1 },
+      { id: "next", track: 0 }
+    ]);
+  });
+
+  it("zooms the viewport around a focus time and keeps it clamped to the duration", () => {
+    const zoomed = zoomPlaylistViewport(20, 30, 0.5, 35, 100);
+    expect(zoomed.duration).toBe(15);
+    expect(zoomed.start).toBeCloseTo(27.5);
+  });
+
+  it("pans the viewport while respecting bounds", () => {
+    expect(panPlaylistViewport(5, -20, 80, 20)).toBe(0);
+    expect(panPlaylistViewport(65, 40, 80, 20)).toBe(60);
   });
 });
 
