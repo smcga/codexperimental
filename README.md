@@ -10,6 +10,7 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 
 - Place an MP3 at `public/song.mp3` (replace the placeholder file).
 - Edit `public/timeline.json` to change the intro terminal script, section timings, transitions, or text cues. Use `mm:ss` or `mm:ss.s` time strings for section and cue start/end values (for example, `01:44.5`).
+- **Sacred anchor policy:** before changing timeline timings, read `docs/sacred-musical-anchors.md`. The listed musical anchor timestamps are mandatory and must remain locked unless the soundtrack itself is intentionally recut.
 - `public/timeline.release.json` is a release-cut timeline that adds per-section era presets and a curated arc for the graphics-history progression. Load it with the release URL flag described below.
 - The bundled timeline includes lyric-style overlays in `textCues`; adjust or replace those cues to change the on-screen callouts synced to the music.
 - Transition types include `fade`, `wipe`, `slide-left`, `slide-right`, `slide-up`, `slide-down`, `iris`, `flash`, `shatter`, `signal-collapse`, `camera-punch-through`, and `bitplane-wipe` (vertical VGA-style bands with staggered timing).
