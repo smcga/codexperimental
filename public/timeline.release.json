@@ -1809,8 +1809,64 @@
       "era": "future"
     },
     {
-      "id": "this-callout",
+      "id": "this-callout-pre-rap-buildup",
       "start": "03:09.6",
+      "end": "03:15.7",
+      "effect": "neon",
+      "params": {
+        "speed": 0.78,
+        "glow": 0.28
+      },
+      "layers": [
+        {
+          "effect": "platformerScroll",
+          "blend": "screen",
+          "opacity": 0.09,
+          "params": {
+            "audioReact": 0.2
+          }
+        },
+        {
+          "effect": "feedback",
+          "blend": "screen",
+          "opacity": 0.09,
+          "params": {
+            "alpha": 0.18
+          }
+        }
+      ]
+    },
+    {
+      "id": "this-callout-dnb-return",
+      "start": "03:15.7",
+      "end": "03:24",
+      "effect": "neon",
+      "params": {
+        "speed": 0.78,
+        "glow": 0.28
+      },
+      "layers": [
+        {
+          "effect": "platformerScroll",
+          "blend": "screen",
+          "opacity": 0.09,
+          "params": {
+            "audioReact": 0.2
+          }
+        },
+        {
+          "effect": "feedback",
+          "blend": "screen",
+          "opacity": 0.09,
+          "params": {
+            "alpha": 0.18
+          }
+        }
+      ]
+    },
+    {
+      "id": "this-callout-drum-fill-lead-in",
+      "start": "03:24",
       "end": "03:25.14",
       "effect": "neon",
       "params": {
