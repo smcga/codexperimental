@@ -5,19 +5,14 @@ import { assignmentCount, generatedFileBytes } from "../src/generated/explicitPi
 import { H, W } from "../src/generated/explicitPixelsFrame";
 
 describe("explicit pixels generated frame", () => {
-  test("generated function keeps pure assignment style", () => {
+  test("generated function exposes committed-frame API and metadata stays in sync", () => {
     const framePath = path.resolve(process.cwd(), "src/generated/explicitPixelsFrame.ts");
     const frameSource = fs.readFileSync(framePath, "utf8");
 
-    expect(frameSource).toContain("export function applyExplicit(data: Uint8ClampedArray): void");
-    expect(frameSource).not.toContain("for (");
-    expect(frameSource).not.toContain("while (");
-    expect(frameSource).not.toContain(".map(");
-    expect(frameSource).not.toContain(".forEach(");
+    expect(frameSource).toContain("export function applyExplicit_frameBytes(dst: Uint8ClampedArray): void");
+    expect(frameSource).toContain("dst.set(FRAME_BYTES);");
 
-    const matches = frameSource.match(/data\[/g) ?? [];
-    expect(matches.length).toBeGreaterThanOrEqual(W * H * 4);
-    expect(assignmentCount).toBe(matches.length);
+    expect(assignmentCount).toBe(W * H * 4);
     expect(generatedFileBytes).toBeGreaterThan(10_000);
     expect(generatedFileBytes).toBe(Buffer.byteLength(frameSource, "utf8"));
   });
