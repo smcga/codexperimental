@@ -3,7 +3,8 @@ import { generatedEffectManifests } from "./generated";
 import { Effect } from "../types";
 import { EffectDebugConfig, EffectManifest } from "./shared";
 
-const sortByRegistryKey = (left: EffectManifest, right: EffectManifest): number => left.key.localeCompare(right.key);
+const sortByRegistryKey = (left: EffectManifest, right: EffectManifest): number =>
+  left.key < right.key ? -1 : left.key > right.key ? 1 : 0;
 
 export const effectManifests = [...generatedEffectManifests].sort(sortByRegistryKey);
 
