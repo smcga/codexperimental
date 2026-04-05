@@ -1,6 +1,7 @@
 import { AudioFeatures } from "./audioPlayer";
 
 const MANUAL_BEAT_WINDOW_SECONDS = 0.16;
+const MANUAL_BEAT_PEAK_STRENGTH = 1.8;
 
 export class ManualBeatTrigger {
   private pendingBeat = false;
@@ -14,7 +15,7 @@ export class ManualBeatTrigger {
   apply(features: AudioFeatures, time: number): AudioFeatures {
     const age = time - this.lastTriggerTime;
     const active = age >= 0 && age <= MANUAL_BEAT_WINDOW_SECONDS;
-    const manualStrength = active ? 1 - age / MANUAL_BEAT_WINDOW_SECONDS : 0;
+    const manualStrength = active ? (1 - age / MANUAL_BEAT_WINDOW_SECONDS) * MANUAL_BEAT_PEAK_STRENGTH : 0;
     const manualBeat = this.pendingBeat && active;
     this.pendingBeat = false;
 

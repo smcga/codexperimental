@@ -24,8 +24,8 @@ describe("ManualBeatTrigger", () => {
     const injected = trigger.apply(base, 12);
 
     expect(injected.beat).toBe(true);
-    expect(injected.beatStrength).toBe(1);
-    expect(injected.impactStrength).toBe(1);
+    expect(injected.beatStrength).toBe(1.8);
+    expect(injected.impactStrength).toBe(1.8);
   });
 
   it("decays beat strength over a short window", () => {
@@ -37,8 +37,8 @@ describe("ManualBeatTrigger", () => {
     const decayed = trigger.apply(base, 3.08);
 
     expect(decayed.beat).toBe(false);
-    expect(decayed.beatStrength).toBeGreaterThan(0.4);
-    expect(decayed.beatStrength).toBeLessThan(0.6);
+    expect(decayed.beatStrength).toBeGreaterThan(0.85);
+    expect(decayed.beatStrength).toBeLessThan(0.95);
   });
 
   it("preserves stronger detected beat values", () => {
