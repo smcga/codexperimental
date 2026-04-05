@@ -13,7 +13,12 @@ import { Timeline } from "./timeline/timeline";
 import { Renderer } from "./renderer/renderer";
 import { FramingOverride } from "./renderer/framing";
 import { effectRegistry } from "./renderer/effects";
-import { getEffectRegistryKeys, getManifestDebugConfig, EffectParamControl } from "./renderer/effects/manifest";
+import {
+  getEffectRegistryKeys,
+  getManifestDebugConfig,
+  registerRuntimeEffectManifest,
+  EffectParamControl
+} from "./renderer/effects/manifest";
 import { coerceEffectParams, getEffectDebugDefaults } from "./renderer/debug/effectDebug";
 import { getWebGLStatusLabel } from "./renderer/effects/gl/webglStatus";
 import { TerminalIntroRenderer } from "./renderer/intro/terminalIntro";
@@ -46,6 +51,7 @@ import {
   compileRuntimeEffect,
   EffectIdeaApiError,
   EffectIdeaGenerationResult,
+  GeneratedEffectParam,
   fetchApprovedEffects,
   generateEffectIdea,
   submitEffectIdea
@@ -62,6 +68,11 @@ import { buildSharePayload, canUseNativeShare, getShareLink, ShareLinkPlatform }
 import { getOverlayPresentation, OverlayMode } from "./overlayContent";
 import { buildTransitionOptionMarkup } from "./renderer/transitions";
 import { createPlaybackSyncController, shouldApplyRemoteState } from "./playbackSync";
+import {
+  applyCurrentValuesAsGeneratedDefaults,
+  getGeneratedEffectDefaultParams,
+  getRandomGeneratedEffectParams
+} from "./generatedEffectControls";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
@@ -121,6 +132,11 @@ const doodleSubmitButton = document.querySelector<HTMLButtonElement>("#doodle-su
 const effectIdeaModal = document.querySelector<HTMLDivElement>("#effect-idea-modal");
 const effectIdeaInput = document.querySelector<HTMLTextAreaElement>("#effect-idea-input");
 const effectIdeaPreview = document.querySelector<HTMLCanvasElement>("#effect-idea-preview");
+const effectIdeaControls = document.querySelector<HTMLDivElement>("#effect-idea-controls");
+const effectIdeaControlsGrid = document.querySelector<HTMLDivElement>("#effect-idea-controls-grid");
+const effectIdeaControlsEmpty = document.querySelector<HTMLDivElement>("#effect-idea-controls-empty");
+const effectIdeaSetDefaultsButton = document.querySelector<HTMLButtonElement>("#effect-idea-set-defaults");
+const effectIdeaRandomizeButton = document.querySelector<HTMLButtonElement>("#effect-idea-randomize");
 const effectIdeaCode = document.querySelector<HTMLPreElement>("#effect-idea-code");
 const effectIdeaStatus = document.querySelector<HTMLDivElement>("#effect-idea-status");
 const effectIdeaCancelButton = document.querySelector<HTMLButtonElement>("#effect-idea-cancel");
@@ -177,6 +193,7 @@ let generatedIdeaPrompt = "";
 let effectIdeaPreviewFrame = 0;
 let effectIdeaPreviewStart = 0;
 let effectIdeaPreviewEffect: ReturnType<typeof compileRuntimeEffect> | null = null;
+let effectIdeaPreviewParams: Record<string, number | string> = {};
 let availableEffectNames = getEffectRegistryKeys();
 let playbackSyncSuppressBroadcast = false;
 let lastPlaybackSyncStateSentAt = 0;
@@ -520,6 +537,86 @@ function updateEffectIdeaButtons(): void {
   if (effectIdeaSubmitButton) {
     effectIdeaSubmitButton.disabled = effectIdeasSubmitting || generatedIdea === null;
   }
+  if (effectIdeaSetDefaultsButton) {
+    effectIdeaSetDefaultsButton.disabled = effectIdeasGenerating || !generatedIdea || (generatedIdea.params?.length ?? 0) === 0;
+  }
+  if (effectIdeaRandomizeButton) {
+    effectIdeaRandomizeButton.disabled = effectIdeasGenerating || !generatedIdea || (generatedIdea.params?.length ?? 0) === 0;
+  }
+}
+
+function renderGeneratedEffectIdeaControls(): void {
+  if (!effectIdeaControls || !effectIdeaControlsGrid || !effectIdeaControlsEmpty) {
+    return;
+  }
+  const params = generatedIdea?.params ?? [];
+  const hasControls = params.length > 0;
+  effectIdeaControls.classList.toggle("hidden", !generatedIdea);
+  effectIdeaControlsGrid.innerHTML = "";
+  effectIdeaControlsEmpty.classList.toggle("hidden", hasControls);
+  if (!hasControls) {
+    return;
+  }
+
+  params.forEach((param) => {
+    const field = document.createElement("label");
+    field.classList.add("debug-field");
+    const label = document.createElement("span");
+    label.textContent = param.label;
+    field.appendChild(label);
+
+    if (param.type === "select") {
+      const select = document.createElement("select");
+      select.dataset.effectIdeaParam = param.key;
+      (param.options ?? []).forEach((option) => {
+        const optionEl = document.createElement("option");
+        optionEl.value = option.value;
+        optionEl.textContent = option.label;
+        select.appendChild(optionEl);
+      });
+      select.value = String(effectIdeaPreviewParams[param.key] ?? "");
+      select.addEventListener("change", () => {
+        effectIdeaPreviewParams[param.key] = select.value;
+      });
+      field.appendChild(select);
+      effectIdeaControlsGrid.appendChild(field);
+      return;
+    }
+
+    const input = document.createElement("input");
+    input.dataset.effectIdeaParam = param.key;
+    if (param.type === "toggle") {
+      input.type = "checkbox";
+      input.checked = Number(effectIdeaPreviewParams[param.key]) !== 0;
+      input.addEventListener("change", () => {
+        effectIdeaPreviewParams[param.key] = input.checked ? 1 : 0;
+      });
+      field.appendChild(input);
+      effectIdeaControlsGrid.appendChild(field);
+      return;
+    }
+
+    input.type = "number";
+    if (param.min !== undefined) {
+      input.min = String(param.min);
+    }
+    if (param.max !== undefined) {
+      input.max = String(param.max);
+    }
+    if (param.step !== undefined) {
+      input.step = String(param.step);
+    }
+    input.value = String(effectIdeaPreviewParams[param.key] ?? 0);
+    input.addEventListener("input", () => {
+      const numeric = Number(input.value);
+      if (!Number.isFinite(numeric)) {
+        return;
+      }
+      effectIdeaPreviewParams[param.key] = numeric;
+    });
+    field.appendChild(input);
+    effectIdeaControlsGrid.appendChild(field);
+  });
 }
 
 function stopEffectIdeaPreview(): void {
@@ -544,7 +641,7 @@ function previewGeneratedIdea(): void {
     time: nowSeconds - effectIdeaPreviewStart,
     delta: 1 / 60,
     audio: EMPTY_AUDIO_FEATURES,
-    params: {}
+    params: effectIdeaPreviewParams
   });
   effectIdeaPreviewFrame = requestAnimationFrame(previewGeneratedIdea);
 }
@@ -562,9 +659,11 @@ function setEffectIdeaModalVisible(visible: boolean): void {
     effectIdeaCode.textContent = "";
     setEffectIdeaStatus("Describe your idea, click Generate, and preview the result.");
     generatedIdea = null;
+    effectIdeaPreviewParams = {};
     generatedIdeaPrompt = "";
     effectIdeaPreviewEffect = null;
     effectIdeaPreviewStart = 0;
+    renderGeneratedEffectIdeaControls();
     updateEffectIdeaButtons();
   }
 }
@@ -619,10 +718,12 @@ async function generateCurrentEffectIdea(): Promise<void> {
   try {
     const generation = await generateEffectIdea(prompt);
     generatedIdea = generation;
+    effectIdeaPreviewParams = getGeneratedEffectDefaultParams(generation.params);
     generatedIdeaPrompt = prompt;
     if (effectIdeaCode) {
       effectIdeaCode.textContent = generation.typescriptCode;
     }
+    renderGeneratedEffectIdeaControls();
     effectIdeaPreviewEffect = compileRuntimeEffect(generation.runtimeCode);
     effectIdeaPreviewStart = 0;
     stopEffectIdeaPreview();
@@ -630,6 +731,8 @@ async function generateCurrentEffectIdea(): Promise<void> {
     setEffectIdeaStatus("Preview ready. If it looks good, submit it for approval.", "success");
   } catch (error) {
     generatedIdea = null;
+    effectIdeaPreviewParams = {};
+    renderGeneratedEffectIdeaControls();
     effectIdeaPreviewEffect = null;
     const message = error instanceof Error ? error.message : "Generation failed. Please adjust the prompt and try again.";
     if (effectIdeaCode && error instanceof EffectIdeaApiError && error.rawResponse) {
@@ -654,7 +757,9 @@ async function submitCurrentEffectIdea(): Promise<void> {
       name: generatedIdea.name,
       prompt: generatedIdeaPrompt,
       typescriptCode: generatedIdea.typescriptCode,
-      runtimeCode: generatedIdea.runtimeCode
+      runtimeCode: generatedIdea.runtimeCode,
+      params: generatedIdea.params,
+      docs: generatedIdea.docs
     });
     setEffectIdeaStatus("Submitted. Once approved, it will appear in effect selectors.", "success");
     setEffectIdeaModalVisible(false);
@@ -813,12 +918,78 @@ function createEffectSelector(): void {
   updateEffectSelectorState();
 }
 
+function buildGeneratedEffectControls(params: GeneratedEffectParam[] | undefined): EffectParamControl[] {
+  if (!params || params.length === 0) {
+    return [];
+  }
+  return params.flatMap((param) => {
+    if (!param.key || !param.label) {
+      return [];
+    }
+    if (param.type === "select") {
+      const options = (param.options ?? [])
+        .filter((option) => option.value.trim().length > 0)
+        .map((option) => ({
+          value: option.value,
+          label: option.label || option.value
+        }));
+      if (options.length === 0) {
+        return [];
+      }
+      const defaultValue = typeof param.defaultValue === "string" && options.some((option) => option.value === param.defaultValue)
+        ? param.defaultValue
+        : options[0].value;
+      return [{
+        key: param.key,
+        label: param.label,
+        type: "select" as const,
+        defaultValue,
+        options
+      }];
+    }
+    if (param.type === "toggle") {
+      const defaultValue = Number(param.defaultValue) !== 0 ? 1 : 0;
+      return [{
+        key: param.key,
+        label: param.label,
+        type: "toggle" as const,
+        defaultValue
+      }];
+    }
+    return [{
+      key: param.key,
+      label: param.label,
+      type: "number" as const,
+      defaultValue: typeof param.defaultValue === "number" ? param.defaultValue : 0,
+      min: param.min,
+      max: param.max,
+      step: param.step
+    }];
+  });
+}
+
 async function hydrateApprovedEffects(): Promise<void> {
   try {
     const approved = await fetchApprovedEffects();
     approved.forEach((entry) => {
       try {
-        effectRegistry[entry.name] = compileRuntimeEffect(entry.runtimeCode);
+        const runtimeEffect = compileRuntimeEffect(entry.runtimeCode);
+        effectRegistry[entry.name] = runtimeEffect;
+        registerRuntimeEffectManifest({
+          key: entry.name,
+          className: "GeneratedEffect",
+          sourcePath: "generated/effectIdeas",
+          createEffect: () => runtimeEffect,
+          debug: {
+            title: `${entry.name} Controls`,
+            controls: buildGeneratedEffectControls(entry.params)
+          },
+          docs: {
+            description: entry.docs?.description ?? "Community-generated effect created with the effect idea generator.",
+            parameters: entry.docs?.parameters ?? "Parameter docs not provided for this generated effect.",
+            catalogNote: "Generated via effect idea workflow."
+          }
+        });
         if (!debugState.effectParams[entry.name]) {
           debugState.effectParams[entry.name] = {};
         }
@@ -1512,6 +1683,31 @@ if (effectIdeaGenerateButton) {
 if (effectIdeaSubmitButton) {
   effectIdeaSubmitButton.addEventListener("click", () => {
     void submitCurrentEffectIdea();
+  });
+}
+
+if (effectIdeaSetDefaultsButton) {
+  effectIdeaSetDefaultsButton.addEventListener("click", () => {
+    if (!generatedIdea?.params || generatedIdea.params.length === 0) {
+      return;
+    }
+    const updatedParams = applyCurrentValuesAsGeneratedDefaults(generatedIdea.params, effectIdeaPreviewParams);
+    generatedIdea = { ...generatedIdea, params: updatedParams };
+    effectIdeaPreviewParams = getGeneratedEffectDefaultParams(updatedParams);
+    renderGeneratedEffectIdeaControls();
+    updateEffectIdeaButtons();
+    setEffectIdeaStatus("Current preview values saved as submitted defaults.", "success");
+  });
+}
+
+if (effectIdeaRandomizeButton) {
+  effectIdeaRandomizeButton.addEventListener("click", () => {
+    if (!generatedIdea?.params || generatedIdea.params.length === 0) {
+      return;
+    }
+    effectIdeaPreviewParams = getRandomGeneratedEffectParams(generatedIdea.params);
+    renderGeneratedEffectIdeaControls();
+    setEffectIdeaStatus("Randomized all generated params for inspiration.", "success");
   });
 }
 

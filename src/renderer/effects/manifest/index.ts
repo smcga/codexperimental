@@ -7,20 +7,32 @@ const sortByRegistryKey = (left: EffectManifest, right: EffectManifest): number 
   left.key < right.key ? -1 : left.key > right.key ? 1 : 0;
 
 export const effectManifests = [...generatedEffectManifests].sort(sortByRegistryKey);
+const runtimeManifests = new Map<string, EffectManifest>();
 
-export const getEffectManifests = (): EffectManifest[] => effectManifests;
+const getAllEffectManifests = (): EffectManifest[] =>
+  [...effectManifests, ...runtimeManifests.values()].sort(sortByRegistryKey);
+
+export const registerRuntimeEffectManifest = (manifest: EffectManifest): void => {
+  runtimeManifests.set(manifest.key, manifest);
+};
+
+export const clearRuntimeEffectManifests = (): void => {
+  runtimeManifests.clear();
+};
+
+export const getEffectManifests = (): EffectManifest[] => getAllEffectManifests();
 
 export const getEffectManifest = (effectName: string | null): EffectManifest | null => {
   if (!effectName) {
     return null;
   }
-  return effectManifests.find((manifest) => manifest.key === effectName) ?? null;
+  return getAllEffectManifests().find((manifest) => manifest.key === effectName) ?? null;
 };
 
-export const getEffectRegistryKeys = (): string[] => effectManifests.map((manifest) => manifest.key);
+export const getEffectRegistryKeys = (): string[] => getAllEffectManifests().map((manifest) => manifest.key);
 
 export const createEffectRegistry = (): Record<string, Effect> =>
-  Object.fromEntries(effectManifests.map((manifest) => [manifest.key, manifest.createEffect()]));
+  Object.fromEntries(getAllEffectManifests().map((manifest) => [manifest.key, manifest.createEffect()]));
 
 export const getManifestDebugConfig = (effectName: string | null): EffectDebugConfig | null => {
   const manifest = getEffectManifest(effectName);
