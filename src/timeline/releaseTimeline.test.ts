@@ -13,6 +13,10 @@ const toSeconds = (value: string | number): number => {
 };
 
 describe("release timeline", () => {
+  it("applies the MP3 sync compensation offset used for sacred anchor playback timing", () => {
+    expect(timeline.audio.offset).toBeCloseTo(-0.128, 5);
+  });
+
   it("covers the continuous main run through 06:22.87", () => {
     const sections = timeline.sections.map((section) => ({
       id: section.id,

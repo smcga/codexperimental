@@ -8,6 +8,7 @@ These anchors are **non-negotiable timing constraints** for the demo arrangement
 2. If a timeline edit is required, validate every listed anchor against the soundtrack and preserve the same musical hit point.
 3. If any anchor must change in a future revision, update this document, `README.md`, and `AGENTS.md` in the same commit with an explicit reason.
 4. Keep the total runtime locked at **06:22.87** unless there is an intentional audio recut.
+5. Keep timeline playback aligned to MP3 waveform timing by preserving `audio.offset: -0.128` in `public/timeline.release.json` (this compensates the observed in-browser clock skew versus manual Audacity timing checks).
 
 ## Priority order for timing decisions
 

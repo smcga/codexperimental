@@ -15,6 +15,7 @@ describe("sacred musical anchor documentation", () => {
     expect(agents).toContain("advisory only");
 
     expect(anchorsDoc).toContain("total runtime locked at **06:22.87**");
+    expect(anchorsDoc).toContain("audio.offset: -0.128");
     expect(anchorsDoc).toContain("Primary priority (absolute)");
     expect(anchorsDoc).toContain("Secondary priority (advisory)");
     expect(anchorsDoc).toContain("Secondary effect-switch timing cues");

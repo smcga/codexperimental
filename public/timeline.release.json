@@ -1,7 +1,7 @@
 {
   "audio": {
     "src": "/song.mp3",
-    "offset": 0
+    "offset": -0.128
   },
   "intro": {
     "mode": "terminal",
