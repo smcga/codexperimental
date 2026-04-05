@@ -49,6 +49,11 @@ describe("timelineStore", () => {
     expect(scene.fitAlign).toBe("fill");
   });
 
+  it("createScene leaves end undefined when not provided", () => {
+    const scene = createScene({ id: "scene-open", start: 12, effect: "plasma" });
+    expect(scene.end).toBeUndefined();
+  });
+
   it("createAutomationEntry applies overrides", () => {
     const entry = createAutomationEntry({ param: "glow", t0: 2.5, t1: 7.5, ease: undefined });
     expect(entry.param).toBe("glow");

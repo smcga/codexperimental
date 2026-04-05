@@ -203,13 +203,9 @@ export const getScenePlayingAtTime = (
     return null;
   }
   const sorted = [...scenes].sort((a, b) => parseTimelineTimeValue(a.start) - parseTimelineTimeValue(b.start));
-  for (let index = 0; index < sorted.length; index += 1) {
+  for (let index = sorted.length - 1; index >= 0; index -= 1) {
     const scene = sorted[index];
-    const start = parseTimelineTimeValue(scene.start);
-    const fallbackEnd =
-      index < sorted.length - 1 ? parseTimelineTimeValue(sorted[index + 1].start) : Number.POSITIVE_INFINITY;
-    const end = scene.end !== undefined && scene.end !== null ? parseTimelineTimeValue(scene.end) : fallbackEnd;
-    if (demoTime >= start && demoTime < end) {
+    if (demoTime >= parseTimelineTimeValue(scene.start)) {
       return scene;
     }
   }
@@ -230,6 +226,14 @@ export const getNewSceneTimeRange = (
     start,
     end: nextStart ?? start + 10
   };
+};
+
+export const stripSceneEnds = (sections: RawSectionConfig[]): void => {
+  sections.forEach((section) => {
+    if ("end" in section) {
+      delete section.end;
+    }
+  });
 };
 
 export const getNextNewSectionName = (scenes: RawSectionConfig[]): string => {
@@ -593,6 +597,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     }
     const next = structuredClone(state.timeline);
     updater(next);
+    stripSceneEnds(next.sections);
     saveTimelineDraft(next);
     if (options?.selectedSceneId !== undefined) {
       setState({ timeline: next, selectedSceneId: options.selectedSceneId });
@@ -622,9 +627,6 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   const getSceneEnd = (scene: RawSectionConfig): number => {
     const scenes = getScenesByTime();
     const index = scenes.findIndex((entry) => entry.id === scene.id);
-    if (scene.end !== undefined && scene.end !== null) {
-      return parseTimelineTimeValue(scene.end);
-    }
     if (index >= 0 && index < scenes.length - 1) {
       return parseTimelineTimeValue(scenes[index + 1].start);
     }
@@ -1091,7 +1093,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         </label>
         <label>
           <span>End (s)</span>
-          <input type="number" step="0.1" data-field="end" value="${formatEditableTime(scene.end, true)}" />
+          <input type="number" step="0.1" value="${formatEditableTime(getSceneEnd(scene))}" disabled />
         </label>
         <label>
           <span>Era preset</span>
@@ -1259,8 +1261,6 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         }
         if (field === "start") {
           target.start = Number(value);
-        } else if (field === "end") {
-          target.end = value === "" ? undefined : Number(value);
         } else if (field === "id") {
           target.id = value;
           setState({ selectedSceneId: value });
@@ -2106,12 +2106,11 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       if (isPlaying && isWithinSceneStartThreshold(sections, currentDemoTime)) {
         return;
       }
-      const { start, end } = getNewSceneTimeRange(sections, currentDemoTime);
+      const { start } = getNewSceneTimeRange(sections, currentDemoTime);
       const effect = getRandomEffectSelection(init.effectNames);
       const newScene = createScene({
         id: getNextNewSectionName(sections),
         start,
-        end,
         effect,
         params: getRandomEffectParams(effect)
       });

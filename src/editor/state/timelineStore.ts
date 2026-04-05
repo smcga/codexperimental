@@ -6,7 +6,6 @@ import {
   RawTimelineConfig
 } from "../../config/loadConfig";
 
-const DEFAULT_SCENE_DURATION = 10;
 const DEFAULT_LAYER_OPACITY = 0.6;
 
 export type ParamsParseResult = {
@@ -22,11 +21,10 @@ export function createScene(options?: {
   params?: Record<string, number | string>;
 }): RawSectionConfig {
   const start = options?.start ?? 0;
-  const end = options?.end ?? start + DEFAULT_SCENE_DURATION;
   return {
     id: options?.id ?? `scene-${Math.random().toString(36).slice(2, 8)}`,
     start,
-    end,
+    end: options?.end,
     effect: options?.effect ?? "starfield",
     era: "pcdemo",
     transition: {

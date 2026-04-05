@@ -12,6 +12,7 @@ import {
   isWithinSceneStartThreshold,
   layoutPlaylistTracks,
   panPlaylistViewport,
+  stripSceneEnds,
   zoomPlaylistViewport,
   isEditorParamToggleChecked,
   clampEditorNumberParam,
@@ -47,13 +48,24 @@ describe("getScenePlayingAtTime", () => {
     expect(getScenePlayingAtTime(scenes, 10)?.id).toBe("middle");
   });
 
-  it("falls back to the next scene start when end is omitted", () => {
+  it("selects scenes by latest start time when end is omitted", () => {
     expect(getScenePlayingAtTime(scenes, 19.5)?.id).toBe("middle");
   });
 
+  it("keeps the final scene active after its former explicit end", () => {
+    expect(getScenePlayingAtTime(scenes, 30)?.id).toBe("ending");
+  });
+
   it("returns null when no scene matches", () => {
-    expect(getScenePlayingAtTime(scenes, 30)).toBeNull();
     expect(getScenePlayingAtTime(scenes, Number.NaN)).toBeNull();
+  });
+
+  it("ignores explicit end overlap and picks the newest started scene", () => {
+    const overlapping = [
+      { id: "a", start: 0, end: 99, effect: "starfield" },
+      { id: "b", start: 10, end: 20, effect: "rain" }
+    ];
+    expect(getScenePlayingAtTime(overlapping, 12)?.id).toBe("b");
   });
 });
 
@@ -251,6 +263,20 @@ describe("playlist helpers", () => {
   it("pans the viewport while respecting bounds", () => {
     expect(panPlaylistViewport(5, -20, 80, 20)).toBe(0);
     expect(panPlaylistViewport(65, 40, 80, 20)).toBe(60);
+  });
+});
+
+describe("stripSceneEnds", () => {
+  it("removes explicit end properties so scene length derives from next start", () => {
+    const sections = [
+      { id: "a", start: 0, end: 4, effect: "starfield" },
+      { id: "b", start: 4, end: 8, effect: "rain" }
+    ];
+    stripSceneEnds(sections);
+    expect(sections).toEqual([
+      { id: "a", start: 0, effect: "starfield" },
+      { id: "b", start: 4, effect: "rain" }
+    ]);
   });
 });
 
