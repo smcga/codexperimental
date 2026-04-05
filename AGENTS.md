@@ -26,6 +26,18 @@ The demo timeline is locked to sacred musical anchors documented in `docs/sacred
 - [ ] Docs updated (`docs/effects.md` regenerated).
 - [ ] Docs check passes (`npm run docs:check`).
 - [ ] Effect appears in UI/debug dropdowns.
+- [ ] If touching effect submission/moderation/review flows (`api/effects*`, `src/effectIdeas*`, `src/effectReview*`), run and verify moderation-link tests and pending review fetch paths so review links do not regress to false “expired/missing” states.
+
+## Moderation/review regression guardrail
+
+When changing effect-generator payload validation or optional metadata parsing:
+
+- Keep review-page loading tolerant of legacy/partial metadata on pending effects.
+- Do not reject a pending effect solely because optional fields (`params`, `docs`, future optional fields) are malformed/missing.
+- Always add/update tests that cover:
+  - fetching pending effect records with optional-field shape drift;
+  - approving/rejecting pending effects via signed links;
+  - a happy-path pending review fetch with token.
 
 ### How to add a new effect
 1. Implement the effect in `src/renderer/effects/` (or `src/renderer/effects/gl/` for WebGL2 shader effects).

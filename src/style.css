@@ -1066,6 +1066,40 @@ body,
   font-size: 0.75rem;
 }
 
+.effect-idea-controls {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.effect-idea-controls-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  color: rgba(232, 247, 255, 0.86);
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.effect-idea-controls-actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.effect-idea-controls-actions button {
+  border: 1px solid rgba(142, 249, 255, 0.34);
+  background: rgba(8, 16, 29, 0.88);
+  color: rgba(232, 247, 255, 0.88);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.55rem;
+  border-radius: 0;
+}
+
 .doodle-actions {
   display: flex;
   flex-wrap: wrap;

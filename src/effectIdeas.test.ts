@@ -28,7 +28,9 @@ describe("effect ideas client", () => {
         generation: {
           name: "Nebula Pulse",
           typescriptCode: "export const name='Nebula Pulse';",
-          runtimeCode: "return { render() {} };"
+          runtimeCode: "return { render() {} };",
+          params: [{ key: "speed", label: "Speed", type: "number", defaultValue: 1 }],
+          docs: { description: "Generated effect", parameters: "- speed: speed." }
         }
       })
     })) as typeof fetch;
@@ -36,7 +38,9 @@ describe("effect ideas client", () => {
     await expect(generateEffectIdea("nebula pulses")).resolves.toEqual({
       name: "Nebula Pulse",
       typescriptCode: "export const name='Nebula Pulse';",
-      runtimeCode: "return { render() {} };"
+      runtimeCode: "return { render() {} };",
+      params: [{ key: "speed", label: "Speed", type: "number", defaultValue: 1 }],
+      docs: { description: "Generated effect", parameters: "- speed: speed." }
     });
   });
 
@@ -83,6 +87,30 @@ describe("effect ideas client", () => {
       "/api/effects?pendingId=pending-2&token=secret-token",
       expect.objectContaining({ method: "GET" })
     );
+  });
+
+  it("accepts pending effects even when optional metadata is malformed", async () => {
+    globalThis.fetch = vi.fn(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        effect: {
+          id: "pending-legacy",
+          name: "Legacy",
+          prompt: "Legacy prompt",
+          typescriptCode: "ts",
+          runtimeCode: "return { render() {} };",
+          params: "bad-shape",
+          docs: null,
+          createdAt: 5
+        }
+      })
+    })) as typeof fetch;
+
+    const result = await fetchPendingEffect("pending-legacy", "secret-token");
+    expect(result.reviewUrl).toBeNull();
+    expect(result.effect).not.toBeNull();
+    expect(result.effect?.id).toBe("pending-legacy");
   });
 
   it("builds moderation action URLs for effect review buttons", () => {
