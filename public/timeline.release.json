@@ -1818,6 +1818,24 @@
         "speed": 0.78,
         "glow": 0.28
       },
+      "automation": [
+        {
+          "param": "speed",
+          "from": 0.78,
+          "to": 0.9,
+          "t0": "03:09.6",
+          "t1": "03:15.7",
+          "ease": "easeInOutQuad"
+        },
+        {
+          "param": "glow",
+          "from": 0.28,
+          "to": 0.36,
+          "t0": "03:09.6",
+          "t1": "03:15.7",
+          "ease": "easeInOutQuad"
+        }
+      ],
       "layers": [
         {
           "effect": "platformerScroll",
@@ -1843,9 +1861,27 @@
       "end": "03:24",
       "effect": "neon",
       "params": {
-        "speed": 0.78,
-        "glow": 0.28
+        "speed": 0.9,
+        "glow": 0.36
       },
+      "automation": [
+        {
+          "param": "speed",
+          "from": 0.9,
+          "to": 1.14,
+          "t0": "03:15.7",
+          "t1": "03:24",
+          "ease": "easeInOutQuad"
+        },
+        {
+          "param": "glow",
+          "from": 0.36,
+          "to": 0.56,
+          "t0": "03:15.7",
+          "t1": "03:24",
+          "ease": "easeInOutQuad"
+        }
+      ],
       "layers": [
         {
           "effect": "platformerScroll",
@@ -1871,9 +1907,27 @@
       "end": "03:25.012",
       "effect": "neon",
       "params": {
-        "speed": 0.78,
-        "glow": 0.28
+        "speed": 1.14,
+        "glow": 0.56
       },
+      "automation": [
+        {
+          "param": "speed",
+          "from": 1.14,
+          "to": 1.22,
+          "t0": "03:24",
+          "t1": "03:25.012",
+          "ease": "easeOutQuad"
+        },
+        {
+          "param": "glow",
+          "from": 0.56,
+          "to": 0.62,
+          "t0": "03:24",
+          "t1": "03:25.012",
+          "ease": "easeOutQuad"
+        }
+      ],
       "layers": [
         {
           "effect": "platformerScroll",
