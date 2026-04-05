@@ -1126,18 +1126,18 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 - **Registry key:** `fractal_zoomer`
 - **Implementation:** `src/renderer/effects/fractalZoomer.ts` (class `FractalZoomerEffect`)
 - **Renderer:** Canvas2D
-- **Description:** Mandelbrot zoom with built-in continuous zoom motion.
-- **Audio features:** bass, beat, beatStrength, rms
+- **Description:** High-resolution Mandelbrot edge dive with continuous auto-zoom.
+- **Audio features:** bass, rms
 - **Performance notes:** Uses ImageData per frame; CPU cost scales with resolution.
 
 ### Parameters
 
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
 | --- | --- | --- | --- | --- | --- |
-| `params.audioReact` | number | 0.55 | min 0, max 1 | Audio React | yes |
+| `params.audioReact` | number | 0 | min 0, max 1 | Audio React | yes |
 | `params.centerX` | number | -0.72 | min -2.5, max 1.5 | Center X | yes |
 | `params.centerY` | number | 0 | min -1.8, max 1.8 | Center Y | yes |
-| `params.iterations` | number | 140 | min 24, max 600 | Iterations | yes |
+| `params.iterations` | number | 140 | min 24, max 1600 | Iterations | yes |
 | `params.paletteSpeed` | number | 0.18 | min 0, max 2 | Palette Speed | yes |
 | `params.zoom` | number | 1.6 | min 0.4, max 8 | Zoom | yes |
 

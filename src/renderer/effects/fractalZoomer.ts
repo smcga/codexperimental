@@ -1,9 +1,9 @@
 import { clamp } from "../../util/math";
 import { Effect, EffectRenderContext } from "./types";
 
-const RESOLUTION_SCALE = 0.32;
-const MIN_INTERNAL_SIZE = 96;
-const MAX_INTERNAL_SIZE = 360;
+const RESOLUTION_SCALE = 0.6;
+const MIN_INTERNAL_SIZE = 140;
+const MAX_INTERNAL_SIZE = 960;
 
 export const FRACTAL_ZOOMER_DEFAULTS = {
   zoom: 1.6,
@@ -11,7 +11,7 @@ export const FRACTAL_ZOOMER_DEFAULTS = {
   centerY: 0,
   iterations: 140,
   paletteSpeed: 0.18,
-  audioReact: 0.55
+  audioReact: 0
 } as const;
 
 export type FractalZoomerParams = {
@@ -39,7 +39,7 @@ export const normalizeFractalZoomerParams = (params: Record<string, unknown>): F
   zoom: clamp(toFiniteNumber(params.zoom, FRACTAL_ZOOMER_DEFAULTS.zoom), 0.4, 8),
   centerX: clamp(toFiniteNumber(params.centerX, FRACTAL_ZOOMER_DEFAULTS.centerX), -2.5, 1.5),
   centerY: clamp(toFiniteNumber(params.centerY, FRACTAL_ZOOMER_DEFAULTS.centerY), -1.8, 1.8),
-  iterations: clamp(Math.round(toFiniteNumber(params.iterations, FRACTAL_ZOOMER_DEFAULTS.iterations)), 24, 600),
+  iterations: clamp(Math.round(toFiniteNumber(params.iterations, FRACTAL_ZOOMER_DEFAULTS.iterations)), 24, 1600),
   paletteSpeed: clamp(toFiniteNumber(params.paletteSpeed, FRACTAL_ZOOMER_DEFAULTS.paletteSpeed), 0, 2),
   audioReact: clamp(toFiniteNumber(params.audioReact, FRACTAL_ZOOMER_DEFAULTS.audioReact), 0, 1)
 });
@@ -49,21 +49,22 @@ export const buildFractalZoomerState = (
   audio: EffectRenderContext["audio"],
   params: FractalZoomerParams
 ): FractalZoomerState => {
-  const beatPulse = audio.beat ? clamp(audio.beatStrength, 0, 1) : 0;
-  const audioBoost = (clamp(audio.bass, 0, 1) * 0.7 + clamp(audio.rms, 0, 1) * 0.3) * params.audioReact;
-  const zoomMotion = time * (0.2 + params.paletteSpeed * 0.35);
-  const autoZoom = Math.sin(zoomMotion) * 0.7 + Math.sin(zoomMotion * 0.43) * 0.45;
-  const zoomScale = Math.pow(2, params.zoom + autoZoom + audioBoost * 0.75 + beatPulse * 0.2);
-  const centerX = params.centerX + Math.sin(zoomMotion * 0.19) * 0.018;
-  const centerY = params.centerY + Math.cos(zoomMotion * 0.23) * 0.015;
-  const palettePhase = time * params.paletteSpeed + audioBoost * 0.8;
+  const audioBoost = (clamp(audio.bass, 0, 1) * 0.65 + clamp(audio.rms, 0, 1) * 0.35) * params.audioReact;
+  const zoomExponent = params.zoom + time * 0.85;
+  const zoomScale = Math.pow(2, zoomExponent);
+  const orbitRadius = 0.14 / Math.pow(Math.max(zoomScale, 1), 0.18);
+  const orbitAngle = time * 0.9;
+  const centerX = params.centerX + Math.cos(orbitAngle) * orbitRadius;
+  const centerY = params.centerY + Math.sin(orbitAngle * 1.13) * orbitRadius * 0.75;
+  const palettePhase = time * params.paletteSpeed + audioBoost * 0.45;
+  const detailIterations = params.iterations + Math.log2(Math.max(zoomScale, 1)) * 18 + audioBoost * 60;
 
   return {
     escapeRadiusSq: 4,
     zoomScale,
     centerX,
     centerY,
-    iterations: Math.round(params.iterations * (1 + audioBoost * 0.35)),
+    iterations: clamp(Math.round(detailIterations), 24, 1600),
     palettePhase
   };
 };
@@ -143,7 +144,7 @@ export class FractalZoomerEffect implements Effect {
     this.fractalCtx.putImageData(this.imageData, 0, 0);
 
     const previousSmoothing = ctx.imageSmoothingEnabled;
-    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingEnabled = false;
     ctx.drawImage(this.fractalCanvas, 0, 0, this.bufferW, this.bufferH, 0, 0, width, height);
     ctx.imageSmoothingEnabled = previousSmoothing;
   }

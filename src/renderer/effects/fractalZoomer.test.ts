@@ -31,9 +31,14 @@ describe("fractalZoomer params", () => {
     expect(params.zoom).toBe(8);
     expect(params.centerX).toBe(-2.5);
     expect(params.centerY).toBe(1.8);
-    expect(params.iterations).toBe(600);
+    expect(params.iterations).toBe(1600);
     expect(params.paletteSpeed).toBe(0);
     expect(params.audioReact).toBe(1);
+  });
+
+  it("defaults audio react to zero", () => {
+    const params = normalizeFractalZoomerParams({});
+    expect(params.audioReact).toBe(0);
   });
 
   it("maps normalized params to deterministic state", () => {
@@ -68,8 +73,9 @@ describe("fractalZoomer params", () => {
     const first = buildFractalZoomerState(0, audio, params);
     const later = buildFractalZoomerState(6, audio, params);
 
-    expect(later.zoomScale).not.toBe(first.zoomScale);
+    expect(later.zoomScale).toBeGreaterThan(first.zoomScale);
     expect(later.centerX).not.toBe(first.centerX);
     expect(later.centerY).not.toBe(first.centerY);
+    expect(later.iterations).toBeGreaterThan(first.iterations);
   });
 });
