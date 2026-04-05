@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { buildTransitionOptionMarkup, transitionOptions } from "../renderer/transitions";
 import {
   computeSceneSeekTime,
+  clampPlaylistViewportStart,
+  getPlaylistScrollbarMetrics,
   getMainSlotSelection,
   applyMainSlotSelection,
   getNewSceneTimeRange,
@@ -10,6 +12,10 @@ import {
   getRandomEffectSelection,
   getScenePlayingAtTime,
   isWithinSceneStartThreshold,
+  layoutPlaylistTracks,
+  panPlaylistViewport,
+  stripSceneEnds,
+  zoomPlaylistViewport,
   isEditorParamToggleChecked,
   clampEditorNumberParam,
   stepEditorNumberParam,
@@ -44,13 +50,33 @@ describe("getScenePlayingAtTime", () => {
     expect(getScenePlayingAtTime(scenes, 10)?.id).toBe("middle");
   });
 
-  it("falls back to the next scene start when end is omitted", () => {
+  it("selects scenes by latest start time when end is omitted", () => {
     expect(getScenePlayingAtTime(scenes, 19.5)?.id).toBe("middle");
   });
 
+  it("keeps the final scene active after its former explicit end", () => {
+    expect(getScenePlayingAtTime(scenes, 30)?.id).toBe("ending");
+  });
+
   it("returns null when no scene matches", () => {
-    expect(getScenePlayingAtTime(scenes, 30)).toBeNull();
     expect(getScenePlayingAtTime(scenes, Number.NaN)).toBeNull();
+  });
+
+  it("ignores explicit end overlap and picks the newest started scene", () => {
+    const overlapping = [
+      { id: "a", start: 0, end: 99, effect: "starfield" },
+      { id: "b", start: 10, end: 20, effect: "rain" }
+    ];
+    expect(getScenePlayingAtTime(overlapping, 12)?.id).toBe("b");
+  });
+
+  it("works with unsorted sections by sorting before selection", () => {
+    const unsorted = [
+      { id: "late", start: 20, effect: "rain" },
+      { id: "early", start: 0, effect: "starfield" },
+      { id: "mid", start: 10, effect: "plasma" }
+    ];
+    expect(getScenePlayingAtTime(unsorted, 11)?.id).toBe("mid");
   });
 });
 
@@ -219,6 +245,85 @@ describe("isWithinSceneStartThreshold", () => {
 
   it("returns false when playback time is outside the threshold", () => {
     expect(isWithinSceneStartThreshold(scenes, 2.11)).toBe(false);
+  });
+});
+
+describe("playlist helpers", () => {
+  it("packs overlapping clips into multiple tracks", () => {
+    const scenes = [
+      { id: "intro", start: 0, end: 10, effect: "starfield" },
+      { id: "overlap", start: 4, end: 8, effect: "plasma" },
+      { id: "next", start: 10, end: 14, effect: "rain" }
+    ];
+
+    const layout = layoutPlaylistTracks(scenes, (scene) => Number(scene.end ?? scene.start));
+    expect(layout.trackCount).toBe(2);
+    expect(layout.clips.map((clip) => ({ id: clip.sceneId, track: clip.track }))).toEqual([
+      { id: "intro", track: 0 },
+      { id: "overlap", track: 1 },
+      { id: "next", track: 0 }
+    ]);
+  });
+
+  it("zooms the viewport around a focus time and keeps it clamped to the duration", () => {
+    const zoomed = zoomPlaylistViewport(20, 30, 0.5, 35, 100);
+    expect(zoomed.duration).toBe(15);
+    expect(zoomed.start).toBeCloseTo(27.5);
+  });
+
+  it("clamps zoom focus ratio so out-of-bounds cursor positions do not lock viewport panning", () => {
+    const zoomedNearLeft = zoomPlaylistViewport(40, 20, 0.5, 10, 120);
+    const zoomedNearRight = zoomPlaylistViewport(40, 20, 0.5, 90, 120);
+    expect(zoomedNearLeft.start).toBeLessThanOrEqual(40);
+    expect(zoomedNearRight.start).toBeGreaterThanOrEqual(40);
+  });
+
+  it("pans the viewport while respecting bounds", () => {
+    expect(panPlaylistViewport(5, -20, 80, 20)).toBe(0);
+    expect(panPlaylistViewport(65, 40, 80, 20)).toBe(60);
+  });
+
+  it("clamps viewport start against zoom window and timeline duration", () => {
+    expect(clampPlaylistViewportStart(-8, 120, 30)).toBe(0);
+    expect(clampPlaylistViewportStart(500, 120, 30)).toBe(90);
+  });
+
+  it("clamps zoom duration to the allowed range", () => {
+    const zoomedIn = zoomPlaylistViewport(0, 8, 0.1, 1, 120);
+    const zoomedOut = zoomPlaylistViewport(0, 40, 10, 1, 120);
+    expect(zoomedIn.duration).toBeGreaterThanOrEqual(15);
+    expect(zoomedOut.duration).toBe(120);
+  });
+
+  it("computes scrollbar thumb size/start from viewport ratios", () => {
+    const metrics = getPlaylistScrollbarMetrics(120, 30, 20);
+    expect(metrics.thumbSizeRatio).toBeCloseTo(1 / 6);
+    expect(metrics.thumbStartRatio).toBeCloseTo(0.25);
+  });
+
+  it("clamps scrollbar thumb to minimum visible size", () => {
+    const metrics = getPlaylistScrollbarMetrics(300, 10, 1);
+    expect(metrics.thumbSizeRatio).toBe(0.05);
+  });
+});
+
+describe("stripSceneEnds", () => {
+  it("removes explicit end properties so scene length derives from next start", () => {
+    const sections = [
+      { id: "a", start: 0, end: 4, effect: "starfield" },
+      { id: "b", start: 4, end: 8, effect: "rain" }
+    ];
+    stripSceneEnds(sections);
+    expect(sections).toEqual([
+      { id: "a", start: 0, effect: "starfield" },
+      { id: "b", start: 4, effect: "rain" }
+    ]);
+  });
+
+  it("is safe to run when sections already omit end", () => {
+    const sections = [{ id: "a", start: 0, effect: "starfield" }];
+    stripSceneEnds(sections);
+    expect(sections).toEqual([{ id: "a", start: 0, effect: "starfield" }]);
   });
 });
 

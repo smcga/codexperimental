@@ -623,6 +623,7 @@ body,
   display: grid;
   gap: 0.5rem;
   min-height: 120px;
+  --editor-playlist-track-height: 2.3rem;
 }
 
 .editor-preview {
@@ -658,6 +659,87 @@ body,
   height: 6rem;
 }
 
+.editor-playlist-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.editor-playlist-toolbar-actions {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.editor-playlist-toolbar-actions button {
+  min-width: 2rem;
+}
+
+.editor-playlist-scroll {
+  position: relative;
+  min-height: 9rem;
+  max-height: 14rem;
+  overflow: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 40%),
+    rgba(0, 0, 0, 0.28);
+}
+
+.editor-playlist-scroll::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.editor-playlist-scrollbar {
+  position: relative;
+  height: 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.editor-playlist-scrollbar-thumb {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  min-width: 6%;
+  border-radius: 999px;
+  background: rgba(142, 249, 255, 0.45);
+  border: 1px solid rgba(142, 249, 255, 0.8);
+  cursor: grab;
+}
+
+.editor-playlist-scrollbar-thumb:active {
+  cursor: grabbing;
+}
+
+.editor-playlist-tracks {
+  position: relative;
+  min-height: calc(var(--playlist-track-count, 1) * var(--editor-playlist-track-height));
+}
+
+.editor-playlist-track {
+  position: relative;
+  height: var(--editor-playlist-track-height);
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.12);
+}
+
+.editor-playlist-track-label {
+  position: absolute;
+  left: 0.25rem;
+  top: 0.25rem;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  color: rgba(215, 247, 255, 0.45);
+}
+
 .editor-block {
   position: absolute;
   top: 0.3rem;
@@ -672,6 +754,17 @@ body,
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.editor-playlist-clip {
+  top: 0;
+  bottom: auto;
+  height: calc(var(--editor-playlist-track-height) - 0.5rem);
+  z-index: 1;
+}
+
+.editor-playlist-clip.is-dragging {
+  opacity: 0.65;
 }
 
 .editor-block.is-selected {

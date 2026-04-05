@@ -203,13 +203,9 @@ export const getScenePlayingAtTime = (
     return null;
   }
   const sorted = [...scenes].sort((a, b) => parseTimelineTimeValue(a.start) - parseTimelineTimeValue(b.start));
-  for (let index = 0; index < sorted.length; index += 1) {
+  for (let index = sorted.length - 1; index >= 0; index -= 1) {
     const scene = sorted[index];
-    const start = parseTimelineTimeValue(scene.start);
-    const fallbackEnd =
-      index < sorted.length - 1 ? parseTimelineTimeValue(sorted[index + 1].start) : Number.POSITIVE_INFINITY;
-    const end = scene.end !== undefined && scene.end !== null ? parseTimelineTimeValue(scene.end) : fallbackEnd;
-    if (demoTime >= start && demoTime < end) {
+    if (demoTime >= parseTimelineTimeValue(scene.start)) {
       return scene;
     }
   }
@@ -230,6 +226,14 @@ export const getNewSceneTimeRange = (
     start,
     end: nextStart ?? start + 10
   };
+};
+
+export const stripSceneEnds = (sections: RawSectionConfig[]): void => {
+  sections.forEach((section) => {
+    if ("end" in section) {
+      delete section.end;
+    }
+  });
 };
 
 export const getNextNewSectionName = (scenes: RawSectionConfig[]): string => {
@@ -301,6 +305,96 @@ export const isWithinSceneStartThreshold = (
     return false;
   }
   return scenes.some((scene) => Math.abs(parseTimelineTimeValue(scene.start) - playbackTime) <= thresholdSeconds);
+};
+
+export type PlaylistClipLayout = {
+  sceneId: string;
+  start: number;
+  end: number;
+  track: number;
+};
+
+export const layoutPlaylistTracks = (scenes: RawSectionConfig[], getSceneEnd: (scene: RawSectionConfig) => number) => {
+  const sorted = [...scenes].sort((a, b) => parseTimelineTimeValue(a.start) - parseTimelineTimeValue(b.start));
+  const trackEnds: number[] = [];
+  const clips: PlaylistClipLayout[] = [];
+
+  sorted.forEach((scene) => {
+    const start = parseTimelineTimeValue(scene.start);
+    const end = Math.max(start + 0.05, getSceneEnd(scene));
+    let assignedTrack = trackEnds.findIndex((trackEnd) => trackEnd <= start + 0.0001);
+    if (assignedTrack < 0) {
+      assignedTrack = trackEnds.length;
+      trackEnds.push(end);
+    } else {
+      trackEnds[assignedTrack] = end;
+    }
+    clips.push({
+      sceneId: scene.id,
+      start,
+      end,
+      track: assignedTrack
+    });
+  });
+
+  return {
+    clips,
+    trackCount: Math.max(1, trackEnds.length)
+  };
+};
+
+export const clampPlaylistViewportStart = (start: number, duration: number, viewportDuration: number): number => {
+  const maxStart = Math.max(0, duration - viewportDuration);
+  return Math.min(maxStart, Math.max(0, start));
+};
+
+export const zoomPlaylistViewport = (
+  viewportStart: number,
+  viewportDuration: number,
+  zoomFactor: number,
+  focusTime: number,
+  totalDuration: number
+): { start: number; duration: number } => {
+  const minDuration = Math.max(2, Math.min(15, totalDuration));
+  const maxDuration = Math.max(minDuration, totalDuration);
+  const unclampedDuration = viewportDuration * zoomFactor;
+  const nextDuration = Math.min(maxDuration, Math.max(minDuration, unclampedDuration));
+  const effectiveFocus = Number.isFinite(focusTime) ? focusTime : viewportStart + viewportDuration / 2;
+  const unclampedFocusRatio = viewportDuration > 0 ? (effectiveFocus - viewportStart) / viewportDuration : 0.5;
+  const focusRatio = Math.min(1, Math.max(0, unclampedFocusRatio));
+  const nextStart = clampPlaylistViewportStart(effectiveFocus - focusRatio * nextDuration, totalDuration, nextDuration);
+  return {
+    start: nextStart,
+    duration: nextDuration
+  };
+};
+
+export const panPlaylistViewport = (
+  viewportStart: number,
+  deltaSeconds: number,
+  totalDuration: number,
+  viewportDuration: number
+): number => {
+  return clampPlaylistViewportStart(viewportStart + deltaSeconds, totalDuration, viewportDuration);
+};
+
+export const getPlaylistScrollbarMetrics = (
+  totalDuration: number,
+  viewportStart: number,
+  viewportDuration: number
+): { thumbStartRatio: number; thumbSizeRatio: number } => {
+  if (!Number.isFinite(totalDuration) || totalDuration <= 0) {
+    return { thumbStartRatio: 0, thumbSizeRatio: 1 };
+  }
+  const normalizedViewportDuration = Math.min(totalDuration, Math.max(0, viewportDuration));
+  const rawSizeRatio = normalizedViewportDuration / totalDuration;
+  const thumbSizeRatio = Math.min(1, Math.max(0.05, rawSizeRatio));
+  const maxStart = Math.max(0, totalDuration - normalizedViewportDuration);
+  const startRatio = maxStart > 0 ? Math.min(1, Math.max(0, viewportStart / maxStart)) : 0;
+  return {
+    thumbStartRatio: startRatio * (1 - thumbSizeRatio),
+    thumbSizeRatio
+  };
 };
 
 export const parseEditorParamInputValue = (input: string): EditorParamValue => {
@@ -462,6 +556,22 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   let editorVisible = false;
   let currentDemoTime = 0;
   let isPlaying = false;
+  let playlistViewportStart = 0;
+  let playlistViewportDuration = 45;
+  let activePlaylistPan:
+    | {
+        pointerId: number;
+        startX: number;
+        startViewport: number;
+      }
+    | null = null;
+  let activeScrollbarDrag:
+    | {
+        pointerId: number;
+        startX: number;
+        startViewport: number;
+      }
+    | null = null;
 
   const getEffectParamOptions = (effectName: string | null | undefined): string[] => {
     const config = getManifestDebugConfig(effectName ?? null);
@@ -521,6 +631,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     }
     const next = structuredClone(state.timeline);
     updater(next);
+    stripSceneEnds(next.sections);
     saveTimelineDraft(next);
     if (options?.selectedSceneId !== undefined) {
       setState({ timeline: next, selectedSceneId: options.selectedSceneId });
@@ -550,9 +661,6 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   const getSceneEnd = (scene: RawSectionConfig): number => {
     const scenes = getScenesByTime();
     const index = scenes.findIndex((entry) => entry.id === scene.id);
-    if (scene.end !== undefined && scene.end !== null) {
-      return parseTimelineTimeValue(scene.end);
-    }
     if (index >= 0 && index < scenes.length - 1) {
       return parseTimelineTimeValue(scenes[index + 1].start);
     }
@@ -783,36 +891,74 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       return;
     }
     const scenes = getScenesByTime();
-    const duration = scenes.reduce((max, scene) => Math.max(max, getSceneEnd(scene)), 0);
-    const ticks = Math.max(1, Math.ceil(duration / 10));
+    const duration = Math.max(5, scenes.reduce((max, scene) => Math.max(max, getSceneEnd(scene)), 0));
+    playlistViewportDuration = Math.min(Math.max(2, playlistViewportDuration), duration);
+    playlistViewportStart = clampPlaylistViewportStart(playlistViewportStart, duration, playlistViewportDuration);
+    const viewportEnd = Math.min(duration, playlistViewportStart + playlistViewportDuration);
+    const layout = layoutPlaylistTracks(scenes, getSceneEnd);
+    const ticks = Math.max(1, Math.ceil(playlistViewportDuration / 5));
 
     view.innerHTML = `
+      <div class="editor-playlist-toolbar">
+        <span>Playlist</span>
+        <div class="editor-playlist-toolbar-actions">
+          <button type="button" data-action="playlist-zoom-out">−</button>
+          <button type="button" data-action="playlist-zoom-in">+</button>
+          <button type="button" data-action="playlist-reset">Reset</button>
+        </div>
+      </div>
       <div class="editor-ruler">
         ${Array.from({ length: ticks + 1 })
           .map((_, index) => {
-            const time = Math.min(duration, index * 10);
-            return `<span style="left:${duration ? (time / duration) * 100 : 0}%">${formatTime(time)}</span>`;
+            const time = Math.min(viewportEnd, playlistViewportStart + (playlistViewportDuration / ticks) * index);
+            const relative = (time - playlistViewportStart) / Math.max(playlistViewportDuration, 0.001);
+            return `<span style="left:${relative * 100}%">${formatTime(time)}</span>`;
           })
           .join("")}
       </div>
-      <div class="editor-blocks"></div>
+      <div class="editor-playlist-scroll" data-region="playlist-scroll">
+        <div class="editor-playlist-tracks" data-region="playlist-tracks"></div>
+      </div>
+      <div class="editor-playlist-scrollbar" data-region="playlist-scrollbar">
+        <div class="editor-playlist-scrollbar-thumb" data-region="playlist-scrollbar-thumb"></div>
+      </div>
     `;
 
-    const blocks = view.querySelector<HTMLDivElement>(".editor-blocks");
-    if (!blocks) {
+    const tracks = view.querySelector<HTMLDivElement>("[data-region='playlist-tracks']");
+    const scroll = view.querySelector<HTMLDivElement>("[data-region='playlist-scroll']");
+    const scrollbar = view.querySelector<HTMLDivElement>("[data-region='playlist-scrollbar']");
+    const scrollbarThumb = view.querySelector<HTMLDivElement>("[data-region='playlist-scrollbar-thumb']");
+    if (!tracks || !scroll || !scrollbar || !scrollbarThumb) {
       return;
     }
+    tracks.style.setProperty("--playlist-track-count", String(layout.trackCount));
 
-    scenes.forEach((scene) => {
-      const start = parseTimelineTimeValue(scene.start);
-      const end = getSceneEnd(scene);
-      const left = duration ? (start / duration) * 100 : 0;
-      const width = duration ? ((end - start) / duration) * 100 : 0;
+    for (let trackIndex = 0; trackIndex < layout.trackCount; trackIndex += 1) {
+      const lane = document.createElement("div");
+      lane.className = "editor-playlist-track";
+      lane.dataset.track = String(trackIndex);
+      lane.innerHTML = `<span class="editor-playlist-track-label">Track ${trackIndex + 1}</span>`;
+      tracks.appendChild(lane);
+    }
+
+    layout.clips.forEach((clip) => {
+      const scene = scenes.find((candidate) => candidate.id === clip.sceneId);
+      if (!scene) {
+        return;
+      }
+      const start = clip.start;
+      const end = clip.end;
+      const left = ((start - playlistViewportStart) / Math.max(playlistViewportDuration, 0.001)) * 100;
+      const width = ((end - start) / Math.max(playlistViewportDuration, 0.001)) * 100;
+      if (left > 100 || left + width < 0) {
+        return;
+      }
       const block = document.createElement("button");
       block.type = "button";
-      block.className = "editor-block";
-      block.style.left = `${left}%`;
+      block.className = "editor-block editor-playlist-clip";
+      block.style.left = `${Math.max(0, left)}%`;
       block.style.width = `${Math.max(2, width)}%`;
+      block.style.top = `calc(${clip.track} * var(--editor-playlist-track-height) + 0.25rem)`;
       block.textContent = scene.id;
       block.title = `${scene.id} (${formatTime(start)} → ${formatTime(end)})`;
       if (scene.id === state.selectedSceneId) {
@@ -822,9 +968,204 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         selectScene(scene.id);
         init.seek(computeSceneSeekTime(scene.start, init.getAudioOffset()));
       });
-      blocks.appendChild(block);
+      block.draggable = true;
+      block.addEventListener("dragstart", (event) => {
+        event.dataTransfer?.setData("text/plain", scene.id);
+        block.classList.add("is-dragging");
+      });
+      block.addEventListener("dragend", () => {
+        block.classList.remove("is-dragging");
+      });
+      tracks.appendChild(block);
+    });
+
+    tracks.addEventListener("dragover", (event) => {
+      event.preventDefault();
+    });
+    tracks.addEventListener("drop", (event) => {
+      event.preventDefault();
+      const clipId = event.dataTransfer?.getData("text/plain");
+      if (!clipId) {
+        return;
+      }
+      const draggedScene = scenes.find((scene) => scene.id === clipId);
+      if (!draggedScene) {
+        return;
+      }
+      const rect = tracks.getBoundingClientRect();
+      const xRatio = rect.width > 0 ? (event.clientX - rect.left) / rect.width : 0;
+      const dropTime = clampEditorNumberParam(playlistViewportStart + xRatio * playlistViewportDuration, {
+        min: 0,
+        max: duration,
+        fallback: parseTimelineTimeValue(draggedScene.start)
+      });
+      updateTimeline((draft) => {
+        const target = draft.sections.find((section) => section.id === clipId);
+        if (!target) {
+          return;
+        }
+        target.start = Number(dropTime.toFixed(3));
+      });
+    });
+
+    scroll.addEventListener("pointerdown", (event) => {
+      if ((event.target as HTMLElement).closest(".editor-playlist-clip")) {
+        return;
+      }
+      activePlaylistPan = {
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startViewport: playlistViewportStart
+      };
+    });
+    scroll.addEventListener("wheel", (event) => {
+      event.preventDefault();
+      const rect = scroll.getBoundingClientRect();
+      if (event.shiftKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
+        const pixels = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+        const secondsPerPixel = rect.width > 0 ? playlistViewportDuration / rect.width : 0;
+        playlistViewportStart = panPlaylistViewport(
+          playlistViewportStart,
+          pixels * secondsPerPixel,
+          duration,
+          playlistViewportDuration
+        );
+      } else {
+        const ratio = rect.width > 0 ? (event.clientX - rect.left) / rect.width : 0.5;
+        const focusTime = playlistViewportStart + ratio * playlistViewportDuration;
+        const factor = event.deltaY > 0 ? 1.12 : 0.88;
+        const zoomed = zoomPlaylistViewport(
+          playlistViewportStart,
+          playlistViewportDuration,
+          factor,
+          focusTime,
+          duration
+        );
+        playlistViewportStart = zoomed.start;
+        playlistViewportDuration = zoomed.duration;
+      }
+      renderTimelineView();
+    });
+    const scrollbarMetrics = getPlaylistScrollbarMetrics(duration, playlistViewportStart, playlistViewportDuration);
+    scrollbarThumb.style.width = `${scrollbarMetrics.thumbSizeRatio * 100}%`;
+    scrollbarThumb.style.left = `${scrollbarMetrics.thumbStartRatio * 100}%`;
+    scrollbar.addEventListener("pointerdown", (event) => {
+      const target = event.target as HTMLElement;
+      if (target.closest("[data-region='playlist-scrollbar-thumb']")) {
+        activeScrollbarDrag = {
+          pointerId: event.pointerId,
+          startX: event.clientX,
+          startViewport: playlistViewportStart
+        };
+        return;
+      }
+      const rect = scrollbar.getBoundingClientRect();
+      if (rect.width <= 0) {
+        return;
+      }
+      const ratio = (event.clientX - rect.left) / rect.width;
+      const desiredStart = ratio * duration - playlistViewportDuration / 2;
+      playlistViewportStart = clampPlaylistViewportStart(desiredStart, duration, playlistViewportDuration);
+      renderTimelineView();
+    });
+
+    view.querySelector<HTMLButtonElement>("[data-action='playlist-zoom-in']")?.addEventListener("click", () => {
+      const zoomed = zoomPlaylistViewport(
+        playlistViewportStart,
+        playlistViewportDuration,
+        0.8,
+        playlistViewportStart + playlistViewportDuration / 2,
+        duration
+      );
+      playlistViewportStart = zoomed.start;
+      playlistViewportDuration = zoomed.duration;
+      renderTimelineView();
+    });
+    view.querySelector<HTMLButtonElement>("[data-action='playlist-zoom-out']")?.addEventListener("click", () => {
+      const zoomed = zoomPlaylistViewport(
+        playlistViewportStart,
+        playlistViewportDuration,
+        1.25,
+        playlistViewportStart + playlistViewportDuration / 2,
+        duration
+      );
+      playlistViewportStart = zoomed.start;
+      playlistViewportDuration = zoomed.duration;
+      renderTimelineView();
+    });
+    view.querySelector<HTMLButtonElement>("[data-action='playlist-reset']")?.addEventListener("click", () => {
+      playlistViewportStart = 0;
+      playlistViewportDuration = Math.min(Math.max(20, duration * 0.4), duration);
+      renderTimelineView();
     });
   };
+
+  const handleGlobalPlaylistPan = (event: PointerEvent): void => {
+    if (!activePlaylistPan || event.pointerId !== activePlaylistPan.pointerId) {
+      return;
+    }
+    const scroll = init.container.querySelector<HTMLDivElement>("[data-region='playlist-scroll']");
+    if (!scroll) {
+      return;
+    }
+    const rect = scroll.getBoundingClientRect();
+    if (rect.width <= 0) {
+      return;
+    }
+    const scenes = getScenesByTime();
+    const duration = Math.max(5, scenes.reduce((max, scene) => Math.max(max, getSceneEnd(scene)), 0));
+    const deltaRatio = (event.clientX - activePlaylistPan.startX) / rect.width;
+    playlistViewportStart = panPlaylistViewport(
+      activePlaylistPan.startViewport,
+      -deltaRatio * playlistViewportDuration,
+      duration,
+      playlistViewportDuration
+    );
+    renderTimelineView();
+  };
+
+  const handleGlobalScrollbarDrag = (event: PointerEvent): void => {
+    if (!activeScrollbarDrag || event.pointerId !== activeScrollbarDrag.pointerId) {
+      return;
+    }
+    const scrollbar = init.container.querySelector<HTMLDivElement>("[data-region='playlist-scrollbar']");
+    if (!scrollbar) {
+      return;
+    }
+    const rect = scrollbar.getBoundingClientRect();
+    if (rect.width <= 0) {
+      return;
+    }
+    const scenes = getScenesByTime();
+    const duration = Math.max(5, scenes.reduce((max, scene) => Math.max(max, getSceneEnd(scene)), 0));
+    const secondsPerPixel = duration / rect.width;
+    const deltaSeconds = (event.clientX - activeScrollbarDrag.startX) * secondsPerPixel;
+    playlistViewportStart = clampPlaylistViewportStart(
+      activeScrollbarDrag.startViewport + deltaSeconds,
+      duration,
+      playlistViewportDuration
+    );
+    renderTimelineView();
+  };
+
+  window.addEventListener("pointermove", handleGlobalPlaylistPan);
+  window.addEventListener("pointermove", handleGlobalScrollbarDrag);
+  window.addEventListener("pointerup", (event) => {
+    if (activePlaylistPan && event.pointerId === activePlaylistPan.pointerId) {
+      activePlaylistPan = null;
+    }
+    if (activeScrollbarDrag && event.pointerId === activeScrollbarDrag.pointerId) {
+      activeScrollbarDrag = null;
+    }
+  });
+  window.addEventListener("pointercancel", (event) => {
+    if (activePlaylistPan && event.pointerId === activePlaylistPan.pointerId) {
+      activePlaylistPan = null;
+    }
+    if (activeScrollbarDrag && event.pointerId === activeScrollbarDrag.pointerId) {
+      activeScrollbarDrag = null;
+    }
+  });
 
   const renderInspector = (): void => {
     const inspector = init.container.querySelector<HTMLDivElement>("[data-region='inspector']");
@@ -863,7 +1204,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         </label>
         <label>
           <span>End (s)</span>
-          <input type="number" step="0.1" data-field="end" value="${formatEditableTime(scene.end, true)}" />
+          <input type="number" step="0.1" value="${formatEditableTime(getSceneEnd(scene))}" disabled />
         </label>
         <label>
           <span>Era preset</span>
@@ -1031,8 +1372,6 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         }
         if (field === "start") {
           target.start = Number(value);
-        } else if (field === "end") {
-          target.end = value === "" ? undefined : Number(value);
         } else if (field === "id") {
           target.id = value;
           setState({ selectedSceneId: value });
@@ -1878,12 +2217,11 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       if (isPlaying && isWithinSceneStartThreshold(sections, currentDemoTime)) {
         return;
       }
-      const { start, end } = getNewSceneTimeRange(sections, currentDemoTime);
+      const { start } = getNewSceneTimeRange(sections, currentDemoTime);
       const effect = getRandomEffectSelection(init.effectNames);
       const newScene = createScene({
         id: getNextNewSectionName(sections),
         start,
-        end,
         effect,
         params: getRandomEffectParams(effect)
       });

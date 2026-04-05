@@ -33,3 +33,16 @@ describe("start overlay organic link", () => {
     expect(css).not.toContain(".overlay-organic-banner a");
   });
 });
+
+describe("editor playlist scrollbar styling", () => {
+  it("hides the native scrollbars so only the custom playlist scrollbar is shown", () => {
+    const css = readFileSync(new URL("./style.css", import.meta.url), "utf8");
+
+    expect(css).toContain(".editor-playlist-scroll");
+    expect(css).toContain("scrollbar-width: none;");
+    expect(css).toContain("-ms-overflow-style: none;");
+    expect(css).toContain(".editor-playlist-scroll::-webkit-scrollbar");
+    expect(css).toContain("width: 0;");
+    expect(css).toContain("height: 0;");
+  });
+});
