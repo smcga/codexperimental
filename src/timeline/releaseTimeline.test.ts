@@ -127,6 +127,7 @@ describe("release timeline", () => {
       "marble",
       "velvet_dreamscape",
       "water_drops",
+      "infinite_zoom_droste",
       "cloth_sim",
       "recursiveFracture",
       "skeletal_ribbon",

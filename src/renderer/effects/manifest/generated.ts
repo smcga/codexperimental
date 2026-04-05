@@ -32,6 +32,7 @@ import { game_of_lifeManifest } from "./game_of_life.manifest";
 import { greets_wallManifest } from "./greets_wall.manifest";
 import { hexGridPulseManifest } from "./hexGridPulse.manifest";
 import { infinitycloudManifest } from "./infinitycloud.manifest";
+import { infinite_zoom_drosteManifest } from "./infinite_zoom_droste.manifest";
 import { infinite_mirrorManifest } from "./infinite_mirror.manifest";
 import { isogridManifest } from "./isogrid.manifest";
 import { kefrens_barsManifest } from "./kefrens_bars.manifest";
@@ -132,6 +133,7 @@ export const generatedEffectManifests = [
   greets_wallManifest,
   hexGridPulseManifest,
   infinitycloudManifest,
+  infinite_zoom_drosteManifest,
   infinite_mirrorManifest,
   isogridManifest,
   kefrens_barsManifest,

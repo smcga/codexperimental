@@ -199,6 +199,7 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `sphere3d` | `speed` |  |
 | `spherecloud` | `speed` |  |
 | `infinitycloud` | `speed` |  |
+| `infinite_zoom_droste` | `speed`, `scaleBase`, `rotationSpeed`, `detail`, `glow`, `pulse`, `twist`, `seed`, `shape`, `fitMode` | `shape` supports `portal`, `rings`, or `grid`; `fitMode` supports `auto` or `safe`. |
 | `infiniteMirror` | `depth`, `scale`, `rotation`, `twist`, `offsetX`, `offsetY`, `pulse`, `glow`, `softness`, `vignette`, `monochrome`, `mirrorFrames`, `baseScene`, `symmetry`, `strobeOnBeat`, `feedbackMix` | Self-referential mirror corridor recursion using feedback; `baseScene` supports `grid`, `rings`, `checker`, `bars`, `void`. |
 | `volumetric_clouds` | `density`, `layers`, `windSpeed`, `cloudScale`, `detail`, `sunlight`, `haze`, `audioReact` | Layered procedural cloudscape with parallax and soft haze. |
 | `voronoi_cells` | `cellCount`, `drift`, `speed`, `lineWidth`, `lineAlpha`, `fillAlpha`, `contrast`, `jitter`, `paletteMode`, `beatPulse`, `shade`, `seed`, `pixelStep`, `chromatic` | Animated Voronoi-style cellular mosaic with era-aware palette bias; `paletteMode` supports `mono`, `neon`, `heat`, or `era`. |

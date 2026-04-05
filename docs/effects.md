@@ -38,6 +38,7 @@ Total effects: **93**.
 - [Effect: glitch](#effect-glitch)
 - [Effect: god_rays](#effect-god-rays)
 - [Effect: greets_wall](#effect-greets-wall)
+- [Effect: infinite_zoom_droste](#effect-infinite-zoom-droste)
 - [Effect: hexGridPulse](#effect-hexGridPulse)
 - [Effect: infiniteMirror](#effect-infiniteMirror)
 - [Effect: infinitycloud](#effect-infinitycloud)
@@ -1257,6 +1258,12 @@ Total effects: **93**.
 }
 ```
 
+## Effect: infinite_zoom_droste
+
+- **Registry key:** `infinite_zoom_droste`
+- **Implementation:** `src/renderer/effects/infiniteZoomDroste.ts` (class `InfiniteZoomDrosteEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Infinite nested portal recursion with continuous logarithmic zoom and layered geometric accents.
 ## Effect: hexGridPulse
 
 - **Registry key:** `hexGridPulse`
@@ -1306,6 +1313,16 @@ Total effects: **93**.
 
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
 | --- | --- | --- | --- | --- | --- |
+| `params.detail` | number | 0.75 | min 0.1, max 1 | Detail | yes |
+| `params.fitMode` | string | "auto" | options: auto, safe | Fit Mode | no |
+| `params.glow` | number | 0.6 | min 0, max 1.2 | Glow | yes |
+| `params.pulse` | number | 0.5 | min 0, max 1 | Pulse | yes |
+| `params.rotationSpeed` | number | 0.18 | min -1.2, max 1.2 | Rotation Speed | yes |
+| `params.scaleBase` | number | 2 | min 1.2, max 3.8 | Scale Base | yes |
+| `params.seed` | number | 1 | min 0, max 9999 | Seed | yes |
+| `params.shape` | string | "portal" | options: portal, rings, grid | Shape | no |
+| `params.speed` | number | 0.35 | min -1.8, max 1.8 | Speed | yes |
+| `params.twist` | number | 0.25 | min -1, max 1 | Twist | yes |
 | `params.baseScene` | string | "grid" | options: grid, rings, checker, bars, void | Base Scene | no |
 | `params.depth` | number | 18 | min 1, max 48 | Depth | yes |
 | `params.feedbackMix` | number | 0.82 | min 0.3, max 0.98 | Feedback Mix | yes |
@@ -1327,6 +1344,7 @@ Total effects: **93**.
 
 ```json
 {
+  "effect": "infinite_zoom_droste",
   "effect": "infiniteMirror",
   "opacity": 1,
   "blend": "source-over",
