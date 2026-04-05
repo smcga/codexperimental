@@ -66,6 +66,11 @@ import { buildSharePayload, canUseNativeShare, getShareLink, ShareLinkPlatform }
 import { getOverlayPresentation, OverlayMode } from "./overlayContent";
 import { buildTransitionOptionMarkup } from "./renderer/transitions";
 import { createPlaybackSyncController, shouldApplyRemoteState } from "./playbackSync";
+import {
+  applyCurrentValuesAsGeneratedDefaults,
+  getGeneratedEffectDefaultParams,
+  getRandomGeneratedEffectParams
+} from "./generatedEffectControls";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
@@ -124,6 +129,11 @@ const doodleSubmitButton = document.querySelector<HTMLButtonElement>("#doodle-su
 const effectIdeaModal = document.querySelector<HTMLDivElement>("#effect-idea-modal");
 const effectIdeaInput = document.querySelector<HTMLTextAreaElement>("#effect-idea-input");
 const effectIdeaPreview = document.querySelector<HTMLCanvasElement>("#effect-idea-preview");
+const effectIdeaControls = document.querySelector<HTMLDivElement>("#effect-idea-controls");
+const effectIdeaControlsGrid = document.querySelector<HTMLDivElement>("#effect-idea-controls-grid");
+const effectIdeaControlsEmpty = document.querySelector<HTMLDivElement>("#effect-idea-controls-empty");
+const effectIdeaSetDefaultsButton = document.querySelector<HTMLButtonElement>("#effect-idea-set-defaults");
+const effectIdeaRandomizeButton = document.querySelector<HTMLButtonElement>("#effect-idea-randomize");
 const effectIdeaCode = document.querySelector<HTMLPreElement>("#effect-idea-code");
 const effectIdeaStatus = document.querySelector<HTMLDivElement>("#effect-idea-status");
 const effectIdeaCancelButton = document.querySelector<HTMLButtonElement>("#effect-idea-cancel");
@@ -180,6 +190,7 @@ let generatedIdeaPrompt = "";
 let effectIdeaPreviewFrame = 0;
 let effectIdeaPreviewStart = 0;
 let effectIdeaPreviewEffect: ReturnType<typeof compileRuntimeEffect> | null = null;
+let effectIdeaPreviewParams: Record<string, number | string> = {};
 let availableEffectNames = getEffectRegistryKeys();
 let playbackSyncSuppressBroadcast = false;
 let lastPlaybackSyncStateSentAt = 0;
@@ -522,6 +533,86 @@ function updateEffectIdeaButtons(): void {
   if (effectIdeaSubmitButton) {
     effectIdeaSubmitButton.disabled = effectIdeasSubmitting || generatedIdea === null;
   }
+  if (effectIdeaSetDefaultsButton) {
+    effectIdeaSetDefaultsButton.disabled = effectIdeasGenerating || !generatedIdea || (generatedIdea.params?.length ?? 0) === 0;
+  }
+  if (effectIdeaRandomizeButton) {
+    effectIdeaRandomizeButton.disabled = effectIdeasGenerating || !generatedIdea || (generatedIdea.params?.length ?? 0) === 0;
+  }
+}
+
+function renderGeneratedEffectIdeaControls(): void {
+  if (!effectIdeaControls || !effectIdeaControlsGrid || !effectIdeaControlsEmpty) {
+    return;
+  }
+  const params = generatedIdea?.params ?? [];
+  const hasControls = params.length > 0;
+  effectIdeaControls.classList.toggle("hidden", !generatedIdea);
+  effectIdeaControlsGrid.innerHTML = "";
+  effectIdeaControlsEmpty.classList.toggle("hidden", hasControls);
+  if (!hasControls) {
+    return;
+  }
+
+  params.forEach((param) => {
+    const field = document.createElement("label");
+    field.classList.add("debug-field");
+    const label = document.createElement("span");
+    label.textContent = param.label;
+    field.appendChild(label);
+
+    if (param.type === "select") {
+      const select = document.createElement("select");
+      select.dataset.effectIdeaParam = param.key;
+      (param.options ?? []).forEach((option) => {
+        const optionEl = document.createElement("option");
+        optionEl.value = option.value;
+        optionEl.textContent = option.label;
+        select.appendChild(optionEl);
+      });
+      select.value = String(effectIdeaPreviewParams[param.key] ?? "");
+      select.addEventListener("change", () => {
+        effectIdeaPreviewParams[param.key] = select.value;
+      });
+      field.appendChild(select);
+      effectIdeaControlsGrid.appendChild(field);
+      return;
+    }
+
+    const input = document.createElement("input");
+    input.dataset.effectIdeaParam = param.key;
+    if (param.type === "toggle") {
+      input.type = "checkbox";
+      input.checked = Number(effectIdeaPreviewParams[param.key]) !== 0;
+      input.addEventListener("change", () => {
+        effectIdeaPreviewParams[param.key] = input.checked ? 1 : 0;
+      });
+      field.appendChild(input);
+      effectIdeaControlsGrid.appendChild(field);
+      return;
+    }
+
+    input.type = "number";
+    if (param.min !== undefined) {
+      input.min = String(param.min);
+    }
+    if (param.max !== undefined) {
+      input.max = String(param.max);
+    }
+    if (param.step !== undefined) {
+      input.step = String(param.step);
+    }
+    input.value = String(effectIdeaPreviewParams[param.key] ?? 0);
+    input.addEventListener("input", () => {
+      const numeric = Number(input.value);
+      if (!Number.isFinite(numeric)) {
+        return;
+      }
+      effectIdeaPreviewParams[param.key] = numeric;
+    });
+    field.appendChild(input);
+    effectIdeaControlsGrid.appendChild(field);
+  });
 }
 
 function stopEffectIdeaPreview(): void {
@@ -546,7 +637,7 @@ function previewGeneratedIdea(): void {
     time: nowSeconds - effectIdeaPreviewStart,
     delta: 1 / 60,
     audio: EMPTY_AUDIO_FEATURES,
-    params: {}
+    params: effectIdeaPreviewParams
   });
   effectIdeaPreviewFrame = requestAnimationFrame(previewGeneratedIdea);
 }
@@ -564,9 +655,11 @@ function setEffectIdeaModalVisible(visible: boolean): void {
     effectIdeaCode.textContent = "";
     setEffectIdeaStatus("Describe your idea, click Generate, and preview the result.");
     generatedIdea = null;
+    effectIdeaPreviewParams = {};
     generatedIdeaPrompt = "";
     effectIdeaPreviewEffect = null;
     effectIdeaPreviewStart = 0;
+    renderGeneratedEffectIdeaControls();
     updateEffectIdeaButtons();
   }
 }
@@ -621,10 +714,12 @@ async function generateCurrentEffectIdea(): Promise<void> {
   try {
     const generation = await generateEffectIdea(prompt);
     generatedIdea = generation;
+    effectIdeaPreviewParams = getGeneratedEffectDefaultParams(generation.params);
     generatedIdeaPrompt = prompt;
     if (effectIdeaCode) {
       effectIdeaCode.textContent = generation.typescriptCode;
     }
+    renderGeneratedEffectIdeaControls();
     effectIdeaPreviewEffect = compileRuntimeEffect(generation.runtimeCode);
     effectIdeaPreviewStart = 0;
     stopEffectIdeaPreview();
@@ -632,6 +727,8 @@ async function generateCurrentEffectIdea(): Promise<void> {
     setEffectIdeaStatus("Preview ready. If it looks good, submit it for approval.", "success");
   } catch (error) {
     generatedIdea = null;
+    effectIdeaPreviewParams = {};
+    renderGeneratedEffectIdeaControls();
     effectIdeaPreviewEffect = null;
     const message = error instanceof Error ? error.message : "Generation failed. Please adjust the prompt and try again.";
     if (effectIdeaCode && error instanceof EffectIdeaApiError && error.rawResponse) {
@@ -1567,6 +1664,31 @@ if (effectIdeaGenerateButton) {
 if (effectIdeaSubmitButton) {
   effectIdeaSubmitButton.addEventListener("click", () => {
     void submitCurrentEffectIdea();
+  });
+}
+
+if (effectIdeaSetDefaultsButton) {
+  effectIdeaSetDefaultsButton.addEventListener("click", () => {
+    if (!generatedIdea?.params || generatedIdea.params.length === 0) {
+      return;
+    }
+    const updatedParams = applyCurrentValuesAsGeneratedDefaults(generatedIdea.params, effectIdeaPreviewParams);
+    generatedIdea = { ...generatedIdea, params: updatedParams };
+    effectIdeaPreviewParams = getGeneratedEffectDefaultParams(updatedParams);
+    renderGeneratedEffectIdeaControls();
+    updateEffectIdeaButtons();
+    setEffectIdeaStatus("Current preview values saved as submitted defaults.", "success");
+  });
+}
+
+if (effectIdeaRandomizeButton) {
+  effectIdeaRandomizeButton.addEventListener("click", () => {
+    if (!generatedIdea?.params || generatedIdea.params.length === 0) {
+      return;
+    }
+    effectIdeaPreviewParams = getRandomGeneratedEffectParams(generatedIdea.params);
+    renderGeneratedEffectIdeaControls();
+    setEffectIdeaStatus("Randomized all generated params for inspiration.", "success");
   });
 }
 
