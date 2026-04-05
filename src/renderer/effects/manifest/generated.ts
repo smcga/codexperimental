@@ -52,6 +52,7 @@ import { neon_alleyManifest } from "./neon_alley.manifest";
 import { particlesManifest } from "./particles.manifest";
 import { particleAttractorsManifest } from "./particleAttractors.manifest";
 import { physics_pileManifest } from "./physics_pile.manifest";
+import { polar_tunnelManifest } from "./polar_tunnel.manifest";
 import { plasmaManifest } from "./plasma.manifest";
 import { platformerScrollManifest } from "./platformerScroll.manifest";
 import { poly_morph_showcaseManifest } from "./poly_morph_showcase.manifest";
@@ -155,6 +156,7 @@ export const generatedEffectManifests = [
   particlesManifest,
   particleAttractorsManifest,
   physics_pileManifest,
+  polar_tunnelManifest,
   plasmaManifest,
   platformerScrollManifest,
   poly_morph_showcaseManifest,

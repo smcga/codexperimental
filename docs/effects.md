@@ -62,6 +62,7 @@ Total effects: **93**.
 - [Effect: physics_pile](#effect-physics-pile)
 - [Effect: plasma](#effect-plasma)
 - [Effect: platformerScroll](#effect-platformerScroll)
+- [Effect: polar_tunnel](#effect-polar-tunnel)
 - [Effect: poly_morph_showcase](#effect-poly-morph-showcase)
 - [Effect: portrait](#effect-portrait)
 - [Effect: prism_bloom](#effect-prism-bloom)
@@ -2095,6 +2096,42 @@ Total effects: **93**.
 ```json
 {
   "effect": "platformerScroll",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: polar_tunnel
+
+- **Registry key:** `polar_tunnel`
+- **Implementation:** `src/renderer/effects/polarTunnelEffect.ts` (class `PolarTunnelEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Center-relative polar tunnel with angle/radius wobble and a sine palette for demoscene-style concentric motion.
+- **Audio features:** bass, rms
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.angularFrequency` | number | 6 | min 0, max 24 | Angular Frequency | yes |
+| `params.audioReact` | number | 0.35 | min 0, max 1 | Audio React | yes |
+| `params.colorCycles` | number | 6.2831 | min 0.5, max 16 | Color Cycles | yes |
+| `params.radialFrequency` | number | 30 | min 1, max 80 | Radial Frequency | yes |
+| `params.radialWobbleAmount` | number | 0.03 | min 0, max 0.2 | Radial Wobble Amt | yes |
+| `params.radialWobbleFrequency` | number | 8 | min 0, max 24 | Radial Wobble Freq | yes |
+| `params.radialWobbleSpeed` | number | 1.5 | min -8, max 8 | Radial Wobble Speed | yes |
+| `params.rotateSpeed` | number | 0.8 | min -4, max 4 | Rotate Speed | yes |
+| `params.wobbleAmount` | number | 0.8 | min 0, max 2 | Wobble Amount | yes |
+| `params.wobbleFrequency` | number | 12 | min 0, max 40 | Wobble Frequency | yes |
+| `params.wobbleSpeed` | number | 2 | min -8, max 8 | Wobble Speed | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "polar_tunnel",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
