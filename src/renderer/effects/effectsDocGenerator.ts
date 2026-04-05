@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import ts from "typescript";
 import { effectManifests } from "./manifest";
+import { buildEffectChronologyMarkdown } from "./effectChronology";
 export type ParamType = "number" | "string" | "boolean" | "object" | "array" | "union";
 type ParamConstraints = {
   min?: number;
@@ -507,6 +508,7 @@ export const generateEffectsDoc = (): { markdown: string; effectNames: string[];
   const commonParams = buildCommonParamPatterns(effects);
   const effectNames = effects.map((effect) => effect.name);
 
+  const chronologyMarkdown = buildEffectChronologyMarkdown({ includeTitle: false });
   const toc = effects.map((effect) => `- [Effect: ${effect.name}](#effect-${effect.name.replace(/_/g, "-")})`).join("\n");
 
   const header = [
@@ -531,6 +533,12 @@ export const generateEffectsDoc = (): { markdown: string; effectNames: string[];
     commonParams.length > 0
       ? commonParams.map((entry) => `- \`${entry.name}\` (used in ${entry.count} effects)`).join("\n")
       : "- No common params detected.",
+    "",
+    "## Demoscene chronology (inferred)",
+    "",
+    "The full chronology table is maintained in `docs/effect-chronology.md` and summarised below.",
+    "",
+    chronologyMarkdown,
     "",
     "## Effects"
   ].join("\n");
