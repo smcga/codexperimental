@@ -35,6 +35,7 @@
             <button id="overlay-share-button" type="button">Spread the signal</button>
             <button id="overlay-restart-button" class="hidden" type="button">Restart</button>
             <button id="add-doodle-button" class="hidden" type="button">Add a doodle</button>
+            <button id="add-effect-idea-button" class="hidden" type="button">Got an effect idea? Make it real!</button>
           </div>
           <div id="share-panel" class="share-panel hidden" aria-label="Share this demo">
             <button id="share-copy-button" type="button">Copy link</button>
@@ -79,6 +80,24 @@
           </div>
         </div>
       </div>
+      <div id="effect-idea-modal" class="doodle-modal hidden" aria-hidden="true">
+        <div class="doodle-panel">
+          <div class="doodle-title">Got an effect idea? Make it real!</div>
+          <p class="doodle-copy">Describe your visual effect, generate TypeScript + runtime code with Codex, preview it, then submit it for approval.</p>
+          <label class="doodle-tool-group" for="effect-idea-input">
+            <span class="doodle-tool-label">Effect idea</span>
+            <textarea id="effect-idea-input" rows="4" placeholder="Example: neon vector tunnel that pulses with beat-reactive glow"></textarea>
+          </label>
+          <canvas id="effect-idea-preview" width="512" height="288" aria-label="Generated effect preview"></canvas>
+          <pre id="effect-idea-code" class="effect-idea-code"></pre>
+          <div id="effect-idea-status" class="doodle-status">Describe your idea, click Generate, and preview the result.</div>
+          <div class="doodle-actions">
+            <button id="effect-idea-cancel" type="button">Cancel</button>
+            <button id="effect-idea-generate" type="button">Generate</button>
+            <button id="effect-idea-submit" type="button">Submit</button>
+          </div>
+        </div>
+      </div>
       <div id="debug-panels">
         <div id="debug-overlay" class="debug-panel hidden">
           <div class="debug-title">Debug Controls</div>
@@ -97,6 +116,10 @@
           <div class="debug-row">
             <span>Second half</span>
             <button id="debug-skip-second-half" type="button">Skip to second half</button>
+          </div>
+          <div class="debug-row">
+            <span>End</span>
+            <button id="debug-skip-end" type="button">Skip to end</button>
           </div>
           <div class="debug-row">
             <span>Skip 10s</span>

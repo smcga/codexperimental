@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { getRelativeSeekTime, getSecondHalfSkipTime } from "./controls";
+import { getEndSkipTime, getRelativeSeekTime, getSecondHalfSkipTime } from "./controls";
 
 describe("getSecondHalfSkipTime", () => {
   it("skips forward to the configured second-half time", () => {
@@ -31,5 +31,19 @@ describe("getRelativeSeekTime", () => {
 
   it("does not clamp to duration when duration is unknown", () => {
     expect(getRelativeSeekTime(5, 10, 0)).toBe(15);
+  });
+});
+
+describe("getEndSkipTime", () => {
+  it("skips to just before the track end by default", () => {
+    expect(getEndSkipTime(50, 180)).toBe(179.9);
+  });
+
+  it("does not rewind when already at the end", () => {
+    expect(getEndSkipTime(179.95, 180)).toBe(179.95);
+  });
+
+  it("returns current time when duration is unknown", () => {
+    expect(getEndSkipTime(42, 0)).toBe(42);
   });
 });

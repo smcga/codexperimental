@@ -13,7 +13,8 @@ describe("getOverlayPresentation", () => {
       showStart: true,
       showShare: true,
       showRestart: false,
-      showDoodle: false
+      showDoodle: false,
+      showEffectIdea: false
     });
   });
 
@@ -24,7 +25,8 @@ describe("getOverlayPresentation", () => {
       showStart: false,
       showShare: false,
       showRestart: false,
-      showDoodle: false
+      showDoodle: false,
+      showEffectIdea: false
     });
   });
 
@@ -33,11 +35,13 @@ describe("getOverlayPresentation", () => {
       kicker: "signal complete",
       title: "The end",
       subtitle: "Replay it, tag the crew, or leave a doodle for the wall.",
+      effectIdeaLabel: "Got an effect idea? Make it real!",
       showActions: true,
       showStart: false,
       showShare: true,
       showRestart: true,
-      showDoodle: true
+      showDoodle: true,
+      showEffectIdea: true
     });
   });
 });

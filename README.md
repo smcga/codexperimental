@@ -22,6 +22,7 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 - The `volumetric_clouds` effect renders layered procedural cloud banks with parallax depth and audio-reactive density pulses; tune `params` like `density`, `layers`, `windSpeed`, `cloudScale`, `detail`, `sunlight`, `haze`, and `audioReact`.
 - The `flyover` effect renders a sky/sea flythrough with distant islands; tune `params` like `speed`, `horizon`, `seaDetail`, `islandSeed`, and `palette`.
 - The `synthwaveSunset` effect renders an outrun sunset with a striped sun, neon sky, and reflective sea; tune `params` like `horizon`, `sunRadius`, `stripeHeight`, `stripeGap`, and `seaSpeed`.
+- The `skyboxTransition` effect renders a panoramic atmospheric backdrop that smoothly evolves from day through sunset into surreal night; tune `params` like `speed`, `intensity`, `horizon`, `cloudAmount`, `starAmount`, `silhouetteAmount`, `surrealness`, `audioReactive`, `loop`, and `phaseOffset`.
 - The `border_multiplex` effect fakes border-breaking sprites and multiplexed raster reuse; tune `params` like `hwSprites`, `totalSprites`, `bandHeight`, `spriteSize`, `speed`, `rasterJitter`, `borderMaskStrength`, `audioReact`, and `seed`.
 - The `rain` effect renders layered storm rain with turbulence, optional ground splashes, and low mist bands; tune `params` like `intensity`, `wind`, `speed`, `streakLength`, `splash`, `hue`, `storm`, `turbulence`, `mist`, and `seed`.
 - The `lightning` effect renders brief flash overlays with optional bolt branches; tune `params` like `trigger`, `chancePerSecond`, `cooldown`, `flashDuration`, `bolt`, `branches`, and `seed`.
@@ -66,6 +67,21 @@ Automation example:
 ```
 
 Automation supports numeric params only; non-numeric values fall back to the base params.
+
+### Timeline runtime behavior (how playback works)
+
+- The timeline runs in two modes: `intro` and `sections`. While the current playback time is before `intro.end`, the app stays in `intro`; at `intro.end` and later it switches to `sections`.
+- During `intro`, the renderer still receives the first section as `section` context so post-intro visuals can warm up consistently, but transitions and text cues remain inactive.
+- Section lookup is start-time based: the active section is the last section whose `start` is less than or equal to the current time.
+- Transition blending is evaluated only at section boundaries:
+  - A transition is active for `section.transition.duration` seconds after a section starts.
+  - Transition progress is clamped from `0` to `1`.
+  - The transition type uses the incoming section `transition.in` (normalized to `fade` when omitted in JSON).
+- `textCues` are active only while `start <= currentTime <= end`.
+- If the final section omits an explicit `end`, it is treated as "until audio ends" and is finalized after audio metadata loads.
+- `introTime` is exposed in both modes:
+  - In `intro`, `introTime` equals absolute playback time.
+  - In `sections`, `introTime` equals elapsed time since `intro.end`.
 
 ### Timeline data schema
 
@@ -150,12 +166,16 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `tunnel` | `speed` |  |
 | `dotTunnel` | `ringCount`, `dotsPerRing`, `fov`, `speed`, `twist`, `palette`, `glow`, `seed` | Depth-sorted sprite/ring tunnel; `palette` selects built-in color ramps. |
 | `moire_grid` | `spacing`, `lineWidth`, `speed`, `warp`, `intensity`, `palette`, `audioReact` | Warped interference grid; `palette` supports `cyan`, `magenta`, or `amber`. |
+| `recursiveFracture` | `seed`, `shapeCount`, `maxDepth`, `splitBias`, `angleJitter`, `gap`, `strokeWidth`, `fillAlpha`, `lineAlpha`, `progressSpeed`, `progressMode`, `beatPunch`, `bassInfluence`, `trebleDetail`, `paletteMode`, `minFragmentSize` | Deterministic recursive subdivision panes; `progressMode` supports `outward`/`inward`, and `paletteMode` supports `mono`, `era`, or `heat`. |
+| `moving_shadow_map` | `seed`, `objectCount`, `lightCount`, `lightSpeed`, `lightHeightMin`, `lightHeightMax`, `shadowLength`, `shadowSoftness`, `floorGrid`, `paletteMode`, `contrast`, `haze`, `orbitRadius`, `colorA`, `colorB`, `lightColor` | Faux-3D Canvas2D scene with orbiting lights and projected moving shadows over a ground plane. |
 | `textmode_charset` | `cols`, `rows`, `glyphSet`, `mode`, `speed`, `palette`, `scanlines`, `seed` | Coarse character-grid renderer with glyph ramps (` .:-=+*#%@`) and palette-indexed tinting. |
 | `rotozoom` | `speed` |  |
 | `blobs` | `count`, `radius`, `orbit`, `speed`, `glow` |  |
 | `metaballs` | `bufW`, `bufH`, `count`, `baseRadius`, `radiusVar`, `baseThreshold`, `edgeSoftness`, `normalZ`, `ambient`, `diffuse`, `specStrength`, `shininess`, `rimStrength`, `palette`, `hueSpeed`, `smoothing`, `glow`, `audioReact`, `beatKick`, `seed` | Implicit surface metaballs with chrome/neon lighting; `palette` supports `chrome` or `neon`. |
 | `ribbons` | `count`, `speed`, `amplitude`, `audioBoost`, `offset`, `spacing`, `thickness` |  |
+| `skeletal_ribbon` | `boneCount`, `length`, `thickness`, `waveAmp`, `waveFreq`, `stiffness`, `audioInfluence`, `colorMode`, `hueShift`, `glow`, `debugSkeleton` | Articulated spine/tentacle ribbon driven by chained bone kinematics with beat-reactive pulse thickness. |
 | `lissajous` | `points`, `speed`, `a`, `b`, `radius`, `lineWidth` |  |
+| `marble` | `scale`, `veinScale`, `contrast`, `brightness`, `speed`, `turbulence`, `layers` | Animated marble veins using turbulent sine domain warping; audio subtly modulates turbulence, vein scale, and brightness. |
 | `glitch` | `sparkles`, `sparkleSize`, `sliceCount`, `sliceBoost`, `sliceHeight`, `sliceVariance`, `offset`, `shake`, `maxShake` |  |
 | `bokeh` | `count`, `speed`, `radius`, `alpha`, `hueShift` |  |
 | `fractal` | `iterations`, `trebleBoost`, `speed`, `scale`, `alpha` |  |
@@ -163,10 +183,14 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `equalizer` | `bars`, `barWidth`, `height`, `bassBoost`, `alpha` |  |
 | `spectrum_analyzer` | `bands`, `smoothing`, `curve`, `tilt`, `peakHold`, `grid`, `glow` | Parametric-EQ-style spectrum trace with log-spaced bins and peak-hold markers. |
 | `isogrid` | `opacity`, `lineWidth`, `spacing`, `wave`, `speed` |  |
+| `kaleidoscope_symmetry` | `slices`, `rotationSpeed`, `radialZoom`, `mirror`, `patternScale`, `patternWarp`, `centreX`, `centreY`, `colorShift`, `glow`, `audioReactive`, `bassInfluence`, `trebleInfluence`, `spinOnBeat`, `ringDensity` | Mirrored radial wedges driven by a procedural source pattern for mandala/starburst motion. |
 | `neon` | `shapes`, `radius`, `radiusStep`, `speed`, `glow`, `lineWidth` |  |
 | `particles` | `trail`, `burst`, `burstAudio`, `force`, `forceAudio` |  |
+| `particleAttractors` | `count`, `seed`, `attractorCount`, `strength`, `swirl`, `damping`, `speedLimit`, `softening`, `absorbRadius`, `spawnMode`, `trailAlpha`, `particleSize`, `glow`, `motion`, `audioReactive`, `beatPulse`, `colorMode`, `backgroundFade`, `vignette` | Gravity-well particle flow with swirling paths; `spawnMode` supports `edges`, `ring`, or `random`, and `colorMode` supports `mono`, `era`, or `heat`. |
 | `border_multiplex` | `hwSprites`, `totalSprites`, `bandHeight`, `spriteSize`, `speed`, `rasterJitter`, `borderMaskStrength`, `audioReact`, `seed` |  |
 | `fluid` | `speed`, `dissipation`, `splatCount`, `splatSize`, `turbulence`, `hueShift`, `seed` |  |
+| `reactionDiffusion` | `scale`, `simScale`, `feed`, `kill`, `diffA`, `diffB`, `steps`, `seed`, `contrast`, `brightness`, `invert`, `paletteMix`, `audioReactivity`, `beatPulse`, `drift`, `reseedCue` | Gray–Scott style reaction-diffusion simulation with evolving spots/stripes, subtle audio pulse response, and era-aware output shaping. |
+| `smoke_simulation` | `density`, `flowSpeed`, `turbulence`, `swirl`, `diffusion`, `softness`, `emission`, `emitMode`, `scale`, `colorMode`, `hueShift`, `audioReactive`, `bassInfluence`, `midInfluence`, `trebleInfluence`, `seed`, `highlights` | `emitMode` supports `centre`, `bottom`, `random`; `colorMode` supports `mono` or `tinted`. |
 | `boids_simulation` | `count`, `speed`, `cohesion`, `alignment`, `separation`, `neighborRadius`, `separationRadius`, `trail`, `size`, `seed` | Audio-reactive flocking simulation with wraparound space and neon boid trails. |
 | `finale` | `trail`, `starSpeed`, `starWarp`, `starTurn`, `particleCount`, `particleForce`, `bars`, `barHeight` |  |
 | `proper3d` | `speed` |  |
@@ -176,10 +200,14 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `sphere3d` | `speed` |  |
 | `spherecloud` | `speed` |  |
 | `infinitycloud` | `speed` |  |
+| `infinite_zoom_droste` | `speed`, `scaleBase`, `rotationSpeed`, `detail`, `glow`, `pulse`, `twist`, `seed`, `shape`, `fitMode` | `shape` supports `portal`, `rings`, or `grid`; `fitMode` supports `auto` or `safe`. |
+| `infiniteMirror` | `depth`, `scale`, `rotation`, `twist`, `offsetX`, `offsetY`, `pulse`, `glow`, `softness`, `vignette`, `monochrome`, `mirrorFrames`, `baseScene`, `symmetry`, `strobeOnBeat`, `feedbackMix` | Self-referential mirror corridor recursion using feedback; `baseScene` supports `grid`, `rings`, `checker`, `bars`, `void`. |
 | `volumetric_clouds` | `density`, `layers`, `windSpeed`, `cloudScale`, `detail`, `sunlight`, `haze`, `audioReact` | Layered procedural cloudscape with parallax and soft haze. |
+| `voronoi_cells` | `cellCount`, `drift`, `speed`, `lineWidth`, `lineAlpha`, `fillAlpha`, `contrast`, `jitter`, `paletteMode`, `beatPulse`, `shade`, `seed`, `pixelStep`, `chromatic` | Animated Voronoi-style cellular mosaic with era-aware palette bias; `paletteMode` supports `mono`, `neon`, `heat`, or `era`. |
 | `torus_orbit_3d` | `ringCount`, `pointsPerRing`, `majorRadius`, `minorRadius`, `spinSpeed`, `wobbleSpeed`, `depth`, `glow`, `palette`, `audioReact` | Orbiting 3D torus points; `palette` supports `teal`, `violet`, or `amber`. |
 | `raytrace_spheres` | `quality`, `bufW`, `bufH`, `sphereCount`, `maxDepth`, `floorReflect`, `shininess`, `diffuseStrength`, `specStrength`, `ambient`, `fov`, `cellSize`, `adaptive`, `refineThreshold`, `refineGrow`, `aa`, `aaMode`, `outputSmoothing`, `forceAA`, `audioReact`, `beatKick`, `scanlines`, `seed` | Low-res software raytraced spheres with reflections. |
 | `chess` | `speed`, `showHighlights`, `startTime` | Deterministic self-playing chess match with clearer silhouette-led pieces, distinctive major-piece markers, and move highlights. |
+| `cloth_sim` | `width`, `height`, `cols`, `rows`, `gravity`, `damping`, `stiffness`, `iterations`, `wind`, `flutter`, `audioReactive`, `pinMode`, `driftX`, `driftY`, `shading`, `seamAlpha`, `paletteMode`, `backgroundAlpha`, `mobileQuality`, `obstacle`, `obstacleSize` | Canvas2D verlet cloth mesh with pinned anchors, gust-driven folds, beat billows, and era-aware shading that can run as base or composited layer. |
 | `flyover` | `speed`, `horizon`, `seaDetail`, `waveSpeed`, `waveIntensity`, `islandCount`, `islandSeed`, `fog`, `palette`, `audioReactive` | `palette` supports `day`, `sunset`, `night`. |
 | `voxel_landscape` | `bufW`, `bufH`, `speed`, `turnRate`, `turnWobble`, `camH`, `heightBob`, `beatBump`, `fov`, `horizon`, `scale`, `maxDist`, `stepBase`, `stepGrow`, `fogStrength`, `audioReact`, `beatKick`, `scanlines`, `seed` | Heightfield voxel landscape flyover with portrait-aware camera framing. |
 | `voxel_world_builder` | `buildProgress`, `cityDensity`, `glow`, `cameraLift`, `seed` | WebGL2 instanced voxel city assembler (64x64 cubes); falls back to Canvas2D isometric voxels when WebGL2 is unavailable. |
@@ -195,20 +223,26 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `envmap_donut` | `bufW`, `bufH`, `segmentsU`, `segmentsV`, `R`, `r`, `camDist`, `focalMul`, `rotXSpeed`, `rotYSpeed`, `rotZSpeed`, `fresnelStrength`, `specStrength`, `shininess`, `chromeDesat`, `backfaceCull`, `scanlines`, `edge`, `audioReact`, `beatKick`, `seed` | Software environment-mapped chrome torus. |
 | `poly_morph_showcase` | `lat`, `lon`, `morphSpeed`, `styleSpeed`, `style`, `camDist`, `focalMul`, `rotXSpeed`, `rotYSpeed`, `rotZSpeed`, `sat`, `baseHue`, `hueSpeed`, `solidAlpha`, `glenzAlpha`, `shadedAlpha`, `edge`, `edgeAlpha`, `sortSolid`, `sortShaded`, `sortGlenz`, `audioReact`, `beatKick`, `seed` | `style` supports `auto`, `solid`, `glenz`, `shaded`. |
 | `glenz_vectors` | `model`, `instances`, `camDist`, `focal`, `rotXSpeed`, `rotYSpeed`, `rotZSpeed`, `baseHue`, `hueSpeed`, `sat`, `lightness`, `faceAlpha`, `edge`, `edgeAlpha`, `lineWidth`, `trailFade`, `sortFaces`, `audioReact`, `beatKick`, `seed` | `model` supports `cube`, `octa`, `icosa`; `sortFaces` supports `none` or `backToFront`. |
+| `god_rays` | `sourceX`, `sourceY`, `rayCount`, `spread`, `intensity`, `haze`, `occlusion`, `drift`, `pulse`, `warmth`, `dust`, `seed`, `style`, `sourceDriftX`, `sourceDriftY`, `shadowBands` | Atmospheric volumetric-style shafts with drifting haze, procedural occluders, and style variants (`sunbreak`, `window`, `cathedral`). |
 | `synthwaveSunset` | `horizon`, `sunRadius`, `stripeHeight`, `stripeGap`, `seaSpeed`, `starCount`, `glow`, `scanlines`, `audioReactive` |  |
+| `skyboxTransition` | `speed`, `intensity`, `horizon`, `cloudAmount`, `starAmount`, `silhouetteAmount`, `surrealness`, `audioReactive`, `loop`, `phaseOffset` | Evolving panoramic skybox backdrop that blends day, sunset, twilight, and surreal night moods. |
 | `taco_meteor_shower` | `shellCount`, `fallSpeed`, `swirl`, `burst`, `stardust`, `toppingSpread`, `audioReact`, `seed` | Luminescent taco shells cascade like meteors, shed sparkling stardust, and splat into avocado/cilantro/salsa confetti. |
 | `rain` | `intensity`, `wind`, `speed`, `streakLength`, `splash`, `hue`, `storm`, `turbulence`, `mist`, `seed` | `storm` controls downpour density/velocity, `turbulence` adds sideways sway, and `mist` controls near-ground fog bands. |
 | `rainbow_cat` | `speed`, `rainbowLength`, `bounce`, `sparkle`, `trailAlpha`, `catScale`, `starDensity`, `seed` | Synth-night rainbow cat silhouette with swishing tail, trotting paws, glitter stars, and a configurable six-colour trail. |
 | `water_drops` | `dropCount`, `minRadius`, `maxRadius`, `fallSpeed`, `distortion`, `trail`, `audioReact`, `tint`, `refraction`, `microDrops`, `rivulets`, `seed` | Stylized droplets on glass with dark/bright refractive edges, tiny bead clusters, and optional rivulet streaks. |
 | `fireworks_display` | `shellRate`, `burstSize`, `glitter`, `trail`, `gravity`, `hueShift`, `audioReact`, `launchSpread`, `seed` | Audio-reactive fireworks with ember launch tails, deterministic shell timing, sparkling burst spokes, and smoky bloom rings. |
 | `cosmic_voyage` | `speed`, `warp`, `starDensity`, `galaxyGlow`, `nebula`, `asteroidDensity`, `planetCount`, `parallax`, `bloom`, `seed` | Cinematic deep-space flythrough with layered galaxies, planets, and asteroid belts. |
+| `caustics` | `scale`, `speed`, `intensity`, `contrast`, `warp`, `detail`, `background`, `color`, `glow`, `seed`, `audioReactive`, `driftX`, `driftY` | Animated refractive caustic web with converging bright filaments and soft glow bloom. |
 | `lemmings_march` | `spawnInterval`, `colonySize`, `worldLength`, `hilliness`, `wallRate`, `digRate`, `bashRate`, `bridgeRate`, `floatiness`, `scrollFollow`, `seed` | Tiny colony sim with contextual climber/digger/basher/builder/floater behaviour, deformable terrain, and a rescue portal score. |
 | `prism_bloom` | `bloom`, `flow`, `petalCount`, `smear`, `prismShift`, `vignette`, `audioReact`, `seed` | Painterly prism petals and spectral bloom clouds for a tasteful AI-art showcase beat. |
 | `velvet_dreamscape` | `bloom`, `flow`, `ribbonCount`, `grain`, `hueDrift`, `focus`, `audioReact`, `seed` | Layered silk ribbons, luminous blooms, and gallery grain for a tasteful AI-art statement shot. |
 | `platformerScroll` | `speed`, `seed`, `tileSize`, `groundRatio`, `parallaxFar`, `parallaxMid`, `parallaxFront`, `audioReact`, `beatKick`, `platformRate`, `platformMaxSteps` | Deterministic side-scrolling platformer parallax scene with looping platforms and a colorful cobalt mascot runner. |
 | `tetris_matrix` | `speed`, `level`, `glow`, `contrast`, `ghost`, `seed` | Self-playing falling-block match with chunky monochrome shading and a dot-matrix handheld screen vibe. |
 | `matrix_rain` | `speed`, `density`, `fontSize`, `trail`, `glow`, `brightness`, `jitter`, `audioReact`, `glyphSet`, `seed` | Matrix-style falling code rain tuned for slower, smoother descent with smaller glyphs and subtle default jitter. |
+| `tilingMorph` | `scale`, `morphSpeed`, `morphAmount`, `rotationSpeed`, `lineWidth`, `fillAlpha`, `paletteShift`, `audioReactive`, `cellJitter`, `roundedness`, `contrast`, `seed`, `backgroundAlpha`, `mode` | Seam-safe lattice tiling morph that cycles square, diamond, skewed, and rounded-interlocking phases; `mode` supports `mono`, `palette`, `neon`. |
+| `gameOfLife` | `cellSize`, `stepRate`, `seed`, `density`, `wrap`, `paletteMode`, `gridLines`, `fadeTrails`, `gliderRate`, `patternMode`, `burstOnBeat`, `survivalTint`, `safeFit` | Conway-style cellular automata with deterministic seeding, curated inserts, optional wrap edges, and restrained beat-triggered bursts/gliders. |
 | `greets_wall` | `names`, `layout`, `transitionStyle`, `cycleSeconds`, `columns`, `padding`, `highlightPulse`, `beatPulseDecay`, `audioReact`, `title` | `layout` supports `grid` or `carousel`; `transitionStyle` supports `slide`, `fade`, or `pop`. |
+| `hexGridPulse` | `cellSize`, `speed`, `waveScale`, `rippleStrength`, `pulseStrength`, `lineWidth`, `fillAlpha`, `glowAlpha`, `audioReactive`, `paletteMix`, `invert` | Hexagonal lattice with travelling waves, radial ripples, and controlled audio-reactive pulse highlights across eras. |
 | `doodle_greetz_wall` | `layout`, `transitionStyle`, `cycleSeconds`, `columns`, `padding`, `highlightPulse`, `beatPulseDecay`, `audioReact`, `title` | Pulls approved PNG doodles from the doodle API and renders them in `grid` or `carousel` layouts. |
 | `lightning` | `trigger`, `chancePerSecond`, `cooldown`, `flashDuration`, `bolt`, `branches`, `seed` | `trigger` supports `beat`, `random`, `both`. |
 | `effect_evolution` | `density`, `motion`, `warp`, `trail`, `seed` | Reinterprets the same lattice across eras. |
@@ -216,6 +250,8 @@ Each timeline section `effect` maps to one of the entries below. Include any of 
 | `amiga_showcase` | `barCount`, `barSpeed`, `barWaveAmp`, `barWaveFreq`, `barSaturation`, `bobCount`, `bobRadius`, `bobTrail`, `bobIntensity`, `twistWidth`, `twistAmp`, `twistSpeed`, `twistSlices`, `twistHueSpeed`, `twistX`, `glenz`, `audioReact` |  |
 | `twister` | `x`, `baseWidth`, `amplitude`, `turns`, `speed`, `sliceH`, `sat`, `hueSpeed`, `minWidthScale`, `maxWidthScale`, `minAlpha`, `maxAlpha`, `edgeShade`, `background`, `trailFade`, `texture`, `audioReact`, `beatKick` | `x` accepts pixels or normalized 0-1; `background` supports `clear` or `fade`; `texture` supports `solid` or `pattern`. |
 | `sine_scroller_logo` | `message`, `fontSize`, `speed`, `waveAmp`, `waveSpeed`, `wavePhaseStep`, `scrollerY`, `scrollerX`, `layer2`, `layer2Speed`, `layer2FontSize`, `layer2Y`, `logoText`, `logoFontSize`, `logoY`, `scanlineStep`, `logoWaveAmp`, `logoWaveSpeed`, `logoWaveFreq`, `audioReact`, `beatBoost` | Scroll + sine wave + scanline logo wobble. |
+| `soft_shadows` | `count`, `lightAngle`, `lightSweep`, `height`, `shadowLength`, `softness`, `contactHardness`, `passCount`, `objectSize`, `motion`, `floorGlow`, `audioReactive`, `palette` | Layered faux-PCF floor shadows with deterministic contact hardening and smooth penumbra falloff. `palette` supports `studio`, `sunset`, or `mono`. |
+| `lens_flare` | `intensity`, `sourceX`, `sourceY`, `haloRadius`, `ghostCount`, `ghostSpread`, `streakStrength`, `ringStrength`, `chromatic`, `audioReactive`, `shimmer`, `bgDim`, `seed`, `blendBias` | Cinematic optical flare with centered ghost chains, soft rings, and an optional anamorphic streak. |
 | `lens_wobbler` | `bufW`, `bufH`, `rotSpeed`, `baseScale`, `zoomAmp`, `zoomSpeed`, `scrollU`, `scrollV`, `lensRadius`, `lensStrength`, `invertRing`, `wobble`, `wobbleAmp`, `wobbleFreq`, `wobbleSpeed`, `wobbleSlice`, `audioReact`, `beatKick`, `seed`, `lensPath` | Bubble lens warp with optional jelly wobble. |
 | `shadebobs_bobs` | `mode`, `shadeCount`, `bobCount`, `shadeScale`, `blobRadius`, `trailFade`, `blend`, `hueSpeed`, `steer`, `maxSpeed`, `spriteSize`, `boingCheckers`, `bobAlpha`, `fastBlob`, `audioReact`, `beatPulseStrength`, `dirtyRects`, `seed` | Amiga-style bobs mixed with shadebobs interference. |
 | `sine_distorter` | `mode`, `amp`, `freq`, `speed`, `slice`, `phase`, `sourceScale`, `edges`, `source`, `logoText`, `audioReact`, `beatBoost`, `glow` | Wavy glass distorter (scanline or column sine shifts). |
@@ -309,15 +345,19 @@ npm run preview
 - The start overlay and end overlay now pair that demoscene-styled call-to-action with a **Spread the signal** share control. On supported devices it opens the native share sheet; otherwise it reveals quick-share links for LinkedIn, X, Facebook, Reddit, email, plus a copy-link fallback.
 - `R` to restart
 - At the end screen, use **Add a doodle** to draw and submit a doodle for moderation; the modal now includes multiple brush colours plus an adjustable brush size slider, and approved doodles only appear in `doodle_greetz_wall` after someone opens the review page and approves them.
+- At the end screen, use **Got an effect idea? Make it real!** to open the effect-idea modal, describe a concept, generate TypeScript/runtime code through the OpenAI Codex API, preview it live, and submit it to a moderation queue before it can appear as an effect option.
 - `F` to toggle fullscreen (if supported)
-- `D` to toggle the debug overlay (timestamp, skip intro, skip to second half, transition selection, effect overrides, monochrome toggle)
+- `D` to toggle the debug overlay (timestamp, skip intro, skip to second half, skip to end, transition selection, effect overrides, monochrome toggle)
 - The debug overlay shows WebGL status as `OK` or `FALLBACK` when available.
 - When the debug overlay is visible, selecting an effect reveals a secondary panel with effect-specific controls (or a note when none are available).
 - The serverless view/doodle APIs accept either the legacy `KV_*` Upstash variables or the newer `DB2_KV_*` prefixed variants. If any `DB2_*` variable is present, the API locks to the DB2 configuration and ignores legacy `KV_*` values. Use the REST URL/token variables (`*_KV_REST_API_URL`, `*_KV_REST_API_TOKEN`, and optionally `*_KV_REST_API_READ_ONLY_TOKEN`); copied values are trimmed, and raw `redis://` URLs are ignored by the REST client.
 - Doodle submissions now land in a pending moderation queue. The public doodle wall only reads approved doodles, while pending doodles stay hidden until approved via the signed review flow. Set `DOODLE_MODERATION_TOKEN` (or legacy `DOODLE_ADMIN_TOKEN`) to enable the review page at `/review.html?id=...&token=...`, direct moderation actions through `/api/doodles?action=approve|reject&id=...&token=...`, and queue inspection through `/api/doodles?includePending=1&token=...`.
 - To get fast phone notifications for new doodles, set `DOODLE_MODERATION_BASE_URL` to your public site URL and configure either `DOODLE_MODERATION_WEBHOOK_URL` for a custom JSON webhook payload or `DOODLE_MODERATION_NTFY_URL` (plus optional `DOODLE_MODERATION_NTFY_TOKEN`) to push a message through ntfy. The webhook payload includes the review URL plus direct moderation endpoints, while the ntfy notification sets a default click action that opens the signed doodle review page.
+- The effect-idea generator requires an OpenAI API key on the server. Set `OPENAI_API_KEY` and (optionally) `OPENAI_CODEX_MODEL` if you want to override the default model (`gpt-5-codex`), then redeploy.
+- Effect idea moderation uses `EFFECT_MODERATION_TOKEN` (falls back to `DOODLE_MODERATION_TOKEN` / `DOODLE_ADMIN_TOKEN`). Approve/reject links use `/api/effects?action=approve|reject&id=...&token=...`, and pending queue inspection uses `/api/effects?includePending=1&token=...`.
 - Run `npm run test:integration` in an environment with the DB2 secrets set to verify the live Upstash database exists and can be read/written. If the DB2 URL is malformed, the APIs now fail closed instead of crashing with a 500 during Redis client creation. The serverless API modules also use explicit `.js` ESM imports so Vercel can resolve the emitted files correctly.
 - Append `?editor=1` in dev builds to open the Scene + Timeline Editor (or toggle "Editor mode" in the debug overlay). The editor shows a live preview, edits hot-apply to the running demo, and changes persist to localStorage.
+- Playback now auto-syncs across same-origin tabs/windows via `BroadcastChannel`, so play/pause/seek/restart actions in one editor window mirror to the others (handy for running multiple preview sizes side-by-side).
 - The editor's Text Cues panel now includes a bulk generator: paste words/new lines, set font/colour/size/position/alignment plus start/end timing, and auto-create evenly timed cue sequences (useful for ~100 words over ~30 seconds).
 - On touch devices, two floating buttons appear in the lower-right corner: `DBG` toggles the debug overlay and `⛶` toggles fullscreen.
 
@@ -357,3 +397,30 @@ curl -H "Title: ntfy doodle test" -d "If you can read this on your phone, ntfy i
 ```
 
 If that curl command appears on your phone but doodle submissions do not, double-check `DOODLE_MODERATION_BASE_URL`, `DOODLE_MODERATION_TOKEN`, and `DOODLE_MODERATION_NTFY_URL`, then redeploy.
+
+### Effect idea generator setup (OpenAI + moderation)
+
+To use **Got an effect idea? Make it real!** in deployed environments, configure these variables:
+
+```bash
+OPENAI_API_KEY=sk-...
+# Optional override; defaults to gpt-5-codex
+OPENAI_CODEX_MODEL=gpt-5-codex
+
+# Required if you want token-protected effect moderation endpoints
+EFFECT_MODERATION_TOKEN=replace-with-a-long-random-secret
+
+# Optional effect-specific moderation notifications
+EFFECT_MODERATION_BASE_URL=https://your-public-site.example.com
+EFFECT_MODERATION_NTFY_URL=https://ntfy.sh/effect-moderation-topic
+EFFECT_MODERATION_NTFY_TOKEN=your-ntfy-access-token
+```
+
+Optional fallback token behavior:
+- If `EFFECT_MODERATION_TOKEN` is not set, `/api/effects` moderation falls back to `DOODLE_MODERATION_TOKEN`, then `DOODLE_ADMIN_TOKEN`.
+- Effect moderation notifications can use their own ntfy feed (`EFFECT_MODERATION_NTFY_URL`) or fall back to doodle ntfy settings (`DOODLE_MODERATION_NTFY_URL`).
+- Generated effects are submitted into a pending queue; they only become selectable after approval via `/api/effects?action=approve&id=...&token=...`.
+- If generation requests return `503` from `/api/effects?action=generate`, check that `OPENAI_API_KEY` is set in your deployed environment and redeploy so the serverless function picks it up.
+- If generation fails with `Unable to parse generated effect response.`, the modal now shows the raw model output in the code panel so you can inspect formatting mismatches.
+- The generator prompt now explicitly asks for `runtimeCode` as plain JavaScript (no TS annotations/import/export). The client still attempts to normalize module-style code (`export default function ...`) when possible.
+- The client also normalizes escaped code payloads (for example strings containing literal `\\n`) before compiling preview/runtime effects.
