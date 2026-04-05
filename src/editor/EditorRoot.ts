@@ -360,7 +360,8 @@ export const zoomPlaylistViewport = (
   const unclampedDuration = viewportDuration * zoomFactor;
   const nextDuration = Math.min(maxDuration, Math.max(minDuration, unclampedDuration));
   const effectiveFocus = Number.isFinite(focusTime) ? focusTime : viewportStart + viewportDuration / 2;
-  const focusRatio = viewportDuration > 0 ? (effectiveFocus - viewportStart) / viewportDuration : 0.5;
+  const unclampedFocusRatio = viewportDuration > 0 ? (effectiveFocus - viewportStart) / viewportDuration : 0.5;
+  const focusRatio = Math.min(1, Math.max(0, unclampedFocusRatio));
   const nextStart = clampPlaylistViewportStart(effectiveFocus - focusRatio * nextDuration, totalDuration, nextDuration);
   return {
     start: nextStart,
@@ -538,6 +539,13 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   let isPlaying = false;
   let playlistViewportStart = 0;
   let playlistViewportDuration = 45;
+  let activePlaylistPan:
+    | {
+        pointerId: number;
+        startX: number;
+        startViewport: number;
+      }
+    | null = null;
 
   const getEffectParamOptions = (effectName: string | null | undefined): string[] => {
     const config = getManifestDebugConfig(effectName ?? null);
@@ -969,59 +977,42 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       });
     });
 
-    let panStartX = 0;
-    let panStartViewport = playlistViewportStart;
-    let isPanning = false;
     scroll.addEventListener("pointerdown", (event) => {
       if ((event.target as HTMLElement).closest(".editor-playlist-clip")) {
         return;
       }
-      isPanning = true;
-      panStartX = event.clientX;
-      panStartViewport = playlistViewportStart;
-      scroll.setPointerCapture(event.pointerId);
-    });
-    scroll.addEventListener("pointermove", (event) => {
-      if (!isPanning) {
-        return;
-      }
-      const rect = scroll.getBoundingClientRect();
-      if (rect.width <= 0) {
-        return;
-      }
-      const deltaRatio = (event.clientX - panStartX) / rect.width;
-      playlistViewportStart = panPlaylistViewport(
-        panStartViewport - deltaRatio * playlistViewportDuration,
-        0,
-        duration,
-        playlistViewportDuration
-      );
-      renderTimelineView();
-    });
-    scroll.addEventListener("pointerup", (event) => {
-      isPanning = false;
-      if (scroll.hasPointerCapture(event.pointerId)) {
-        scroll.releasePointerCapture(event.pointerId);
-      }
-    });
-    scroll.addEventListener("pointercancel", () => {
-      isPanning = false;
+      activePlaylistPan = {
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startViewport: playlistViewportStart
+      };
     });
     scroll.addEventListener("wheel", (event) => {
       event.preventDefault();
       const rect = scroll.getBoundingClientRect();
-      const ratio = rect.width > 0 ? (event.clientX - rect.left) / rect.width : 0.5;
-      const focusTime = playlistViewportStart + ratio * playlistViewportDuration;
-      const factor = event.deltaY > 0 ? 1.12 : 0.88;
-      const zoomed = zoomPlaylistViewport(
-        playlistViewportStart,
-        playlistViewportDuration,
-        factor,
-        focusTime,
-        duration
-      );
-      playlistViewportStart = zoomed.start;
-      playlistViewportDuration = zoomed.duration;
+      if (event.shiftKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
+        const pixels = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+        const secondsPerPixel = rect.width > 0 ? playlistViewportDuration / rect.width : 0;
+        playlistViewportStart = panPlaylistViewport(
+          playlistViewportStart,
+          pixels * secondsPerPixel,
+          duration,
+          playlistViewportDuration
+        );
+      } else {
+        const ratio = rect.width > 0 ? (event.clientX - rect.left) / rect.width : 0.5;
+        const focusTime = playlistViewportStart + ratio * playlistViewportDuration;
+        const factor = event.deltaY > 0 ? 1.12 : 0.88;
+        const zoomed = zoomPlaylistViewport(
+          playlistViewportStart,
+          playlistViewportDuration,
+          factor,
+          focusTime,
+          duration
+        );
+        playlistViewportStart = zoomed.start;
+        playlistViewportDuration = zoomed.duration;
+      }
       renderTimelineView();
     });
 
@@ -1055,6 +1046,42 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       renderTimelineView();
     });
   };
+
+  const handleGlobalPlaylistPan = (event: PointerEvent): void => {
+    if (!activePlaylistPan || event.pointerId !== activePlaylistPan.pointerId) {
+      return;
+    }
+    const scroll = init.container.querySelector<HTMLDivElement>("[data-region='playlist-scroll']");
+    if (!scroll) {
+      return;
+    }
+    const rect = scroll.getBoundingClientRect();
+    if (rect.width <= 0) {
+      return;
+    }
+    const scenes = getScenesByTime();
+    const duration = Math.max(5, scenes.reduce((max, scene) => Math.max(max, getSceneEnd(scene)), 0));
+    const deltaRatio = (event.clientX - activePlaylistPan.startX) / rect.width;
+    playlistViewportStart = panPlaylistViewport(
+      activePlaylistPan.startViewport,
+      -deltaRatio * playlistViewportDuration,
+      duration,
+      playlistViewportDuration
+    );
+    renderTimelineView();
+  };
+
+  window.addEventListener("pointermove", handleGlobalPlaylistPan);
+  window.addEventListener("pointerup", (event) => {
+    if (activePlaylistPan && event.pointerId === activePlaylistPan.pointerId) {
+      activePlaylistPan = null;
+    }
+  });
+  window.addEventListener("pointercancel", (event) => {
+    if (activePlaylistPan && event.pointerId === activePlaylistPan.pointerId) {
+      activePlaylistPan = null;
+    }
+  });
 
   const renderInspector = (): void => {
     const inspector = init.container.querySelector<HTMLDivElement>("[data-region='inspector']");

@@ -260,6 +260,13 @@ describe("playlist helpers", () => {
     expect(zoomed.start).toBeCloseTo(27.5);
   });
 
+  it("clamps zoom focus ratio so out-of-bounds cursor positions do not lock viewport panning", () => {
+    const zoomedNearLeft = zoomPlaylistViewport(40, 20, 0.5, 10, 120);
+    const zoomedNearRight = zoomPlaylistViewport(40, 20, 0.5, 90, 120);
+    expect(zoomedNearLeft.start).toBeLessThanOrEqual(40);
+    expect(zoomedNearRight.start).toBeGreaterThanOrEqual(40);
+  });
+
   it("pans the viewport while respecting bounds", () => {
     expect(panPlaylistViewport(5, -20, 80, 20)).toBe(0);
     expect(panPlaylistViewport(65, 40, 80, 20)).toBe(60);
