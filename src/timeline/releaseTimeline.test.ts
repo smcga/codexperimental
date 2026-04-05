@@ -124,9 +124,13 @@ describe("release timeline", () => {
       "prism_bloom",
       "tetris_matrix",
       "matrix_rain",
+      "marble",
       "velvet_dreamscape",
       "water_drops",
-      "lens_flare"
+      "cloth_sim",
+      "recursiveFracture",
+      "skeletal_ribbon",
+      "infiniteMirror"
     ]);
     documentedEffects.forEach((effectId) => {
       if (optionalEffects.has(effectId)) {
