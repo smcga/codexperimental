@@ -48,6 +48,14 @@ import {
   shouldShowEffectPanel
 } from "./debug/debugPanel";
 import { applyEraOverride, applyEraOverrideToTransition } from "./debug/eraOverride";
+import {
+  applyLimitOverridesToControls,
+  autoExpandDraftLimit,
+  EffectParamLimitOverride,
+  EffectParamLimitsByEffect,
+  loadPersistedEffectParamLimits,
+  persistEffectParamLimits
+} from "./debug/effectParamLimits";
 import { createEditorRoot, EditorController } from "./editor/EditorRoot";
 import { submitDoodle } from "./doodles";
 import {
@@ -112,6 +120,8 @@ const debugEffectControls = document.querySelector<HTMLDivElement>("#debug-effec
 const debugEffectEmpty = document.querySelector<HTMLDivElement>("#debug-effect-empty");
 const debugEffectCopyButton = document.querySelector<HTMLButtonElement>("#debug-effect-copy");
 const debugEffectCopyStatus = document.querySelector<HTMLDivElement>("#debug-effect-copy-status");
+const debugEditParamLimitsToggle = document.querySelector<HTMLInputElement>("#debug-edit-param-limits");
+const debugApplyParamLimitsButton = document.querySelector<HTMLButtonElement>("#debug-apply-param-limits");
 const debugMonochromeToggle = document.querySelector<HTMLInputElement>("#debug-monochrome");
 const debugSkipIntroButton = document.querySelector<HTMLButtonElement>("#debug-skip-intro");
 const debugSkipSecondHalfButton = document.querySelector<HTMLButtonElement>("#debug-skip-second-half");
@@ -267,6 +277,9 @@ const debugState = {
   eraOverride: null as EraPreset | null,
   monochromeOverride: null as boolean | null,
   effectParams: Object.fromEntries(getEffectRegistryKeys().map((effectName) => [effectName, getEffectDebugDefaults(effectName)])),
+  effectParamLimits: loadPersistedEffectParamLimits(window.localStorage),
+  effectParamLimitDrafts: {} as EffectParamLimitsByEffect,
+  editingParamLimits: false,
   framingOverride: "auto" as FramingOverride
 };
 let mobileDebugSection: DebugPanelSection = "transport";
@@ -1026,6 +1039,7 @@ function syncEffectInputs(effectName: string, controls: EffectParamControl[]): v
     return;
   }
   const params = debugState.effectParams[effectName] ?? {};
+  const draftLimits = debugState.effectParamLimitDrafts[effectName] ?? {};
   controls.forEach((control) => {
     const input = debugEffectControls.querySelector<HTMLInputElement | HTMLSelectElement>(
       `[data-effect-param="${control.key}"]`
@@ -1045,9 +1059,56 @@ function syncEffectInputs(effectName: string, controls: EffectParamControl[]): v
     if (input instanceof HTMLInputElement) {
       input.value = String(value);
     }
+    if (control.type === "number") {
+      const minInput = debugEffectControls.querySelector<HTMLInputElement>(
+        `[data-effect-param-limit-min="${control.key}"]`
+      );
+      const maxInput = debugEffectControls.querySelector<HTMLInputElement>(
+        `[data-effect-param-limit-max="${control.key}"]`
+      );
+      const draft = draftLimits[control.key];
+      if (minInput) {
+        minInput.value = draft?.min !== undefined ? String(draft.min) : "";
+      }
+      if (maxInput) {
+        maxInput.value = draft?.max !== undefined ? String(draft.max) : "";
+      }
+    }
   });
 }
 
+function getEffectiveControls(effectName: string): EffectParamControl[] {
+  const config = getManifestDebugConfig(effectName);
+  if (!config) {
+    return [];
+  }
+  return applyLimitOverridesToControls(config.controls, debugState.effectParamLimits[effectName]);
+}
+
+function getCoerceOptions(effectName: string): { disableNumberClamp?: boolean; controlOverrides?: Record<string, EffectParamLimitOverride> } {
+  return {
+    disableNumberClamp: debugState.editingParamLimits,
+    controlOverrides: debugState.effectParamLimits[effectName]
+  };
+}
+
+function ensureEffectLimitDraft(effectName: string, controls: EffectParamControl[]): void {
+  if (debugState.effectParamLimitDrafts[effectName]) {
+    return;
+  }
+  const active = debugState.effectParamLimits[effectName] ?? {};
+  debugState.effectParamLimitDrafts[effectName] = controls.reduce<Record<string, EffectParamLimitOverride>>((acc, control) => {
+    if (control.type !== "number") {
+      return acc;
+    }
+    const existing = active[control.key];
+    acc[control.key] = {
+      min: existing?.min ?? control.min,
+      max: existing?.max ?? control.max
+    };
+    return acc;
+  }, {});
+}
 
 function getResolvedEffectParams(effectName: string, controls: EffectParamControl[]): Record<string, string | number> {
   const rawParams = controls.reduce<Record<string, string | number>>((params, control) => {
@@ -1057,7 +1118,7 @@ function getResolvedEffectParams(effectName: string, controls: EffectParamContro
   const nextParams = coerceEffectParams(effectName, {
     ...rawParams,
     ...debugState.effectParams[effectName]
-  });
+  }, getCoerceOptions(effectName));
   debugState.effectParams[effectName] = nextParams;
   return nextParams;
 }
@@ -1080,7 +1141,7 @@ async function copyCurrentEffectSettings(): Promise<void> {
   }
   const payload = formatEffectSettingsForTimeline(
     debugState.forcedEffect,
-    getResolvedEffectParams(debugState.forcedEffect, config.controls)
+    getResolvedEffectParams(debugState.forcedEffect, getEffectiveControls(debugState.forcedEffect))
   );
   try {
     await navigator.clipboard.writeText(payload);
@@ -1098,18 +1159,20 @@ function renderEffectPanel(effectName: string): void {
   if (!config) {
     return;
   }
+  const controls = getEffectiveControls(effectName);
+  ensureEffectLimitDraft(effectName, controls);
   debugEffectTitle.textContent = config.title;
   debugEffectControls.innerHTML = "";
   setCopyStatus("");
   if (debugEffectCopyButton) {
     debugEffectCopyButton.disabled = false;
   }
-  if (config.controls.length === 0) {
+  if (controls.length === 0) {
     debugEffectEmpty.classList.remove("hidden");
     return;
   }
   debugEffectEmpty.classList.add("hidden");
-  config.controls.forEach((control) => {
+  controls.forEach((control) => {
     const field = document.createElement("label");
     field.classList.add("debug-field");
     const label = document.createElement("span");
@@ -1129,9 +1192,9 @@ function renderEffectPanel(effectName: string): void {
         const nextParams = coerceEffectParams(effectName, {
           ...debugState.effectParams[effectName],
           [control.key]: select.value
-        });
+        }, getCoerceOptions(effectName));
         debugState.effectParams[effectName] = nextParams;
-        syncEffectInputs(effectName, config.controls);
+        syncEffectInputs(effectName, controls);
       });
       field.appendChild(select);
       debugEffectControls.appendChild(field);
@@ -1146,35 +1209,89 @@ function renderEffectPanel(effectName: string): void {
         const nextParams = coerceEffectParams(effectName, {
           ...debugState.effectParams[effectName],
           [control.key]: input.checked ? 1 : 0
-        });
+        }, getCoerceOptions(effectName));
         debugState.effectParams[effectName] = nextParams;
-        syncEffectInputs(effectName, config.controls);
+        syncEffectInputs(effectName, controls);
       });
     } else {
       input.type = "number";
+      const showLimitEditors = debugState.editingParamLimits;
+      if (showLimitEditors) {
+        input.placeholder = "current";
+      }
       if (control.step !== undefined) {
         input.step = String(control.step);
       }
-      if (control.min !== undefined) {
+      if (!showLimitEditors && control.min !== undefined) {
         input.min = String(control.min);
       }
-      if (control.max !== undefined) {
+      if (!showLimitEditors && control.max !== undefined) {
         input.max = String(control.max);
       }
       input.addEventListener("input", () => {
         const nextParams = coerceEffectParams(effectName, {
           ...debugState.effectParams[effectName],
           [control.key]: Number.parseFloat(input.value)
-        });
+        }, getCoerceOptions(effectName));
+        if (debugState.editingParamLimits) {
+          const currentValue = Number(nextParams[control.key]);
+          if (Number.isFinite(currentValue)) {
+            const draftForEffect = debugState.effectParamLimitDrafts[effectName] ?? {};
+            draftForEffect[control.key] = autoExpandDraftLimit(draftForEffect[control.key] ?? {}, currentValue);
+            debugState.effectParamLimitDrafts[effectName] = draftForEffect;
+          }
+        }
         debugState.effectParams[effectName] = nextParams;
-        syncEffectInputs(effectName, config.controls);
+        syncEffectInputs(effectName, controls);
       });
+
+      if (showLimitEditors) {
+        const limitRow = document.createElement("div");
+        limitRow.classList.add("debug-limit-row");
+
+        const minInput = document.createElement("input");
+        minInput.type = "number";
+        minInput.dataset.effectParamLimitMin = control.key;
+        minInput.placeholder = "min";
+        minInput.addEventListener("input", () => {
+          const parsed = Number.parseFloat(minInput.value);
+          const draftForEffect = debugState.effectParamLimitDrafts[effectName] ?? {};
+          const current = draftForEffect[control.key] ?? {};
+          draftForEffect[control.key] = {
+            ...current,
+            min: Number.isFinite(parsed) ? parsed : undefined
+          };
+          debugState.effectParamLimitDrafts[effectName] = draftForEffect;
+        });
+        limitRow.appendChild(minInput);
+
+        limitRow.appendChild(input);
+
+        const maxInput = document.createElement("input");
+        maxInput.type = "number";
+        maxInput.dataset.effectParamLimitMax = control.key;
+        maxInput.placeholder = "max";
+        maxInput.addEventListener("input", () => {
+          const parsed = Number.parseFloat(maxInput.value);
+          const draftForEffect = debugState.effectParamLimitDrafts[effectName] ?? {};
+          const current = draftForEffect[control.key] ?? {};
+          draftForEffect[control.key] = {
+            ...current,
+            max: Number.isFinite(parsed) ? parsed : undefined
+          };
+          debugState.effectParamLimitDrafts[effectName] = draftForEffect;
+        });
+        limitRow.appendChild(maxInput);
+        field.appendChild(limitRow);
+        debugEffectControls.appendChild(field);
+        return;
+      }
     }
 
     field.appendChild(input);
     debugEffectControls.appendChild(field);
   });
-  syncEffectInputs(effectName, config.controls);
+  syncEffectInputs(effectName, controls);
 }
 
 function updateEffectPanelVisibility(): void {
@@ -1185,6 +1302,13 @@ function updateEffectPanelVisibility(): void {
   debugEffectPanel.classList.toggle("hidden", !visible);
   if (debugEffectCopyButton) {
     debugEffectCopyButton.disabled = !visible;
+  }
+  if (debugApplyParamLimitsButton) {
+    debugApplyParamLimitsButton.disabled = !visible || !debugState.editingParamLimits;
+  }
+  if (debugEditParamLimitsToggle) {
+    debugEditParamLimitsToggle.checked = debugState.editingParamLimits;
+    debugEditParamLimitsToggle.disabled = !visible;
   }
   if (!visible) {
     setCopyStatus("");
@@ -1230,6 +1354,33 @@ if (!releaseMode && debugMonochromeToggle) {
 if (!releaseMode && debugEffectCopyButton) {
   debugEffectCopyButton.addEventListener("click", () => {
     void copyCurrentEffectSettings();
+  });
+}
+
+if (!releaseMode && debugEditParamLimitsToggle) {
+  debugEditParamLimitsToggle.addEventListener("change", () => {
+    debugState.editingParamLimits = debugEditParamLimitsToggle.checked;
+    if (debugState.forcedEffect) {
+      renderEffectPanel(debugState.forcedEffect);
+    } else {
+      updateEffectPanelVisibility();
+    }
+  });
+}
+
+if (!releaseMode && debugApplyParamLimitsButton) {
+  debugApplyParamLimitsButton.addEventListener("click", () => {
+    const effectName = debugState.forcedEffect;
+    if (!effectName) {
+      return;
+    }
+    const draft = debugState.effectParamLimitDrafts[effectName];
+    if (!draft) {
+      return;
+    }
+    debugState.effectParamLimits[effectName] = { ...draft };
+    persistEffectParamLimits(debugState.effectParamLimits, window.localStorage);
+    renderEffectPanel(effectName);
   });
 }
 

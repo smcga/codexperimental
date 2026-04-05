@@ -325,6 +325,26 @@ body,
   touch-action: manipulation;
 }
 
+#debug-effect-copy,
+#debug-apply-param-limits {
+  width: 100%;
+  min-width: 0;
+  background: rgba(255, 255, 255, 0.08);
+  color: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.25rem 0.4rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+#debug-apply-param-limits:disabled,
+#debug-effect-copy:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .debug-row button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -358,6 +378,12 @@ body,
 .debug-field input[type="checkbox"] {
   width: auto;
   accent-color: #8ef9ff;
+}
+
+.debug-limit-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.35rem;
 }
 
 #debug-effect-select {

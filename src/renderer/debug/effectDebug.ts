@@ -9,6 +9,11 @@ import {
 
 export type { EffectDebugConfig, EffectParamControl, EffectParamValue };
 
+export type CoerceEffectParamOptions = {
+  disableNumberClamp?: boolean;
+  controlOverrides?: Record<string, { min?: number; max?: number }>;
+};
+
 export function getEffectDebugConfig(effectName: string | null): EffectDebugConfig | null {
   if (!effectName) {
     return null;
@@ -75,7 +80,8 @@ const clampIfNeeded = (value: number, min?: number, max?: number): number => {
 const coerceFromControls = (
   controls: EffectParamControl[],
   defaults: Record<string, EffectParamValue>,
-  overrides: Record<string, EffectParamValue>
+  overrides: Record<string, EffectParamValue>,
+  options: CoerceEffectParamOptions = {}
 ): Record<string, EffectParamValue> =>
   controls.reduce<Record<string, EffectParamValue>>((acc, control) => {
     const value = overrides[control.key];
@@ -88,13 +94,17 @@ const coerceFromControls = (
       return acc;
     }
     const base = toNumber(value, Number(defaults[control.key] ?? control.defaultValue));
-    acc[control.key] = clampIfNeeded(base, control.min, control.max);
+    const overrideRange = options.controlOverrides?.[control.key];
+    const min = overrideRange?.min ?? control.min;
+    const max = overrideRange?.max ?? control.max;
+    acc[control.key] = options.disableNumberClamp ? base : clampIfNeeded(base, min, max);
     return acc;
   }, {});
 
 export function coerceEffectParams(
   effectName: string,
-  overrides: Record<string, EffectParamValue>
+  overrides: Record<string, EffectParamValue>,
+  options: CoerceEffectParamOptions = {}
 ): Record<string, EffectParamValue> {
   const manifest = getEffectManifest(effectName);
   if (!manifest) {
@@ -107,5 +117,5 @@ export function coerceEffectParams(
   if (manifest.debug.controls.length === 0) {
     return { ...defaults };
   }
-  return coerceFromControls(manifest.debug.controls, defaults, overrides);
+  return coerceFromControls(manifest.debug.controls, defaults, overrides, options);
 }
