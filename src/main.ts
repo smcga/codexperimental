@@ -9,6 +9,7 @@ import {
   normalizeTimelineConfig
 } from "./config/loadConfig";
 import { AudioPlayer, AudioFeatures } from "./audio/audioPlayer";
+import { createManualBeatTrigger } from "./audio/manualBeatTrigger";
 import { EffectPreviewAudioController } from "./effectPreviewAudio";
 import { Timeline } from "./timeline/timeline";
 import { Renderer } from "./renderer/renderer";
@@ -204,6 +205,7 @@ let effectIdeaAudioPreview = new EffectPreviewAudioController("/song.mp3");
 let availableEffectNames = getEffectRegistryKeys();
 let playbackSyncSuppressBroadcast = false;
 let lastPlaybackSyncStateSentAt = 0;
+const manualBeatTrigger = createManualBeatTrigger();
 const playbackSync = createPlaybackSyncController(
   {
     onRemoteTransport: (action, time) => {
@@ -1445,7 +1447,8 @@ function loop(): void {
   const delta = Math.max(0, demoTime - lastDemoTime);
   lastDemoTime = demoTime;
 
-  const audioFeatures: AudioFeatures = audioPlayer.updateFeatures();
+  const baseAudioFeatures: AudioFeatures = audioPlayer.updateFeatures();
+  const audioFeatures: AudioFeatures = manualBeatTrigger.apply(baseAudioFeatures, demoTime);
   const state = timeline.getState(demoTime);
   if (state.mode === "intro") {
     introRenderer.render({
@@ -1526,6 +1529,16 @@ function loop(): void {
     lastPlaybackSyncStateSentAt = now;
   }
   animationFrame = requestAnimationFrame(loop);
+}
+
+if (canvas) {
+  canvas.addEventListener("pointerdown", () => {
+    if (!audioPlayer || !timeline || overlayMode === "start") {
+      return;
+    }
+    const demoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+    manualBeatTrigger.trigger(demoTime);
+  });
 }
 
 overlay.addEventListener("click", () => {
