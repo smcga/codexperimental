@@ -15,7 +15,7 @@ export const envmap_donutManifest = defineEffectManifest({
       numberControl("segmentsV", "Segments V", ENVMAP_DONUT_DEFAULTS.segmentsV, { min: 12, max: 96, step: 1 }),
       numberControl("R", "Major Radius", ENVMAP_DONUT_DEFAULTS.R, { min: 0.6, max: 2.0, step: 0.05 }),
       numberControl("r", "Minor Radius", ENVMAP_DONUT_DEFAULTS.r, { min: 0.25, max: 1.0, step: 0.05 }),
-      numberControl("camDist", "Camera Distance", ENVMAP_DONUT_DEFAULTS.camDist, { min: 2.0, max: 5.0, step: 0.1 }),
+      numberControl("camDist", "Camera Distance", ENVMAP_DONUT_DEFAULTS.camDist, { min: 2.0, max: 15.0, step: 0.1 }),
       numberControl("focalMul", "Focal Multiplier", ENVMAP_DONUT_DEFAULTS.focalMul, { min: 0.6, max: 2.0, step: 0.05 }),
       numberControl("rotXSpeed", "Rotate X", ENVMAP_DONUT_DEFAULTS.rotXSpeed, { min: 0, max: 2.0, step: 0.05 }),
       numberControl("rotYSpeed", "Rotate Y", ENVMAP_DONUT_DEFAULTS.rotYSpeed, { min: 0, max: 2.0, step: 0.05 }),

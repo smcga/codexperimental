@@ -246,6 +246,25 @@ describe("release timeline", () => {
     expect(words.indexOf("any")).toBeLessThan(words.indexOf("models"));
   });
 
+
+  it("keeps envmap donut timeline usage aligned with the new safe defaults", () => {
+    const envmapEntries = timeline.sections.flatMap((section) => {
+      const entries = [section, ...(section.layers ?? [])];
+      return entries.filter((entry) => entry.effect === "envmap_donut");
+    });
+
+    expect(envmapEntries.length).toBeGreaterThan(0);
+
+    envmapEntries.forEach((entry) => {
+      expect(entry.params?.audioReact).toBe(0.0005);
+      expect(entry.params?.beatKick).toBe(0);
+      expect(entry.params?.backfaceCull).toBe(0);
+      if (typeof entry.params?.camDist === "number") {
+        expect(entry.params.camDist).toBeGreaterThanOrEqual(5);
+      }
+    });
+  });
+
   it("splits the pre-rap callout into buildup, DnB return, and drum-fill lead-in anchors", () => {
     const byId = new Map(timeline.sections.map((section) => [section.id, section]));
     const preRapBuildup = byId.get("this-callout-pre-rap-buildup");

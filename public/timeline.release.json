@@ -2376,7 +2376,9 @@
           "blend": "screen",
           "opacity": 0.12,
           "params": {
-            "audioReact": 0.2
+            "audioReact": 0.0005,
+            "beatKick": 0,
+            "backfaceCull": 0
           }
         },
         {
@@ -2634,8 +2636,10 @@
         "duration": 0.8
       },
       "params": {
-        "camDist": 4.8,
-        "audioReact": 0
+        "camDist": 5,
+        "audioReact": 0.0005,
+        "beatKick": 0,
+        "backfaceCull": 0
       },
       "automation": [],
       "layers": [],
@@ -4971,7 +4975,7 @@
         "segmentsV": 82,
         "R": 0.8,
         "r": 0.4,
-        "camDist": 4.8,
+        "camDist": 5,
         "focalMul": 1,
         "rotXSpeed": 1.1,
         "rotYSpeed": 0.8,
@@ -4980,11 +4984,11 @@
         "specStrength": 0.55,
         "shininess": 11,
         "chromeDesat": 0.03,
-        "backfaceCull": 1,
+        "backfaceCull": 0,
         "scanlines": 0,
         "edge": 0,
-        "audioReact": 0.05,
-        "beatKick": 0.4,
+        "audioReact": 0.0005,
+        "beatKick": 0,
         "seed": 13
       },
       "automation": [
