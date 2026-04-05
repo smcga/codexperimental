@@ -44,7 +44,7 @@ describe("sacred musical anchor documentation", () => {
       "03:09.6",
       "03:15.7",
       "03:24",
-      "03:25.14",
+      "03:25.012",
       "04:25.7",
       "04:30.9",
       "04:40.7",
@@ -113,7 +113,7 @@ describe("sacred musical anchor documentation", () => {
       "02:50.3",
       "02:50.8",
       "02:51.1",
-      "03:25.14",
+      "03:25.012",
       "03:26.1",
       "03:42.36",
       "04:00.4",
@@ -123,6 +123,26 @@ describe("sacred musical anchor documentation", () => {
 
     requiredSecondarySwitchCues.forEach((cue) => {
       expect(anchorsDoc).toContain(`**${cue}**`);
+    });
+
+    const requiredRapLyricAnchors = [
+      "03:25.012",
+      "03:26.217",
+      "03:31.470",
+      "03:39.779",
+      "03:49.266",
+      "03:57.898",
+      "04:00.656",
+      "04:04.346",
+      "04:12.474",
+      "04:20.433",
+      "04:23.996",
+      "04:26.790"
+    ];
+
+    expect(anchorsDoc).toContain("Rap lyric cue anchors");
+    requiredRapLyricAnchors.forEach((anchor) => {
+      expect(anchorsDoc).toContain(`**${anchor}**`);
     });
   });
 });

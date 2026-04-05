@@ -13,6 +13,7 @@ The demo timeline is locked to sacred musical anchors documented in `docs/sacred
 - If an intentional recut ever requires anchor changes, update `docs/sacred-musical-anchors.md`, `README.md`, and this file in the same commit and clearly explain why.
 - Do not merge timeline edits that violate or ignore anchor constraints.
 - Treat secondary effect-switch cues in `docs/sacred-musical-anchors.md` as advisory only; they never override sacred anchors or clearly intentional section art direction.
+- Current locked rap start anchor: **03:25.012** (word: **“All”**).
 
 ## Effect documentation guardrails
 - Do not add, remove, or rename any effect without:

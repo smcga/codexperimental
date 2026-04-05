@@ -183,7 +183,7 @@ describe("normalizeTimelineConfig", () => {
     const raw = JSON.parse(readFileSync(timelinePath, "utf-8")) as RawTimelineConfig;
     const normalized = normalizeTimelineConfig(raw);
 
-    const rapStart = 3 * 60 + 25.14;
+    const rapStart = 3 * 60 + 25.012;
     const rapEnd = 4 * 60 + 25.7;
     const rapCues = normalized.textCues.filter((cue) => cue.end > rapStart && cue.start < rapEnd);
 
