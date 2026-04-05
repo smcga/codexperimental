@@ -36,14 +36,21 @@ function eyeColor(x: number, y: number): [number, number, number] {
   ];
 }
 
-function main(): void {
+function writeMetaFromFrameSource(frameSource: string): void {
+  const assignmentCount = (frameSource.match(/data\[/g) ?? []).length;
+  const generatedFileBytes = Buffer.byteLength(frameSource, "utf8");
+  const metaSource = `export const assignmentCount = ${assignmentCount};\nexport const generatedFileBytes = ${generatedFileBytes};\n`;
+  fs.mkdirSync(path.dirname(metaPath), { recursive: true });
+  fs.writeFileSync(metaPath, metaSource, "utf8");
+}
+
+function generateFrameSource(): string {
   const lines: string[] = [];
   lines.push(`export const W = ${W};`);
   lines.push(`export const H = ${H};`);
   lines.push("");
   lines.push("export function applyExplicit(data: Uint8ClampedArray): void {");
 
-  let assignmentCount = 0;
   for (let y = 0; y < H; y += 1) {
     for (let x = 0; x < W; x += 1) {
       const [r, g, b] = eyeColor(x, y);
@@ -52,19 +59,26 @@ function main(): void {
       lines.push(`  data[${idx + 1}] = ${g};`);
       lines.push(`  data[${idx + 2}] = ${b};`);
       lines.push(`  data[${idx + 3}] = 255;`);
-      assignmentCount += 4;
     }
   }
 
   lines.push("}");
+  return `${lines.join("\n")}\n`;
+}
 
+function main(): void {
+  const forceRegenerate = process.argv.includes("--force");
+
+  if (!forceRegenerate && fs.existsSync(framePath)) {
+    const existingFrameSource = fs.readFileSync(framePath, "utf8");
+    writeMetaFromFrameSource(existingFrameSource);
+    return;
+  }
+
+  const frameSource = generateFrameSource();
   fs.mkdirSync(path.dirname(framePath), { recursive: true });
-  const frameSource = `${lines.join("\n")}\n`;
   fs.writeFileSync(framePath, frameSource, "utf8");
-
-  const generatedFileBytes = Buffer.byteLength(frameSource, "utf8");
-  const metaSource = `export const assignmentCount = ${assignmentCount};\nexport const generatedFileBytes = ${generatedFileBytes};\n`;
-  fs.writeFileSync(metaPath, metaSource, "utf8");
+  writeMetaFromFrameSource(frameSource);
 }
 
 main();
