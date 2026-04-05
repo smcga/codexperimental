@@ -359,6 +359,17 @@ export const stepEditorNumberParam = (
   });
 };
 
+export const stepEditorNumberParamFromWheel = (
+  value: unknown,
+  deltaY: number,
+  options: { min?: number; max?: number; step?: number; fallback?: number }
+): number => {
+  if (!Number.isFinite(deltaY) || deltaY === 0) {
+    return clampEditorNumberParam(value, options);
+  }
+  return stepEditorNumberParam(value, deltaY < 0 ? 1 : -1, options);
+};
+
 export const splitCueWords = (value: string): string[] => {
   return value
     .split(/\s+/)
@@ -1180,8 +1191,14 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           .map(
             ([key, value]) => `
             <div class="editor-param-row">
-              <input type="text" data-param-key list="${listId}" value="${key}" />
-              <span data-param-value-slot><input type="text" data-param-value value="${String(value)}" /></span>
+              <label class="editor-param-key-field">
+                <span class="editor-param-meta">Param</span>
+                <input type="text" data-param-key list="${listId}" value="${key}" />
+              </label>
+              <label class="editor-param-value-field">
+                <span class="editor-param-meta">Value</span>
+                <span data-param-value-slot><input type="text" data-param-value value="${String(value)}" /></span>
+              </label>
               <button type="button" data-action="remove-param">Remove</button>
             </div>`
           )
@@ -1352,6 +1369,27 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         input.addEventListener("input", () => {
           syncNumberInputs();
         });
+        input.addEventListener(
+          "wheel",
+          (event) => {
+            const key = row.querySelector<HTMLInputElement>("[data-param-key]")?.value ?? "";
+            const control = controlsByKey.get(key);
+            if (!control || control.type !== "number") {
+              return;
+            }
+            event.preventDefault();
+            const nextValue = stepEditorNumberParamFromWheel(input.value, event.deltaY, {
+              min: control.min,
+              max: control.max,
+              step: control.step,
+              fallback: typeof control.defaultValue === "number" ? control.defaultValue : 0
+            });
+            input.value = String(nextValue);
+            syncNumberInputs();
+            updateParams();
+          },
+          { passive: false }
+        );
       });
       row.querySelectorAll<HTMLButtonElement>("[data-action='param-step']").forEach((button) => {
         button.addEventListener("click", () => {
