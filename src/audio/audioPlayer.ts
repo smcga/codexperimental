@@ -93,6 +93,11 @@ export class AudioPlayer {
     this.audio.pause();
   }
 
+
+  setVolume(volume: number): void {
+    this.audio.volume = clamp(volume, 0, 1);
+  }
+
   seek(time: number): void {
     const duration = this.duration;
     const target = duration ? clamp(time, 0, duration) : Math.max(0, time);
