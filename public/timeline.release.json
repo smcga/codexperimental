@@ -1172,7 +1172,7 @@
           "params": {}
         },
         {
-          "effect": "fractal_zoomer",
+          "effect": "fractal",
           "opacity": 0.6,
           "blend": "color-dodge",
           "params": {
@@ -2351,7 +2351,7 @@
           "params": {}
         },
         {
-          "effect": "fractal_zoomer",
+          "effect": "fractal",
           "blend": "screen",
           "opacity": 0.1,
           "params": {
@@ -6505,7 +6505,7 @@
       "id": "Scene 084 - Fractal Zoomer",
       "start": 297.506319,
       "end": 302.4,
-      "effect": "fractal_zoomer",
+      "effect": "fractal",
       "era": "pcdemo",
       "transition": {
         "in": "slide-right",

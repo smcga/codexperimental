@@ -35,7 +35,6 @@ export const effectChronologyEntries: EffectChronologyEntry[] = [
   { key: "fluid", yearFit: 2001, confidence: "medium", lineage: 'fluid simulation' },
   { key: "flyover", yearFit: 1992, confidence: "medium", lineage: '' },
   { key: "fractal", yearFit: 1990, confidence: "medium", lineage: '' },
-  { key: "fractal_zoomer", yearFit: 1990, confidence: "medium", lineage: '' },
   { key: "gameOfLife", yearFit: 1987, confidence: "high", lineage: 'cellular automata part' },
   { key: "gl_fractal_tunnel", yearFit: 2011, confidence: "medium", lineage: 'raymarched tunnel shader' },
   { key: "gl_impossible_corridor", yearFit: 2011, confidence: "medium", lineage: 'raymarched corridor shader' },

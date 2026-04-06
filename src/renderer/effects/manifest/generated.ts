@@ -23,7 +23,6 @@ import { fireworks_displayManifest } from "./fireworks_display.manifest";
 import { fluidManifest } from "./fluid.manifest";
 import { flyoverManifest } from "./flyover.manifest";
 import { fractalManifest } from "./fractal.manifest";
-import { fractal_zoomerManifest } from "./fractal_zoomer.manifest";
 import { gl_fractal_tunnelManifest } from "./gl_fractal_tunnel.manifest";
 import { gl_impossible_corridorManifest } from "./gl_impossible_corridor.manifest";
 import { god_raysManifest } from "./god_rays.manifest";
@@ -127,7 +126,6 @@ export const generatedEffectManifests = [
   fluidManifest,
   flyoverManifest,
   fractalManifest,
-  fractal_zoomerManifest,
   gl_fractal_tunnelManifest,
   gl_impossible_corridorManifest,
   god_raysManifest,

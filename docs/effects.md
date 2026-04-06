@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **102**.
+Total effects: **101**.
 
 ## Table of contents
 
@@ -31,7 +31,6 @@ Total effects: **102**.
 - [Effect: fluid](#effect-fluid)
 - [Effect: flyover](#effect-flyover)
 - [Effect: fractal](#effect-fractal)
-- [Effect: fractal_zoomer](#effect-fractal-zoomer)
 - [Effect: gameOfLife](#effect-gameOfLife)
 - [Effect: gl_fractal_tunnel](#effect-gl-fractal-tunnel)
 - [Effect: gl_impossible_corridor](#effect-gl-impossible-corridor)
@@ -129,7 +128,7 @@ Total effects: **102**.
 
 - `speed` (used in 50 effects)
 - `seed` (used in 49 effects)
-- `audioReact` (used in 35 effects)
+- `audioReact` (used in 34 effects)
 - `glow` (used in 19 effects)
 - `beatKick` (used in 14 effects)
 - `audioReactive` (used in 13 effects)
@@ -180,7 +179,6 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 | `dotTunnel` | 1990 | medium |  |
 | `envmap_donut` | 1990 | medium |  |
 | `fractal` | 1990 | medium |  |
-| `fractal_zoomer` | 1990 | medium |  |
 | `glenz_vectors` | 1990 | high |  |
 | `glitch` | 1990 | low |  |
 | `lens_flare` | 1990 | low |  |
@@ -1115,38 +1113,6 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 ```json
 {
   "effect": "fractal",
-  "opacity": 1,
-  "blend": "source-over",
-  "params": {}
-}
-```
-
-## Effect: fractal_zoomer
-
-- **Registry key:** `fractal_zoomer`
-- **Implementation:** `src/renderer/effects/fractalZoomer.ts` (class `FractalZoomerEffect`)
-- **Renderer:** Canvas2D
-- **Description:** `setType` supports `mandelbrot`, `julia`, or `burningShip`.
-- **Audio features:** bass, beat, beatStrength, rms
-- **Performance notes:** Uses ImageData per frame; CPU cost scales with resolution.
-
-### Parameters
-
-| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
-| --- | --- | --- | --- | --- | --- |
-| `params.audioReact` | number | 0.55 | min 0, max 1 | Audio React | yes |
-| `params.centerX` | number | -0.72 | min -2.5, max 1.5 | Center X | yes |
-| `params.centerY` | number | 0 | min -1.8, max 1.8 | Center Y | yes |
-| `params.iterations` | number | 140 | min 24, max 600 | Iterations | yes |
-| `params.paletteSpeed` | number | 0.18 | min 0, max 2 | Palette Speed | yes |
-| `params.setType` | string | "mandelbrot" | options: mandelbrot, julia, burningShip | Set | no |
-| `params.zoom` | number | 1.6 | min 0.4, max 8 | Zoom | yes |
-
-### Minimal layer usage
-
-```json
-{
-  "effect": "fractal_zoomer",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
