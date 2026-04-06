@@ -88,22 +88,24 @@ describe("normalizeTimelineConfig", () => {
     expect(normalized.audio.offset).toBeCloseTo(-0.128, 5);
   });
 
-  it("includes hook hit sections and text cues in the release timeline", () => {
+  it("includes hook hit sections and keeps only rap-era text cues in the release timeline", () => {
     const releasePath = new URL("../../public/timeline.release.json", import.meta.url);
     const raw = JSON.parse(readFileSync(releasePath, "utf-8")) as RawTimelineConfig;
     const normalized = normalizeTimelineConfig(raw);
 
     const hookSection = normalized.sections.find((section) => section.id === "hook-hit-01160");
     const lateHookSection = normalized.sections.find((section) => section.id === "rap-hook-hit-03520");
-    const hookText = normalized.textCues?.find((cue) => cue.id === "this-hit-00542");
-    const lateHookText = normalized.textCues?.find((cue) => cue.id === "this-hit-04407");
+    const rapStartCue = normalized.textCues?.find((cue) => cue.id === "scene-023-lissajous-1");
+    const preRapHookText = normalized.textCues?.find((cue) => cue.id === "this-hit-00542");
+    const postRapHookText = normalized.textCues?.find((cue) => cue.id === "this-hit-04407");
 
     expect(hookSection?.start).toBeCloseTo(76.62);
     expect(hookSection?.end).toBeCloseTo(78.8);
     expect(lateHookSection?.start).toBeCloseTo(229.2);
     expect(lateHookSection?.end).toBeCloseTo(234.0);
-    expect(hookText?.start).toBeCloseTo(54.2);
-    expect(lateHookText?.start).toBeCloseTo(280.73);
+    expect(rapStartCue?.start).toBeCloseTo(205.012);
+    expect(preRapHookText).toBeUndefined();
+    expect(postRapHookText).toBeUndefined();
   });
 
   it("features the wireframe ride and mutation sections in the release timeline", () => {
