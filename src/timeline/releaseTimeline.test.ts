@@ -139,6 +139,20 @@ describe("release timeline", () => {
     expect(earliestRapCueStart).toBeCloseTo(rapStart, 5);
   });
 
+  it("keeps all timeline text cues inside the rap lyric window and runout", () => {
+    const rapStart = 3 * 60 + 25.012;
+    const lyricRunout = 4 * 60 + 26.79;
+    const cueStarts = timeline.textCues.map((cue) => toSeconds(cue.start));
+    const cueEnds = timeline.textCues.map((cue) => toSeconds(cue.end));
+
+    expect(Math.min(...cueStarts)).toBeCloseTo(rapStart, 5);
+    expect(Math.max(...cueEnds)).toBeCloseTo(lyricRunout, 5);
+    timeline.textCues.forEach((cue) => {
+      expect(toSeconds(cue.start)).toBeGreaterThanOrEqual(rapStart);
+      expect(toSeconds(cue.end)).toBeLessThanOrEqual(lyricRunout);
+    });
+  });
+
   it("locks rap lyric text cues to the documented sacred lyric anchors", () => {
     const cueById = new Map(timeline.textCues.map((cue) => [cue.id, cue]));
     const expectedAnchors: Array<[string, number]> = [
