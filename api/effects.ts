@@ -1044,6 +1044,8 @@ async function generateWithOpenAi(prompt: string): Promise<{
                 "runtimeCode MUST be plain JavaScript (no TypeScript annotations).",
                 "runtimeCode MUST NOT include markdown fences.",
                 "runtimeCode MUST NOT include export/import statements.",
+                "runtimeCode MUST NOT use dynamic code execution primitives (Function constructor, new Function, eval, import()).",
+                "runtimeCode MUST NOT construct code from strings or call methods like setTimeout/setInterval with string arguments.",
                 "runtimeCode MUST evaluate to an effect object with render(context) and optional reset().",
                 "Preferred runtimeCode shape: `return { render(context) { ... }, reset() { ... } };`",
                 "params MUST be an array of UI control metadata using keys: key,label,type,defaultValue,min,max,step,options,description.",
