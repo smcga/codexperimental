@@ -87,7 +87,6 @@ import { textmode_charsetManifest } from "./textmode_charset.manifest";
 import { textured_cubeManifest } from "./textured_cube.manifest";
 import { tilingMorphManifest } from "./tilingMorph.manifest";
 import { torus_orbit_3dManifest } from "./torus_orbit_3d.manifest";
-import { treegrowthManifest } from "./treegrowth.manifest";
 import { tunnelManifest } from "./tunnel.manifest";
 import { twisterManifest } from "./twister.manifest";
 import { vector3d_ballsManifest } from "./vector3d_balls.manifest";
@@ -190,7 +189,6 @@ export const generatedEffectManifests = [
   textured_cubeManifest,
   tilingMorphManifest,
   torus_orbit_3dManifest,
-  treegrowthManifest,
   tunnelManifest,
   twisterManifest,
   vector3d_ballsManifest,

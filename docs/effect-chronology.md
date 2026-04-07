@@ -84,7 +84,6 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 | `physics_pile` | 2004 | medium | rigid-body simulation part |
 | `torus_orbit_3d` | 2006 | low |  |
 | `moving_shadow_map` | 2008 | low |  |
-| `treegrowth` | 2008 | low |  |
 | `water_drops` | 2009 | low |  |
 | `hexGridPulse` | 2010 | low |  |
 | `raymarch_fractal` | 2010 | medium | raymarching fractal shader |

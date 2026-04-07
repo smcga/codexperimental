@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **101**.
+Total effects: **100**.
 
 ## Table of contents
 
@@ -95,7 +95,6 @@ Total effects: **101**.
 - [Effect: textured_cube](#effect-textured-cube)
 - [Effect: tilingMorph](#effect-tilingMorph)
 - [Effect: torus_orbit_3d](#effect-torus-orbit-3d)
-- [Effect: treegrowth](#effect-treegrowth)
 - [Effect: tunnel](#effect-tunnel)
 - [Effect: twister](#effect-twister)
 - [Effect: vector3d_balls](#effect-vector3d-balls)
@@ -126,8 +125,8 @@ Total effects: **101**.
 
 ### Common parameter patterns
 
-- `speed` (used in 50 effects)
-- `seed` (used in 48 effects)
+- `speed` (used in 49 effects)
+- `seed` (used in 47 effects)
 - `audioReact` (used in 35 effects)
 - `glow` (used in 19 effects)
 - `beatKick` (used in 14 effects)
@@ -227,7 +226,6 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 | `physics_pile` | 2004 | medium | rigid-body simulation part |
 | `torus_orbit_3d` | 2006 | low |  |
 | `moving_shadow_map` | 2008 | low |  |
-| `treegrowth` | 2008 | low |  |
 | `water_drops` | 2009 | low |  |
 | `hexGridPulse` | 2010 | low |  |
 | `raymarch_fractal` | 2010 | medium | raymarching fractal shader |
@@ -3399,41 +3397,6 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 ```json
 {
   "effect": "torus_orbit_3d",
-  "opacity": 1,
-  "blend": "source-over",
-  "params": {}
-}
-```
-
-## Effect: treegrowth
-
-- **Registry key:** `treegrowth`
-- **Implementation:** `src/renderer/effects/treeGrowthEffect.ts` (class `TreeGrowthEffect`)
-- **Renderer:** Canvas2D
-- **Description:** Cinematic time-lapse tree growth with layered bark, seasonal canopy shifts, and visible age rings; growth proceeds automatically over time.
-- **Audio features:** bass, rms, treble
-- **Performance notes:** None noted.
-
-### Parameters
-
-| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
-| --- | --- | --- | --- | --- | --- |
-| `params.branchAngle` | number | 23 | min 8, max 55 | Branch Angle | yes |
-| `params.branchScale` | number | 0.69 | min 0.45, max 0.86 | Branch Scale | yes |
-| `params.jitter` | number | 0.16 | min 0, max 0.65 | Jitter | yes |
-| `params.leafSize` | number | 2.2 | min 0, max 10 | Leaf Size | yes |
-| `params.levels` | number | 8 | min 4, max 10 | Levels | yes |
-| `params.seed` | number | 0 | min 0, max 10 | Seed | yes |
-| `params.speed` | number | 0.12 | min 0, max 1 | Speed | yes |
-| `params.sway` | number | 0.22 | min 0, max 1.2 | Sway | yes |
-| `params.trunkHeight` | number | 0.52 | min 0.25, max 0.72 | Trunk Height | yes |
-| `params.trunkWidth` | number | 8 | min 2, max 24 | Trunk Width | yes |
-
-### Minimal layer usage
-
-```json
-{
-  "effect": "treegrowth",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
