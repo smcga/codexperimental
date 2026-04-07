@@ -99,6 +99,9 @@ describe("platformerScroll helpers", () => {
     expect(partNames.has("helmet-front")).toBe(true);
     expect(partNames.has("gauntlet-front")).toBe(true);
     expect(partNames.has("antenna-tip")).toBe(true);
+    expect(partNames.has("antenna-beacon")).toBe(true);
+    expect(partNames.has("eye-left")).toBe(true);
+    expect(partNames.has("eye-right")).toBe(true);
     expect(earlyFrame.shadow.w).toBeGreaterThan(0);
     expect(earlyFrontBoot?.x).not.toBe(laterFrontBoot?.x);
   });

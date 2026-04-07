@@ -125,13 +125,16 @@ export function buildRunnerSprite(baseX: number, footY: number, tileSize: number
   const antennaLift = Math.floor(audioAmount * 2) * unit;
 
   const parts: RunnerSpritePart[] = [
-    { name: "antenna-tip", color: RUNNER_COLORS.spark, x: x + 6 * unit, y: y - antennaLift, w: unit, h: unit },
-    { name: "antenna-stem", color: RUNNER_COLORS.outline, x: x + 6 * unit, y: y + unit - antennaLift, w: unit, h: 2 * unit },
+    { name: "antenna-beacon", color: RUNNER_COLORS.spark, x: x + 6 * unit, y: y - unit - antennaLift, w: 2 * unit, h: unit },
+    { name: "antenna-tip", color: RUNNER_COLORS.visorGlow, x: x + 6 * unit, y: y - antennaLift, w: unit, h: unit },
+    { name: "antenna-stem", color: RUNNER_COLORS.outline, x: x + 6 * unit, y: y + unit - antennaLift, w: unit, h: 3 * unit },
     { name: "helmet-back", color: RUNNER_COLORS.helmetShade, x: x + 2 * unit, y: y + 2 * unit, w: 9 * unit, h: 5 * unit },
     { name: "helmet-front", color: RUNNER_COLORS.helmet, x: x + 4 * unit, y: y + 2 * unit, w: 8 * unit, h: 6 * unit },
-    { name: "visor", color: RUNNER_COLORS.visor, x: x + 7 * unit, y: y + 4 * unit, w: 4 * unit, h: 2 * unit },
+    { name: "visor", color: RUNNER_COLORS.visor, x: x + 7 * unit, y: y + 4 * unit, w: 4 * unit, h: unit },
     { name: "visor-glint", color: RUNNER_COLORS.visorGlow, x: x + 8 * unit, y: y + 4 * unit, w: 2 * unit, h: unit },
-    { name: "face", color: RUNNER_COLORS.skin, x: x + 8 * unit, y: y + 6 * unit, w: 3 * unit, h: 2 * unit },
+    { name: "face", color: RUNNER_COLORS.skin, x: x + 7 * unit, y: y + 5 * unit, w: 4 * unit, h: 3 * unit },
+    { name: "eye-left", color: RUNNER_COLORS.outline, x: x + 8 * unit, y: y + 6 * unit, w: unit, h: unit },
+    { name: "eye-right", color: RUNNER_COLORS.outline, x: x + 10 * unit, y: y + 6 * unit, w: unit, h: unit },
     { name: "torso", color: RUNNER_COLORS.jacket, x: x + 5 * unit, y: y + 8 * unit, w: 6 * unit, h: 5 * unit },
     { name: "torso-shade", color: RUNNER_COLORS.jacketShade, x: x + 5 * unit, y: y + 10 * unit, w: 4 * unit, h: 3 * unit },
     {
