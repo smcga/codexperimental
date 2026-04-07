@@ -156,6 +156,31 @@ describe("api/effects", () => {
     expect(JSON.parse(res.getBody()).effect.params).toEqual([{ key: "speed", label: "Speed", type: "number", defaultValue: 1 }]);
   });
 
+  it("treats submitted runtime code as inert text on the server", async () => {
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+
+    const runtimePayload = "globalThis.__effectRuntimeExecuted = true; return { render() {} };";
+    (globalThis as { __effectRuntimeExecuted?: boolean }).__effectRuntimeExecuted = false;
+
+    await handler({
+      method: "POST",
+      url: "/api/effects",
+      body: JSON.stringify({
+        name: "Inert Runtime",
+        prompt: "Security boundary check",
+        typescriptCode: "export default {}",
+        runtimeCode: runtimePayload
+      })
+    }, res.response);
+
+    expect(res.response.statusCode).toBe(200);
+    expect((globalThis as { __effectRuntimeExecuted?: boolean }).__effectRuntimeExecuted).toBe(false);
+    expect(JSON.parse(res.getBody()).effect.runtimeCode).toBe(runtimePayload);
+  });
+
   it("generates via OpenAI", async () => {
     process.env.OPENAI_API_KEY = "sk-test";
     const redis = createMockRedis();
