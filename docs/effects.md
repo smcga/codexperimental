@@ -2232,7 +2232,7 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 - **Registry key:** `platformerScroll`
 - **Implementation:** `src/renderer/effects/platformerScroll.ts` (class `PlatformerScrollEffect`)
 - **Renderer:** Canvas2D
-- **Description:** Deterministic side-scrolling platformer parallax scene with looping platforms and a colorful cobalt mascot runner.
+- **Description:** Deterministic side-scrolling platformer parallax scene with looping platforms and a colorful neon astronaut mascot runner.
 - **Audio features:** beat, rms
 - **Performance notes:** None noted.
 
