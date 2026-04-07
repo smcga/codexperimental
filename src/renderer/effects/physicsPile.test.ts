@@ -1,5 +1,6 @@
-import { describe, expect, it } from "vitest";
-import { PhysicsWorld } from "./physicsPile";
+import { describe, expect, it, vi } from "vitest";
+import { PhysicsPileEffect, PhysicsWorld } from "./physicsPile";
+import { EffectRenderContext } from "./types";
 
 const STEP = 1 / 120;
 
@@ -8,6 +9,30 @@ const stepWorld = (world: PhysicsWorld, steps: number) => {
     world.step(STEP);
   }
 };
+
+
+const createRenderContext = (ctx: CanvasRenderingContext2D): EffectRenderContext =>
+  ({
+    ctx,
+    width: 320,
+    height: 200,
+    time: 1,
+    delta: STEP,
+    audio: {
+      rms: 0,
+      bass: 0,
+      mid: 0,
+      treble: 0,
+      beat: false,
+      beatStrength: 0,
+      impactStrength: 0
+    },
+    params: {
+      count: 10,
+      seed: 3,
+      trail: 0
+    }
+  } as EffectRenderContext);
 
 const stddev = (values: number[]): number => {
   const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
@@ -274,3 +299,34 @@ describe("PhysicsWorld", () => {
     expect(Math.abs(body.angularVelocity)).toBeLessThanOrEqual(world.maxAngVel + 1e-3);
   });
 });
+
+describe("PhysicsPileEffect", () => {
+  it("does not render connector lines between boxes", () => {
+    const effect = new PhysicsPileEffect();
+    const lineTo = vi.fn();
+    const ctx = {
+      fillRect: vi.fn(),
+      save: vi.fn(),
+      restore: vi.fn(),
+      translate: vi.fn(),
+      rotate: vi.fn(),
+      strokeRect: vi.fn(),
+      beginPath: vi.fn(),
+      moveTo: vi.fn(),
+      lineTo,
+      stroke: vi.fn(),
+      arc: vi.fn(),
+      fill: vi.fn(),
+      globalAlpha: 1,
+      globalCompositeOperation: "source-over",
+      fillStyle: "#000",
+      strokeStyle: "#fff",
+      lineWidth: 1
+    } as unknown as CanvasRenderingContext2D;
+
+    effect.render(createRenderContext(ctx));
+
+    expect(lineTo).not.toHaveBeenCalled();
+  });
+});
+

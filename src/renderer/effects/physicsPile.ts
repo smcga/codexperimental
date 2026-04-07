@@ -1146,16 +1146,6 @@ export class PhysicsPileEffect implements Effect {
 
       audio.impactStrength = clamp(world.impactStrength * IMPACT_STRENGTH_SCALE, 0, 1);
 
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
-      for (let i = 0; i < world.joints.length; i += 1) {
-        const joint = world.joints[i];
-        ctx.beginPath();
-        ctx.moveTo(joint.a.x, joint.a.y);
-        ctx.lineTo(joint.b.x, joint.b.y);
-        ctx.stroke();
-      }
-
       for (let i = 0; i < world.bodies.length; i += 1) {
         const body = world.bodies[i];
         if (!body.render) {
