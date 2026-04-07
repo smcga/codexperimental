@@ -470,6 +470,7 @@ Optional fallback token behavior:
 - Generated effect payloads now also include optional parameter control metadata (`params`) and concise docs (`docs`). After approval, these generated controls are exposed in the debug panel + editor parameter pickers just like built-in effects.
 - The effect generator modal now keeps the initial prompt editor focused and roomy, then reveals preview/code/param sections only after a successful generation. While generating, it shows approved community effects in a carousel with previous/next controls, and the eventual submission uses the current preview param values as defaults automatically (no separate “set defaults” step).
 - Effect generation and moderation preview now use `public/songloop.ogg` as a dedicated seamless background loop (low volume), while a synthetic preview timeline keeps generated effects animating continuously even as the audio loops.
+- After approving or denying from `/effect-review.html`, the page now offers a **Next effect** button whenever additional pending effects are still in the moderation queue.
 - The client also normalizes escaped code payloads (for example strings containing literal `\\n`) before compiling preview/runtime effects.
 
 Expected `POST /api/effects?action=generate` failure codes:
