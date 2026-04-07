@@ -3410,7 +3410,7 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 - **Registry key:** `treegrowth`
 - **Implementation:** `src/renderer/effects/treeGrowthEffect.ts` (class `TreeGrowthEffect`)
 - **Renderer:** Canvas2D
-- **Description:** Cinematic time-lapse tree growth with layered bark, seasonal canopy shifts, and visible age rings; set `growth` to `-1` for auto or `0-1` to override.
+- **Description:** Cinematic time-lapse tree growth with layered bark, seasonal canopy shifts, and visible age rings; growth proceeds automatically over time.
 - **Audio features:** bass, rms, treble
 - **Performance notes:** None noted.
 
@@ -3420,7 +3420,6 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 | --- | --- | --- | --- | --- | --- |
 | `params.branchAngle` | number | 23 | min 8, max 55 | Branch Angle | yes |
 | `params.branchScale` | number | 0.69 | min 0.45, max 0.86 | Branch Scale | yes |
-| `params.growth` | number | -1 | min -1, max 1 | Growth Override (-1 = auto) | yes |
 | `params.jitter` | number | 0.16 | min 0, max 0.65 | Jitter | yes |
 | `params.leafSize` | number | 2.2 | min 0, max 10 | Leaf Size | yes |
 | `params.levels` | number | 8 | min 4, max 10 | Levels | yes |

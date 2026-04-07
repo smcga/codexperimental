@@ -39,7 +39,7 @@ const createContext = () => {
 };
 
 describe("TreeGrowthEffect", () => {
-  it("skips drawing when growth is zero", () => {
+  it("starts as a sapling and draws nothing at t=0 in auto mode", () => {
     const effect = new TreeGrowthEffect();
     const ctx = createContext();
 
@@ -50,24 +50,33 @@ describe("TreeGrowthEffect", () => {
       time: 0,
       delta: 0.016,
       audio: createAudio(),
-      params: { growth: 0 }
+      params: { speed: 0.12 }
     });
 
     expect(ctx.stroke).not.toHaveBeenCalled();
   });
 
-  it("draws dense branch and canopy geometry when fully grown", () => {
+  it("draws dense branch and canopy geometry when mature", () => {
     const effect = new TreeGrowthEffect();
-    const ctx = createContext();
+    effect.render({
+      ctx: createContext(),
+      width: 200,
+      height: 120,
+      time: 0,
+      delta: 0.016,
+      audio: createAudio(),
+      params: { speed: 0.3, levels: 7, seed: 2 }
+    });
 
+    const ctx = createContext();
     effect.render({
       ctx,
       width: 200,
       height: 120,
-      time: 1,
+      time: 30,
       delta: 0.016,
       audio: createAudio(),
-      params: { growth: 1, levels: 7, seed: 2 }
+      params: { speed: 0.3, levels: 7, seed: 2 }
     });
 
     expect(ctx.bezierCurveTo).toHaveBeenCalled();
@@ -77,7 +86,55 @@ describe("TreeGrowthEffect", () => {
     expect(ctx.arc.mock.calls.length).toBeGreaterThan(20);
   });
 
-  it("keeps trunk and branches present across seasonal year wrap in auto mode", () => {
+  it("speed controls simulation progression", () => {
+    const slowEffect = new TreeGrowthEffect();
+    slowEffect.render({
+      ctx: createContext(),
+      width: 240,
+      height: 160,
+      time: 0,
+      delta: 0.016,
+      audio: createAudio(),
+      params: { speed: 0.05, levels: 8, seed: 5 }
+    });
+
+    const slowCtx = createContext();
+    slowEffect.render({
+      ctx: slowCtx,
+      width: 240,
+      height: 160,
+      time: 12,
+      delta: 0.016,
+      audio: createAudio(),
+      params: { speed: 0.05, levels: 8, seed: 5 }
+    });
+
+    const fastEffect = new TreeGrowthEffect();
+    fastEffect.render({
+      ctx: createContext(),
+      width: 240,
+      height: 160,
+      time: 0,
+      delta: 0.016,
+      audio: createAudio(),
+      params: { speed: 0.45, levels: 8, seed: 5 }
+    });
+
+    const fastCtx = createContext();
+    fastEffect.render({
+      ctx: fastCtx,
+      width: 240,
+      height: 160,
+      time: 12,
+      delta: 0.016,
+      audio: createAudio(),
+      params: { speed: 0.45, levels: 8, seed: 5 }
+    });
+
+    expect(slowCtx.bezierCurveTo.mock.calls.length).toBeLessThan(fastCtx.bezierCurveTo.mock.calls.length);
+  });
+
+  it("keeps trunk and branches present across seasonal year wrap", () => {
     const effect = new TreeGrowthEffect();
 
     effect.render({
@@ -87,7 +144,7 @@ describe("TreeGrowthEffect", () => {
       time: 0,
       delta: 0.016,
       audio: createAudio(),
-      params: { growth: -1, speed: 0.12, levels: 8, seed: 3 }
+      params: { speed: 0.12, levels: 8, seed: 3 }
     });
 
     const lateYearCtx = createContext();
@@ -98,7 +155,7 @@ describe("TreeGrowthEffect", () => {
       time: 58,
       delta: 0.016,
       audio: createAudio(),
-      params: { growth: -1, speed: 0.12, levels: 8, seed: 3 }
+      params: { speed: 0.12, levels: 8, seed: 3 }
     });
 
     const nextYearCtx = createContext();
@@ -109,14 +166,14 @@ describe("TreeGrowthEffect", () => {
       time: 67,
       delta: 0.016,
       audio: createAudio(),
-      params: { growth: -1, speed: 0.12, levels: 8, seed: 3 }
+      params: { speed: 0.12, levels: 8, seed: 3 }
     });
 
     expect(lateYearCtx.stroke).toHaveBeenCalled();
     expect(nextYearCtx.stroke).toHaveBeenCalled();
   });
 
-  it("adds visible year markers over time in auto mode", () => {
+  it("adds visible year markers over time", () => {
     const effect = new TreeGrowthEffect();
 
     const yearZeroCtx = createContext();
@@ -127,7 +184,7 @@ describe("TreeGrowthEffect", () => {
       time: 0,
       delta: 0.016,
       audio: createAudio(),
-      params: { growth: -1, speed: 0.12, levels: 8, seed: 1 }
+      params: { speed: 0.12, levels: 8, seed: 1 }
     });
 
     const laterCtx = createContext();
@@ -138,7 +195,7 @@ describe("TreeGrowthEffect", () => {
       time: 40,
       delta: 0.016,
       audio: createAudio(),
-      params: { growth: -1, speed: 0.12, levels: 8, seed: 1 }
+      params: { speed: 0.12, levels: 8, seed: 1 }
     });
 
     expect(yearZeroCtx.ellipse).not.toHaveBeenCalled();
@@ -154,7 +211,7 @@ describe("TreeGrowthEffect", () => {
       time: 0,
       delta: 0.016,
       audio: createAudio(),
-      params: { growth: -1, speed: 0.22, levels: 8, seed: 1.5 }
+      params: { speed: 0.22, levels: 8, seed: 1.5 }
     });
 
     const grownCtx = createContext();
@@ -166,7 +223,7 @@ describe("TreeGrowthEffect", () => {
       time: 24,
       delta: 0.016,
       audio: createAudio(),
-      params: { growth: -1, speed: 0.22, levels: 8, seed: 1.5 }
+      params: { speed: 0.22, levels: 8, seed: 1.5 }
     });
 
     expect(grownCtx.stroke).toHaveBeenCalled();
@@ -181,7 +238,7 @@ describe("TreeGrowthEffect", () => {
       time: 24,
       delta: 0.016,
       audio: createAudio(),
-      params: { growth: -1, speed: 0.22, levels: 8, seed: 1.5 }
+      params: { speed: 0.22, levels: 8, seed: 1.5 }
     });
 
     expect(resetCtx.stroke).not.toHaveBeenCalled();

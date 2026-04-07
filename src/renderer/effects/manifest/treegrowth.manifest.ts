@@ -18,14 +18,13 @@ export const treegrowthManifest = defineEffectManifest({
       numberControl("sway", "Sway", 0.22, { min: 0, max: 1.2, step: 0.01 }),
       numberControl("leafSize", "Leaf Size", 2.2, { min: 0, max: 10, step: 0.1 }),
       numberControl("jitter", "Jitter", 0.16, { min: 0, max: 0.65, step: 0.01 }),
-      numberControl("seed", "Seed", 0, { min: 0, max: 10, step: 0.1 }),
-      numberControl("growth", "Growth Override (-1 = auto)", -1, { min: -1, max: 1, step: 0.01 })
+      numberControl("seed", "Seed", 0, { min: 0, max: 10, step: 0.1 })
     ]
   },
   docs: {
-    parameters: "`speed`, `levels`, `trunkHeight`, `branchScale`, `branchAngle`, `trunkWidth`, `sway`, `leafSize`, `jitter`, `seed`, `growth`",
-    catalogNote: "Cinematic time-lapse tree growth with layered bark, seasonal canopy shifts, and visible age rings; set `growth` to `-1` for auto or `0-1` to override.",
-    description: "Cinematic time-lapse tree growth with layered bark, seasonal canopy shifts, and visible age rings; set `growth` to `-1` for auto or `0-1` to override."
+    parameters: "`speed`, `levels`, `trunkHeight`, `branchScale`, `branchAngle`, `trunkWidth`, `sway`, `leafSize`, `jitter`, `seed`",
+    catalogNote: "Cinematic time-lapse tree growth with layered bark, seasonal canopy shifts, and visible age rings; growth proceeds automatically over time.",
+    description: "Cinematic time-lapse tree growth with layered bark, seasonal canopy shifts, and visible age rings; growth proceeds automatically over time."
   }
 });
 

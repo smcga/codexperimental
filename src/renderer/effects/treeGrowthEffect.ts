@@ -235,7 +235,6 @@ export class TreeGrowthEffect implements Effect {
     const leafSize = clamp(resolveNumberParam(rawParams.leafSize, 2.2), 0, 10);
     const jitter = clamp(resolveNumberParam(rawParams.jitter, 0.16), 0, 0.65);
     const seed = resolveNumberParam(rawParams.seed, 0);
-    const growthOverride = resolveNumberParam(rawParams.growth, -1);
 
     if (this.cycleStartTime === null) {
       this.cycleStartTime = time;
@@ -248,10 +247,7 @@ export class TreeGrowthEffect implements Effect {
     const ageProgress = clamp01(ageYears / 8);
     const seasonState = getSeasonState(season);
 
-    const structuralGrowth =
-      growthOverride >= 0
-        ? clamp(growthOverride, 0, 1)
-        : clamp01(smoothstep(0, 1, Math.min(1, ageProgress * 1.08)));
+    const structuralGrowth = clamp01(smoothstep(0, 1, Math.min(1, ageProgress * 1.08)));
 
     if (structuralGrowth <= 0.001) {
       return;
