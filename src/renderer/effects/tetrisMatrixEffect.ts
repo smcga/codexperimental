@@ -396,6 +396,44 @@ export const choosePlacement = (board: CellValue[], piece: Pentomino, seed: numb
 export const isPlacementAboveTop = (piece: Pentomino, rotation: number, y: number): boolean =>
   getPieceCells(piece, rotation).some(([, cellY]) => y + cellY < 0);
 
+export const resolveFallingRotation = (
+  piece: Pentomino,
+  targetRotation: number,
+  pieceProgress: number,
+  seed: number,
+  pieceIndex: number
+): number => {
+  const rotationCount = PENTOMINO_ROTATIONS[piece]?.length ?? 1;
+  if (rotationCount <= 1) {
+    return 0;
+  }
+  const normalizedTarget = ((targetRotation % rotationCount) + rotationCount) % rotationCount;
+  const spinRoll = hash(pieceIndex * 19 + normalizedTarget * 3, seed + 37);
+  if (spinRoll < 0.33) {
+    return normalizedTarget;
+  }
+
+  const direction = hash(pieceIndex * 23 + normalizedTarget * 5, seed + 13) > 0.5 ? 1 : -1;
+  const altRotation = ((normalizedTarget + direction) % rotationCount + rotationCount) % rotationCount;
+  const secondAlt = ((altRotation + direction) % rotationCount + rotationCount) % rotationCount;
+  const windupEnd = 0.16 + hash(pieceIndex * 31 + normalizedTarget * 11, seed + 17) * 0.18;
+  const settleStart = 0.72 + hash(pieceIndex * 43 + normalizedTarget * 7, seed + 29) * 0.16;
+
+  if (pieceProgress < windupEnd * 0.5) {
+    return secondAlt;
+  }
+  if (pieceProgress < windupEnd) {
+    return altRotation;
+  }
+  if (pieceProgress < settleStart) {
+    return normalizedTarget;
+  }
+  if (spinRoll > 0.82 && pieceProgress < 0.93) {
+    return altRotation;
+  }
+  return normalizedTarget;
+};
+
 const getPieceBounds = (cells: Array<[number, number]>): { minX: number; maxX: number; minY: number; maxY: number } => ({
   minX: Math.min(...cells.map(([x]) => x)),
   maxX: Math.max(...cells.map(([x]) => x)),
@@ -536,11 +574,7 @@ export class TetrisMatrixEffect implements Effect {
     const easedProgress = clamp(easedProgressRaw, 0, 1);
     const dropY = Math.round((SPAWN_Y + (currentPlacement.y - SPAWN_Y) * easedProgress) * cellSize);
     const lockPulse = Math.max(0, 1 - Math.abs(pieceProgress - 0.92) * 9);
-    const rotateInFlight =
-      currentPlacement.rotation !== 0 &&
-      pieceProgress < 0.4 &&
-      hash(settledCount * 5 + currentPlacement.x, resolved.seed) < 0.55;
-    const renderedRotation = rotateInFlight ? 0 : currentPlacement.rotation;
+    const renderedRotation = resolveFallingRotation(currentPiece, currentPlacement.rotation, pieceProgress, resolved.seed, settledCount);
 
     ctx.save();
     ctx.clearRect(0, 0, width, height);

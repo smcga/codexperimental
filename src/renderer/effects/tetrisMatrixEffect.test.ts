@@ -10,6 +10,7 @@ import {
   findDropY,
   getPieceCells,
   isPlacementAboveTop,
+  resolveFallingRotation,
   resolveTetrisMatrixParams,
   TETRIS_BOARD_HEIGHT,
   TETRIS_BOARD_WIDTH,
@@ -164,6 +165,15 @@ describe("tetrisMatrixEffect helpers", () => {
   it("detects top-out placements that lock above the visible board", () => {
     expect(isPlacementAboveTop("I", 1, -4)).toBe(true);
     expect(isPlacementAboveTop("I", 1, 0)).toBe(false);
+  });
+
+  it("shows visible in-flight spins for some falling pieces", () => {
+    const spun = Array.from({ length: 48 }, (_, i) => i).some((pieceIndex) => {
+      const early = resolveFallingRotation("T", 0, 0.1, 1989, pieceIndex);
+      const late = resolveFallingRotation("T", 0, 0.95, 1989, pieceIndex);
+      return early !== 0 && late === 0;
+    });
+    expect(spun).toBe(true);
   });
 });
 
