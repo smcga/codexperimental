@@ -35,6 +35,7 @@ describe("getOverlayPresentation", () => {
       kicker: "signal complete",
       title: "The end",
       subtitle: "Replay it, tag the crew, or leave a doodle for the wall.",
+      shareLabel: "Spread the signal",
       effectIdeaLabel: "Got an effect idea? Make it real!",
       showActions: true,
       showStart: false,

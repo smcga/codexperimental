@@ -347,7 +347,8 @@ npm run preview
 ## Controls
 
 - Click anywhere or use the stylized **Start demo** control to begin playback (audio + visuals).
-- The start overlay and end overlay now pair that demoscene-styled call-to-action with a **Spread the signal** share control. On supported devices it opens the native share sheet; otherwise it reveals quick-share links for LinkedIn, X, Facebook, Reddit, email, plus a copy-link fallback.
+- The start overlay and end overlay now pair that demoscene-styled call-to-action with a subtle, bottom-anchored **Spread the signal** link-style control. On supported devices it opens the native share sheet; otherwise it reveals quick-share links for LinkedIn, X, Facebook, Reddit, email, plus a copy-link fallback.
+- The browser tab title now animates with unicode spinner glyphs, a subscript clock, and a binary counter for a glitchy demoscene-style status feed.
 - `R` to restart
 - At the end screen, use **Add a doodle** to draw and submit a doodle for moderation; the modal now includes multiple brush colours plus an adjustable brush size slider, and approved doodles only appear in `doodle_greetz_wall` after someone opens the review page and approves them.
 - At the end screen, use **Got an effect idea? Make it real!** to open the effect-idea modal, describe a concept, generate TypeScript/runtime code through the OpenAI Codex API, preview it live, and submit it to a moderation queue before it can appear as an effect option.
