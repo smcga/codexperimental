@@ -82,9 +82,23 @@ const PALETTE = [
   { fill: "#0f172a", stroke: "#f472b6" }
 ];
 
-const DEFAULT_TRAIL = 0.2;
-const DEFAULT_COUNT = 18;
+const DEFAULT_TRAIL = 0;
+const DEFAULT_COUNT = 10;
+const DEFAULT_RESTITUTION = 0.95;
+const DEFAULT_FRICTION = 0.12;
+const DEFAULT_GRAVITY = 540;
 const DEFAULT_KICK_IMPULSE = 250;
+const DEFAULT_KICK_RADIUS = 138;
+const DEFAULT_SCATTER_ANGLE_DEG = 121;
+const DEFAULT_SCATTER_JITTER = 0.7;
+const DEFAULT_KICK_UP_BIAS = 1;
+const DEFAULT_KICK_TORQUE = 111;
+const DEFAULT_LOOSEN_DURATION = 1.1;
+const DEFAULT_LOOSEN_FRICTION_MULT = 0;
+const DEFAULT_SEP_BIAS_DEG = 17;
+const DEFAULT_SEED = 7;
+const DEFAULT_KICK_ORIGIN_Y = 0;
+const DEFAULT_SHATTER = 0.2;
 
 function mulberry32(seed: number): () => number {
   let t = seed >>> 0;
@@ -1006,12 +1020,12 @@ export class PhysicsPileEffect implements Effect {
   private world: PhysicsWorld | null = null;
   private lastConfig = {
     count: DEFAULT_COUNT,
-    restitution: 0.25,
-    friction: 0.6,
-    gravity: 900,
+    restitution: DEFAULT_RESTITUTION,
+    friction: DEFAULT_FRICTION,
+    gravity: DEFAULT_GRAVITY,
     beatImpulse: DEFAULT_KICK_IMPULSE,
     spawnMode: "pile" as SpawnMode,
-    seed: null as number | null,
+    seed: DEFAULT_SEED,
     width: 0,
     height: 0
   };
@@ -1023,34 +1037,34 @@ export class PhysicsPileEffect implements Effect {
 
   render({ ctx, width, height, time, audio, params }: EffectRenderContext): void {
     const count = clamp(resolveNumberParam(params.count, DEFAULT_COUNT), 5, MAX_BODIES);
-    const restitution = clamp(resolveNumberParam(params.restitution, 0.25), 0, 1);
-    const friction = clamp(resolveNumberParam(params.friction, 0.6), 0, 1);
-    const gravity = resolveNumberParam(params.gravity, 900);
+    const restitution = clamp(resolveNumberParam(params.restitution, DEFAULT_RESTITUTION), 0, 1);
+    const friction = clamp(resolveNumberParam(params.friction, DEFAULT_FRICTION), 0, 1);
+    const gravity = resolveNumberParam(params.gravity, DEFAULT_GRAVITY);
     const kickImpulseParam = resolveNumberParam(params.kickImpulse, Number.NaN);
     const beatImpulse = resolveNumberParam(params.beatImpulse, DEFAULT_KICK_IMPULSE);
     const kickImpulse = Number.isFinite(kickImpulseParam) ? kickImpulseParam : beatImpulse;
     const kickRadius = resolveNumberParam(
       params.kickRadius,
-      Math.min(width, height) * 0.6
+      DEFAULT_KICK_RADIUS
     );
-    const scatterAngleDeg = resolveNumberParam(params.scatterAngleDeg, 25);
-    const scatterJitter = clamp(resolveNumberParam(params.scatterJitter, 0.35), 0, 1);
-    const kickUpBias = clamp(resolveNumberParam(params.kickUpBias, 0.35), 0, 1);
-    const kickTorque = resolveNumberParam(params.kickTorque, 35);
-    const loosenDuration = resolveNumberParam(params.loosenDuration, 0.18);
-    const loosenFrictionMult = clamp(resolveNumberParam(params.loosenFrictionMult, 0.25), 0, 1);
+    const scatterAngleDeg = resolveNumberParam(params.scatterAngleDeg, DEFAULT_SCATTER_ANGLE_DEG);
+    const scatterJitter = clamp(resolveNumberParam(params.scatterJitter, DEFAULT_SCATTER_JITTER), 0, 1);
+    const kickUpBias = clamp(resolveNumberParam(params.kickUpBias, DEFAULT_KICK_UP_BIAS), 0, 1);
+    const kickTorque = resolveNumberParam(params.kickTorque, DEFAULT_KICK_TORQUE);
+    const loosenDuration = resolveNumberParam(params.loosenDuration, DEFAULT_LOOSEN_DURATION);
+    const loosenFrictionMult = clamp(resolveNumberParam(params.loosenFrictionMult, DEFAULT_LOOSEN_FRICTION_MULT), 0, 1);
     const loosenRestitutionAdd = clamp(resolveNumberParam(params.loosenRestitutionAdd, 0.35), 0, 1);
     const loosenPosCorrMult = clamp(resolveNumberParam(params.loosenPosCorrMult, 0.35), 0, 1);
     const loosenExtraSlop = resolveNumberParam(params.loosenExtraSlop, 1.5);
     const maxLinVel = resolveNumberParam(params.maxLinVel, 1800);
     const maxAngVel = resolveNumberParam(params.maxAngVel, 18);
     const kickOrigin = resolveKickOriginMode((params as Record<string, unknown>).kickOrigin);
-    const kickOriginY = resolveNumberParam(params.kickOriginY, Number.NaN);
-    const sepBiasDeg = resolveNumberParam(params.sepBiasDeg, 10);
-    const seed = resolveNumberParam(params.seed, Number.NaN);
+    const kickOriginY = resolveNumberParam(params.kickOriginY, DEFAULT_KICK_ORIGIN_Y);
+    const sepBiasDeg = resolveNumberParam(params.sepBiasDeg, DEFAULT_SEP_BIAS_DEG);
+    const seed = resolveNumberParam(params.seed, DEFAULT_SEED);
     const spawnMode = resolveSpawnMode((params as Record<string, unknown>).spawnMode);
     const trail = clamp(resolveNumberParam(params.trail, DEFAULT_TRAIL), 0, 1);
-    const shatter = clamp(resolveNumberParam(params.shatter, 0), 0, 1);
+    const shatter = clamp(resolveNumberParam(params.shatter, DEFAULT_SHATTER), 0, 1);
     const wreckingCue = clamp(resolveNumberParam(params.wreckingCue, 0), 0, 1);
 
     if (!this.world || this.lastConfig.width !== width || this.lastConfig.height !== height) {
@@ -1063,7 +1077,7 @@ export class PhysicsPileEffect implements Effect {
       this.lastConfig.gravity = gravity;
       this.lastConfig.beatImpulse = kickImpulse;
       this.lastConfig.spawnMode = spawnMode;
-      this.lastConfig.seed = Number.isFinite(seed) ? seed : null;
+      this.lastConfig.seed = Number.isFinite(seed) ? seed : DEFAULT_SEED;
       this.world.resetBodies(
         count,
         spawnMode,
@@ -1077,13 +1091,13 @@ export class PhysicsPileEffect implements Effect {
       this.lastConfig.restitution !== restitution ||
       this.lastConfig.friction !== friction ||
       this.lastConfig.spawnMode !== spawnMode ||
-      this.lastConfig.seed !== (Number.isFinite(seed) ? seed : null)
+      this.lastConfig.seed !== (Number.isFinite(seed) ? seed : DEFAULT_SEED)
     ) {
       this.lastConfig.count = count;
       this.lastConfig.restitution = restitution;
       this.lastConfig.friction = friction;
       this.lastConfig.spawnMode = spawnMode;
-      this.lastConfig.seed = Number.isFinite(seed) ? seed : null;
+      this.lastConfig.seed = Number.isFinite(seed) ? seed : DEFAULT_SEED;
       this.world.resetBodies(
         count,
         spawnMode,

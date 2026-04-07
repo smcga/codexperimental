@@ -11,7 +11,10 @@ const stepWorld = (world: PhysicsWorld, steps: number) => {
 };
 
 
-const createRenderContext = (ctx: CanvasRenderingContext2D): EffectRenderContext =>
+const createRenderContext = (
+  ctx: CanvasRenderingContext2D,
+  params: Record<string, unknown> = {}
+): EffectRenderContext =>
   ({
     ctx,
     width: 320,
@@ -27,11 +30,7 @@ const createRenderContext = (ctx: CanvasRenderingContext2D): EffectRenderContext
       beatStrength: 0,
       impactStrength: 0
     },
-    params: {
-      count: 10,
-      seed: 3,
-      trail: 0
-    }
+    params
   } as EffectRenderContext);
 
 const stddev = (values: number[]): number => {
@@ -339,8 +338,40 @@ describe("PhysicsPileEffect", () => {
       lineWidth: 1
     } as unknown as CanvasRenderingContext2D;
 
-    effect.render(createRenderContext(ctx));
+    effect.render(createRenderContext(ctx, { count: 10, seed: 3, trail: 0 }));
 
     expect(lineTo).not.toHaveBeenCalled();
+  });
+
+  it("uses the updated physics pile defaults when params are omitted", () => {
+    const effect = new PhysicsPileEffect();
+    const ctx = {
+      fillRect: vi.fn(),
+      save: vi.fn(),
+      restore: vi.fn(),
+      translate: vi.fn(),
+      rotate: vi.fn(),
+      strokeRect: vi.fn(),
+      fillStyle: "#000",
+      strokeStyle: "#fff"
+    } as unknown as CanvasRenderingContext2D;
+
+    effect.render(createRenderContext(ctx));
+
+    const world = (effect as unknown as { world: PhysicsWorld }).world;
+    const state = effect as unknown as { trailAlpha: number; lastConfig: { seed: number } };
+    expect(world).toBeTruthy();
+    expect(world?.gravity).toBe(540);
+    expect(world?.kickRadius).toBe(138);
+    expect(world?.scatterAngleRad).toBeCloseTo((121 * Math.PI) / 180, 6);
+    expect(world?.scatterJitter).toBe(0.7);
+    expect(world?.kickUpBias).toBe(1);
+    expect(world?.kickTorque).toBe(111);
+    expect(world?.kickOriginY).toBe(0);
+    expect(world?.loosenDuration).toBe(1.1);
+    expect(world?.loosenFrictionMult).toBe(0);
+    expect(world?.sepBiasRad).toBeCloseTo((17 * Math.PI) / 180, 6);
+    expect(state.trailAlpha).toBe(0);
+    expect(state.lastConfig.seed).toBe(7);
   });
 });
