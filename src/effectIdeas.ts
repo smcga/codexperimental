@@ -63,6 +63,28 @@ export class EffectIdeaApiError extends Error {
   }
 }
 
+type RuntimeSafetyRule = {
+  pattern: RegExp;
+  reason: string;
+};
+
+const RUNTIME_CODE_SAFETY_RULES: RuntimeSafetyRule[] = [
+  { pattern: /\bprocess\s*\.\s*env\b/iu, reason: "accessing environment variables (process.env)" },
+  { pattern: /\b(?:globalThis|window)\s*\.\s*process\b/iu, reason: "accessing process globals" },
+  { pattern: /\b(?:Deno|Bun)\s*\.\s*env\b/iu, reason: "accessing runtime environment variables" },
+  { pattern: /\bdocument\s*\.\s*cookie\b/iu, reason: "reading browser cookies" },
+  { pattern: /\b(?:localStorage|sessionStorage|indexedDB)\b/iu, reason: "accessing browser storage" },
+  { pattern: /\bfetch\s*\(/iu, reason: "making network requests with fetch" },
+  { pattern: /\bXMLHttpRequest\b/iu, reason: "making network requests with XMLHttpRequest" },
+  { pattern: /\bnavigator\s*\.\s*sendBeacon\b/iu, reason: "sending background network beacons" },
+  { pattern: /\bWebSocket\b/iu, reason: "opening network sockets" },
+  { pattern: /\bEventSource\b/iu, reason: "opening server-sent event streams" },
+  { pattern: /\beval\s*\(/iu, reason: "using eval()" },
+  { pattern: /\bFunction\s*\(/iu, reason: "using dynamic Function constructor" },
+  { pattern: /\bimport\s*\(/iu, reason: "using dynamic import()" },
+  { pattern: /\brequire\s*\(/iu, reason: "using require()" }
+];
+
 function normalizeGeneratedCode(rawCode: string): string {
   const hasEscapedNewlines = rawCode.includes("\\n");
   const hasRealNewlines = rawCode.includes("\n");
@@ -85,6 +107,15 @@ function normalizeGeneratedCode(rawCode: string): string {
       const stripped = params.replace(/([A-Za-z_$][A-Za-z0-9_$]*)\s*\??:\s*[^,)=]+/gu, "$1");
       return `(${stripped})`;
     });
+}
+
+export function validateGeneratedRuntimeCode(runtimeCode: string): void {
+  const normalizedCode = normalizeGeneratedCode(runtimeCode);
+  const violated = RUNTIME_CODE_SAFETY_RULES.find((rule) => rule.pattern.test(normalizedCode));
+  if (!violated) {
+    return;
+  }
+  throw new Error(`Generated runtime code blocked by safety policy: ${violated.reason}.`);
 }
 
 function isRecord(value: unknown): value is EffectIdeaRecord {
@@ -132,6 +163,7 @@ async function requestEffects(path = "/api/effects", init?: RequestInit): Promis
 
 export function compileRuntimeEffect(runtimeCode: string): Effect {
   const normalizedCode = normalizeGeneratedCode(runtimeCode);
+  validateGeneratedRuntimeCode(normalizedCode);
   const factory = new Function(
     `"use strict";
 ${normalizedCode}
