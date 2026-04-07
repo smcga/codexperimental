@@ -128,7 +128,19 @@ describe("tetrisMatrixEffect helpers", () => {
     const after = applyPlacement(board, placement).board;
 
     expect(countBoardHoles(after)).toBe(0);
-    expect(placement.x).toBe(5);
+  });
+
+  it("adds human-like drop styles to placements", () => {
+    const board = createEmptyBoard();
+    const modes = new Set<string>();
+    for (let i = 0; i < 24; i += 1) {
+      const placement = choosePlacement(board, "T", 1989, i);
+      modes.add(placement.dropMode ?? "normal");
+    }
+
+    expect(modes.has("quick")).toBe(true);
+    expect(modes.has("hesitate")).toBe(true);
+    expect(modes.has("normal")).toBe(true);
   });
 
   it("defines pentomino rotations with five minos each", () => {

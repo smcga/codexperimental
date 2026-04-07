@@ -28,6 +28,8 @@ export type TetrisPlacement = {
   score: number;
   clearedLines: number;
   piece: Pentomino;
+  dropMode?: "normal" | "quick" | "hesitate";
+  hesitation?: number;
 };
 
 export type TetrisResolvedParams = {
@@ -337,7 +339,7 @@ const countWellDepth = (heights: number[]): number => {
 
 export const choosePlacement = (board: CellValue[], piece: Pentomino, seed: number, pieceIndex: number): TetrisPlacement => {
   const rotations = PENTOMINO_ROTATIONS[piece];
-  let best: TetrisPlacement | null = null;
+  const candidates: TetrisPlacement[] = [];
 
   rotations.forEach((_, rotation) => {
     const cells = getPieceCells(piece, rotation);
@@ -367,18 +369,28 @@ export const choosePlacement = (board: CellValue[], piece: Pentomino, seed: numb
         centerBias * 0.08 +
         randomness;
 
-      if (
-        best === null ||
-        score > best.score ||
-        (score === best.score && y > best.y) ||
-        (score === best.score && y === best.y && x < best.x)
-      ) {
-        best = { ...placement, score, clearedLines };
-      }
+      candidates.push({ ...placement, score, clearedLines });
     }
   });
 
-  return best ?? { piece, rotation: 0, x: 3, y: SPAWN_Y, score: -9999, clearedLines: 0 };
+  if (candidates.length === 0) {
+    return { piece, rotation: 0, x: 3, y: SPAWN_Y, score: -9999, clearedLines: 0, dropMode: "normal", hesitation: 0 };
+  }
+
+  candidates.sort((a, b) => b.score - a.score || b.y - a.y || a.x - b.x);
+  const best = candidates[0]!;
+  const second = candidates[1];
+  const confidence = Math.max(0, best.score - (second?.score ?? best.score - 2));
+  const uncertain = confidence < 0.65;
+  const topChoices = candidates.slice(0, uncertain ? Math.min(4, candidates.length) : Math.min(2, candidates.length));
+  const pickJitter = hash(pieceIndex * 29 + seed * 0.17, seed);
+  const pickIndex = uncertain ? Math.floor(pickJitter * topChoices.length) : Math.floor(pickJitter * Math.min(2, topChoices.length));
+  const chosen = topChoices[Math.min(topChoices.length - 1, pickIndex)] ?? best;
+  const styleRoll = hash(pieceIndex * 41 + chosen.rotation * 7 + chosen.x, seed + 11);
+  const dropMode: TetrisPlacement["dropMode"] = styleRoll > 0.78 ? "quick" : styleRoll < (uncertain ? 0.42 : 0.24) ? "hesitate" : "normal";
+  const hesitation = dropMode === "hesitate" ? 0.14 + hash(pieceIndex * 13 + chosen.x, seed + 3) * 0.22 : 0;
+
+  return { ...chosen, dropMode, hesitation };
 };
 
 export const isPlacementAboveTop = (piece: Pentomino, rotation: number, y: number): boolean =>
@@ -512,8 +524,23 @@ export class TetrisMatrixEffect implements Effect {
     } = layout;
     const beatGlow = (audio.beat ? 1 : 0) * (0.2 + (audio.beatStrength ?? 0) * 0.55);
     const rmsGlow = clamp(audio.rms ?? 0, 0, 1) * 0.18;
-    const dropY = Math.round((SPAWN_Y + (currentPlacement.y - SPAWN_Y) * Math.pow(pieceProgress, 0.86)) * cellSize);
+    const hesitation = clamp(currentPlacement.hesitation ?? 0, 0, 0.4);
+    const easedProgressRaw =
+      currentPlacement.dropMode === "quick"
+        ? Math.pow(pieceProgress, 0.44)
+        : currentPlacement.dropMode === "hesitate"
+          ? pieceProgress <= hesitation
+            ? 0
+            : Math.pow((pieceProgress - hesitation) / Math.max(0.01, 1 - hesitation), 1.06)
+          : Math.pow(pieceProgress, 0.86);
+    const easedProgress = clamp(easedProgressRaw, 0, 1);
+    const dropY = Math.round((SPAWN_Y + (currentPlacement.y - SPAWN_Y) * easedProgress) * cellSize);
     const lockPulse = Math.max(0, 1 - Math.abs(pieceProgress - 0.92) * 9);
+    const rotateInFlight =
+      currentPlacement.rotation !== 0 &&
+      pieceProgress < 0.4 &&
+      hash(settledCount * 5 + currentPlacement.x, resolved.seed) < 0.55;
+    const renderedRotation = rotateInFlight ? 0 : currentPlacement.rotation;
 
     ctx.save();
     ctx.clearRect(0, 0, width, height);
@@ -577,7 +604,7 @@ export class TetrisMatrixEffect implements Effect {
     }
 
     const activeShade = lockPulse > 0.15 ? GAMEBOY_PALETTE.bright : GAMEBOY_PALETTE.high;
-    getPieceCells(currentPiece, currentPlacement.rotation).forEach(([x, y]) => {
+    getPieceCells(currentPiece, renderedRotation).forEach(([x, y]) => {
       const px = boardLeft + (currentPlacement.x + x) * cellSize;
       const py = boardTop + dropY + y * cellSize;
       if (py < boardTop - cellSize || py > boardTop + boardHeightPx) {
