@@ -4,6 +4,7 @@ import {
   applyPlacement,
   choosePlacement,
   collides,
+  computeTetrisLayout,
   countBoardHoles,
   createEmptyBoard,
   findDropY,
@@ -135,6 +136,16 @@ describe("tetrisMatrixEffect helpers", () => {
       const cells = getPieceCells(piece, 0);
       expect(cells).toHaveLength(5);
     });
+  });
+
+  it("keeps HUD panels separated from the board area", () => {
+    const layout = computeTetrisLayout(320, 180);
+    expect(layout.leftPanelX + layout.leftPanelW).toBeLessThanOrEqual(layout.boardLeft - 1);
+    expect(layout.rightPanelX).toBeGreaterThanOrEqual(layout.boardRight + 1);
+    expect(layout.screenX).toBeGreaterThanOrEqual(0);
+    expect(layout.screenY).toBeGreaterThanOrEqual(0);
+    expect(layout.screenX + layout.screenW).toBeLessThanOrEqual(320);
+    expect(layout.screenY + layout.screenH).toBeLessThanOrEqual(180);
   });
 });
 

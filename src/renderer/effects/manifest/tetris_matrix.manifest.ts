@@ -19,8 +19,8 @@ export const tetris_matrixManifest = defineEffectManifest({
   },
   docs: {
     parameters: "`speed`, `level`, `glow`, `contrast`, `ghost`, `seed`",
-    catalogNote: "Self-playing falling-block match with full pentomino sets (all 12 five-cell shapes), chunky monochrome shading, and a dot-matrix handheld screen vibe.",
-    description: "Self-playing falling-block match with full pentomino sets (all 12 five-cell shapes), chunky monochrome shading, and a dot-matrix handheld screen vibe."
+    catalogNote: "Self-playing falling-block match with full pentomino sets (all 12 five-cell shapes), a clearer side-panel HUD, chunky monochrome shading, and a dot-matrix handheld screen vibe.",
+    description: "Self-playing falling-block match with full pentomino sets (all 12 five-cell shapes), a clearer side-panel HUD, chunky monochrome shading, and a dot-matrix handheld screen vibe."
   }
 });
 
