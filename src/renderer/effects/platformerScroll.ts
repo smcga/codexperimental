@@ -37,16 +37,18 @@ export type RunnerSprite = {
 
 const RUNNER_COLORS = {
   outline: "#10141f",
-  cobalt: "#2563eb",
-  cobaltDark: "#1d4ed8",
-  muzzle: "#ffd4b8",
-  scarf: "#ffb703",
-  gloves: "#f8fafc",
-  shoes: "#ef4444",
-  sole: "#ffffff",
-  eye: "#f8fafc",
-  iris: "#0f172a",
-  spark: "#7dd3fc"
+  helmet: "#8b5cf6",
+  helmetShade: "#6d28d9",
+  skin: "#fbcaa4",
+  visor: "#22d3ee",
+  visorGlow: "#a5f3fc",
+  jacket: "#f43f5e",
+  jacketShade: "#be123c",
+  glove: "#fde68a",
+  pant: "#1f2937",
+  boot: "#f59e0b",
+  sole: "#f8fafc",
+  spark: "#67e8f9"
 } as const;
 
 const asFinite = (value: unknown, fallback: number): number =>
@@ -116,76 +118,77 @@ export function runnerJumpOffset(prevSupportY: number, currentSupportY: number, 
 
 export function buildRunnerSprite(baseX: number, footY: number, tileSize: number, time: number, audioAmount: number): RunnerSprite {
   const unit = Math.max(1, Math.round(tileSize / 16));
-  const x = baseX - 3 * unit;
+  const x = baseX - 4 * unit;
   const y = footY - 16 * unit;
   const legSwing = Math.sin(time * 18) >= 0 ? unit : -unit;
   const armSwing = Math.sin(time * 18 + Math.PI * 0.65) >= 0 ? unit : -unit;
-  const scarfLift = Math.floor(audioAmount * 2) * unit;
+  const antennaLift = Math.floor(audioAmount * 2) * unit;
 
   const parts: RunnerSpritePart[] = [
-    { name: "quill-back-top", color: RUNNER_COLORS.outline, x: x + unit, y: y + 3 * unit, w: 6 * unit, h: 3 * unit },
-    { name: "quill-back-mid", color: RUNNER_COLORS.cobaltDark, x, y: y + 5 * unit, w: 7 * unit, h: 3 * unit },
-    { name: "quill-back-low", color: RUNNER_COLORS.cobalt, x: x + unit, y: y + 8 * unit, w: 6 * unit, h: 3 * unit },
-    { name: "ear-back", color: RUNNER_COLORS.outline, x: x + 6 * unit, y: y, w: 2 * unit, h: 3 * unit },
-    { name: "ear-front", color: RUNNER_COLORS.cobaltDark, x: x + 8 * unit, y: y + unit, w: 2 * unit, h: 3 * unit },
-    { name: "head", color: RUNNER_COLORS.cobalt, x: x + 4 * unit, y: y + 2 * unit, w: 7 * unit, h: 7 * unit },
-    { name: "face", color: RUNNER_COLORS.muzzle, x: x + 7 * unit, y: y + 4 * unit, w: 4 * unit, h: 4 * unit },
-    { name: "eye", color: RUNNER_COLORS.eye, x: x + 8 * unit, y: y + 3 * unit, w: 2 * unit, h: 2 * unit },
-    { name: "iris", color: RUNNER_COLORS.iris, x: x + 9 * unit, y: y + 3 * unit, w: unit, h: 2 * unit },
-    { name: "torso", color: RUNNER_COLORS.cobaltDark, x: x + 5 * unit, y: y + 8 * unit, w: 5 * unit, h: 4 * unit },
-    { name: "chest", color: RUNNER_COLORS.muzzle, x: x + 7 * unit, y: y + 9 * unit, w: 3 * unit, h: 3 * unit },
+    { name: "antenna-beacon", color: RUNNER_COLORS.spark, x: x + 6 * unit, y: y - unit - antennaLift, w: 2 * unit, h: unit },
+    { name: "antenna-tip", color: RUNNER_COLORS.visorGlow, x: x + 6 * unit, y: y - antennaLift, w: unit, h: unit },
+    { name: "antenna-stem", color: RUNNER_COLORS.outline, x: x + 6 * unit, y: y + unit - antennaLift, w: unit, h: 3 * unit },
+    { name: "helmet-back", color: RUNNER_COLORS.helmetShade, x: x + 2 * unit, y: y + 2 * unit, w: 9 * unit, h: 5 * unit },
+    { name: "helmet-front", color: RUNNER_COLORS.helmet, x: x + 4 * unit, y: y + 2 * unit, w: 8 * unit, h: 6 * unit },
+    { name: "visor", color: RUNNER_COLORS.visor, x: x + 7 * unit, y: y + 4 * unit, w: 4 * unit, h: unit },
+    { name: "visor-glint", color: RUNNER_COLORS.visorGlow, x: x + 8 * unit, y: y + 4 * unit, w: 2 * unit, h: unit },
+    { name: "face", color: RUNNER_COLORS.skin, x: x + 7 * unit, y: y + 5 * unit, w: 4 * unit, h: 3 * unit },
+    { name: "eye-left", color: RUNNER_COLORS.outline, x: x + 8 * unit, y: y + 6 * unit, w: unit, h: unit },
+    { name: "eye-right", color: RUNNER_COLORS.outline, x: x + 10 * unit, y: y + 6 * unit, w: unit, h: unit },
+    { name: "torso", color: RUNNER_COLORS.jacket, x: x + 5 * unit, y: y + 8 * unit, w: 6 * unit, h: 5 * unit },
+    { name: "torso-shade", color: RUNNER_COLORS.jacketShade, x: x + 5 * unit, y: y + 10 * unit, w: 4 * unit, h: 3 * unit },
     {
-      name: "scarf-tail",
-      color: RUNNER_COLORS.scarf,
-      x: x + (legSwing > 0 ? 3 : 2) * unit,
-      y: y + (8 - scarfLift / unit) * unit,
+      name: "jetpack-fin",
+      color: RUNNER_COLORS.helmetShade,
+      x: x + (legSwing > 0 ? 2 : 1) * unit,
+      y: y + (9 - antennaLift / unit) * unit,
       w: 3 * unit,
       h: 2 * unit
     },
-    { name: "scarf-knot", color: RUNNER_COLORS.scarf, x: x + 6 * unit, y: y + 8 * unit, w: 3 * unit, h: 2 * unit },
+    { name: "belt", color: RUNNER_COLORS.glove, x: x + 6 * unit, y: y + 12 * unit, w: 5 * unit, h: unit },
     {
       name: "arm-back",
-      color: RUNNER_COLORS.cobaltDark,
+      color: RUNNER_COLORS.jacketShade,
       x: x + (4 + armSwing) * unit,
-      y: y + 8 * unit,
+      y: y + 9 * unit,
       w: 2 * unit,
       h: 4 * unit
     },
     {
-      name: "glove-back",
-      color: RUNNER_COLORS.gloves,
+      name: "gauntlet-back",
+      color: RUNNER_COLORS.glove,
       x: x + (3 + armSwing) * unit,
-      y: y + 11 * unit,
+      y: y + 12 * unit,
       w: 2 * unit,
       h: 2 * unit
     },
     {
       name: "arm-front",
-      color: RUNNER_COLORS.cobalt,
+      color: RUNNER_COLORS.jacket,
       x: x + (9 - armSwing) * unit,
-      y: y + 8 * unit,
+      y: y + 9 * unit,
       w: 2 * unit,
       h: 4 * unit
     },
     {
-      name: "glove-front",
-      color: RUNNER_COLORS.gloves,
+      name: "gauntlet-front",
+      color: RUNNER_COLORS.glove,
       x: x + (10 - armSwing) * unit,
-      y: y + 11 * unit,
+      y: y + 12 * unit,
       w: 2 * unit,
       h: 2 * unit
     },
     {
       name: "leg-back",
-      color: RUNNER_COLORS.cobaltDark,
+      color: RUNNER_COLORS.pant,
       x: x + (6 - legSwing) * unit,
       y: y + 12 * unit,
       w: 2 * unit,
       h: 3 * unit
     },
     {
-      name: "shoe-back",
-      color: RUNNER_COLORS.shoes,
+      name: "boot-back",
+      color: RUNNER_COLORS.boot,
       x: x + (5 - legSwing) * unit,
       y: y + 15 * unit,
       w: 4 * unit,
@@ -201,15 +204,15 @@ export function buildRunnerSprite(baseX: number, footY: number, tileSize: number
     },
     {
       name: "leg-front",
-      color: RUNNER_COLORS.cobalt,
+      color: RUNNER_COLORS.pant,
       x: x + (8 + legSwing) * unit,
       y: y + 12 * unit,
       w: 2 * unit,
       h: 3 * unit
     },
     {
-      name: "shoe-front",
-      color: RUNNER_COLORS.shoes,
+      name: "boot-front",
+      color: RUNNER_COLORS.boot,
       x: x + (8 + legSwing) * unit,
       y: y + 15 * unit,
       w: 4 * unit,
@@ -227,7 +230,7 @@ export function buildRunnerSprite(baseX: number, footY: number, tileSize: number
       name: "spark",
       color: RUNNER_COLORS.spark,
       x: x + 2 * unit,
-      y: y + 12 * unit - scarfLift,
+      y: y + 13 * unit - antennaLift,
       w: 2 * unit,
       h: unit
     }

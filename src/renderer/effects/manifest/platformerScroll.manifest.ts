@@ -24,8 +24,8 @@ export const platformerScrollManifest = defineEffectManifest({
   },
   docs: {
     parameters: "`speed`, `seed`, `tileSize`, `groundRatio`, `parallaxFar`, `parallaxMid`, `parallaxFront`, `audioReact`, `beatKick`, `platformRate`, `platformMaxSteps`",
-    catalogNote: "Deterministic side-scrolling platformer parallax scene with looping platforms and a colorful cobalt mascot runner.",
-    description: "Deterministic side-scrolling platformer parallax scene with looping platforms and a colorful cobalt mascot runner."
+    catalogNote: "Deterministic side-scrolling platformer parallax scene with looping platforms and a colorful neon astronaut mascot runner.",
+    description: "Deterministic side-scrolling platformer parallax scene with looping platforms and a colorful neon astronaut mascot runner."
   }
 });
 

@@ -92,15 +92,18 @@ describe("platformerScroll helpers", () => {
     const laterFrame = buildRunnerSprite(100, 160, 16, 0.2, 0.2);
     const palette = new Set(earlyFrame.parts.map((part) => part.color));
     const partNames = new Set(earlyFrame.parts.map((part) => part.name));
-    const earlyFrontShoe = earlyFrame.parts.find((part) => part.name === "shoe-front");
-    const laterFrontShoe = laterFrame.parts.find((part) => part.name === "shoe-front");
+    const earlyFrontBoot = earlyFrame.parts.find((part) => part.name === "boot-front");
+    const laterFrontBoot = laterFrame.parts.find((part) => part.name === "boot-front");
 
     expect(palette.size).toBeGreaterThanOrEqual(7);
-    expect(partNames.has("scarf-knot")).toBe(true);
-    expect(partNames.has("glove-front")).toBe(true);
-    expect(partNames.has("quill-back-top")).toBe(true);
+    expect(partNames.has("helmet-front")).toBe(true);
+    expect(partNames.has("gauntlet-front")).toBe(true);
+    expect(partNames.has("antenna-tip")).toBe(true);
+    expect(partNames.has("antenna-beacon")).toBe(true);
+    expect(partNames.has("eye-left")).toBe(true);
+    expect(partNames.has("eye-right")).toBe(true);
     expect(earlyFrame.shadow.w).toBeGreaterThan(0);
-    expect(earlyFrontShoe?.x).not.toBe(laterFrontShoe?.x);
+    expect(earlyFrontBoot?.x).not.toBe(laterFrontBoot?.x);
   });
 });
 
@@ -132,9 +135,9 @@ describe("PlatformerScrollEffect", () => {
     });
 
     expect((ctx.clearRect as ReturnType<typeof vi.fn>).mock.calls.length).toBe(1);
-    expect(colorUsage.get("#2563eb") ?? 0).toBeGreaterThan(0);
-    expect(colorUsage.get("#ffb703") ?? 0).toBeGreaterThan(0);
-    expect(colorUsage.get("#ef4444") ?? 0).toBeGreaterThan(0);
-    expect(colorUsage.get("#f8fafc") ?? 0).toBeGreaterThan(0);
+    expect(colorUsage.get("#8b5cf6") ?? 0).toBeGreaterThan(0);
+    expect(colorUsage.get("#22d3ee") ?? 0).toBeGreaterThan(0);
+    expect(colorUsage.get("#f43f5e") ?? 0).toBeGreaterThan(0);
+    expect(colorUsage.get("#f59e0b") ?? 0).toBeGreaterThan(0);
   });
 });
