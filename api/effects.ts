@@ -697,11 +697,60 @@ function isEffectRecord(value: unknown): value is EffectRecord {
     && Number.isFinite(v.createdAt);
 }
 
+function coercePendingEffectRecord(value: unknown): EffectRecord | null {
+  if (!value || typeof value !== "object") {
+    return null;
+  }
+  const entry = value as Record<string, unknown>;
+  const id = typeof entry.id === "string" ? entry.id : "";
+  const name = typeof entry.name === "string" ? entry.name : "";
+  const createdAt = typeof entry.createdAt === "number" ? entry.createdAt : Number.NaN;
+  if (!id || !name || !Number.isFinite(createdAt)) {
+    return null;
+  }
+
+  const prompt = typeof entry.prompt === "string" ? entry.prompt : "";
+  const typescriptCode = typeof entry.typescriptCode === "string"
+    ? entry.typescriptCode
+    : typeof entry.code === "string"
+      ? entry.code
+      : "";
+  const runtimeCode = typeof entry.runtimeCode === "string"
+    ? entry.runtimeCode
+    : typeof entry.code === "string"
+      ? entry.code
+      : typescriptCode;
+  const docs = sanitizeGeneratedDocs(entry.docs);
+  return {
+    id,
+    name,
+    prompt,
+    typescriptCode,
+    runtimeCode,
+    ...(Array.isArray(entry.params) ? { params: sanitizeGeneratedParams(entry.params) } : {}),
+    ...(docs ? { docs } : {}),
+    createdAt
+  };
+}
+
 function normalizeEffects(value: unknown): EffectRecord[] {
   if (!Array.isArray(value)) {
     return [];
   }
   return value.flatMap((entry) => (isEffectRecord(entry) ? [entry] : []));
+}
+
+function normalizePendingEffects(value: unknown): EffectRecord[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  return value.flatMap((entry) => {
+    if (isEffectRecord(entry)) {
+      return [entry];
+    }
+    const coerced = coercePendingEffectRecord(entry);
+    return coerced ? [coerced] : [];
+  });
 }
 
 async function readApprovedEffects(): Promise<EffectRecord[]> {
@@ -720,7 +769,7 @@ async function readPendingEffects(client: { get: (key: string) => Promise<unknow
     return [];
   }
   try {
-    return normalizeEffects(await client.get(PENDING_EFFECTS_KEY));
+    return normalizePendingEffects(await client.get(PENDING_EFFECTS_KEY));
   } catch {
     return [];
   }

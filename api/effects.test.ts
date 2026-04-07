@@ -378,6 +378,43 @@ describe("api/effects", () => {
     });
   });
 
+  it("keeps pending review fetch working when optional metadata shape drifts", async () => {
+    process.env.EFFECT_MODERATION_TOKEN = "secret-token";
+    process.env.EFFECT_MODERATION_BASE_URL = "https://demo.example.com";
+    const redis = createMockRedis([], [
+      {
+        id: "pending-legacy",
+        name: "Legacy",
+        prompt: "Older payload format",
+        code: "return { render() {} };",
+        params: "bad-shape",
+        docs: null,
+        createdAt: 7
+      }
+    ]);
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+
+    await handler(
+      { method: "GET", url: "/api/effects?pendingId=pending-legacy&token=secret-token" },
+      res.response
+    );
+
+    expect(res.response.statusCode).toBe(200);
+    expect(JSON.parse(res.getBody())).toEqual({
+      effect: {
+        id: "pending-legacy",
+        name: "Legacy",
+        prompt: "Older payload format",
+        typescriptCode: "return { render() {} };",
+        runtimeCode: "return { render() {} };",
+        createdAt: 7
+      },
+      reviewUrl: "https://demo.example.com/effect-review.html?id=pending-legacy&token=secret-token"
+    });
+  });
+
   it("approves a pending effect through a signed one-tap link with HTML response", async () => {
     process.env.EFFECT_MODERATION_TOKEN = "secret-token";
     const redis = createMockRedis([], [{ id: "pending-1", name: "Tunnel", prompt: "Fast", typescriptCode: "ts", runtimeCode: "return { render() {} };", createdAt: 1 }]);
@@ -395,6 +432,29 @@ describe("api/effects", () => {
     expect(redis.lpush).toHaveBeenCalledWith(
       "effects:items",
       expect.objectContaining({ id: "pending-1" })
+    );
+  });
+
+  it("approves legacy pending effects through signed links", async () => {
+    process.env.EFFECT_MODERATION_TOKEN = "secret-token";
+    const redis = createMockRedis([], [{ id: "pending-legacy", name: "Legacy", code: "return { render() {} };", createdAt: 1 }]);
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+
+    await handler(
+      { method: "GET", url: "/api/effects?action=approve&id=pending-legacy&token=secret-token" },
+      res.response
+    );
+
+    expect(res.response.statusCode).toBe(200);
+    expect(redis.lpush).toHaveBeenCalledWith(
+      "effects:items",
+      expect.objectContaining({
+        id: "pending-legacy",
+        typescriptCode: "return { render() {} };",
+        runtimeCode: "return { render() {} };"
+      })
     );
   });
 
