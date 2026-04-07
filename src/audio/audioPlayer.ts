@@ -98,6 +98,10 @@ export class AudioPlayer {
     this.audio.volume = clamp(volume, 0, 1);
   }
 
+  setLoop(loop: boolean): void {
+    this.audio.loop = loop;
+  }
+
   seek(time: number): void {
     const duration = this.duration;
     const target = duration ? clamp(time, 0, duration) : Math.max(0, time);

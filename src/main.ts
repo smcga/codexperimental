@@ -10,7 +10,7 @@ import {
 } from "./config/loadConfig";
 import { AudioPlayer, AudioFeatures } from "./audio/audioPlayer";
 import { createManualBeatTrigger } from "./audio/manualBeatTrigger";
-import { EffectPreviewAudioController } from "./effectPreviewAudio";
+import { EFFECT_PREVIEW_AUDIO_SRC, EffectPreviewAudioController } from "./effectPreviewAudio";
 import { Timeline } from "./timeline/timeline";
 import { Renderer } from "./renderer/renderer";
 import { FramingOverride } from "./renderer/framing";
@@ -210,7 +210,7 @@ let generatedIdeaPrompt = "";
 let effectIdeaPreviewFrame = 0;
 let effectIdeaPreviewEffect: ReturnType<typeof compileRuntimeEffect> | null = null;
 let effectIdeaPreviewParams: Record<string, number | string> = {};
-let effectIdeaAudioPreview = new EffectPreviewAudioController("/song.mp3");
+let effectIdeaAudioPreview = new EffectPreviewAudioController(EFFECT_PREVIEW_AUDIO_SRC);
 let availableEffectNames = getEffectRegistryKeys();
 let playbackSyncSuppressBroadcast = false;
 let lastPlaybackSyncStateSentAt = 0;
@@ -684,7 +684,7 @@ function setEffectIdeaModalVisible(visible: boolean): void {
     effectIdeaAudioPreview.stop();
   }
   if (visible && effectIdeaCode) {
-    effectIdeaAudioPreview.setSource(currentAudioSrc || "/song.mp3");
+    effectIdeaAudioPreview.setSource(EFFECT_PREVIEW_AUDIO_SRC);
     void effectIdeaAudioPreview.start();
     effectIdeaCode.textContent = "";
     setEffectIdeaStatus("Describe your idea, click Generate, and preview the result.");
@@ -860,7 +860,6 @@ async function applyTimelineConfig(config: TimelineConfig): Promise<void> {
     attachAudioPlayerHandlers(audioPlayer);
     await audioPlayer.load();
     currentAudioSrc = config.audio.src;
-    effectIdeaAudioPreview.setSource(currentAudioSrc);
   }
   timeline = new Timeline(config);
   timeline.setAudioDuration(audioPlayer.duration);
@@ -1545,7 +1544,6 @@ async function startDemo(): Promise<void> {
     attachAudioPlayerHandlers(audioPlayer);
     await audioPlayer.load();
     currentAudioSrc = config.audio.src;
-    effectIdeaAudioPreview.setSource(currentAudioSrc);
 
     timeline = new Timeline(config);
     timeline.setAudioDuration(audioPlayer.duration);

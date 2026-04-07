@@ -1,10 +1,7 @@
 import { AudioPlayer, AudioFeatures } from "./audio/audioPlayer";
 
-export const EFFECT_PREVIEW_AUDIO_START_TIME = 5 * 60 + 12.85;
-export const EFFECT_PREVIEW_AUDIO_LOOP_START_TIME = 5 * 60 + 39.934;
-export const EFFECT_PREVIEW_AUDIO_LOOP_END_TIME = 5 * 60 + 50.786;
+export const EFFECT_PREVIEW_AUDIO_SRC = "/songloop.ogg";
 export const EFFECT_PREVIEW_AUDIO_VOLUME = 0.2;
-const LOOP_SYNC_INTERVAL_MS = 120;
 
 const EMPTY_AUDIO_FEATURES: AudioFeatures = {
   timeDomain: new Uint8Array(2048),
@@ -18,17 +15,11 @@ const EMPTY_AUDIO_FEATURES: AudioFeatures = {
   impactStrength: 0
 };
 
-export function getEffectPreviewLoopTime(currentTime: number): number {
-  return currentTime >= EFFECT_PREVIEW_AUDIO_LOOP_END_TIME ? EFFECT_PREVIEW_AUDIO_LOOP_START_TIME : currentTime;
-}
-
-export function shouldRestartEffectPreviewLoop(currentTime: number, paused: boolean): boolean {
-  return currentTime >= EFFECT_PREVIEW_AUDIO_LOOP_END_TIME && paused;
-}
-
 export class EffectPreviewAudioController {
   private player: AudioPlayer | null = null;
-  private loopSyncTimer: ReturnType<typeof setInterval> | null = null;
+  private syntheticTimelineTime = 0;
+  private timelineLastTickMs = 0;
+  private timelineRunning = false;
 
   constructor(private src: string) {}
 
@@ -45,22 +36,25 @@ export class EffectPreviewAudioController {
       this.player = new AudioPlayer(this.src);
       await this.player.load();
       this.player.setVolume(EFFECT_PREVIEW_AUDIO_VOLUME);
+      this.player.setLoop(true);
     }
 
-    this.player.seek(EFFECT_PREVIEW_AUDIO_START_TIME);
+    this.syntheticTimelineTime = 0;
+    this.timelineLastTickMs = performance.now();
+    this.timelineRunning = true;
+    this.player.seek(0);
 
     try {
       await this.player.play();
     } catch {
       // Ignore autoplay rejections; preview rendering still runs with silent audio features.
     }
-
-    this.startLoopSync();
   }
 
   stop(): void {
     this.player?.pause();
-    this.stopLoopSync();
+    this.updateSyntheticTimelineTime();
+    this.timelineRunning = false;
   }
 
   destroy(): void {
@@ -69,59 +63,35 @@ export class EffectPreviewAudioController {
   }
 
   getPlaybackTime(): number {
-    if (!this.player) {
-      return EFFECT_PREVIEW_AUDIO_START_TIME;
-    }
-    this.syncLoopWindow();
-    return this.player.currentTime;
+    this.updateSyntheticTimelineTime();
+    return this.syntheticTimelineTime;
   }
 
   getFeatures(): AudioFeatures {
     if (!this.player) {
       return EMPTY_AUDIO_FEATURES;
     }
-    this.syncLoopWindow();
     return this.player.updateFeatures();
   }
 
-  private syncLoopWindow(): void {
-    if (!this.player) {
+  private updateSyntheticTimelineTime(): void {
+    if (!this.timelineRunning) {
       return;
     }
-    const { currentTime, paused } = this.player;
-    const loopedTime = getEffectPreviewLoopTime(currentTime);
-    if (loopedTime !== currentTime) {
-      this.player.seek(loopedTime);
-      if (shouldRestartEffectPreviewLoop(currentTime, paused)) {
-        void this.player.play().catch(() => {
-          // Ignore autoplay rejections during loop restart.
-        });
-      }
-    }
-  }
-
-  private startLoopSync(): void {
-    if (this.loopSyncTimer) {
+    const now = performance.now();
+    if (this.timelineLastTickMs <= 0) {
+      this.timelineLastTickMs = now;
       return;
     }
-    this.loopSyncTimer = setInterval(() => {
-      this.syncLoopWindow();
-    }, LOOP_SYNC_INTERVAL_MS);
-  }
-
-  private stopLoopSync(): void {
-    if (!this.loopSyncTimer) {
-      return;
-    }
-    clearInterval(this.loopSyncTimer);
-    this.loopSyncTimer = null;
+    const elapsedSeconds = Math.max(0, (now - this.timelineLastTickMs) / 1000);
+    this.syntheticTimelineTime += elapsedSeconds;
+    this.timelineLastTickMs = now;
   }
 
   private destroyPlayer(): void {
     if (!this.player) {
       return;
     }
-    this.stopLoopSync();
     this.player.destroy();
     this.player = null;
   }
