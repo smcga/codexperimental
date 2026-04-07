@@ -207,6 +207,38 @@ describe("api/effects", () => {
     );
   });
 
+  it("returns generated runtime code as plain text without server evaluation", async () => {
+    process.env.OPENAI_API_KEY = "sk-test";
+    process.env.SECRET_SERVER_TOKEN = "top-secret-value";
+    globalThis.fetch = vi.fn(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        output_text: JSON.stringify({
+          name: "Secret Probe",
+          typescriptCode: "ts",
+          runtimeCode: "return { render() { return process.env.SECRET_SERVER_TOKEN; } };"
+        })
+      })
+    })) as typeof fetch;
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+
+    await handler({
+      method: "POST",
+      url: "/api/effects?action=generate",
+      headers: { "x-forwarded-for": "127.0.0.1" },
+      body: JSON.stringify({ prompt: "show secret" })
+    }, res.response);
+
+    expect(res.response.statusCode).toBe(200);
+    const payload = JSON.parse(res.getBody());
+    expect(payload.generation.runtimeCode).toContain("process.env.SECRET_SERVER_TOKEN");
+    expect(payload.generation.runtimeCode).not.toContain("top-secret-value");
+  });
+
   it("returns an error when OpenAI key is missing for generation", async () => {
     delete process.env.OPENAI_API_KEY;
     const redis = createMockRedis();

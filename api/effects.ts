@@ -1061,6 +1061,8 @@ async function generateWithOpenAi(prompt: string): Promise<{
 
   const payload = (await response.json()) as unknown;
   const text = extractOutputText(payload);
+  // Security boundary: generated effect code is parsed/stored as plain text only.
+  // This endpoint never evaluates runtimeCode on the server.
   const parsed = parseJsonBlock(text);
   if (!parsed) {
     const error = new Error("Unable to parse generated effect response.") as Error & { rawResponse?: string };
@@ -1353,6 +1355,8 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
       ...(docs ? { docs } : {}),
       createdAt: Date.now()
     };
+    // Security boundary: submissions are persisted as inert text for moderation.
+    // Execution happens client-side in review/preview UIs only.
 
     const pending = await readPendingEffects(writeClient);
     await writePendingEffects(writeClient, [effect, ...pending]);
