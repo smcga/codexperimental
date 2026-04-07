@@ -2124,28 +2124,28 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 | JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
 | --- | --- | --- | --- | --- | --- |
 | `params.beatImpulse` | number | 250 | min 0, max 3000 | Beat Impulse | yes |
-| `params.count` | number | 18 | min 5, max 120 | Count | yes |
-| `params.friction` | number | 0.6 | min 0, max 1 | Friction | yes |
-| `params.gravity` | number | 900 | min 0, max 2400 | Gravity | yes |
+| `params.count` | number | 10 | min 5, max 120 | Count | yes |
+| `params.friction` | number | 0.12 | min 0, max 1 | Friction | yes |
+| `params.gravity` | number | 540 | min 0, max 2400 | Gravity | yes |
 | `params.kickImpulse` | number | 250 | min 0, max 3000 | Kick Impulse | yes |
 | `params.kickOriginY` | number | 0 | unspecified | Kick Origin Y | yes |
-| `params.kickRadius` | number | 240 | min 1, max 1000 | Kick Radius | yes |
-| `params.kickTorque` | number | 35 | min 0, max 360 | Kick Torque | yes |
-| `params.kickUpBias` | number | 0.35 | min 0, max 1 | Kick Up Bias | yes |
-| `params.loosenDuration` | number | 0.18 | min 0, max 5 | Loosen Duration | yes |
+| `params.kickRadius` | number | 138 | min 1, max 1000 | Kick Radius | yes |
+| `params.kickTorque` | number | 111 | min 0, max 360 | Kick Torque | yes |
+| `params.kickUpBias` | number | 1 | min 0, max 1 | Kick Up Bias | yes |
+| `params.loosenDuration` | number | 1.1 | min 0, max 5 | Loosen Duration | yes |
 | `params.loosenExtraSlop` | number | 1.5 | min 0, max 10 | Loosen Extra Slop | yes |
-| `params.loosenFrictionMult` | number | 0.25 | min 0, max 1 | Loosen Friction Mult | yes |
+| `params.loosenFrictionMult` | number | 0 | min 0, max 1 | Loosen Friction Mult | yes |
 | `params.loosenPosCorrMult` | number | 0.35 | min 0, max 1 | Loosen Position Correction Mult | yes |
 | `params.loosenRestitutionAdd` | number | 0.35 | min 0, max 1 | Loosen Restitution Add | yes |
 | `params.maxAngVel` | number | 18 | min 0, max 360 | Max Angular Velocity | yes |
 | `params.maxLinVel` | number | 1800 | min 0, max 5000 | Max Linear Velocity | yes |
-| `params.restitution` | number | 0.25 | min 0, max 1 | Restitution | yes |
-| `params.scatterAngleDeg` | number | 25 | min 0, max 180 | Scatter Angle | yes |
-| `params.scatterJitter` | number | 0.35 | min 0, max 1 | Scatter Jitter | yes |
-| `params.seed` | number | 0 | min 0, max 9999 | Seed | yes |
-| `params.sepBiasDeg` | number | 10 | min 0, max 180 | Separation Bias | yes |
-| `params.shatter` | number | 0 | min 0, max 1 | Shatter | yes |
-| `params.trail` | number | 0.2 | min 0, max 1 | Trail | yes |
+| `params.restitution` | number | 0.95 | min 0, max 1 | Restitution | yes |
+| `params.scatterAngleDeg` | number | 121 | min 0, max 180 | Scatter Angle | yes |
+| `params.scatterJitter` | number | 0.7 | min 0, max 1 | Scatter Jitter | yes |
+| `params.seed` | number | 7 | min 0, max 9999 | Seed | yes |
+| `params.sepBiasDeg` | number | 17 | min 0, max 180 | Separation Bias | yes |
+| `params.shatter` | number | 0.2 | min 0, max 1 | Shatter | yes |
+| `params.trail` | number | 0 | min 0, max 1 | Trail | yes |
 | `params.wreckingCue` | number | 0 | min 0, max 1 | Wrecking Cue | yes |
 
 ### Minimal layer usage

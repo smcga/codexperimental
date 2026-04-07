@@ -1,5 +1,6 @@
-import { describe, expect, it } from "vitest";
-import { PhysicsWorld } from "./physicsPile";
+import { describe, expect, it, vi } from "vitest";
+import { PhysicsPileEffect, PhysicsWorld } from "./physicsPile";
+import { EffectRenderContext } from "./types";
 
 const STEP = 1 / 120;
 
@@ -8,6 +9,29 @@ const stepWorld = (world: PhysicsWorld, steps: number) => {
     world.step(STEP);
   }
 };
+
+
+const createRenderContext = (
+  ctx: CanvasRenderingContext2D,
+  params: Record<string, unknown> = {}
+): EffectRenderContext =>
+  ({
+    ctx,
+    width: 320,
+    height: 200,
+    time: 1,
+    delta: STEP,
+    audio: {
+      rms: 0,
+      bass: 0,
+      mid: 0,
+      treble: 0,
+      beat: false,
+      beatStrength: 0,
+      impactStrength: 0
+    },
+    params
+  } as EffectRenderContext);
 
 const stddev = (values: number[]): number => {
   const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
@@ -226,6 +250,21 @@ describe("PhysicsWorld", () => {
     expect(spinCount).toBeGreaterThanOrEqual(Math.floor(world.bodies.length * 0.3));
   });
 
+  it("kicks bodies upward away from the floor origin", () => {
+    const world = new PhysicsWorld(360, 240, 0);
+    world.resetBodies(16, "pile", 0.2, 0.5, 21);
+    world.kickRadius = 400;
+    world.scatterAngleRad = 0;
+    world.scatterJitter = 0;
+    world.kickUpBias = 0.35;
+    world.kickOriginMode = "floorCenter";
+
+    world.applyBeatImpulse(700, 1);
+
+    const averageVy = world.bodies.reduce((sum, body) => sum + body.vy, 0) / world.bodies.length;
+    expect(averageVy).toBeLessThan(0);
+  });
+
   it("remains stable with periodic beat impulses", () => {
     const world = new PhysicsWorld(320, 180, 900);
     world.resetBodies(14, "pile", 0.22, 0.55, 7);
@@ -272,5 +311,67 @@ describe("PhysicsWorld", () => {
     const speed = Math.hypot(body.vx, body.vy);
     expect(speed).toBeLessThanOrEqual(world.maxLinVel + 1e-3);
     expect(Math.abs(body.angularVelocity)).toBeLessThanOrEqual(world.maxAngVel + 1e-3);
+  });
+});
+
+describe("PhysicsPileEffect", () => {
+  it("does not render connector lines between boxes", () => {
+    const effect = new PhysicsPileEffect();
+    const lineTo = vi.fn();
+    const ctx = {
+      fillRect: vi.fn(),
+      save: vi.fn(),
+      restore: vi.fn(),
+      translate: vi.fn(),
+      rotate: vi.fn(),
+      strokeRect: vi.fn(),
+      beginPath: vi.fn(),
+      moveTo: vi.fn(),
+      lineTo,
+      stroke: vi.fn(),
+      arc: vi.fn(),
+      fill: vi.fn(),
+      globalAlpha: 1,
+      globalCompositeOperation: "source-over",
+      fillStyle: "#000",
+      strokeStyle: "#fff",
+      lineWidth: 1
+    } as unknown as CanvasRenderingContext2D;
+
+    effect.render(createRenderContext(ctx, { count: 10, seed: 3, trail: 0 }));
+
+    expect(lineTo).not.toHaveBeenCalled();
+  });
+
+  it("uses the updated physics pile defaults when params are omitted", () => {
+    const effect = new PhysicsPileEffect();
+    const ctx = {
+      fillRect: vi.fn(),
+      save: vi.fn(),
+      restore: vi.fn(),
+      translate: vi.fn(),
+      rotate: vi.fn(),
+      strokeRect: vi.fn(),
+      fillStyle: "#000",
+      strokeStyle: "#fff"
+    } as unknown as CanvasRenderingContext2D;
+
+    effect.render(createRenderContext(ctx));
+
+    const world = (effect as unknown as { world: PhysicsWorld }).world;
+    const state = effect as unknown as { trailAlpha: number; lastConfig: { seed: number } };
+    expect(world).toBeTruthy();
+    expect(world?.gravity).toBe(540);
+    expect(world?.kickRadius).toBe(138);
+    expect(world?.scatterAngleRad).toBeCloseTo((121 * Math.PI) / 180, 6);
+    expect(world?.scatterJitter).toBe(0.7);
+    expect(world?.kickUpBias).toBe(1);
+    expect(world?.kickTorque).toBe(111);
+    expect(world?.kickOriginY).toBe(0);
+    expect(world?.loosenDuration).toBe(1.1);
+    expect(world?.loosenFrictionMult).toBe(0);
+    expect(world?.sepBiasRad).toBeCloseTo((17 * Math.PI) / 180, 6);
+    expect(state.trailAlpha).toBe(0);
+    expect(state.lastConfig.seed).toBe(7);
   });
 });

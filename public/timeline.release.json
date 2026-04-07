@@ -1055,9 +1055,30 @@
       "end": "02:23.6",
       "effect": "physics_pile",
       "params": {
-        "gravity": 0.34,
-        "kickImpulse": 0.2,
-        "beatImpulse": 0.2
+        "count": 10,
+        "restitution": 0.95,
+        "friction": 0.12,
+        "gravity": 540,
+        "kickImpulse": 250,
+        "beatImpulse": 250,
+        "kickRadius": 138,
+        "scatterAngleDeg": 121,
+        "scatterJitter": 0.7,
+        "kickUpBias": 1,
+        "kickTorque": 111,
+        "loosenDuration": 1.1,
+        "loosenFrictionMult": 0,
+        "loosenRestitutionAdd": 0.35,
+        "loosenPosCorrMult": 0.35,
+        "loosenExtraSlop": 1.5,
+        "maxLinVel": 1800,
+        "maxAngVel": 18,
+        "kickOriginY": 0,
+        "sepBiasDeg": 17,
+        "seed": 7,
+        "trail": 0,
+        "shatter": 0.2,
+        "wreckingCue": 0
       },
       "layers": [
         {
