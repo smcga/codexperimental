@@ -1,4 +1,5 @@
 import process from "node:process";
+import { readFileSync } from "node:fs";
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -154,6 +155,13 @@ describe("api/effects", () => {
     expect(res.response.statusCode).toBe(200);
     expect(JSON.parse(res.getBody()).moderationStatus).toBe("pending");
     expect(JSON.parse(res.getBody()).effect.params).toEqual([{ key: "speed", label: "Speed", type: "number", defaultValue: 1 }]);
+  });
+
+  it("treats generated effect code as inert text on the server", () => {
+    const source = readFileSync(new URL("./effects.ts", import.meta.url), "utf8");
+    expect(source).not.toMatch(/\bnew Function\s*\(/u);
+    expect(source).not.toMatch(/\beval\s*\(/u);
+    expect(source).not.toMatch(/\bnode:vm\b|\bvm\./u);
   });
 
   it("generates via OpenAI", async () => {

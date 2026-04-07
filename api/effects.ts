@@ -50,6 +50,14 @@ type EffectRecord = {
   createdAt: number;
 };
 
+/**
+ * Security invariant: model-generated effect code is treated as untrusted text on the server.
+ *
+ * The API may validate shape/limits and persist the payload for moderation, but it must never
+ * evaluate, import, or otherwise execute submitted `typescriptCode`/`runtimeCode`.
+ * Execution is intentionally limited to browser-side preview/runtime paths.
+ */
+
 type GeneratedEffectParamOption = {
   label: string;
   value: string;
