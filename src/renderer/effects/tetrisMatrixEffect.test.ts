@@ -9,6 +9,7 @@ import {
   createEmptyBoard,
   findDropY,
   getPieceCells,
+  isPlacementAboveTop,
   resolveTetrisMatrixParams,
   TETRIS_BOARD_HEIGHT,
   TETRIS_BOARD_WIDTH,
@@ -147,6 +148,11 @@ describe("tetrisMatrixEffect helpers", () => {
     expect(layout.screenX + layout.screenW).toBeLessThanOrEqual(320);
     expect(layout.screenY + layout.screenH).toBeLessThanOrEqual(180);
   });
+
+  it("detects top-out placements that lock above the visible board", () => {
+    expect(isPlacementAboveTop("I", 1, -4)).toBe(true);
+    expect(isPlacementAboveTop("I", 1, 0)).toBe(false);
+  });
 });
 
 describe("TetrisMatrixEffect", () => {
@@ -209,5 +215,24 @@ describe("TetrisMatrixEffect", () => {
         params: { seed: 1989 }
       })
     ).not.toThrow();
+  });
+
+  it("restarts when a placement would lock above the top of the board", () => {
+    const effect = new TetrisMatrixEffect() as unknown as {
+      cache: { board: number[]; score: number; lines: number; pieceCount: number; placements: unknown[]; bag: string[] };
+      ensureSimulation: (pieceCount: number, seed: number) => void;
+    };
+
+    effect.cache.board = createEmptyBoard().map(() => 3);
+    effect.cache.score = 900;
+    effect.cache.lines = 12;
+    effect.cache.pieceCount = 0;
+    effect.cache.placements = [];
+    effect.cache.bag = ["I"];
+    effect.ensureSimulation(1, 1989);
+
+    expect(effect.cache.score).toBeLessThan(100);
+    expect(effect.cache.lines).toBeLessThanOrEqual(1);
+    expect(effect.cache.pieceCount).toBe(1);
   });
 });

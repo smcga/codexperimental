@@ -381,6 +381,9 @@ export const choosePlacement = (board: CellValue[], piece: Pentomino, seed: numb
   return best ?? { piece, rotation: 0, x: 3, y: SPAWN_Y, score: -9999, clearedLines: 0 };
 };
 
+export const isPlacementAboveTop = (piece: Pentomino, rotation: number, y: number): boolean =>
+  getPieceCells(piece, rotation).some(([, cellY]) => y + cellY < 0);
+
 const getPieceBounds = (cells: Array<[number, number]>): { minX: number; maxX: number; minY: number; maxY: number } => ({
   minX: Math.min(...cells.map(([x]) => x)),
   maxX: Math.max(...cells.map(([x]) => x)),
@@ -417,6 +420,15 @@ export class TetrisMatrixEffect implements Effect {
 
   private seed = TETRIS_MATRIX_DEFAULTS.seed;
 
+  private resetSimulationState(): void {
+    this.cache.board = createEmptyBoard();
+    this.cache.score = 0;
+    this.cache.lines = 0;
+    this.cache.placements = [];
+    this.cache.pieceCount = 0;
+    this.cache.bag = [];
+  }
+
   private ensureSimulation(pieceCount: number, seed: number): void {
     if (this.seed !== seed) {
       this.seed = seed;
@@ -434,13 +446,8 @@ export class TetrisMatrixEffect implements Effect {
       const piece = getPieceAtIndex(this.cache, seed, this.cache.pieceCount);
       let placement = choosePlacement(this.cache.board, piece, seed, this.cache.pieceCount);
 
-      if (collides(this.cache.board, piece, placement.rotation, placement.x, placement.y)) {
-        this.cache.board = createEmptyBoard();
-        this.cache.score = 0;
-        this.cache.lines = 0;
-        this.cache.placements = [];
-        this.cache.pieceCount = 0;
-        this.cache.bag = [];
+      if (isPlacementAboveTop(piece, placement.rotation, placement.y) || collides(this.cache.board, piece, placement.rotation, placement.x, placement.y)) {
+        this.resetSimulationState();
         continue;
       }
 
