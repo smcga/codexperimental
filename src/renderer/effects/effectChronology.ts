@@ -50,7 +50,6 @@ export const effectChronologyEntries: EffectChronologyEntry[] = [
   { key: "isogrid", yearFit: 1989, confidence: "medium", lineage: '' },
   { key: "kaleidoscope_symmetry", yearFit: 1988, confidence: "medium", lineage: '' },
   { key: "kefrens_bars", yearFit: 1988, confidence: "high", lineage: '' },
-  { key: "lemmings_march", yearFit: 1994, confidence: "low", lineage: '' },
   { key: "lens_flare", yearFit: 1990, confidence: "low", lineage: '' },
   { key: "lens_wobbler", yearFit: 1994, confidence: "low", lineage: '' },
   { key: "lightning", yearFit: 1993, confidence: "low", lineage: '' },

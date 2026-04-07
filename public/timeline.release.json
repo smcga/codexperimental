@@ -4602,7 +4602,7 @@
       "id": "Scene 043 - Voxel Landscape",
       "start": 230.666796,
       "end": 234,
-      "effect": "lemmings_march",
+      "effect": "voxel_landscape",
       "era": "pcdemo",
       "transition": {
         "in": "slide-down",

@@ -71,7 +71,6 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 | `lightning` | 1993 | low |  |
 | `rain` | 1993 | low |  |
 | `recursiveFracture` | 1993 | low |  |
-| `lemmings_march` | 1994 | low |  |
 | `lens_wobbler` | 1994 | low |  |
 | `ribbons` | 1994 | low |  |
 | `tilingMorph` | 1995 | low |  |
