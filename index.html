@@ -94,26 +94,45 @@
           <p class="doodle-copy">Describe your visual effect, generate TypeScript + runtime code with Codex, preview it, then submit it for approval.</p>
           <label class="doodle-tool-group" for="effect-idea-input">
             <span class="doodle-tool-label">Effect idea</span>
-            <textarea id="effect-idea-input" rows="4" placeholder="Example: neon vector tunnel that pulses with beat-reactive glow"></textarea>
+            <textarea id="effect-idea-input" rows="8" placeholder="Example: neon vector tunnel that pulses with beat-reactive glow"></textarea>
           </label>
-          <canvas id="effect-idea-preview" width="512" height="288" aria-label="Generated effect preview"></canvas>
+          <div id="effect-idea-preview-stage" class="effect-idea-preview-stage hidden">
+            <canvas id="effect-idea-preview" width="512" height="288" aria-label="Generated effect preview"></canvas>
+            <div id="effect-idea-countdown" class="effect-idea-countdown hidden" aria-live="polite"></div>
+            <div id="effect-idea-shatter" class="effect-idea-shatter hidden" aria-hidden="true"></div>
+          </div>
           <div id="effect-idea-controls" class="effect-idea-controls hidden">
             <div class="effect-idea-controls-header">
               <span>Generated params</span>
               <div class="effect-idea-controls-actions">
-                <button id="effect-idea-set-defaults" type="button">Set current as defaults</button>
                 <button id="effect-idea-randomize" type="button">Randomize everything</button>
               </div>
             </div>
             <div id="effect-idea-controls-grid" class="debug-grid"></div>
             <div id="effect-idea-controls-empty" class="debug-empty">No generated params were returned for this effect.</div>
           </div>
-          <pre id="effect-idea-code" class="effect-idea-code"></pre>
+          <pre id="effect-idea-code" class="effect-idea-code hidden"></pre>
+          <div id="effect-idea-submit-panel" class="effect-idea-submit-panel hidden">
+            <p class="doodle-copy">Happy with the generated effect? Give it a name and submit it for moderation.</p>
+            <label class="doodle-tool-group" for="effect-idea-name">
+              <span class="doodle-tool-label">Effect name</span>
+              <input id="effect-idea-name" type="text" maxlength="48" placeholder="Neon Tunnel Bloom" />
+            </label>
+          </div>
           <div id="effect-idea-status" class="doodle-status">Describe your idea, click Generate, and preview the result.</div>
-          <div class="doodle-actions">
+          <div id="effect-idea-actions" class="doodle-actions">
             <button id="effect-idea-cancel" type="button">Cancel</button>
             <button id="effect-idea-generate" type="button">Generate</button>
-            <button id="effect-idea-submit" type="button">Submit</button>
+            <button id="effect-idea-submit" type="button">Submit effect</button>
+          </div>
+          <div id="effect-idea-busy-sheet" class="effect-idea-busy-sheet hidden" aria-live="polite">
+            <div id="effect-idea-busy-spinner" class="effect-idea-busy-spinner" aria-hidden="true"></div>
+            <div id="effect-idea-busy-message" class="effect-idea-busy-message">Generating your effect…</div>
+            <div class="effect-idea-cycle-actions">
+              <button id="effect-idea-prev" type="button" aria-label="Previous approved effect">◀</button>
+              <button id="effect-idea-next" type="button" aria-label="Next approved effect">▶</button>
+            </div>
+            <button id="effect-idea-retry" type="button" class="hidden">Retry generation</button>
           </div>
         </div>
       </div>
