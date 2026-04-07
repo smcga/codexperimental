@@ -55,6 +55,20 @@ describe("roadDrive helpers", () => {
     expect(first[first.length - 1]).toBeCloseTo(40);
   });
 
+
+  it("lays out z rows monotonically to avoid near-camera seam gaps", () => {
+    const resX = 4;
+    const resZ = 6;
+    const vertices = buildRoadDriveVertices(resX, resZ, 10, 60);
+
+    const rowZValues = Array.from({ length: resZ }, (_, row) => vertices[row * resX * 2 + 1]);
+    const sorted = [...rowZValues].sort((a, b) => a - b);
+
+    expect(rowZValues).toEqual(sorted);
+    expect(rowZValues[0]).toBeCloseTo(0);
+    expect(rowZValues[rowZValues.length - 1]).toBeCloseTo(60);
+  });
+
   it("builds triangle indices with expected count and valid ranges", () => {
     const resX = 6;
     const resZ = 5;

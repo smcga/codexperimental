@@ -25,9 +25,10 @@ out float v_trackX;
 
 void main() {
   float zOffset = u_time * u_speed * 30.0;
-  float wrappedZ = mod(a_position.y + zOffset, u_trackDepth);
+  float trackZ = a_position.y + zOffset;
   float bob = sin(u_time * 2.4) * u_cameraBob * (0.5 + 0.5 * u_rms * u_rmsReactive);
-  float depthNorm = wrappedZ / max(u_trackDepth, 0.001);
+  bob = max(bob, -u_cameraBob * 0.22);
+  float depthNorm = a_position.y / max(u_trackDepth, 0.001);
   float curvePhase = depthNorm * 6.28318530718;
   float curveDensity = mix(1.0, 4.5, clamp((u_curveFrequency - 0.015) / 0.185, 0.0, 1.0));
   float travelPhase = u_time * u_speed * (0.55 + u_curveFrequency * 8.0);
@@ -35,7 +36,7 @@ void main() {
   float shortBend = sin(curvePhase * (curveDensity * 2.0) + travelPhase * 1.7 + 0.9) * u_curveStrength * 0.35;
   float curveOffset = (longBend + shortBend) * (0.35 + 0.65 * depthNorm);
 
-  vec3 pos = vec3(a_position.x + curveOffset, -0.35 - bob, -(wrappedZ + 0.6));
+  vec3 pos = vec3(a_position.x + curveOffset, -0.46 - bob, -(a_position.y + 0.6));
 
   float nearPlane = 0.1;
   float farPlane = u_trackDepth * 2.4;
@@ -47,8 +48,8 @@ void main() {
 
   gl_Position = vec4(pos.x * f / u_aspect, pos.y * f, clipZ, clipW);
 
-  v_depth = wrappedZ / max(u_trackDepth, 0.001);
-  v_trackZ = wrappedZ;
+  v_depth = depthNorm;
+  v_trackZ = trackZ;
   v_trackX = a_position.x;
 }
 `;
