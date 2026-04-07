@@ -1,7 +1,7 @@
 import "./style.css";
 
 import { buildEffectModerationActionUrl, compileRuntimeEffect, fetchPendingEffect } from "./effectIdeas";
-import { EffectPreviewAudioController } from "./effectPreviewAudio";
+import { EFFECT_PREVIEW_AUDIO_SRC, EffectPreviewAudioController } from "./effectPreviewAudio";
 
 export type EffectReviewPageParams = {
   id: string | null;
@@ -36,7 +36,7 @@ const denyLink = typeof document !== "undefined" ? document.querySelector<HTMLAn
 
 let previewFrame = 0;
 let activeEffect: ReturnType<typeof compileRuntimeEffect> | null = null;
-const previewAudio = new EffectPreviewAudioController("/song.mp3");
+const previewAudio = new EffectPreviewAudioController(EFFECT_PREVIEW_AUDIO_SRC);
 
 function setStatus(message: string, state: "idle" | "error" | "success" = "idle"): void {
   if (!reviewStatus) {
