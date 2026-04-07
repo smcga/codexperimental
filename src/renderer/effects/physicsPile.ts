@@ -389,7 +389,7 @@ export class PhysicsWorld {
     const baseImpulse = magnitude * (0.4 + strength * 0.6);
     const radius = this.kickRadius > 0 ? this.kickRadius : Math.min(this.width, this.height) * 0.6;
     let originX = this.width * 0.5;
-    let originY = this.height * 0.65;
+    let originY = this.height * 0.92;
     if (this.kickOriginMode === "center") {
       originY = this.height * 0.5;
     } else if (this.kickOriginMode === "random") {

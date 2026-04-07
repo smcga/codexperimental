@@ -251,6 +251,21 @@ describe("PhysicsWorld", () => {
     expect(spinCount).toBeGreaterThanOrEqual(Math.floor(world.bodies.length * 0.3));
   });
 
+  it("kicks bodies upward away from the floor origin", () => {
+    const world = new PhysicsWorld(360, 240, 0);
+    world.resetBodies(16, "pile", 0.2, 0.5, 21);
+    world.kickRadius = 400;
+    world.scatterAngleRad = 0;
+    world.scatterJitter = 0;
+    world.kickUpBias = 0.35;
+    world.kickOriginMode = "floorCenter";
+
+    world.applyBeatImpulse(700, 1);
+
+    const averageVy = world.bodies.reduce((sum, body) => sum + body.vy, 0) / world.bodies.length;
+    expect(averageVy).toBeLessThan(0);
+  });
+
   it("remains stable with periodic beat impulses", () => {
     const world = new PhysicsWorld(320, 180, 900);
     world.resetBodies(14, "pile", 0.22, 0.55, 7);
@@ -329,4 +344,3 @@ describe("PhysicsPileEffect", () => {
     expect(lineTo).not.toHaveBeenCalled();
   });
 });
-
