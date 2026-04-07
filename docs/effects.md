@@ -3231,7 +3231,7 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 - **Registry key:** `tetris_matrix`
 - **Implementation:** `src/renderer/effects/tetrisMatrixEffect.ts` (class `TetrisMatrixEffect`)
 - **Renderer:** Canvas2D
-- **Description:** Self-playing falling-block match with full pentomino sets (all 12 five-cell shapes), a clearer side-panel HUD, top-out game-over restarts, chunky monochrome shading, and a dot-matrix handheld screen vibe.
+- **Description:** Self-playing falling-block match with full pentomino sets (all 12 five-cell shapes), a clearer side-panel HUD, safe top-out game-over restarts, chunky monochrome shading, and a dot-matrix handheld screen vibe.
 - **Audio features:** beat, beatStrength, rms
 - **Performance notes:** None noted.
 

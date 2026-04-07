@@ -235,4 +235,18 @@ describe("TetrisMatrixEffect", () => {
     expect(effect.cache.lines).toBeLessThanOrEqual(1);
     expect(effect.cache.pieceCount).toBe(1);
   });
+
+  it("keeps simulation progressing after repeated top-out resets", () => {
+    const effect = new TetrisMatrixEffect() as unknown as {
+      cache: { board: number[]; pieceCount: number; bag: string[] };
+      ensureSimulation: (pieceCount: number, seed: number) => void;
+    };
+
+    effect.cache.board = createEmptyBoard().map(() => 3);
+    effect.cache.pieceCount = 0;
+    effect.cache.bag = ["I"];
+    effect.ensureSimulation(5, 1989);
+
+    expect(effect.cache.pieceCount).toBe(5);
+  });
 });

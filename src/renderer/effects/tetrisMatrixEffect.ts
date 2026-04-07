@@ -420,12 +420,14 @@ export class TetrisMatrixEffect implements Effect {
 
   private seed = TETRIS_MATRIX_DEFAULTS.seed;
 
-  private resetSimulationState(): void {
+  private resetSimulationState(preservePieceCount = false): void {
     this.cache.board = createEmptyBoard();
     this.cache.score = 0;
     this.cache.lines = 0;
     this.cache.placements = [];
-    this.cache.pieceCount = 0;
+    if (!preservePieceCount) {
+      this.cache.pieceCount = 0;
+    }
     this.cache.bag = [];
   }
 
@@ -447,7 +449,8 @@ export class TetrisMatrixEffect implements Effect {
       let placement = choosePlacement(this.cache.board, piece, seed, this.cache.pieceCount);
 
       if (isPlacementAboveTop(piece, placement.rotation, placement.y) || collides(this.cache.board, piece, placement.rotation, placement.x, placement.y)) {
-        this.resetSimulationState();
+        this.resetSimulationState(true);
+        this.cache.pieceCount += 1;
         continue;
       }
 
