@@ -71,7 +71,6 @@ export const effectChronologyEntries: EffectChronologyEntry[] = [
   { key: "prism_bloom", yearFit: 2018, confidence: "low", lineage: 'painterly bloom composition' },
   { key: "proper3d", yearFit: 1987, confidence: "medium", lineage: '' },
   { key: "rain", yearFit: 1993, confidence: "low", lineage: '' },
-  { key: "rainbow_cat", yearFit: 2011, confidence: "low", lineage: 'meme-synthwave sprite trail' },
   { key: "raster_bars", yearFit: 1982, confidence: "high", lineage: '' },
   { key: "raymarch_fractal", yearFit: 2010, confidence: "medium", lineage: 'raymarching fractal shader' },
   { key: "raytrace_spheres", yearFit: 1990, confidence: "high", lineage: '' },

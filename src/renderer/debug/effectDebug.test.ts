@@ -255,43 +255,6 @@ describe("effect debug params", () => {
     });
   });
 
-  it("provides defaults for rainbow cat controls", () => {
-    expect(getEffectDebugDefaults("rainbow_cat")).toEqual({
-      speed: 0.9,
-      rainbowLength: 0.72,
-      bounce: 0.45,
-      sparkle: 0.6,
-      trailAlpha: 0.82,
-      catScale: 1,
-      starDensity: 0.65,
-      seed: 0
-    });
-  });
-
-  it("coerces rainbow cat params based on control constraints", () => {
-    const params = coerceEffectParams("rainbow_cat", {
-      speed: 0,
-      rainbowLength: 2,
-      bounce: -1,
-      sparkle: 3,
-      trailAlpha: 0,
-      catScale: 5,
-      starDensity: -1,
-      seed: 1200
-    });
-
-    expect(params).toEqual({
-      speed: 0.2,
-      rainbowLength: 1,
-      bounce: 0,
-      sparkle: 1,
-      trailAlpha: 0.1,
-      catScale: 1.8,
-      starDensity: 0,
-      seed: 999
-    });
-  });
-
   it("provides defaults for water drops controls", () => {
     expect(getEffectDebugDefaults("water_drops")).toEqual({
       dropCount: 72,
