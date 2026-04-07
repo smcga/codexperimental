@@ -89,7 +89,6 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 | `raymarch_fractal` | 2010 | medium | raymarching fractal shader |
 | `gl_fractal_tunnel` | 2011 | medium | raymarched tunnel shader |
 | `gl_impossible_corridor` | 2011 | medium | raymarched corridor shader |
-| `rainbow_cat` | 2011 | low | meme-synthwave sprite trail |
 | `infinitycloud` | 2012 | low |  |
 | `neon_alley` | 2012 | low | raymarched neon city shader |
 | `space_hangar` | 2012 | low | raymarched sci-fi shader |

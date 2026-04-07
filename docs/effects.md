@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **100**.
+Total effects: **99**.
 
 ## Table of contents
 
@@ -67,7 +67,6 @@ Total effects: **100**.
 - [Effect: prism_bloom](#effect-prism-bloom)
 - [Effect: proper3d](#effect-proper3d)
 - [Effect: rain](#effect-rain)
-- [Effect: rainbow_cat](#effect-rainbow-cat)
 - [Effect: raster_bars](#effect-raster-bars)
 - [Effect: raymarch_fractal](#effect-raymarch-fractal)
 - [Effect: raytrace_spheres](#effect-raytrace-spheres)
@@ -125,8 +124,8 @@ Total effects: **100**.
 
 ### Common parameter patterns
 
-- `speed` (used in 49 effects)
-- `seed` (used in 47 effects)
+- `speed` (used in 48 effects)
+- `seed` (used in 46 effects)
 - `audioReact` (used in 35 effects)
 - `glow` (used in 19 effects)
 - `beatKick` (used in 14 effects)
@@ -231,7 +230,6 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 | `raymarch_fractal` | 2010 | medium | raymarching fractal shader |
 | `gl_fractal_tunnel` | 2011 | medium | raymarched tunnel shader |
 | `gl_impossible_corridor` | 2011 | medium | raymarched corridor shader |
-| `rainbow_cat` | 2011 | low | meme-synthwave sprite trail |
 | `infinitycloud` | 2012 | low |  |
 | `neon_alley` | 2012 | low | raymarched neon city shader |
 | `space_hangar` | 2012 | low | raymarched sci-fi shader |
@@ -2396,39 +2394,6 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 ```json
 {
   "effect": "rain",
-  "opacity": 1,
-  "blend": "source-over",
-  "params": {}
-}
-```
-
-## Effect: rainbow_cat
-
-- **Registry key:** `rainbow_cat`
-- **Implementation:** `src/renderer/effects/rainbowCatEffect.ts` (class `RainbowCatEffect`)
-- **Renderer:** Canvas2D
-- **Description:** Synth-night rainbow cat silhouette with swishing tail, trotting paws, glitter stars, and a configurable six-colour trail.
-- **Audio features:** beat, rms, treble
-- **Performance notes:** None noted.
-
-### Parameters
-
-| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
-| --- | --- | --- | --- | --- | --- |
-| `params.bounce` | number | 0.45 | min 0, max 1.2 | Bounce | yes |
-| `params.catScale` | number | 1 | min 0.6, max 1.8 | Cat Scale | yes |
-| `params.rainbowLength` | number | 0.72 | min 0.2, max 1 | Rainbow Length | yes |
-| `params.seed` | number | 0 | min 0, max 999 | Seed | yes |
-| `params.sparkle` | number | 0.6 | min 0, max 1 | Sparkle | yes |
-| `params.speed` | number | 0.9 | min 0.2, max 2.5 | Speed | yes |
-| `params.starDensity` | number | 0.65 | min 0, max 1 | Star Density | yes |
-| `params.trailAlpha` | number | 0.82 | min 0.1, max 1 | Trail Alpha | yes |
-
-### Minimal layer usage
-
-```json
-{
-  "effect": "rainbow_cat",
   "opacity": 1,
   "blend": "source-over",
   "params": {}

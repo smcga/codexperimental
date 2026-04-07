@@ -976,7 +976,7 @@
           "params": {}
         },
         {
-          "effect": "rainbow_cat",
+          "effect": "starfield",
           "blend": "screen",
           "opacity": 0.16,
           "params": {
@@ -4874,7 +4874,7 @@
       "id": "Scene 049 - Glitch",
       "start": 240.885931,
       "end": 243.6,
-      "effect": "rainbow_cat",
+      "effect": "glitch",
       "era": "pcdemo",
       "transition": {
         "in": "signal-collapse",
