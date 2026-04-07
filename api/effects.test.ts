@@ -185,7 +185,7 @@ describe("api/effects", () => {
       "https://api.openai.com/v1/responses",
       expect.objectContaining({
         method: "POST",
-        body: expect.stringContaining("runtimeCode MUST NOT use dynamic code execution primitives")
+        body: expect.stringContaining("Prefer deterministic helper functions, lookup tables, and explicit state updates")
       })
     );
   });
