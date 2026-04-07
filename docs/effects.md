@@ -3410,7 +3410,7 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 - **Registry key:** `treegrowth`
 - **Implementation:** `src/renderer/effects/treeGrowthEffect.ts` (class `TreeGrowthEffect`)
 - **Renderer:** Canvas2D
-- **Description:** Tree structure grows continuously across years while foliage cycles by season; set `growth` to `-1` for auto or `0-1` to override.
+- **Description:** Cinematic time-lapse tree growth with layered bark, seasonal canopy shifts, and visible age rings; set `growth` to `-1` for auto or `0-1` to override.
 - **Audio features:** bass, rms, treble
 - **Performance notes:** None noted.
 

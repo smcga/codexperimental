@@ -4,16 +4,16 @@ import { Effect, EffectRenderContext } from "./types";
 const resolveNumberParam = (value: unknown, fallback: number): number =>
   typeof value === "number" && Number.isFinite(value) ? value : fallback;
 
-const hashFloat = (value: number): number => {
-  const hashed = Math.sin(value) * 43758.5453123;
-  return hashed - Math.floor(hashed);
-};
-
 const mix = (from: number, to: number, amount: number): number => from + (to - from) * amount;
 
 const clamp01 = (value: number): number => clamp(value, 0, 1);
 
 const fract = (value: number): number => value - Math.floor(value);
+
+const hashFloat = (value: number): number => {
+  const hashed = Math.sin(value * 12.9898 + 78.233) * 43758.5453123;
+  return hashed - Math.floor(hashed);
+};
 
 const seasonalWindow = (season: number, start: number, peak: number, end: number): number => {
   if (season <= start || season >= end) {
@@ -37,42 +37,43 @@ type SeasonState = {
 type TreeSegment = {
   startX: number;
   startY: number;
-  controlX: number;
-  controlY: number;
+  controlAX: number;
+  controlAY: number;
+  controlBX: number;
+  controlBY: number;
   endX: number;
   endY: number;
   depth: number;
   branchId: number;
+  bornAt: number;
+  maturity: number;
 };
 
 type TreeModel = {
   segments: TreeSegment[];
-  leafTips: TreeSegment[];
+  tipSegments: TreeSegment[];
   maxDepth: number;
 };
 
 const getSeasonState = (season: number): SeasonState => {
-  const springBurst = seasonalWindow(season, 0.08, 0.22, 0.38);
-  const autumnShift = seasonalWindow(season, 0.56, 0.74, 0.94);
-  const winterAmount = Math.max(
-    seasonalWindow(season, -0.05, 0.02, 0.14),
-    seasonalWindow(season, 0.88, 0.98, 1.08)
-  );
+  const springBurst = seasonalWindow(season, 0.07, 0.2, 0.36);
+  const autumnShift = seasonalWindow(season, 0.54, 0.72, 0.93);
+  const winterAmount = Math.max(seasonalWindow(season, -0.06, 0.03, 0.15), seasonalWindow(season, 0.86, 0.98, 1.08));
 
-  const summerHold = clamp01(1 - autumnShift * 0.85);
-  const leafPresence = clamp01(springBurst * 1.15 + summerHold * 0.95 - winterAmount * 1.15);
+  const summerHold = clamp01(1 - autumnShift * 0.82);
+  const leafPresence = clamp01(springBurst * 1.16 + summerHold * 0.97 - winterAmount * 1.2);
 
   return {
     leafPresence,
     blossomAmount: springBurst * (1 - autumnShift) * (1 - winterAmount),
-    autumnAmount: autumnShift * (1 - winterAmount * 0.7),
+    autumnAmount: autumnShift * (1 - winterAmount * 0.72),
     winterAmount,
-    fallenLeafAmount: clamp01(autumnShift * 1.1 + winterAmount * 0.3),
-    branchFlex: mix(0.14, 0.25, springBurst * 0.45 + autumnShift * 0.25)
+    fallenLeafAmount: clamp01(autumnShift * 1.12 + winterAmount * 0.28),
+    branchFlex: mix(0.1, 0.24, springBurst * 0.45 + autumnShift * 0.34)
   };
 };
 
-const buildHsla = (hue: number, saturation: number, lightness: number, alpha: number): string =>
+const hsla = (hue: number, saturation: number, lightness: number, alpha: number): string =>
   `hsla(${hue}, ${saturation}%, ${lightness}%, ${alpha})`;
 
 export class TreeGrowthEffect implements Effect {
@@ -113,59 +114,109 @@ export class TreeGrowthEffect implements Effect {
 
     const spread = (options.branchAngleDeg * Math.PI) / 180;
     const segments: TreeSegment[] = [];
-    const leafTips: TreeSegment[] = [];
 
-    const build = (x: number, y: number, length: number, angle: number, depth: number, branchId: number): void => {
-      if (depth >= options.levels) {
-        return;
-      }
-
-      const bendDir = hashFloat(options.seed + branchId * 4.73) - 0.5;
-      const bend = (0.1 + options.jitter * 0.35) * bendDir;
+    const addSegment = (
+      x: number,
+      y: number,
+      length: number,
+      angle: number,
+      depth: number,
+      branchId: number,
+      bornAt: number,
+      maturity: number
+    ): TreeSegment => {
+      const bendSeed = hashFloat(options.seed * 0.37 + branchId * 1.93) - 0.5;
+      const bend = bendSeed * (0.09 + options.jitter * 0.33);
       const endX = x + Math.cos(angle) * length;
       const endY = y - Math.sin(angle) * length;
-      const controlX = x + Math.cos(angle) * length * 0.52 + Math.cos(angle - Math.PI / 2) * length * bend;
-      const controlY = y - Math.sin(angle) * length * 0.52 - Math.sin(angle - Math.PI / 2) * length * bend;
+      const tangentX = Math.cos(angle);
+      const tangentY = -Math.sin(angle);
+      const normalX = Math.cos(angle - Math.PI / 2);
+      const normalY = -Math.sin(angle - Math.PI / 2);
+      const controlAX = x + tangentX * length * 0.32 + normalX * length * bend * 0.45;
+      const controlAY = y + tangentY * length * 0.32 + normalY * length * bend * 0.45;
+      const controlBX = x + tangentX * length * 0.78 + normalX * length * bend;
+      const controlBY = y + tangentY * length * 0.78 + normalY * length * bend;
 
       const segment: TreeSegment = {
         startX: x,
         startY: y,
-        controlX,
-        controlY,
+        controlAX,
+        controlAY,
+        controlBX,
+        controlBY,
         endX,
         endY,
         depth,
-        branchId
+        branchId,
+        bornAt,
+        maturity
       };
       segments.push(segment);
+      return segment;
+    };
 
-      if (depth >= options.levels - 2) {
-        leafTips.push(segment);
+    const build = (
+      x: number,
+      y: number,
+      length: number,
+      angle: number,
+      depth: number,
+      branchId: number,
+      bornAt: number,
+      maturity: number
+    ): void => {
+      if (depth >= options.levels || length < 2) {
+        return;
       }
 
-      const localSpread = spread * mix(0.9, 1.12, hashFloat(options.seed + branchId * 2.71));
-      const varianceA = (hashFloat(options.seed + branchId * 1.37) - 0.5) * 2 * localSpread * options.jitter;
-      const varianceB = (hashFloat(options.seed + branchId * 2.91) - 0.5) * 2 * localSpread * options.jitter;
-      const scaleA = options.branchScale * (0.88 + hashFloat(options.seed + branchId * 5.11) * 0.16);
-      const scaleB = options.branchScale * (0.88 + hashFloat(options.seed + branchId * 7.77) * 0.16);
+      const parent = addSegment(x, y, length, angle, depth, branchId, bornAt, maturity);
+      const childProgressBase = bornAt + 0.095 + depth * 0.015;
+      const childMaturity = Math.max(0.06, maturity * 0.83);
+      const localSpread = spread * mix(0.88, 1.13, hashFloat(options.seed + branchId * 2.17));
+      const jitterAmp = localSpread * options.jitter;
 
-      build(endX, endY, length * scaleA, angle + localSpread + varianceA, depth + 1, branchId * 2);
-      build(endX, endY, length * scaleB, angle - localSpread + varianceB, depth + 1, branchId * 2 + 1);
+      const leftVariance = (hashFloat(options.seed + branchId * 1.31) - 0.5) * jitterAmp * 2;
+      const rightVariance = (hashFloat(options.seed + branchId * 2.41) - 0.5) * jitterAmp * 2;
+      const leftScale = options.branchScale * (0.87 + hashFloat(options.seed + branchId * 4.11) * 0.18);
+      const rightScale = options.branchScale * (0.87 + hashFloat(options.seed + branchId * 5.91) * 0.18);
 
-      const hasSprig = depth >= 1 && depth <= options.levels - 3 && hashFloat(options.seed + branchId * 9.13) > 0.39;
-      if (hasSprig) {
-        const sprigDirection = hashFloat(options.seed + branchId * 11.3) > 0.5 ? 1 : -1;
-        const sprigAngle = angle + sprigDirection * localSpread * mix(0.2, 0.35, hashFloat(options.seed + branchId * 1.11));
-        const sprigScale = options.branchScale * (0.5 + hashFloat(options.seed + branchId * 6.3) * 0.1);
-        build(endX, endY, length * sprigScale, sprigAngle, depth + 1, branchId * 3 + 17);
+      build(parent.endX, parent.endY, length * leftScale, angle + localSpread + leftVariance, depth + 1, branchId * 2, childProgressBase, childMaturity);
+      build(
+        parent.endX,
+        parent.endY,
+        length * rightScale,
+        angle - localSpread + rightVariance,
+        depth + 1,
+        branchId * 2 + 1,
+        childProgressBase + 0.012,
+        childMaturity
+      );
+
+      const sprouts = depth >= 1 && depth <= options.levels - 3 ? 1 : 0;
+      if (sprouts > 0 && hashFloat(options.seed + branchId * 8.03) > 0.36) {
+        const dir = hashFloat(options.seed + branchId * 7.17) > 0.5 ? 1 : -1;
+        const sproutAngle = angle + dir * localSpread * mix(0.17, 0.32, hashFloat(options.seed + branchId * 3.53));
+        const sproutScale = options.branchScale * (0.44 + hashFloat(options.seed + branchId * 6.79) * 0.13);
+        build(
+          parent.endX,
+          parent.endY,
+          length * sproutScale,
+          sproutAngle,
+          depth + 1,
+          branchId * 3 + 19,
+          childProgressBase + 0.04,
+          childMaturity * 0.8
+        );
       }
     };
 
-    build(0, 0, options.height * options.trunkHeight, Math.PI / 2, 0, 1);
+    build(0, 0, options.height * options.trunkHeight, Math.PI / 2, 0, 1, 0, 0.18);
+    const tipSegments = segments.filter((segment) => segment.depth >= options.levels - 3);
 
     this.model = {
       segments,
-      leafTips,
+      tipSegments,
       maxDepth: Math.max(1, options.levels - 1)
     };
     this.modelSignature = signature;
@@ -200,7 +251,7 @@ export class TreeGrowthEffect implements Effect {
     const structuralGrowth =
       growthOverride >= 0
         ? clamp(growthOverride, 0, 1)
-        : clamp01(smoothstep(0, 1, Math.min(1, ageProgress * 1.05)));
+        : clamp01(smoothstep(0, 1, Math.min(1, ageProgress * 1.08)));
 
     if (structuralGrowth <= 0.001) {
       return;
@@ -216,92 +267,149 @@ export class TreeGrowthEffect implements Effect {
       height
     });
 
-    const skyLight = mix(8, 17, 1 - seasonState.winterAmount * 0.52 + seasonState.blossomAmount * 0.06);
-    ctx.fillStyle = buildHsla(214 - seasonState.autumnAmount * 12, 22, skyLight, 0.35);
+    const skyLight = mix(7, 17, 1 - seasonState.winterAmount * 0.58 + seasonState.blossomAmount * 0.08);
+    const skyHue = mix(215, 202, seasonState.blossomAmount * 0.25 + seasonState.winterAmount * 0.14);
+    ctx.fillStyle = hsla(skyHue, 26, skyLight, 0.36);
     ctx.fillRect(0, 0, width, height);
-    ctx.fillStyle = buildHsla(135 - seasonState.autumnAmount * 30, 20, mix(9, 14, seasonState.fallenLeafAmount), 0.32);
-    ctx.fillRect(0, height * 0.82, width, height * 0.18);
+
+    const groundLight = mix(8.5, 15.5, seasonState.fallenLeafAmount * 0.66 + seasonState.blossomAmount * 0.12);
+    ctx.fillStyle = hsla(122 - seasonState.autumnAmount * 48, 23, groundLight, 0.34);
+    ctx.fillRect(0, height * 0.8, width, height * 0.2);
 
     ctx.save();
     ctx.translate(width / 2, height * 0.92);
     ctx.lineCap = "round";
 
-    const branchAlpha = mix(0.76, 0.92, clamp01(audio.rms * 1.6 + 0.08));
-    const baseSway = Math.sin(time * 0.26 + seed * 0.71) * sway * (0.14 + audio.bass * 0.25 + seasonState.branchFlex);
-    const visibleDepth = Math.max(1, Math.floor(1 + structuralGrowth * model.maxDepth));
+    const branchAlpha = mix(0.76, 0.94, clamp01(audio.rms * 1.5 + 0.1));
+    const baseSway = Math.sin(time * 0.27 + seed * 0.67) * sway * (0.12 + audio.bass * 0.26 + seasonState.branchFlex);
 
+    let visibleBranches = 0;
     for (const segment of model.segments) {
-      if (segment.depth > visibleDepth) {
+      const bornEase = smoothstep(segment.bornAt, segment.bornAt + segment.maturity, structuralGrowth);
+      if (bornEase <= 0.001) {
         continue;
       }
 
-      const progressInDepth = clamp01(structuralGrowth * model.maxDepth - segment.depth);
-      if (progressInDepth <= 0) {
-        continue;
-      }
-
+      visibleBranches += 1;
       const swayScale = segment.depth / Math.max(1, model.maxDepth);
-      const swayX = Math.cos(segment.depth + segment.branchId * 0.031) * baseSway * 12 * swayScale;
-      const swayY = Math.sin(segment.depth + segment.branchId * 0.021) * baseSway * 7 * swayScale;
-      const barkHue = mix(26, 18, seasonState.winterAmount * 0.7 + seasonState.autumnAmount * 0.25);
-      const barkLight = mix(24, 37, segment.depth / model.maxDepth) + audio.rms * 3;
-      const thickness = Math.max(0.45, trunkWidth * Math.pow(0.62, segment.depth) * (0.55 + progressInDepth * 0.45));
+      const swayX = Math.cos(segment.branchId * 0.061 + segment.depth * 0.41) * baseSway * 12 * swayScale;
+      const swayY = Math.sin(segment.branchId * 0.049 + segment.depth * 0.37) * baseSway * 7 * swayScale;
 
-      ctx.strokeStyle = buildHsla(barkHue, 26, barkLight, branchAlpha);
+      const barkHue = mix(26, 17, seasonState.winterAmount * 0.74 + seasonState.autumnAmount * 0.33);
+      const barkLight = mix(22, 39, segment.depth / model.maxDepth) + audio.rms * 3;
+      const thickness = Math.max(0.45, trunkWidth * Math.pow(0.64, segment.depth) * (0.4 + bornEase * 0.75));
+
+      ctx.strokeStyle = hsla(barkHue, 28, barkLight, branchAlpha);
       ctx.lineWidth = thickness;
       ctx.beginPath();
-      ctx.moveTo(segment.startX + swayX * 0.2, segment.startY + swayY * 0.2);
-      ctx.quadraticCurveTo(
-        segment.controlX + swayX * 0.45,
-        segment.controlY + swayY * 0.45,
+      ctx.moveTo(segment.startX + swayX * 0.18, segment.startY + swayY * 0.18);
+      ctx.bezierCurveTo(
+        segment.controlAX + swayX * 0.45,
+        segment.controlAY + swayY * 0.45,
+        segment.controlBX + swayX * 0.7,
+        segment.controlBY + swayY * 0.7,
         segment.endX + swayX,
         segment.endY + swayY
       );
       ctx.stroke();
+
+      if (segment.depth <= 1) {
+        const highlight = 0.17 + bornEase * 0.12;
+        ctx.strokeStyle = hsla(31, 38, 52, highlight);
+        ctx.lineWidth = Math.max(0.5, thickness * 0.22);
+        ctx.beginPath();
+        ctx.moveTo(segment.startX + swayX * 0.11 - thickness * 0.1, segment.startY + swayY * 0.11);
+        ctx.bezierCurveTo(
+          segment.controlAX + swayX * 0.3,
+          segment.controlAY + swayY * 0.3,
+          segment.controlBX + swayX * 0.54,
+          segment.controlBY + swayY * 0.54,
+          segment.endX + swayX * 0.8,
+          segment.endY + swayY * 0.8
+        );
+        ctx.stroke();
+      }
     }
 
-    const leafDensity = seasonState.leafPresence;
-    if (leafSize > 0 && leafDensity > 0.015) {
-      for (const tip of model.leafTips) {
-        if (tip.depth > visibleDepth + 1) {
+    const canopyReadiness = smoothstep(0.34, 0.76, structuralGrowth);
+    const leafDensity = seasonState.leafPresence * canopyReadiness;
+    if (leafSize > 0 && leafDensity > 0.012) {
+      for (const tip of model.tipSegments) {
+        const bornEase = smoothstep(tip.bornAt, tip.bornAt + tip.maturity, structuralGrowth);
+        if (bornEase <= 0.001) {
           continue;
         }
 
-        const seedBase = seed + tip.branchId * 2.13;
-        const clusterCount = 2 + Math.round(hashFloat(seedBase + 0.7) * 3);
-        for (let index = 0; index < clusterCount; index += 1) {
-          const petalJitter = hashFloat(seedBase + index * 1.37);
-          const orbit = hashFloat(seedBase + index * 2.17) * Math.PI * 2;
-          const distance = leafSize * (0.45 + petalJitter * 0.9);
-          const radius = leafSize * (0.38 + petalJitter * 0.32) * (0.5 + leafDensity * 0.65);
-          const leafHue = mix(106, 30, seasonState.autumnAmount);
-          const blossomHue = mix(336, 20, petalJitter * 0.35);
-          const hue = mix(leafHue, blossomHue, seasonState.blossomAmount * (0.5 + petalJitter * 0.35));
-          const saturation = mix(25, 66, leafDensity * 0.88 + seasonState.blossomAmount * 0.24);
-          const lightness = mix(50, 75, seasonState.blossomAmount * 0.62 + seasonState.autumnAmount * 0.2 + petalJitter * 0.08);
-          const alpha = 0.22 + leafDensity * 0.35 + audio.treble * 0.07;
+        const clusterSeed = seed + tip.branchId * 1.73;
+        const clusterCount = 2 + Math.floor(hashFloat(clusterSeed + 0.4) * 4);
 
-          ctx.fillStyle = buildHsla(hue, saturation, lightness, alpha);
+        for (let index = 0; index < clusterCount; index += 1) {
+          const n = hashFloat(clusterSeed + index * 1.29);
+          const orbit = hashFloat(clusterSeed + index * 2.03) * Math.PI * 2;
+          const distance = leafSize * (0.38 + n * 1.18) * (0.66 + bornEase * 0.34);
+          const radius = leafSize * (0.22 + n * 0.46) * (0.35 + leafDensity * 0.85) * (0.65 + bornEase * 0.35);
+
+          const leafHue = mix(108, 23, seasonState.autumnAmount);
+          const blossomHue = mix(340, 20, n * 0.4);
+          const hue = mix(leafHue, blossomHue, seasonState.blossomAmount * (0.45 + n * 0.45));
+          const saturation = mix(28, 68, leafDensity * 0.84 + seasonState.blossomAmount * 0.3);
+          const lightness = mix(48, 78, seasonState.blossomAmount * 0.64 + seasonState.autumnAmount * 0.24 + n * 0.09);
+          const alpha = 0.18 + leafDensity * 0.32 + audio.treble * 0.06;
+
+          const px = tip.endX + Math.cos(orbit) * distance;
+          const py = tip.endY + Math.sin(orbit) * distance * 0.72;
+
+          ctx.fillStyle = hsla(hue, saturation, lightness, alpha);
           ctx.beginPath();
-          ctx.arc(tip.endX + Math.cos(orbit) * distance, tip.endY + Math.sin(orbit) * distance * 0.72, radius, 0, Math.PI * 2);
+          ctx.arc(px, py, radius, 0, Math.PI * 2);
           ctx.fill();
+
+          if (seasonState.blossomAmount > 0.1 && n > 0.6) {
+            ctx.fillStyle = hsla(12, 36, 96, 0.23 * seasonState.blossomAmount);
+            ctx.beginPath();
+            ctx.arc(px - radius * 0.22, py - radius * 0.24, radius * 0.38, 0, Math.PI * 2);
+            ctx.fill();
+          }
         }
       }
     }
 
-    if (seasonState.fallenLeafAmount > 0.03 && leafSize > 0) {
-      const fallenCount = 8 + Math.round(seasonState.fallenLeafAmount * 18 + structuralGrowth * 8);
+    if (seasonState.fallenLeafAmount > 0.02 && leafSize > 0) {
+      const fallenCount = 8 + Math.round(seasonState.fallenLeafAmount * 20 + structuralGrowth * 10);
       for (let index = 0; index < fallenCount; index += 1) {
         const scatter = hashFloat(seed * 2.1 + index * 0.73);
         const x = mix(-width * 0.34, width * 0.34, scatter);
-        const y = mix(height * 0.005, height * 0.08, hashFloat(seed + index * 3.17));
-        const radius = leafSize * (0.2 + hashFloat(seed + index * 4.1) * 0.28);
-        const hue = mix(30, 12, hashFloat(seed + index * 1.9) * 0.34);
-        ctx.fillStyle = buildHsla(hue, 66, 50, 0.12 + seasonState.fallenLeafAmount * 0.16);
+        const y = mix(height * 0.008, height * 0.086, hashFloat(seed + index * 3.17));
+        const radius = leafSize * (0.14 + hashFloat(seed + index * 4.1) * 0.33);
+        const hue = mix(31, 10, hashFloat(seed + index * 1.9) * 0.44);
+        ctx.fillStyle = hsla(hue, 65, 49, 0.11 + seasonState.fallenLeafAmount * 0.18);
         ctx.beginPath();
         ctx.arc(x, y, radius, 0, Math.PI * 2);
         ctx.fill();
       }
+    }
+
+    const yearMarkers = Math.max(0, Math.floor(ageYears));
+    if (yearMarkers > 0) {
+      const ringCount = Math.min(7, yearMarkers);
+      for (let index = 0; index < ringCount; index += 1) {
+        const ageRatio = (index + 1) / (ringCount + 1);
+        const radius = mix(2.3, trunkWidth * 1.42, ageRatio) * (0.55 + structuralGrowth * 0.45);
+        ctx.strokeStyle = hsla(30, 35, mix(28, 48, ageRatio), 0.11 + ageRatio * 0.08);
+        ctx.lineWidth = 0.7;
+        ctx.beginPath();
+        ctx.arc(0, 0, radius, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    }
+
+    if (visibleBranches > 0) {
+      const shadowRadius = mix(trunkWidth * 1.8, trunkWidth * 3.6, clamp01(visibleBranches / model.segments.length));
+      const shadowAlpha = 0.13 + 0.09 * structuralGrowth;
+      ctx.fillStyle = hsla(22, 22, 6, shadowAlpha);
+      ctx.beginPath();
+      ctx.ellipse(0, height * 0.045, shadowRadius * 2.2, shadowRadius * 0.58, 0, 0, Math.PI * 2);
+      ctx.fill();
     }
 
     ctx.restore();

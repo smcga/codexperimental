@@ -22,7 +22,9 @@ const createContext = () => {
     moveTo: vi.fn(),
     lineTo: vi.fn(),
     quadraticCurveTo: vi.fn(),
+    bezierCurveTo: vi.fn(),
     arc: vi.fn(),
+    ellipse: vi.fn(),
     stroke: vi.fn(),
     fill: vi.fn(),
     fillRect: vi.fn(),
@@ -54,7 +56,7 @@ describe("TreeGrowthEffect", () => {
     expect(ctx.stroke).not.toHaveBeenCalled();
   });
 
-  it("draws many branching curves and leaves when fully grown", () => {
+  it("draws dense branch and canopy geometry when fully grown", () => {
     const effect = new TreeGrowthEffect();
     const ctx = createContext();
 
@@ -68,10 +70,11 @@ describe("TreeGrowthEffect", () => {
       params: { growth: 1, levels: 7, seed: 2 }
     });
 
-    expect(ctx.quadraticCurveTo).toHaveBeenCalled();
+    expect(ctx.bezierCurveTo).toHaveBeenCalled();
     expect(ctx.stroke).toHaveBeenCalled();
     expect(ctx.arc).toHaveBeenCalled();
-    expect(ctx.quadraticCurveTo.mock.calls.length).toBeGreaterThan(30);
+    expect(ctx.bezierCurveTo.mock.calls.length).toBeGreaterThan(30);
+    expect(ctx.arc.mock.calls.length).toBeGreaterThan(20);
   });
 
   it("keeps trunk and branches present across seasonal year wrap in auto mode", () => {
@@ -111,6 +114,35 @@ describe("TreeGrowthEffect", () => {
 
     expect(lateYearCtx.stroke).toHaveBeenCalled();
     expect(nextYearCtx.stroke).toHaveBeenCalled();
+  });
+
+  it("adds visible year markers over time in auto mode", () => {
+    const effect = new TreeGrowthEffect();
+
+    const yearZeroCtx = createContext();
+    effect.render({
+      ctx: yearZeroCtx,
+      width: 280,
+      height: 180,
+      time: 0,
+      delta: 0.016,
+      audio: createAudio(),
+      params: { growth: -1, speed: 0.12, levels: 8, seed: 1 }
+    });
+
+    const laterCtx = createContext();
+    effect.render({
+      ctx: laterCtx,
+      width: 280,
+      height: 180,
+      time: 40,
+      delta: 0.016,
+      audio: createAudio(),
+      params: { growth: -1, speed: 0.12, levels: 8, seed: 1 }
+    });
+
+    expect(yearZeroCtx.ellipse).not.toHaveBeenCalled();
+    expect(laterCtx.ellipse).toHaveBeenCalled();
   });
 
   it("resets the automatic growth cycle back to a sapling", () => {

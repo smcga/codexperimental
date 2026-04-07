@@ -24,8 +24,8 @@ export const treegrowthManifest = defineEffectManifest({
   },
   docs: {
     parameters: "`speed`, `levels`, `trunkHeight`, `branchScale`, `branchAngle`, `trunkWidth`, `sway`, `leafSize`, `jitter`, `seed`, `growth`",
-    catalogNote: "Tree structure grows continuously across years while foliage cycles by season; set `growth` to `-1` for auto or `0-1` to override.",
-    description: "Tree structure grows continuously across years while foliage cycles by season; set `growth` to `-1` for auto or `0-1` to override."
+    catalogNote: "Cinematic time-lapse tree growth with layered bark, seasonal canopy shifts, and visible age rings; set `growth` to `-1` for auto or `0-1` to override.",
+    description: "Cinematic time-lapse tree growth with layered bark, seasonal canopy shifts, and visible age rings; set `growth` to `-1` for auto or `0-1` to override."
   }
 });
 
