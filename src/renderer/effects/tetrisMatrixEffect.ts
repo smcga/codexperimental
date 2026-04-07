@@ -15,7 +15,7 @@ export const TETRIS_BOARD_HEIGHT = 20;
 const SPAWN_Y = -2;
 const PREVIEW_COUNT = 3;
 
-export type Tetromino = "I" | "O" | "T" | "S" | "Z" | "J" | "L";
+export type Pentomino = "F" | "I" | "L" | "P" | "N" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z";
 
 export type TetrisPlacement = {
   rotation: number;
@@ -23,7 +23,7 @@ export type TetrisPlacement = {
   y: number;
   score: number;
   clearedLines: number;
-  piece: Tetromino;
+  piece: Pentomino;
 };
 
 export type TetrisResolvedParams = {
@@ -43,10 +43,10 @@ type CachedState = {
   score: number;
   lines: number;
   pieceCount: number;
-  bag: Tetromino[];
+  bag: Pentomino[];
 };
 
-const SHADE_ORDER: CellValue[] = [4, 3, 2, 1, 2, 3, 4];
+const SHADE_ORDER: CellValue[] = [4, 3, 2, 1, 2, 3, 4, 3, 2, 1, 2, 3];
 const GAMEBOY_PALETTE = {
   shell: "#8bac0f",
   shellDark: "#556b2f",
@@ -64,42 +64,75 @@ const GAMEBOY_PALETTE = {
   text: "#1f3a1c"
 } as const;
 
-const PIECE_SEQUENCE: Tetromino[] = ["I", "O", "T", "S", "Z", "J", "L"];
+export const PIECE_SEQUENCE: Pentomino[] = ["F", "I", "L", "P", "N", "T", "U", "V", "W", "X", "Y", "Z"];
 
-const TETROMINO_ROTATIONS: Record<Tetromino, Array<Array<[number, number]>>> = {
-  I: [
-    [[0, 1], [1, 1], [2, 1], [3, 1]],
-    [[2, 0], [2, 1], [2, 2], [2, 3]]
-  ],
-  O: [
-    [[1, 0], [2, 0], [1, 1], [2, 1]]
-  ],
-  T: [
-    [[1, 0], [0, 1], [1, 1], [2, 1]],
-    [[1, 0], [1, 1], [2, 1], [1, 2]],
-    [[0, 1], [1, 1], [2, 1], [1, 2]],
-    [[1, 0], [0, 1], [1, 1], [1, 2]]
-  ],
-  S: [
-    [[1, 0], [2, 0], [0, 1], [1, 1]],
-    [[1, 0], [1, 1], [2, 1], [2, 2]]
-  ],
-  Z: [
-    [[0, 0], [1, 0], [1, 1], [2, 1]],
-    [[2, 0], [1, 1], [2, 1], [1, 2]]
-  ],
-  J: [
-    [[0, 0], [0, 1], [1, 1], [2, 1]],
-    [[1, 0], [2, 0], [1, 1], [1, 2]],
-    [[0, 1], [1, 1], [2, 1], [2, 2]],
-    [[1, 0], [1, 1], [0, 2], [1, 2]]
-  ],
-  L: [
-    [[2, 0], [0, 1], [1, 1], [2, 1]],
-    [[1, 0], [1, 1], [1, 2], [2, 2]],
-    [[0, 1], [1, 1], [2, 1], [0, 2]],
-    [[0, 0], [1, 0], [1, 1], [1, 2]]
-  ]
+type ShapePoint = [number, number];
+type RotationSet = Array<Array<[number, number]>>;
+
+const BASE_PENTOMINOES: Record<Pentomino, ShapePoint[]> = {
+  F: [[0, 1], [1, 0], [1, 1], [1, 2], [2, 2]],
+  I: [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0]],
+  L: [[0, 0], [0, 1], [0, 2], [0, 3], [1, 3]],
+  P: [[0, 0], [1, 0], [0, 1], [1, 1], [0, 2]],
+  N: [[0, 0], [0, 1], [1, 1], [1, 2], [1, 3]],
+  T: [[0, 0], [1, 0], [2, 0], [1, 1], [1, 2]],
+  U: [[0, 0], [2, 0], [0, 1], [1, 1], [2, 1]],
+  V: [[0, 0], [0, 1], [0, 2], [1, 2], [2, 2]],
+  W: [[0, 0], [0, 1], [1, 1], [1, 2], [2, 2]],
+  X: [[1, 0], [0, 1], [1, 1], [2, 1], [1, 2]],
+  Y: [[0, 0], [0, 1], [0, 2], [0, 3], [1, 1]],
+  Z: [[0, 0], [1, 0], [1, 1], [1, 2], [2, 2]]
+};
+
+const normalizeCells = (cells: ShapePoint[]): ShapePoint[] => {
+  const minX = Math.min(...cells.map(([x]) => x));
+  const minY = Math.min(...cells.map(([, y]) => y));
+  return cells
+    .map(([x, y]) => [x - minX, y - minY] as ShapePoint)
+    .sort(([ax, ay], [bx, by]) => (ax === bx ? ay - by : ax - bx));
+};
+
+const rotate90 = (cells: ShapePoint[]): ShapePoint[] => {
+  const maxY = Math.max(...cells.map(([, y]) => y));
+  return cells.map(([x, y]) => [maxY - y, x]);
+};
+
+const reflectHorizontally = (cells: ShapePoint[]): ShapePoint[] => {
+  const maxX = Math.max(...cells.map(([x]) => x));
+  return cells.map(([x, y]) => [maxX - x, y]);
+};
+
+const encodeCells = (cells: ShapePoint[]): string => cells.map(([x, y]) => `${x},${y}`).join("|");
+
+const buildUniqueRotations = (base: ShapePoint[]): RotationSet => {
+  const variants: ShapePoint[][] = [];
+  let current = normalizeCells(base);
+  for (let i = 0; i < 4; i += 1) {
+    variants.push(current);
+    variants.push(normalizeCells(reflectHorizontally(current)));
+    current = normalizeCells(rotate90(current));
+  }
+
+  const unique = new Map<string, ShapePoint[]>();
+  variants.forEach((variant) => {
+    unique.set(encodeCells(variant), variant);
+  });
+  return [...unique.values()];
+};
+
+const PENTOMINO_ROTATIONS: Record<Pentomino, RotationSet> = {
+  F: buildUniqueRotations(BASE_PENTOMINOES.F),
+  I: buildUniqueRotations(BASE_PENTOMINOES.I),
+  L: buildUniqueRotations(BASE_PENTOMINOES.L),
+  P: buildUniqueRotations(BASE_PENTOMINOES.P),
+  N: buildUniqueRotations(BASE_PENTOMINOES.N),
+  T: buildUniqueRotations(BASE_PENTOMINOES.T),
+  U: buildUniqueRotations(BASE_PENTOMINOES.U),
+  V: buildUniqueRotations(BASE_PENTOMINOES.V),
+  W: buildUniqueRotations(BASE_PENTOMINOES.W),
+  X: buildUniqueRotations(BASE_PENTOMINOES.X),
+  Y: buildUniqueRotations(BASE_PENTOMINOES.Y),
+  Z: buildUniqueRotations(BASE_PENTOMINOES.Z)
 };
 
 const asFinite = (value: unknown, fallback: number): number =>
@@ -123,12 +156,12 @@ export const createEmptyBoard = (): CellValue[] => new Array(TETRIS_BOARD_WIDTH 
 
 const boardIndex = (x: number, y: number): number => y * TETRIS_BOARD_WIDTH + x;
 
-export const getPieceCells = (piece: Tetromino, rotation: number): Array<[number, number]> => {
-  const rotations = TETROMINO_ROTATIONS[piece];
+export const getPieceCells = (piece: Pentomino, rotation: number): Array<[number, number]> => {
+  const rotations = PENTOMINO_ROTATIONS[piece];
   return rotations[((rotation % rotations.length) + rotations.length) % rotations.length] ?? rotations[0] ?? [];
 };
 
-export const collides = (board: CellValue[], piece: Tetromino, rotation: number, offsetX: number, offsetY: number): boolean =>
+export const collides = (board: CellValue[], piece: Pentomino, rotation: number, offsetX: number, offsetY: number): boolean =>
   getPieceCells(piece, rotation).some(([x, y]) => {
     const boardX = offsetX + x;
     const boardY = offsetY + y;
@@ -141,7 +174,7 @@ export const collides = (board: CellValue[], piece: Tetromino, rotation: number,
     return board[boardIndex(boardX, boardY)] !== 0;
   });
 
-export const findDropY = (board: CellValue[], piece: Tetromino, rotation: number, offsetX: number): number => {
+export const findDropY = (board: CellValue[], piece: Pentomino, rotation: number, offsetX: number): number => {
   let y = SPAWN_Y;
   while (!collides(board, piece, rotation, offsetX, y + 1)) {
     y += 1;
@@ -232,8 +265,8 @@ const countWellDepth = (heights: number[]): number => {
   return wells;
 };
 
-export const choosePlacement = (board: CellValue[], piece: Tetromino, seed: number, pieceIndex: number): TetrisPlacement => {
-  const rotations = TETROMINO_ROTATIONS[piece];
+export const choosePlacement = (board: CellValue[], piece: Pentomino, seed: number, pieceIndex: number): TetrisPlacement => {
+  const rotations = PENTOMINO_ROTATIONS[piece];
   let best: TetrisPlacement | null = null;
 
   rotations.forEach((_, rotation) => {
@@ -278,7 +311,7 @@ export const choosePlacement = (board: CellValue[], piece: Tetromino, seed: numb
   return best ?? { piece, rotation: 0, x: 3, y: SPAWN_Y, score: -9999, clearedLines: 0 };
 };
 
-const shuffleBag = (seed: number, bagIndex: number): Tetromino[] => {
+const shuffleBag = (seed: number, bagIndex: number): Pentomino[] => {
   const bag = [...PIECE_SEQUENCE];
   for (let i = bag.length - 1; i > 0; i -= 1) {
     const swapIndex = Math.floor(hash(seed * 0.13 + bagIndex * 7.1 + i * 1.7, seed + bagIndex * 13) * (i + 1));
@@ -287,7 +320,7 @@ const shuffleBag = (seed: number, bagIndex: number): Tetromino[] => {
   return bag;
 };
 
-const getPieceAtIndex = (cache: CachedState, seed: number, index: number): Tetromino => {
+const getPieceAtIndex = (cache: CachedState, seed: number, index: number): Pentomino => {
   while (cache.bag.length <= index) {
     const bagIndex = Math.floor(cache.bag.length / PIECE_SEQUENCE.length);
     cache.bag.push(...shuffleBag(seed, bagIndex));
@@ -366,7 +399,7 @@ export class TetrisMatrixEffect implements Effect {
 
     const currentPiece = getPieceAtIndex(this.cache, resolved.seed, settledCount);
     const currentPlacement = choosePlacement(this.cache.board, currentPiece, resolved.seed, settledCount);
-    const preview: Tetromino[] = [];
+    const preview: Pentomino[] = [];
     for (let i = 1; i <= PREVIEW_COUNT; i += 1) {
       preview.push(getPieceAtIndex(this.cache, resolved.seed, settledCount + i));
     }

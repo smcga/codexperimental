@@ -90,46 +90,50 @@ describe("tetrisMatrixEffect helpers", () => {
   it("applies placements and clears complete lines", () => {
     const board = createEmptyBoard();
     const bottomRow = TETRIS_BOARD_HEIGHT - 1;
-    for (let x = 0; x < TETRIS_BOARD_WIDTH - 1; x += 1) {
+    for (let x = 0; x < TETRIS_BOARD_WIDTH; x += 1) {
+      if (x === TETRIS_BOARD_WIDTH - 1) {
+        continue;
+      }
       board[bottomRow * TETRIS_BOARD_WIDTH + x] = 2;
     }
 
     const result = applyPlacement(board, {
       piece: "I",
       rotation: 1,
-      x: 7,
-      y: bottomRow - 3,
+      x: TETRIS_BOARD_WIDTH - 1,
+      y: bottomRow - 4,
       score: 0,
       clearedLines: 0
     });
 
     expect(result.clearedLines).toBe(1);
     expect(result.board.slice(0, TETRIS_BOARD_WIDTH)).toEqual(new Array(TETRIS_BOARD_WIDTH).fill(0));
-    expect(result.board.filter((cell) => cell !== 0)).toHaveLength(3);
+    expect(result.board.filter((cell) => cell !== 0)).toHaveLength(4);
   });
 
   it("prefers placements that avoid creating holes when possible", () => {
     const board = createEmptyBoard();
     const lastRow = TETRIS_BOARD_HEIGHT - 1;
+    const secondLastRow = TETRIS_BOARD_HEIGHT - 2;
     for (let x = 0; x < TETRIS_BOARD_WIDTH; x += 1) {
-      if (x !== 4 && x !== 5) {
+      if (x !== 5) {
         board[lastRow * TETRIS_BOARD_WIDTH + x] = 3;
+        board[secondLastRow * TETRIS_BOARD_WIDTH + x] = 3;
       }
     }
 
-    const placement = choosePlacement(board, "O", 1989, 12);
+    const placement = choosePlacement(board, "I", 1989, 12);
     const after = applyPlacement(board, placement).board;
 
     expect(countBoardHoles(after)).toBe(0);
-    expect(placement.x).toBeGreaterThanOrEqual(3);
-    expect(placement.x).toBeLessThanOrEqual(4);
+    expect(placement.x).toBe(5);
   });
 
-  it("defines piece rotations with four minos each", () => {
-    const pieces = ["I", "O", "T", "S", "Z", "J", "L"] as const;
+  it("defines pentomino rotations with five minos each", () => {
+    const pieces = ["F", "I", "L", "P", "N", "T", "U", "V", "W", "X", "Y", "Z"] as const;
     pieces.forEach((piece) => {
       const cells = getPieceCells(piece, 0);
-      expect(cells).toHaveLength(4);
+      expect(cells).toHaveLength(5);
     });
   });
 });
