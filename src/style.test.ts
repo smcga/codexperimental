@@ -15,9 +15,20 @@ describe("effect idea modal styling", () => {
     const css = readFileSync(new URL("./style.css", import.meta.url), "utf8");
 
     expect(css).toContain(".doodle-actions button:disabled");
-    expect(css).toContain("#effect-idea-generate.is-busy::after");
-    expect(css).toContain("#effect-idea-status[data-state=\"busy\"]::after");
+    expect(css).toContain(".effect-idea-busy-spinner");
+    expect(css).toContain(".effect-idea-busy-modal.is-error");
     expect(css).toContain("@keyframes effect-idea-button-spin");
+  });
+
+  it("uses a larger textarea and deferred preview sections for effect generation UX", () => {
+    const indexHtml = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+    const css = readFileSync(new URL("./style.css", import.meta.url), "utf8");
+
+    expect(indexHtml).toContain('id="effect-idea-generated-sections" class="hidden"');
+    expect(indexHtml).toContain('id="effect-idea-busy-modal"');
+    expect(indexHtml).toContain('id="effect-idea-input" rows="8"');
+    expect(css).toContain("#effect-idea-input");
+    expect(css).toContain("min-height: 10.5rem;");
   });
 });
 
