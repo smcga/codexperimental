@@ -99,7 +99,6 @@ export const effectChronologyEntries: EffectChronologyEntry[] = [
   { key: "textured_cube", yearFit: 1990, confidence: "high", lineage: '' },
   { key: "tilingMorph", yearFit: 1995, confidence: "low", lineage: '' },
   { key: "torus_orbit_3d", yearFit: 2006, confidence: "low", lineage: '' },
-  { key: "treegrowth", yearFit: 2008, confidence: "low", lineage: '' },
   { key: "tunnel", yearFit: 1989, confidence: "high", lineage: '' },
   { key: "twister", yearFit: 1988, confidence: "high", lineage: '' },
   { key: "vector3d_balls", yearFit: 1990, confidence: "medium", lineage: '' },

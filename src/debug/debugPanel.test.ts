@@ -103,15 +103,15 @@ describe("debug effect selector helpers", () => {
   });
 
   it("flags newly selected debug effects for reset", () => {
-    expect(getNextDebugEffectSelection(null, "treegrowth")).toEqual({
-      forcedEffect: "treegrowth",
+    expect(getNextDebugEffectSelection(null, "kefrens_bars")).toEqual({
+      forcedEffect: "kefrens_bars",
       shouldReset: true
     });
-    expect(getNextDebugEffectSelection("treegrowth", "treegrowth")).toEqual({
-      forcedEffect: "treegrowth",
+    expect(getNextDebugEffectSelection("kefrens_bars", "kefrens_bars")).toEqual({
+      forcedEffect: "kefrens_bars",
       shouldReset: false
     });
-    expect(getNextDebugEffectSelection("treegrowth", "timeline")).toEqual({
+    expect(getNextDebugEffectSelection("kefrens_bars", "timeline")).toEqual({
       forcedEffect: null,
       shouldReset: false
     });

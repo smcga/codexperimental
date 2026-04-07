@@ -2345,7 +2345,7 @@
           "params": {}
         },
         {
-          "effect": "treegrowth",
+          "effect": "ribbons",
           "blend": "screen",
           "opacity": 0.1,
           "params": {}
@@ -5067,10 +5067,10 @@
       "fitAlign": "fill"
     },
     {
-      "id": "Scene 053 - Treegrowth",
+      "id": "Scene 053 - Kefrens Bars",
       "start": 245.921546,
       "end": 248.4,
-      "effect": "treegrowth",
+      "effect": "kefrens_bars",
       "era": "pcdemo",
       "transition": {
         "in": "slide-up",
@@ -5652,10 +5652,10 @@
       "fitAlign": "fill"
     },
     {
-      "id": "Scene 065 - Treegrowth",
+      "id": "Scene 065 - Raster Bars",
       "start": 260.76656,
       "end": 262,
-      "effect": "treegrowth",
+      "effect": "raster_bars",
       "era": "pcdemo",
       "transition": {
         "in": "slide-up",
@@ -13155,7 +13155,7 @@
       ]
     },
     {
-      "id": "scene-053-treegrowth-1",
+      "id": "scene-053-kefrens-bars-1",
       "start": 245.697,
       "end": 245.87,
       "text": "Why",
@@ -13181,7 +13181,7 @@
       ]
     },
     {
-      "id": "scene-053-treegrowth-2",
+      "id": "scene-053-kefrens-bars-2",
       "start": 245.87,
       "end": 246.043,
       "text": "you",
@@ -13209,7 +13209,7 @@
       ]
     },
     {
-      "id": "scene-053-treegrowth-3",
+      "id": "scene-053-kefrens-bars-3",
       "start": 246.043,
       "end": 246.216,
       "text": "mad",
@@ -13238,7 +13238,7 @@
       ]
     },
     {
-      "id": "scene-053-treegrowth-4",
+      "id": "scene-053-kefrens-bars-4",
       "start": 246.216,
       "end": 246.39,
       "text": "that",
@@ -13264,7 +13264,7 @@
       ]
     },
     {
-      "id": "scene-053-treegrowth-5",
+      "id": "scene-053-kefrens-bars-5",
       "start": 246.39,
       "end": 246.563,
       "text": "when",
@@ -13290,7 +13290,7 @@
       ]
     },
     {
-      "id": "scene-053-treegrowth-6",
+      "id": "scene-053-kefrens-bars-6",
       "start": 246.563,
       "end": 246.736,
       "text": "you",
@@ -13318,7 +13318,7 @@
       ]
     },
     {
-      "id": "scene-053-treegrowth-7",
+      "id": "scene-053-kefrens-bars-7",
       "start": 246.736,
       "end": 247.009,
       "text": "have",
@@ -13347,7 +13347,7 @@
       ]
     },
     {
-      "id": "scene-053-treegrowth-8",
+      "id": "scene-053-kefrens-bars-8",
       "start": 247.009,
       "end": 247.282,
       "text": "an",
@@ -13373,7 +13373,7 @@
       ]
     },
     {
-      "id": "scene-053-treegrowth-9",
+      "id": "scene-053-kefrens-bars-9",
       "start": 247.282,
       "end": 247.556,
       "text": "idea",
@@ -13399,7 +13399,7 @@
       ]
     },
     {
-      "id": "scene-053-treegrowth-10",
+      "id": "scene-053-kefrens-bars-10",
       "start": 247.556,
       "end": 247.829,
       "text": "you",
@@ -13427,7 +13427,7 @@
       ]
     },
     {
-      "id": "scene-053-treegrowth-11",
+      "id": "scene-053-kefrens-bars-11",
       "start": 247.829,
       "end": 248.102,
       "text": "can",
@@ -13456,7 +13456,7 @@
       ]
     },
     {
-      "id": "scene-053-treegrowth-12",
+      "id": "scene-053-kefrens-bars-12",
       "start": 248.102,
       "end": 248.375,
       "text": "magically",
