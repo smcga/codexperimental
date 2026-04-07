@@ -470,7 +470,8 @@ Optional fallback token behavior:
 - Before any generated runtime code is compiled for preview/review, the client applies a safety scanner that rejects obviously dangerous primitives (`process.env`, `document.cookie`, browser storage APIs, network APIs like `fetch`/`XMLHttpRequest`/`sendBeacon`, and dynamic code loaders such as `eval`/`Function`/`import()`/`require()`).
 - Generated effect payloads now also include optional parameter control metadata (`params`) and concise docs (`docs`). After approval, these generated controls are exposed in the debug panel + editor parameter pickers just like built-in effects.
 - The effect generator modal now renders generated params as editable controls immediately in preview, with **Set current as defaults** (persist defaults into submitted metadata) and **Randomize everything** buttons for rapid iteration.
-- Effect generation and moderation preview now use `public/songloop.ogg` as a dedicated seamless background loop (low volume), while a synthetic preview timeline keeps generated effects animating continuously even as the audio loops.
+- Effect generation and moderation preview now use `public/songloop.ogg` as a dedicated seamless background loop (low volume), show a fake looping timeline counter during review preview, and keep generated effects animating continuously even as the audio loops.
+- After approving or denying from `/effect-review.html`, the page now offers a **Next effect** button whenever additional pending effects are still in the moderation queue.
 - The client also normalizes escaped code payloads (for example strings containing literal `\\n`) before compiling preview/runtime effects.
 
 Expected `POST /api/effects?action=generate` failure codes:

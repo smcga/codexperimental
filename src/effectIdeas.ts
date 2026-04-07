@@ -44,6 +44,7 @@ export type EffectIdeaGenerationResult = {
 type EffectsResponse = {
   effects?: EffectIdeaRecord[];
   effect?: EffectIdeaRecord;
+  pendingEffects?: EffectIdeaRecord[];
   moderationStatus?: "pending";
   reviewUrl?: string | null;
   generation?: EffectIdeaGenerationResult;
@@ -220,6 +221,12 @@ export async function fetchPendingEffect(id: string, token: string): Promise<{ e
     effect: isRecord(payload.effect) ? payload.effect : null,
     reviewUrl: payload.reviewUrl ?? null
   };
+}
+
+export async function fetchPendingEffects(token: string): Promise<EffectIdeaRecord[]> {
+  const params = new URLSearchParams({ includePending: "1", token });
+  const payload = await requestEffects(`/api/effects?${params.toString()}`, { method: "GET" });
+  return normalizeEffects(payload.pendingEffects);
 }
 
 export async function fetchApprovedEffects(forceRefresh = false): Promise<EffectIdeaRecord[]> {

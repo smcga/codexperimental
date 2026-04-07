@@ -1,6 +1,6 @@
 import "./style.css";
 
-import { buildEffectModerationActionUrl, compileRuntimeEffect, fetchPendingEffect } from "./effectIdeas";
+import { buildEffectModerationActionUrl, compileRuntimeEffect, fetchPendingEffect, fetchPendingEffects } from "./effectIdeas";
 import { EFFECT_PREVIEW_AUDIO_SRC, EffectPreviewAudioController } from "./effectPreviewAudio";
 
 export type EffectReviewPageParams = {
@@ -33,10 +33,33 @@ const reviewTypescript = typeof document !== "undefined" ? document.querySelecto
 const reviewRuntime = typeof document !== "undefined" ? document.querySelector<HTMLPreElement>("#effect-review-runtime") : null;
 const approveLink = typeof document !== "undefined" ? document.querySelector<HTMLAnchorElement>("#effect-review-approve") : null;
 const denyLink = typeof document !== "undefined" ? document.querySelector<HTMLAnchorElement>("#effect-review-deny") : null;
+const nextEffectLink = typeof document !== "undefined" ? document.querySelector<HTMLAnchorElement>("#effect-review-next") : null;
+const timelineCounter = typeof document !== "undefined" ? document.querySelector<HTMLSpanElement>("#effect-review-timeline") : null;
+const timelineDuration = typeof document !== "undefined" ? document.querySelector<HTMLSpanElement>("#effect-review-timeline-duration") : null;
 
 let previewFrame = 0;
 let activeEffect: ReturnType<typeof compileRuntimeEffect> | null = null;
 const previewAudio = new EffectPreviewAudioController(EFFECT_PREVIEW_AUDIO_SRC);
+const FAKE_TIMELINE_DURATION_SECONDS = 230;
+
+function formatTimelineCounter(seconds: number): string {
+  const safeSeconds = Math.max(0, seconds);
+  const minutes = Math.floor(safeSeconds / 60);
+  const wholeSeconds = Math.floor(safeSeconds % 60);
+  const milliseconds = Math.floor((safeSeconds % 1) * 1000);
+  return `${minutes.toString().padStart(2, "0")}:${wholeSeconds.toString().padStart(2, "0")}.${milliseconds.toString().padStart(3, "0")}`;
+}
+
+function setTimelineCounter(playbackTime: number): void {
+  if (!timelineCounter) {
+    return;
+  }
+  const loopedPlayback = playbackTime % FAKE_TIMELINE_DURATION_SECONDS;
+  timelineCounter.textContent = formatTimelineCounter(loopedPlayback);
+  if (timelineDuration) {
+    timelineDuration.textContent = formatTimelineCounter(FAKE_TIMELINE_DURATION_SECONDS);
+  }
+}
 
 function setStatus(message: string, state: "idle" | "error" | "success" = "idle"): void {
   if (!reviewStatus) {
@@ -106,15 +129,18 @@ function startPreview(): void {
     return;
   }
 
+  setTimelineCounter(0);
   const draw = (): void => {
     if (!previewCanvas || !previewContext || !activeEffect) {
       return;
     }
+    const playbackTime = previewAudio.getPlaybackTime();
+    setTimelineCounter(playbackTime);
     activeEffect.render({
       ctx: previewContext,
       width: previewCanvas.width,
       height: previewCanvas.height,
-      time: previewAudio.getPlaybackTime(),
+      time: playbackTime,
       delta: 1 / 60,
       audio: previewAudio.getFeatures(),
       params: {}
@@ -125,6 +151,82 @@ function startPreview(): void {
   stopPreview();
   void previewAudio.start();
   draw();
+}
+
+export function getNextPendingEffectId(
+  pendingEffects: Array<{ id: string }>,
+  currentEffectId: string,
+  action: "approve" | "reject"
+): string | null {
+  if (pendingEffects.length === 0) {
+    return null;
+  }
+  if (action === "reject") {
+    return pendingEffects[0]?.id ?? null;
+  }
+  const currentIndex = pendingEffects.findIndex((entry) => entry.id === currentEffectId);
+  if (currentIndex >= 0) {
+    const nextAfterCurrent = pendingEffects[currentIndex + 1];
+    if (nextAfterCurrent) {
+      return nextAfterCurrent.id;
+    }
+  }
+  const fallback = pendingEffects.find((entry) => entry.id !== currentEffectId);
+  return fallback?.id ?? null;
+}
+
+async function handleModerationAction(action: "approve" | "reject", id: string, token: string): Promise<void> {
+  const actionUrl = buildEffectModerationActionUrl(action, id, token);
+  setStatus(action === "approve" ? "Approving effect…" : "Denying effect…");
+  setActionState(false, null, null);
+
+  try {
+    const response = await fetch(actionUrl, {
+      method: "GET",
+      headers: { Accept: "text/html" }
+    });
+    if (!response.ok) {
+      throw new Error(`Moderation action failed with status ${response.status}`);
+    }
+    const pendingEffects = await fetchPendingEffects(token);
+    const nextId = getNextPendingEffectId(pendingEffects, id, action);
+    if (nextEffectLink) {
+      if (nextId) {
+        const nextUrl = new URL(window.location.href);
+        nextUrl.searchParams.set("id", nextId);
+        nextUrl.searchParams.set("token", token);
+        nextEffectLink.href = nextUrl.toString();
+        nextEffectLink.classList.remove("hidden");
+      } else {
+        nextEffectLink.classList.add("hidden");
+      }
+    }
+    setStatus(
+      nextId
+        ? `Effect ${action === "approve" ? "approved" : "denied"}. More pending effects are waiting.`
+        : `Effect ${action === "approve" ? "approved" : "denied"}. Queue complete.`,
+      "success"
+    );
+  } catch {
+    setStatus("Could not submit moderation decision. Please try again.", "error");
+    setActionState(true, id, token);
+  }
+}
+
+function bindModerationButtons(id: string, token: string): void {
+  const entries = [
+    { element: approveLink, action: "approve" as const },
+    { element: denyLink, action: "reject" as const }
+  ];
+  for (const entry of entries) {
+    if (!entry.element) {
+      continue;
+    }
+    entry.element.addEventListener("click", (event) => {
+      event.preventDefault();
+      void handleModerationAction(entry.action, id, token);
+    });
+  }
 }
 
 async function initEffectReviewPage(): Promise<void> {
@@ -165,6 +267,7 @@ async function initEffectReviewPage(): Promise<void> {
     startPreview();
 
     setActionState(true, effect.id, token);
+    bindModerationButtons(effect.id, token);
     setStatus("Ready for moderation.", "success");
   } catch {
     setStatus("This effect is no longer waiting for review, or the link has expired.", "error");

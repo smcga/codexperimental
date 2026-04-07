@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { formatEffectReviewTimestamp, getEffectReviewActionStates, getEffectReviewPageParams } from "./effectReview";
+import {
+  formatEffectReviewTimestamp,
+  getEffectReviewActionStates,
+  getEffectReviewPageParams,
+  getNextPendingEffectId
+} from "./effectReview";
 
 describe("effect review page helpers", () => {
   it("reads id and token from the query string", () => {
@@ -28,5 +33,13 @@ describe("effect review page helpers", () => {
   it("formats timestamps for moderation metadata", () => {
     const formatted = formatEffectReviewTimestamp(Date.UTC(2024, 0, 2, 3, 4, 0));
     expect(formatted.length).toBeGreaterThan(0);
+  });
+
+  it("picks the next pending effect after approval", () => {
+    expect(getNextPendingEffectId([{ id: "a" }, { id: "b" }, { id: "c" }], "a", "approve")).toBe("b");
+  });
+
+  it("picks the first pending effect after rejection", () => {
+    expect(getNextPendingEffectId([{ id: "b" }, { id: "c" }], "a", "reject")).toBe("b");
   });
 });
