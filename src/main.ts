@@ -84,6 +84,7 @@ import {
   getRandomGeneratedEffectParams
 } from "./generatedEffectControls";
 import { installGlobalNumberInputWheelGuard } from "./numberInputWheel";
+import { installAnimatedTitle } from "./titleFx";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
@@ -348,6 +349,14 @@ function resize(): void {
 
 resize();
 window.addEventListener("resize", resize);
+const stopAnimatedTitle = installAnimatedTitle(document);
+window.addEventListener(
+  "beforeunload",
+  () => {
+    stopAnimatedTitle();
+  },
+  { once: true }
+);
 
 subscribeToLiveViews((count) => {
   updateViewCounter(count);

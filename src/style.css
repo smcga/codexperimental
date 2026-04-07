@@ -1070,7 +1070,6 @@ body,
 }
 
 #overlay-start-button,
-#overlay-share-button,
 #overlay-restart-button,
 #share-copy-button,
 .share-panel a,
@@ -1099,7 +1098,6 @@ body,
 }
 
 #overlay-start-button::before,
-#overlay-share-button::before,
 #overlay-restart-button::before,
 #share-copy-button::before,
 .share-panel a::before,
@@ -1126,9 +1124,32 @@ body,
 }
 
 #overlay-share-button {
-  background:
-    linear-gradient(180deg, rgba(24, 80, 120, 0.95), rgba(8, 20, 46, 0.98)),
-    rgba(8, 20, 36, 0.88);
+  position: fixed;
+  left: 50%;
+  bottom: max(0.9rem, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 8;
+  min-width: auto;
+  background: none;
+  border: none;
+  clip-path: none;
+  box-shadow: none;
+  padding: 0.15rem 0.35rem;
+  color: rgba(180, 231, 255, 0.66);
+  font: inherit;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 0.2rem;
+  text-decoration-thickness: 1px;
+  cursor: pointer;
+  opacity: 0.82;
+}
+
+#overlay-share-button::before {
+  content: none;
 }
 
 #overlay-share-button:hover,
@@ -1148,6 +1169,14 @@ body,
   outline: none;
   border-color: rgba(142, 249, 255, 0.85);
   box-shadow: 0 0 24px rgba(0, 255, 255, 0.22);
+}
+
+#overlay-share-button:hover,
+#overlay-share-button:focus-visible {
+  border-color: transparent;
+  box-shadow: none;
+  color: rgba(212, 248, 255, 0.96);
+  opacity: 1;
 }
 
 .doodle-actions button {
