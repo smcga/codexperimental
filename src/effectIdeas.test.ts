@@ -6,6 +6,7 @@ import {
   EffectIdeaApiError,
   compileRuntimeEffect,
   fetchPendingEffect,
+  fetchPendingEffects,
   fetchApprovedEffects,
   generateEffectIdea,
   submitEffectIdea,
@@ -112,6 +113,29 @@ describe("effect ideas client", () => {
     expect(result.reviewUrl).toBeNull();
     expect(result.effect).not.toBeNull();
     expect(result.effect?.id).toBe("pending-legacy");
+  });
+
+  it("fetches pending effects queue for next-item moderation", async () => {
+    globalThis.fetch = vi.fn(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        effects: [],
+        pendingEffects: [
+          { id: "pending-1", name: "One", prompt: "p", typescriptCode: "ts", runtimeCode: "return { render() {} };", createdAt: 1 },
+          { id: "pending-2", name: "Two", prompt: "p", typescriptCode: "ts", runtimeCode: "return { render() {} };", createdAt: 2 }
+        ]
+      })
+    })) as typeof fetch;
+
+    await expect(fetchPendingEffects("secret-token")).resolves.toEqual([
+      { id: "pending-1", name: "One", prompt: "p", typescriptCode: "ts", runtimeCode: "return { render() {} };", createdAt: 1 },
+      { id: "pending-2", name: "Two", prompt: "p", typescriptCode: "ts", runtimeCode: "return { render() {} };", createdAt: 2 }
+    ]);
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      "/api/effects?includePending=1&token=secret-token",
+      expect.objectContaining({ method: "GET" })
+    );
   });
 
   it("builds moderation action URLs for effect review buttons", () => {
