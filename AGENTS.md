@@ -22,6 +22,15 @@ The demo timeline is locked to sacred musical anchors documented in `docs/sacred
   - Verifying the effect appears in the debug panel/editor dropdowns (registry is the single source).
 - Any change to effect parameters must update `docs/effects.md` and preserve backward compatibility where possible.
 
+## Effect deletion timeline safety
+
+When fully deleting an effect from the codebase/registry:
+
+- Find every timeline usage of that effect and swap each occurrence to another valid effect.
+- Preserve timeline structure exactly: do **not** change any timings, timestamps, cue offsets, section boundaries, transition timing, section ordering, or section positions.
+- Keep replacements as strict effect-name swaps (and any minimally required compatible params) so the timeline remains musically and structurally identical.
+- Remove the deleted effect cleanly from implementation, registry, docs, and UI selectors only after timeline swaps are complete.
+
 ### PR checklist
 - [ ] Docs updated (`docs/effects.md` regenerated).
 - [ ] Docs check passes (`npm run docs:check`).
