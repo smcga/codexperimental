@@ -147,11 +147,21 @@ const doodleSubmitButton = document.querySelector<HTMLButtonElement>("#doodle-su
 const effectIdeaModal = document.querySelector<HTMLDivElement>("#effect-idea-modal");
 const effectIdeaInput = document.querySelector<HTMLTextAreaElement>("#effect-idea-input");
 const effectIdeaPreview = document.querySelector<HTMLCanvasElement>("#effect-idea-preview");
+const effectIdeaPreviewShell = document.querySelector<HTMLDivElement>("#effect-idea-preview-shell");
+const effectIdeaCountdown = document.querySelector<HTMLDivElement>("#effect-idea-countdown");
+const effectIdeaPrevButton = document.querySelector<HTMLButtonElement>("#effect-idea-prev");
+const effectIdeaNextButton = document.querySelector<HTMLButtonElement>("#effect-idea-next");
+const effectIdeaBusyModal = document.querySelector<HTMLDivElement>("#effect-idea-busy-modal");
+const effectIdeaBusySpinner = document.querySelector<HTMLDivElement>("#effect-idea-busy-spinner");
+const effectIdeaBusyTitle = document.querySelector<HTMLDivElement>("#effect-idea-busy-title");
+const effectIdeaBusyCopy = document.querySelector<HTMLDivElement>("#effect-idea-busy-copy");
+const effectIdeaRetryButton = document.querySelector<HTMLButtonElement>("#effect-idea-retry");
+const effectIdeaGeneratedSections = document.querySelector<HTMLDivElement>("#effect-idea-generated-sections");
 const effectIdeaControls = document.querySelector<HTMLDivElement>("#effect-idea-controls");
 const effectIdeaControlsGrid = document.querySelector<HTMLDivElement>("#effect-idea-controls-grid");
 const effectIdeaControlsEmpty = document.querySelector<HTMLDivElement>("#effect-idea-controls-empty");
-const effectIdeaSetDefaultsButton = document.querySelector<HTMLButtonElement>("#effect-idea-set-defaults");
 const effectIdeaRandomizeButton = document.querySelector<HTMLButtonElement>("#effect-idea-randomize");
+const effectIdeaNameInput = document.querySelector<HTMLInputElement>("#effect-idea-name");
 const effectIdeaCode = document.querySelector<HTMLPreElement>("#effect-idea-code");
 const effectIdeaStatus = document.querySelector<HTMLDivElement>("#effect-idea-status");
 const effectIdeaCancelButton = document.querySelector<HTMLButtonElement>("#effect-idea-cancel");
@@ -211,6 +221,9 @@ let generatedIdeaPrompt = "";
 let effectIdeaPreviewFrame = 0;
 let effectIdeaPreviewEffect: ReturnType<typeof compileRuntimeEffect> | null = null;
 let effectIdeaPreviewParams: Record<string, number | string> = {};
+let effectIdeaCountdownTimer = 0;
+let effectIdeaCarouselEntries: Array<{ name: string; effect: ReturnType<typeof compileRuntimeEffect>; params: Record<string, number | string> }> = [];
+let effectIdeaCarouselIndex = 0;
 let effectIdeaAudioPreview = new EffectPreviewAudioController(EFFECT_PREVIEW_AUDIO_SRC);
 let availableEffectNames = getEffectRegistryKeys();
 let playbackSyncSuppressBroadcast = false;
@@ -567,22 +580,128 @@ function setEffectIdeaStatus(message: string, state: "idle" | "busy" | "error" |
   effectIdeaStatus.dataset.state = state;
 }
 
+function sanitizeEffectIdeaName(name: string): string {
+  return name.replace(/[^a-z0-9 _-]/giu, "").replace(/\s+/gu, " ").trim().slice(0, 48);
+}
+
+function setEffectIdeaBusyState(mode: "hidden" | "busy" | "error", message?: string): void {
+  if (!effectIdeaBusyModal || !effectIdeaBusyTitle || !effectIdeaBusyCopy || !effectIdeaRetryButton || !effectIdeaBusySpinner) {
+    return;
+  }
+  effectIdeaBusyModal.classList.toggle("hidden", mode === "hidden");
+  effectIdeaBusyModal.classList.toggle("is-error", mode === "error");
+  effectIdeaBusySpinner.classList.toggle("hidden", mode !== "busy");
+  effectIdeaRetryButton.classList.toggle("hidden", mode !== "error");
+  if (mode === "busy") {
+    effectIdeaBusyTitle.textContent = "Generating your effect…";
+    effectIdeaBusyCopy.textContent = "Enjoy approved community effects while Codex cooks your idea.";
+    return;
+  }
+  if (mode === "error") {
+    effectIdeaBusyTitle.textContent = "Generation hiccup";
+    effectIdeaBusyCopy.textContent = message ?? "That attempt did not compile cleanly. Retry to generate a fresh variation.";
+  }
+}
+
+function setEffectIdeaGenerationView(hasGeneration: boolean): void {
+  effectIdeaPreviewShell?.classList.toggle("hidden", !hasGeneration && effectIdeasGenerating === false);
+  effectIdeaGeneratedSections?.classList.toggle("hidden", !hasGeneration);
+}
+
+function clearEffectIdeaCountdown(): void {
+  if (effectIdeaCountdownTimer) {
+    window.clearTimeout(effectIdeaCountdownTimer);
+    effectIdeaCountdownTimer = 0;
+  }
+  if (effectIdeaCountdown) {
+    effectIdeaCountdown.classList.add("hidden");
+    effectIdeaCountdown.textContent = "3";
+  }
+}
+
+function applyEffectIdeaCarouselEntry(): void {
+  const entry = effectIdeaCarouselEntries[effectIdeaCarouselIndex];
+  if (!entry) {
+    return;
+  }
+  effectIdeaPreviewEffect = entry.effect;
+  effectIdeaPreviewParams = { ...entry.params };
+  stopEffectIdeaPreview();
+  previewGeneratedIdea();
+}
+
+function cycleEffectIdeaCarousel(direction: 1 | -1): void {
+  if (effectIdeaCarouselEntries.length < 2) {
+    return;
+  }
+  effectIdeaCarouselIndex = (effectIdeaCarouselIndex + direction + effectIdeaCarouselEntries.length) % effectIdeaCarouselEntries.length;
+  applyEffectIdeaCarouselEntry();
+}
+
+async function hydrateEffectIdeaCarousel(): Promise<void> {
+  const approved = await fetchApprovedEffects();
+  const entries = approved.flatMap((entry) => {
+    try {
+      return [{
+        name: entry.name,
+        effect: compileRuntimeEffect(entry.runtimeCode),
+        params: getGeneratedEffectDefaultParams(entry.params)
+      }];
+    } catch {
+      return [];
+    }
+  });
+  for (let i = entries.length - 1; i > 0; i -= 1) {
+    const swapIndex = Math.floor(Math.random() * (i + 1));
+    [entries[i], entries[swapIndex]] = [entries[swapIndex], entries[i]];
+  }
+  effectIdeaCarouselEntries = entries;
+  effectIdeaCarouselIndex = 0;
+}
+
+function runEffectIdeaSuccessCountdown(onDone: () => void): void {
+  if (!effectIdeaCountdown) {
+    onDone();
+    return;
+  }
+  let beat = 3;
+  effectIdeaCountdown.classList.remove("hidden");
+  effectIdeaCountdown.textContent = String(beat);
+  const beatMs = Math.round((60 / 177) * 1000);
+  const tick = () => {
+    beat -= 1;
+    if (beat <= 0) {
+      effectIdeaCountdown.textContent = "1";
+      effectIdeaCountdown.classList.add("shatter");
+      effectIdeaCountdownTimer = window.setTimeout(() => {
+        effectIdeaCountdown?.classList.remove("shatter");
+        effectIdeaCountdown?.classList.add("hidden");
+        onDone();
+      }, beatMs);
+      return;
+    }
+    effectIdeaCountdown.textContent = String(beat);
+    effectIdeaCountdownTimer = window.setTimeout(tick, beatMs);
+  };
+  effectIdeaCountdownTimer = window.setTimeout(tick, beatMs);
+}
+
 function updateEffectIdeaButtons(): void {
   if (effectIdeaGenerateButton) {
-    effectIdeaGenerateButton.disabled = effectIdeasGenerating;
-    effectIdeaGenerateButton.classList.toggle("is-busy", effectIdeasGenerating);
-    effectIdeaGenerateButton.setAttribute("aria-busy", effectIdeasGenerating ? "true" : "false");
-    effectIdeaGenerateButton.textContent = effectIdeasGenerating ? "Generating" : "Generate";
+    effectIdeaGenerateButton.disabled = effectIdeasGenerating || effectIdeasSubmitting;
   }
   if (effectIdeaSubmitButton) {
-    effectIdeaSubmitButton.disabled = effectIdeasSubmitting || generatedIdea === null;
-  }
-  if (effectIdeaSetDefaultsButton) {
-    effectIdeaSetDefaultsButton.disabled = effectIdeasGenerating || !generatedIdea || (generatedIdea.params?.length ?? 0) === 0;
+    const submittedName = sanitizeEffectIdeaName(effectIdeaNameInput?.value ?? generatedIdea?.name ?? "");
+    effectIdeaSubmitButton.disabled = effectIdeasSubmitting || generatedIdea === null || submittedName.length < 3;
   }
   if (effectIdeaRandomizeButton) {
-    effectIdeaRandomizeButton.disabled = effectIdeasGenerating || !generatedIdea || (generatedIdea.params?.length ?? 0) === 0;
+    effectIdeaRandomizeButton.disabled = effectIdeasGenerating || effectIdeasSubmitting || !generatedIdea || (generatedIdea.params?.length ?? 0) === 0;
   }
+  effectIdeaCancelButton?.classList.toggle("hidden", effectIdeasGenerating);
+  effectIdeaGenerateButton?.classList.toggle("hidden", effectIdeasGenerating);
+  effectIdeaSubmitButton?.classList.toggle("hidden", effectIdeasGenerating || generatedIdea === null);
+  effectIdeaPrevButton?.classList.toggle("hidden", !effectIdeasGenerating || effectIdeaCarouselEntries.length < 2);
+  effectIdeaNextButton?.classList.toggle("hidden", !effectIdeasGenerating || effectIdeaCarouselEntries.length < 2);
 }
 
 function renderGeneratedEffectIdeaControls(): void {
@@ -691,6 +810,8 @@ function setEffectIdeaModalVisible(visible: boolean): void {
   if (!visible) {
     stopEffectIdeaPreview();
     effectIdeaAudioPreview.stop();
+    clearEffectIdeaCountdown();
+    setEffectIdeaBusyState("hidden");
   }
   if (visible && effectIdeaCode) {
     effectIdeaAudioPreview.setSource(EFFECT_PREVIEW_AUDIO_SRC);
@@ -701,6 +822,12 @@ function setEffectIdeaModalVisible(visible: boolean): void {
     effectIdeaPreviewParams = {};
     generatedIdeaPrompt = "";
     effectIdeaPreviewEffect = null;
+    effectIdeaCarouselEntries = [];
+    effectIdeaCarouselIndex = 0;
+    if (effectIdeaNameInput) {
+      effectIdeaNameInput.value = "";
+    }
+    setEffectIdeaGenerationView(false);
     renderGeneratedEffectIdeaControls();
     updateEffectIdeaButtons();
   }
@@ -751,31 +878,47 @@ async function generateCurrentEffectIdea(): Promise<void> {
     return;
   }
   effectIdeasGenerating = true;
+  clearEffectIdeaCountdown();
+  setEffectIdeaGenerationView(false);
+  setEffectIdeaBusyState("busy");
+  effectIdeaPreviewShell?.classList.remove("hidden");
   updateEffectIdeaButtons();
   setEffectIdeaStatus("Generating effect code with Codex…", "busy");
   try {
+    await hydrateEffectIdeaCarousel();
+    applyEffectIdeaCarouselEntry();
     const generation = await generateEffectIdea(prompt);
     generatedIdea = generation;
     effectIdeaPreviewParams = getGeneratedEffectDefaultParams(generation.params);
     generatedIdeaPrompt = prompt;
+    if (effectIdeaNameInput) {
+      effectIdeaNameInput.value = sanitizeEffectIdeaName(generation.name);
+    }
     if (effectIdeaCode) {
       effectIdeaCode.textContent = generation.typescriptCode;
     }
     renderGeneratedEffectIdeaControls();
-    effectIdeaPreviewEffect = compileRuntimeEffect(generation.runtimeCode);
-    stopEffectIdeaPreview();
-    previewGeneratedIdea();
-    setEffectIdeaStatus("Preview ready. If it looks good, submit it for approval.", "success");
+    const compiled = compileRuntimeEffect(generation.runtimeCode);
+    runEffectIdeaSuccessCountdown(() => {
+      effectIdeaPreviewEffect = compiled;
+      stopEffectIdeaPreview();
+      previewGeneratedIdea();
+      setEffectIdeaBusyState("hidden");
+    });
+    setEffectIdeaGenerationView(true);
+    setEffectIdeaStatus("Preview ready. Name your effect, then submit it for approval.", "success");
   } catch (error) {
     generatedIdea = null;
     effectIdeaPreviewParams = {};
+    setEffectIdeaGenerationView(false);
     renderGeneratedEffectIdeaControls();
     effectIdeaPreviewEffect = null;
     const message = error instanceof Error ? error.message : "Generation failed. Please adjust the prompt and try again.";
     if (effectIdeaCode && error instanceof EffectIdeaApiError && error.rawResponse) {
       effectIdeaCode.textContent = error.rawResponse;
     }
-    setEffectIdeaStatus(message, "error");
+    setEffectIdeaBusyState("error", message);
+    setEffectIdeaStatus("Generation failed. Try again to get a fresh working variation.", "error");
   } finally {
     effectIdeasGenerating = false;
     updateEffectIdeaButtons();
@@ -790,16 +933,17 @@ async function submitCurrentEffectIdea(): Promise<void> {
   updateEffectIdeaButtons();
   setEffectIdeaStatus("Submitting for moderation…");
   try {
+    const submittedName = sanitizeEffectIdeaName(effectIdeaNameInput?.value ?? generatedIdea.name);
+    const submittedParams = applyCurrentValuesAsGeneratedDefaults(generatedIdea.params, effectIdeaPreviewParams);
     await submitEffectIdea({
-      name: generatedIdea.name,
+      name: submittedName || generatedIdea.name,
       prompt: generatedIdeaPrompt,
       typescriptCode: generatedIdea.typescriptCode,
       runtimeCode: generatedIdea.runtimeCode,
-      params: generatedIdea.params,
+      params: submittedParams,
       docs: generatedIdea.docs
     });
-    setEffectIdeaStatus("Submitted. Once approved, it will appear in effect selectors.", "success");
-    setEffectIdeaModalVisible(false);
+    setEffectIdeaStatus("Thanks! Submitted for approval. Keep exploring your preview while it awaits moderation.", "success");
     await hydrateApprovedEffects();
   } catch {
     setEffectIdeaStatus("Submit failed. Please try again.", "error");
@@ -1902,23 +2046,15 @@ if (effectIdeaGenerateButton) {
   });
 }
 
-if (effectIdeaSubmitButton) {
-  effectIdeaSubmitButton.addEventListener("click", () => {
-    void submitCurrentEffectIdea();
+if (effectIdeaRetryButton) {
+  effectIdeaRetryButton.addEventListener("click", () => {
+    void generateCurrentEffectIdea();
   });
 }
 
-if (effectIdeaSetDefaultsButton) {
-  effectIdeaSetDefaultsButton.addEventListener("click", () => {
-    if (!generatedIdea?.params || generatedIdea.params.length === 0) {
-      return;
-    }
-    const updatedParams = applyCurrentValuesAsGeneratedDefaults(generatedIdea.params, effectIdeaPreviewParams);
-    generatedIdea = { ...generatedIdea, params: updatedParams };
-    effectIdeaPreviewParams = getGeneratedEffectDefaultParams(updatedParams);
-    renderGeneratedEffectIdeaControls();
-    updateEffectIdeaButtons();
-    setEffectIdeaStatus("Current preview values saved as submitted defaults.", "success");
+if (effectIdeaSubmitButton) {
+  effectIdeaSubmitButton.addEventListener("click", () => {
+    void submitCurrentEffectIdea();
   });
 }
 
@@ -1930,6 +2066,28 @@ if (effectIdeaRandomizeButton) {
     effectIdeaPreviewParams = getRandomGeneratedEffectParams(generatedIdea.params);
     renderGeneratedEffectIdeaControls();
     setEffectIdeaStatus("Randomized all generated params for inspiration.", "success");
+  });
+}
+
+if (effectIdeaPrevButton) {
+  effectIdeaPrevButton.addEventListener("click", () => {
+    cycleEffectIdeaCarousel(-1);
+  });
+}
+
+if (effectIdeaNextButton) {
+  effectIdeaNextButton.addEventListener("click", () => {
+    cycleEffectIdeaCarousel(1);
+  });
+}
+
+if (effectIdeaNameInput) {
+  effectIdeaNameInput.addEventListener("input", () => {
+    const sanitized = sanitizeEffectIdeaName(effectIdeaNameInput.value);
+    if (sanitized !== effectIdeaNameInput.value) {
+      effectIdeaNameInput.value = sanitized;
+    }
+    updateEffectIdeaButtons();
   });
 }
 
