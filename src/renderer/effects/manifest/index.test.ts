@@ -14,6 +14,11 @@ describe("effect manifests", () => {
     expect(effectManifests.map((manifest) => manifest.key)).toEqual(sortedKeys);
   });
 
+  it("does not expose removed effects in the registry", () => {
+    expect(getEffectRegistryKeys()).not.toContain("lemmings_march");
+    expect(getEffectManifest("lemmings_march")).toBeNull();
+  });
+
   it("provides shared docs and debug metadata for known effects", () => {
     const manifest = getEffectManifest("starfield");
     expect(manifest?.docs.catalogNote).toContain("flight feel");

@@ -30,7 +30,7 @@ These anchors are **non-negotiable timing constraints** for the demo arrangement
 - **01:38.3** — returns to dubstep-bass style section.
 - **01:49.16** — chilled synthwave/sunset moment.
 - **02:00** — snare-rush buildup; effect changes accelerate.
-- **02:10.8** — chilled showcase section (chess / physics / lemmings / tetris / platformer style content).
+- **02:10.8** — chilled showcase section (chess / physics / voxel / tetris / platformer style content).
 - **02:25.9** — music drops out, vocal "it's so cool" (hero moment).
 - **02:27** — drop back to dubstep bass.
 - **02:32.5** — four-bar switch.

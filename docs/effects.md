@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **102**.
+Total effects: **101**.
 
 ## Table of contents
 
@@ -46,7 +46,6 @@ Total effects: **102**.
 - [Effect: isogrid](#effect-isogrid)
 - [Effect: kaleidoscope_symmetry](#effect-kaleidoscope-symmetry)
 - [Effect: kefrens_bars](#effect-kefrens-bars)
-- [Effect: lemmings_march](#effect-lemmings-march)
 - [Effect: lens_flare](#effect-lens-flare)
 - [Effect: lens_wobbler](#effect-lens-wobbler)
 - [Effect: lightning](#effect-lightning)
@@ -128,7 +127,7 @@ Total effects: **102**.
 ### Common parameter patterns
 
 - `speed` (used in 50 effects)
-- `seed` (used in 49 effects)
+- `seed` (used in 48 effects)
 - `audioReact` (used in 35 effects)
 - `glow` (used in 19 effects)
 - `beatKick` (used in 14 effects)
@@ -215,7 +214,6 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 | `lightning` | 1993 | low |  |
 | `rain` | 1993 | low |  |
 | `recursiveFracture` | 1993 | low |  |
-| `lemmings_march` | 1994 | low |  |
 | `lens_wobbler` | 1994 | low |  |
 | `ribbons` | 1994 | low |  |
 | `tilingMorph` | 1995 | low |  |
@@ -1643,42 +1641,6 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 ```json
 {
   "effect": "kefrens_bars",
-  "opacity": 1,
-  "blend": "source-over",
-  "params": {}
-}
-```
-
-## Effect: lemmings_march
-
-- **Registry key:** `lemmings_march`
-- **Implementation:** `src/renderer/effects/lemmingsMarchEffect.ts` (class `LemmingsMarchEffect`)
-- **Renderer:** Canvas2D
-- **Description:** Origins-and-Lemmings-inspired colony march through repeating classical pillars, bash/build route edits, and a rescue portal score.
-- **Audio features:** bass, beat, beatStrength
-- **Performance notes:** None noted.
-
-### Parameters
-
-| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
-| --- | --- | --- | --- | --- | --- |
-| `params.bashRate` | number | 28 | min 2, max 40 | Bash Rate | yes |
-| `params.bridgeRate` | number | 6 | min 1, max 12 | Bridge Rate | yes |
-| `params.colonySize` | number | 22 | min 4, max 48 | Colony Size | yes |
-| `params.digRate` | number | 18 | min 2, max 40 | Dig Rate | yes |
-| `params.floatiness` | number | 0.45 | min 0, max 1 | Floatiness | yes |
-| `params.hilliness` | number | 0.35 | min 0, max 1.4 | Hilliness | yes |
-| `params.scrollFollow` | number | 0.22 | min 0, max 1 | Scroll Follow | yes |
-| `params.seed` | number | 73 | min 0, max 9999 | Seed | yes |
-| `params.spawnInterval` | number | 0.9 | min 0.2, max 3 | Spawn Interval | yes |
-| `params.wallRate` | number | 0.28 | min 0, max 0.5 | Wall Rate | yes |
-| `params.worldLength` | number | 300 | min 120, max 640 | World Length | yes |
-
-### Minimal layer usage
-
-```json
-{
-  "effect": "lemmings_march",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
