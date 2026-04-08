@@ -10,6 +10,8 @@ The demo timeline is locked to sacred musical anchors documented in `docs/sacred
 - These anchors are **mandatory** and **must not drift**.
 - Treat every listed timestamp as musically exact (not approximate).
 - For any timeline edit (`public/timeline.json`, `public/timeline.release.json`, cue timings, intro timings, section boundaries, transition timing), re-check and preserve all anchors.
+- For any PR/commit that touches timeline files or timing data, include a concise changelist with explicit before/after timestamps (mm:ss.mmm) so reviewers can validate musical alignment quickly.
+- In those changelist notes, call out every sacred anchor timestamp that was checked and confirm whether it changed or remained locked.
 - If an intentional recut ever requires anchor changes, update `docs/sacred-musical-anchors.md`, `README.md`, and this file in the same commit and clearly explain why.
 - Do not merge timeline edits that violate or ignore anchor constraints.
 - Treat secondary effect-switch cues in `docs/sacred-musical-anchors.md` as advisory only; they never override sacred anchors or clearly intentional section art direction.
