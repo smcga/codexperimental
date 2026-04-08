@@ -602,22 +602,29 @@ function sanitizeEffectIdeaName(name: string): string {
   return name.replace(/[^a-z0-9 _-]/giu, "").replace(/\s+/gu, " ").trim().slice(0, 48);
 }
 
-function setEffectIdeaBusyState(mode: "hidden" | "busy" | "error", message?: string): void {
+function setEffectIdeaBusyState(
+  mode: "hidden" | "busy" | "error",
+  message?: string,
+  selfImprovementAttempt?: { attempt: number; maxAttempts: number } | null
+): void {
   if (!effectIdeaBusyModal || !effectIdeaBusyTitle || !effectIdeaBusyCopy || !effectIdeaRetryButton || !effectIdeaBusySpinner) {
     return;
   }
   effectIdeaBusyModal.classList.toggle("hidden", mode === "hidden");
   effectIdeaBusyModal.classList.toggle("is-error", mode === "error");
   effectIdeaBusySpinner.classList.toggle("hidden", mode !== "busy");
-  effectIdeaRetryButton.classList.toggle("hidden", mode !== "error");
+  effectIdeaRetryButton.classList.add("hidden");
   if (mode === "busy") {
     effectIdeaBusyTitle.textContent = "Generating your effect…";
-    effectIdeaBusyCopy.textContent = "Enjoy approved community effects while Codex cooks your idea.";
+    effectIdeaBusyCopy.textContent = "Enjoy approved community effects while Codex cooks your idea. Self-improvement auto-retries are enabled (up to 5 attempts).";
     return;
   }
   if (mode === "error") {
+    const attemptSuffix = selfImprovementAttempt
+      ? ` Self-improvement attempt ${selfImprovementAttempt.attempt}/${selfImprovementAttempt.maxAttempts}.`
+      : "";
     effectIdeaBusyTitle.textContent = "Generation hiccup";
-    effectIdeaBusyCopy.textContent = message ?? "That attempt did not compile cleanly. Retry to generate a fresh variation.";
+    effectIdeaBusyCopy.textContent = `${message ?? "An error occurred. Self-improvement protocol engaged. Will auto retry shortly."}${attemptSuffix}`;
   }
 }
 
@@ -971,7 +978,14 @@ async function generateCurrentEffectIdea(): Promise<void> {
       setEffectIdeaBusyState("hidden");
     });
     setEffectIdeaGenerationView(true);
-    setEffectIdeaStatus("Preview ready. Name your effect, then submit it for approval.", "success");
+    if (generation.selfImprovement?.engaged) {
+      setEffectIdeaStatus(
+        `Preview ready after self-improvement attempt ${generation.selfImprovement.attempt}/${generation.selfImprovement.maxAttempts}. Name your effect, then submit it for approval.`,
+        "success"
+      );
+    } else {
+      setEffectIdeaStatus("Preview ready. Name your effect, then submit it for approval.", "success");
+    }
   } catch (error) {
     generatedIdea = null;
     effectIdeaPreviewParams = {};
@@ -982,8 +996,14 @@ async function generateCurrentEffectIdea(): Promise<void> {
     if (effectIdeaCode && error instanceof EffectIdeaApiError && error.rawResponse) {
       effectIdeaCode.textContent = error.rawResponse;
     }
-    setEffectIdeaBusyState("error", message);
-    setEffectIdeaStatus("Generation failed. Try again to get a fresh working variation.", "error");
+    const attempt = error instanceof EffectIdeaApiError ? error.selfImprovement : null;
+    setEffectIdeaBusyState("error", message, attempt);
+    setEffectIdeaStatus(
+      attempt
+        ? `An error occurred. Self-improvement protocol engaged. Will auto retry shortly. Attempt ${attempt.attempt}/${attempt.maxAttempts}.`
+        : "An error occurred. Self-improvement protocol engaged. Will auto retry shortly.",
+      "error"
+    );
   } finally {
     effectIdeasGenerating = false;
     renderBusyCommunityEffectControls();
@@ -2122,12 +2142,6 @@ if (effectIdeaCancelButton) {
 
 if (effectIdeaGenerateButton) {
   effectIdeaGenerateButton.addEventListener("click", () => {
-    void generateCurrentEffectIdea();
-  });
-}
-
-if (effectIdeaRetryButton) {
-  effectIdeaRetryButton.addEventListener("click", () => {
     void generateCurrentEffectIdea();
   });
 }

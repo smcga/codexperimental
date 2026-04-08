@@ -39,6 +39,11 @@ export type EffectIdeaGenerationResult = {
   runtimeCode: string;
   params?: GeneratedEffectParam[];
   docs?: GeneratedEffectDocs;
+  selfImprovement?: {
+    engaged: boolean;
+    attempt: number;
+    maxAttempts: number;
+  };
 };
 
 type EffectsResponse = {
@@ -48,6 +53,11 @@ type EffectsResponse = {
   moderationStatus?: "pending";
   reviewUrl?: string | null;
   generation?: EffectIdeaGenerationResult;
+  selfImprovement?: {
+    engaged: boolean;
+    attempt: number;
+    maxAttempts: number;
+  };
   error?: string;
   rawResponse?: string;
 };
@@ -56,11 +66,17 @@ let approvedCache: EffectIdeaRecord[] = [];
 
 export class EffectIdeaApiError extends Error {
   rawResponse: string | null;
+  selfImprovement: { engaged: boolean; attempt: number; maxAttempts: number } | null;
 
-  constructor(message: string, rawResponse: string | null = null) {
+  constructor(
+    message: string,
+    rawResponse: string | null = null,
+    selfImprovement: { engaged: boolean; attempt: number; maxAttempts: number } | null = null
+  ) {
     super(message);
     this.name = "EffectIdeaApiError";
     this.rawResponse = rawResponse;
+    this.selfImprovement = selfImprovement;
   }
 }
 
@@ -161,7 +177,14 @@ async function requestEffects(path = "/api/effects", init?: RequestInit): Promis
       ? payload.error
       : `Effect idea request failed: ${response.status}`;
     const rawResponse = typeof payload.rawResponse === "string" && payload.rawResponse.length > 0 ? payload.rawResponse : null;
-    throw new EffectIdeaApiError(message, rawResponse);
+    const selfImprovement = payload.selfImprovement && typeof payload.selfImprovement === "object"
+      ? {
+        engaged: Boolean(payload.selfImprovement.engaged),
+        attempt: Number(payload.selfImprovement.attempt ?? 0),
+        maxAttempts: Number(payload.selfImprovement.maxAttempts ?? 0)
+      }
+      : null;
+    throw new EffectIdeaApiError(message, rawResponse, selfImprovement);
   }
   return payload;
 }
@@ -203,7 +226,10 @@ export async function generateEffectIdea(prompt: string): Promise<EffectIdeaGene
   if (!payload.generation) {
     throw new Error("No generation returned.");
   }
-  return payload.generation;
+  return {
+    ...payload.generation,
+    ...(payload.selfImprovement ? { selfImprovement: payload.selfImprovement } : {})
+  };
 }
 
 export async function submitEffectIdea(idea: Omit<EffectIdeaRecord, "id" | "createdAt">): Promise<void> {

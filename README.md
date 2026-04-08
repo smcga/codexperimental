@@ -461,6 +461,10 @@ Optional fallback token behavior:
 - Generate requests are rate limited per identity (`user`/`session`/`IP`) via KV-backed sliding window and return `429` with a friendly wait-time message (for example, “Please wait 5 minutes before trying again.”).
 - Generate requests also enforce a global daily cap (default `100/day`, configurable via `EFFECT_GENERATE_DAILY_CAP`) and return `429` when the day budget is exhausted.
 - Generate monitoring now persists aggregate counters + recent failure samples in KV so regressions can be tracked over time (status mix, failure categories, and timestamps).
+- The generator system prompt template is now stored in KV with explicit versions (`effects:generate:prompt-template`) so prompt evolution can be reviewed over time and updated at runtime.
+- Failed generation attempts now log full failure diagnostics (`effects:generate:failure-logs`): failure time, exact prompt template text used, full model output text, user-visible error message, and self-improvement attempt number.
+- On generation failures, the API runs a bounded self-improvement loop (up to 5 attempts): it asks Codex for a small prompt-template tweak, stores the tweak as a new template version, and automatically retries generation without requiring a manual retry click.
+- If all 5 self-improvement attempts fail, the user-facing message apologizes and asks them to try again tomorrow.
 - Moderators can inspect those generation diagnostics via `GET /api/effects?action=generateMetrics&token=...` (signed moderation token required).
 - Generation monitoring can also push proactive ntfy alerts on failures (with per-category cooldown) so you do not need to poll logs/metrics manually.
 - If generation requests return `503` from `/api/effects?action=generate`, check that `OPENAI_API_KEY` is set in your deployed environment and redeploy so the serverless function picks it up.
