@@ -116,6 +116,63 @@ export function runnerJumpOffset(prevSupportY: number, currentSupportY: number, 
   return Math.floor(arc * (lift * 0.85 + extra));
 }
 
+export type RunnerJumpState = {
+  airborne: boolean;
+  velocityY: number;
+  y: number;
+};
+
+export function updateRunnerJumpState(
+  state: RunnerJumpState,
+  supportY: number,
+  nextSupportY: number,
+  deltaTime: number,
+  audioAmount: number
+): RunnerJumpState {
+  const dt = clamp(deltaTime, 1 / 240, 0.2);
+  const rise = supportY - nextSupportY;
+  const shouldJump = !state.airborne && rise > 0.5;
+  const jumpStrength = 180 + rise * 5 + audioAmount * 26;
+  const gravity = 560;
+  const maxFallSpeed = 380;
+  const snapDistance = 0.75;
+
+  let y = state.y;
+  let velocityY = state.velocityY;
+  let airborne = state.airborne;
+
+  if (shouldJump) {
+    velocityY = -jumpStrength;
+    y = supportY;
+    airborne = true;
+  }
+
+  if (!airborne) {
+    return {
+      airborne: false,
+      velocityY: 0,
+      y: supportY
+    };
+  }
+
+  velocityY = Math.min(maxFallSpeed, velocityY + gravity * dt);
+  y += velocityY * dt;
+
+  if (velocityY >= 0 && y >= nextSupportY - snapDistance) {
+    return {
+      airborne: false,
+      velocityY: 0,
+      y: nextSupportY
+    };
+  }
+
+  return {
+    airborne: true,
+    velocityY,
+    y
+  };
+}
+
 export function buildRunnerSprite(baseX: number, footY: number, tileSize: number, time: number, audioAmount: number): RunnerSprite {
   const unit = Math.max(1, Math.round(tileSize / 16));
   const x = baseX - 4 * unit;
@@ -277,6 +334,9 @@ const drawHillLayer = (
 };
 
 export class PlatformerScrollEffect implements Effect {
+  private jumpState: RunnerJumpState | null = null;
+  private lastTime = Number.NEGATIVE_INFINITY;
+
   render({ ctx, width, height, time, audio, params }: EffectRenderContext): void {
     const speed = Math.max(0, asFinite(params.speed, PLATFORMER_SCROLL_DEFAULTS.speed));
     const seed = asFinite(params.seed, PLATFORMER_SCROLL_DEFAULTS.seed);
@@ -407,7 +467,35 @@ export class PlatformerScrollEffect implements Effect {
     );
 
     const supportY = Math.floor(prevSupportY + (currentSupportY - prevSupportY) * smoothstep(colProgress));
-    const hop = runnerJumpOffset(prevSupportY, currentSupportY, colProgress, audioAmount);
+    const nextColSupportY = supportTopY(
+      currentCol + 1,
+      seed,
+      platformRate,
+      platformMaxSteps,
+      basePlatformY,
+      tileSize,
+      groundTop,
+      frontPulse
+    );
+    const currentJumpState =
+      this.jumpState ??
+      ({
+        airborne: false,
+        velocityY: 0,
+        y: supportY
+      } satisfies RunnerJumpState);
+    const jumpedTime = time < this.lastTime || time - this.lastTime > 0.5;
+    const jumpState = jumpedTime
+      ? {
+          airborne: false,
+          velocityY: 0,
+          y: supportY
+        }
+      : updateRunnerJumpState(currentJumpState, supportY, nextColSupportY, time - this.lastTime, audioAmount);
+    this.jumpState = jumpState;
+    this.lastTime = time;
+
+    const hop = Math.max(0, Math.floor(supportY - jumpState.y));
     const runBob = Math.floor((Math.sin(time * 14) * 1.5 + audioAmount * 1.5) * 0.5);
     const runnerFootY = supportY - hop - runBob - 1;
     const runnerSprite = buildRunnerSprite(runnerBaseX, runnerFootY, tileSize, time, audioAmount);
