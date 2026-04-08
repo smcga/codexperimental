@@ -3669,8 +3669,8 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 - **Registry key:** `water_drops`
 - **Implementation:** `src/renderer/effects/waterDropsEffect.ts` (class `WaterDropsEffect`)
 - **Renderer:** Canvas2D
-- **Description:** Stylized droplets on glass with dark/bright refractive edges, tiny bead clusters, and optional rivulet streaks.
-- **Audio features:** beat, rms
+- **Description:** Layered wet-glass droplets with refractive cores, chromatic rims, sparkling micro-beads, and flowing rivulet streaks.
+- **Audio features:** beat, beatStrength, rms
 - **Performance notes:** None noted.
 
 ### Parameters

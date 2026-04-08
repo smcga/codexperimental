@@ -79,6 +79,29 @@ describe("WaterDropsEffect", () => {
     expect(ctx.quadraticCurveTo).toHaveBeenCalled();
   });
 
+
+  it("adds a full-frame mist pass at the end", () => {
+    const effect = new WaterDropsEffect();
+    const ctx = createContext();
+
+    effect.render({
+      ctx,
+      width: 320,
+      height: 180,
+      time: 0.5,
+      delta: 0.016,
+      audio: createAudio(),
+      params: { dropCount: 8, trail: 0, rivulets: 0, microDrops: 0, seed: 3 }
+    });
+
+    const lastArc = ctx.arc.mock.calls.at(-1);
+    expect(lastArc?.[0]).toBe(160);
+    expect(lastArc?.[1]).toBe(90);
+    expect(lastArc?.[2]).toBeCloseTo(249.6, 5);
+    expect(lastArc?.[3]).toBe(0);
+    expect(lastArc?.[4]).toBe(Math.PI * 2);
+  });
+
   it("omits droplet trails and rivulets when disabled", () => {
     const effect = new WaterDropsEffect();
     const ctx = createContext();
