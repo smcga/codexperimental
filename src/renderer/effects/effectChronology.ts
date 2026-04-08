@@ -42,7 +42,6 @@ export const effectChronologyEntries: EffectChronologyEntry[] = [
   { key: "glenz_vectors", yearFit: 1990, confidence: "high", lineage: '' },
   { key: "glitch", yearFit: 1990, confidence: "low", lineage: '' },
   { key: "god_rays", yearFit: 2015, confidence: "medium", lineage: '' },
-  { key: "greets_wall", yearFit: 1986, confidence: "low", lineage: 'greets-wall presentation' },
   { key: "hexGridPulse", yearFit: 2010, confidence: "low", lineage: '' },
   { key: "infiniteMirror", yearFit: 1992, confidence: "medium", lineage: 'feedback mirror recursion' },
   { key: "infinite_zoom_droste", yearFit: 1993, confidence: "medium", lineage: 'droste recursion zoom' },
