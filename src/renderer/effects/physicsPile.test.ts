@@ -58,6 +58,30 @@ describe("PhysicsWorld", () => {
     expect(Math.abs(body.vy)).toBeLessThan(5);
   });
 
+  it("nudges floor-contacting corner rests toward a flat orientation", () => {
+    const world = new PhysicsWorld(320, 220, 0);
+    const size = 42;
+    const body = world.addBody({
+      x: 160,
+      y: 220 - Math.hypot(size * 0.5, size * 0.5),
+      width: size,
+      height: size,
+      restitution: 0.08,
+      friction: 0.82,
+      angle: Math.PI / 4,
+      angularVelocity: 0,
+      vx: 0,
+      vy: 0
+    });
+    const quarterTurn = Math.PI * 0.5;
+    const initialError = Math.abs(body.angle - Math.round(body.angle / quarterTurn) * quarterTurn);
+
+    world.step(STEP);
+
+    const nextError = Math.abs(body.angle - Math.round(body.angle / quarterTurn) * quarterTurn);
+    expect(nextError).toBeLessThan(initialError);
+  });
+
   it("reflects relative velocity based on restitution", () => {
     const world = new PhysicsWorld(800, 200, 0);
     const a = world.addBody({
