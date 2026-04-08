@@ -1429,6 +1429,23 @@ body,
   color: #dffcff;
 }
 
+.effect-idea-busy-toggle {
+  position: absolute;
+  top: 0.45rem;
+  right: 0.45rem;
+  z-index: 4;
+  width: 1.8rem;
+  height: 1.8rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 1px solid rgba(142, 249, 255, 0.7);
+  background: rgba(4, 10, 18, 0.9);
+  color: #dffcff;
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
 .effect-idea-carousel-prev {
   left: 0.65rem;
 }

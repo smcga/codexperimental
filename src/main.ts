@@ -150,6 +150,7 @@ const effectIdeaInput = document.querySelector<HTMLTextAreaElement>("#effect-ide
 const effectIdeaPreview = document.querySelector<HTMLCanvasElement>("#effect-idea-preview");
 const effectIdeaPreviewShell = document.querySelector<HTMLDivElement>("#effect-idea-preview-shell");
 const effectIdeaCountdown = document.querySelector<HTMLDivElement>("#effect-idea-countdown");
+const effectIdeaBusyToggleButton = document.querySelector<HTMLButtonElement>("#effect-idea-busy-toggle");
 const effectIdeaPrevButton = document.querySelector<HTMLButtonElement>("#effect-idea-prev");
 const effectIdeaNextButton = document.querySelector<HTMLButtonElement>("#effect-idea-next");
 const effectIdeaBusyModal = document.querySelector<HTMLDivElement>("#effect-idea-busy-modal");
@@ -226,6 +227,7 @@ let generatedIdeaPrompt = "";
 let effectIdeaPreviewFrame = 0;
 let effectIdeaPreviewEffect: ReturnType<typeof compileRuntimeEffect> | null = null;
 let effectIdeaPreviewParams: Record<string, number | string> = {};
+let effectIdeaBusyControlsVisible = true;
 let effectIdeaCountdownTimer = 0;
 let effectIdeaCarouselEntries: Array<{
   name: string;
@@ -690,13 +692,18 @@ function renderEffectIdeaParamControls(
 }
 
 function renderBusyCommunityEffectControls(): void {
-  if (!effectIdeaBusyEffectName || !effectIdeaBusyControls) {
+  if (!effectIdeaBusyEffectName || !effectIdeaBusyControls || !effectIdeaBusyToggleButton) {
     return;
   }
   const entry = effectIdeaCarouselEntries[effectIdeaCarouselIndex];
   const showCommunityControls = effectIdeasGenerating && Boolean(entry);
   effectIdeaBusyEffectName.classList.toggle("hidden", !showCommunityControls);
-  effectIdeaBusyControls.classList.toggle("hidden", !showCommunityControls);
+  effectIdeaBusyToggleButton.classList.toggle("hidden", !showCommunityControls);
+  const nextLabel = effectIdeaBusyControlsVisible ? "Hide community effect params" : "Show community effect params";
+  effectIdeaBusyToggleButton.setAttribute("aria-pressed", effectIdeaBusyControlsVisible ? "true" : "false");
+  effectIdeaBusyToggleButton.setAttribute("aria-label", nextLabel);
+  effectIdeaBusyToggleButton.title = nextLabel;
+  effectIdeaBusyControls.classList.toggle("hidden", !showCommunityControls || !effectIdeaBusyControlsVisible);
   if (!showCommunityControls || !entry) {
     return;
   }
@@ -869,6 +876,7 @@ function setEffectIdeaModalVisible(visible: boolean): void {
     setEffectIdeaStatus("Describe your idea, click Generate, and preview the result.");
     generatedIdea = null;
     effectIdeaPreviewParams = {};
+    effectIdeaBusyControlsVisible = true;
     generatedIdeaPrompt = "";
     effectIdeaPreviewEffect = null;
     effectIdeaCarouselEntries = [];
@@ -928,6 +936,7 @@ async function generateCurrentEffectIdea(): Promise<void> {
     return;
   }
   effectIdeasGenerating = true;
+  effectIdeaBusyControlsVisible = true;
   clearEffectIdeaCountdown();
   setEffectIdeaGenerationView(false);
   setEffectIdeaBusyState("busy");
@@ -2130,6 +2139,13 @@ if (effectIdeaPrevButton) {
 if (effectIdeaNextButton) {
   effectIdeaNextButton.addEventListener("click", () => {
     cycleEffectIdeaCarousel(1);
+  });
+}
+
+if (effectIdeaBusyToggleButton) {
+  effectIdeaBusyToggleButton.addEventListener("click", () => {
+    effectIdeaBusyControlsVisible = !effectIdeaBusyControlsVisible;
+    renderBusyCommunityEffectControls();
   });
 }
 
