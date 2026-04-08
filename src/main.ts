@@ -91,6 +91,7 @@ const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
 const overlayKicker = document.querySelector<HTMLDivElement>("#overlay-kicker");
 const overlayText = overlay?.querySelector<HTMLDivElement>(".start-text");
+const overlayEcho = document.querySelector<HTMLDivElement>("#overlay-echo");
 const overlaySubtitle = document.querySelector<HTMLDivElement>("#overlay-subtitle");
 const overlayActions = document.querySelector<HTMLDivElement>("#overlay-actions");
 const overlayStartButton = document.querySelector<HTMLButtonElement>("#overlay-start-button");
@@ -212,6 +213,7 @@ let editorController: EditorController | null = null;
 let lastFrameTimestamp = performance.now();
 let currentViewCount = 0;
 let overlayMode: OverlayMode = "start";
+let overlayStartPending = false;
 let selectedQualityPresetId: QualityPresetId = initialQualityPresetId;
 let doodleHasStroke = false;
 let doodleSubmitting = false;
@@ -398,6 +400,10 @@ function updateOverlayActions(): void {
   }
   if (overlaySubtitle) {
     overlaySubtitle.textContent = presentation.subtitle;
+  }
+  if (overlayEcho) {
+    overlayEcho.textContent = presentation.echo;
+    overlayEcho.classList.toggle("hidden", presentation.echo.length === 0);
   }
   if (overlayQualitySelect) {
     overlayQualitySelect.value = selectedQualityPresetId;
@@ -1739,6 +1745,7 @@ if (!releaseMode) {
 }
 
 async function startDemo(): Promise<void> {
+  overlayStartPending = false;
   if (isRunning) {
     return;
   }
@@ -1928,7 +1935,7 @@ overlay.addEventListener("click", () => {
   if (overlayMode !== "start") {
     return;
   }
-  void startDemo();
+  void startDemoFromOverlay();
 });
 
 if (overlayShareButton) {
@@ -1944,7 +1951,7 @@ if (overlayStartButton) {
     if (overlayMode !== "start") {
       return;
     }
-    void startDemo();
+    void startDemoFromOverlay();
   });
 }
 
@@ -1994,6 +2001,19 @@ if (overlayQualitySelect) {
     }
     applyQualityPreset(value);
   });
+}
+
+async function startDemoFromOverlay(): Promise<void> {
+  if (overlayMode !== "start" || overlayStartPending) {
+    return;
+  }
+  overlayStartPending = true;
+  if (overlayStartButton) {
+    overlayStartButton.textContent = "compiling…";
+  }
+  overlay.classList.add("hidden");
+  await new Promise((resolve) => window.setTimeout(resolve, 180));
+  await startDemo();
 }
 
 [shareLinkedIn, shareX, shareFacebook, shareReddit, shareEmail].forEach((anchor) => {

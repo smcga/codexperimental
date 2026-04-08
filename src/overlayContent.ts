@@ -3,6 +3,7 @@ export type OverlayMode = "start" | "status" | "end";
 export interface OverlayPresentation {
   kicker: string;
   title: string;
+  echo: string;
   subtitle: string;
   startLabel: string;
   shareLabel: string;
@@ -19,10 +20,11 @@ export interface OverlayPresentation {
 
 const OVERLAY_PRESENTATIONS: Record<OverlayMode, OverlayPresentation> = {
   start: {
-    kicker: "browser invitro // live signal",
+    kicker: "browser invitro // everything is computed",
     title: "Enter the signal",
-    subtitle: "Sound on. Click anywhere or punch Start to boot the demo.",
-    startLabel: "Start demo",
+    echo: "real-time. no playback.",
+    subtitle: "audio active\nclick anywhere or press start",
+    startLabel: "Execute",
     shareLabel: "Spread the signal",
     restartLabel: "Restart demo",
     doodleLabel: "Add a doodle",
@@ -37,6 +39,7 @@ const OVERLAY_PRESENTATIONS: Record<OverlayMode, OverlayPresentation> = {
   status: {
     kicker: "system status",
     title: "Loading",
+    echo: "",
     subtitle: "Please wait while the next sequence locks in.",
     startLabel: "Start demo",
     shareLabel: "Spread the signal",
@@ -53,6 +56,7 @@ const OVERLAY_PRESENTATIONS: Record<OverlayMode, OverlayPresentation> = {
   end: {
     kicker: "signal complete",
     title: "The end",
+    echo: "",
     subtitle: "Replay it, tag the crew, or leave a doodle for the wall.",
     startLabel: "Start demo",
     shareLabel: "Spread the signal",

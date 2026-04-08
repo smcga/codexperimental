@@ -26,20 +26,22 @@
       <canvas id="demo"></canvas>
       <div id="start-overlay" data-mode="start">
         <div class="overlay-panel">
-          <div id="overlay-kicker" class="overlay-kicker">browser invitro // live signal</div>
+          <div id="overlay-kicker" class="overlay-kicker">browser invitro // everything is computed</div>
           <div class="start-text">Enter the signal</div>
-          <div id="overlay-subtitle" class="overlay-subtitle">Sound on. Click anywhere or punch Start to boot the demo.</div>
+          <div id="overlay-echo" class="overlay-echo">real-time. no playback.</div>
+          <div id="overlay-subtitle" class="overlay-subtitle">audio active
+click anywhere or press start</div>
           <label class="overlay-quality" for="overlay-quality-select">
-            <span class="overlay-quality-label">Rendering quality</span>
+            <span class="overlay-quality-label">render quality</span>
             <select id="overlay-quality-select">
               <option value="performance">Best performance</option>
               <option value="balanced" selected>Balanced</option>
-              <option value="quality">Best quality</option>
+              <option value="quality">Maximum</option>
             </select>
           </label>
           <div id="share-status" class="share-status hidden" aria-live="polite"></div>
           <div class="overlay-actions" id="overlay-actions">
-            <button id="overlay-start-button" type="button">Start demo</button>
+            <button id="overlay-start-button" type="button">Execute</button>
             <button id="overlay-share-button" type="button">Spread the signal</button>
             <button id="overlay-restart-button" class="hidden" type="button">Restart</button>
             <button id="add-doodle-button" class="hidden" type="button">Add a doodle</button>

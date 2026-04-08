@@ -55,7 +55,7 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
   - `?baseW=640&baseH=360` overrides the base canvas dimensions (must be 16:9 and between `320×180` and `1920×1080`).
   - `?quality=0.85` scales the effective base resolution for performance (default `1.0`, clamped to `0.65`-`1.0`).
   - `?autoQuality=1` enables dynamic quality scaling based on frame time (adjusts by `0.05` at most once per second).
-  - The start overlay includes a **Rendering quality** selector (`Best performance`, `Balanced`, `Best quality`) so users can pick sensible defaults without query-string tuning.
+  - The start overlay includes a **render quality** selector (`Best performance`, `Balanced`, `Maximum`) so users can pick sensible defaults without query-string tuning.
   - Recommended: `baseScale=2` for 1080p-class displays, `baseScale=3` for 1440p+ if your GPU/CPU allows.
 
 Automation example:
@@ -344,7 +344,7 @@ npm run preview
 
 ## Controls
 
-- Click anywhere or use the stylized **Start demo** control to begin playback (audio + visuals).
+- Click anywhere or use the stylized **Execute** control to begin playback (audio + visuals).
 - The start overlay and end overlay now pair that demoscene-styled call-to-action with a subtle, bottom-anchored **Spread the signal** link-style control. On supported devices it opens the native share sheet; otherwise it reveals quick-share links for LinkedIn, X, Facebook, Reddit, email, plus a copy-link fallback.
 - The browser tab title now animates with unicode spinner glyphs, a subscript clock, and a binary counter for a glitchy demoscene-style status feed.
 - `R` to restart

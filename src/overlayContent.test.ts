@@ -5,9 +5,11 @@ import { getOverlayPresentation } from "./overlayContent";
 describe("getOverlayPresentation", () => {
   it("keeps the start overlay focused on starting and sharing", () => {
     expect(getOverlayPresentation("start")).toMatchObject({
-      kicker: "browser invitro // live signal",
+      kicker: "browser invitro // everything is computed",
       title: "Enter the signal",
-      startLabel: "Start demo",
+      echo: "real-time. no playback.",
+      subtitle: "audio active\nclick anywhere or press start",
+      startLabel: "Execute",
       shareLabel: "Spread the signal",
       showActions: true,
       showStart: true,
@@ -21,6 +23,7 @@ describe("getOverlayPresentation", () => {
   it("hides overlay actions during status messages", () => {
     expect(getOverlayPresentation("status")).toMatchObject({
       kicker: "system status",
+      echo: "",
       showActions: false,
       showStart: false,
       showShare: false,
@@ -34,6 +37,7 @@ describe("getOverlayPresentation", () => {
     expect(getOverlayPresentation("end")).toMatchObject({
       kicker: "signal complete",
       title: "The end",
+      echo: "",
       subtitle: "Replay it, tag the crew, or leave a doodle for the wall.",
       shareLabel: "Spread the signal",
       effectIdeaLabel: "Got an effect idea? Make it real!",
