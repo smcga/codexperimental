@@ -226,6 +226,10 @@ describe("normalizeTimelineConfig", () => {
       if (line.length < 2) {
         return;
       }
+      const lineEnd = line.at(-1)?.end ?? line[0].end;
+      line.forEach((cue) => {
+        expect(cue.end).toBeCloseTo(lineEnd, 6);
+      });
       for (let i = 1; i < line.length; i += 1) {
         expect(line[i].y).toBeGreaterThanOrEqual(line[i - 1].y);
       }
