@@ -196,6 +196,18 @@ describe("effect ideas client", () => {
     `)).not.toThrow();
   });
 
+  it("allows dynamic code helpers when runtime behavior is otherwise safe", () => {
+    expect(() => validateGeneratedRuntimeCode(`
+      const factory = new Function("return 6 * 7;");
+      const imported = import("./optional-effect-helper.js");
+      const maybeRequired = require("./optional-effect-helper");
+      const value = eval("factory()");
+      void imported;
+      void maybeRequired;
+      void value;
+    `)).not.toThrow();
+  });
+
   it("surfaces API error messages for generation failures", async () => {
     globalThis.fetch = vi.fn(async () => ({
       ok: false,

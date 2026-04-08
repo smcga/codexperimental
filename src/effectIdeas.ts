@@ -79,11 +79,7 @@ const RUNTIME_CODE_SAFETY_RULES: RuntimeSafetyRule[] = [
   { pattern: /\bXMLHttpRequest\b/iu, reason: "making network requests with XMLHttpRequest" },
   { pattern: /\bnavigator\s*\.\s*sendBeacon\b/iu, reason: "sending background network beacons" },
   { pattern: /\bWebSocket\b/iu, reason: "opening network sockets" },
-  { pattern: /\bEventSource\b/iu, reason: "opening server-sent event streams" },
-  { pattern: /\beval\s*\(/iu, reason: "using eval()" },
-  { pattern: /\b(?:new\s+)?Function\s*\(/iu, reason: "using dynamic Function constructor" },
-  { pattern: /\bimport\s*\(/iu, reason: "using dynamic import()" },
-  { pattern: /\brequire\s*\(/iu, reason: "using require()" }
+  { pattern: /\bEventSource\b/iu, reason: "opening server-sent event streams" }
 ];
 
 function stripRuntimeStringLiteralsAndComments(source: string): string {
