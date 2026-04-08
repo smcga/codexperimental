@@ -85,6 +85,7 @@ import {
 } from "./generatedEffectControls";
 import { installGlobalNumberInputWheelGuard } from "./numberInputWheel";
 import { installAnimatedTitle } from "./titleFx";
+import { getEffectIdeaCloseBlockedMessage, shouldShowCommunityCarouselButtons } from "./effectIdeaModalClose";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
@@ -149,12 +150,17 @@ const effectIdeaInput = document.querySelector<HTMLTextAreaElement>("#effect-ide
 const effectIdeaPreview = document.querySelector<HTMLCanvasElement>("#effect-idea-preview");
 const effectIdeaPreviewShell = document.querySelector<HTMLDivElement>("#effect-idea-preview-shell");
 const effectIdeaCountdown = document.querySelector<HTMLDivElement>("#effect-idea-countdown");
+const effectIdeaBusyToggleButton = document.querySelector<HTMLButtonElement>("#effect-idea-busy-toggle");
 const effectIdeaPrevButton = document.querySelector<HTMLButtonElement>("#effect-idea-prev");
 const effectIdeaNextButton = document.querySelector<HTMLButtonElement>("#effect-idea-next");
 const effectIdeaBusyModal = document.querySelector<HTMLDivElement>("#effect-idea-busy-modal");
 const effectIdeaBusySpinner = document.querySelector<HTMLDivElement>("#effect-idea-busy-spinner");
 const effectIdeaBusyTitle = document.querySelector<HTMLDivElement>("#effect-idea-busy-title");
 const effectIdeaBusyCopy = document.querySelector<HTMLDivElement>("#effect-idea-busy-copy");
+const effectIdeaBusyEffectName = document.querySelector<HTMLDivElement>("#effect-idea-busy-effect-name");
+const effectIdeaBusyControls = document.querySelector<HTMLDivElement>("#effect-idea-busy-controls");
+const effectIdeaBusyControlsGrid = document.querySelector<HTMLDivElement>("#effect-idea-busy-controls-grid");
+const effectIdeaBusyControlsEmpty = document.querySelector<HTMLDivElement>("#effect-idea-busy-controls-empty");
 const effectIdeaRetryButton = document.querySelector<HTMLButtonElement>("#effect-idea-retry");
 const effectIdeaGeneratedSections = document.querySelector<HTMLDivElement>("#effect-idea-generated-sections");
 const effectIdeaControls = document.querySelector<HTMLDivElement>("#effect-idea-controls");
@@ -221,8 +227,14 @@ let generatedIdeaPrompt = "";
 let effectIdeaPreviewFrame = 0;
 let effectIdeaPreviewEffect: ReturnType<typeof compileRuntimeEffect> | null = null;
 let effectIdeaPreviewParams: Record<string, number | string> = {};
+let effectIdeaBusyControlsVisible = true;
 let effectIdeaCountdownTimer = 0;
-let effectIdeaCarouselEntries: Array<{ name: string; effect: ReturnType<typeof compileRuntimeEffect>; params: Record<string, number | string> }> = [];
+let effectIdeaCarouselEntries: Array<{
+  name: string;
+  effect: ReturnType<typeof compileRuntimeEffect>;
+  params: Record<string, number | string>;
+  paramDefs: GeneratedEffectParam[];
+}> = [];
 let effectIdeaCarouselIndex = 0;
 let effectIdeaAudioPreview = new EffectPreviewAudioController(EFFECT_PREVIEW_AUDIO_SRC);
 let availableEffectNames = getEffectRegistryKeys();
@@ -603,6 +615,102 @@ function setEffectIdeaBusyState(mode: "hidden" | "busy" | "error", message?: str
   }
 }
 
+function renderEffectIdeaParamControls(
+  container: HTMLDivElement | null,
+  empty: HTMLDivElement | null,
+  params: GeneratedEffectParam[],
+  values: Record<string, number | string>
+): void {
+  if (!container) {
+    return;
+  }
+  container.innerHTML = "";
+  const hasControls = params.length > 0;
+  empty?.classList.toggle("hidden", hasControls);
+  if (!hasControls) {
+    return;
+  }
+  params.forEach((param) => {
+    const field = document.createElement("label");
+    field.classList.add("debug-field");
+    const label = document.createElement("span");
+    label.textContent = param.label;
+    field.appendChild(label);
+
+    if (param.type === "select") {
+      const select = document.createElement("select");
+      select.dataset.effectIdeaParam = param.key;
+      (param.options ?? []).forEach((option) => {
+        const optionEl = document.createElement("option");
+        optionEl.value = option.value;
+        optionEl.textContent = option.label;
+        select.appendChild(optionEl);
+      });
+      select.value = String(values[param.key] ?? "");
+      select.addEventListener("change", () => {
+        values[param.key] = select.value;
+      });
+      field.appendChild(select);
+      container.appendChild(field);
+      return;
+    }
+
+    const input = document.createElement("input");
+    input.dataset.effectIdeaParam = param.key;
+    if (param.type === "toggle") {
+      input.type = "checkbox";
+      input.checked = Number(values[param.key]) !== 0;
+      input.addEventListener("change", () => {
+        values[param.key] = input.checked ? 1 : 0;
+      });
+      field.appendChild(input);
+      container.appendChild(field);
+      return;
+    }
+
+    input.type = "number";
+    if (param.min !== undefined) {
+      input.min = String(param.min);
+    }
+    if (param.max !== undefined) {
+      input.max = String(param.max);
+    }
+    if (param.step !== undefined) {
+      input.step = String(param.step);
+    }
+    input.value = String(values[param.key] ?? 0);
+    input.addEventListener("input", () => {
+      const numeric = Number(input.value);
+      if (!Number.isFinite(numeric)) {
+        return;
+      }
+      values[param.key] = numeric;
+    });
+    field.appendChild(input);
+    container.appendChild(field);
+  });
+}
+
+function renderBusyCommunityEffectControls(): void {
+  if (!effectIdeaBusyEffectName || !effectIdeaBusyControls || !effectIdeaBusyToggleButton) {
+    return;
+  }
+  const entry = effectIdeaCarouselEntries[effectIdeaCarouselIndex];
+  const showCommunityControls = effectIdeasGenerating && Boolean(entry);
+  effectIdeaBusyEffectName.classList.toggle("hidden", !showCommunityControls);
+  effectIdeaBusyToggleButton.classList.toggle("hidden", !showCommunityControls);
+  const nextLabel = effectIdeaBusyControlsVisible ? "Hide community effect params" : "Show community effect params";
+  effectIdeaBusyToggleButton.setAttribute("aria-pressed", effectIdeaBusyControlsVisible ? "true" : "false");
+  effectIdeaBusyToggleButton.setAttribute("aria-label", nextLabel);
+  effectIdeaBusyToggleButton.title = nextLabel;
+  effectIdeaBusyControls.classList.toggle("hidden", !showCommunityControls || !effectIdeaBusyControlsVisible);
+  if (!showCommunityControls || !entry) {
+    return;
+  }
+  effectIdeaBusyEffectName.textContent = `Now previewing: ${entry.name}`;
+  renderEffectIdeaParamControls(effectIdeaBusyControlsGrid, effectIdeaBusyControlsEmpty, entry.paramDefs, entry.params);
+}
+
 function setEffectIdeaGenerationView(hasGeneration: boolean): void {
   effectIdeaPreviewShell?.classList.toggle("hidden", !hasGeneration && effectIdeasGenerating === false);
   effectIdeaGeneratedSections?.classList.toggle("hidden", !hasGeneration);
@@ -625,7 +733,8 @@ function applyEffectIdeaCarouselEntry(): void {
     return;
   }
   effectIdeaPreviewEffect = entry.effect;
-  effectIdeaPreviewParams = { ...entry.params };
+  effectIdeaPreviewParams = entry.params;
+  renderBusyCommunityEffectControls();
   stopEffectIdeaPreview();
   previewGeneratedIdea();
 }
@@ -645,7 +754,8 @@ async function hydrateEffectIdeaCarousel(): Promise<void> {
       return [{
         name: entry.name,
         effect: compileRuntimeEffect(entry.runtimeCode),
-        params: getGeneratedEffectDefaultParams(entry.params)
+        params: getGeneratedEffectDefaultParams(entry.params),
+        paramDefs: entry.params ?? []
       }];
     } catch {
       return [];
@@ -687,6 +797,8 @@ function runEffectIdeaSuccessCountdown(onDone: () => void): void {
 }
 
 function updateEffectIdeaButtons(): void {
+  const busyModalVisible = Boolean(effectIdeaBusyModal && !effectIdeaBusyModal.classList.contains("hidden"));
+  const showCarouselButtons = shouldShowCommunityCarouselButtons(effectIdeasGenerating, busyModalVisible, effectIdeaCarouselEntries.length);
   if (effectIdeaGenerateButton) {
     effectIdeaGenerateButton.disabled = effectIdeasGenerating || effectIdeasSubmitting;
   }
@@ -700,8 +812,17 @@ function updateEffectIdeaButtons(): void {
   effectIdeaCancelButton?.classList.toggle("hidden", effectIdeasGenerating);
   effectIdeaGenerateButton?.classList.toggle("hidden", effectIdeasGenerating);
   effectIdeaSubmitButton?.classList.toggle("hidden", effectIdeasGenerating || generatedIdea === null);
-  effectIdeaPrevButton?.classList.toggle("hidden", !effectIdeasGenerating || effectIdeaCarouselEntries.length < 2);
-  effectIdeaNextButton?.classList.toggle("hidden", !effectIdeasGenerating || effectIdeaCarouselEntries.length < 2);
+  effectIdeaPrevButton?.classList.toggle("hidden", !showCarouselButtons);
+  effectIdeaNextButton?.classList.toggle("hidden", !showCarouselButtons);
+}
+
+function closeEffectIdeaModalIfAllowed(): void {
+  const blockedMessage = getEffectIdeaCloseBlockedMessage(effectIdeasGenerating);
+  if (blockedMessage) {
+    setEffectIdeaStatus(blockedMessage, "busy");
+    return;
+  }
+  setEffectIdeaModalVisible(false);
 }
 
 function renderGeneratedEffectIdeaControls(): void {
@@ -709,73 +830,8 @@ function renderGeneratedEffectIdeaControls(): void {
     return;
   }
   const params = generatedIdea?.params ?? [];
-  const hasControls = params.length > 0;
   effectIdeaControls.classList.toggle("hidden", !generatedIdea);
-  effectIdeaControlsGrid.innerHTML = "";
-  effectIdeaControlsEmpty.classList.toggle("hidden", hasControls);
-  if (!hasControls) {
-    return;
-  }
-
-  params.forEach((param) => {
-    const field = document.createElement("label");
-    field.classList.add("debug-field");
-    const label = document.createElement("span");
-    label.textContent = param.label;
-    field.appendChild(label);
-
-    if (param.type === "select") {
-      const select = document.createElement("select");
-      select.dataset.effectIdeaParam = param.key;
-      (param.options ?? []).forEach((option) => {
-        const optionEl = document.createElement("option");
-        optionEl.value = option.value;
-        optionEl.textContent = option.label;
-        select.appendChild(optionEl);
-      });
-      select.value = String(effectIdeaPreviewParams[param.key] ?? "");
-      select.addEventListener("change", () => {
-        effectIdeaPreviewParams[param.key] = select.value;
-      });
-      field.appendChild(select);
-      effectIdeaControlsGrid.appendChild(field);
-      return;
-    }
-
-    const input = document.createElement("input");
-    input.dataset.effectIdeaParam = param.key;
-    if (param.type === "toggle") {
-      input.type = "checkbox";
-      input.checked = Number(effectIdeaPreviewParams[param.key]) !== 0;
-      input.addEventListener("change", () => {
-        effectIdeaPreviewParams[param.key] = input.checked ? 1 : 0;
-      });
-      field.appendChild(input);
-      effectIdeaControlsGrid.appendChild(field);
-      return;
-    }
-
-    input.type = "number";
-    if (param.min !== undefined) {
-      input.min = String(param.min);
-    }
-    if (param.max !== undefined) {
-      input.max = String(param.max);
-    }
-    if (param.step !== undefined) {
-      input.step = String(param.step);
-    }
-    input.value = String(effectIdeaPreviewParams[param.key] ?? 0);
-    input.addEventListener("input", () => {
-      const numeric = Number(input.value);
-      if (!Number.isFinite(numeric)) {
-        return;
-      }
-      effectIdeaPreviewParams[param.key] = numeric;
-    });
-    field.appendChild(input);
-    effectIdeaControlsGrid.appendChild(field);
-  });
+  renderEffectIdeaParamControls(effectIdeaControlsGrid, effectIdeaControlsEmpty, params, effectIdeaPreviewParams);
 }
 
 function stopEffectIdeaPreview(): void {
@@ -820,10 +876,12 @@ function setEffectIdeaModalVisible(visible: boolean): void {
     setEffectIdeaStatus("Describe your idea, click Generate, and preview the result.");
     generatedIdea = null;
     effectIdeaPreviewParams = {};
+    effectIdeaBusyControlsVisible = true;
     generatedIdeaPrompt = "";
     effectIdeaPreviewEffect = null;
     effectIdeaCarouselEntries = [];
     effectIdeaCarouselIndex = 0;
+    renderBusyCommunityEffectControls();
     if (effectIdeaNameInput) {
       effectIdeaNameInput.value = "";
     }
@@ -878,6 +936,7 @@ async function generateCurrentEffectIdea(): Promise<void> {
     return;
   }
   effectIdeasGenerating = true;
+  effectIdeaBusyControlsVisible = true;
   clearEffectIdeaCountdown();
   setEffectIdeaGenerationView(false);
   setEffectIdeaBusyState("busy");
@@ -886,6 +945,7 @@ async function generateCurrentEffectIdea(): Promise<void> {
   setEffectIdeaStatus("Generating effect code with Codex…", "busy");
   try {
     await hydrateEffectIdeaCarousel();
+    renderBusyCommunityEffectControls();
     applyEffectIdeaCarouselEntry();
     const generation = await generateEffectIdea(prompt);
     generatedIdea = generation;
@@ -921,6 +981,7 @@ async function generateCurrentEffectIdea(): Promise<void> {
     setEffectIdeaStatus("Generation failed. Try again to get a fresh working variation.", "error");
   } finally {
     effectIdeasGenerating = false;
+    renderBusyCommunityEffectControls();
     updateEffectIdeaButtons();
   }
 }
@@ -2036,7 +2097,7 @@ if (doodleModal) {
 
 if (effectIdeaCancelButton) {
   effectIdeaCancelButton.addEventListener("click", () => {
-    setEffectIdeaModalVisible(false);
+    closeEffectIdeaModalIfAllowed();
   });
 }
 
@@ -2081,6 +2142,13 @@ if (effectIdeaNextButton) {
   });
 }
 
+if (effectIdeaBusyToggleButton) {
+  effectIdeaBusyToggleButton.addEventListener("click", () => {
+    effectIdeaBusyControlsVisible = !effectIdeaBusyControlsVisible;
+    renderBusyCommunityEffectControls();
+  });
+}
+
 if (effectIdeaNameInput) {
   effectIdeaNameInput.addEventListener("input", () => {
     const sanitized = sanitizeEffectIdeaName(effectIdeaNameInput.value);
@@ -2094,7 +2162,7 @@ if (effectIdeaNameInput) {
 if (effectIdeaModal) {
   effectIdeaModal.addEventListener("click", (event) => {
     if (event.target === effectIdeaModal) {
-      setEffectIdeaModalVisible(false);
+      closeEffectIdeaModalIfAllowed();
     }
   });
 }
@@ -2108,7 +2176,7 @@ window.addEventListener("keydown", (event) => {
     return;
   }
   if (event.key === "Escape" && effectIdeaModal && !effectIdeaModal.classList.contains("hidden")) {
-    setEffectIdeaModalVisible(false);
+    closeEffectIdeaModalIfAllowed();
     return;
   }
   if (!releaseMode && event.key.toLowerCase() === "d") {

@@ -1408,6 +1408,11 @@ body,
 }
 
 .effect-idea-preview-shell {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.effect-idea-preview-stage {
   position: relative;
 }
 
@@ -1415,12 +1420,30 @@ body,
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
+  z-index: 3;
   width: 2.2rem;
   height: 2.2rem;
   border-radius: 999px;
   border: 1px solid rgba(142, 249, 255, 0.7);
   background: rgba(4, 10, 18, 0.9);
   color: #dffcff;
+}
+
+.effect-idea-busy-toggle {
+  position: absolute;
+  top: 0.45rem;
+  right: 0.45rem;
+  z-index: 4;
+  width: 1.8rem;
+  height: 1.8rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 1px solid rgba(142, 249, 255, 0.7);
+  background: rgba(4, 10, 18, 0.9);
+  color: #dffcff;
+  font-size: 0.9rem;
+  line-height: 1;
 }
 
 .effect-idea-carousel-prev {
@@ -1432,11 +1455,9 @@ body,
 }
 
 .effect-idea-busy-modal {
-  position: absolute;
-  left: 50%;
-  bottom: 0.85rem;
-  transform: translateX(-50%);
-  width: min(90%, 30rem);
+  width: 100%;
+  max-height: 15.5rem;
+  overflow: auto;
   display: grid;
   justify-items: center;
   gap: 0.35rem;
@@ -1474,6 +1495,44 @@ body,
   text-align: center;
 }
 
+.effect-idea-busy-effect-name {
+  color: rgba(221, 252, 255, 0.92);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.effect-idea-busy-controls {
+  width: 100%;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.effect-idea-busy-controls .debug-grid {
+  gap: 0.3rem;
+}
+
+.effect-idea-busy-controls .debug-field {
+  background: rgba(8, 17, 29, 0.84);
+  border-color: rgba(142, 249, 255, 0.2);
+  padding: 0.3rem 0.4rem;
+}
+
+.effect-idea-busy-controls .debug-field span {
+  font-size: 0.62rem;
+}
+
+.effect-idea-busy-controls .debug-field input,
+.effect-idea-busy-controls .debug-field select {
+  min-height: 1.4rem;
+  font-size: 0.68rem;
+}
+
+.effect-idea-busy-controls .debug-empty {
+  font-size: 0.68rem;
+  color: rgba(215, 247, 255, 0.65);
+}
+
 #effect-idea-name {
   border: 1px solid rgba(142, 249, 255, 0.22);
   background: rgba(6, 12, 20, 0.9);
@@ -1504,8 +1563,8 @@ body,
 }
 
 @keyframes effect-idea-error-pulse {
-  0%, 100% { transform: translateX(-50%) scale(1); }
-  35% { transform: translateX(-50%) scale(1.03); }
+  0%, 100% { transform: scale(1); }
+  35% { transform: scale(1.01); }
 }
 
 .effect-idea-code {

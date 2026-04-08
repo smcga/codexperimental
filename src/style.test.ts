@@ -26,9 +26,17 @@ describe("effect idea modal styling", () => {
 
     expect(indexHtml).toContain('id="effect-idea-generated-sections" class="hidden"');
     expect(indexHtml).toContain('id="effect-idea-busy-modal"');
+    expect(indexHtml).toContain('id="effect-idea-busy-toggle"');
+    expect(indexHtml).toContain('class="effect-idea-preview-stage"');
+    expect(indexHtml).toContain('id="effect-idea-busy-controls" class="effect-idea-busy-controls hidden"');
     expect(indexHtml).toContain('id="effect-idea-input" rows="8"');
     expect(css).toContain("#effect-idea-input");
     expect(css).toContain("min-height: 10.5rem;");
+    expect(css).toContain(".effect-idea-preview-stage");
+    expect(css).toContain(".effect-idea-busy-toggle");
+    expect(css).toContain(".effect-idea-busy-modal");
+    expect(css).toContain("max-height: 15.5rem;");
+    expect(css).toContain(".effect-idea-busy-controls .debug-field");
   });
 });
 
