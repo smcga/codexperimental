@@ -87,9 +87,9 @@ describe("debug effect selector helpers", () => {
     expect(getDebugEffectSelectorOptions(["starfield", "roadDrive"])).toEqual(["timeline", "starfield", "roadDrive"]);
   });
 
-  it("includes greets_wall from the effect manifest registry", () => {
+  it("includes doodle_greetz_wall from the effect manifest registry", () => {
     const options = getDebugEffectSelectorOptions(getRegistryEffectNames());
-    expect(options).toContain("greets_wall");
+    expect(options).toContain("doodle_greetz_wall");
   });
 
   it("formats effect settings for timeline section JSON", () => {

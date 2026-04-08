@@ -2468,7 +2468,7 @@
       "id": "credits-vibe",
       "start": "05:40",
       "end": "05:56.3",
-      "effect": "greets_wall",
+      "effect": "doodle_greetz_wall",
       "params": {
         "speed": 0.52,
         "glow": 0.24,
