@@ -121,9 +121,11 @@ export function runnerTraversalY(prevSupportY: number, currentSupportY: number, 
   const heightDelta = prevSupportY - currentSupportY;
 
   if (heightDelta > 0) {
-    const phase = smoothstep(progress);
-    const arcLift = Math.sin(phase * Math.PI) * Math.max(3, heightDelta * 0.45 + audioAmount * 3);
-    const baseY = prevSupportY + (currentSupportY - prevSupportY) * phase;
+    const jumpWindowStart = 0.08;
+    const jumpWindowEnd = 0.96;
+    const jumpProgress = smoothstep((progress - jumpWindowStart) / (jumpWindowEnd - jumpWindowStart));
+    const arcLift = Math.sin(jumpProgress * Math.PI) * Math.max(6, heightDelta * 0.9 + audioAmount * 4);
+    const baseY = prevSupportY + (currentSupportY - prevSupportY) * jumpProgress;
     return baseY - arcLift;
   }
 

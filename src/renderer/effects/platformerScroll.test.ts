@@ -90,11 +90,13 @@ describe("platformerScroll helpers", () => {
 
   it("runnerTraversalY adds a jump arc for upward steps", () => {
     const start = runnerTraversalY(220, 188, 0, 0.2);
+    const preTakeoff = runnerTraversalY(220, 188, 0.04, 0.2);
     const peak = runnerTraversalY(220, 188, 0.5, 0.2);
     const end = runnerTraversalY(220, 188, 1, 0.2);
 
     expect(start).toBe(220);
-    expect(peak).toBeLessThan(204);
+    expect(preTakeoff).toBe(220);
+    expect(peak).toBeLessThan(194);
     expect(end).toBe(188);
   });
 
