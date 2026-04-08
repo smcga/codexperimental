@@ -184,6 +184,18 @@ describe("effect ideas client", () => {
       .toThrow("Generated runtime code blocked by safety policy");
   });
 
+  it("allows comments and strings that mention blocked primitives", () => {
+    expect(() => compileRuntimeEffect(`
+      // Avoid eval() and new Function() in this effect.
+      return {
+        render() {
+          const note = "Never call import('x') from generated effects.";
+          void note;
+        }
+      };
+    `)).not.toThrow();
+  });
+
   it("surfaces API error messages for generation failures", async () => {
     globalThis.fetch = vi.fn(async () => ({
       ok: false,

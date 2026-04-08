@@ -81,10 +81,17 @@ const RUNTIME_CODE_SAFETY_RULES: RuntimeSafetyRule[] = [
   { pattern: /\bWebSocket\b/iu, reason: "opening network sockets" },
   { pattern: /\bEventSource\b/iu, reason: "opening server-sent event streams" },
   { pattern: /\beval\s*\(/iu, reason: "using eval()" },
-  { pattern: /\bFunction\s*\(/iu, reason: "using dynamic Function constructor" },
+  { pattern: /\b(?:new\s+)?Function\s*\(/iu, reason: "using dynamic Function constructor" },
   { pattern: /\bimport\s*\(/iu, reason: "using dynamic import()" },
   { pattern: /\brequire\s*\(/iu, reason: "using require()" }
 ];
+
+function stripRuntimeStringLiteralsAndComments(source: string): string {
+  return source
+    .replace(/\/\*[\s\S]*?\*\//gu, " ")
+    .replace(/\/\/.*$/gmu, " ")
+    .replace(/(["'`])(?:\\[\s\S]|(?!\1)[^\\])*\1/gu, "\"\"");
+}
 
 function normalizeGeneratedCode(rawCode: string): string {
   const hasEscapedNewlines = rawCode.includes("\\n");
@@ -112,7 +119,8 @@ function normalizeGeneratedCode(rawCode: string): string {
 
 export function validateGeneratedRuntimeCode(runtimeCode: string): void {
   const normalizedCode = normalizeGeneratedCode(runtimeCode);
-  const violated = RUNTIME_CODE_SAFETY_RULES.find((rule) => rule.pattern.test(normalizedCode));
+  const codeForValidation = stripRuntimeStringLiteralsAndComments(normalizedCode);
+  const violated = RUNTIME_CODE_SAFETY_RULES.find((rule) => rule.pattern.test(codeForValidation));
   if (!violated) {
     return;
   }
