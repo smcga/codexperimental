@@ -3159,8 +3159,8 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 - **Registry key:** `tetris_matrix`
 - **Implementation:** `src/renderer/effects/tetrisMatrixEffect.ts` (class `TetrisMatrixEffect`)
 - **Renderer:** Canvas2D
-- **Description:** Self-playing falling-block match with full pentomino sets (all 12 five-cell shapes), a clearer side-panel HUD, safe top-out game-over restarts, and visible mid-air spins plus quick-drop/hesitation choices in tricky spots.
-- **Audio features:** beat, beatStrength, rms
+- **Description:** Self-playing falling-block match with full pentomino sets (all 12 five-cell shapes), reactive combo pulses/screen shake, clearer side-panel HUD, safe top-out game-over restarts, and visible mid-air spins plus quick-drop/hesitation choices in tricky spots.
+- **Audio features:** beat, beatStrength, impactStrength, rms
 - **Performance notes:** None noted.
 
 ### Parameters

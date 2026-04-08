@@ -458,6 +458,19 @@ const getPieceAtIndex = (cache: CachedState, seed: number, index: number): Pento
   return cache.bag[index] ?? "I";
 };
 
+
+const getRecentLineBursts = (placements: TetrisPlacement[], settledCount: number): number[] => {
+  const bursts: number[] = [];
+  for (let i = Math.max(0, settledCount - 5); i < settledCount; i += 1) {
+    const placement = placements[i];
+    if (!placement || placement.clearedLines <= 0) {
+      continue;
+    }
+    bursts.push(settledCount - i);
+  }
+  return bursts;
+};
+
 export class TetrisMatrixEffect implements Effect {
   private cache: CachedState = {
     board: createEmptyBoard(),
@@ -562,6 +575,14 @@ export class TetrisMatrixEffect implements Effect {
     } = layout;
     const beatGlow = (audio.beat ? 1 : 0) * (0.2 + (audio.beatStrength ?? 0) * 0.55);
     const rmsGlow = clamp(audio.rms ?? 0, 0, 1) * 0.18;
+    const intensity = clamp(0.35 + resolved.level / 26 + (audio.impactStrength ?? 0) * 0.3, 0.2, 1.55);
+    const recentLineBursts = getRecentLineBursts(this.cache.placements, settledCount);
+    const burstEnergy = clamp(recentLineBursts.reduce((sum, age) => sum + 1 / (age * 1.4 + 0.4), 0), 0, 1.6);
+    const comboPulse = clamp((currentPlacement.clearedLines ?? 0) * 0.2 + burstEnergy * 0.34 + beatGlow * 0.45, 0, 1.5);
+    const screenShake = comboPulse * cellSize * 0.22;
+    const shakePhase = time * (19 + resolved.level * 0.55);
+    const shakeX = Math.sin(shakePhase) * screenShake;
+    const shakeY = Math.cos(shakePhase * 0.93) * screenShake * 0.7;
     const hesitation = clamp(currentPlacement.hesitation ?? 0, 0, 0.4);
     const easedProgressRaw =
       currentPlacement.dropMode === "quick"
@@ -578,6 +599,7 @@ export class TetrisMatrixEffect implements Effect {
 
     ctx.save();
     ctx.clearRect(0, 0, width, height);
+    ctx.translate(shakeX, shakeY);
 
     const bgGradient = ctx.createLinearGradient(0, 0, 0, height);
     bgGradient.addColorStop(0, GAMEBOY_PALETTE.shell);
@@ -599,7 +621,7 @@ export class TetrisMatrixEffect implements Effect {
     ctx.fillRect(leftPanelX, leftPanelY, leftPanelW, leftPanelH);
     ctx.fillRect(rightPanelX, rightPanelY, rightPanelW, leftPanelH);
 
-    const screenGlow = clamp(resolved.glow + beatGlow + rmsGlow, 0, 1.6);
+    const screenGlow = clamp(resolved.glow + beatGlow + rmsGlow + comboPulse * 0.45 + intensity * 0.14, 0, 1.6);
     ctx.fillStyle = `rgba(183, 210, 92, ${0.05 + screenGlow * 0.08})`;
     ctx.fillRect(boardLeft, boardTop, boardWidthPx, boardHeightPx);
 
@@ -614,6 +636,13 @@ export class TetrisMatrixEffect implements Effect {
 
         if (cell === 0) {
           continue;
+        }
+
+        const rowPressure = clamp((y - (TETRIS_BOARD_HEIGHT - 8)) / 8, 0, 1);
+        const activePulse = clamp(comboPulse * (0.8 + rowPressure * 0.9), 0, 1.25);
+        if (activePulse > 0.04) {
+          ctx.fillStyle = `rgba(183,210,92,${0.06 + activePulse * 0.16})`;
+          ctx.fillRect(px, py, cellSize - 1, cellSize - 1);
         }
 
         const shade = [GAMEBOY_PALETTE.low, GAMEBOY_PALETTE.mid, GAMEBOY_PALETTE.high, GAMEBOY_PALETTE.bright][cell - 1] ?? GAMEBOY_PALETTE.high;
@@ -637,7 +666,20 @@ export class TetrisMatrixEffect implements Effect {
       });
     }
 
-    const activeShade = lockPulse > 0.15 ? GAMEBOY_PALETTE.bright : GAMEBOY_PALETTE.high;
+    if (comboPulse > 0.12) {
+      const trailAlpha = clamp(comboPulse * 0.14, 0, 0.3);
+      ctx.fillStyle = `rgba(183,210,92,${trailAlpha})`;
+      getPieceCells(currentPiece, currentPlacement.rotation).forEach(([x, y]) => {
+        const px = boardLeft + (currentPlacement.x + x) * cellSize;
+        const py = boardTop + (currentPlacement.y + y) * cellSize;
+        if (py < boardTop) {
+          return;
+        }
+        ctx.fillRect(px + 1, py + 1, cellSize - 2, cellSize - 2);
+      });
+    }
+
+    const activeShade = lockPulse + comboPulse > 0.22 ? GAMEBOY_PALETTE.bright : GAMEBOY_PALETTE.high;
     getPieceCells(currentPiece, renderedRotation).forEach(([x, y]) => {
       const px = boardLeft + (currentPlacement.x + x) * cellSize;
       const py = boardTop + dropY + y * cellSize;
@@ -660,6 +702,8 @@ export class TetrisMatrixEffect implements Effect {
     ctx.fillText("LINES", hudX, leftPanelY + cellSize * 2.8);
     ctx.fillText(String(this.cache.lines).padStart(3, "0"), hudX, leftPanelY + cellSize * 3.7);
     ctx.fillText(`LV ${String(resolved.level).padStart(2, "0")}`, hudX, leftPanelY + cellSize * 5.05);
+    const lamp = comboPulse > 0.45 ? "HOT" : audio.beat ? "SYNC" : "CALM";
+    ctx.fillText(lamp, hudX, leftPanelY + cellSize * 6.35);
 
     const previewX = rightPanelX + cellSize * 0.45;
     ctx.fillText("NEXT", previewX, rightPanelY + cellSize * 0.55);
@@ -687,6 +731,13 @@ export class TetrisMatrixEffect implements Effect {
 
     ctx.fillStyle = GAMEBOY_PALETTE.glare;
     ctx.fillRect(screenX + cellSize * 0.9, screenY + cellSize * 0.7, screenW * 0.28, screenH * 0.14);
+
+    const vignette = ctx.createLinearGradient(0, 0, 0, height);
+    vignette.addColorStop(0, `rgba(15,31,15,${0.12 + intensity * 0.05})`);
+    vignette.addColorStop(0.5, "rgba(15,31,15,0)");
+    vignette.addColorStop(1, `rgba(15,31,15,${0.16 + intensity * 0.06})`);
+    ctx.fillStyle = vignette;
+    ctx.fillRect(0, 0, width, height);
 
     for (let y = 0; y < height; y += 3) {
       ctx.fillStyle = GAMEBOY_PALETTE.scanline;

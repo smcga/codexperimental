@@ -31,6 +31,7 @@ const createCtx = () =>
     createLinearGradient: vi.fn(() => createGradient()),
     fillText: vi.fn(),
     save: vi.fn(),
+    translate: vi.fn(),
     restore: vi.fn()
   }) as unknown as CanvasRenderingContext2D;
 
@@ -202,12 +203,14 @@ describe("TetrisMatrixEffect", () => {
     });
 
     expect((ctx.clearRect as ReturnType<typeof vi.fn>).mock.calls.length).toBe(1);
+    expect((ctx.translate as ReturnType<typeof vi.fn>).mock.calls.length).toBe(1);
     expect(colors.has("#0f1f0f")).toBe(true);
     expect(colors.has("#9bbc0f")).toBe(true);
     expect(colors.has("#77a834") || colors.has("#b7d25c")).toBe(true);
     expect(labels).toContain("SCORE");
     expect(labels).toContain("NEXT");
     expect(labels).toContain("DOT MATRIX");
+    expect(labels).toContain("SYNC");
   });
 
   it("resets cached simulation state", () => {
