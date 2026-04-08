@@ -7,7 +7,8 @@ import {
   PlatformerScrollEffect,
   platformAt,
   runnerJumpOffset,
-  supportTopY
+  runnerTraversalY,
+  supportTopY,
 } from "./platformerScroll";
 
 const createGradient = () => ({ addColorStop: vi.fn() });
@@ -85,6 +86,27 @@ describe("platformerScroll helpers", () => {
     expect(upAtMid).toBeGreaterThan(0);
     expect(flat).toBe(0);
     expect(down).toBe(0);
+  });
+
+  it("runnerTraversalY adds a jump arc for upward steps", () => {
+    const start = runnerTraversalY(220, 188, 0, 0.2);
+    const preTakeoff = runnerTraversalY(220, 188, 0.04, 0.2);
+    const peak = runnerTraversalY(220, 188, 0.5, 0.2);
+    const end = runnerTraversalY(220, 188, 1, 0.2);
+
+    expect(start).toBe(220);
+    expect(preTakeoff).toBe(220);
+    expect(peak).toBeLessThan(194);
+    expect(end).toBe(188);
+  });
+
+  it("runnerTraversalY keeps footing briefly before dropping down", () => {
+    const early = runnerTraversalY(188, 220, 0.1, 0.2);
+    const late = runnerTraversalY(188, 220, 0.9, 0.2);
+
+    expect(early).toBe(188);
+    expect(late).toBeGreaterThan(210);
+    expect(late).toBeLessThanOrEqual(220);
   });
 
   it("buildRunnerSprite creates a colorful mascot silhouette with animated limbs", () => {

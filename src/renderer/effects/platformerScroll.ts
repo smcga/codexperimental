@@ -116,6 +116,28 @@ export function runnerJumpOffset(prevSupportY: number, currentSupportY: number, 
   return Math.floor(arc * (lift * 0.85 + extra));
 }
 
+export function runnerTraversalY(prevSupportY: number, currentSupportY: number, colProgress: number, audioAmount: number): number {
+  const progress = clamp(colProgress, 0, 1);
+  const heightDelta = prevSupportY - currentSupportY;
+
+  if (heightDelta > 0) {
+    const jumpWindowStart = 0.08;
+    const jumpWindowEnd = 0.96;
+    const jumpProgress = smoothstep((progress - jumpWindowStart) / (jumpWindowEnd - jumpWindowStart));
+    const arcLift = Math.sin(jumpProgress * Math.PI) * Math.max(6, heightDelta * 0.9 + audioAmount * 4);
+    const baseY = prevSupportY + (currentSupportY - prevSupportY) * jumpProgress;
+    return baseY - arcLift;
+  }
+
+  if (heightDelta < 0) {
+    const ledgeHold = 0.22;
+    const fallProgress = progress <= ledgeHold ? 0 : smoothstep((progress - ledgeHold) / (1 - ledgeHold));
+    return prevSupportY + (currentSupportY - prevSupportY) * fallProgress;
+  }
+
+  return prevSupportY;
+}
+
 export function buildRunnerSprite(baseX: number, footY: number, tileSize: number, time: number, audioAmount: number): RunnerSprite {
   const unit = Math.max(1, Math.round(tileSize / 16));
   const x = baseX - 4 * unit;
@@ -406,10 +428,9 @@ export class PlatformerScrollEffect implements Effect {
       frontPulse
     );
 
-    const supportY = Math.floor(prevSupportY + (currentSupportY - prevSupportY) * smoothstep(colProgress));
-    const hop = runnerJumpOffset(prevSupportY, currentSupportY, colProgress, audioAmount);
+    const supportY = runnerTraversalY(prevSupportY, currentSupportY, colProgress, audioAmount);
     const runBob = Math.floor((Math.sin(time * 14) * 1.5 + audioAmount * 1.5) * 0.5);
-    const runnerFootY = supportY - hop - runBob - 1;
+    const runnerFootY = Math.floor(supportY) - runBob - 1;
     const runnerSprite = buildRunnerSprite(runnerBaseX, runnerFootY, tileSize, time, audioAmount);
 
     ctx.fillStyle = runnerSprite.shadow.color;
