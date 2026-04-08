@@ -25,8 +25,8 @@ export const water_dropsManifest = defineEffectManifest({
   },
   docs: {
     parameters: "`dropCount`, `minRadius`, `maxRadius`, `fallSpeed`, `distortion`, `trail`, `audioReact`, `tint`, `refraction`, `microDrops`, `rivulets`, `seed`",
-    catalogNote: "Stylized droplets on glass with dark/bright refractive edges, tiny bead clusters, and optional rivulet streaks.",
-    description: "Stylized droplets on glass with dark/bright refractive edges, tiny bead clusters, and optional rivulet streaks."
+    catalogNote: "Layered wet-glass droplets with refractive cores, chromatic rims, sparkling micro-beads, and flowing rivulet streaks.",
+    description: "Layered wet-glass droplets with refractive cores, chromatic rims, sparkling micro-beads, and flowing rivulet streaks."
   }
 });
 
