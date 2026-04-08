@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  getEffectReviewPreviewUnavailableMessage,
   formatEffectReviewTimestamp,
   getEffectReviewActionStates,
   getEffectReviewPageParams,
@@ -33,6 +34,10 @@ describe("effect review page helpers", () => {
   it("formats timestamps for moderation metadata", () => {
     const formatted = formatEffectReviewTimestamp(Date.UTC(2024, 0, 2, 3, 4, 0));
     expect(formatted.length).toBeGreaterThan(0);
+  });
+
+  it("explains moderation is still possible when preview fails", () => {
+    expect(getEffectReviewPreviewUnavailableMessage()).toContain("approve or deny");
   });
 
   it("picks the next pending effect after approval", () => {

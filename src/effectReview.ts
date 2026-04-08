@@ -23,6 +23,10 @@ export function formatEffectReviewTimestamp(timestamp: number): string {
   });
 }
 
+export function getEffectReviewPreviewUnavailableMessage(): string {
+  return "Preview unavailable for this effect, but you can still approve or deny it.";
+}
+
 
 const previewCanvas = typeof document !== "undefined" ? document.querySelector<HTMLCanvasElement>("#effect-review-preview") : null;
 const previewContext = previewCanvas?.getContext("2d") ?? null;
@@ -263,12 +267,29 @@ async function initEffectReviewPage(): Promise<void> {
       reviewMeta.classList.remove("hidden");
     }
 
-    activeEffect = compileRuntimeEffect(effect.runtimeCode);
-    startPreview();
-
     setActionState(true, effect.id, token);
     bindModerationButtons(effect.id, token);
-    setStatus("Ready for moderation.", "success");
+
+    try {
+      activeEffect = compileRuntimeEffect(effect.runtimeCode);
+      startPreview();
+      setStatus("Ready for moderation.", "success");
+    } catch {
+      activeEffect = null;
+      stopPreview();
+      setStatus(getEffectReviewPreviewUnavailableMessage(), "error");
+      if (reviewCopy) {
+        reviewCopy.textContent = "This effect could not be previewed, but moderation actions are still available.";
+      }
+      if (previewContext && previewCanvas) {
+        previewContext.fillStyle = "#040812";
+        previewContext.fillRect(0, 0, previewCanvas.width, previewCanvas.height);
+        previewContext.fillStyle = "rgba(232, 247, 255, 0.75)";
+        previewContext.font = "28px monospace";
+        previewContext.textAlign = "center";
+        previewContext.fillText("Preview unavailable", previewCanvas.width / 2, previewCanvas.height / 2);
+      }
+    }
   } catch {
     setStatus("This effect is no longer waiting for review, or the link has expired.", "error");
     if (reviewCopy) {
