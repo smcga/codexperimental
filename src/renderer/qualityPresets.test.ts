@@ -11,7 +11,7 @@ describe("quality presets", () => {
     expect(getQualityPresets()).toEqual([
       { id: "performance", label: "Best performance", qualityScale: 0.65, autoQuality: true },
       { id: "balanced", label: "Balanced", qualityScale: 0.85, autoQuality: true },
-      { id: "quality", label: "Best quality", qualityScale: 1, autoQuality: false }
+      { id: "quality", label: "Maximum", qualityScale: 1, autoQuality: false }
     ]);
   });
 

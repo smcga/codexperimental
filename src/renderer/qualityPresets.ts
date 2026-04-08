@@ -25,7 +25,7 @@ const QUALITY_PRESET_LIST: QualityPreset[] = [
   },
   {
     id: "quality",
-    label: "Best quality",
+    label: "Maximum",
     qualityScale: renderSettingsDefaults.MAX_QUALITY_SCALE,
     autoQuality: false
   }
