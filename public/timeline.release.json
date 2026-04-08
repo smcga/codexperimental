@@ -8709,7 +8709,7 @@
     {
       "id": "scene-023-lissajous-1",
       "start": 205.012,
-      "end": 205.184,
+      "end": 206.907,
       "text": "All",
       "x": 0.13,
       "y": 0.14,
@@ -8735,7 +8735,7 @@
     {
       "id": "scene-023-lissajous-2",
       "start": 205.184,
-      "end": 205.356,
+      "end": 206.907,
       "text": "I",
       "x": 0.137,
       "y": 0.2,
@@ -8763,7 +8763,7 @@
     {
       "id": "scene-023-lissajous-3",
       "start": 205.356,
-      "end": 205.528,
+      "end": 206.907,
       "text": "had",
       "x": 0.145,
       "y": 0.26,
@@ -8792,7 +8792,7 @@
     {
       "id": "scene-023-lissajous-4",
       "start": 205.528,
-      "end": 205.701,
+      "end": 206.907,
       "text": "to",
       "x": 0.152,
       "y": 0.32,
@@ -8818,7 +8818,7 @@
     {
       "id": "scene-023-lissajous-5",
       "start": 205.701,
-      "end": 205.873,
+      "end": 206.907,
       "text": "do",
       "x": 0.159,
       "y": 0.38,
@@ -8844,7 +8844,7 @@
     {
       "id": "scene-023-lissajous-6",
       "start": 205.873,
-      "end": 206.045,
+      "end": 206.907,
       "text": "was",
       "x": 0.166,
       "y": 0.44,
@@ -8872,7 +8872,7 @@
     {
       "id": "scene-023-lissajous-7",
       "start": 206.045,
-      "end": 206.217,
+      "end": 206.907,
       "text": "ask,",
       "x": 0.5,
       "y": 0.5,
@@ -8901,7 +8901,7 @@
     {
       "id": "scene-023-lissajous-8",
       "start": 206.217,
-      "end": 206.346,
+      "end": 206.907,
       "text": "now",
       "x": 0.181,
       "y": 0.56,
@@ -8927,7 +8927,7 @@
     {
       "id": "scene-023-lissajous-9",
       "start": 206.346,
-      "end": 206.476,
+      "end": 206.907,
       "text": "it's",
       "x": 0.188,
       "y": 0.62,
@@ -8953,7 +8953,7 @@
     {
       "id": "scene-023-lissajous-10",
       "start": 206.476,
-      "end": 206.605,
+      "end": 206.907,
       "text": "real,",
       "x": 0.5,
       "y": 0.68,
@@ -8981,7 +8981,7 @@
     {
       "id": "scene-023-lissajous-11",
       "start": 206.605,
-      "end": 206.756,
+      "end": 206.907,
       "text": "it",
       "x": 0.203,
       "y": 0.74,
@@ -9036,7 +9036,7 @@
     {
       "id": "scene-023-lissajous-13",
       "start": 206.907,
-      "end": 207.031,
+      "end": 208.441,
       "text": "From",
       "x": 0.87,
       "y": 0.16,
@@ -9064,7 +9064,7 @@
     {
       "id": "scene-023-lissajous-14",
       "start": 207.031,
-      "end": 207.154,
+      "end": 208.441,
       "text": "an",
       "x": 0.86,
       "y": 0.237,
@@ -9093,7 +9093,7 @@
     {
       "id": "scene-023-lissajous-15",
       "start": 207.154,
-      "end": 207.278,
+      "end": 208.441,
       "text": "vibe,",
       "x": 0.85,
       "y": 0.315,
@@ -9119,7 +9119,7 @@
     {
       "id": "scene-023-lissajous-16",
       "start": 207.278,
-      "end": 207.401,
+      "end": 208.441,
       "text": "from",
       "x": 0.84,
       "y": 0.392,
@@ -9145,7 +9145,7 @@
     {
       "id": "scene-023-lissajous-17",
       "start": 207.401,
-      "end": 207.525,
+      "end": 208.441,
       "text": "an",
       "x": 0.83,
       "y": 0.47,
@@ -9173,7 +9173,7 @@
     {
       "id": "scene-023-lissajous-18",
       "start": 207.525,
-      "end": 207.648,
+      "end": 208.441,
       "text": "idea,",
       "x": 0.82,
       "y": 0.547,
@@ -9202,7 +9202,7 @@
     {
       "id": "scene-023-lissajous-19",
       "start": 207.648,
-      "end": 207.772,
+      "end": 208.441,
       "text": "I",
       "x": 0.81,
       "y": 0.625,
@@ -9228,7 +9228,7 @@
     {
       "id": "scene-023-lissajous-20",
       "start": 207.772,
-      "end": 208.106,
+      "end": 208.441,
       "text": "spawned",
       "x": 0.8,
       "y": 0.702,
@@ -9282,7 +9282,7 @@
     {
       "id": "scene-023-lissajous-22",
       "start": 208.441,
-      "end": 208.573,
+      "end": 208.969,
       "text": "Wanna",
       "x": 0.5,
       "y": 0.18,
@@ -9311,7 +9311,7 @@
     {
       "id": "scene-023-lissajous-23",
       "start": 208.573,
-      "end": 208.705,
+      "end": 208.969,
       "text": "Make",
       "x": 0.5,
       "y": 0.393,
@@ -9337,7 +9337,7 @@
     {
       "id": "scene-023-lissajous-24",
       "start": 208.705,
-      "end": 208.837,
+      "end": 208.969,
       "text": "a",
       "x": 0.5,
       "y": 0.607,
@@ -9391,7 +9391,7 @@
     {
       "id": "scene-023-lissajous-26",
       "start": 208.969,
-      "end": 209.101,
+      "end": 209.365,
       "text": "write",
       "x": 0.13,
       "y": 0.14,
@@ -9417,7 +9417,7 @@
     {
       "id": "scene-023-lissajous-27",
       "start": 209.101,
-      "end": 209.233,
+      "end": 209.365,
       "text": "an",
       "x": 0.17,
       "y": 0.47,
@@ -9471,7 +9471,7 @@
     {
       "id": "scene-023-lissajous-29",
       "start": 209.365,
-      "end": 209.497,
+      "end": 213.151,
       "text": "well",
       "x": 0.87,
       "y": 0.16,
@@ -9497,7 +9497,7 @@
     {
       "id": "scene-023-lissajous-30",
       "start": 209.497,
-      "end": 209.629,
+      "end": 213.151,
       "text": "man,",
       "x": 0.859,
       "y": 0.249,
@@ -9525,7 +9525,7 @@
     {
       "id": "scene-023-lissajous-31",
       "start": 209.629,
-      "end": 211.11,
+      "end": 213.151,
       "text": "Now",
       "x": 0.847,
       "y": 0.337,
@@ -9554,7 +9554,7 @@
     {
       "id": "scene-024-c64-raster-bars-1",
       "start": 211.11,
-      "end": 211.23,
+      "end": 213.151,
       "text": "Feed",
       "x": 0.84,
       "y": 0.42,
@@ -9580,7 +9580,7 @@
     {
       "id": "scene-024-c64-raster-bars-2",
       "start": 211.23,
-      "end": 211.35,
+      "end": 213.151,
       "text": "full",
       "x": 0.828,
       "y": 0.45,
@@ -9606,7 +9606,7 @@
     {
       "id": "scene-024-c64-raster-bars-3",
       "start": 211.35,
-      "end": 211.47,
+      "end": 213.151,
       "text": "of",
       "x": 0.816,
       "y": 0.48,
@@ -9634,7 +9634,7 @@
     {
       "id": "scene-024-c64-raster-bars-4",
       "start": 211.47,
-      "end": 211.671,
+      "end": 213.151,
       "text": "fake",
       "x": 0.804,
       "y": 0.51,
@@ -9660,7 +9660,7 @@
     {
       "id": "scene-024-c64-raster-bars-5",
       "start": 211.671,
-      "end": 211.873,
+      "end": 213.151,
       "text": "news,",
       "x": 0.792,
       "y": 0.54,
@@ -9686,7 +9686,7 @@
     {
       "id": "scene-024-c64-raster-bars-6",
       "start": 211.873,
-      "end": 212.074,
+      "end": 213.151,
       "text": "lies,",
       "x": 0.78,
       "y": 0.57,
@@ -9714,7 +9714,7 @@
     {
       "id": "scene-024-c64-raster-bars-7",
       "start": 212.074,
-      "end": 212.276,
+      "end": 213.151,
       "text": "slop",
       "x": 0.768,
       "y": 0.6,
@@ -9740,7 +9740,7 @@
     {
       "id": "scene-024-c64-raster-bars-8",
       "start": 212.276,
-      "end": 212.477,
+      "end": 213.151,
       "text": "and",
       "x": 0.756,
       "y": 0.63,
@@ -9795,7 +9795,7 @@
     {
       "id": "scene-024-c64-raster-bars-10",
       "start": 213.151,
-      "end": 213.355,
+      "end": 216.033,
       "text": "That",
       "x": 0.732,
       "y": 0.2,
@@ -9821,7 +9821,7 @@
     {
       "id": "scene-024-c64-raster-bars-11",
       "start": 213.355,
-      "end": 213.56,
+      "end": 216.033,
       "text": "shit",
       "x": 0.72,
       "y": 0.3,
@@ -9847,7 +9847,7 @@
     {
       "id": "scene-024-c64-raster-bars-12",
       "start": 213.56,
-      "end": 213.764,
+      "end": 216.033,
       "text": "was",
       "x": 0.708,
       "y": 0.4,
@@ -9876,7 +9876,7 @@
     {
       "id": "scene-024-c64-raster-bars-13",
       "start": 213.764,
-      "end": 213.969,
+      "end": 216.033,
       "text": "a",
       "x": 0.696,
       "y": 0.5,
@@ -9902,7 +9902,7 @@
     {
       "id": "scene-024-c64-raster-bars-14",
       "start": 213.969,
-      "end": 214.173,
+      "end": 216.033,
       "text": "problem",
       "x": 0.684,
       "y": 0.6,
@@ -9931,7 +9931,7 @@
     {
       "id": "scene-030-copper-gradient-splits-1",
       "start": 214.173,
-      "end": 214.505,
+      "end": 216.033,
       "text": "before",
       "x": 0.836,
       "y": 0.7,
@@ -9957,7 +9957,7 @@
     {
       "id": "scene-030-copper-gradient-splits-2",
       "start": 214.505,
-      "end": 214.836,
+      "end": 216.033,
       "text": "any",
       "x": 0.824,
       "y": 0.78,
@@ -9983,7 +9983,7 @@
     {
       "id": "scene-030-copper-gradient-splits-2-5",
       "start": 214.836,
-      "end": 215.168,
+      "end": 216.033,
       "text": "models",
       "x": 0.818,
       "y": 0.86,
@@ -10012,7 +10012,7 @@
     {
       "id": "scene-031-textured-cube-1",
       "start": 215.168,
-      "end": 215.456,
+      "end": 216.033,
       "text": "trained",
       "x": 0.813,
       "y": 0.93,
@@ -10040,7 +10040,7 @@
     {
       "id": "scene-031-textured-cube-1-2",
       "start": 215.456,
-      "end": 215.745,
+      "end": 216.033,
       "text": "trained",
       "x": 0.801,
       "y": 0.96,
@@ -10095,7 +10095,7 @@
     {
       "id": "scene-031-textured-cube-3-2",
       "start": 216.033,
-      "end": 216.285,
+      "end": 218.577,
       "text": "You",
       "x": 0.5,
       "y": 0.18,
@@ -10123,7 +10123,7 @@
     {
       "id": "scene-031-textured-cube-4-2",
       "start": 216.285,
-      "end": 216.538,
+      "end": 218.577,
       "text": "say",
       "x": 0.5,
       "y": 0.251,
@@ -10152,7 +10152,7 @@
     {
       "id": "scene-031-textured-cube-5-2",
       "start": 216.538,
-      "end": 216.791,
+      "end": 218.577,
       "text": "it's",
       "x": 0.5,
       "y": 0.322,
@@ -10178,7 +10178,7 @@
     {
       "id": "scene-031-textured-cube-6-2",
       "start": 216.791,
-      "end": 217.043,
+      "end": 218.577,
       "text": "fake,",
       "x": 0.5,
       "y": 0.393,
@@ -10204,7 +10204,7 @@
     {
       "id": "scene-031-textured-cube-7-2",
       "start": 217.043,
-      "end": 217.299,
+      "end": 218.577,
       "text": "no",
       "x": 0.5,
       "y": 0.464,
@@ -10232,7 +10232,7 @@
     {
       "id": "scene-031-textured-cube-8-2",
       "start": 217.299,
-      "end": 217.554,
+      "end": 218.577,
       "text": "skill,",
       "x": 0.5,
       "y": 0.536,
@@ -10261,7 +10261,7 @@
     {
       "id": "scene-031-textured-cube-9",
       "start": 217.554,
-      "end": 217.81,
+      "end": 218.577,
       "text": "no",
       "x": 0.5,
       "y": 0.607,
@@ -10287,7 +10287,7 @@
     {
       "id": "scene-031-textured-cube-10",
       "start": 217.81,
-      "end": 218.066,
+      "end": 218.577,
       "text": "effort's",
       "x": 0.5,
       "y": 0.678,
@@ -10313,7 +10313,7 @@
     {
       "id": "scene-031-textured-cube-11",
       "start": 218.066,
-      "end": 218.321,
+      "end": 218.577,
       "text": "been",
       "x": 0.5,
       "y": 0.749,
@@ -10370,7 +10370,7 @@
     {
       "id": "scene-031-textured-cube-13",
       "start": 218.577,
-      "end": 218.762,
+      "end": 219.502,
       "text": "Why",
       "x": 0.13,
       "y": 0.14,
@@ -10399,7 +10399,7 @@
     {
       "id": "scene-031-textured-cube-14",
       "start": 218.762,
-      "end": 218.948,
+      "end": 219.502,
       "text": "the",
       "x": 0.157,
       "y": 0.36,
@@ -10425,7 +10425,7 @@
     {
       "id": "scene-031-textured-cube-15",
       "start": 218.948,
-      "end": 219.225,
+      "end": 219.502,
       "text": "hate,",
       "x": 0.183,
       "y": 0.58,
@@ -10479,7 +10479,7 @@
     {
       "id": "scene-035-textmode-charset-1",
       "start": 219.502,
-      "end": 219.779,
+      "end": 221.457,
       "text": "chill,",
       "x": 0.87,
       "y": 0.16,
@@ -10505,7 +10505,7 @@
     {
       "id": "scene-035-textmode-charset-2",
       "start": 219.779,
-      "end": 220.115,
+      "end": 221.457,
       "text": "I've",
       "x": 0.854,
       "y": 0.284,
@@ -10531,7 +10531,7 @@
     {
       "id": "scene-035-textmode-charset-3",
       "start": 220.115,
-      "end": 220.45,
+      "end": 221.457,
       "text": "found",
       "x": 0.838,
       "y": 0.408,
@@ -10559,7 +10559,7 @@
     {
       "id": "scene-035-textmode-charset-4",
       "start": 220.45,
-      "end": 220.786,
+      "end": 221.457,
       "text": "new",
       "x": 0.822,
       "y": 0.532,
@@ -10588,7 +10588,7 @@
     {
       "id": "scene-035-textmode-charset-5",
       "start": 220.786,
-      "end": 221.121,
+      "end": 221.457,
       "text": "creative",
       "x": 0.806,
       "y": 0.656,
@@ -10640,7 +10640,7 @@
     {
       "id": "scene-035-textmode-charset-7",
       "start": 221.457,
-      "end": 221.882,
+      "end": 223.83,
       "text": "And",
       "x": 0.5,
       "y": 0.18,
@@ -10666,7 +10666,7 @@
     {
       "id": "scene-035-textmode-charset-8",
       "start": 221.882,
-      "end": 222.308,
+      "end": 223.83,
       "text": "anyway,",
       "x": 0.5,
       "y": 0.251,
@@ -10694,7 +10694,7 @@
     {
       "id": "scene-035-textmode-charset-9",
       "start": 222.308,
-      "end": 222.498,
+      "end": 223.83,
       "text": "Why",
       "x": 0.5,
       "y": 0.322,
@@ -10723,7 +10723,7 @@
     {
       "id": "scene-035-textmode-charset-10",
       "start": 222.498,
-      "end": 222.689,
+      "end": 223.83,
       "text": "should",
       "x": 0.5,
       "y": 0.393,
@@ -10749,7 +10749,7 @@
     {
       "id": "scene-035-textmode-charset-11",
       "start": 222.689,
-      "end": 222.879,
+      "end": 223.83,
       "text": "art",
       "x": 0.5,
       "y": 0.464,
@@ -10775,7 +10775,7 @@
     {
       "id": "scene-035-textmode-charset-12",
       "start": 222.879,
-      "end": 223.069,
+      "end": 223.83,
       "text": "be",
       "x": 0.5,
       "y": 0.536,
@@ -10803,7 +10803,7 @@
     {
       "id": "scene-035-textmode-charset-13",
       "start": 223.069,
-      "end": 223.259,
+      "end": 223.83,
       "text": "just",
       "x": 0.5,
       "y": 0.607,
@@ -10832,7 +10832,7 @@
     {
       "id": "scene-035-textmode-charset-14",
       "start": 223.259,
-      "end": 223.45,
+      "end": 223.83,
       "text": "for",
       "x": 0.5,
       "y": 0.678,
@@ -10858,7 +10858,7 @@
     {
       "id": "scene-035-textmode-charset-15",
       "start": 223.45,
-      "end": 223.64,
+      "end": 223.83,
       "text": "an",
       "x": 0.5,
       "y": 0.749,
@@ -10912,7 +10912,7 @@
     {
       "id": "scene-035-textmode-charset-17",
       "start": 223.83,
-      "end": 224.05,
+      "end": 226.712,
       "text": "I",
       "x": 0.13,
       "y": 0.14,
@@ -10940,7 +10940,7 @@
     {
       "id": "scene-035-textmode-charset-18",
       "start": 224.05,
-      "end": 224.27,
+      "end": 226.712,
       "text": "believe",
       "x": 0.137,
       "y": 0.2,
@@ -10969,7 +10969,7 @@
     {
       "id": "scene-035-textmode-charset-19",
       "start": 224.27,
-      "end": 224.489,
+      "end": 226.712,
       "text": "that",
       "x": 0.145,
       "y": 0.26,
@@ -10995,7 +10995,7 @@
     {
       "id": "scene-038-raytrace-spheres-1",
       "start": 224.489,
-      "end": 224.709,
+      "end": 226.712,
       "text": "everyone",
       "x": 0.5,
       "y": 0.32,
@@ -11021,7 +11021,7 @@
     {
       "id": "scene-038-raytrace-spheres-2",
       "start": 224.709,
-      "end": 224.929,
+      "end": 226.712,
       "text": "should",
       "x": 0.159,
       "y": 0.38,
@@ -11049,7 +11049,7 @@
     {
       "id": "scene-038-raytrace-spheres-3",
       "start": 224.929,
-      "end": 225.149,
+      "end": 226.712,
       "text": "be",
       "x": 0.166,
       "y": 0.44,
@@ -11078,7 +11078,7 @@
     {
       "id": "scene-038-raytrace-spheres-4",
       "start": 225.149,
-      "end": 225.369,
+      "end": 226.712,
       "text": "able",
       "x": 0.174,
       "y": 0.5,
@@ -11104,7 +11104,7 @@
     {
       "id": "scene-038-raytrace-spheres-5",
       "start": 225.369,
-      "end": 225.588,
+      "end": 226.712,
       "text": "to",
       "x": 0.181,
       "y": 0.56,
@@ -11130,7 +11130,7 @@
     {
       "id": "scene-038-raytrace-spheres-6",
       "start": 225.588,
-      "end": 225.808,
+      "end": 226.712,
       "text": "make",
       "x": 0.188,
       "y": 0.62,
@@ -11158,7 +11158,7 @@
     {
       "id": "scene-038-raytrace-spheres-7",
       "start": 225.808,
-      "end": 226.028,
+      "end": 226.712,
       "text": "their",
       "x": 0.195,
       "y": 0.68,
@@ -11187,7 +11187,7 @@
     {
       "id": "scene-038-raytrace-spheres-8",
       "start": 226.028,
-      "end": 226.37,
+      "end": 226.712,
       "text": "own",
       "x": 0.203,
       "y": 0.74,
@@ -11239,7 +11239,7 @@
     {
       "id": "scene-038-raytrace-spheres-10",
       "start": 226.712,
-      "end": 226.925,
+      "end": 232.477,
       "text": "If",
       "x": 0.87,
       "y": 0.16,
@@ -11268,7 +11268,7 @@
     {
       "id": "scene-038-raytrace-spheres-11",
       "start": 226.925,
-      "end": 227.138,
+      "end": 232.477,
       "text": "it",
       "x": 0.867,
       "y": 0.186,
@@ -11294,7 +11294,7 @@
     {
       "id": "scene-038-raytrace-spheres-12",
       "start": 227.138,
-      "end": 227.35,
+      "end": 232.477,
       "text": "was",
       "x": 0.863,
       "y": 0.212,
@@ -11320,7 +11320,7 @@
     {
       "id": "scene-038-raytrace-spheres-13",
       "start": 227.35,
-      "end": 227.563,
+      "end": 232.477,
       "text": "real",
       "x": 0.5,
       "y": 0.237,
@@ -11348,7 +11348,7 @@
     {
       "id": "scene-038-raytrace-spheres-14",
       "start": 227.563,
-      "end": 227.776,
+      "end": 232.477,
       "text": "when",
       "x": 0.857,
       "y": 0.263,
@@ -11377,7 +11377,7 @@
     {
       "id": "scene-038-raytrace-spheres-15",
       "start": 227.776,
-      "end": 227.989,
+      "end": 232.477,
       "text": "you",
       "x": 0.853,
       "y": 0.289,
@@ -11403,7 +11403,7 @@
     {
       "id": "scene-038-raytrace-spheres-16",
       "start": 227.989,
-      "end": 228.202,
+      "end": 232.477,
       "text": "sampled",
       "x": 0.85,
       "y": 0.315,
@@ -11429,7 +11429,7 @@
     {
       "id": "scene-038-raytrace-spheres-17",
       "start": 228.202,
-      "end": 228.415,
+      "end": 232.477,
       "text": "the",
       "x": 0.847,
       "y": 0.341,
@@ -11457,7 +11457,7 @@
     {
       "id": "scene-038-raytrace-spheres-18",
       "start": 228.415,
-      "end": 228.627,
+      "end": 232.477,
       "text": "Beatles",
       "x": 0.843,
       "y": 0.367,
@@ -11486,7 +11486,7 @@
     {
       "id": "scene-038-raytrace-spheres-19",
       "start": 228.627,
-      "end": 228.84,
+      "end": 232.477,
       "text": "and",
       "x": 0.84,
       "y": 0.392,
@@ -11512,7 +11512,7 @@
     {
       "id": "scene-038-raytrace-spheres-20",
       "start": 228.84,
-      "end": 229.053,
+      "end": 232.477,
       "text": "remixed",
       "x": 0.837,
       "y": 0.418,
@@ -11538,7 +11538,7 @@
     {
       "id": "scene-042-volumetric-clouds-1",
       "start": 229.053,
-      "end": 229.266,
+      "end": 232.477,
       "text": "'ye,",
       "x": 0.833,
       "y": 0.444,
@@ -11566,7 +11566,7 @@
     {
       "id": "scene-042-volumetric-clouds-2",
       "start": 229.266,
-      "end": 229.513,
+      "end": 232.477,
       "text": "Then",
       "x": 0.83,
       "y": 0.47,
@@ -11595,7 +11595,7 @@
     {
       "id": "scene-042-volumetric-clouds-3",
       "start": 229.513,
-      "end": 229.76,
+      "end": 232.477,
       "text": "why",
       "x": 0.827,
       "y": 0.496,
@@ -11621,7 +11621,7 @@
     {
       "id": "scene-042-volumetric-clouds-4",
       "start": 229.76,
-      "end": 230.007,
+      "end": 232.477,
       "text": "you",
       "x": 0.823,
       "y": 0.522,
@@ -11647,7 +11647,7 @@
     {
       "id": "scene-042-volumetric-clouds-5",
       "start": 230.007,
-      "end": 230.254,
+      "end": 232.477,
       "text": "hatin'",
       "x": 0.82,
       "y": 0.547,
@@ -11675,7 +11675,7 @@
     {
       "id": "scene-042-volumetric-clouds-6",
       "start": 230.254,
-      "end": 230.501,
+      "end": 232.477,
       "text": "on",
       "x": 0.817,
       "y": 0.573,
@@ -11704,7 +11704,7 @@
     {
       "id": "scene-042-volumetric-clouds-7",
       "start": 230.501,
-      "end": 230.748,
+      "end": 232.477,
       "text": "this",
       "x": 0.813,
       "y": 0.599,
@@ -11730,7 +11730,7 @@
     {
       "id": "scene-042-volumetric-clouds-8",
       "start": 230.748,
-      "end": 230.995,
+      "end": 232.477,
       "text": "mashup",
       "x": 0.81,
       "y": 0.625,
@@ -11756,7 +11756,7 @@
     {
       "id": "scene-042-volumetric-clouds-9",
       "start": 230.995,
-      "end": 231.242,
+      "end": 232.477,
       "text": "of",
       "x": 0.807,
       "y": 0.651,
@@ -11784,7 +11784,7 @@
     {
       "id": "scene-042-volumetric-clouds-10",
       "start": 231.242,
-      "end": 231.489,
+      "end": 232.477,
       "text": "the",
       "x": 0.803,
       "y": 0.677,
@@ -11813,7 +11813,7 @@
     {
       "id": "scene-042-volumetric-clouds-11",
       "start": 231.489,
-      "end": 231.736,
+      "end": 232.477,
       "text": "whole",
       "x": 0.8,
       "y": 0.702,
@@ -11839,7 +11839,7 @@
     {
       "id": "scene-042-volumetric-clouds-12",
       "start": 231.736,
-      "end": 231.983,
+      "end": 232.477,
       "text": "damn",
       "x": 0.797,
       "y": 0.728,
@@ -11865,7 +11865,7 @@
     {
       "id": "scene-042-volumetric-clouds-13",
       "start": 231.983,
-      "end": 232.23,
+      "end": 232.477,
       "text": "human",
       "x": 0.5,
       "y": 0.754,
@@ -11922,7 +11922,7 @@
     {
       "id": "scene-042-volumetric-clouds-15",
       "start": 232.477,
-      "end": 232.68,
+      "end": 235.19,
       "text": "Would",
       "x": 0.5,
       "y": 0.18,
@@ -11948,7 +11948,7 @@
     {
       "id": "scene-042-volumetric-clouds-16",
       "start": 232.68,
-      "end": 232.883,
+      "end": 235.19,
       "text": "You",
       "x": 0.5,
       "y": 0.26,
@@ -11974,7 +11974,7 @@
     {
       "id": "scene-042-volumetric-clouds-17",
       "start": 232.883,
-      "end": 233.085,
+      "end": 235.19,
       "text": "blame",
       "x": 0.5,
       "y": 0.34,
@@ -12002,7 +12002,7 @@
     {
       "id": "scene-042-volumetric-clouds-18",
       "start": 233.085,
-      "end": 233.288,
+      "end": 235.19,
       "text": "the",
       "x": 0.5,
       "y": 0.42,
@@ -12031,7 +12031,7 @@
     {
       "id": "scene-042-volumetric-clouds-19",
       "start": 233.288,
-      "end": 233.491,
+      "end": 235.19,
       "text": "brush",
       "x": 0.5,
       "y": 0.5,
@@ -12057,7 +12057,7 @@
     {
       "id": "scene-042-volumetric-clouds-20",
       "start": 233.491,
-      "end": 233.803,
+      "end": 235.19,
       "text": "‘cause",
       "x": 0.5,
       "y": 0.58,
@@ -12083,7 +12083,7 @@
     {
       "id": "scene-042-volumetric-clouds-21",
       "start": 233.803,
-      "end": 234.114,
+      "end": 235.19,
       "text": "you",
       "x": 0.5,
       "y": 0.66,
@@ -12111,7 +12111,7 @@
     {
       "id": "scene-046-amiga-showcase-1",
       "start": 234.114,
-      "end": 234.426,
+      "end": 235.19,
       "text": "painted",
       "x": 0.5,
       "y": 0.74,
@@ -12166,7 +12166,7 @@
     {
       "id": "scene-047-kefrens-bars-1",
       "start": 235.19,
-      "end": 235.393,
+      "end": 237.898,
       "text": "Would",
       "x": 0.13,
       "y": 0.14,
@@ -12192,7 +12192,7 @@
     {
       "id": "scene-047-kefrens-bars-2",
       "start": 235.393,
-      "end": 235.597,
+      "end": 237.898,
       "text": "You",
       "x": 0.139,
       "y": 0.213,
@@ -12220,7 +12220,7 @@
     {
       "id": "scene-047-kefrens-bars-3",
       "start": 235.597,
-      "end": 235.8,
+      "end": 237.898,
       "text": "blame",
       "x": 0.148,
       "y": 0.287,
@@ -12249,7 +12249,7 @@
     {
       "id": "scene-047-kefrens-bars-4",
       "start": 235.8,
-      "end": 236.004,
+      "end": 237.898,
       "text": "the",
       "x": 0.157,
       "y": 0.36,
@@ -12275,7 +12275,7 @@
     {
       "id": "scene-047-kefrens-bars-5",
       "start": 236.004,
-      "end": 236.207,
+      "end": 237.898,
       "text": "synth",
       "x": 0.166,
       "y": 0.433,
@@ -12301,7 +12301,7 @@
     {
       "id": "scene-047-kefrens-bars-6",
       "start": 236.207,
-      "end": 236.45,
+      "end": 237.898,
       "text": "‘cause",
       "x": 0.174,
       "y": 0.507,
@@ -12329,7 +12329,7 @@
     {
       "id": "scene-047-kefrens-bars-7",
       "start": 236.45,
-      "end": 236.692,
+      "end": 237.898,
       "text": "your",
       "x": 0.183,
       "y": 0.58,
@@ -12358,7 +12358,7 @@
     {
       "id": "scene-047-kefrens-bars-8",
       "start": 236.692,
-      "end": 236.934,
+      "end": 237.898,
       "text": "tune",
       "x": 0.192,
       "y": 0.653,
@@ -12384,7 +12384,7 @@
     {
       "id": "scene-047-kefrens-bars-9",
       "start": 236.934,
-      "end": 237.177,
+      "end": 237.898,
       "text": "was",
       "x": 0.201,
       "y": 0.727,
@@ -12438,7 +12438,7 @@
     {
       "id": "scene-047-kefrens-bars-11",
       "start": 237.898,
-      "end": 238.1,
+      "end": 240.342,
       "text": "Would",
       "x": 0.87,
       "y": 0.16,
@@ -12466,7 +12466,7 @@
     {
       "id": "scene-047-kefrens-bars-12",
       "start": 238.1,
-      "end": 238.303,
+      "end": 240.342,
       "text": "You",
       "x": 0.861,
       "y": 0.229,
@@ -12495,7 +12495,7 @@
     {
       "id": "scene-047-kefrens-bars-13",
       "start": 238.303,
-      "end": 238.505,
+      "end": 240.342,
       "text": "blame",
       "x": 0.852,
       "y": 0.298,
@@ -12521,7 +12521,7 @@
     {
       "id": "scene-047-kefrens-bars-14",
       "start": 238.505,
-      "end": 238.708,
+      "end": 240.342,
       "text": "the",
       "x": 0.843,
       "y": 0.367,
@@ -12547,7 +12547,7 @@
     {
       "id": "scene-048-equalizer-1",
       "start": 238.708,
-      "end": 238.91,
+      "end": 240.342,
       "text": "mirror",
       "x": 0.834,
       "y": 0.436,
@@ -12575,7 +12575,7 @@
     {
       "id": "scene-048-equalizer-2",
       "start": 238.91,
-      "end": 239.157,
+      "end": 240.342,
       "text": "'cos",
       "x": 0.826,
       "y": 0.504,
@@ -12604,7 +12604,7 @@
     {
       "id": "scene-048-equalizer-3",
       "start": 239.157,
-      "end": 239.405,
+      "end": 240.342,
       "text": "your",
       "x": 0.817,
       "y": 0.573,
@@ -12630,7 +12630,7 @@
     {
       "id": "scene-048-equalizer-4",
       "start": 239.405,
-      "end": 239.653,
+      "end": 240.342,
       "text": "face",
       "x": 0.808,
       "y": 0.642,
@@ -12656,7 +12656,7 @@
     {
       "id": "scene-048-equalizer-5",
       "start": 239.653,
-      "end": 239.9,
+      "end": 240.342,
       "text": "looks",
       "x": 0.799,
       "y": 0.711,
@@ -12713,7 +12713,7 @@
     {
       "id": "scene-048-equalizer-7",
       "start": 240.342,
-      "end": 240.656,
+      "end": 241.788,
       "text": "Nah,",
       "x": 0.5,
       "y": 0.18,
@@ -12742,7 +12742,7 @@
     {
       "id": "scene-048-equalizer-8",
       "start": 240.656,
-      "end": 240.956,
+      "end": 241.788,
       "text": "so",
       "x": 0.5,
       "y": 0.34,
@@ -12768,7 +12768,7 @@
     {
       "id": "scene-048-equalizer-9",
       "start": 240.956,
-      "end": 241.255,
+      "end": 241.788,
       "text": "why",
       "x": 0.5,
       "y": 0.5,
@@ -12794,7 +12794,7 @@
     {
       "id": "scene-048-equalizer-10",
       "start": 241.255,
-      "end": 241.522,
+      "end": 241.788,
       "text": "blame",
       "x": 0.5,
       "y": 0.66,
@@ -12851,7 +12851,7 @@
     {
       "id": "scene-048-equalizer-12",
       "start": 241.788,
-      "end": 242.055,
+      "end": 243.334,
       "text": "for",
       "x": 0.13,
       "y": 0.14,
@@ -12877,7 +12877,7 @@
     {
       "id": "scene-048-equalizer-13",
       "start": 242.055,
-      "end": 242.321,
+      "end": 243.334,
       "text": "all",
       "x": 0.157,
       "y": 0.36,
@@ -12903,7 +12903,7 @@
     {
       "id": "scene-048-equalizer-14",
       "start": 242.321,
-      "end": 242.588,
+      "end": 243.334,
       "text": "the",
       "x": 0.183,
       "y": 0.58,
@@ -12960,7 +12960,7 @@
     {
       "id": "scene-048-equalizer-16",
       "start": 243.334,
-      "end": 243.671,
+      "end": 248.922,
       "text": "This",
       "x": 0.87,
       "y": 0.16,
@@ -12986,7 +12986,7 @@
     {
       "id": "scene-048-equalizer-17",
       "start": 243.671,
-      "end": 244.009,
+      "end": 248.922,
       "text": "ain't",
       "x": 0.866,
       "y": 0.19,
@@ -13014,7 +13014,7 @@
     {
       "id": "scene-048-equalizer-18",
       "start": 244.009,
-      "end": 244.346,
+      "end": 248.922,
       "text": "Skynet,",
       "x": 0.862,
       "y": 0.219,
@@ -13043,7 +13043,7 @@
     {
       "id": "scene-048-equalizer-19",
       "start": 244.346,
-      "end": 244.616,
+      "end": 248.922,
       "text": "this",
       "x": 0.859,
       "y": 0.249,
@@ -13069,7 +13069,7 @@
     {
       "id": "scene-048-equalizer-20",
       "start": 244.616,
-      "end": 244.886,
+      "end": 248.922,
       "text": "is",
       "x": 0.855,
       "y": 0.278,
@@ -13095,7 +13095,7 @@
     {
       "id": "scene-048-equalizer-21",
       "start": 244.886,
-      "end": 245.157,
+      "end": 248.922,
       "text": "sky's",
       "x": 0.851,
       "y": 0.308,
@@ -13123,7 +13123,7 @@
     {
       "id": "scene-048-equalizer-22",
       "start": 245.157,
-      "end": 245.427,
+      "end": 248.922,
       "text": "the",
       "x": 0.847,
       "y": 0.337,
@@ -13152,7 +13152,7 @@
     {
       "id": "scene-048-equalizer-23",
       "start": 245.427,
-      "end": 245.697,
+      "end": 248.922,
       "text": "limit,",
       "x": 0.843,
       "y": 0.367,
@@ -13178,7 +13178,7 @@
     {
       "id": "scene-053-kefrens-bars-1",
       "start": 245.697,
-      "end": 245.87,
+      "end": 248.922,
       "text": "Why",
       "x": 0.84,
       "y": 0.396,
@@ -13204,7 +13204,7 @@
     {
       "id": "scene-053-kefrens-bars-2",
       "start": 245.87,
-      "end": 246.043,
+      "end": 248.922,
       "text": "you",
       "x": 0.836,
       "y": 0.426,
@@ -13232,7 +13232,7 @@
     {
       "id": "scene-053-kefrens-bars-3",
       "start": 246.043,
-      "end": 246.216,
+      "end": 248.922,
       "text": "mad",
       "x": 0.832,
       "y": 0.455,
@@ -13261,7 +13261,7 @@
     {
       "id": "scene-053-kefrens-bars-4",
       "start": 246.216,
-      "end": 246.39,
+      "end": 248.922,
       "text": "that",
       "x": 0.828,
       "y": 0.485,
@@ -13287,7 +13287,7 @@
     {
       "id": "scene-053-kefrens-bars-5",
       "start": 246.39,
-      "end": 246.563,
+      "end": 248.922,
       "text": "when",
       "x": 0.824,
       "y": 0.514,
@@ -13313,7 +13313,7 @@
     {
       "id": "scene-053-kefrens-bars-6",
       "start": 246.563,
-      "end": 246.736,
+      "end": 248.922,
       "text": "you",
       "x": 0.82,
       "y": 0.544,
@@ -13341,7 +13341,7 @@
     {
       "id": "scene-053-kefrens-bars-7",
       "start": 246.736,
-      "end": 247.009,
+      "end": 248.922,
       "text": "have",
       "x": 0.817,
       "y": 0.573,
@@ -13370,7 +13370,7 @@
     {
       "id": "scene-053-kefrens-bars-8",
       "start": 247.009,
-      "end": 247.282,
+      "end": 248.922,
       "text": "an",
       "x": 0.813,
       "y": 0.603,
@@ -13396,7 +13396,7 @@
     {
       "id": "scene-053-kefrens-bars-9",
       "start": 247.282,
-      "end": 247.556,
+      "end": 248.922,
       "text": "idea",
       "x": 0.809,
       "y": 0.632,
@@ -13422,7 +13422,7 @@
     {
       "id": "scene-053-kefrens-bars-10",
       "start": 247.556,
-      "end": 247.829,
+      "end": 248.922,
       "text": "you",
       "x": 0.805,
       "y": 0.662,
@@ -13450,7 +13450,7 @@
     {
       "id": "scene-053-kefrens-bars-11",
       "start": 247.829,
-      "end": 248.102,
+      "end": 248.922,
       "text": "can",
       "x": 0.801,
       "y": 0.691,
@@ -13479,7 +13479,7 @@
     {
       "id": "scene-053-kefrens-bars-12",
       "start": 248.102,
-      "end": 248.375,
+      "end": 248.922,
       "text": "magically",
       "x": 0.798,
       "y": 0.721,
@@ -13505,7 +13505,7 @@
     {
       "id": "scene-056-amiga-showcase-1",
       "start": 248.375,
-      "end": 248.649,
+      "end": 248.922,
       "text": "appear",
       "x": 0.794,
       "y": 0.75,
@@ -13559,7 +13559,7 @@
     {
       "id": "scene-056-amiga-showcase-3",
       "start": 248.922,
-      "end": 249.131,
+      "end": 250.525,
       "text": "I",
       "x": 0.5,
       "y": 0.18,
@@ -13587,7 +13587,7 @@
     {
       "id": "scene-056-amiga-showcase-4",
       "start": 249.131,
-      "end": 249.34,
+      "end": 250.525,
       "text": "hear",
       "x": 0.5,
       "y": 0.287,
@@ -13616,7 +13616,7 @@
     {
       "id": "scene-056-amiga-showcase-5",
       "start": 249.34,
-      "end": 249.55,
+      "end": 250.525,
       "text": "’em",
       "x": 0.5,
       "y": 0.393,
@@ -13642,7 +13642,7 @@
     {
       "id": "scene-056-amiga-showcase-6",
       "start": 249.55,
-      "end": 249.759,
+      "end": 250.525,
       "text": "ask",
       "x": 0.5,
       "y": 0.5,
@@ -13668,7 +13668,7 @@
     {
       "id": "scene-056-amiga-showcase-7",
       "start": 249.759,
-      "end": 250.014,
+      "end": 250.525,
       "text": "“where’s",
       "x": 0.5,
       "y": 0.607,
@@ -13696,7 +13696,7 @@
     {
       "id": "scene-056-amiga-showcase-8",
       "start": 250.014,
-      "end": 250.269,
+      "end": 250.525,
       "text": "the",
       "x": 0.5,
       "y": 0.713,
@@ -13751,7 +13751,7 @@
     {
       "id": "scene-056-amiga-showcase-10",
       "start": 250.525,
-      "end": 250.78,
+      "end": 251.633,
       "text": "yeah,",
       "x": 0.13,
       "y": 0.14,
@@ -13780,7 +13780,7 @@
     {
       "id": "scene-056-amiga-showcase-11",
       "start": 250.78,
-      "end": 251.064,
+      "end": 251.633,
       "text": "“where’s",
       "x": 0.157,
       "y": 0.36,
@@ -13806,7 +13806,7 @@
     {
       "id": "scene-056-amiga-showcase-12",
       "start": 251.064,
-      "end": 251.349,
+      "end": 251.633,
       "text": "the",
       "x": 0.183,
       "y": 0.58,
@@ -13860,7 +13860,7 @@
     {
       "id": "scene-056-amiga-showcase-14",
       "start": 251.633,
-      "end": 251.801,
+      "end": 254.51,
       "text": "I",
       "x": 0.87,
       "y": 0.16,
@@ -13886,7 +13886,7 @@
     {
       "id": "scene-056-amiga-showcase-15",
       "start": 251.801,
-      "end": 251.969,
+      "end": 254.51,
       "text": "know",
       "x": 0.863,
       "y": 0.212,
@@ -13912,7 +13912,7 @@
     {
       "id": "scene-056-amiga-showcase-16",
       "start": 251.969,
-      "end": 252.138,
+      "end": 254.51,
       "text": "it's",
       "x": 0.857,
       "y": 0.263,
@@ -13940,7 +13940,7 @@
     {
       "id": "scene-056-amiga-showcase-17",
       "start": 252.138,
-      "end": 252.306,
+      "end": 254.51,
       "text": "there",
       "x": 0.85,
       "y": 0.315,
@@ -13969,7 +13969,7 @@
     {
       "id": "scene-056-amiga-showcase-18",
       "start": 252.306,
-      "end": 252.474,
+      "end": 254.51,
       "text": "—",
       "x": 0.843,
       "y": 0.367,
@@ -13995,7 +13995,7 @@
     {
       "id": "scene-056-amiga-showcase-19",
       "start": 252.474,
-      "end": 252.634,
+      "end": 254.51,
       "text": "cos",
       "x": 0.837,
       "y": 0.418,
@@ -14021,7 +14021,7 @@
     {
       "id": "scene-056-amiga-showcase-20",
       "start": 252.634,
-      "end": 252.793,
+      "end": 254.51,
       "text": "I’ve",
       "x": 0.83,
       "y": 0.47,
@@ -14049,7 +14049,7 @@
     {
       "id": "scene-056-amiga-showcase-21",
       "start": 252.793,
-      "end": 252.953,
+      "end": 254.51,
       "text": "felt",
       "x": 0.823,
       "y": 0.522,
@@ -14078,7 +14078,7 @@
     {
       "id": "scene-056-amiga-showcase-22",
       "start": 252.953,
-      "end": 253.113,
+      "end": 254.51,
       "text": "it",
       "x": 0.817,
       "y": 0.573,
@@ -14104,7 +14104,7 @@
     {
       "id": "scene-060-flyover-1",
       "start": 253.113,
-      "end": 253.462,
+      "end": 254.51,
       "text": "true",
       "x": 0.81,
       "y": 0.625,
@@ -14130,7 +14130,7 @@
     {
       "id": "scene-060-flyover-2",
       "start": 253.462,
-      "end": 253.811,
+      "end": 254.51,
       "text": "deep",
       "x": 0.803,
       "y": 0.677,
@@ -14158,7 +14158,7 @@
     {
       "id": "scene-060-flyover-3",
       "start": 253.811,
-      "end": 254.161,
+      "end": 254.51,
       "text": "real",
       "x": 0.5,
       "y": 0.728,
@@ -14239,7 +14239,7 @@
     {
       "id": "scene-060-flyover-6",
       "start": 254.749,
-      "end": 254.989,
+      "end": 260.433,
       "text": "art",
       "x": 0.5,
       "y": 0.14,
@@ -14267,7 +14267,7 @@
     {
       "id": "scene-060-flyover-7",
       "start": 254.989,
-      "end": 255.228,
+      "end": 260.433,
       "text": "can",
       "x": 0.134,
       "y": 0.17,
@@ -14296,7 +14296,7 @@
     {
       "id": "scene-060-flyover-8",
       "start": 255.228,
-      "end": 255.468,
+      "end": 260.433,
       "text": "have",
       "x": 0.137,
       "y": 0.2,
@@ -14322,7 +14322,7 @@
     {
       "id": "scene-060-flyover-9",
       "start": 255.468,
-      "end": 255.707,
+      "end": 260.433,
       "text": "soul,",
       "x": 0.5,
       "y": 0.23,
@@ -14348,7 +14348,7 @@
     {
       "id": "scene-060-flyover-10",
       "start": 255.707,
-      "end": 255.963,
+      "end": 260.433,
       "text": "it",
       "x": 0.145,
       "y": 0.26,
@@ -14376,7 +14376,7 @@
     {
       "id": "scene-060-flyover-11",
       "start": 255.963,
-      "end": 256.218,
+      "end": 260.433,
       "text": "comes",
       "x": 0.148,
       "y": 0.29,
@@ -14405,7 +14405,7 @@
     {
       "id": "scene-060-flyover-12",
       "start": 256.218,
-      "end": 256.474,
+      "end": 260.433,
       "text": "from",
       "x": 0.152,
       "y": 0.32,
@@ -14431,7 +14431,7 @@
     {
       "id": "scene-060-flyover-13",
       "start": 256.474,
-      "end": 256.73,
+      "end": 260.433,
       "text": "the",
       "x": 0.155,
       "y": 0.35,
@@ -14457,7 +14457,7 @@
     {
       "id": "scene-060-flyover-14",
       "start": 256.73,
-      "end": 256.985,
+      "end": 260.433,
       "text": "human",
       "x": 0.5,
       "y": 0.38,
@@ -14485,7 +14485,7 @@
     {
       "id": "scene-060-flyover-15",
       "start": 256.985,
-      "end": 257.241,
+      "end": 260.433,
       "text": "steering,",
       "x": 0.163,
       "y": 0.41,
@@ -14514,7 +14514,7 @@
     {
       "id": "scene-060-flyover-16",
       "start": 257.241,
-      "end": 257.464,
+      "end": 260.433,
       "text": "It",
       "x": 0.166,
       "y": 0.44,
@@ -14540,7 +14540,7 @@
     {
       "id": "scene-060-flyover-17",
       "start": 257.464,
-      "end": 257.687,
+      "end": 260.433,
       "text": "was",
       "x": 0.17,
       "y": 0.47,
@@ -14566,7 +14566,7 @@
     {
       "id": "scene-060-flyover-18",
       "start": 257.687,
-      "end": 257.91,
+      "end": 260.433,
       "text": "never",
       "x": 0.174,
       "y": 0.5,
@@ -14594,7 +14594,7 @@
     {
       "id": "scene-064-textmode-charset-1",
       "start": 257.91,
-      "end": 258.134,
+      "end": 260.433,
       "text": "’bout",
       "x": 0.177,
       "y": 0.53,
@@ -14623,7 +14623,7 @@
     {
       "id": "scene-064-textmode-charset-2",
       "start": 258.134,
-      "end": 258.357,
+      "end": 260.433,
       "text": "the",
       "x": 0.181,
       "y": 0.56,
@@ -14649,7 +14649,7 @@
     {
       "id": "scene-064-textmode-charset-3",
       "start": 258.357,
-      "end": 258.58,
+      "end": 260.433,
       "text": "method,",
       "x": 0.185,
       "y": 0.59,
@@ -14675,7 +14675,7 @@
     {
       "id": "scene-064-textmode-charset-4",
       "start": 258.58,
-      "end": 258.845,
+      "end": 260.433,
       "text": "nah,",
       "x": 0.188,
       "y": 0.62,
@@ -14703,7 +14703,7 @@
     {
       "id": "scene-064-textmode-charset-5",
       "start": 258.845,
-      "end": 259.109,
+      "end": 260.433,
       "text": "it",
       "x": 0.192,
       "y": 0.65,
@@ -14732,7 +14732,7 @@
     {
       "id": "scene-064-textmode-charset-6",
       "start": 259.109,
-      "end": 259.374,
+      "end": 260.433,
       "text": "'bout",
       "x": 0.195,
       "y": 0.68,
@@ -14758,7 +14758,7 @@
     {
       "id": "scene-064-textmode-charset-7",
       "start": 259.374,
-      "end": 259.639,
+      "end": 260.433,
       "text": "what",
       "x": 0.199,
       "y": 0.71,
@@ -14784,7 +14784,7 @@
     {
       "id": "scene-064-textmode-charset-8",
       "start": 259.639,
-      "end": 259.904,
+      "end": 260.433,
       "text": "truth",
       "x": 0.5,
       "y": 0.74,
@@ -14812,7 +14812,7 @@
     {
       "id": "scene-064-textmode-charset-9",
       "start": 259.904,
-      "end": 260.168,
+      "end": 260.433,
       "text": "you’re",
       "x": 0.206,
       "y": 0.77,
@@ -14867,7 +14867,7 @@
     {
       "id": "scene-064-textmode-charset-11",
       "start": 260.433,
-      "end": 260.603,
+      "end": 265.859,
       "text": "It’s",
       "x": 0.87,
       "y": 0.16,
@@ -14896,7 +14896,7 @@
     {
       "id": "scene-064-textmode-charset-12",
       "start": 260.603,
-      "end": 260.773,
+      "end": 265.859,
       "text": "mad",
       "x": 0.867,
       "y": 0.186,
@@ -14922,7 +14922,7 @@
     {
       "id": "scene-064-textmode-charset-13",
       "start": 260.773,
-      "end": 260.943,
+      "end": 265.859,
       "text": "that",
       "x": 0.863,
       "y": 0.212,
@@ -14948,7 +14948,7 @@
     {
       "id": "scene-064-textmode-charset-14",
       "start": 260.943,
-      "end": 261.113,
+      "end": 265.859,
       "text": "from",
       "x": 0.86,
       "y": 0.237,
@@ -14976,7 +14976,7 @@
     {
       "id": "scene-064-textmode-charset-15",
       "start": 261.113,
-      "end": 261.283,
+      "end": 265.859,
       "text": "a",
       "x": 0.857,
       "y": 0.263,
@@ -15005,7 +15005,7 @@
     {
       "id": "scene-064-textmode-charset-16",
       "start": 261.283,
-      "end": 261.453,
+      "end": 265.859,
       "text": "thought,",
       "x": 0.853,
       "y": 0.289,
@@ -15031,7 +15031,7 @@
     {
       "id": "scene-064-textmode-charset-17",
       "start": 261.453,
-      "end": 261.733,
+      "end": 265.859,
       "text": "from",
       "x": 0.85,
       "y": 0.315,
@@ -15057,7 +15057,7 @@
     {
       "id": "scene-064-textmode-charset-18",
       "start": 261.733,
-      "end": 262.012,
+      "end": 265.859,
       "text": "dreaming",
       "x": 0.847,
       "y": 0.341,
@@ -15085,7 +15085,7 @@
     {
       "id": "scene-067-rain-1",
       "start": 262.012,
-      "end": 262.292,
+      "end": 265.859,
       "text": "of",
       "x": 0.843,
       "y": 0.367,
@@ -15114,7 +15114,7 @@
     {
       "id": "scene-067-rain-2",
       "start": 262.292,
-      "end": 262.638,
+      "end": 265.859,
       "text": "random",
       "x": 0.84,
       "y": 0.392,
@@ -15140,7 +15140,7 @@
     {
       "id": "scene-067-rain-3",
       "start": 262.638,
-      "end": 262.984,
+      "end": 265.859,
       "text": "shit,",
       "x": 0.837,
       "y": 0.418,
@@ -15166,7 +15166,7 @@
     {
       "id": "scene-067-rain-4",
       "start": 262.984,
-      "end": 263.186,
+      "end": 265.859,
       "text": "We",
       "x": 0.833,
       "y": 0.444,
@@ -15194,7 +15194,7 @@
     {
       "id": "scene-067-rain-5",
       "start": 263.186,
-      "end": 263.389,
+      "end": 265.859,
       "text": "can",
       "x": 0.83,
       "y": 0.47,
@@ -15223,7 +15223,7 @@
     {
       "id": "scene-067-rain-6",
       "start": 263.389,
-      "end": 263.591,
+      "end": 265.859,
       "text": "build",
       "x": 0.827,
       "y": 0.496,
@@ -15249,7 +15249,7 @@
     {
       "id": "scene-067-rain-7",
       "start": 263.591,
-      "end": 263.794,
+      "end": 265.859,
       "text": "whole",
       "x": 0.823,
       "y": 0.522,
@@ -15275,7 +15275,7 @@
     {
       "id": "scene-067-rain-8",
       "start": 263.794,
-      "end": 263.996,
+      "end": 265.859,
       "text": "worlds,",
       "x": 0.5,
       "y": 0.547,
@@ -15303,7 +15303,7 @@
     {
       "id": "scene-067-rain-9",
       "start": 263.996,
-      "end": 264.306,
+      "end": 265.859,
       "text": "all",
       "x": 0.817,
       "y": 0.573,
@@ -15332,7 +15332,7 @@
     {
       "id": "scene-067-rain-10",
       "start": 264.306,
-      "end": 264.617,
+      "end": 265.859,
       "text": "we",
       "x": 0.813,
       "y": 0.599,
@@ -15358,7 +15358,7 @@
     {
       "id": "scene-067-rain-11",
       "start": 264.617,
-      "end": 264.927,
+      "end": 265.859,
       "text": "have",
       "x": 0.81,
       "y": 0.625,
@@ -15384,7 +15384,7 @@
     {
       "id": "scene-067-rain-12",
       "start": 264.927,
-      "end": 265.238,
+      "end": 265.859,
       "text": "to",
       "x": 0.807,
       "y": 0.651,
@@ -15412,7 +15412,7 @@
     {
       "id": "scene-067-rain-13",
       "start": 265.238,
-      "end": 265.548,
+      "end": 265.859,
       "text": "do",
       "x": 0.803,
       "y": 0.677,
