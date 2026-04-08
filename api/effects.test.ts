@@ -203,7 +203,13 @@ describe("api/effects", () => {
       body: JSON.stringify({ prompt: "make stars" })
     }, res.response);
     expect(res.response.statusCode).toBe(503);
-    expect(JSON.parse(res.getBody()).error).toContain("OPENAI_API_KEY");
+    const payload = JSON.parse(res.getBody());
+    expect(payload.error).toContain("Self-improvement protocol engaged");
+    expect(payload.selfImprovement).toEqual({
+      engaged: true,
+      attempt: 5,
+      maxAttempts: 5
+    });
   });
 
   it("returns raw model output when generation response cannot be parsed", async () => {
@@ -225,8 +231,65 @@ describe("api/effects", () => {
     }, res.response);
     expect(res.response.statusCode).toBe(503);
     const payload = JSON.parse(res.getBody());
-    expect(payload.error).toContain("Unable to parse generated effect response.");
+    expect(payload.error).toContain("Self-improvement protocol engaged");
     expect(payload.rawResponse).toContain("I can help with that");
+    expect(payload.selfImprovement.attempt).toBe(5);
+  });
+
+  it("self-improves prompt templates and retries generation automatically", async () => {
+    process.env.OPENAI_API_KEY = "sk-test";
+    const redis = createMockRedis();
+    const fetchMock = vi.fn<typeof fetch>()
+      .mockImplementationOnce(async () => ({
+        ok: true,
+        status: 200,
+        json: async () => ({ output_text: "non-json first attempt" })
+      }) as Response)
+      .mockImplementationOnce(async () => ({
+        ok: true,
+        status: 200,
+        json: async () => ({ output_text: "You generate canvas demoscene effects. Return strict JSON only. Always include runtimeCode with render()." })
+      }) as Response)
+      .mockImplementationOnce(async () => ({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          output_text: JSON.stringify({
+            name: "Recovered",
+            typescriptCode: "ts",
+            runtimeCode: "return { render() {} };"
+          })
+        })
+      }) as Response);
+    globalThis.fetch = fetchMock as typeof fetch;
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+    await handler({
+      method: "POST",
+      url: "/api/effects?action=generate",
+      headers: { "x-forwarded-for": "127.0.0.1" },
+      body: JSON.stringify({ prompt: "make stars with pulse" })
+    }, res.response);
+
+    expect(res.response.statusCode).toBe(200);
+    const payload = JSON.parse(res.getBody());
+    expect(payload.generation.name).toBe("Recovered");
+    expect(payload.selfImprovement).toEqual({ engaged: true, attempt: 1, maxAttempts: 5 });
+    expect(redis.set).toHaveBeenCalledWith(
+      "effects:generate:prompt-template",
+      expect.objectContaining({
+        currentVersion: 2
+      })
+    );
+    expect(redis.lpush).toHaveBeenCalledWith(
+      "effects:generate:failure-logs",
+      expect.objectContaining({
+        error: "Unable to parse generated effect response.",
+        userIdeaPrompt: "make stars with pulse",
+        selfImprovementAttempt: 0
+      })
+    );
   });
 
   it("records generation failures in monitoring metrics and exposes them via authorized endpoint", async () => {

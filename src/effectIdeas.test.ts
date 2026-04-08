@@ -33,7 +33,8 @@ describe("effect ideas client", () => {
           runtimeCode: "return { render() {} };",
           params: [{ key: "speed", label: "Speed", type: "number", defaultValue: 1 }],
           docs: { description: "Generated effect", parameters: "- speed: speed." }
-        }
+        },
+        selfImprovement: { engaged: true, attempt: 2, maxAttempts: 5 }
       })
     })) as typeof fetch;
 
@@ -42,7 +43,8 @@ describe("effect ideas client", () => {
       typescriptCode: "export const name='Nebula Pulse';",
       runtimeCode: "return { render() {} };",
       params: [{ key: "speed", label: "Speed", type: "number", defaultValue: 1 }],
-      docs: { description: "Generated effect", parameters: "- speed: speed." }
+      docs: { description: "Generated effect", parameters: "- speed: speed." },
+      selfImprovement: { engaged: true, attempt: 2, maxAttempts: 5 }
     });
   });
 
@@ -224,13 +226,15 @@ describe("effect ideas client", () => {
       status: 503,
       json: async () => ({
         error: "Unable to parse generated effect response.",
-        rawResponse: "Sure! Here is a markdown explanation first..."
+        rawResponse: "Sure! Here is a markdown explanation first...",
+        selfImprovement: { engaged: true, attempt: 5, maxAttempts: 5 }
       })
     })) as typeof fetch;
 
     await expect(generateEffectIdea("test")).rejects.toMatchObject({
       name: "EffectIdeaApiError",
-      rawResponse: "Sure! Here is a markdown explanation first..."
+      rawResponse: "Sure! Here is a markdown explanation first...",
+      selfImprovement: { engaged: true, attempt: 5, maxAttempts: 5 }
     } satisfies Partial<EffectIdeaApiError>);
   });
 });

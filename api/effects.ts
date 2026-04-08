@@ -7,12 +7,16 @@ const PENDING_EFFECTS_KEY = "effects:pending";
 const GENERATE_RATE_LIMIT_PREFIX = "effects:generate:rl";
 const GENERATE_METRICS_KEY = "effects:generate:metrics";
 const GENERATE_ERROR_SAMPLES_KEY = "effects:generate:error-samples";
+const GENERATE_FAILURE_LOGS_KEY = "effects:generate:failure-logs";
+const GENERATE_PROMPT_TEMPLATE_KEY = "effects:generate:prompt-template";
 const GENERATE_ALERT_COOLDOWN_PREFIX = "effects:generate:alert-cooldown";
 const PARAM_LIMITS_KEY = "effects:param-limits";
 const MAX_EFFECTS = 128;
 const MAX_PENDING_EFFECTS = 128;
 const MAX_GENERATE_ERROR_SAMPLES = 200;
+const MAX_GENERATE_FAILURE_LOGS = 200;
 const MAX_GENERATE_PROMPT_LENGTH = 3000;
+const MAX_SELF_IMPROVEMENT_ATTEMPTS = 5;
 const DEFAULT_GENERATE_RATE_LIMIT_MAX = 8;
 const DEFAULT_GENERATE_RATE_LIMIT_WINDOW_MS = 60_000;
 const DEFAULT_GENERATE_DAILY_CAP = 100;
@@ -95,11 +99,39 @@ type JsonResponse = {
     params?: GeneratedEffectParam[];
     docs?: GeneratedEffectDocs;
   };
+  selfImprovement?: {
+    engaged: boolean;
+    attempt: number;
+    maxAttempts: number;
+  };
   generateMetrics?: GenerateMetrics;
   recentGenerateErrors?: GenerateErrorSample[];
   paramLimits?: EffectParamLimitsRecord;
   error?: string;
   rawResponse?: string;
+};
+
+type PromptTemplateVersionRecord = {
+  version: number;
+  template: string;
+  updatedAt: string;
+  source: "seed" | "self_improvement";
+};
+
+type PromptTemplateStore = {
+  currentVersion: number;
+  versions: PromptTemplateVersionRecord[];
+};
+
+type GenerateFailureLog = {
+  failedAt: string;
+  requestId: string;
+  prompt: string;
+  response: string;
+  error: string;
+  userIdeaPrompt: string;
+  templateVersion: number;
+  selfImprovementAttempt: number;
 };
 
 type EffectParamLimitRange = {
@@ -1010,12 +1042,165 @@ function extractOutputText(payload: unknown): string {
   return chunks.join("\n").trim();
 }
 
-async function generateWithOpenAi(prompt: string): Promise<{
+const DEFAULT_GENERATE_PROMPT_TEMPLATE = [
+  "You generate canvas demoscene effects.",
+  "Return STRICT JSON only with keys: name, typescriptCode, runtimeCode, params, docs.",
+  "typescriptCode can use TypeScript syntax.",
+  "runtimeCode MUST be plain JavaScript (no TypeScript annotations).",
+  "runtimeCode MUST NOT include markdown fences.",
+  "runtimeCode MUST NOT include export/import statements.",
+  "runtimeCode MUST NOT use dynamic code execution primitives (Function constructor, new Function, eval, import()).",
+  "runtimeCode MUST NOT construct code from strings or call methods like setTimeout/setInterval with string arguments.",
+  "Prefer deterministic helper functions, lookup tables, and explicit state updates instead of runtime code generation.",
+  "runtimeCode MUST evaluate to an effect object with render(context) and optional reset().",
+  "Preferred runtimeCode shape: `return { render(context) { ... }, reset() { ... } };`",
+  "params MUST be an array of UI control metadata using keys: key,label,type,defaultValue,min,max,step,options,description.",
+  "Use type=number with numeric defaults and optional min/max/step.",
+  "Use type=toggle with numeric defaultValue of 0 or 1.",
+  "Use type=select with string defaultValue and options array of {label,value}.",
+  "docs MUST be { description, parameters } where parameters is concise markdown describing each param."
+].join(" ");
+
+function buildSeedPromptTemplateStore(): PromptTemplateStore {
+  return {
+    currentVersion: 1,
+    versions: [{
+      version: 1,
+      template: DEFAULT_GENERATE_PROMPT_TEMPLATE,
+      updatedAt: new Date(0).toISOString(),
+      source: "seed"
+    }]
+  };
+}
+
+function sanitizePromptTemplateStore(value: unknown): PromptTemplateStore {
+  const fallback = buildSeedPromptTemplateStore();
+  if (!value || typeof value !== "object") {
+    return fallback;
+  }
+  const typed = value as Partial<PromptTemplateStore>;
+  if (!Array.isArray(typed.versions)) {
+    return fallback;
+  }
+  const versions = typed.versions
+    .flatMap((entry): PromptTemplateVersionRecord[] => {
+      if (!entry || typeof entry !== "object") {
+        return [];
+      }
+      const candidate = entry as Partial<PromptTemplateVersionRecord>;
+      if (
+        typeof candidate.version !== "number"
+        || !Number.isFinite(candidate.version)
+        || typeof candidate.template !== "string"
+        || candidate.template.trim().length === 0
+        || typeof candidate.updatedAt !== "string"
+        || (candidate.source !== "seed" && candidate.source !== "self_improvement")
+      ) {
+        return [];
+      }
+      return [{
+        version: Math.max(1, Math.floor(candidate.version)),
+        template: candidate.template.slice(0, 20_000),
+        updatedAt: candidate.updatedAt,
+        source: candidate.source
+      }];
+    })
+    .sort((a, b) => a.version - b.version);
+  if (versions.length === 0) {
+    return fallback;
+  }
+  const latest = versions[versions.length - 1];
+  return {
+    currentVersion: latest.version,
+    versions
+  };
+}
+
+async function readPromptTemplateStore(): Promise<PromptTemplateStore> {
+  if (!writeClient) {
+    return buildSeedPromptTemplateStore();
+  }
+  const existing = sanitizePromptTemplateStore(await writeClient.get(GENERATE_PROMPT_TEMPLATE_KEY));
+  if (existing.versions.length > 0) {
+    return existing;
+  }
+  const seeded = buildSeedPromptTemplateStore();
+  await writeClient.set(GENERATE_PROMPT_TEMPLATE_KEY, seeded);
+  return seeded;
+}
+
+function containsPotentialIdeaLeak(template: string, userIdeaPrompt: string): boolean {
+  const normalizedTemplate = template.toLowerCase();
+  const normalizedIdea = userIdeaPrompt.trim().toLowerCase();
+  if (!normalizedIdea) {
+    return false;
+  }
+  if (normalizedTemplate.includes(normalizedIdea)) {
+    return true;
+  }
+  const longSegments = normalizedIdea
+    .split(/\s+/u)
+    .filter((segment) => segment.length >= 10);
+  return longSegments.some((segment) => normalizedTemplate.includes(segment));
+}
+
+async function appendPromptTemplateVersion(template: string): Promise<PromptTemplateStore> {
+  const trimmed = template.trim();
+  if (!trimmed) {
+    throw new Error("Self-improved prompt template was empty.");
+  }
+  const store = await readPromptTemplateStore();
+  const nextVersion = store.currentVersion + 1;
+  const nextStore: PromptTemplateStore = {
+    currentVersion: nextVersion,
+    versions: [...store.versions, {
+      version: nextVersion,
+      template: trimmed.slice(0, 20_000),
+      updatedAt: new Date().toISOString(),
+      source: "self_improvement"
+    }]
+  };
+  if (writeClient) {
+    await writeClient.set(GENERATE_PROMPT_TEMPLATE_KEY, nextStore);
+  }
+  return nextStore;
+}
+
+async function appendGenerateFailureLog(log: GenerateFailureLog): Promise<void> {
+  if (!writeClient) {
+    return;
+  }
+  await writeClient.lpush(GENERATE_FAILURE_LOGS_KEY, log);
+  await writeClient.ltrim(GENERATE_FAILURE_LOGS_KEY, 0, MAX_GENERATE_FAILURE_LOGS - 1);
+}
+
+async function requestResponsesApi(
+  apiKey: string,
+  model: string,
+  input: Array<{ role: "system" | "user"; content: Array<{ type: "input_text"; text: string }> }>
+): Promise<string> {
+  const response = await fetch("https://api.openai.com/v1/responses", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ model, input })
+  });
+  if (!response.ok) {
+    throw new Error(`OpenAI request failed (${response.status}).`);
+  }
+  const payload = (await response.json()) as unknown;
+  return extractOutputText(payload);
+}
+
+async function generateWithOpenAi(systemPromptTemplate: string, userPrompt: string): Promise<{
   name: string;
   typescriptCode: string;
   runtimeCode: string;
   params?: GeneratedEffectParam[];
   docs?: GeneratedEffectDocs;
+  rawModelResponse: string;
 }> {
   const apiKey = normalizeEnvValue(process.env.OPENAI_API_KEY);
   if (!apiKey) {
@@ -1023,62 +1208,66 @@ async function generateWithOpenAi(prompt: string): Promise<{
   }
 
   const model = normalizeEnvValue(process.env.OPENAI_CODEX_MODEL) ?? "gpt-5-codex";
-  const response = await fetch("https://api.openai.com/v1/responses", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json"
+  const text = await requestResponsesApi(apiKey, model, [
+    {
+      role: "system",
+      content: [{ type: "input_text", text: systemPromptTemplate }]
     },
-    body: JSON.stringify({
-      model,
-      input: [
-        {
-          role: "system",
-          content: [
-            {
-              type: "input_text",
-              text: [
-                "You generate canvas demoscene effects.",
-                "Return STRICT JSON only with keys: name, typescriptCode, runtimeCode, params, docs.",
-                "typescriptCode can use TypeScript syntax.",
-                "runtimeCode MUST be plain JavaScript (no TypeScript annotations).",
-                "runtimeCode MUST NOT include markdown fences.",
-                "runtimeCode MUST NOT include export/import statements.",
-                "runtimeCode MUST NOT use dynamic code execution primitives (Function constructor, new Function, eval, import()).",
-                "runtimeCode MUST NOT construct code from strings or call methods like setTimeout/setInterval with string arguments.",
-                "Prefer deterministic helper functions, lookup tables, and explicit state updates instead of runtime code generation.",
-                "runtimeCode MUST evaluate to an effect object with render(context) and optional reset().",
-                "Preferred runtimeCode shape: `return { render(context) { ... }, reset() { ... } };`",
-                "params MUST be an array of UI control metadata using keys: key,label,type,defaultValue,min,max,step,options,description.",
-                "Use type=number with numeric defaults and optional min/max/step.",
-                "Use type=toggle with numeric defaultValue of 0 or 1.",
-                "Use type=select with string defaultValue and options array of {label,value}.",
-                "docs MUST be { description, parameters } where parameters is concise markdown describing each param."
-              ].join(" ")
-            }
-          ]
-        },
-        {
-          role: "user",
-          content: [{ type: "input_text", text: prompt }]
-        }
-      ]
-    })
-  });
-
-  if (!response.ok) {
-    throw new Error(`OpenAI request failed (${response.status}).`);
-  }
-
-  const payload = (await response.json()) as unknown;
-  const text = extractOutputText(payload);
+    {
+      role: "user",
+      content: [{ type: "input_text", text: userPrompt }]
+    }
+  ]);
   const parsed = parseJsonBlock(text);
   if (!parsed) {
     const error = new Error("Unable to parse generated effect response.") as Error & { rawResponse?: string };
-    error.rawResponse = text.slice(0, 4000);
+    error.rawResponse = text;
     throw error;
   }
-  return parsed;
+  return { ...parsed, rawModelResponse: text };
+}
+
+async function requestPromptTemplateImprovement(input: {
+  attempt: number;
+  userPrompt: string;
+  sentPrompt: string;
+  modelResponse: string;
+  error: string;
+  allFailures: Array<{ sentPrompt: string; modelResponse: string; error: string }>;
+}): Promise<string> {
+  const apiKey = normalizeEnvValue(process.env.OPENAI_API_KEY);
+  if (!apiKey) {
+    throw new Error("OPENAI_API_KEY is not configured.");
+  }
+  const model = normalizeEnvValue(process.env.OPENAI_CODEX_MODEL) ?? "gpt-5-codex";
+  const isFinalAttempt = input.attempt >= MAX_SELF_IMPROVEMENT_ATTEMPTS;
+  const failureSummary = input.allFailures
+    .map((entry, index) => `Failure ${index + 1}\nPrompt sent:\n${entry.sentPrompt}\nResponse:\n${entry.modelResponse}\nError:\n${entry.error}`)
+    .join("\n\n");
+  const text = await requestResponsesApi(apiKey, model, [
+    {
+      role: "system",
+      content: [{
+        type: "input_text",
+        text: [
+          "You improve a reusable system prompt template for generating demoscene effects.",
+          "Return only the revised system prompt template text (no JSON, no markdown fences).",
+          "Do not include any user idea text or any generated effect code from the failed attempts.",
+          "Keep it generic and reusable for future users."
+        ].join(" ")
+      }]
+    },
+    {
+      role: "user",
+      content: [{
+        type: "input_text",
+        text: isFinalAttempt
+          ? `This is the final self-improvement attempt (${input.attempt}/${MAX_SELF_IMPROVEMENT_ATTEMPTS}). Think hard and make a deeper prompt correction.\n\nOriginal user idea (never copy this into the template):\n${input.userPrompt}\n\nAll failures so far:\n${failureSummary}`
+          : `Self-improvement attempt ${input.attempt}/${MAX_SELF_IMPROVEMENT_ATTEMPTS}.\nThis prompt was sent:\n${input.sentPrompt}\n\nResponse:\n${input.modelResponse}\n\nError shown to the user:\n${input.error}\n\nOriginal user idea (never copy this into the template):\n${input.userPrompt}\n\nPlease make a small tweak to the reusable system prompt template so this class of error is less likely.`
+      }]
+    }
+  ]);
+  return text.trim();
 }
 
 async function handleModerationAction(res: ResponseLike, url: URL): Promise<boolean> {
@@ -1280,7 +1469,67 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
       return;
     }
     try {
-      const generation = await generateWithOpenAi(prompt);
+      let templateStore = await readPromptTemplateStore();
+      let selfImprovementAttempt = 0;
+      let generation:
+        | {
+          name: string;
+          typescriptCode: string;
+          runtimeCode: string;
+          params?: GeneratedEffectParam[];
+          docs?: GeneratedEffectDocs;
+          rawModelResponse: string;
+        }
+        | null = null;
+      const failedAttempts: Array<{ sentPrompt: string; modelResponse: string; error: string }> = [];
+
+      while (generation === null) {
+        const sentPrompt = templateStore.versions[templateStore.versions.length - 1]?.template ?? DEFAULT_GENERATE_PROMPT_TEMPLATE;
+        try {
+          generation = await generateWithOpenAi(sentPrompt, prompt);
+          break;
+        } catch (error) {
+          const message = error instanceof Error ? error.message : "Unable to generate effect.";
+          const rawResponse = error instanceof Error && "rawResponse" in error && typeof (error as { rawResponse?: unknown }).rawResponse === "string"
+            ? (error as { rawResponse: string }).rawResponse
+            : "";
+          await appendGenerateFailureLog({
+            failedAt: new Date().toISOString(),
+            requestId,
+            prompt: sentPrompt,
+            response: rawResponse,
+            error: message,
+            userIdeaPrompt: prompt,
+            templateVersion: templateStore.currentVersion,
+            selfImprovementAttempt
+          });
+          failedAttempts.push({
+            sentPrompt,
+            modelResponse: rawResponse,
+            error: message
+          });
+          if (selfImprovementAttempt >= MAX_SELF_IMPROVEMENT_ATTEMPTS) {
+            throw error;
+          }
+          selfImprovementAttempt += 1;
+          const improved = await requestPromptTemplateImprovement({
+            attempt: selfImprovementAttempt,
+            userPrompt: prompt,
+            sentPrompt,
+            modelResponse: rawResponse,
+            error: message,
+            allFailures: failedAttempts
+          });
+          if (containsPotentialIdeaLeak(improved, prompt)) {
+            throw new Error("Self-improvement produced a prompt template that leaked user idea content.");
+          }
+          templateStore = await appendPromptTemplateVersion(improved);
+        }
+      }
+
+      if (!generation) {
+        throw new Error("Unable to generate effect.");
+      }
       logGenerateRequest({
         outcome: "accepted",
         httpStatus: 200,
@@ -1289,7 +1538,20 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
         promptLength: prompt.length,
         requestId
       });
-      sendJson(res, 200, { generation });
+      sendJson(res, 200, {
+        generation: {
+          name: generation.name,
+          typescriptCode: generation.typescriptCode,
+          runtimeCode: generation.runtimeCode,
+          ...(generation.params ? { params: generation.params } : {}),
+          ...(generation.docs ? { docs: generation.docs } : {})
+        },
+        selfImprovement: {
+          engaged: selfImprovementAttempt > 0,
+          attempt: selfImprovementAttempt,
+          maxAttempts: MAX_SELF_IMPROVEMENT_ATTEMPTS
+        }
+      });
       await recordGenerateMonitoring({
         outcome: "accepted",
         httpStatus: 200,
@@ -1312,7 +1574,15 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
         requestId,
         error: message
       });
-      sendJson(res, 503, { error: message, rawResponse });
+      sendJson(res, 503, {
+        error: `An error occurred. Self-improvement protocol engaged. Will auto retry shortly. Final status: attempts exhausted (${MAX_SELF_IMPROVEMENT_ATTEMPTS}/${MAX_SELF_IMPROVEMENT_ATTEMPTS}). Sorry — please try again tomorrow; this should keep improving every day.`,
+        rawResponse,
+        selfImprovement: {
+          engaged: true,
+          attempt: MAX_SELF_IMPROVEMENT_ATTEMPTS,
+          maxAttempts: MAX_SELF_IMPROVEMENT_ATTEMPTS
+        }
+      });
       await recordGenerateMonitoring({
         outcome: "error",
         httpStatus: 503,
