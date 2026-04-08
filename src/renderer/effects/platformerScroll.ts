@@ -12,7 +12,10 @@ export const PLATFORMER_SCROLL_DEFAULTS = {
   audioReact: 0.35,
   beatKick: 0.35,
   platformRate: 0.55,
-  platformMaxSteps: 5
+  platformMaxSteps: 5,
+  skyGlow: 0.65,
+  speedLines: 0.55,
+  collectibleRate: 0.2
 };
 
 type PlatformInfo = {
@@ -114,6 +117,14 @@ export function runnerJumpOffset(prevSupportY: number, currentSupportY: number, 
   const arc = Math.sin(phase * Math.PI);
   const extra = 1 + Math.floor(audioAmount * 2);
   return Math.floor(arc * (lift * 0.85 + extra));
+}
+
+export function collectibleAt(worldCol: number, seed: number, collectibleRate: number): boolean {
+  const clampedRate = clamp(collectibleRate, 0, 1);
+  if (clampedRate <= 0) {
+    return false;
+  }
+  return hash1(worldCol * 3.17 + 59, seed + 912) < clampedRate;
 }
 
 export function buildRunnerSprite(baseX: number, footY: number, tileSize: number, time: number, audioAmount: number): RunnerSprite {
@@ -289,6 +300,9 @@ export class PlatformerScrollEffect implements Effect {
     const beatKick = clamp(asFinite(params.beatKick, PLATFORMER_SCROLL_DEFAULTS.beatKick), 0, 1);
     const platformRate = clamp(asFinite(params.platformRate, PLATFORMER_SCROLL_DEFAULTS.platformRate), 0, 1);
     const platformMaxSteps = Math.max(1, Math.floor(asFinite(params.platformMaxSteps, PLATFORMER_SCROLL_DEFAULTS.platformMaxSteps)));
+    const skyGlow = clamp(asFinite(params.skyGlow, PLATFORMER_SCROLL_DEFAULTS.skyGlow), 0, 1);
+    const speedLines = clamp(asFinite(params.speedLines, PLATFORMER_SCROLL_DEFAULTS.speedLines), 0, 1);
+    const collectibleRate = clamp(asFinite(params.collectibleRate, PLATFORMER_SCROLL_DEFAULTS.collectibleRate), 0, 1);
 
     const audioAmount = audioReact * clamp(audio.rms, 0, 1);
     const camNudge = audio.beat ? Math.floor(beatKick * 6) : 0;
@@ -306,6 +320,28 @@ export class PlatformerScrollEffect implements Effect {
     sky.addColorStop(1, "#5a7fb3");
     ctx.fillStyle = sky;
     ctx.fillRect(0, 0, width, height);
+
+    const glowCenterX = width * 0.72;
+    const glowCenterY = height * 0.2;
+    const glowRadius = Math.max(40, Math.floor(Math.min(width, height) * 0.25));
+    const glow = ctx.createRadialGradient(glowCenterX, glowCenterY, 0, glowCenterX, glowCenterY, glowRadius);
+    glow.addColorStop(0, `rgba(244, 252, 255, ${0.3 + skyGlow * 0.35})`);
+    glow.addColorStop(1, "rgba(244, 252, 255, 0)");
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, width, Math.floor(height * 0.7));
+
+    const starCount = Math.max(10, Math.floor(width / 22));
+    ctx.fillStyle = "#f8fafc";
+    for (let i = 0; i < starCount; i += 1) {
+      const starX = Math.floor(hash1(i * 7.3 + 2, seed + 41) * width);
+      const starY = Math.floor(hash1(i * 11.9 + 8, seed + 73) * (height * 0.5));
+      const twinkle = Math.sin(time * 2.8 + i * 1.7 + seed * 0.002) * 0.5 + 0.5;
+      if (twinkle < 0.45) {
+        continue;
+      }
+      const size = twinkle > 0.8 ? 2 : 1;
+      ctx.fillRect(starX, starY, size, size);
+    }
 
     const horizonY = Math.floor(height * 0.56);
     drawHillLayer(ctx, width, horizonY, cameraX + camNudge, parallaxFar, seed + 100, Math.floor(height * 0.1), 96, "#617ea5", 22);
@@ -333,6 +369,24 @@ export class PlatformerScrollEffect implements Effect {
       const x = Math.floor(world * cityStep - cityScroll);
       const towerH = tileSize + Math.floor(hash1(world * 2 + 5, seed + 700) * tileSize * 4);
       ctx.fillRect(x, cityBase - towerH, tileSize + 2, towerH);
+
+      if (hash1(world * 7 + 13, seed + 777) > 0.68) {
+        ctx.fillStyle = "#fef08a";
+        ctx.fillRect(x + 1, cityBase - towerH + 3, 2, 2);
+        ctx.fillStyle = "#32455c";
+      }
+    }
+
+    if (speedLines > 0) {
+      const lineCount = Math.max(2, Math.floor(speedLines * 12));
+      ctx.fillStyle = "rgba(224, 242, 254, 0.28)";
+      for (let i = 0; i < lineCount; i += 1) {
+        const lane = (i + 1) / (lineCount + 1);
+        const y = Math.floor(height * (0.28 + lane * 0.26));
+        const phase = ((cameraX * (0.8 + i * 0.06) + i * 29) % (width + 60)) - 30;
+        const length = Math.floor(tileSize * (1.5 + lane * 2.2));
+        ctx.fillRect(Math.floor(phase), y, length, 1);
+      }
     }
 
     const fgScroll = (cameraX + camNudge) * parallaxFront;
@@ -377,6 +431,14 @@ export class PlatformerScrollEffect implements Effect {
         ctx.fillRect(x + 2, platformY - 4, 2, 4);
         ctx.fillStyle = "#1f222a";
       }
+
+      if (collectibleAt(worldCol, seed, collectibleRate)) {
+        const coinY = platformY - Math.max(6, Math.floor(tileSize * 0.8));
+        const shimmer = Math.sin(time * 8 + worldCol) > 0 ? "#fde047" : "#facc15";
+        ctx.fillStyle = shimmer;
+        ctx.fillRect(x + Math.floor(tileSize * 0.25), coinY, Math.max(2, Math.floor(tileSize * 0.4)), Math.max(2, Math.floor(tileSize * 0.4)));
+        ctx.fillStyle = "#1f222a";
+      }
     }
 
     const runnerBaseX = Math.floor(width * 0.28);
@@ -411,6 +473,20 @@ export class PlatformerScrollEffect implements Effect {
     const runBob = Math.floor((Math.sin(time * 14) * 1.5 + audioAmount * 1.5) * 0.5);
     const runnerFootY = supportY - hop - runBob - 1;
     const runnerSprite = buildRunnerSprite(runnerBaseX, runnerFootY, tileSize, time, audioAmount);
+
+    if (speedLines > 0) {
+      const trail = Math.max(1, Math.floor(speedLines * 4));
+      for (let i = 0; i < trail; i += 1) {
+        const fade = 0.17 - i * 0.03;
+        if (fade <= 0) {
+          continue;
+        }
+        ctx.fillStyle = `rgba(14, 165, 233, ${fade.toFixed(3)})`;
+        const widthMul = 1 - i * 0.18;
+        const trailWidth = Math.max(3, Math.floor(runnerSprite.shadow.w * widthMul));
+        ctx.fillRect(runnerSprite.shadow.x - (i + 1) * 4, runnerSprite.shadow.y - 2, trailWidth, runnerSprite.shadow.h + 1);
+      }
+    }
 
     ctx.fillStyle = runnerSprite.shadow.color;
     ctx.fillRect(runnerSprite.shadow.x, runnerSprite.shadow.y, runnerSprite.shadow.w, runnerSprite.shadow.h);
