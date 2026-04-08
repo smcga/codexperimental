@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 import {
+  buildCollectibleSprite,
   buildRunnerSprite,
   collectibleAt,
   hash1,
@@ -94,6 +95,17 @@ describe("platformerScroll helpers", () => {
     expect(collectibleAt(44, 2024, 0.35)).toBe(collectibleAt(44, 2024, 0.35));
   });
 
+  it("buildCollectibleSprite adds bobbing aura, gleam, and sparkles", () => {
+    const spriteA = buildCollectibleSprite(120, 80, 16, 0.15, 30);
+    const spriteB = buildCollectibleSprite(120, 80, 16, 0.55, 30);
+
+    expect(spriteA.core.w).toBeGreaterThanOrEqual(2);
+    expect(spriteA.aura.w).toBeGreaterThan(spriteA.core.w);
+    expect(spriteA.shine.color).toBe("#fef9c3");
+    expect(spriteA.sparkles).toHaveLength(4);
+    expect(spriteA.core.y).not.toBe(spriteB.core.y);
+  });
+
   it("buildRunnerSprite creates a colorful mascot silhouette with animated limbs", () => {
     const earlyFrame = buildRunnerSprite(100, 160, 16, 0, 0.2);
     const laterFrame = buildRunnerSprite(100, 160, 16, 0.2, 0.2);
@@ -146,5 +158,31 @@ describe("PlatformerScrollEffect", () => {
     expect(colorUsage.get("#fb923c") ?? 0).toBeGreaterThan(0);
     expect(colorUsage.get("#f8fafc") ?? 0).toBeGreaterThan(0);
     expect((ctx.createRadialGradient as ReturnType<typeof vi.fn>).mock.calls.length).toBeGreaterThan(0);
+  });
+
+  it("renders polished pickup colors when collectibles are frequent", () => {
+    const effect = new PlatformerScrollEffect();
+    const ctx = createCtx();
+    const colorUsage = new Map<string, number>();
+
+    (ctx.fillRect as ReturnType<typeof vi.fn>).mockImplementation(() => {
+      const color = String((ctx as unknown as { fillStyle: unknown }).fillStyle);
+      colorUsage.set(color, (colorUsage.get(color) ?? 0) + 1);
+    });
+
+    effect.render({
+      ctx,
+      width: 320,
+      height: 180,
+      time: 0.35,
+      delta: 1 / 60,
+      audio,
+      params: { collectibleRate: 1 }
+    });
+
+    const glowColorHit = [...colorUsage.keys()].some((color) => color.startsWith("rgba(253, 224, 71,"));
+    expect(glowColorHit).toBe(true);
+    expect(colorUsage.get("#fef9c3") ?? 0).toBeGreaterThan(0);
+    expect(colorUsage.get("rgba(255, 255, 255, 0.65)") ?? 0).toBeGreaterThan(0);
   });
 });

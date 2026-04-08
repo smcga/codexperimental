@@ -38,6 +38,14 @@ export type RunnerSprite = {
   shadow: RunnerSpritePart;
 };
 
+export type CollectibleSprite = {
+  aura: RunnerSpritePart;
+  core: RunnerSpritePart;
+  shine: RunnerSpritePart;
+  glint: RunnerSpritePart;
+  sparkles: RunnerSpritePart[];
+};
+
 const RUNNER_COLORS = {
   outline: "#10141f",
   helmet: "#06b6d4",
@@ -125,6 +133,50 @@ export function collectibleAt(worldCol: number, seed: number, collectibleRate: n
     return false;
   }
   return hash1(worldCol * 3.17 + 59, seed + 912) < clampedRate;
+}
+
+export function buildCollectibleSprite(x: number, y: number, tileSize: number, time: number, worldCol: number): CollectibleSprite {
+  const size = Math.max(2, Math.floor(tileSize * 0.38));
+  const bob = Math.round(Math.sin(time * 6 + worldCol * 0.37) * Math.max(1, tileSize * 0.08));
+  const pulse = Math.sin(time * 10 + worldCol * 0.61) * 0.5 + 0.5;
+  const auraPad = Math.max(1, Math.floor(size * 0.55 + pulse));
+  const bodyX = x + Math.floor(tileSize * 0.5 - size * 0.5);
+  const bodyY = y + bob;
+  const sparkOffset = Math.max(2, Math.floor(size * 0.8));
+
+  return {
+    aura: {
+      name: "pickup-aura",
+      color: `rgba(253, 224, 71, ${(0.18 + pulse * 0.18).toFixed(3)})`,
+      x: bodyX - auraPad,
+      y: bodyY - auraPad,
+      w: size + auraPad * 2,
+      h: size + auraPad * 2
+    },
+    core: { name: "pickup-core", color: pulse > 0.55 ? "#fde047" : "#facc15", x: bodyX, y: bodyY, w: size, h: size },
+    shine: {
+      name: "pickup-shine",
+      color: "#fef9c3",
+      x: bodyX + Math.max(1, Math.floor(size * 0.2)),
+      y: bodyY + Math.max(1, Math.floor(size * 0.15)),
+      w: Math.max(1, Math.floor(size * 0.45)),
+      h: Math.max(1, Math.floor(size * 0.3))
+    },
+    glint: {
+      name: "pickup-glint",
+      color: "rgba(255, 255, 255, 0.65)",
+      x: bodyX - 1,
+      y: bodyY + Math.floor(size * 0.5),
+      w: size + 2,
+      h: 1
+    },
+    sparkles: [
+      { name: "pickup-spark-n", color: "rgba(254, 249, 195, 0.85)", x: bodyX + Math.floor(size * 0.5), y: bodyY - sparkOffset, w: 1, h: 2 },
+      { name: "pickup-spark-e", color: "rgba(254, 249, 195, 0.75)", x: bodyX + size + sparkOffset - 1, y: bodyY + Math.floor(size * 0.5), w: 2, h: 1 },
+      { name: "pickup-spark-s", color: "rgba(254, 249, 195, 0.7)", x: bodyX + Math.floor(size * 0.5), y: bodyY + size + sparkOffset - 1, w: 1, h: 2 },
+      { name: "pickup-spark-w", color: "rgba(254, 249, 195, 0.75)", x: bodyX - sparkOffset, y: bodyY + Math.floor(size * 0.5), w: 2, h: 1 }
+    ]
+  };
 }
 
 export function buildRunnerSprite(baseX: number, footY: number, tileSize: number, time: number, audioAmount: number): RunnerSprite {
@@ -434,9 +486,19 @@ export class PlatformerScrollEffect implements Effect {
 
       if (collectibleAt(worldCol, seed, collectibleRate)) {
         const coinY = platformY - Math.max(6, Math.floor(tileSize * 0.8));
-        const shimmer = Math.sin(time * 8 + worldCol) > 0 ? "#fde047" : "#facc15";
-        ctx.fillStyle = shimmer;
-        ctx.fillRect(x + Math.floor(tileSize * 0.25), coinY, Math.max(2, Math.floor(tileSize * 0.4)), Math.max(2, Math.floor(tileSize * 0.4)));
+        const collectible = buildCollectibleSprite(x, coinY, tileSize, time, worldCol);
+        ctx.fillStyle = collectible.aura.color;
+        ctx.fillRect(collectible.aura.x, collectible.aura.y, collectible.aura.w, collectible.aura.h);
+        ctx.fillStyle = collectible.core.color;
+        ctx.fillRect(collectible.core.x, collectible.core.y, collectible.core.w, collectible.core.h);
+        ctx.fillStyle = collectible.shine.color;
+        ctx.fillRect(collectible.shine.x, collectible.shine.y, collectible.shine.w, collectible.shine.h);
+        ctx.fillStyle = collectible.glint.color;
+        ctx.fillRect(collectible.glint.x, collectible.glint.y, collectible.glint.w, collectible.glint.h);
+        for (const sparkle of collectible.sparkles) {
+          ctx.fillStyle = sparkle.color;
+          ctx.fillRect(sparkle.x, sparkle.y, sparkle.w, sparkle.h);
+        }
         ctx.fillStyle = "#1f222a";
       }
     }
