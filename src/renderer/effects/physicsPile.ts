@@ -72,6 +72,12 @@ const JOINT_STIFFNESS = 0.45;
 const JOINT_DAMPING = 0.12;
 const SHATTER_DURATION = 0.8;
 const SHATTER_PARTICLES_PER_BODY = 5;
+const FLOOR_ALIGN_RANGE = 2;
+const FLOOR_ALIGN_SPEED_MAX = 90;
+const FLOOR_ALIGN_VERTICAL_SPEED_MAX = 40;
+const FLOOR_ALIGN_ANGULAR_SPEED_MAX = 8;
+const FLOOR_ALIGN_ANGULAR_DAMPING = 0.95;
+const FLOOR_ALIGN_TORQUE = 60;
 
 const PALETTE = [
   { fill: "#1b263b", stroke: "#f77f00" },
@@ -123,6 +129,16 @@ function resolveKickOriginMode(value: unknown): KickOriginMode {
 
 function resolveNumberParam(value: unknown, fallback: number): number {
   return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+}
+
+function wrapAngleToPi(angle: number): number {
+  let wrapped = angle % (Math.PI * 2);
+  if (wrapped > Math.PI) {
+    wrapped -= Math.PI * 2;
+  } else if (wrapped < -Math.PI) {
+    wrapped += Math.PI * 2;
+  }
+  return wrapped;
 }
 
 export class PhysicsWorld {
@@ -506,6 +522,25 @@ export class PhysicsWorld {
         continue;
       }
       body.vy += this.gravity * dt;
+      const extentY = this.getBodyExtentY(body);
+      const floorGap = this.height - (body.y + extentY);
+      if (floorGap <= FLOOR_ALIGN_RANGE) {
+        const linearSpeed = Math.hypot(body.vx, body.vy);
+        if (
+          linearSpeed < FLOOR_ALIGN_SPEED_MAX &&
+          Math.abs(body.vy) < FLOOR_ALIGN_VERTICAL_SPEED_MAX &&
+          Math.abs(body.angularVelocity) < FLOOR_ALIGN_ANGULAR_SPEED_MAX
+        ) {
+          const quarterTurn = Math.PI * 0.5;
+          const nearestFlat = Math.round(body.angle / quarterTurn) * quarterTurn;
+          const error = wrapAngleToPi(body.angle - nearestFlat);
+          if (Math.abs(error) < 0.08) {
+            continue;
+          }
+          body.angularVelocity *= FLOOR_ALIGN_ANGULAR_DAMPING;
+          body.angularVelocity -= error * FLOOR_ALIGN_TORQUE * dt;
+        }
+      }
       body.x += body.vx * dt;
       body.y += body.vy * dt;
       body.angle += body.angularVelocity * dt;
