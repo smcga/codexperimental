@@ -155,6 +155,9 @@ const effectIdeaBusyModal = document.querySelector<HTMLDivElement>("#effect-idea
 const effectIdeaBusySpinner = document.querySelector<HTMLDivElement>("#effect-idea-busy-spinner");
 const effectIdeaBusyTitle = document.querySelector<HTMLDivElement>("#effect-idea-busy-title");
 const effectIdeaBusyCopy = document.querySelector<HTMLDivElement>("#effect-idea-busy-copy");
+const effectIdeaBusyControls = document.querySelector<HTMLDivElement>("#effect-idea-busy-controls");
+const effectIdeaBusyControlsGrid = document.querySelector<HTMLDivElement>("#effect-idea-busy-controls-grid");
+const effectIdeaBusyControlsEmpty = document.querySelector<HTMLDivElement>("#effect-idea-busy-controls-empty");
 const effectIdeaRetryButton = document.querySelector<HTMLButtonElement>("#effect-idea-retry");
 const effectIdeaGeneratedSections = document.querySelector<HTMLDivElement>("#effect-idea-generated-sections");
 const effectIdeaControls = document.querySelector<HTMLDivElement>("#effect-idea-controls");
@@ -222,7 +225,12 @@ let effectIdeaPreviewFrame = 0;
 let effectIdeaPreviewEffect: ReturnType<typeof compileRuntimeEffect> | null = null;
 let effectIdeaPreviewParams: Record<string, number | string> = {};
 let effectIdeaCountdownTimer = 0;
-let effectIdeaCarouselEntries: Array<{ name: string; effect: ReturnType<typeof compileRuntimeEffect>; params: Record<string, number | string> }> = [];
+let effectIdeaCarouselEntries: Array<{
+  name: string;
+  effect: ReturnType<typeof compileRuntimeEffect>;
+  params: Record<string, number | string>;
+  controls: GeneratedEffectParam[];
+}> = [];
 let effectIdeaCarouselIndex = 0;
 let effectIdeaAudioPreview = new EffectPreviewAudioController(EFFECT_PREVIEW_AUDIO_SRC);
 let availableEffectNames = getEffectRegistryKeys();
@@ -595,11 +603,13 @@ function setEffectIdeaBusyState(mode: "hidden" | "busy" | "error", message?: str
   if (mode === "busy") {
     effectIdeaBusyTitle.textContent = "Generating your effect…";
     effectIdeaBusyCopy.textContent = "Enjoy approved community effects while Codex cooks your idea.";
+    effectIdeaBusyControls?.classList.remove("hidden");
     return;
   }
   if (mode === "error") {
     effectIdeaBusyTitle.textContent = "Generation hiccup";
     effectIdeaBusyCopy.textContent = message ?? "That attempt did not compile cleanly. Retry to generate a fresh variation.";
+    effectIdeaBusyControls?.classList.add("hidden");
   }
 }
 
@@ -626,6 +636,7 @@ function applyEffectIdeaCarouselEntry(): void {
   }
   effectIdeaPreviewEffect = entry.effect;
   effectIdeaPreviewParams = { ...entry.params };
+  renderEffectIdeaBusyControls(entry.controls);
   stopEffectIdeaPreview();
   previewGeneratedIdea();
 }
@@ -645,7 +656,8 @@ async function hydrateEffectIdeaCarousel(): Promise<void> {
       return [{
         name: entry.name,
         effect: compileRuntimeEffect(entry.runtimeCode),
-        params: getGeneratedEffectDefaultParams(entry.params)
+        params: getGeneratedEffectDefaultParams(entry.params),
+        controls: entry.params ?? []
       }];
     } catch {
       return [];
@@ -657,6 +669,79 @@ async function hydrateEffectIdeaCarousel(): Promise<void> {
   }
   effectIdeaCarouselEntries = entries;
   effectIdeaCarouselIndex = 0;
+}
+
+function renderEffectIdeaBusyControls(params: GeneratedEffectParam[]): void {
+  if (!effectIdeaBusyControls || !effectIdeaBusyControlsGrid || !effectIdeaBusyControlsEmpty) {
+    return;
+  }
+  const hasControls = params.length > 0;
+  effectIdeaBusyControls.classList.toggle("hidden", !hasControls);
+  effectIdeaBusyControlsGrid.innerHTML = "";
+  effectIdeaBusyControlsEmpty.classList.toggle("hidden", hasControls);
+  if (!hasControls) {
+    return;
+  }
+
+  params.forEach((param) => {
+    const field = document.createElement("label");
+    field.classList.add("debug-field");
+    const label = document.createElement("span");
+    label.textContent = param.label;
+    field.appendChild(label);
+
+    if (param.type === "select") {
+      const select = document.createElement("select");
+      select.dataset.effectIdeaParam = param.key;
+      (param.options ?? []).forEach((option) => {
+        const optionEl = document.createElement("option");
+        optionEl.value = option.value;
+        optionEl.textContent = option.label;
+        select.appendChild(optionEl);
+      });
+      select.value = String(effectIdeaPreviewParams[param.key] ?? "");
+      select.addEventListener("change", () => {
+        effectIdeaPreviewParams[param.key] = select.value;
+      });
+      field.appendChild(select);
+      effectIdeaBusyControlsGrid.appendChild(field);
+      return;
+    }
+
+    const input = document.createElement("input");
+    input.dataset.effectIdeaParam = param.key;
+    if (param.type === "toggle") {
+      input.type = "checkbox";
+      input.checked = Number(effectIdeaPreviewParams[param.key]) !== 0;
+      input.addEventListener("change", () => {
+        effectIdeaPreviewParams[param.key] = input.checked ? 1 : 0;
+      });
+      field.appendChild(input);
+      effectIdeaBusyControlsGrid.appendChild(field);
+      return;
+    }
+
+    input.type = "number";
+    if (param.min !== undefined) {
+      input.min = String(param.min);
+    }
+    if (param.max !== undefined) {
+      input.max = String(param.max);
+    }
+    if (param.step !== undefined) {
+      input.step = String(param.step);
+    }
+    input.value = String(effectIdeaPreviewParams[param.key] ?? 0);
+    input.addEventListener("input", () => {
+      const numeric = Number(input.value);
+      if (!Number.isFinite(numeric)) {
+        return;
+      }
+      effectIdeaPreviewParams[param.key] = numeric;
+    });
+    field.appendChild(input);
+    effectIdeaBusyControlsGrid.appendChild(field);
+  });
 }
 
 function runEffectIdeaSuccessCountdown(onDone: () => void): void {
@@ -824,6 +909,7 @@ function setEffectIdeaModalVisible(visible: boolean): void {
     effectIdeaPreviewEffect = null;
     effectIdeaCarouselEntries = [];
     effectIdeaCarouselIndex = 0;
+    renderEffectIdeaBusyControls([]);
     if (effectIdeaNameInput) {
       effectIdeaNameInput.value = "";
     }

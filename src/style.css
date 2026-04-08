@@ -1474,6 +1474,30 @@ body,
   text-align: center;
 }
 
+.effect-idea-busy-controls {
+  width: 100%;
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 0.2rem;
+}
+
+.effect-idea-busy-controls-label {
+  color: rgba(232, 247, 255, 0.86);
+  font-size: 0.66rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+#effect-idea-busy-controls-grid {
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: 0.4rem;
+}
+
+#effect-idea-busy-controls-grid .debug-field {
+  background: rgba(4, 10, 18, 0.65);
+  padding: 0.3rem 0.4rem;
+}
+
 #effect-idea-name {
   border: 1px solid rgba(142, 249, 255, 0.22);
   background: rgba(6, 12, 20, 0.9);
