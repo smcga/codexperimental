@@ -13,7 +13,6 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 | `lissajous` | 1985 | medium |  |
 | `moire_grid` | 1985 | medium |  |
 | `doodle_greetz_wall` | 1986 | low | greets-wall presentation |
-| `greets_wall` | 1986 | low | greets-wall presentation |
 | `fake3d` | 1987 | medium |  |
 | `gameOfLife` | 1987 | high | cellular automata part |
 | `proper3d` | 1987 | medium |  |

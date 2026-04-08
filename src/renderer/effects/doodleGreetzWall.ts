@@ -1,17 +1,16 @@
 import { clamp } from "../../util/math";
 import { DoodleRecord, fetchDoodles, getCachedDoodles } from "../../doodles";
 import { Effect, EffectRenderContext } from "./types";
-import { GREETS_WALL_DEFAULTS, resolveGreetsSequenceIndex } from "./greetsWall";
 
 export const DOODLE_GREETZ_WALL_DEFAULTS = {
-  layout: GREETS_WALL_DEFAULTS.layout,
-  transitionStyle: GREETS_WALL_DEFAULTS.transitionStyle,
-  cycleSeconds: GREETS_WALL_DEFAULTS.cycleSeconds,
-  columns: GREETS_WALL_DEFAULTS.columns,
-  padding: GREETS_WALL_DEFAULTS.padding,
-  highlightPulse: GREETS_WALL_DEFAULTS.highlightPulse,
-  beatPulseDecay: GREETS_WALL_DEFAULTS.beatPulseDecay,
-  audioReact: GREETS_WALL_DEFAULTS.audioReact,
+  layout: "grid" as "grid" | "carousel",
+  transitionStyle: "slide" as "slide" | "fade" | "pop",
+  cycleSeconds: 1.5,
+  columns: 3,
+  padding: 0.08,
+  highlightPulse: 0.65,
+  beatPulseDecay: 2.2,
+  audioReact: 0.45,
   title: "DOODLE GREETZ WALL"
 };
 
@@ -70,6 +69,14 @@ export function orderDoodlesForWall(doodles: DoodleRecord[]): DoodleRecord[] {
     return left.createdAt - right.createdAt;
   });
 }
+
+export const resolveDoodleWallSequenceIndex = (time: number, cycleSeconds: number, entryCount: number): number => {
+  if (entryCount <= 0) {
+    return 0;
+  }
+  const safeCycle = Math.max(0.001, cycleSeconds);
+  return Math.floor(Math.max(0, time) / safeCycle) % entryCount;
+};
 
 export class DoodleGreetzWallEffect implements Effect {
   private beatPulse = 0;
@@ -191,7 +198,7 @@ export class DoodleGreetzWallEffect implements Effect {
     }
 
     const count = orderedDoodles.length;
-    const index = resolveGreetsSequenceIndex(time, resolved.cycleSeconds, count);
+    const index = resolveDoodleWallSequenceIndex(time, resolved.cycleSeconds, count);
     const cycleProgress = ((time % resolved.cycleSeconds) + resolved.cycleSeconds) % resolved.cycleSeconds / resolved.cycleSeconds;
 
     if (resolved.layout === "carousel") {

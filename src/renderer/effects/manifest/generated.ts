@@ -30,7 +30,6 @@ import { god_raysManifest } from "./god_rays.manifest";
 import { glenz_vectorsManifest } from "./glenz_vectors.manifest";
 import { glitchManifest } from "./glitch.manifest";
 import { game_of_lifeManifest } from "./game_of_life.manifest";
-import { greets_wallManifest } from "./greets_wall.manifest";
 import { hexGridPulseManifest } from "./hexGridPulse.manifest";
 import { infinitycloudManifest } from "./infinitycloud.manifest";
 import { infinite_zoom_drosteManifest } from "./infinite_zoom_droste.manifest";
@@ -131,7 +130,6 @@ export const generatedEffectManifests = [
   glenz_vectorsManifest,
   glitchManifest,
   game_of_lifeManifest,
-  greets_wallManifest,
   hexGridPulseManifest,
   infinitycloudManifest,
   infinite_zoom_drosteManifest,

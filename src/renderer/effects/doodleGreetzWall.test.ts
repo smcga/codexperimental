@@ -3,7 +3,8 @@ import { describe, expect, it } from "vitest";
 import {
   DOODLE_GREETZ_WALL_DEFAULTS,
   normalizeDoodleGreetzWallParams,
-  orderDoodlesForWall
+  orderDoodlesForWall,
+  resolveDoodleWallSequenceIndex
 } from "./doodleGreetzWall";
 
 describe("DoodleGreetzWallEffect helpers", () => {
@@ -40,5 +41,13 @@ describe("DoodleGreetzWallEffect helpers", () => {
 
     expect(doodles.map((doodle) => doodle.id)).toEqual(orderDoodlesForWall(doodles).map((doodle) => doodle.id));
     expect(new Set(doodles.map((doodle) => doodle.id))).toEqual(new Set(["alpha", "beta", "gamma"]));
+  });
+
+  it("advances sequence index over cycle duration", () => {
+    expect(resolveDoodleWallSequenceIndex(0, 0.5, 4)).toBe(0);
+    expect(resolveDoodleWallSequenceIndex(0.49, 0.5, 4)).toBe(0);
+    expect(resolveDoodleWallSequenceIndex(0.5, 0.5, 4)).toBe(1);
+    expect(resolveDoodleWallSequenceIndex(1.01, 0.5, 4)).toBe(2);
+    expect(resolveDoodleWallSequenceIndex(2.2, 0.5, 4)).toBe(0);
   });
 });

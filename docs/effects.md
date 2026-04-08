@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **99**.
+Total effects: **98**.
 
 ## Table of contents
 
@@ -38,7 +38,6 @@ Total effects: **99**.
 - [Effect: glenz_vectors](#effect-glenz-vectors)
 - [Effect: glitch](#effect-glitch)
 - [Effect: god_rays](#effect-god-rays)
-- [Effect: greets_wall](#effect-greets-wall)
 - [Effect: hexGridPulse](#effect-hexGridPulse)
 - [Effect: infiniteMirror](#effect-infiniteMirror)
 - [Effect: infinite_zoom_droste](#effect-infinite-zoom-droste)
@@ -126,7 +125,7 @@ Total effects: **99**.
 
 - `speed` (used in 48 effects)
 - `seed` (used in 46 effects)
-- `audioReact` (used in 35 effects)
+- `audioReact` (used in 34 effects)
 - `glow` (used in 19 effects)
 - `beatKick` (used in 14 effects)
 - `audioReactive` (used in 13 effects)
@@ -154,7 +153,6 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 | `lissajous` | 1985 | medium |  |
 | `moire_grid` | 1985 | medium |  |
 | `doodle_greetz_wall` | 1986 | low | greets-wall presentation |
-| `greets_wall` | 1986 | low | greets-wall presentation |
 | `fake3d` | 1987 | medium |  |
 | `gameOfLife` | 1987 | high | cellular automata part |
 | `proper3d` | 1987 | medium |  |
@@ -1361,41 +1359,6 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 ```json
 {
   "effect": "god_rays",
-  "opacity": 1,
-  "blend": "source-over",
-  "params": {}
-}
-```
-
-## Effect: greets_wall
-
-- **Registry key:** `greets_wall`
-- **Implementation:** `src/renderer/effects/greetsWall.ts` (class `GreetsWallEffect`)
-- **Renderer:** Canvas2D
-- **Description:** `layout` supports `grid` or `carousel`; `transitionStyle` supports `slide`, `fade`, or `pop`.
-- **Audio features:** beat, impactStrength, rms
-- **Performance notes:** None noted.
-
-### Parameters
-
-| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
-| --- | --- | --- | --- | --- | --- |
-| `params.audioReact` | number | 0.45 | min 0, max 1 | Audio React | yes |
-| `params.beatPulseDecay` | number | 2.2 | min 0.2, max 8 | Beat Decay | yes |
-| `params.columns` | number | 3 | min 1, max 8 | Columns | yes |
-| `params.cycleSeconds` | number | 1.5 | min 0.35, max 6 | Cycle Seconds | yes |
-| `params.highlightPulse` | number | 0.65 | min 0, max 1.5 | Highlight Pulse | yes |
-| `params.layout` | string | "grid" | options: grid, carousel | Layout | no |
-| `params.names` | string | "Fairlight|TRSI|Spaceballs|CNCD|Mercury|TBL" | options: Fairlight|TRSI|Spaceballs|CNCD|Mercury|TBL | Names | no |
-| `params.padding` | number | 0.08 | min 0.02, max 0.18 | Padding | yes |
-| `params.title` | string | "GREETS" | options: GREETS | Title | no |
-| `params.transitionStyle` | string | "slide" | options: slide, fade, pop | Transition | no |
-
-### Minimal layer usage
-
-```json
-{
-  "effect": "greets_wall",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
