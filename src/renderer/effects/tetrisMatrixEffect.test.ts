@@ -4,10 +4,13 @@ import {
   applyPlacement,
   choosePlacement,
   collides,
+  computeTetrisLayout,
   countBoardHoles,
   createEmptyBoard,
   findDropY,
   getPieceCells,
+  isPlacementAboveTop,
+  resolveFallingRotation,
   resolveTetrisMatrixParams,
   TETRIS_BOARD_HEIGHT,
   TETRIS_BOARD_WIDTH,
@@ -90,47 +93,87 @@ describe("tetrisMatrixEffect helpers", () => {
   it("applies placements and clears complete lines", () => {
     const board = createEmptyBoard();
     const bottomRow = TETRIS_BOARD_HEIGHT - 1;
-    for (let x = 0; x < TETRIS_BOARD_WIDTH - 1; x += 1) {
+    for (let x = 0; x < TETRIS_BOARD_WIDTH; x += 1) {
+      if (x === TETRIS_BOARD_WIDTH - 1) {
+        continue;
+      }
       board[bottomRow * TETRIS_BOARD_WIDTH + x] = 2;
     }
 
     const result = applyPlacement(board, {
       piece: "I",
       rotation: 1,
-      x: 7,
-      y: bottomRow - 3,
+      x: TETRIS_BOARD_WIDTH - 1,
+      y: bottomRow - 4,
       score: 0,
       clearedLines: 0
     });
 
     expect(result.clearedLines).toBe(1);
     expect(result.board.slice(0, TETRIS_BOARD_WIDTH)).toEqual(new Array(TETRIS_BOARD_WIDTH).fill(0));
-    expect(result.board.filter((cell) => cell !== 0)).toHaveLength(3);
+    expect(result.board.filter((cell) => cell !== 0)).toHaveLength(4);
   });
 
   it("prefers placements that avoid creating holes when possible", () => {
     const board = createEmptyBoard();
     const lastRow = TETRIS_BOARD_HEIGHT - 1;
+    const secondLastRow = TETRIS_BOARD_HEIGHT - 2;
     for (let x = 0; x < TETRIS_BOARD_WIDTH; x += 1) {
-      if (x !== 4 && x !== 5) {
+      if (x !== 5) {
         board[lastRow * TETRIS_BOARD_WIDTH + x] = 3;
+        board[secondLastRow * TETRIS_BOARD_WIDTH + x] = 3;
       }
     }
 
-    const placement = choosePlacement(board, "O", 1989, 12);
+    const placement = choosePlacement(board, "I", 1989, 12);
     const after = applyPlacement(board, placement).board;
 
     expect(countBoardHoles(after)).toBe(0);
-    expect(placement.x).toBeGreaterThanOrEqual(3);
-    expect(placement.x).toBeLessThanOrEqual(4);
   });
 
-  it("defines piece rotations with four minos each", () => {
-    const pieces = ["I", "O", "T", "S", "Z", "J", "L"] as const;
+  it("adds human-like drop styles to placements", () => {
+    const board = createEmptyBoard();
+    const modes = new Set<string>();
+    for (let i = 0; i < 24; i += 1) {
+      const placement = choosePlacement(board, "T", 1989, i);
+      modes.add(placement.dropMode ?? "normal");
+    }
+
+    expect(modes.has("quick")).toBe(true);
+    expect(modes.has("hesitate")).toBe(true);
+    expect(modes.has("normal")).toBe(true);
+  });
+
+  it("defines pentomino rotations with five minos each", () => {
+    const pieces = ["F", "I", "L", "P", "N", "T", "U", "V", "W", "X", "Y", "Z"] as const;
     pieces.forEach((piece) => {
       const cells = getPieceCells(piece, 0);
-      expect(cells).toHaveLength(4);
+      expect(cells).toHaveLength(5);
     });
+  });
+
+  it("keeps HUD panels separated from the board area", () => {
+    const layout = computeTetrisLayout(320, 180);
+    expect(layout.leftPanelX + layout.leftPanelW).toBeLessThanOrEqual(layout.boardLeft - 1);
+    expect(layout.rightPanelX).toBeGreaterThanOrEqual(layout.boardRight + 1);
+    expect(layout.screenX).toBeGreaterThanOrEqual(0);
+    expect(layout.screenY).toBeGreaterThanOrEqual(0);
+    expect(layout.screenX + layout.screenW).toBeLessThanOrEqual(320);
+    expect(layout.screenY + layout.screenH).toBeLessThanOrEqual(180);
+  });
+
+  it("detects top-out placements that lock above the visible board", () => {
+    expect(isPlacementAboveTop("I", 1, -4)).toBe(true);
+    expect(isPlacementAboveTop("I", 1, 0)).toBe(false);
+  });
+
+  it("shows visible in-flight spins for some falling pieces", () => {
+    const spun = Array.from({ length: 48 }, (_, i) => i).some((pieceIndex) => {
+      const early = resolveFallingRotation("T", 0, 0.1, 1989, pieceIndex);
+      const late = resolveFallingRotation("T", 0, 0.95, 1989, pieceIndex);
+      return early !== 0 && late === 0;
+    });
+    expect(spun).toBe(true);
   });
 });
 
@@ -194,5 +237,38 @@ describe("TetrisMatrixEffect", () => {
         params: { seed: 1989 }
       })
     ).not.toThrow();
+  });
+
+  it("restarts when a placement would lock above the top of the board", () => {
+    const effect = new TetrisMatrixEffect() as unknown as {
+      cache: { board: number[]; score: number; lines: number; pieceCount: number; placements: unknown[]; bag: string[] };
+      ensureSimulation: (pieceCount: number, seed: number) => void;
+    };
+
+    effect.cache.board = createEmptyBoard().map(() => 3);
+    effect.cache.score = 900;
+    effect.cache.lines = 12;
+    effect.cache.pieceCount = 0;
+    effect.cache.placements = [];
+    effect.cache.bag = ["I"];
+    effect.ensureSimulation(1, 1989);
+
+    expect(effect.cache.score).toBeLessThan(100);
+    expect(effect.cache.lines).toBeLessThanOrEqual(1);
+    expect(effect.cache.pieceCount).toBe(1);
+  });
+
+  it("keeps simulation progressing after repeated top-out resets", () => {
+    const effect = new TetrisMatrixEffect() as unknown as {
+      cache: { board: number[]; pieceCount: number; bag: string[] };
+      ensureSimulation: (pieceCount: number, seed: number) => void;
+    };
+
+    effect.cache.board = createEmptyBoard().map(() => 3);
+    effect.cache.pieceCount = 0;
+    effect.cache.bag = ["I"];
+    effect.ensureSimulation(5, 1989);
+
+    expect(effect.cache.pieceCount).toBe(5);
   });
 });

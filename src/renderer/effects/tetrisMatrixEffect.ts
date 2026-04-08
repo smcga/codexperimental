@@ -14,8 +14,12 @@ export const TETRIS_BOARD_WIDTH = 10;
 export const TETRIS_BOARD_HEIGHT = 20;
 const SPAWN_Y = -2;
 const PREVIEW_COUNT = 3;
+const SCREEN_PADDING_CELLS = 0.6;
+const PANEL_GAP_CELLS = 0.8;
+const LEFT_PANEL_CELLS = 3.6;
+const RIGHT_PANEL_CELLS = 3.9;
 
-export type Tetromino = "I" | "O" | "T" | "S" | "Z" | "J" | "L";
+export type Pentomino = "F" | "I" | "L" | "P" | "N" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z";
 
 export type TetrisPlacement = {
   rotation: number;
@@ -23,7 +27,9 @@ export type TetrisPlacement = {
   y: number;
   score: number;
   clearedLines: number;
-  piece: Tetromino;
+  piece: Pentomino;
+  dropMode?: "normal" | "quick" | "hesitate";
+  hesitation?: number;
 };
 
 export type TetrisResolvedParams = {
@@ -43,10 +49,10 @@ type CachedState = {
   score: number;
   lines: number;
   pieceCount: number;
-  bag: Tetromino[];
+  bag: Pentomino[];
 };
 
-const SHADE_ORDER: CellValue[] = [4, 3, 2, 1, 2, 3, 4];
+const SHADE_ORDER: CellValue[] = [4, 3, 2, 1, 2, 3, 4, 3, 2, 1, 2, 3];
 const GAMEBOY_PALETTE = {
   shell: "#8bac0f",
   shellDark: "#556b2f",
@@ -64,42 +70,75 @@ const GAMEBOY_PALETTE = {
   text: "#1f3a1c"
 } as const;
 
-const PIECE_SEQUENCE: Tetromino[] = ["I", "O", "T", "S", "Z", "J", "L"];
+export const PIECE_SEQUENCE: Pentomino[] = ["F", "I", "L", "P", "N", "T", "U", "V", "W", "X", "Y", "Z"];
 
-const TETROMINO_ROTATIONS: Record<Tetromino, Array<Array<[number, number]>>> = {
-  I: [
-    [[0, 1], [1, 1], [2, 1], [3, 1]],
-    [[2, 0], [2, 1], [2, 2], [2, 3]]
-  ],
-  O: [
-    [[1, 0], [2, 0], [1, 1], [2, 1]]
-  ],
-  T: [
-    [[1, 0], [0, 1], [1, 1], [2, 1]],
-    [[1, 0], [1, 1], [2, 1], [1, 2]],
-    [[0, 1], [1, 1], [2, 1], [1, 2]],
-    [[1, 0], [0, 1], [1, 1], [1, 2]]
-  ],
-  S: [
-    [[1, 0], [2, 0], [0, 1], [1, 1]],
-    [[1, 0], [1, 1], [2, 1], [2, 2]]
-  ],
-  Z: [
-    [[0, 0], [1, 0], [1, 1], [2, 1]],
-    [[2, 0], [1, 1], [2, 1], [1, 2]]
-  ],
-  J: [
-    [[0, 0], [0, 1], [1, 1], [2, 1]],
-    [[1, 0], [2, 0], [1, 1], [1, 2]],
-    [[0, 1], [1, 1], [2, 1], [2, 2]],
-    [[1, 0], [1, 1], [0, 2], [1, 2]]
-  ],
-  L: [
-    [[2, 0], [0, 1], [1, 1], [2, 1]],
-    [[1, 0], [1, 1], [1, 2], [2, 2]],
-    [[0, 1], [1, 1], [2, 1], [0, 2]],
-    [[0, 0], [1, 0], [1, 1], [1, 2]]
-  ]
+type ShapePoint = [number, number];
+type RotationSet = Array<Array<[number, number]>>;
+
+const BASE_PENTOMINOES: Record<Pentomino, ShapePoint[]> = {
+  F: [[0, 1], [1, 0], [1, 1], [1, 2], [2, 2]],
+  I: [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0]],
+  L: [[0, 0], [0, 1], [0, 2], [0, 3], [1, 3]],
+  P: [[0, 0], [1, 0], [0, 1], [1, 1], [0, 2]],
+  N: [[0, 0], [0, 1], [1, 1], [1, 2], [1, 3]],
+  T: [[0, 0], [1, 0], [2, 0], [1, 1], [1, 2]],
+  U: [[0, 0], [2, 0], [0, 1], [1, 1], [2, 1]],
+  V: [[0, 0], [0, 1], [0, 2], [1, 2], [2, 2]],
+  W: [[0, 0], [0, 1], [1, 1], [1, 2], [2, 2]],
+  X: [[1, 0], [0, 1], [1, 1], [2, 1], [1, 2]],
+  Y: [[0, 0], [0, 1], [0, 2], [0, 3], [1, 1]],
+  Z: [[0, 0], [1, 0], [1, 1], [1, 2], [2, 2]]
+};
+
+const normalizeCells = (cells: ShapePoint[]): ShapePoint[] => {
+  const minX = Math.min(...cells.map(([x]) => x));
+  const minY = Math.min(...cells.map(([, y]) => y));
+  return cells
+    .map(([x, y]) => [x - minX, y - minY] as ShapePoint)
+    .sort(([ax, ay], [bx, by]) => (ax === bx ? ay - by : ax - bx));
+};
+
+const rotate90 = (cells: ShapePoint[]): ShapePoint[] => {
+  const maxY = Math.max(...cells.map(([, y]) => y));
+  return cells.map(([x, y]) => [maxY - y, x]);
+};
+
+const reflectHorizontally = (cells: ShapePoint[]): ShapePoint[] => {
+  const maxX = Math.max(...cells.map(([x]) => x));
+  return cells.map(([x, y]) => [maxX - x, y]);
+};
+
+const encodeCells = (cells: ShapePoint[]): string => cells.map(([x, y]) => `${x},${y}`).join("|");
+
+const buildUniqueRotations = (base: ShapePoint[]): RotationSet => {
+  const variants: ShapePoint[][] = [];
+  let current = normalizeCells(base);
+  for (let i = 0; i < 4; i += 1) {
+    variants.push(current);
+    variants.push(normalizeCells(reflectHorizontally(current)));
+    current = normalizeCells(rotate90(current));
+  }
+
+  const unique = new Map<string, ShapePoint[]>();
+  variants.forEach((variant) => {
+    unique.set(encodeCells(variant), variant);
+  });
+  return [...unique.values()];
+};
+
+const PENTOMINO_ROTATIONS: Record<Pentomino, RotationSet> = {
+  F: buildUniqueRotations(BASE_PENTOMINOES.F),
+  I: buildUniqueRotations(BASE_PENTOMINOES.I),
+  L: buildUniqueRotations(BASE_PENTOMINOES.L),
+  P: buildUniqueRotations(BASE_PENTOMINOES.P),
+  N: buildUniqueRotations(BASE_PENTOMINOES.N),
+  T: buildUniqueRotations(BASE_PENTOMINOES.T),
+  U: buildUniqueRotations(BASE_PENTOMINOES.U),
+  V: buildUniqueRotations(BASE_PENTOMINOES.V),
+  W: buildUniqueRotations(BASE_PENTOMINOES.W),
+  X: buildUniqueRotations(BASE_PENTOMINOES.X),
+  Y: buildUniqueRotations(BASE_PENTOMINOES.Y),
+  Z: buildUniqueRotations(BASE_PENTOMINOES.Z)
 };
 
 const asFinite = (value: unknown, fallback: number): number =>
@@ -123,12 +162,78 @@ export const createEmptyBoard = (): CellValue[] => new Array(TETRIS_BOARD_WIDTH 
 
 const boardIndex = (x: number, y: number): number => y * TETRIS_BOARD_WIDTH + x;
 
-export const getPieceCells = (piece: Tetromino, rotation: number): Array<[number, number]> => {
-  const rotations = TETROMINO_ROTATIONS[piece];
+type TetrisLayout = {
+  cellSize: number;
+  boardLeft: number;
+  boardTop: number;
+  boardWidthPx: number;
+  boardHeightPx: number;
+  boardRight: number;
+  leftPanelX: number;
+  leftPanelY: number;
+  leftPanelW: number;
+  leftPanelH: number;
+  rightPanelX: number;
+  rightPanelY: number;
+  rightPanelW: number;
+  rightPanelH: number;
+  screenX: number;
+  screenY: number;
+  screenW: number;
+  screenH: number;
+};
+
+export const computeTetrisLayout = (width: number, height: number): TetrisLayout => {
+  const maxCellByHeight = Math.floor(height * 0.72 / TETRIS_BOARD_HEIGHT);
+  const maxCellByWidth = Math.floor(width / (TETRIS_BOARD_WIDTH + LEFT_PANEL_CELLS + RIGHT_PANEL_CELLS + PANEL_GAP_CELLS * 2 + SCREEN_PADDING_CELLS * 2));
+  const cellSize = Math.max(4, Math.min(maxCellByHeight, maxCellByWidth));
+
+  const boardWidthPx = cellSize * TETRIS_BOARD_WIDTH;
+  const boardHeightPx = cellSize * TETRIS_BOARD_HEIGHT;
+  const leftPanelW = cellSize * LEFT_PANEL_CELLS;
+  const rightPanelW = cellSize * RIGHT_PANEL_CELLS;
+  const panelGap = cellSize * PANEL_GAP_CELLS;
+  const screenPadding = cellSize * SCREEN_PADDING_CELLS;
+  const screenW = leftPanelW + panelGap + boardWidthPx + panelGap + rightPanelW + screenPadding * 2;
+  const screenH = boardHeightPx + screenPadding * 2;
+  const screenX = Math.round((width - screenW) * 0.5);
+  const screenY = Math.round((height - screenH) * 0.5);
+  const boardLeft = screenX + screenPadding + leftPanelW + panelGap;
+  const boardTop = screenY + screenPadding;
+  const boardRight = boardLeft + boardWidthPx;
+  const leftPanelX = screenX + screenPadding;
+  const leftPanelY = screenY + screenPadding;
+  const rightPanelX = boardRight + panelGap;
+  const rightPanelY = leftPanelY;
+
+  return {
+    cellSize,
+    boardLeft,
+    boardTop,
+    boardWidthPx,
+    boardHeightPx,
+    boardRight,
+    leftPanelX,
+    leftPanelY,
+    leftPanelW,
+    leftPanelH: boardHeightPx,
+    rightPanelX,
+    rightPanelY,
+    rightPanelW,
+    rightPanelH: boardHeightPx,
+    screenX,
+    screenY,
+    screenW,
+    screenH
+  };
+};
+
+export const getPieceCells = (piece: Pentomino, rotation: number): Array<[number, number]> => {
+  const rotations = PENTOMINO_ROTATIONS[piece];
   return rotations[((rotation % rotations.length) + rotations.length) % rotations.length] ?? rotations[0] ?? [];
 };
 
-export const collides = (board: CellValue[], piece: Tetromino, rotation: number, offsetX: number, offsetY: number): boolean =>
+export const collides = (board: CellValue[], piece: Pentomino, rotation: number, offsetX: number, offsetY: number): boolean =>
   getPieceCells(piece, rotation).some(([x, y]) => {
     const boardX = offsetX + x;
     const boardY = offsetY + y;
@@ -141,7 +246,7 @@ export const collides = (board: CellValue[], piece: Tetromino, rotation: number,
     return board[boardIndex(boardX, boardY)] !== 0;
   });
 
-export const findDropY = (board: CellValue[], piece: Tetromino, rotation: number, offsetX: number): number => {
+export const findDropY = (board: CellValue[], piece: Pentomino, rotation: number, offsetX: number): number => {
   let y = SPAWN_Y;
   while (!collides(board, piece, rotation, offsetX, y + 1)) {
     y += 1;
@@ -232,9 +337,9 @@ const countWellDepth = (heights: number[]): number => {
   return wells;
 };
 
-export const choosePlacement = (board: CellValue[], piece: Tetromino, seed: number, pieceIndex: number): TetrisPlacement => {
-  const rotations = TETROMINO_ROTATIONS[piece];
-  let best: TetrisPlacement | null = null;
+export const choosePlacement = (board: CellValue[], piece: Pentomino, seed: number, pieceIndex: number): TetrisPlacement => {
+  const rotations = PENTOMINO_ROTATIONS[piece];
+  const candidates: TetrisPlacement[] = [];
 
   rotations.forEach((_, rotation) => {
     const cells = getPieceCells(piece, rotation);
@@ -264,21 +369,79 @@ export const choosePlacement = (board: CellValue[], piece: Tetromino, seed: numb
         centerBias * 0.08 +
         randomness;
 
-      if (
-        best === null ||
-        score > best.score ||
-        (score === best.score && y > best.y) ||
-        (score === best.score && y === best.y && x < best.x)
-      ) {
-        best = { ...placement, score, clearedLines };
-      }
+      candidates.push({ ...placement, score, clearedLines });
     }
   });
 
-  return best ?? { piece, rotation: 0, x: 3, y: SPAWN_Y, score: -9999, clearedLines: 0 };
+  if (candidates.length === 0) {
+    return { piece, rotation: 0, x: 3, y: SPAWN_Y, score: -9999, clearedLines: 0, dropMode: "normal", hesitation: 0 };
+  }
+
+  candidates.sort((a, b) => b.score - a.score || b.y - a.y || a.x - b.x);
+  const best = candidates[0]!;
+  const second = candidates[1];
+  const confidence = Math.max(0, best.score - (second?.score ?? best.score - 2));
+  const uncertain = confidence < 0.65;
+  const topChoices = candidates.slice(0, uncertain ? Math.min(4, candidates.length) : Math.min(2, candidates.length));
+  const pickJitter = hash(pieceIndex * 29 + seed * 0.17, seed);
+  const pickIndex = uncertain ? Math.floor(pickJitter * topChoices.length) : Math.floor(pickJitter * Math.min(2, topChoices.length));
+  const chosen = topChoices[Math.min(topChoices.length - 1, pickIndex)] ?? best;
+  const styleRoll = hash(pieceIndex * 41 + chosen.rotation * 7 + chosen.x, seed + 11);
+  const dropMode: TetrisPlacement["dropMode"] = styleRoll > 0.78 ? "quick" : styleRoll < (uncertain ? 0.42 : 0.24) ? "hesitate" : "normal";
+  const hesitation = dropMode === "hesitate" ? 0.14 + hash(pieceIndex * 13 + chosen.x, seed + 3) * 0.22 : 0;
+
+  return { ...chosen, dropMode, hesitation };
 };
 
-const shuffleBag = (seed: number, bagIndex: number): Tetromino[] => {
+export const isPlacementAboveTop = (piece: Pentomino, rotation: number, y: number): boolean =>
+  getPieceCells(piece, rotation).some(([, cellY]) => y + cellY < 0);
+
+export const resolveFallingRotation = (
+  piece: Pentomino,
+  targetRotation: number,
+  pieceProgress: number,
+  seed: number,
+  pieceIndex: number
+): number => {
+  const rotationCount = PENTOMINO_ROTATIONS[piece]?.length ?? 1;
+  if (rotationCount <= 1) {
+    return 0;
+  }
+  const normalizedTarget = ((targetRotation % rotationCount) + rotationCount) % rotationCount;
+  const spinRoll = hash(pieceIndex * 19 + normalizedTarget * 3, seed + 37);
+  if (spinRoll < 0.33) {
+    return normalizedTarget;
+  }
+
+  const direction = hash(pieceIndex * 23 + normalizedTarget * 5, seed + 13) > 0.5 ? 1 : -1;
+  const altRotation = ((normalizedTarget + direction) % rotationCount + rotationCount) % rotationCount;
+  const secondAlt = ((altRotation + direction) % rotationCount + rotationCount) % rotationCount;
+  const windupEnd = 0.16 + hash(pieceIndex * 31 + normalizedTarget * 11, seed + 17) * 0.18;
+  const settleStart = 0.72 + hash(pieceIndex * 43 + normalizedTarget * 7, seed + 29) * 0.16;
+
+  if (pieceProgress < windupEnd * 0.5) {
+    return secondAlt;
+  }
+  if (pieceProgress < windupEnd) {
+    return altRotation;
+  }
+  if (pieceProgress < settleStart) {
+    return normalizedTarget;
+  }
+  if (spinRoll > 0.82 && pieceProgress < 0.93) {
+    return altRotation;
+  }
+  return normalizedTarget;
+};
+
+const getPieceBounds = (cells: Array<[number, number]>): { minX: number; maxX: number; minY: number; maxY: number } => ({
+  minX: Math.min(...cells.map(([x]) => x)),
+  maxX: Math.max(...cells.map(([x]) => x)),
+  minY: Math.min(...cells.map(([, y]) => y)),
+  maxY: Math.max(...cells.map(([, y]) => y))
+});
+
+const shuffleBag = (seed: number, bagIndex: number): Pentomino[] => {
   const bag = [...PIECE_SEQUENCE];
   for (let i = bag.length - 1; i > 0; i -= 1) {
     const swapIndex = Math.floor(hash(seed * 0.13 + bagIndex * 7.1 + i * 1.7, seed + bagIndex * 13) * (i + 1));
@@ -287,7 +450,7 @@ const shuffleBag = (seed: number, bagIndex: number): Tetromino[] => {
   return bag;
 };
 
-const getPieceAtIndex = (cache: CachedState, seed: number, index: number): Tetromino => {
+const getPieceAtIndex = (cache: CachedState, seed: number, index: number): Pentomino => {
   while (cache.bag.length <= index) {
     const bagIndex = Math.floor(cache.bag.length / PIECE_SEQUENCE.length);
     cache.bag.push(...shuffleBag(seed, bagIndex));
@@ -307,6 +470,17 @@ export class TetrisMatrixEffect implements Effect {
 
   private seed = TETRIS_MATRIX_DEFAULTS.seed;
 
+  private resetSimulationState(preservePieceCount = false): void {
+    this.cache.board = createEmptyBoard();
+    this.cache.score = 0;
+    this.cache.lines = 0;
+    this.cache.placements = [];
+    if (!preservePieceCount) {
+      this.cache.pieceCount = 0;
+    }
+    this.cache.bag = [];
+  }
+
   private ensureSimulation(pieceCount: number, seed: number): void {
     if (this.seed !== seed) {
       this.seed = seed;
@@ -324,13 +498,9 @@ export class TetrisMatrixEffect implements Effect {
       const piece = getPieceAtIndex(this.cache, seed, this.cache.pieceCount);
       let placement = choosePlacement(this.cache.board, piece, seed, this.cache.pieceCount);
 
-      if (collides(this.cache.board, piece, placement.rotation, placement.x, placement.y)) {
-        this.cache.board = createEmptyBoard();
-        this.cache.score = 0;
-        this.cache.lines = 0;
-        this.cache.placements = [];
-        this.cache.pieceCount = 0;
-        this.cache.bag = [];
+      if (isPlacementAboveTop(piece, placement.rotation, placement.y) || collides(this.cache.board, piece, placement.rotation, placement.x, placement.y)) {
+        this.resetSimulationState(true);
+        this.cache.pieceCount += 1;
         continue;
       }
 
@@ -366,25 +536,45 @@ export class TetrisMatrixEffect implements Effect {
 
     const currentPiece = getPieceAtIndex(this.cache, resolved.seed, settledCount);
     const currentPlacement = choosePlacement(this.cache.board, currentPiece, resolved.seed, settledCount);
-    const preview: Tetromino[] = [];
+    const preview: Pentomino[] = [];
     for (let i = 1; i <= PREVIEW_COUNT; i += 1) {
       preview.push(getPieceAtIndex(this.cache, resolved.seed, settledCount + i));
     }
 
-    const boardLeft = width * 0.32;
-    const boardTop = height * 0.16;
-    const boardHeightPx = height * 0.72;
-    const cellSize = Math.floor(Math.min(boardHeightPx / TETRIS_BOARD_HEIGHT, width * 0.04));
-    const boardWidthPx = cellSize * TETRIS_BOARD_WIDTH;
-    const boardActualHeight = cellSize * TETRIS_BOARD_HEIGHT;
-    const screenX = boardLeft - cellSize * 2.2;
-    const screenY = boardTop - cellSize * 1.8;
-    const screenW = boardWidthPx + cellSize * 6.6;
-    const screenH = boardActualHeight + cellSize * 4.4;
+    const layout = computeTetrisLayout(width, height);
+    const {
+      cellSize,
+      boardLeft,
+      boardTop,
+      boardWidthPx,
+      boardHeightPx,
+      leftPanelX,
+      leftPanelY,
+      leftPanelW,
+      leftPanelH,
+      rightPanelX,
+      rightPanelY,
+      rightPanelW,
+      screenX,
+      screenY,
+      screenW,
+      screenH
+    } = layout;
     const beatGlow = (audio.beat ? 1 : 0) * (0.2 + (audio.beatStrength ?? 0) * 0.55);
     const rmsGlow = clamp(audio.rms ?? 0, 0, 1) * 0.18;
-    const dropY = Math.round((SPAWN_Y + (currentPlacement.y - SPAWN_Y) * Math.pow(pieceProgress, 0.86)) * cellSize);
+    const hesitation = clamp(currentPlacement.hesitation ?? 0, 0, 0.4);
+    const easedProgressRaw =
+      currentPlacement.dropMode === "quick"
+        ? Math.pow(pieceProgress, 0.44)
+        : currentPlacement.dropMode === "hesitate"
+          ? pieceProgress <= hesitation
+            ? 0
+            : Math.pow((pieceProgress - hesitation) / Math.max(0.01, 1 - hesitation), 1.06)
+          : Math.pow(pieceProgress, 0.86);
+    const easedProgress = clamp(easedProgressRaw, 0, 1);
+    const dropY = Math.round((SPAWN_Y + (currentPlacement.y - SPAWN_Y) * easedProgress) * cellSize);
     const lockPulse = Math.max(0, 1 - Math.abs(pieceProgress - 0.92) * 9);
+    const renderedRotation = resolveFallingRotation(currentPiece, currentPlacement.rotation, pieceProgress, resolved.seed, settledCount);
 
     ctx.save();
     ctx.clearRect(0, 0, width, height);
@@ -403,11 +593,15 @@ export class TetrisMatrixEffect implements Effect {
     ctx.fillStyle = GAMEBOY_PALETTE.screenBorder;
     ctx.fillRect(screenX + cellSize * 0.45, screenY + cellSize * 0.45, screenW - cellSize * 0.9, screenH - cellSize * 0.9);
     ctx.fillStyle = GAMEBOY_PALETTE.bg;
-    ctx.fillRect(boardLeft, boardTop, boardWidthPx, boardActualHeight);
+    ctx.fillRect(boardLeft, boardTop, boardWidthPx, boardHeightPx);
+
+    ctx.fillStyle = "rgba(15,31,15,0.55)";
+    ctx.fillRect(leftPanelX, leftPanelY, leftPanelW, leftPanelH);
+    ctx.fillRect(rightPanelX, rightPanelY, rightPanelW, leftPanelH);
 
     const screenGlow = clamp(resolved.glow + beatGlow + rmsGlow, 0, 1.6);
     ctx.fillStyle = `rgba(183, 210, 92, ${0.05 + screenGlow * 0.08})`;
-    ctx.fillRect(boardLeft, boardTop, boardWidthPx, boardActualHeight);
+    ctx.fillRect(boardLeft, boardTop, boardWidthPx, boardHeightPx);
 
     for (let y = 0; y < TETRIS_BOARD_HEIGHT; y += 1) {
       for (let x = 0; x < TETRIS_BOARD_WIDTH; x += 1) {
@@ -444,10 +638,10 @@ export class TetrisMatrixEffect implements Effect {
     }
 
     const activeShade = lockPulse > 0.15 ? GAMEBOY_PALETTE.bright : GAMEBOY_PALETTE.high;
-    getPieceCells(currentPiece, currentPlacement.rotation).forEach(([x, y]) => {
+    getPieceCells(currentPiece, renderedRotation).forEach(([x, y]) => {
       const px = boardLeft + (currentPlacement.x + x) * cellSize;
       const py = boardTop + dropY + y * cellSize;
-      if (py < boardTop - cellSize || py > boardTop + boardActualHeight) {
+      if (py < boardTop - cellSize || py > boardTop + boardHeightPx) {
         return;
       }
       ctx.fillStyle = activeShade;
@@ -460,25 +654,36 @@ export class TetrisMatrixEffect implements Effect {
     ctx.font = `${Math.max(9, Math.floor(cellSize * 0.9))}px monospace`;
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
-    ctx.fillText("SCORE", screenX + cellSize * 0.8, screenY + cellSize * 0.8);
-    ctx.fillText(String(this.cache.score).padStart(5, "0"), screenX + cellSize * 0.8, screenY + cellSize * 1.7);
-    ctx.fillText("LINES", screenX + cellSize * 0.8, screenY + cellSize * 3.1);
-    ctx.fillText(String(this.cache.lines).padStart(3, "0"), screenX + cellSize * 0.8, screenY + cellSize * 4.0);
-    ctx.fillText(`LV ${String(resolved.level).padStart(2, "0")}`, screenX + cellSize * 0.8, screenY + cellSize * 5.4);
+    const hudX = leftPanelX + cellSize * 0.35;
+    ctx.fillText("SCORE", hudX, leftPanelY + cellSize * 0.55);
+    ctx.fillText(String(this.cache.score).padStart(5, "0"), hudX, leftPanelY + cellSize * 1.45);
+    ctx.fillText("LINES", hudX, leftPanelY + cellSize * 2.8);
+    ctx.fillText(String(this.cache.lines).padStart(3, "0"), hudX, leftPanelY + cellSize * 3.7);
+    ctx.fillText(`LV ${String(resolved.level).padStart(2, "0")}`, hudX, leftPanelY + cellSize * 5.05);
 
-    const previewX = boardLeft + boardWidthPx + cellSize * 1.3;
-    ctx.fillText("NEXT", previewX, screenY + cellSize * 0.8);
+    const previewX = rightPanelX + cellSize * 0.45;
+    ctx.fillText("NEXT", previewX, rightPanelY + cellSize * 0.55);
     preview.forEach((piece, previewIndex) => {
-      const previewY = screenY + cellSize * (1.8 + previewIndex * 3.1);
-      getPieceCells(piece, 0).forEach(([x, y]) => {
+      const previewY = rightPanelY + cellSize * (1.7 + previewIndex * 4.05);
+      const previewCells = getPieceCells(piece, 0);
+      const bounds = getPieceBounds(previewCells);
+      const previewScale = cellSize * 0.5;
+      const previewW = (bounds.maxX - bounds.minX + 1) * previewScale;
+      const centredX = previewX + (rightPanelW - cellSize * 0.9 - previewW) * 0.5;
+      previewCells.forEach(([x, y]) => {
         ctx.fillStyle = previewIndex === 0 ? GAMEBOY_PALETTE.high : GAMEBOY_PALETTE.mid;
-        ctx.fillRect(previewX + x * (cellSize * 0.65), previewY + y * (cellSize * 0.65), cellSize * 0.55, cellSize * 0.55);
+        ctx.fillRect(
+          centredX + (x - bounds.minX) * previewScale,
+          previewY + (y - bounds.minY) * previewScale,
+          cellSize * 0.42,
+          cellSize * 0.42
+        );
       });
     });
 
     ctx.textAlign = "center";
-    ctx.fillText("DOT MATRIX", width * 0.5, screenY + screenH + cellSize * 0.4);
-    ctx.fillText("8-BIT STACK", width * 0.5, screenY + screenH + cellSize * 1.25);
+    ctx.fillText("DOT MATRIX", width * 0.5, screenY + screenH + cellSize * 0.75);
+    ctx.fillText("8-BIT STACK", width * 0.5, screenY + screenH + cellSize * 1.65);
 
     ctx.fillStyle = GAMEBOY_PALETTE.glare;
     ctx.fillRect(screenX + cellSize * 0.9, screenY + cellSize * 0.7, screenW * 0.28, screenH * 0.14);
