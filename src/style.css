@@ -1408,6 +1408,11 @@ body,
 }
 
 .effect-idea-preview-shell {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.effect-idea-preview-stage {
   position: relative;
 }
 
@@ -1433,12 +1438,9 @@ body,
 }
 
 .effect-idea-busy-modal {
-  position: absolute;
-  left: 50%;
-  bottom: 0.85rem;
-  transform: translateX(-50%);
-  z-index: 2;
-  width: min(90%, 30rem);
+  width: 100%;
+  max-height: 15.5rem;
+  overflow: auto;
   display: grid;
   justify-items: center;
   gap: 0.35rem;
@@ -1544,8 +1546,8 @@ body,
 }
 
 @keyframes effect-idea-error-pulse {
-  0%, 100% { transform: translateX(-50%) scale(1); }
-  35% { transform: translateX(-50%) scale(1.03); }
+  0%, 100% { transform: scale(1); }
+  35% { transform: scale(1.01); }
 }
 
 .effect-idea-code {

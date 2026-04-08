@@ -97,10 +97,12 @@
             <textarea id="effect-idea-input" rows="8" placeholder="Example: neon vector tunnel that pulses with beat-reactive glow"></textarea>
           </label>
           <div id="effect-idea-preview-shell" class="effect-idea-preview-shell hidden">
-            <canvas id="effect-idea-preview" width="512" height="288" aria-label="Generated effect preview"></canvas>
-            <div id="effect-idea-countdown" class="effect-idea-countdown hidden" aria-hidden="true">3</div>
-            <button id="effect-idea-prev" class="effect-idea-carousel-nav effect-idea-carousel-prev hidden" type="button" aria-label="Previous approved effect">◀</button>
-            <button id="effect-idea-next" class="effect-idea-carousel-nav effect-idea-carousel-next hidden" type="button" aria-label="Next approved effect">▶</button>
+            <div class="effect-idea-preview-stage">
+              <canvas id="effect-idea-preview" width="512" height="288" aria-label="Generated effect preview"></canvas>
+              <div id="effect-idea-countdown" class="effect-idea-countdown hidden" aria-hidden="true">3</div>
+              <button id="effect-idea-prev" class="effect-idea-carousel-nav effect-idea-carousel-prev hidden" type="button" aria-label="Previous approved effect">◀</button>
+              <button id="effect-idea-next" class="effect-idea-carousel-nav effect-idea-carousel-next hidden" type="button" aria-label="Next approved effect">▶</button>
+            </div>
             <div id="effect-idea-busy-modal" class="effect-idea-busy-modal hidden" role="status" aria-live="polite">
               <div id="effect-idea-busy-spinner" class="effect-idea-busy-spinner"></div>
               <div id="effect-idea-busy-title" class="effect-idea-busy-title">Generating your effect…</div>
