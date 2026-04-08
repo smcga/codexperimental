@@ -116,61 +116,24 @@ export function runnerJumpOffset(prevSupportY: number, currentSupportY: number, 
   return Math.floor(arc * (lift * 0.85 + extra));
 }
 
-export type RunnerJumpState = {
-  airborne: boolean;
-  velocityY: number;
-  y: number;
-};
+export function runnerTraversalY(prevSupportY: number, currentSupportY: number, colProgress: number, audioAmount: number): number {
+  const progress = clamp(colProgress, 0, 1);
+  const heightDelta = prevSupportY - currentSupportY;
 
-export function updateRunnerJumpState(
-  state: RunnerJumpState,
-  supportY: number,
-  nextSupportY: number,
-  deltaTime: number,
-  audioAmount: number
-): RunnerJumpState {
-  const dt = clamp(deltaTime, 1 / 240, 0.2);
-  const rise = supportY - nextSupportY;
-  const shouldJump = !state.airborne && rise > 0.5;
-  const jumpStrength = 180 + rise * 5 + audioAmount * 26;
-  const gravity = 560;
-  const maxFallSpeed = 380;
-  const snapDistance = 0.75;
-
-  let y = state.y;
-  let velocityY = state.velocityY;
-  let airborne = state.airborne;
-
-  if (shouldJump) {
-    velocityY = -jumpStrength;
-    y = supportY;
-    airborne = true;
+  if (heightDelta > 0) {
+    const phase = smoothstep(progress);
+    const arcLift = Math.sin(phase * Math.PI) * Math.max(3, heightDelta * 0.45 + audioAmount * 3);
+    const baseY = prevSupportY + (currentSupportY - prevSupportY) * phase;
+    return baseY - arcLift;
   }
 
-  if (!airborne) {
-    return {
-      airborne: false,
-      velocityY: 0,
-      y: supportY
-    };
+  if (heightDelta < 0) {
+    const ledgeHold = 0.22;
+    const fallProgress = progress <= ledgeHold ? 0 : smoothstep((progress - ledgeHold) / (1 - ledgeHold));
+    return prevSupportY + (currentSupportY - prevSupportY) * fallProgress;
   }
 
-  velocityY = Math.min(maxFallSpeed, velocityY + gravity * dt);
-  y += velocityY * dt;
-
-  if (velocityY >= 0 && y >= nextSupportY - snapDistance) {
-    return {
-      airborne: false,
-      velocityY: 0,
-      y: nextSupportY
-    };
-  }
-
-  return {
-    airborne: true,
-    velocityY,
-    y
-  };
+  return prevSupportY;
 }
 
 export function buildRunnerSprite(baseX: number, footY: number, tileSize: number, time: number, audioAmount: number): RunnerSprite {
@@ -334,9 +297,6 @@ const drawHillLayer = (
 };
 
 export class PlatformerScrollEffect implements Effect {
-  private jumpState: RunnerJumpState | null = null;
-  private lastTime = Number.NEGATIVE_INFINITY;
-
   render({ ctx, width, height, time, audio, params }: EffectRenderContext): void {
     const speed = Math.max(0, asFinite(params.speed, PLATFORMER_SCROLL_DEFAULTS.speed));
     const seed = asFinite(params.seed, PLATFORMER_SCROLL_DEFAULTS.seed);
@@ -466,38 +426,9 @@ export class PlatformerScrollEffect implements Effect {
       frontPulse
     );
 
-    const supportY = Math.floor(prevSupportY + (currentSupportY - prevSupportY) * smoothstep(colProgress));
-    const nextColSupportY = supportTopY(
-      currentCol + 1,
-      seed,
-      platformRate,
-      platformMaxSteps,
-      basePlatformY,
-      tileSize,
-      groundTop,
-      frontPulse
-    );
-    const currentJumpState =
-      this.jumpState ??
-      ({
-        airborne: false,
-        velocityY: 0,
-        y: supportY
-      } satisfies RunnerJumpState);
-    const jumpedTime = time < this.lastTime || time - this.lastTime > 0.5;
-    const jumpState = jumpedTime
-      ? {
-          airborne: false,
-          velocityY: 0,
-          y: supportY
-        }
-      : updateRunnerJumpState(currentJumpState, supportY, nextColSupportY, time - this.lastTime, audioAmount);
-    this.jumpState = jumpState;
-    this.lastTime = time;
-
-    const hop = Math.max(0, Math.floor(supportY - jumpState.y));
+    const supportY = runnerTraversalY(prevSupportY, currentSupportY, colProgress, audioAmount);
     const runBob = Math.floor((Math.sin(time * 14) * 1.5 + audioAmount * 1.5) * 0.5);
-    const runnerFootY = supportY - hop - runBob - 1;
+    const runnerFootY = Math.floor(supportY) - runBob - 1;
     const runnerSprite = buildRunnerSprite(runnerBaseX, runnerFootY, tileSize, time, audioAmount);
 
     ctx.fillStyle = runnerSprite.shadow.color;

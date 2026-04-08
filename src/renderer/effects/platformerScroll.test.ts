@@ -7,8 +7,8 @@ import {
   PlatformerScrollEffect,
   platformAt,
   runnerJumpOffset,
+  runnerTraversalY,
   supportTopY,
-  updateRunnerJumpState
 } from "./platformerScroll";
 
 const createGradient = () => ({ addColorStop: vi.fn() });
@@ -88,35 +88,23 @@ describe("platformerScroll helpers", () => {
     expect(down).toBe(0);
   });
 
-  it("updateRunnerJumpState performs a physical jump arc for platform rises", () => {
-    const launched = updateRunnerJumpState(
-      { airborne: false, velocityY: 0, y: 220 },
-      220,
-      188,
-      1 / 60,
-      0.2
-    );
-    const rising = updateRunnerJumpState(launched, 220, 188, 1 / 60, 0.2);
-    const falling = updateRunnerJumpState({ ...rising, velocityY: 220 }, 220, 188, 1 / 10, 0.2);
+  it("runnerTraversalY adds a jump arc for upward steps", () => {
+    const start = runnerTraversalY(220, 188, 0, 0.2);
+    const peak = runnerTraversalY(220, 188, 0.5, 0.2);
+    const end = runnerTraversalY(220, 188, 1, 0.2);
 
-    expect(launched.airborne).toBe(true);
-    expect(launched.velocityY).toBeLessThan(0);
-    expect(rising.y).toBeLessThan(220);
-    expect(falling.velocityY).toBeGreaterThan(rising.velocityY);
+    expect(start).toBe(220);
+    expect(peak).toBeLessThan(204);
+    expect(end).toBe(188);
   });
 
-  it("updateRunnerJumpState lands and snaps cleanly to support", () => {
-    const landed = updateRunnerJumpState(
-      { airborne: true, velocityY: 300, y: 195 },
-      220,
-      188,
-      1 / 10,
-      0.2
-    );
+  it("runnerTraversalY keeps footing briefly before dropping down", () => {
+    const early = runnerTraversalY(188, 220, 0.1, 0.2);
+    const late = runnerTraversalY(188, 220, 0.9, 0.2);
 
-    expect(landed.airborne).toBe(false);
-    expect(landed.velocityY).toBe(0);
-    expect(landed.y).toBe(188);
+    expect(early).toBe(188);
+    expect(late).toBeGreaterThan(210);
+    expect(late).toBeLessThanOrEqual(220);
   });
 
   it("buildRunnerSprite creates a colorful mascot silhouette with animated limbs", () => {
