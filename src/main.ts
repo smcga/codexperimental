@@ -85,7 +85,7 @@ import {
 } from "./generatedEffectControls";
 import { installGlobalNumberInputWheelGuard } from "./numberInputWheel";
 import { installAnimatedTitle } from "./titleFx";
-import { getEffectIdeaCloseBlockedMessage } from "./effectIdeaModalClose";
+import { getEffectIdeaCloseBlockedMessage, shouldShowCommunityCarouselButtons } from "./effectIdeaModalClose";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
@@ -791,7 +791,7 @@ function runEffectIdeaSuccessCountdown(onDone: () => void): void {
 
 function updateEffectIdeaButtons(): void {
   const busyModalVisible = Boolean(effectIdeaBusyModal && !effectIdeaBusyModal.classList.contains("hidden"));
-  const showCarouselButtons = (effectIdeasGenerating || (busyModalVisible && generatedIdea !== null)) && effectIdeaCarouselEntries.length >= 2;
+  const showCarouselButtons = shouldShowCommunityCarouselButtons(effectIdeasGenerating, busyModalVisible, effectIdeaCarouselEntries.length);
   if (effectIdeaGenerateButton) {
     effectIdeaGenerateButton.disabled = effectIdeasGenerating || effectIdeasSubmitting;
   }
