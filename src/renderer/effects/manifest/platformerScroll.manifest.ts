@@ -29,9 +29,9 @@ export const platformerScrollManifest = defineEffectManifest({
     parameters:
       "`speed`, `seed`, `tileSize`, `groundRatio`, `parallaxFar`, `parallaxMid`, `parallaxFront`, `audioReact`, `beatKick`, `platformRate`, `platformMaxSteps`, `skyGlow`, `speedLines`, `collectibleRate`",
     catalogNote:
-      "Deterministic side-scrolling platformer parallax scene with twinkling sky glow, speed streaks, collectibles, and a colorful neon astronaut mascot runner.",
+      "Deterministic side-scrolling platformer parallax scene with twinkling sky glow, speed streaks, polished bobbing pickups, and a colorful neon astronaut mascot runner.",
     description:
-      "Deterministic side-scrolling platformer parallax scene with twinkling sky glow, speed streaks, collectibles, and a colorful neon astronaut mascot runner."
+      "Deterministic side-scrolling platformer parallax scene with twinkling sky glow, speed streaks, polished bobbing pickups, and a colorful neon astronaut mascot runner."
   }
 });
 
