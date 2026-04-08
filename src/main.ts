@@ -85,6 +85,7 @@ import {
 } from "./generatedEffectControls";
 import { installGlobalNumberInputWheelGuard } from "./numberInputWheel";
 import { installAnimatedTitle } from "./titleFx";
+import { getEffectIdeaCloseBlockedMessage } from "./effectIdeaModalClose";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
@@ -789,6 +790,8 @@ function runEffectIdeaSuccessCountdown(onDone: () => void): void {
 }
 
 function updateEffectIdeaButtons(): void {
+  const busyModalVisible = Boolean(effectIdeaBusyModal && !effectIdeaBusyModal.classList.contains("hidden"));
+  const showCarouselButtons = (effectIdeasGenerating || (busyModalVisible && generatedIdea !== null)) && effectIdeaCarouselEntries.length >= 2;
   if (effectIdeaGenerateButton) {
     effectIdeaGenerateButton.disabled = effectIdeasGenerating || effectIdeasSubmitting;
   }
@@ -802,8 +805,17 @@ function updateEffectIdeaButtons(): void {
   effectIdeaCancelButton?.classList.toggle("hidden", effectIdeasGenerating);
   effectIdeaGenerateButton?.classList.toggle("hidden", effectIdeasGenerating);
   effectIdeaSubmitButton?.classList.toggle("hidden", effectIdeasGenerating || generatedIdea === null);
-  effectIdeaPrevButton?.classList.toggle("hidden", !effectIdeasGenerating || effectIdeaCarouselEntries.length < 2);
-  effectIdeaNextButton?.classList.toggle("hidden", !effectIdeasGenerating || effectIdeaCarouselEntries.length < 2);
+  effectIdeaPrevButton?.classList.toggle("hidden", !showCarouselButtons);
+  effectIdeaNextButton?.classList.toggle("hidden", !showCarouselButtons);
+}
+
+function closeEffectIdeaModalIfAllowed(): void {
+  const blockedMessage = getEffectIdeaCloseBlockedMessage(effectIdeasGenerating);
+  if (blockedMessage) {
+    setEffectIdeaStatus(blockedMessage, "busy");
+    return;
+  }
+  setEffectIdeaModalVisible(false);
 }
 
 function renderGeneratedEffectIdeaControls(): void {
@@ -2076,7 +2088,7 @@ if (doodleModal) {
 
 if (effectIdeaCancelButton) {
   effectIdeaCancelButton.addEventListener("click", () => {
-    setEffectIdeaModalVisible(false);
+    closeEffectIdeaModalIfAllowed();
   });
 }
 
@@ -2134,7 +2146,7 @@ if (effectIdeaNameInput) {
 if (effectIdeaModal) {
   effectIdeaModal.addEventListener("click", (event) => {
     if (event.target === effectIdeaModal) {
-      setEffectIdeaModalVisible(false);
+      closeEffectIdeaModalIfAllowed();
     }
   });
 }
@@ -2148,7 +2160,7 @@ window.addEventListener("keydown", (event) => {
     return;
   }
   if (event.key === "Escape" && effectIdeaModal && !effectIdeaModal.classList.contains("hidden")) {
-    setEffectIdeaModalVisible(false);
+    closeEffectIdeaModalIfAllowed();
     return;
   }
   if (!releaseMode && event.key.toLowerCase() === "d") {

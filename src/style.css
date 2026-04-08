@@ -1415,6 +1415,7 @@ body,
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
+  z-index: 3;
   width: 2.2rem;
   height: 2.2rem;
   border-radius: 999px;
@@ -1436,6 +1437,7 @@ body,
   left: 50%;
   bottom: 0.85rem;
   transform: translateX(-50%);
+  z-index: 2;
   width: min(90%, 30rem);
   display: grid;
   justify-items: center;
