@@ -2153,7 +2153,7 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 - **Registry key:** `platformerScroll`
 - **Implementation:** `src/renderer/effects/platformerScroll.ts` (class `PlatformerScrollEffect`)
 - **Renderer:** Canvas2D
-- **Description:** Deterministic side-scrolling platformer parallax scene with looping platforms and a colorful neon astronaut mascot runner.
+- **Description:** Deterministic side-scrolling platformer parallax scene with twinkling sky glow, speed streaks, collectibles, and a colorful neon astronaut mascot runner.
 - **Audio features:** beat, rms
 - **Performance notes:** None noted.
 
@@ -2163,6 +2163,7 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 | --- | --- | --- | --- | --- | --- |
 | `params.audioReact` | number | 0.35 | min 0, max 1 | Audio React | yes |
 | `params.beatKick` | number | 0.35 | min 0, max 1 | Beat Kick | yes |
+| `params.collectibleRate` | number | 0.2 | min 0, max 1 | Collectible Rate | yes |
 | `params.groundRatio` | number | 0.24 | min 0.2, max 0.3 | Ground Ratio | yes |
 | `params.parallaxFar` | number | 0.2 | min 0.05, max 0.6 | Parallax Far | yes |
 | `params.parallaxFront` | number | 1 | min 0.7, max 1.4 | Parallax Front | yes |
@@ -2170,7 +2171,9 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 | `params.platformMaxSteps` | number | 5 | min 1, max 12 | Platform Max Steps | yes |
 | `params.platformRate` | number | 0.55 | min 0, max 1 | Platform Rate | yes |
 | `params.seed` | number | 1337 | min 0, max 9999 | Seed | yes |
+| `params.skyGlow` | number | 0.65 | min 0, max 1 | Sky Glow | yes |
 | `params.speed` | number | 140 | min 0, max 8 | Speed | yes |
+| `params.speedLines` | number | 0.55 | min 0, max 1 | Speed Lines | yes |
 | `params.tileSize` | number | 16 | min 8, max 64 | Tile Size | yes |
 
 ### Minimal layer usage

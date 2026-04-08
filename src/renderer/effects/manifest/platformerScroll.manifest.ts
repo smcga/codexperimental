@@ -19,13 +19,19 @@ export const platformerScrollManifest = defineEffectManifest({
       numberControl("audioReact", "Audio React", PLATFORMER_SCROLL_DEFAULTS.audioReact, { min: 0, max: 1, step: 0.05 }),
       numberControl("beatKick", "Beat Kick", PLATFORMER_SCROLL_DEFAULTS.beatKick, { min: 0, max: 1, step: 0.05 }),
       numberControl("platformRate", "Platform Rate", PLATFORMER_SCROLL_DEFAULTS.platformRate, { min: 0, max: 1, step: 0.01 }),
-      numberControl("platformMaxSteps", "Platform Max Steps", PLATFORMER_SCROLL_DEFAULTS.platformMaxSteps, { min: 1, max: 12, step: 1 })
+      numberControl("platformMaxSteps", "Platform Max Steps", PLATFORMER_SCROLL_DEFAULTS.platformMaxSteps, { min: 1, max: 12, step: 1 }),
+      numberControl("skyGlow", "Sky Glow", PLATFORMER_SCROLL_DEFAULTS.skyGlow, { min: 0, max: 1, step: 0.05 }),
+      numberControl("speedLines", "Speed Lines", PLATFORMER_SCROLL_DEFAULTS.speedLines, { min: 0, max: 1, step: 0.05 }),
+      numberControl("collectibleRate", "Collectible Rate", PLATFORMER_SCROLL_DEFAULTS.collectibleRate, { min: 0, max: 1, step: 0.01 })
     ]
   },
   docs: {
-    parameters: "`speed`, `seed`, `tileSize`, `groundRatio`, `parallaxFar`, `parallaxMid`, `parallaxFront`, `audioReact`, `beatKick`, `platformRate`, `platformMaxSteps`",
-    catalogNote: "Deterministic side-scrolling platformer parallax scene with looping platforms and a colorful neon astronaut mascot runner.",
-    description: "Deterministic side-scrolling platformer parallax scene with looping platforms and a colorful neon astronaut mascot runner."
+    parameters:
+      "`speed`, `seed`, `tileSize`, `groundRatio`, `parallaxFar`, `parallaxMid`, `parallaxFront`, `audioReact`, `beatKick`, `platformRate`, `platformMaxSteps`, `skyGlow`, `speedLines`, `collectibleRate`",
+    catalogNote:
+      "Deterministic side-scrolling platformer parallax scene with twinkling sky glow, speed streaks, collectibles, and a colorful neon astronaut mascot runner.",
+    description:
+      "Deterministic side-scrolling platformer parallax scene with twinkling sky glow, speed streaks, collectibles, and a colorful neon astronaut mascot runner."
   }
 });
 

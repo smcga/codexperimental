@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import {
   buildRunnerSprite,
+  collectibleAt,
   hash1,
   PLATFORMER_SCROLL_DEFAULTS,
   PlatformerScrollEffect,
@@ -22,7 +23,8 @@ const createCtx = () =>
     moveTo: vi.fn(),
     lineTo: vi.fn(),
     fill: vi.fn(),
-    createLinearGradient: vi.fn(() => createGradient())
+    createLinearGradient: vi.fn(() => createGradient()),
+    createRadialGradient: vi.fn(() => createGradient())
   }) as unknown as CanvasRenderingContext2D;
 
 const audio = {
@@ -87,6 +89,11 @@ describe("platformerScroll helpers", () => {
     expect(down).toBe(0);
   });
 
+  it("collectibleAt is deterministic and respects disabled rate", () => {
+    expect(collectibleAt(12, 2024, 0)).toBe(false);
+    expect(collectibleAt(44, 2024, 0.35)).toBe(collectibleAt(44, 2024, 0.35));
+  });
+
   it("buildRunnerSprite creates a colorful mascot silhouette with animated limbs", () => {
     const earlyFrame = buildRunnerSprite(100, 160, 16, 0, 0.2);
     const laterFrame = buildRunnerSprite(100, 160, 16, 0.2, 0.2);
@@ -109,6 +116,7 @@ describe("PlatformerScrollEffect", () => {
     expect(PLATFORMER_SCROLL_DEFAULTS.speed).toBe(140);
     expect(PLATFORMER_SCROLL_DEFAULTS.seed).toBe(1337);
     expect(PLATFORMER_SCROLL_DEFAULTS.tileSize).toBeGreaterThanOrEqual(8);
+    expect(PLATFORMER_SCROLL_DEFAULTS.skyGlow).toBeGreaterThan(0);
   });
 
   it("renders a colorful runner instead of a monochrome block silhouette", () => {
@@ -136,5 +144,7 @@ describe("PlatformerScrollEffect", () => {
     expect(colorUsage.get("#99f6e4") ?? 0).toBeGreaterThan(0);
     expect(colorUsage.get("#ff4d6d") ?? 0).toBeGreaterThan(0);
     expect(colorUsage.get("#fb923c") ?? 0).toBeGreaterThan(0);
+    expect(colorUsage.get("#f8fafc") ?? 0).toBeGreaterThan(0);
+    expect((ctx.createRadialGradient as ReturnType<typeof vi.fn>).mock.calls.length).toBeGreaterThan(0);
   });
 });
