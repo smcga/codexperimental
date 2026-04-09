@@ -41,6 +41,10 @@ export type EffectIdeaGenerationResult = {
   docs?: GeneratedEffectDocs;
 };
 
+export type EffectIdeaGenerationRequest = {
+  improvementAttempt?: number;
+};
+
 type EffectsResponse = {
   effects?: EffectIdeaRecord[];
   effect?: EffectIdeaRecord;
@@ -195,10 +199,13 @@ return (() => {${normalizedCode}})();`
   return effect;
 }
 
-export async function generateEffectIdea(prompt: string): Promise<EffectIdeaGenerationResult> {
+export async function generateEffectIdea(prompt: string, options: EffectIdeaGenerationRequest = {}): Promise<EffectIdeaGenerationResult> {
   const payload = await requestEffects("/api/effects?action=generate", {
     method: "POST",
-    body: JSON.stringify({ prompt })
+    body: JSON.stringify({
+      prompt,
+      improvementAttempt: options.improvementAttempt ?? 0
+    })
   });
   if (!payload.generation) {
     throw new Error("No generation returned.");
