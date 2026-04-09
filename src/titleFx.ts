@@ -2,7 +2,7 @@ const TITLE_SPINNER = ["⠋", "⠙", "⠸", "⣠", "⣄", "⡆", "⠇", "⠏"] a
 const TITLE_DIVIDERS = ["⌁", "⟢", "⟣", "⟡"] as const;
 const SUBSCRIPT_DIGITS = ["₀", "₁", "₂", "₃", "₄", "₅", "₆", "₇", "₈", "₉"] as const;
 const TITLE_TICK_MS = 240;
-const TITLE_BASE = "ＤＥＭＯＳＣＥＮＥ";
+const TITLE_BASE = "ＳＩＧＮＡＬ";
 
 function toSubscriptNumber(value: number): string {
   return value

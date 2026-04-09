@@ -59,11 +59,13 @@ import { createEditorRoot, EditorController } from "./editor/EditorRoot";
 import { submitDoodle } from "./doodles";
 import {
   compileRuntimeEffect,
+  EffectPromptImprovementFailure,
   EffectIdeaApiError,
   EffectIdeaGenerationResult,
   GeneratedEffectParam,
   fetchApprovedEffects,
   generateEffectIdea,
+  improveEffectGenerationPromptTemplate,
   submitEffectIdea
 } from "./effectIdeas";
 import {
@@ -86,6 +88,7 @@ import {
 import { installGlobalNumberInputWheelGuard } from "./numberInputWheel";
 import { installAnimatedTitle } from "./titleFx";
 import { getEffectIdeaCloseBlockedMessage, shouldShowCommunityCarouselButtons } from "./effectIdeaModalClose";
+import { generateEffectWithSelfImprovement } from "./effectIdeaSelfImprovement";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
@@ -612,7 +615,7 @@ function setEffectIdeaBusyState(mode: "hidden" | "busy" | "error", message?: str
   effectIdeaRetryButton.classList.toggle("hidden", mode !== "error");
   if (mode === "busy") {
     effectIdeaBusyTitle.textContent = "Generating your effect…";
-    effectIdeaBusyCopy.textContent = "Enjoy approved community effects while Codex cooks your idea.";
+    effectIdeaBusyCopy.textContent = message ?? "Enjoy approved community effects while Codex cooks your idea.";
     return;
   }
   if (mode === "error") {
@@ -947,12 +950,44 @@ async function generateCurrentEffectIdea(): Promise<void> {
   effectIdeaPreviewShell?.classList.remove("hidden");
   updateEffectIdeaButtons();
   setEffectIdeaStatus("Generating effect code with Codex…", "busy");
+  const maxSelfImprovementFailures = 5;
+  const failureHistory: EffectPromptImprovementFailure[] = [];
   try {
     await hydrateEffectIdeaCarousel();
     updateEffectIdeaButtons();
     renderBusyCommunityEffectControls();
     applyEffectIdeaCarouselEntry();
-    const generation = await generateEffectIdea(prompt);
+    const { generation, compiledEffect } = await generateEffectWithSelfImprovement({
+      maxSelfImprovementFailures,
+      generate: (improvementAttempt) => generateEffectIdea(prompt, { improvementAttempt }),
+      compile: compileRuntimeEffect,
+      onFailure: async (failure) => {
+        const rawResponse = failure.error instanceof EffectIdeaApiError
+          ? (failure.error.rawResponse ?? "")
+          : failure.generation
+            ? JSON.stringify(failure.generation)
+            : "";
+        const errorMessage = failure.error instanceof Error
+          ? failure.error.message
+          : "Unable to generate effect.";
+        failureHistory.push({
+          promptSent: prompt,
+          response: rawResponse,
+          error: errorMessage
+        });
+        await improveEffectGenerationPromptTemplate({
+          userPrompt: prompt,
+          response: rawResponse,
+          error: errorMessage,
+          improvementAttempt: failure.improvementAttempt,
+          failureHistory
+        });
+      },
+      onPhaseChange: (phase) => {
+        setEffectIdeaStatus(phase.message, "busy");
+        setEffectIdeaBusyState("busy", phase.message);
+      }
+    });
     generatedIdea = generation;
     effectIdeaPreviewParams = getGeneratedEffectDefaultParams(generation.params);
     generatedIdeaPrompt = prompt;
@@ -963,9 +998,8 @@ async function generateCurrentEffectIdea(): Promise<void> {
       effectIdeaCode.textContent = generation.typescriptCode;
     }
     renderGeneratedEffectIdeaControls();
-    const compiled = compileRuntimeEffect(generation.runtimeCode);
     runEffectIdeaSuccessCountdown(() => {
-      effectIdeaPreviewEffect = compiled;
+      effectIdeaPreviewEffect = compiledEffect;
       stopEffectIdeaPreview();
       previewGeneratedIdea();
       setEffectIdeaBusyState("hidden");
@@ -983,7 +1017,7 @@ async function generateCurrentEffectIdea(): Promise<void> {
       effectIdeaCode.textContent = error.rawResponse;
     }
     setEffectIdeaBusyState("error", message);
-    setEffectIdeaStatus("Generation failed. Try again to get a fresh working variation.", "error");
+    setEffectIdeaStatus("Sorry — self-improvement exhausted all 5 retries. Please try again tomorrow; things get better every day.", "error");
   } finally {
     effectIdeasGenerating = false;
     renderBusyCommunityEffectControls();
