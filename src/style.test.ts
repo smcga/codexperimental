@@ -65,3 +65,21 @@ describe("editor playlist scrollbar styling", () => {
     expect(css).toContain("height: 0;");
   });
 });
+
+
+describe("social preview metadata", () => {
+  it("ships the updated Billy Cheam unfurl title, copy, and preview image tags", () => {
+    const indexHtml = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+
+    expect(indexHtml).toContain("<title>AI CAN DO THIS.</title>");
+    expect(indexHtml).toContain('name="description"');
+    expect(indexHtml).toContain("Every scene generated. Every moment computed. Watch it. Then try it yourself.");
+    expect(indexHtml).toContain('property="og:title" content="AI CAN DO THIS."');
+    expect(indexHtml).toContain('property="og:description"');
+    expect(indexHtml).toContain('property="og:image" content="/img/preview.png"');
+    expect(indexHtml).toContain('name="twitter:card" content="summary_large_image"');
+    expect(indexHtml).toContain('name="twitter:title" content="AI CAN DO THIS."');
+    expect(indexHtml).toContain('name="twitter:description"');
+    expect(indexHtml).toContain('name="twitter:image" content="/img/preview.png"');
+  });
+});
