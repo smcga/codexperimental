@@ -1,6 +1,8 @@
 import { createKvClients } from "./kv.js";
+import { createDbClient } from "./db.js";
 
 const { readClient, writeClient } = createKvClients();
+const dbClient = createDbClient();
 
 const DOODLES_KEY = "doodles:items";
 const PENDING_DOODLES_KEY = "doodles:pending";
@@ -199,6 +201,23 @@ function getReviewUrl(doodleId: string, moderationBaseUrl: string | null, modera
 }
 
 async function readApprovedDoodles(): Promise<DoodleRecord[]> {
+  if (dbClient) {
+    try {
+      const rows = await dbClient.doodleSubmission.findMany({
+        where: { status: "approved" },
+        orderBy: { createdAt: "desc" },
+        take: MAX_DOODLES
+      });
+      return rows.map((row) => ({
+        id: row.id,
+        imageData: row.imageData,
+        createdAt: row.createdAt.getTime()
+      }));
+    } catch {
+      return [];
+    }
+  }
+
   if (!readClient) {
     return [];
   }
@@ -211,6 +230,23 @@ async function readApprovedDoodles(): Promise<DoodleRecord[]> {
 }
 
 async function readPendingDoodles(client: { get: (key: string) => Promise<unknown> } | null): Promise<DoodleRecord[]> {
+  if (dbClient) {
+    try {
+      const rows = await dbClient.doodleSubmission.findMany({
+        where: { status: "pending" },
+        orderBy: { createdAt: "desc" },
+        take: MAX_PENDING_DOODLES
+      });
+      return rows.map((row) => ({
+        id: row.id,
+        imageData: row.imageData,
+        createdAt: row.createdAt.getTime()
+      }));
+    } catch {
+      return [];
+    }
+  }
+
   if (!client) {
     return [];
   }
@@ -311,7 +347,7 @@ async function handleModerationAction(req: RequestLike, res: ResponseLike, url: 
     return true;
   }
 
-  if (!writeClient) {
+  if (!writeClient && !dbClient) {
     sendHtml(res, 503, "Moderation unavailable", "Doodle moderation storage is unavailable right now.");
     return true;
   }
@@ -322,24 +358,44 @@ async function handleModerationAction(req: RequestLike, res: ResponseLike, url: 
     return true;
   }
 
-  const pendingDoodles = await readPendingDoodles(writeClient);
-  const target = pendingDoodles.find((doodle) => doodle.id === id);
-  if (!target) {
-    sendHtml(res, 404, "Already handled", "That doodle was already approved or rejected.");
-    return true;
-  }
+  if (dbClient) {
+    try {
+      const existing = await dbClient.doodleSubmission.findUnique({
+        where: { id }
+      });
+      if (!existing || existing.status !== "pending") {
+        sendHtml(res, 404, "Already handled", "That doodle was already approved or rejected.");
+        return true;
+      }
 
-  const remaining = pendingDoodles.filter((doodle) => doodle.id !== id);
-
-  try {
-    await writePendingDoodles(writeClient, remaining);
-    if (action === "approve") {
-      await writeClient.lpush(DOODLES_KEY, target);
-      await writeClient.ltrim(DOODLES_KEY, 0, MAX_DOODLES - 1);
+      await dbClient.doodleSubmission.update({
+        where: { id },
+        data: { status: action === "approve" ? "approved" : "rejected", moderatedAt: new Date() }
+      });
+    } catch {
+      sendHtml(res, 503, "Moderation unavailable", "Unable to update the doodle queue right now.");
+      return true;
     }
-  } catch {
-    sendHtml(res, 503, "Moderation unavailable", "Unable to update the doodle queue right now.");
-    return true;
+  } else if (writeClient) {
+    const pendingDoodles = await readPendingDoodles(writeClient);
+    const target = pendingDoodles.find((doodle) => doodle.id === id);
+    if (!target) {
+      sendHtml(res, 404, "Already handled", "That doodle was already approved or rejected.");
+      return true;
+    }
+
+    const remaining = pendingDoodles.filter((doodle) => doodle.id !== id);
+
+    try {
+      await writePendingDoodles(writeClient, remaining);
+      if (action === "approve") {
+        await writeClient.lpush(DOODLES_KEY, target);
+        await writeClient.ltrim(DOODLES_KEY, 0, MAX_DOODLES - 1);
+      }
+    } catch {
+      sendHtml(res, 503, "Moderation unavailable", "Unable to update the doodle queue right now.");
+      return true;
+    }
   }
 
   sendHtml(
@@ -402,7 +458,7 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
   }
 
   if (req.method === "POST") {
-    if (!writeClient) {
+    if (!writeClient && !dbClient) {
       sendJson(res, 503, { error: "Doodle storage is unavailable." });
       return;
     }
@@ -420,8 +476,19 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
     };
 
     try {
-      const pendingDoodles = await readPendingDoodles(writeClient);
-      await writePendingDoodles(writeClient, [doodle, ...pendingDoodles]);
+      if (dbClient) {
+        await dbClient.doodleSubmission.create({
+          data: {
+            id: doodle.id,
+            imageData: doodle.imageData,
+            createdAt: new Date(doodle.createdAt),
+            status: "pending"
+          }
+        });
+      } else if (writeClient) {
+        const pendingDoodles = await readPendingDoodles(writeClient);
+        await writePendingDoodles(writeClient, [doodle, ...pendingDoodles]);
+      }
       await sendModerationNotification(doodle, url);
       sendJson(res, 200, { doodle, moderationStatus: "pending", reviewUrl: getReviewUrl(doodle.id, getModerationBaseUrl(url), getModerationToken()) });
     } catch {

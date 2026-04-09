@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("PRISMA_DATABASE_URL")
+}
+
+enum ModerationStatus {
+  pending
+  approved
+  rejected
+}
+
+model EffectIdea {
+  id             String           @id
+  name           String
+  prompt         String
+  typescriptCode String           @db.Text
+  runtimeCode    String           @db.Text
+  params         Json?
+  docs           Json?
+  status         ModerationStatus @default(pending)
+  createdAt      DateTime         @default(now())
+  moderatedAt    DateTime?
+
+  @@index([status, createdAt(sort: Desc)])
+}
+
+model DoodleSubmission {
+  id          String           @id
+  imageData   String           @db.Text
+  status      ModerationStatus @default(pending)
+  createdAt   DateTime         @default(now())
+  moderatedAt DateTime?
+
+  @@index([status, createdAt(sort: Desc)])
+}
+
+model EffectParamLimits {
+  id        Int      @id
+  data      Json
+  updatedAt DateTime @updatedAt
+}
