@@ -9,6 +9,7 @@ import {
   fetchPendingEffects,
   fetchApprovedEffects,
   generateEffectIdea,
+  improveEffectGenerationPromptTemplate,
   submitEffectIdea,
   validateGeneratedRuntimeCode
 } from "./effectIdeas";
@@ -44,6 +45,13 @@ describe("effect ideas client", () => {
       params: [{ key: "speed", label: "Speed", type: "number", defaultValue: 1 }],
       docs: { description: "Generated effect", parameters: "- speed: speed." }
     });
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      "/api/effects?action=generate",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({ prompt: "nebula pulses", improvementAttempt: 0 })
+      })
+    );
   });
 
   it("submits effect ideas for moderation", async () => {
@@ -57,6 +65,58 @@ describe("effect ideas client", () => {
         runtimeCode: "return { render() {} };"
       })
     ).resolves.toBeUndefined();
+  });
+
+  it("sends improvement attempt metadata for self-improvement retries", async () => {
+    globalThis.fetch = vi.fn(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        generation: {
+          name: "Retry Nebula",
+          typescriptCode: "ts",
+          runtimeCode: "return { render() {} };"
+        }
+      })
+    })) as typeof fetch;
+
+    await generateEffectIdea("retry me", { improvementAttempt: 3 });
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      "/api/effects?action=generate",
+      expect.objectContaining({
+        body: JSON.stringify({ prompt: "retry me", improvementAttempt: 3 })
+      })
+    );
+  });
+
+  it("submits prompt-improvement payloads after failures", async () => {
+    globalThis.fetch = vi.fn(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ promptTemplate: { version: 2 } })
+    })) as typeof fetch;
+
+    await improveEffectGenerationPromptTemplate({
+      userPrompt: "retro tunnel",
+      response: "not-json",
+      error: "Unable to parse generated effect response.",
+      improvementAttempt: 2,
+      failureHistory: [{ promptSent: "retro tunnel", response: "not-json", error: "Unable to parse generated effect response." }]
+    });
+
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      "/api/effects?action=improvePromptTemplate",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({
+          userPrompt: "retro tunnel",
+          response: "not-json",
+          error: "Unable to parse generated effect response.",
+          improvementAttempt: 2,
+          failureHistory: [{ promptSent: "retro tunnel", response: "not-json", error: "Unable to parse generated effect response." }]
+        })
+      })
+    );
   });
 
   it("caches approved effects", async () => {

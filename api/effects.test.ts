@@ -229,6 +229,48 @@ describe("api/effects", () => {
     expect(payload.rawResponse).toContain("I can help with that");
   });
 
+  it("self-improves the stored generation prompt template via dedicated improvement action", async () => {
+    process.env.OPENAI_API_KEY = "sk-test";
+    globalThis.fetch = (vi.fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          output_text: JSON.stringify({
+            template: "You generate canvas demoscene effects. Return strict JSON with keys name, typescriptCode, runtimeCode, params, docs. Runtime code must be plain JS with render(context). Prefer deterministic helpers and avoid markdown."
+          })
+        })
+      })) as unknown as typeof fetch;
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+
+    const improve = createResponse();
+    await handler({
+      method: "POST",
+      url: "/api/effects?action=improvePromptTemplate",
+      headers: { "x-forwarded-for": "127.0.0.1" },
+      body: JSON.stringify({
+        userPrompt: "make stars",
+        response: "not-json",
+        error: "Unable to parse generated effect response.",
+        improvementAttempt: 1,
+        failureHistory: [{ promptSent: "make stars", response: "not-json", error: "Unable to parse generated effect response." }]
+      })
+    }, improve.response);
+    expect(improve.response.statusCode).toBe(200);
+
+    const metrics = createResponse();
+    process.env.EFFECT_MODERATION_TOKEN = "secret-token";
+    await handler({ method: "GET", url: "/api/effects?action=generateMetrics&token=secret-token" }, metrics.response);
+    const payload = JSON.parse(metrics.getBody());
+    expect(payload.promptTemplate.version).toBe(2);
+    expect(payload.generateFailureLogs[0]).toEqual(expect.objectContaining({
+      improvementAttempt: 1,
+      userErrorMessage: "Unable to parse generated effect response."
+    }));
+  });
+
   it("records generation failures in monitoring metrics and exposes them via authorized endpoint", async () => {
     process.env.EFFECT_MODERATION_TOKEN = "secret-token";
     delete process.env.OPENAI_API_KEY;

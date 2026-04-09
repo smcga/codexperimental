@@ -7,11 +7,14 @@ const PENDING_EFFECTS_KEY = "effects:pending";
 const GENERATE_RATE_LIMIT_PREFIX = "effects:generate:rl";
 const GENERATE_METRICS_KEY = "effects:generate:metrics";
 const GENERATE_ERROR_SAMPLES_KEY = "effects:generate:error-samples";
+const GENERATE_FAILURE_LOGS_KEY = "effects:generate:failure-logs";
 const GENERATE_ALERT_COOLDOWN_PREFIX = "effects:generate:alert-cooldown";
+const GENERATE_PROMPT_TEMPLATE_KEY = "effects:generate:prompt-template";
 const PARAM_LIMITS_KEY = "effects:param-limits";
 const MAX_EFFECTS = 128;
 const MAX_PENDING_EFFECTS = 128;
 const MAX_GENERATE_ERROR_SAMPLES = 200;
+const MAX_GENERATE_FAILURE_LOGS = 200;
 const MAX_GENERATE_PROMPT_LENGTH = 3000;
 const DEFAULT_GENERATE_RATE_LIMIT_MAX = 8;
 const DEFAULT_GENERATE_RATE_LIMIT_WINDOW_MS = 60_000;
@@ -97,6 +100,8 @@ type JsonResponse = {
   };
   generateMetrics?: GenerateMetrics;
   recentGenerateErrors?: GenerateErrorSample[];
+  generateFailureLogs?: GenerateFailureLog[];
+  promptTemplate?: GeneratePromptTemplate;
   paramLimits?: EffectParamLimitsRecord;
   error?: string;
   rawResponse?: string;
@@ -133,6 +138,23 @@ type GenerateMetrics = {
   failureCategoryCounts: Record<string, number>;
   lastSuccessAt: string | null;
   lastFailureAt: string | null;
+};
+
+type GeneratePromptTemplate = {
+  version: number;
+  template: string;
+  updatedAt: string;
+  updateSource: "seed" | "self_improvement";
+};
+
+type GenerateFailureLog = {
+  timestamp: string;
+  requestId: string;
+  improvementAttempt: number;
+  promptTemplateVersion: number;
+  promptSent: string;
+  modelResponse: string;
+  userErrorMessage: string;
 };
 
 function sendJson(res: ResponseLike, status: number, body: JsonResponse): void {
@@ -961,6 +983,72 @@ function sanitizeEffectParamLimits(value: unknown): EffectParamLimitsRecord {
   }, {});
 }
 
+const DEFAULT_GENERATE_PROMPT_TEMPLATE_TEXT = [
+  "You generate canvas demoscene effects.",
+  "Return STRICT JSON only with keys: name, typescriptCode, runtimeCode, params, docs.",
+  "typescriptCode can use TypeScript syntax.",
+  "runtimeCode MUST be plain JavaScript (no TypeScript annotations).",
+  "runtimeCode MUST NOT include markdown fences.",
+  "runtimeCode MUST NOT include export/import statements.",
+  "runtimeCode MUST NOT use dynamic code execution primitives (Function constructor, new Function, eval, import()).",
+  "runtimeCode MUST NOT construct code from strings or call methods like setTimeout/setInterval with string arguments.",
+  "Prefer deterministic helper functions, lookup tables, and explicit state updates instead of runtime code generation.",
+  "runtimeCode MUST evaluate to an effect object with render(context) and optional reset().",
+  "Preferred runtimeCode shape: `return { render(context) { ... }, reset() { ... } };`",
+  "params MUST be an array of UI control metadata using keys: key,label,type,defaultValue,min,max,step,options,description.",
+  "Use type=number with numeric defaults and optional min/max/step.",
+  "Use type=toggle with numeric defaultValue of 0 or 1.",
+  "Use type=select with string defaultValue and options array of {label,value}.",
+  "docs MUST be { description, parameters } where parameters is concise markdown describing each param."
+].join(" ");
+
+function sanitizePromptTemplate(raw: unknown): GeneratePromptTemplate {
+  if (!raw || typeof raw !== "object") {
+    return {
+      version: 1,
+      template: DEFAULT_GENERATE_PROMPT_TEMPLATE_TEXT,
+      updatedAt: new Date().toISOString(),
+      updateSource: "seed"
+    };
+  }
+  const typed = raw as Partial<GeneratePromptTemplate>;
+  const version = Number.isFinite(typed.version) && Number(typed.version) > 0 ? Math.floor(Number(typed.version)) : 1;
+  const template = typeof typed.template === "string" && typed.template.trim().length > 0
+    ? typed.template.trim().slice(0, 12000)
+    : DEFAULT_GENERATE_PROMPT_TEMPLATE_TEXT;
+  return {
+    version,
+    template,
+    updatedAt: typeof typed.updatedAt === "string" && typed.updatedAt.trim().length > 0
+      ? typed.updatedAt
+      : new Date().toISOString(),
+    updateSource: typed.updateSource === "self_improvement" ? "self_improvement" : "seed"
+  };
+}
+
+async function readPromptTemplate(): Promise<GeneratePromptTemplate> {
+  const sourceClient = writeClient ?? readClient;
+  if (!sourceClient) {
+    return sanitizePromptTemplate(null);
+  }
+  const template = sanitizePromptTemplate(await sourceClient.get(GENERATE_PROMPT_TEMPLATE_KEY));
+  await writeClient?.set(GENERATE_PROMPT_TEMPLATE_KEY, template);
+  return template;
+}
+
+async function writePromptTemplate(template: GeneratePromptTemplate): Promise<void> {
+  await writeClient?.set(GENERATE_PROMPT_TEMPLATE_KEY, sanitizePromptTemplate(template));
+}
+
+async function recordGenerateFailureLog(entry: GenerateFailureLog): Promise<void> {
+  if (!writeClient) {
+    return;
+  }
+  const raw = await writeClient.get(GENERATE_FAILURE_LOGS_KEY);
+  const logs = Array.isArray(raw) ? raw : [];
+  await writeClient.set(GENERATE_FAILURE_LOGS_KEY, [entry, ...logs].slice(0, MAX_GENERATE_FAILURE_LOGS));
+}
+
 function parseJsonBlock(text: string): {
   name: string;
   typescriptCode: string;
@@ -1010,7 +1098,7 @@ function extractOutputText(payload: unknown): string {
   return chunks.join("\n").trim();
 }
 
-async function generateWithOpenAi(prompt: string): Promise<{
+async function generateWithOpenAi(prompt: string, promptTemplate: string): Promise<{
   name: string;
   typescriptCode: string;
   runtimeCode: string;
@@ -1037,24 +1125,7 @@ async function generateWithOpenAi(prompt: string): Promise<{
           content: [
             {
               type: "input_text",
-              text: [
-                "You generate canvas demoscene effects.",
-                "Return STRICT JSON only with keys: name, typescriptCode, runtimeCode, params, docs.",
-                "typescriptCode can use TypeScript syntax.",
-                "runtimeCode MUST be plain JavaScript (no TypeScript annotations).",
-                "runtimeCode MUST NOT include markdown fences.",
-                "runtimeCode MUST NOT include export/import statements.",
-                "runtimeCode MUST NOT use dynamic code execution primitives (Function constructor, new Function, eval, import()).",
-                "runtimeCode MUST NOT construct code from strings or call methods like setTimeout/setInterval with string arguments.",
-                "Prefer deterministic helper functions, lookup tables, and explicit state updates instead of runtime code generation.",
-                "runtimeCode MUST evaluate to an effect object with render(context) and optional reset().",
-                "Preferred runtimeCode shape: `return { render(context) { ... }, reset() { ... } };`",
-                "params MUST be an array of UI control metadata using keys: key,label,type,defaultValue,min,max,step,options,description.",
-                "Use type=number with numeric defaults and optional min/max/step.",
-                "Use type=toggle with numeric defaultValue of 0 or 1.",
-                "Use type=select with string defaultValue and options array of {label,value}.",
-                "docs MUST be { description, parameters } where parameters is concise markdown describing each param."
-              ].join(" ")
+              text: promptTemplate
             }
           ]
         },
@@ -1079,6 +1150,84 @@ async function generateWithOpenAi(prompt: string): Promise<{
     throw error;
   }
   return parsed;
+}
+
+async function improvePromptTemplate(args: {
+  currentTemplate: GeneratePromptTemplate;
+  userPrompt: string;
+  errorMessage: string;
+  modelResponse: string;
+  deepThink: boolean;
+  failureHistory?: Array<{ response: string; error: string }>;
+}): Promise<GeneratePromptTemplate> {
+  const apiKey = normalizeEnvValue(process.env.OPENAI_API_KEY);
+  if (!apiKey || !writeClient) {
+    return args.currentTemplate;
+  }
+  const model = normalizeEnvValue(process.env.OPENAI_CODEX_MODEL) ?? "gpt-5-codex";
+  const response = await fetch("https://api.openai.com/v1/responses", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model,
+      input: [
+        {
+          role: "system",
+          content: [{
+            type: "input_text",
+            text: args.deepThink
+              ? "You revise a reusable system prompt template for effect generation. This is the final retry: think hard and make deeper structural prompt improvements than before. Return JSON only: {\"template\":\"...\"}. Never include or reference the user's effect idea."
+              : "You revise a reusable system prompt template for effect generation. Return JSON only: {\"template\":\"...\"}. Keep edits minimal and generic. Never include or reference the user's effect idea."
+          }]
+        },
+        {
+          role: "user",
+          content: [{
+            type: "input_text",
+            text: [
+              `Current template:\n${args.currentTemplate.template}`,
+              `This prompt was sent: ${args.userPrompt}`,
+              `and the response was this: ${args.modelResponse}`,
+              `which meant that this error occurred: ${args.errorMessage}.`,
+              args.deepThink
+                ? `This is the last self-improvement attempt. Here is the full failure history:\n${(args.failureHistory ?? []).map((entry, index) => `Attempt ${index + 1} error: ${entry.error}\nAttempt ${index + 1} response: ${entry.response}`).join("\n\n")}`
+                : "Please can you make a small tweak to the prompt, so that future generations do not trigger this error in this way.",
+              "Return an improved generic template only."
+            ].join("\n\n")
+          }]
+        }
+      ]
+    })
+  });
+  if (!response.ok) {
+    return args.currentTemplate;
+  }
+  const payload = (await response.json()) as unknown;
+  const output = extractOutputText(payload);
+  let rawTemplate = output;
+  try {
+    const parsed = JSON.parse(output) as { template?: unknown };
+    if (typeof parsed.template === "string") {
+      rawTemplate = parsed.template;
+    }
+  } catch {
+    // Fall back to plain text output.
+  }
+  const safeTemplate = rawTemplate.replaceAll(args.userPrompt, "").trim();
+  if (safeTemplate.length < 120) {
+    return args.currentTemplate;
+  }
+  const next: GeneratePromptTemplate = {
+    version: args.currentTemplate.version + 1,
+    template: safeTemplate.slice(0, 12000),
+    updatedAt: new Date().toISOString(),
+    updateSource: "self_improvement"
+  };
+  await writePromptTemplate(next);
+  return next;
 }
 
 async function handleModerationAction(res: ResponseLike, url: URL): Promise<boolean> {
@@ -1147,7 +1296,10 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
       }
       const metrics = sanitizeGenerateMetrics(writeClient ? await writeClient.get(GENERATE_METRICS_KEY) : null);
       const samples = sanitizeGenerateErrorSamples(writeClient ? await writeClient.get(GENERATE_ERROR_SAMPLES_KEY) : null);
-      sendJson(res, 200, { generateMetrics: metrics, recentGenerateErrors: samples.slice(0, 50) });
+      const failureLogsRaw = writeClient ? await writeClient.get(GENERATE_FAILURE_LOGS_KEY) : null;
+      const generateFailureLogs = Array.isArray(failureLogsRaw) ? failureLogsRaw.slice(0, 50) as GenerateFailureLog[] : [];
+      const promptTemplate = await readPromptTemplate();
+      sendJson(res, 200, { generateMetrics: metrics, recentGenerateErrors: samples.slice(0, 50), generateFailureLogs, promptTemplate });
       return;
     }
     const effects = await readApprovedEffects();
@@ -1280,7 +1432,8 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
       return;
     }
     try {
-      const generation = await generateWithOpenAi(prompt);
+      const promptTemplate = await readPromptTemplate();
+      const generation = await generateWithOpenAi(prompt, promptTemplate.template);
       logGenerateRequest({
         outcome: "accepted",
         httpStatus: 200,
@@ -1323,6 +1476,56 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
         error: message
       });
     }
+    return;
+  }
+
+  if (method === "POST" && url.searchParams.get("action") === "improvePromptTemplate") {
+    const body = await readBody(req);
+    const userPrompt = typeof body.userPrompt === "string" ? body.userPrompt.trim() : "";
+    const responseText = typeof body.response === "string" ? body.response : "";
+    const errorMessage = typeof body.error === "string" ? body.error.trim() : "";
+    const requestedAttempt = body.improvementAttempt;
+    const improvementAttempt = typeof requestedAttempt === "number" && Number.isFinite(requestedAttempt) ? requestedAttempt : 1;
+    if (!userPrompt || !errorMessage) {
+      sendJson(res, 400, { error: "userPrompt and error are required." });
+      return;
+    }
+    const failureHistory = Array.isArray(body.failureHistory)
+      ? body.failureHistory
+        .flatMap((entry) => {
+          if (!entry || typeof entry !== "object") {
+            return [];
+          }
+          const typed = entry as { response?: unknown; error?: unknown };
+          if (typeof typed.error !== "string") {
+            return [];
+          }
+          return [{
+            response: typeof typed.response === "string" ? typed.response.slice(0, 20000) : "",
+            error: typed.error.slice(0, 2000)
+          }];
+        })
+        .slice(-6)
+      : [];
+    const promptTemplate = await readPromptTemplate();
+    await recordGenerateFailureLog({
+      timestamp: new Date().toISOString(),
+      requestId: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
+      improvementAttempt: Math.max(1, Math.floor(improvementAttempt)),
+      promptTemplateVersion: promptTemplate.version,
+      promptSent: `${promptTemplate.template}\n\nUSER_IDEA:\n${userPrompt}`,
+      modelResponse: responseText.slice(0, 20000),
+      userErrorMessage: errorMessage.slice(0, 2000)
+    });
+    const nextPromptTemplate = await improvePromptTemplate({
+      currentTemplate: promptTemplate,
+      userPrompt,
+      errorMessage,
+      modelResponse: responseText,
+      deepThink: improvementAttempt >= 5,
+      failureHistory
+    });
+    sendJson(res, 200, { promptTemplate: nextPromptTemplate });
     return;
   }
 

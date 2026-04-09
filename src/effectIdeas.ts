@@ -41,6 +41,16 @@ export type EffectIdeaGenerationResult = {
   docs?: GeneratedEffectDocs;
 };
 
+export type EffectIdeaGenerationRequest = {
+  improvementAttempt?: number;
+};
+
+export type EffectPromptImprovementFailure = {
+  promptSent: string;
+  response: string;
+  error: string;
+};
+
 type EffectsResponse = {
   effects?: EffectIdeaRecord[];
   effect?: EffectIdeaRecord;
@@ -50,6 +60,12 @@ type EffectsResponse = {
   generation?: EffectIdeaGenerationResult;
   error?: string;
   rawResponse?: string;
+  promptTemplate?: {
+    version: number;
+    template: string;
+    updatedAt: string;
+    updateSource: "seed" | "self_improvement";
+  };
 };
 
 let approvedCache: EffectIdeaRecord[] = [];
@@ -195,15 +211,37 @@ return (() => {${normalizedCode}})();`
   return effect;
 }
 
-export async function generateEffectIdea(prompt: string): Promise<EffectIdeaGenerationResult> {
+export async function generateEffectIdea(prompt: string, options: EffectIdeaGenerationRequest = {}): Promise<EffectIdeaGenerationResult> {
   const payload = await requestEffects("/api/effects?action=generate", {
     method: "POST",
-    body: JSON.stringify({ prompt })
+    body: JSON.stringify({
+      prompt,
+      improvementAttempt: options.improvementAttempt ?? 0
+    })
   });
   if (!payload.generation) {
     throw new Error("No generation returned.");
   }
   return payload.generation;
+}
+
+export async function improveEffectGenerationPromptTemplate(args: {
+  userPrompt: string;
+  response: string;
+  error: string;
+  improvementAttempt: number;
+  failureHistory: EffectPromptImprovementFailure[];
+}): Promise<void> {
+  await requestEffects("/api/effects?action=improvePromptTemplate", {
+    method: "POST",
+    body: JSON.stringify({
+      userPrompt: args.userPrompt,
+      response: args.response,
+      error: args.error,
+      improvementAttempt: args.improvementAttempt,
+      failureHistory: args.failureHistory
+    })
+  });
 }
 
 export async function submitEffectIdea(idea: Omit<EffectIdeaRecord, "id" | "createdAt">): Promise<void> {
