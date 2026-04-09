@@ -47,6 +47,10 @@ import {
   getNextDebugEffectSelection,
   shouldShowEffectPanel
 } from "./debug/debugPanel";
+import {
+  setDatastoreDebugEnabled,
+  subscribeDatastoreDebugMessages
+} from "./debug/datastoreStatus";
 import { applyEraOverride, applyEraOverrideToTransition } from "./debug/eraOverride";
 import {
   applyLimitOverridesToControls,
@@ -140,6 +144,7 @@ const mobileControls = document.querySelector<HTMLDivElement>("#mobile-controls"
 const mobileDebugButton = document.querySelector<HTMLButtonElement>("#mobile-debug");
 const mobileFullscreenButton = document.querySelector<HTMLButtonElement>("#mobile-fullscreen");
 const viewCounter = document.querySelector<HTMLDivElement>("#view-counter");
+const datastoreDebug = document.querySelector<HTMLDivElement>("#datastore-debug");
 const doodleModal = document.querySelector<HTMLDivElement>("#doodle-modal");
 const doodleCanvas = document.querySelector<HTMLCanvasElement>("#doodle-canvas");
 const doodleStatus = document.querySelector<HTMLDivElement>("#doodle-status");
@@ -1063,13 +1068,27 @@ function setDebugOverlayVisible(visible: boolean): void {
   if (releaseMode) {
     debugState.enabled = false;
     debugOverlay.classList.add("hidden");
+    datastoreDebug?.classList.add("hidden");
+    setDatastoreDebugEnabled(false);
     updateEffectPanelVisibility();
     return;
   }
   debugState.enabled = visible;
   debugOverlay.classList.toggle("hidden", !visible);
+  datastoreDebug?.classList.toggle("hidden", !visible);
+  setDatastoreDebugEnabled(visible);
   updateEffectPanelVisibility();
 }
+
+subscribeDatastoreDebugMessages((entries) => {
+  if (!datastoreDebug) {
+    return;
+  }
+  datastoreDebug.textContent = entries.map((entry) => {
+    const marker = entry.tone === "error" ? "!" : entry.tone === "warn" ? "~" : "·";
+    return `${marker} ${entry.message}`;
+  }).join("\n");
+});
 
 function setDebugMobileSection(section: string): void {
   if (!debugOverlay) {

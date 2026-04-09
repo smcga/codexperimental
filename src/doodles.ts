@@ -51,6 +51,7 @@ function normalizeDoodle(value: unknown): DoodleRecord | null {
 }
 
 async function requestDoodles(path = "/api/doodles", init?: RequestInit): Promise<DoodlesResponse> {
+  const method = (init?.method ?? "GET").toUpperCase();
   const response = await fetch(path, {
     headers: {
       Accept: "application/json",
@@ -58,8 +59,11 @@ async function requestDoodles(path = "/api/doodles", init?: RequestInit): Promis
     },
     ...init
   });
+  const dataStore = response.headers?.get?.("x-data-store") ?? "unknown";
+  pushDatastoreDebugMessage(`${method} doodles → ${dataStore}`);
 
   if (!response.ok) {
+    pushDatastoreDebugMessage(`doodles ${response.status}`, "warn");
     throw new Error(`Doodle request failed with status ${response.status}`);
   }
 
@@ -123,3 +127,4 @@ export function clearDoodleCache(): void {
   doodleCache = [];
   doodlesRequest = null;
 }
+import { pushDatastoreDebugMessage } from "./debug/datastoreStatus";

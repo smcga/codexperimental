@@ -1,3 +1,5 @@
+import { pushDatastoreDebugMessage } from "./debug/datastoreStatus";
+
 type ViewsResponse = {
   count?: number;
 };
@@ -19,7 +21,10 @@ export async function fetchViews(): Promise<number> {
         Accept: "application/json"
       }
     });
+    const dataStore = response.headers?.get?.("x-data-store") ?? "unknown";
+    pushDatastoreDebugMessage(`GET views → ${dataStore}`);
     if (!response.ok) {
+      pushDatastoreDebugMessage(`views ${response.status}`, "warn");
       return 0;
     }
     const data = (await response.json()) as ViewsResponse;
@@ -66,7 +71,10 @@ export async function registerViewOncePerSession(): Promise<number | null> {
         "Content-Type": "application/json"
       }
     });
+    const dataStore = response.headers?.get?.("x-data-store") ?? "unknown";
+    pushDatastoreDebugMessage(`POST views → ${dataStore}`);
     if (!response.ok) {
+      pushDatastoreDebugMessage(`views ${response.status}`, "warn");
       return null;
     }
     const data = (await response.json()) as ViewsResponse;
