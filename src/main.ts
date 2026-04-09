@@ -86,6 +86,7 @@ import {
 import { installGlobalNumberInputWheelGuard } from "./numberInputWheel";
 import { installAnimatedTitle } from "./titleFx";
 import { getEffectIdeaCloseBlockedMessage, shouldShowCommunityCarouselButtons } from "./effectIdeaModalClose";
+import { generateEffectWithSelfImprovement } from "./effectIdeaSelfImprovement";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
@@ -947,30 +948,15 @@ async function generateCurrentEffectIdea(): Promise<void> {
     updateEffectIdeaButtons();
     renderBusyCommunityEffectControls();
     applyEffectIdeaCarouselEntry();
-    let generation: Awaited<ReturnType<typeof generateEffectIdea>> | null = null;
-    let lastError: unknown = null;
-    for (let attempt = 1; attempt <= maxSelfImprovementFailures + 1; attempt += 1) {
-      const phaseLabel = attempt === 1
-        ? `Generating effect code with Codex (attempt ${attempt}/${maxSelfImprovementFailures + 1})…`
-        : `An error occurred. Self-improvement protocol engaged. Auto-retry attempt ${attempt - 1}/${maxSelfImprovementFailures}…`;
-      setEffectIdeaStatus(phaseLabel, "busy");
-      setEffectIdeaBusyState("busy", phaseLabel);
-      try {
-        generation = await generateEffectIdea(prompt, { improvementAttempt: Math.max(0, attempt - 1) });
-        break;
-      } catch (error) {
-        lastError = error;
-        if (attempt > maxSelfImprovementFailures) {
-          break;
-        }
-        await new Promise<void>((resolve) => {
-          window.setTimeout(() => resolve(), 800);
-        });
+    const { generation, compiledEffect } = await generateEffectWithSelfImprovement({
+      maxSelfImprovementFailures,
+      generate: (improvementAttempt) => generateEffectIdea(prompt, { improvementAttempt }),
+      compile: compileRuntimeEffect,
+      onPhaseChange: (phase) => {
+        setEffectIdeaStatus(phase.message, "busy");
+        setEffectIdeaBusyState("busy", phase.message);
       }
-    }
-    if (!generation) {
-      throw (lastError ?? new Error("Generation failed."));
-    }
+    });
     generatedIdea = generation;
     effectIdeaPreviewParams = getGeneratedEffectDefaultParams(generation.params);
     generatedIdeaPrompt = prompt;
@@ -981,9 +967,8 @@ async function generateCurrentEffectIdea(): Promise<void> {
       effectIdeaCode.textContent = generation.typescriptCode;
     }
     renderGeneratedEffectIdeaControls();
-    const compiled = compileRuntimeEffect(generation.runtimeCode);
     runEffectIdeaSuccessCountdown(() => {
-      effectIdeaPreviewEffect = compiled;
+      effectIdeaPreviewEffect = compiledEffect;
       stopEffectIdeaPreview();
       previewGeneratedIdea();
       setEffectIdeaBusyState("hidden");
