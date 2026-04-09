@@ -1,5 +1,5 @@
 import { createKvClients } from "./kv.js";
-import { createDbClient } from "./db.js";
+import { createDbClient, getDbDiagnostics } from "./db.js";
 
 const { readClient, writeClient } = createKvClients();
 const dbClient = createDbClient();
@@ -159,32 +159,44 @@ type GenerateFailureLog = {
   userErrorMessage: string;
 };
 
-function getDatastoreLabel(): string {
+function getDatastoreMeta(): { label: string; note?: string } {
+  const diagnostics = getDbDiagnostics();
   if (dbClient && (readClient || writeClient)) {
-    return "postgres+upstash-kv";
+    return { label: "postgres+upstash-kv" };
   }
   if (dbClient) {
-    return "postgres";
+    return { label: "postgres" };
+  }
+  if (diagnostics.configured && (readClient || writeClient)) {
+    return { label: "upstash-kv-fallback", note: diagnostics.initError ?? "db_client_unavailable" };
   }
   if (readClient || writeClient) {
-    return "upstash-kv";
+    return { label: "upstash-kv" };
   }
-  return "none";
+  return { label: "none", ...(diagnostics.configured ? { note: diagnostics.initError ?? "db_client_unavailable" } : {}) };
 }
 
 function sendJson(res: ResponseLike, status: number, body: JsonResponse): void {
+  const datastore = getDatastoreMeta();
   res.statusCode = status;
   res.setHeader("Content-Type", "application/json");
   res.setHeader("Cache-Control", "no-store");
-  res.setHeader("X-Data-Store", getDatastoreLabel());
+  res.setHeader("X-Data-Store", datastore.label);
+  if (datastore.note) {
+    res.setHeader("X-Data-Store-Note", datastore.note);
+  }
   res.end(JSON.stringify(body));
 }
 
 function sendHtml(res: ResponseLike, status: number, title: string, message: string): void {
+  const datastore = getDatastoreMeta();
   res.statusCode = status;
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.setHeader("Cache-Control", "no-store");
-  res.setHeader("X-Data-Store", getDatastoreLabel());
+  res.setHeader("X-Data-Store", datastore.label);
+  if (datastore.note) {
+    res.setHeader("X-Data-Store-Note", datastore.note);
+  }
   res.end(`<!doctype html><html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>${title}</title><style>body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#05070f;color:#e8f7ff;display:grid;place-items:center;min-height:100vh;padding:24px}.card{max-width:520px;padding:24px;border:1px solid rgba(142,249,255,.25);background:rgba(2,6,10,.95);box-shadow:0 0 32px rgba(0,0,0,.45)}h1{margin:0 0 12px;font-size:1.4rem;letter-spacing:.06em;text-transform:uppercase}p{margin:0;color:rgba(232,247,255,.82);line-height:1.6}</style></head><body><div class="card"><h1>${title}</h1><p>${message}</p></div></body></html>`);
 }
 

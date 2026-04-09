@@ -61,6 +61,10 @@ async function requestDoodles(path = "/api/doodles", init?: RequestInit): Promis
   });
   const dataStore = response.headers?.get?.("x-data-store") ?? "unknown";
   pushDatastoreDebugMessage(`${method} doodles → ${dataStore}`);
+  const storeNote = response.headers?.get?.("x-data-store-note");
+  if (storeNote) {
+    pushDatastoreDebugMessage(`doodles fallback: ${storeNote}`, "warn");
+  }
 
   if (!response.ok) {
     pushDatastoreDebugMessage(`doodles ${response.status}`, "warn");

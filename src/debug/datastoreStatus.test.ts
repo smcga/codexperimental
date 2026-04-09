@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   pushDatastoreDebugMessage,
+  resetDatastoreDebugMessages,
   setDatastoreDebugEnabled,
   subscribeDatastoreDebugMessages
 } from "./datastoreStatus";
@@ -23,6 +24,11 @@ describe("datastoreStatus", () => {
     ]);
 
     setDatastoreDebugEnabled(false);
+    expect(snapshots.at(-1)).toEqual([
+      "GET doodles → postgres",
+      "POST effects → postgres+upstash-kv"
+    ]);
+    resetDatastoreDebugMessages();
     expect(snapshots.at(-1)).toEqual([]);
 
     unsubscribe();
@@ -41,6 +47,7 @@ describe("datastoreStatus", () => {
     expect(snapshots.at(-1)).toEqual(["GET views → upstash-kv"]);
 
     setDatastoreDebugEnabled(false);
+    resetDatastoreDebugMessages();
     unsubscribe();
   });
 });

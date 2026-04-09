@@ -17,6 +17,10 @@ async function requestParamLimits(path: string, init?: RequestInit): Promise<Eff
   });
   const dataStore = response.headers?.get?.("x-data-store") ?? "unknown";
   pushDatastoreDebugMessage(`${method} paramLimits → ${dataStore}`);
+  const storeNote = response.headers?.get?.("x-data-store-note");
+  if (storeNote) {
+    pushDatastoreDebugMessage(`paramLimits fallback: ${storeNote}`, "warn");
+  }
   const payload = (await response.json()) as EffectParamLimitsResponse;
   if (!response.ok) {
     pushDatastoreDebugMessage(`paramLimits ${response.status}`, "warn");

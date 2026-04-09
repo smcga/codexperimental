@@ -23,6 +23,10 @@ export async function fetchViews(): Promise<number> {
     });
     const dataStore = response.headers?.get?.("x-data-store") ?? "unknown";
     pushDatastoreDebugMessage(`GET views → ${dataStore}`);
+    const fetchNote = response.headers?.get?.("x-data-store-note");
+    if (fetchNote) {
+      pushDatastoreDebugMessage(`views fallback: ${fetchNote}`, "warn");
+    }
     if (!response.ok) {
       pushDatastoreDebugMessage(`views ${response.status}`, "warn");
       return 0;
@@ -73,6 +77,10 @@ export async function registerViewOncePerSession(): Promise<number | null> {
     });
     const dataStore = response.headers?.get?.("x-data-store") ?? "unknown";
     pushDatastoreDebugMessage(`POST views → ${dataStore}`);
+    const registerNote = response.headers?.get?.("x-data-store-note");
+    if (registerNote) {
+      pushDatastoreDebugMessage(`views fallback: ${registerNote}`, "warn");
+    }
     if (!response.ok) {
       pushDatastoreDebugMessage(`views ${response.status}`, "warn");
       return null;

@@ -12,6 +12,8 @@ const DATABASE_URL_ENV_KEYS = [
   "DATABASE_URL"
 ] as const;
 
+let dbInitError: string | null = null;
+
 type FindManyArgs = {
   where: { status: "pending" | "approved" | "rejected" };
   orderBy: { createdAt: "desc" };
@@ -91,6 +93,13 @@ export function getDatabaseUrl(env: DbEnv = process.env): string | null {
   return null;
 }
 
+export function getDbDiagnostics(env: DbEnv = process.env): { configured: boolean; initError: string | null } {
+  return {
+    configured: Boolean(getDatabaseUrl(env)),
+    initError: dbInitError
+  };
+}
+
 declare global {
   // eslint-disable-next-line no-var
   var __prismaClient: DbClient | undefined;
@@ -116,8 +125,10 @@ export function createDbClient(env: DbEnv = process.env): DbClient | null {
       }
     });
     globalThis.__prismaClient = client;
+    dbInitError = null;
     return client;
   } catch (error) {
+    dbInitError = error instanceof Error ? error.message : "unknown_db_init_error";
     console.error("[db] Failed to create Prisma client", error);
     return null;
   }

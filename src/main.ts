@@ -48,6 +48,7 @@ import {
   shouldShowEffectPanel
 } from "./debug/debugPanel";
 import {
+  pushDatastoreDebugMessage,
   setDatastoreDebugEnabled,
   subscribeDatastoreDebugMessages
 } from "./debug/datastoreStatus";
@@ -1077,6 +1078,9 @@ function setDebugOverlayVisible(visible: boolean): void {
   debugOverlay.classList.toggle("hidden", !visible);
   datastoreDebug?.classList.toggle("hidden", !visible);
   setDatastoreDebugEnabled(visible);
+  if (visible) {
+    pushDatastoreDebugMessage("datastore trace active");
+  }
   updateEffectPanelVisibility();
 }
 

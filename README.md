@@ -355,7 +355,7 @@ npm run preview
 - `F` to toggle fullscreen (if supported)
 - `D` to toggle the debug overlay (timestamp, skip intro, skip to second half, skip to end, transition selection, effect overrides, monochrome toggle)
 - The debug overlay shows WebGL status as `OK` or `FALLBACK` when available.
-- In debug mode (non-`?release=1`), a compact top-right datastore feed now shows short request traces (for example `GET doodles → postgres` or `POST effects → postgres+upstash-kv`) so you can verify which backend path handled each API call while testing.
+- In debug mode (non-`?release=1`), a compact top-right datastore feed now shows short request traces (for example `GET doodles → postgres` or `POST effects → postgres+upstash-kv`) so you can verify which backend path handled each API call while testing. If Postgres is configured but unavailable, the feed surfaces fallback notes (for example `effects fallback: db_client_unavailable`) to make hidden KV fallbacks obvious.
 - The debug overlay now groups controls into `Transport`, `Effects`, and `Render` sections; on mobile/touch it uses tabs plus an internal scroll region so controls stay reachable without page scrolling.
 - Selecting an effect in the `Effects` section reveals effect-specific controls (or a note when none are available) and still supports copying timeline-ready JSON.
 - The same `Effects` panel now includes an **Edit param value limits** mode that exposes `min / current / max` inputs per numeric parameter, auto-expands draft limits when current values exceed bounds, and saves applied limits to the shared `/api/effects?action=paramLimits` datastore via **Apply new limits** so clamp thresholds update for all users without editing code.

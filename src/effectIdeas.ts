@@ -174,6 +174,10 @@ async function requestEffects(path = "/api/effects", init?: RequestInit): Promis
   });
   const dataStore = response.headers?.get?.("x-data-store") ?? "unknown";
   pushDatastoreDebugMessage(`${method} effects → ${dataStore}`);
+  const storeNote = response.headers?.get?.("x-data-store-note");
+  if (storeNote) {
+    pushDatastoreDebugMessage(`effects fallback: ${storeNote}`, "warn");
+  }
 
   const payload = (await response.json()) as EffectsResponse;
   if (!response.ok) {

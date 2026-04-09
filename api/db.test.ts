@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { getDatabaseUrl } from "./db.js";
+import { getDatabaseUrl, getDbDiagnostics } from "./db.js";
 
 describe("getDatabaseUrl", () => {
   it("prefers prisma_postgres_PRISMA_DATABASE_URL when present", () => {
@@ -33,5 +33,12 @@ describe("getDatabaseUrl", () => {
   it("returns null when nothing is configured", () => {
     const url = getDatabaseUrl({} as NodeJS.ProcessEnv);
     expect(url).toBeNull();
+  });
+
+  it("reports whether a database URL is configured", () => {
+    expect(getDbDiagnostics({
+      prisma_postgres_PRISMA_DATABASE_URL: "postgresql://demo"
+    } as NodeJS.ProcessEnv).configured).toBe(true);
+    expect(getDbDiagnostics({} as NodeJS.ProcessEnv).configured).toBe(false);
   });
 });

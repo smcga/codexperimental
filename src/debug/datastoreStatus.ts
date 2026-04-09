@@ -21,10 +21,14 @@ function emit(): void {
 
 export function setDatastoreDebugEnabled(next: boolean): void {
   enabled = next;
-  if (!enabled) {
-    entries = [];
+  if (enabled) {
     emit();
   }
+}
+
+export function resetDatastoreDebugMessages(): void {
+  entries = [];
+  emit();
 }
 
 export function pushDatastoreDebugMessage(message: string, tone: DatastoreDebugTone = "info"): void {
