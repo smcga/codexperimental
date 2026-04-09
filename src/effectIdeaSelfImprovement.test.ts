@@ -21,12 +21,14 @@ describe("generateEffectWithSelfImprovement", () => {
       }
       return { render: vi.fn() };
     });
+    const onFailure = vi.fn();
 
     const phaseMessages: string[] = [];
     const result = await generateEffectWithSelfImprovement({
       maxSelfImprovementFailures: 5,
       generate,
       compile,
+      onFailure,
       retryDelayMs: 0,
       onPhaseChange: (phase) => phaseMessages.push(phase.message)
     });
@@ -37,6 +39,10 @@ describe("generateEffectWithSelfImprovement", () => {
       "Generating effect code with Codex (attempt 1/6)…",
       "An error occurred. Self-improvement protocol engaged. Auto-retry attempt 1/5…"
     ]);
+    expect(onFailure).toHaveBeenCalledTimes(1);
+    expect(onFailure).toHaveBeenCalledWith(expect.objectContaining({
+      improvementAttempt: 1
+    }));
     expect(result.generation.name).toBe("Second");
   });
 

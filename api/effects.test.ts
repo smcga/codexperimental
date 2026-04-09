@@ -229,14 +229,9 @@ describe("api/effects", () => {
     expect(payload.rawResponse).toContain("I can help with that");
   });
 
-  it("self-improves the stored generation prompt template after a failed generation", async () => {
+  it("self-improves the stored generation prompt template via dedicated improvement action", async () => {
     process.env.OPENAI_API_KEY = "sk-test";
-    globalThis.fetch = vi.fn()
-      .mockResolvedValueOnce({
-        ok: true,
-        status: 200,
-        json: async () => ({ output_text: "not-json" })
-      })
+    globalThis.fetch = (vi.fn()
       .mockResolvedValueOnce({
         ok: true,
         status: 200,
@@ -245,19 +240,25 @@ describe("api/effects", () => {
             template: "You generate canvas demoscene effects. Return strict JSON with keys name, typescriptCode, runtimeCode, params, docs. Runtime code must be plain JS with render(context). Prefer deterministic helpers and avoid markdown."
           })
         })
-      }) as unknown as typeof fetch;
+      })) as unknown as typeof fetch;
     const redis = createMockRedis();
     vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
     const { default: handler } = await import("./effects");
 
-    const generate = createResponse();
+    const improve = createResponse();
     await handler({
       method: "POST",
-      url: "/api/effects?action=generate",
+      url: "/api/effects?action=improvePromptTemplate",
       headers: { "x-forwarded-for": "127.0.0.1" },
-      body: JSON.stringify({ prompt: "make stars", improvementAttempt: 1 })
-    }, generate.response);
-    expect(generate.response.statusCode).toBe(503);
+      body: JSON.stringify({
+        userPrompt: "make stars",
+        response: "not-json",
+        error: "Unable to parse generated effect response.",
+        improvementAttempt: 1,
+        failureHistory: [{ promptSent: "make stars", response: "not-json", error: "Unable to parse generated effect response." }]
+      })
+    }, improve.response);
+    expect(improve.response.statusCode).toBe(200);
 
     const metrics = createResponse();
     process.env.EFFECT_MODERATION_TOKEN = "secret-token";

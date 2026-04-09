@@ -11,10 +11,18 @@ export type GenerateEffectAttempt = (improvementAttempt: number) => Promise<Effe
 
 export type CompileGeneratedEffect = (runtimeCode: string) => Effect;
 
+export type EffectIdeaFailureContext = {
+  improvementAttempt: number;
+  maxSelfImprovementFailures: number;
+  error: unknown;
+  generation?: EffectIdeaGenerationResult;
+};
+
 export async function generateEffectWithSelfImprovement(options: {
   maxSelfImprovementFailures: number;
   generate: GenerateEffectAttempt;
   compile: CompileGeneratedEffect;
+  onFailure?: (context: EffectIdeaFailureContext) => Promise<void> | void;
   onPhaseChange?: (phase: EffectIdeaRetryPhase) => void;
   retryDelayMs?: number;
 }): Promise<{ generation: EffectIdeaGenerationResult; compiledEffect: Effect }> {
@@ -32,12 +40,22 @@ export async function generateEffectWithSelfImprovement(options: {
       maxAttempts,
       message: phaseMessage
     });
+    let latestGeneration: EffectIdeaGenerationResult | undefined;
     try {
       const generation = await options.generate(attempt - 1);
+      latestGeneration = generation;
       const compiledEffect = options.compile(generation.runtimeCode);
       return { generation, compiledEffect };
     } catch (error) {
       lastError = error;
+      if (attempt <= maxFailures) {
+        await options.onFailure?.({
+          improvementAttempt: attempt,
+          maxSelfImprovementFailures: maxFailures,
+          error,
+          generation: latestGeneration
+        });
+      }
       if (attempt >= maxAttempts) {
         break;
       }

@@ -59,11 +59,13 @@ import { createEditorRoot, EditorController } from "./editor/EditorRoot";
 import { submitDoodle } from "./doodles";
 import {
   compileRuntimeEffect,
+  EffectPromptImprovementFailure,
   EffectIdeaApiError,
   EffectIdeaGenerationResult,
   GeneratedEffectParam,
   fetchApprovedEffects,
   generateEffectIdea,
+  improveEffectGenerationPromptTemplate,
   submitEffectIdea
 } from "./effectIdeas";
 import {
@@ -943,6 +945,7 @@ async function generateCurrentEffectIdea(): Promise<void> {
   updateEffectIdeaButtons();
   setEffectIdeaStatus("Generating effect code with Codex…", "busy");
   const maxSelfImprovementFailures = 5;
+  const failureHistory: EffectPromptImprovementFailure[] = [];
   try {
     await hydrateEffectIdeaCarousel();
     updateEffectIdeaButtons();
@@ -952,6 +955,28 @@ async function generateCurrentEffectIdea(): Promise<void> {
       maxSelfImprovementFailures,
       generate: (improvementAttempt) => generateEffectIdea(prompt, { improvementAttempt }),
       compile: compileRuntimeEffect,
+      onFailure: async (failure) => {
+        const rawResponse = failure.error instanceof EffectIdeaApiError
+          ? (failure.error.rawResponse ?? "")
+          : failure.generation
+            ? JSON.stringify(failure.generation)
+            : "";
+        const errorMessage = failure.error instanceof Error
+          ? failure.error.message
+          : "Unable to generate effect.";
+        failureHistory.push({
+          promptSent: prompt,
+          response: rawResponse,
+          error: errorMessage
+        });
+        await improveEffectGenerationPromptTemplate({
+          userPrompt: prompt,
+          response: rawResponse,
+          error: errorMessage,
+          improvementAttempt: failure.improvementAttempt,
+          failureHistory
+        });
+      },
       onPhaseChange: (phase) => {
         setEffectIdeaStatus(phase.message, "busy");
         setEffectIdeaBusyState("busy", phase.message);

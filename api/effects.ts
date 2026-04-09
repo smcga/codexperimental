@@ -1158,6 +1158,7 @@ async function improvePromptTemplate(args: {
   errorMessage: string;
   modelResponse: string;
   deepThink: boolean;
+  failureHistory?: Array<{ response: string; error: string }>;
 }): Promise<GeneratePromptTemplate> {
   const apiKey = normalizeEnvValue(process.env.OPENAI_API_KEY);
   if (!apiKey || !writeClient) {
@@ -1186,7 +1187,16 @@ async function improvePromptTemplate(args: {
           role: "user",
           content: [{
             type: "input_text",
-            text: `Current template:\n${args.currentTemplate.template}\n\nFailed user prompt:\n${args.userPrompt}\n\nModel response:\n${args.modelResponse}\n\nError shown to user:\n${args.errorMessage}\n\nReturn an improved generic template only.`
+            text: [
+              `Current template:\n${args.currentTemplate.template}`,
+              `This prompt was sent: ${args.userPrompt}`,
+              `and the response was this: ${args.modelResponse}`,
+              `which meant that this error occurred: ${args.errorMessage}.`,
+              args.deepThink
+                ? `This is the last self-improvement attempt. Here is the full failure history:\n${(args.failureHistory ?? []).map((entry, index) => `Attempt ${index + 1} error: ${entry.error}\nAttempt ${index + 1} response: ${entry.response}`).join("\n\n")}`
+                : "Please can you make a small tweak to the prompt, so that future generations do not trigger this error in this way.",
+              "Return an improved generic template only."
+            ].join("\n\n")
           }]
         }
       ]
@@ -1328,8 +1338,6 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
   if (method === "POST" && url.searchParams.get("action") === "generate") {
     const body = await readBody(req);
     const prompt = typeof body.prompt === "string" ? body.prompt.trim() : "";
-    const requestedAttempt = body.improvementAttempt;
-    const improvementAttempt = typeof requestedAttempt === "number" && Number.isFinite(requestedAttempt) ? requestedAttempt : 0;
     const requestId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
     const access = getGenerateAccess(req, url);
     const limiter = await consumeGenerateRateLimit(access.identity);
@@ -1444,28 +1452,10 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
         requestPath: url.pathname
       });
     } catch (error) {
-      const promptTemplate = await readPromptTemplate();
       const message = error instanceof Error ? error.message : "Unable to generate effect.";
       const rawResponse = error instanceof Error && "rawResponse" in error && typeof (error as { rawResponse?: unknown }).rawResponse === "string"
         ? (error as { rawResponse: string }).rawResponse
         : undefined;
-      const promptSent = `${promptTemplate.template}\n\nUSER_IDEA:\n${prompt}`;
-      await recordGenerateFailureLog({
-        timestamp: new Date().toISOString(),
-        requestId,
-        improvementAttempt: Math.max(0, improvementAttempt),
-        promptTemplateVersion: promptTemplate.version,
-        promptSent,
-        modelResponse: rawResponse ?? "",
-        userErrorMessage: message
-      });
-      await improvePromptTemplate({
-        currentTemplate: promptTemplate,
-        userPrompt: prompt,
-        errorMessage: message,
-        modelResponse: rawResponse ?? "",
-        deepThink: improvementAttempt >= 5
-      });
       logGenerateRequest({
         outcome: "error",
         httpStatus: 503,
@@ -1486,6 +1476,56 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
         error: message
       });
     }
+    return;
+  }
+
+  if (method === "POST" && url.searchParams.get("action") === "improvePromptTemplate") {
+    const body = await readBody(req);
+    const userPrompt = typeof body.userPrompt === "string" ? body.userPrompt.trim() : "";
+    const responseText = typeof body.response === "string" ? body.response : "";
+    const errorMessage = typeof body.error === "string" ? body.error.trim() : "";
+    const requestedAttempt = body.improvementAttempt;
+    const improvementAttempt = typeof requestedAttempt === "number" && Number.isFinite(requestedAttempt) ? requestedAttempt : 1;
+    if (!userPrompt || !errorMessage) {
+      sendJson(res, 400, { error: "userPrompt and error are required." });
+      return;
+    }
+    const failureHistory = Array.isArray(body.failureHistory)
+      ? body.failureHistory
+        .flatMap((entry) => {
+          if (!entry || typeof entry !== "object") {
+            return [];
+          }
+          const typed = entry as { response?: unknown; error?: unknown };
+          if (typeof typed.error !== "string") {
+            return [];
+          }
+          return [{
+            response: typeof typed.response === "string" ? typed.response.slice(0, 20000) : "",
+            error: typed.error.slice(0, 2000)
+          }];
+        })
+        .slice(-6)
+      : [];
+    const promptTemplate = await readPromptTemplate();
+    await recordGenerateFailureLog({
+      timestamp: new Date().toISOString(),
+      requestId: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
+      improvementAttempt: Math.max(1, Math.floor(improvementAttempt)),
+      promptTemplateVersion: promptTemplate.version,
+      promptSent: `${promptTemplate.template}\n\nUSER_IDEA:\n${userPrompt}`,
+      modelResponse: responseText.slice(0, 20000),
+      userErrorMessage: errorMessage.slice(0, 2000)
+    });
+    const nextPromptTemplate = await improvePromptTemplate({
+      currentTemplate: promptTemplate,
+      userPrompt,
+      errorMessage,
+      modelResponse: responseText,
+      deepThink: improvementAttempt >= 5,
+      failureHistory
+    });
+    sendJson(res, 200, { promptTemplate: nextPromptTemplate });
     return;
   }
 
