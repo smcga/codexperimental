@@ -10,7 +10,7 @@ describe("titleFx", () => {
   });
 
   it("builds animated title frames with spinner and binary counter", () => {
-    expect(getAnimatedTitle(0, 0)).toBe("⠋ ⌁ＤＥＭＯＳＣＥＮＥ⌁ ₀₀:₀₀ · 00000000");
-    expect(getAnimatedTitle(3, 42_000)).toBe("⣠ ⟡ＤＥＭＯＳＣＥＮＥ⟡ ₀₀:₄₂ · 00101010");
+    expect(getAnimatedTitle(0, 0)).toBe("⠋ ⌁ＳＩＧＮＡＬ⌁ ₀₀:₀₀ · 00000000");
+    expect(getAnimatedTitle(3, 42_000)).toBe("⣠ ⟡ＳＩＧＮＡＬ⟡ ₀₀:₄₂ · 00101010");
   });
 });
