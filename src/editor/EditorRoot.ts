@@ -172,6 +172,19 @@ export const getMinimumClipWidthPercent = (
   return (minPixelWidth / timelineWidthPx) * 100;
 };
 
+export const buildPlaylistClipTitle = (
+  sceneId: string,
+  effectName: string,
+  start: number,
+  end: number
+): string => {
+  return [
+    `Scene: ${sceneId}`,
+    `Effect: ${effectName}`,
+    `Time: ${formatTime(start)} → ${formatTime(end)}`
+  ].join("\n");
+};
+
 function isMainSlotLayer(layer: RawSectionConfig["layers"][number]): boolean {
   const fitAlign = layer.fitAlign ?? "fill";
   return (
@@ -1057,14 +1070,14 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           if (!scene) {
             return;
           }
+          if (clip.end <= playlistViewportStart || clip.start >= viewportEnd) {
+            return;
+          }
           const clipPercent = getClipPercent(
             clip.start - playlistViewportStart,
             clip.end - playlistViewportStart,
             playlistViewportDuration
           );
-          if (clipPercent.left >= 100 || clipPercent.left + clipPercent.width <= 0) {
-            return;
-          }
           const block = document.createElement("button");
           block.type = "button";
           block.className = "editor-block editor-playlist-clip";
@@ -1072,7 +1085,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           block.style.width = `${Math.max(minClipWidthPercent, clipPercent.width)}%`;
           block.style.top = `calc(${index} * var(--editor-playlist-track-height) + 0.25rem)`;
           block.textContent = clip.sceneId;
-          block.title = `${clip.sceneId} (${formatTime(clip.start)} → ${formatTime(clip.end)})`;
+          block.title = buildPlaylistClipTitle(clip.sceneId, scene.effect, clip.start, clip.end);
           block.dataset.sceneId = clip.sceneId;
           if (clip.sceneId === state.selectedSceneId) {
             block.classList.add("is-selected");
@@ -1111,6 +1124,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         });
         return;
       }
+      if (timelineTrack.end <= playlistViewportStart || timelineTrack.start >= viewportEnd) {
+        return;
+      }
       const clipPercent = getClipPercent(
         timelineTrack.start - playlistViewportStart,
         timelineTrack.end - playlistViewportStart,
@@ -1123,7 +1139,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       block.style.width = `${Math.max(minClipWidthPercent, clipPercent.width)}%`;
       block.style.top = `calc(${index} * var(--editor-playlist-track-height) + 0.25rem)`;
       block.textContent = focusScene.id;
-      block.title = `${timelineTrack.label} (${formatTime(timelineTrack.start)} → ${formatTime(timelineTrack.end)})`;
+      block.title = buildPlaylistClipTitle(focusScene.id, focusScene.effect, timelineTrack.start, timelineTrack.end);
       if (focusScene.id === state.selectedSceneId) {
         block.classList.add("is-selected");
       }

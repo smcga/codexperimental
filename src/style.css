@@ -974,6 +974,19 @@ body,
   font-size: 0;
 }
 
+.editor-playlist-clip.is-compact::after {
+  content: "";
+  position: absolute;
+  width: 0.28rem;
+  height: 0.28rem;
+  border-radius: 999px;
+  background: rgba(215, 247, 255, 0.95);
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
 .editor-inspector-body {
   overflow-y: auto;
   overflow-x: hidden;

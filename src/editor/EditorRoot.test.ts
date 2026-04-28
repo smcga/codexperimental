@@ -7,6 +7,7 @@ import {
   clampPlaylistViewportStart,
   getClipPercent,
   getMinimumClipWidthPercent,
+  buildPlaylistClipTitle,
   buildEditorTimelineTracks,
   getSceneTimelineClips,
   getPlaylistScrollbarMetrics,
@@ -62,6 +63,14 @@ describe("getMinimumClipWidthPercent", () => {
   it("returns zero for invalid dimensions", () => {
     expect(getMinimumClipWidthPercent(0, 800)).toBe(0);
     expect(getMinimumClipWidthPercent(45, 0)).toBe(0);
+  });
+});
+
+describe("buildPlaylistClipTitle", () => {
+  it("builds a multiline tooltip with scene, effect, and time range", () => {
+    expect(buildPlaylistClipTitle("Scene 7", "rain", 65.1, 70.4)).toBe(
+      "Scene: Scene 7\nEffect: rain\nTime: 01:05.1 → 01:10.4"
+    );
   });
 });
 
