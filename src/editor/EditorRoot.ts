@@ -24,7 +24,7 @@ import {
 import { clearTimelineDraft, downloadTimeline, loadTimelineDraft, saveTimelineDraft } from "./serialization";
 import { getManifestDebugConfig } from "../renderer/effects/manifest";
 import { transitionOptions } from "../renderer/transitions";
-import { createAutomationClip, insertPoint } from "./automationClip";
+import { createAutomationClip, insertPoint, movePoint, removePoint } from "./automationClip";
 
 const ERA_PRESETS: EraPreset[] = ["8bit", "16bit", "ps1", "pcdemo", "future"];
 const BLEND_MODES: BlendMode[] = [
@@ -2072,6 +2072,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
               <button type="button" data-action="move-down">↓</button>
               <button type="button" data-action="add-point">+Pt</button>
               <button type="button" data-action="delete">Delete</button>
+            </div>
+            <div class="editor-automation-curve" data-curve-index="${index}">
+              <svg viewBox="0 0 1000 140" preserveAspectRatio="none" data-curve-svg="${index}" style="width:100%;height:92px;background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.15);border-radius:4px;cursor:crosshair;"></svg>
             </div>`
           )
           .join("")}
@@ -2146,6 +2149,91 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         onChange(next);
       });
     });
+
+    const drawCurve = (entry: RawParamAutomation, index: number): void => {
+      const svg = container.querySelector<SVGSVGElement>(`[data-curve-svg='${index}']`);
+      if (!svg) {
+        return;
+      }
+      const seeded = ensureAutomationPoints(entry);
+      const points = seeded.points ?? [];
+      const minTime = parseTimelineTimeValue(seeded.t0);
+      const maxTime = Math.max(minTime + 0.001, parseTimelineTimeValue(seeded.t1));
+      const xOf = (time: number): number => ((time - minTime) / (maxTime - minTime)) * 1000;
+      const yOf = (value: number): number => (1 - clamp(value, 0, 1)) * 140;
+      svg.innerHTML = `<polyline points="${points.map((point) => `${xOf(point.time)},${yOf(point.value)}`).join(" ")}" fill="none" stroke="#d8f5be" stroke-width="2" />`;
+      points.forEach((point, pointIndex) => {
+        const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        dot.setAttribute("cx", String(xOf(point.time)));
+        dot.setAttribute("cy", String(yOf(point.value)));
+        dot.setAttribute("r", "5");
+        dot.setAttribute("fill", "#e6ffd0");
+        dot.setAttribute("stroke", "#2e5f2e");
+        dot.dataset.pointIndex = String(pointIndex);
+        svg.appendChild(dot);
+      });
+      svg.oncontextmenu = (event) => event.preventDefault();
+      svg.onclick = (event) => {
+        if ((event.target as Element).tagName.toLowerCase() === "circle") {
+          return;
+        }
+        const rect = svg.getBoundingClientRect();
+        const x = clamp((event.clientX - rect.left) / rect.width, 0, 1);
+        const y = clamp((event.clientY - rect.top) / rect.height, 0, 1);
+        const next = automation.map((item, itemIndex) => {
+          if (itemIndex !== index) {
+            return item;
+          }
+          const base = ensureAutomationPoints(item);
+          const inserted = insertPoint(createAutomationClip(base.points ?? []), { time: minTime + x * (maxTime - minTime), value: 1 - y }, { gridSize: 0.05, snapEnabled: !event.altKey });
+          return { ...item, points: inserted.points, segmentMeta: inserted.segmentMeta };
+        });
+        onChange(next);
+      };
+      svg.querySelectorAll<SVGCircleElement>("circle").forEach((dot) => {
+        const pointIndex = Number(dot.dataset.pointIndex);
+        dot.oncontextmenu = () => {
+          const next = automation.map((item, itemIndex) => {
+            if (itemIndex !== index) {
+              return item;
+            }
+            const base = ensureAutomationPoints(item);
+            const removed = removePoint(createAutomationClip(base.points ?? []), pointIndex);
+            return { ...item, points: removed.points, segmentMeta: removed.segmentMeta };
+          });
+          onChange(next);
+        };
+        dot.onpointerdown = (pointerEvent) => {
+          pointerEvent.preventDefault();
+          const onMove = (moveEvent: PointerEvent): void => {
+            const rect = svg.getBoundingClientRect();
+            const x = clamp((moveEvent.clientX - rect.left) / rect.width, 0, 1);
+            const y = clamp((moveEvent.clientY - rect.top) / rect.height, 0, 1);
+            const next = automation.map((item, itemIndex) => {
+              if (itemIndex !== index) {
+                return item;
+              }
+              const base = ensureAutomationPoints(item);
+              const moved = movePoint(
+                createAutomationClip(base.points ?? []),
+                pointIndex,
+                { time: minTime + x * (maxTime - minTime), value: 1 - y },
+                { gridSize: 0.05, snapEnabled: !moveEvent.altKey, slideMode: moveEvent.shiftKey }
+              );
+              return { ...item, points: moved.points, segmentMeta: moved.segmentMeta };
+            });
+            onChange(next);
+          };
+          const onUp = (): void => {
+            window.removeEventListener("pointermove", onMove);
+            window.removeEventListener("pointerup", onUp);
+          };
+          window.addEventListener("pointermove", onMove);
+          window.addEventListener("pointerup", onUp);
+        };
+      });
+    };
+    automation.forEach((entry, index) => drawCurve(entry, index));
 
     container.querySelector<HTMLButtonElement>("[data-action='add-automation']")?.addEventListener("click", () => {
       const defaultParam = paramOptions[0] ?? "speed";
