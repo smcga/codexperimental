@@ -14,5 +14,7 @@ describe("automation editor layout styles", () => {
     expect(css).toContain("flex-wrap: wrap;");
     expect(css).toContain(".editor-playlist-vscrollbar {");
     expect(css).toContain(".editor-playlist-scrollbar-handle-start {");
+    expect(css).toContain("scrollbar-width: thin;");
+    expect(css).toContain(".editor-playlist-scroll::-webkit-scrollbar-thumb {");
   });
 });

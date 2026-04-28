@@ -851,8 +851,9 @@ body,
   min-height: min(46vh, 520px);
   max-height: none;
   overflow: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(142, 249, 255, 0.75) rgba(255, 255, 255, 0.08);
+  -ms-overflow-style: auto;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 40%),
@@ -860,8 +861,18 @@ body,
 }
 
 .editor-playlist-scroll::-webkit-scrollbar {
-  width: 0;
-  height: 0;
+  width: 10px;
+  height: 10px;
+}
+
+.editor-playlist-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.editor-playlist-scroll::-webkit-scrollbar-thumb {
+  background: rgba(142, 249, 255, 0.55);
+  border-radius: 999px;
+  border: 1px solid rgba(142, 249, 255, 0.85);
 }
 
 .editor-playlist-scrollbar {
