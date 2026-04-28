@@ -609,6 +609,7 @@ export class Renderer {
       drawShatter: (context) => this.drawShatterTransition(context),
       drawCameraPunchThrough: (context) => this.drawCameraPunchThroughTransition(context),
       drawBitplaneWipe: (context) => this.drawBitplaneWipeTransition(context),
+      drawGlitch: (context) => this.drawGlitchTransition(context),
       drawMobileDefaultCrossfade: (context) => this.drawMobileDefaultCrossfade(context.ctx, context.progress, context.width, context.height),
       drawMobileShatter: (context) => this.drawMobileShatterTransition(context),
       drawMobileCameraPunchThrough: (context) =>
@@ -790,6 +791,73 @@ export class Renderer {
       ctx.save();
       ctx.fillStyle = bloom;
       ctx.fillRect(offsetX + shakeX, offsetY + shakeY, width, height);
+      ctx.restore();
+    }
+  }
+
+
+  private drawGlitchTransition({
+    ctx,
+    progress,
+    scale,
+    offsetX,
+    offsetY,
+    shakeX,
+    shakeY,
+    camera,
+    smoothing
+  }: TransitionDrawContext): void {
+    const width = this.baseWidth * scale;
+    const height = this.baseHeight * scale;
+    const safeProgress = clamp(progress, 0, 1);
+
+    this.drawScaled(ctx, this.transitionCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1, camera, smoothing);
+
+    const reveal = clamp((safeProgress - 0.36) / 0.64, 0, 1);
+    const blendAlpha = Math.pow(reveal, 1.15);
+    this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shakeX, shakeY, blendAlpha, camera, smoothing);
+
+    const glitchIntensity = Math.sin(safeProgress * Math.PI);
+    const rows = Math.max(10, Math.round(16 + glitchIntensity * 24));
+    const rowHeight = height / rows;
+
+    for (let row = 0; row < rows; row += 1) {
+      const bandProgress = row / Math.max(1, rows - 1);
+      const jitterSeed = row * 31.73 + safeProgress * 97.11;
+      const jitter = Math.sin(jitterSeed) * 0.5 + Math.sin(jitterSeed * 0.37) * 0.5;
+      const offset = jitter * width * 0.1 * glitchIntensity;
+      const sourceY = Math.floor(row * rowHeight);
+      const sourceH = Math.ceil(rowHeight + 1);
+      const targetY = offsetY + shakeY + sourceY;
+      const alpha = clamp(0.18 + glitchIntensity * (0.22 + Math.abs(jitter) * 0.3), 0, 0.7);
+
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.imageSmoothingEnabled = false;
+      const sourceCanvas = bandProgress < reveal ? this.baseCanvas : this.transitionCanvas;
+      ctx.drawImage(
+        sourceCanvas,
+        0,
+        sourceY,
+        this.baseWidth,
+        sourceH / scale,
+        offsetX + shakeX + offset,
+        targetY,
+        width,
+        sourceH
+      );
+      ctx.restore();
+    }
+
+    const split = glitchIntensity * width * 0.015;
+    if (split > 0.2) {
+      ctx.save();
+      ctx.globalCompositeOperation = "screen";
+      ctx.globalAlpha = glitchIntensity * 0.22;
+      ctx.drawImage(this.baseCanvas, offsetX + shakeX + split, offsetY + shakeY, width, height);
+      ctx.globalCompositeOperation = "multiply";
+      ctx.globalAlpha = glitchIntensity * 0.18;
+      ctx.drawImage(this.transitionCanvas, offsetX + shakeX - split, offsetY + shakeY, width, height);
       ctx.restore();
     }
   }

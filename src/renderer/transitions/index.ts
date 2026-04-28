@@ -2,6 +2,7 @@ import { bitplaneWipeTransition } from "./bitplaneWipeTransition";
 import { cameraPunchThroughTransition } from "./cameraPunchThroughTransition";
 import { fadeTransition } from "./fade";
 import { flashTransition } from "./flash";
+import { glitchTransition } from "./glitch";
 import { irisTransition } from "./iris";
 import { shatterTransition } from "./shatterTransition";
 import { signalCollapseTransition } from "./signalCollapse";
@@ -22,6 +23,7 @@ export const transitionDefinitions = [
   slideDownTransition,
   irisTransition,
   flashTransition,
+  glitchTransition,
   shatterTransition,
   signalCollapseTransition,
   cameraPunchThroughTransition,
