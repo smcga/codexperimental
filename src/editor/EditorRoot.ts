@@ -161,6 +161,44 @@ export const getClipPercent = (
   };
 };
 
+export const getMinimumClipWidthPercent = (
+  viewportDuration: number,
+  timelineWidthPx: number,
+  minPixelWidth = 2
+): number => {
+  if (!Number.isFinite(viewportDuration) || viewportDuration <= 0 || !Number.isFinite(timelineWidthPx) || timelineWidthPx <= 0) {
+    return 0;
+  }
+  return (minPixelWidth / timelineWidthPx) * 100;
+};
+
+export const buildPlaylistClipTitle = (
+  sceneId: string,
+  effectName: string,
+  start: number,
+  end: number
+): string => {
+  return [
+    `Scene: ${sceneId}`,
+    `Effect: ${effectName}`,
+    `Time: ${formatTime(start)} → ${formatTime(end)}`
+  ].join("\n");
+};
+
+export const getVisibleClipRange = (
+  start: number,
+  end: number,
+  viewportStart: number,
+  viewportEnd: number
+): { start: number; end: number } | null => {
+  const visibleStart = Math.max(start, viewportStart);
+  const visibleEnd = Math.min(end, viewportEnd);
+  if (visibleEnd <= visibleStart) {
+    return null;
+  }
+  return { start: visibleStart, end: visibleEnd };
+};
+
 function isMainSlotLayer(layer: RawSectionConfig["layers"][number]): boolean {
   const fitAlign = layer.fitAlign ?? "fill";
   return (
@@ -656,6 +694,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   let playbackButton: HTMLButtonElement | null = null;
   let previewCanvas: HTMLCanvasElement | null = null;
   let previewContext: CanvasRenderingContext2D | null = null;
+  let playheadElement: HTMLDivElement | null = null;
   let editorVisible = false;
   let currentDemoTime = 0;
   let isPlaying = false;
@@ -675,6 +714,13 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         pointerId: number;
         startX: number;
         startViewport: number;
+      }
+    | null = null;
+  let activeClipResize:
+    | {
+        pointerId: number;
+        sceneId: string;
+        edge: "start" | "end";
       }
     | null = null;
 
@@ -999,7 +1045,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       <div class="editor-playlist-toolbar">
         <span>Track 1</span>
       </div>
-      <div class="editor-ruler">
+      <div class="editor-ruler" data-region="playlist-ruler">
         ${Array.from({ length: ticks + 1 })
           .map((_, index) => {
             const time = Math.min(viewportEnd, playlistViewportStart + (playlistViewportDuration / ticks) * index);
@@ -1018,11 +1064,13 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
 
     const tracks = view.querySelector<HTMLDivElement>("[data-region='playlist-tracks']");
     const scroll = view.querySelector<HTMLDivElement>("[data-region='playlist-scroll']");
+    const ruler = view.querySelector<HTMLDivElement>("[data-region='playlist-ruler']");
     const scrollbar = view.querySelector<HTMLDivElement>("[data-region='playlist-scrollbar']");
     const scrollbarThumb = view.querySelector<HTMLDivElement>("[data-region='playlist-scrollbar-thumb']");
-    if (!tracks || !scroll || !scrollbar || !scrollbarThumb) {
+    if (!tracks || !scroll || !scrollbar || !scrollbarThumb || !ruler) {
       return;
     }
+    const minClipWidthPercent = getMinimumClipWidthPercent(playlistViewportDuration, scroll.clientWidth);
     const visualTracks = timelineTracks.length > 0 ? timelineTracks : [{ id: "empty", label: "Track 1", kind: "scene" as const, start: 0, end: 0 }];
     tracks.style.setProperty("--playlist-track-count", String(visualTracks.length));
 
@@ -1038,24 +1086,29 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           if (!scene) {
             return;
           }
-          const clipPercent = getClipPercent(
-            clip.start - playlistViewportStart,
-            clip.end - playlistViewportStart,
-            playlistViewportDuration
-          );
-          if (clipPercent.left >= 100 || clipPercent.left + clipPercent.width <= 0) {
+          const visibleRange = getVisibleClipRange(clip.start, clip.end, playlistViewportStart, viewportEnd);
+          if (!visibleRange) {
             return;
           }
+          const clipPercent = getClipPercent(
+            visibleRange.start - playlistViewportStart,
+            visibleRange.end - playlistViewportStart,
+            playlistViewportDuration
+          );
           const block = document.createElement("button");
           block.type = "button";
           block.className = "editor-block editor-playlist-clip";
           block.style.left = `${clipPercent.left}%`;
-          block.style.width = `${Math.max(3, clipPercent.width)}%`;
+          block.style.width = `${Math.max(minClipWidthPercent, clipPercent.width)}%`;
           block.style.top = `calc(${index} * var(--editor-playlist-track-height) + 0.25rem)`;
           block.textContent = clip.sceneId;
-          block.title = `${clip.sceneId} (${formatTime(clip.start)} → ${formatTime(clip.end)})`;
+          block.title = buildPlaylistClipTitle(clip.sceneId, scene.effect, clip.start, clip.end);
+          block.dataset.sceneId = clip.sceneId;
           if (clip.sceneId === state.selectedSceneId) {
             block.classList.add("is-selected");
+          }
+          if (clipPercent.width < 4) {
+            block.classList.add("is-compact");
           }
           block.addEventListener("click", () => {
             selectScene(clip.sceneId);
@@ -1069,25 +1122,47 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           block.addEventListener("dragend", () => {
             block.classList.remove("is-dragging");
           });
+          (["start", "end"] as const).forEach((edge) => {
+            const handle = document.createElement("span");
+            handle.className = `editor-playlist-resize-handle editor-playlist-resize-handle-${edge}`;
+            handle.dataset.resizeEdge = edge;
+            handle.addEventListener("pointerdown", (event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              activeClipResize = {
+                pointerId: event.pointerId,
+                sceneId: clip.sceneId,
+                edge
+              };
+            });
+            block.appendChild(handle);
+          });
           tracks.appendChild(block);
         });
         return;
       }
+      const visibleRange = getVisibleClipRange(timelineTrack.start, timelineTrack.end, playlistViewportStart, viewportEnd);
+      if (!visibleRange) {
+        return;
+      }
       const clipPercent = getClipPercent(
-        timelineTrack.start - playlistViewportStart,
-        timelineTrack.end - playlistViewportStart,
+        visibleRange.start - playlistViewportStart,
+        visibleRange.end - playlistViewportStart,
         playlistViewportDuration
       );
       const block = document.createElement("button");
       block.type = "button";
       block.className = "editor-block editor-playlist-clip";
       block.style.left = `${clipPercent.left}%`;
-      block.style.width = `${Math.max(3, clipPercent.width)}%`;
+      block.style.width = `${Math.max(minClipWidthPercent, clipPercent.width)}%`;
       block.style.top = `calc(${index} * var(--editor-playlist-track-height) + 0.25rem)`;
       block.textContent = focusScene.id;
-      block.title = `${timelineTrack.label} (${formatTime(timelineTrack.start)} → ${formatTime(timelineTrack.end)})`;
+      block.title = buildPlaylistClipTitle(focusScene.id, focusScene.effect, timelineTrack.start, timelineTrack.end);
       if (focusScene.id === state.selectedSceneId) {
         block.classList.add("is-selected");
+      }
+      if (clipPercent.width < 4) {
+        block.classList.add("is-compact");
       }
       block.addEventListener("click", () => {
         if (focusScene) {
@@ -1098,10 +1173,19 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       tracks.appendChild(block);
     });
 
-    const playhead = document.createElement("div");
-    playhead.className = "editor-playhead";
-    playhead.style.left = `${playheadRatio * 100}%`;
-    tracks.appendChild(playhead);
+    playheadElement = document.createElement("div");
+    playheadElement.className = "editor-playhead";
+    playheadElement.style.left = `${playheadRatio * 100}%`;
+    tracks.appendChild(playheadElement);
+    ruler.addEventListener("pointerdown", (event) => {
+      const rect = ruler.getBoundingClientRect();
+      if (rect.width <= 0) {
+        return;
+      }
+      const ratio = clamp((event.clientX - rect.left) / rect.width, 0, 1);
+      const targetDemoTime = playlistViewportStart + ratio * playlistViewportDuration;
+      init.seek(Math.max(0, targetDemoTime - init.getAudioOffset()));
+    });
 
     tracks.addEventListener("dragover", (event) => {
       event.preventDefault();
@@ -1124,11 +1208,18 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         fallback: parseTimelineTimeValue(draggedScene.start)
       });
       updateTimeline((draft) => {
+        const ordered = [...draft.sections].sort((a, b) => parseTimelineTimeValue(a.start) - parseTimelineTimeValue(b.start));
+        const orderedIndex = ordered.findIndex((section) => section.id === clipId);
+        const previous = orderedIndex > 0 ? ordered[orderedIndex - 1] : null;
+        const next = orderedIndex >= 0 && orderedIndex < ordered.length - 1 ? ordered[orderedIndex + 1] : null;
+        const min = previous ? parseTimelineTimeValue(previous.start) + 0.05 : 0;
+        const max = next ? parseTimelineTimeValue(next.start) - 0.05 : duration;
+        const clampedDropTime = clamp(dropTime, min, Math.max(min, max));
         const target = draft.sections.find((section) => section.id === clipId);
         if (!target) {
           return;
         }
-        target.start = Number(dropTime.toFixed(3));
+        target.start = Number(clampedDropTime.toFixed(3));
       });
     });
 
@@ -1272,14 +1363,65 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     renderTimelineView();
   };
 
+  const handleGlobalClipResize = (event: PointerEvent): void => {
+    if (!activeClipResize || event.pointerId !== activeClipResize.pointerId || !state.timeline) {
+      return;
+    }
+    const scenes = getScenesByTime();
+    const sceneIndex = scenes.findIndex((scene) => scene.id === activeClipResize.sceneId);
+    if (sceneIndex < 0) {
+      return;
+    }
+    const scroll = init.container.querySelector<HTMLDivElement>("[data-region='playlist-scroll']");
+    if (!scroll) {
+      return;
+    }
+    const rect = scroll.getBoundingClientRect();
+    if (rect.width <= 0) {
+      return;
+    }
+    const duration = Math.max(5, scenes.reduce((max, scene) => Math.max(max, getSceneEnd(scene)), 0));
+    const ratio = clamp((event.clientX - rect.left) / rect.width, 0, 1);
+    const pointerTime = playlistViewportStart + ratio * playlistViewportDuration;
+    const previous = sceneIndex > 0 ? scenes[sceneIndex - 1] : null;
+    const current = scenes[sceneIndex];
+    const next = sceneIndex < scenes.length - 1 ? scenes[sceneIndex + 1] : null;
+    updateTimeline((draft) => {
+      const target = draft.sections.find((section) => section.id === current.id);
+      if (!target) {
+        return;
+      }
+      if (activeClipResize?.edge === "start") {
+        const min = previous ? parseTimelineTimeValue(previous.start) + 0.05 : 0;
+        const max = next ? parseTimelineTimeValue(next.start) - 0.05 : duration;
+        target.start = Number(clamp(pointerTime, min, Math.max(min, max)).toFixed(3));
+        return;
+      }
+      if (!next) {
+        return;
+      }
+      const min = parseTimelineTimeValue(current.start) + 0.05;
+      const max = sceneIndex < scenes.length - 2 ? parseTimelineTimeValue(scenes[sceneIndex + 2].start) - 0.05 : duration;
+      const resizedEnd = Number(clamp(pointerTime, min, Math.max(min, max)).toFixed(3));
+      const nextTarget = draft.sections.find((section) => section.id === next.id);
+      if (nextTarget) {
+        nextTarget.start = resizedEnd;
+      }
+    });
+  };
+
   window.addEventListener("pointermove", handleGlobalPlaylistPan);
   window.addEventListener("pointermove", handleGlobalScrollbarDrag);
+  window.addEventListener("pointermove", handleGlobalClipResize);
   window.addEventListener("pointerup", (event) => {
     if (activePlaylistPan && event.pointerId === activePlaylistPan.pointerId) {
       activePlaylistPan = null;
     }
     if (activeScrollbarDrag && event.pointerId === activeScrollbarDrag.pointerId) {
       activeScrollbarDrag = null;
+    }
+    if (activeClipResize && event.pointerId === activeClipResize.pointerId) {
+      activeClipResize = null;
     }
   });
   window.addEventListener("pointercancel", (event) => {
@@ -1288,6 +1430,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     }
     if (activeScrollbarDrag && event.pointerId === activeScrollbarDrag.pointerId) {
       activeScrollbarDrag = null;
+    }
+    if (activeClipResize && event.pointerId === activeClipResize.pointerId) {
+      activeClipResize = null;
     }
   });
 
@@ -2475,6 +2620,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       if (playbackButton) {
         playbackButton.textContent = playing ? "Pause" : "Play";
         playbackButton.dataset.state = playing ? "playing" : "paused";
+      }
+      if (playheadElement) {
+        const ratio = clamp((demoTime - playlistViewportStart) / Math.max(playlistViewportDuration, 0.001), 0, 1);
+        playheadElement.style.left = `${ratio * 100}%`;
       }
     },
     updatePreview: (source: HTMLCanvasElement) => {

@@ -6,6 +6,9 @@ import {
   formatTime,
   clampPlaylistViewportStart,
   getClipPercent,
+  getMinimumClipWidthPercent,
+  buildPlaylistClipTitle,
+  getVisibleClipRange,
   buildEditorTimelineTracks,
   getSceneTimelineClips,
   getPlaylistScrollbarMetrics,
@@ -50,6 +53,36 @@ describe("getClipPercent", () => {
 
   it("clamps overflow values to timeline bounds", () => {
     expect(getClipPercent(-5, 140, 100)).toEqual({ left: 0, width: 100 });
+  });
+});
+
+describe("getMinimumClipWidthPercent", () => {
+  it("converts pixel minimum width to a percent of the timeline width", () => {
+    expect(getMinimumClipWidthPercent(45, 800, 2)).toBeCloseTo(0.25);
+  });
+
+  it("returns zero for invalid dimensions", () => {
+    expect(getMinimumClipWidthPercent(0, 800)).toBe(0);
+    expect(getMinimumClipWidthPercent(45, 0)).toBe(0);
+  });
+});
+
+describe("buildPlaylistClipTitle", () => {
+  it("builds a multiline tooltip with scene, effect, and time range", () => {
+    expect(buildPlaylistClipTitle("Scene 7", "rain", 65.1, 70.4)).toBe(
+      "Scene: Scene 7\nEffect: rain\nTime: 01:05.1 → 01:10.4"
+    );
+  });
+});
+
+describe("getVisibleClipRange", () => {
+  it("clips ranges to the viewport bounds", () => {
+    expect(getVisibleClipRange(10, 20, 12, 18)).toEqual({ start: 12, end: 18 });
+  });
+
+  it("returns null when clip is fully outside viewport", () => {
+    expect(getVisibleClipRange(1, 2, 3, 4)).toBeNull();
+    expect(getVisibleClipRange(6, 7, 3, 4)).toBeNull();
   });
 });
 
