@@ -67,6 +67,20 @@ describe("editor playlist scrollbar styling", () => {
 });
 
 
+describe("editor inspector sizing", () => {
+  it("prevents horizontal overflow by forcing inspector controls to fit available width", () => {
+    const css = readFileSync(new URL("./style.css", import.meta.url), "utf8");
+
+    expect(css).toContain(".editor-inspector-body");
+    expect(css).toContain("overflow-x: hidden;");
+    expect(css).toContain(".editor-inspector-body > *");
+    expect(css).toContain(".editor-group input,");
+    expect(css).toContain("width: 100%;");
+    expect(css).toContain("box-sizing: border-box;");
+  });
+});
+
+
 describe("social preview metadata", () => {
   it("ships the updated Billy Cheam unfurl title, copy, and preview image tags", () => {
     const indexHtml = readFileSync(new URL("../index.html", import.meta.url), "utf8");

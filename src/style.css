@@ -908,11 +908,17 @@ body,
 
 .editor-inspector-body {
   overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   gap: 1rem;
   padding-right: 0.25rem;
   min-height: 0;
+  min-width: 0;
+}
+
+
+.editor-inspector-body > * {
   min-width: 0;
 }
 
@@ -947,6 +953,9 @@ body,
 .editor-group input,
 .editor-group select,
 .editor-group textarea {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   background: #0b0b0b;
   color: inherit;
   border: 1px solid rgba(255, 255, 255, 0.2);
