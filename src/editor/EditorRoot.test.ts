@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { buildTransitionOptionMarkup, transitionOptions } from "../renderer/transitions";
 import {
+  clamp,
   computeSceneSeekTime,
+  formatTime,
   clampPlaylistViewportStart,
+  getClipPercent,
   getPlaylistScrollbarMetrics,
   getMainSlotSelection,
   applyMainSlotSelection,
@@ -23,6 +26,36 @@ import {
   splitCueWords,
   generateWordTextCues
 } from "./EditorRoot";
+
+describe("formatTime", () => {
+  it("formats seconds to mm:ss.t", () => {
+    expect(formatTime(0)).toBe("00:00.0");
+    expect(formatTime(65.34)).toBe("01:05.3");
+  });
+
+  it("clamps invalid or negative values to zero", () => {
+    expect(formatTime(-2)).toBe("00:00.0");
+    expect(formatTime(Number.NaN)).toBe("00:00.0");
+  });
+});
+
+describe("getClipPercent", () => {
+  it("returns clip left and width percentage from start/end/duration", () => {
+    expect(getClipPercent(10, 30, 100)).toEqual({ left: 10, width: 20 });
+  });
+
+  it("clamps overflow values to timeline bounds", () => {
+    expect(getClipPercent(-5, 140, 100)).toEqual({ left: 0, width: 100 });
+  });
+});
+
+describe("clamp", () => {
+  it("prevents values below min and above max", () => {
+    expect(clamp(-1, 0, 10)).toBe(0);
+    expect(clamp(11, 0, 10)).toBe(10);
+    expect(clamp(4, 0, 10)).toBe(4);
+  });
+});
 
 describe("computeSceneSeekTime", () => {
   it("subtracts audio offset from the scene start", () => {

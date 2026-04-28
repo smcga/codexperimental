@@ -135,6 +135,31 @@ export const computeSceneSeekTime = (sceneStart: number | string, audioOffset: n
   return Math.max(0, parseTimelineTimeValue(sceneStart) - audioOffset);
 };
 
+export const clamp = (value: number, min: number, max: number): number => {
+  return Math.min(max, Math.max(min, value));
+};
+
+export const formatTime = (value: number): string => {
+  const safeValue = Number.isFinite(value) ? Math.max(0, value) : 0;
+  const minutes = Math.floor(safeValue / 60);
+  const seconds = safeValue - minutes * 60;
+  return `${minutes.toString().padStart(2, "0")}:${seconds.toFixed(1).padStart(4, "0")}`;
+};
+
+export const getClipPercent = (
+  start: number,
+  end: number,
+  duration: number
+): { left: number; width: number } => {
+  const safeDuration = Math.max(0.001, duration);
+  const left = ((start / safeDuration) * 100);
+  const width = (((end - start) / safeDuration) * 100);
+  return {
+    left: clamp(left, 0, 100),
+    width: clamp(width, 0, 100)
+  };
+};
+
 function isMainSlotLayer(layer: RawSectionConfig["layers"][number]): boolean {
   const fitAlign = layer.fitAlign ?? "fill";
   return (
@@ -550,12 +575,14 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     fieldErrors: {}
   };
   let playbackLabel: HTMLSpanElement | null = null;
+  let previewPlaybackLabel: HTMLSpanElement | null = null;
   let playbackButton: HTMLButtonElement | null = null;
   let previewCanvas: HTMLCanvasElement | null = null;
   let previewContext: CanvasRenderingContext2D | null = null;
   let editorVisible = false;
   let currentDemoTime = 0;
   let isPlaying = false;
+  let sceneSearchQuery = "";
   let playlistViewportStart = 0;
   let playlistViewportDuration = 45;
   let activePlaylistPan:
@@ -669,12 +696,6 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     return audioDuration > 0 ? audioDuration : fallbackStart + 5;
   };
 
-  const formatTime = (value: number): string => {
-    const minutes = Math.floor(value / 60);
-    const seconds = Math.max(0, value - minutes * 60);
-    return `${minutes.toString().padStart(2, "0")}:${seconds.toFixed(1).padStart(4, "0")}`;
-  };
-
   const formatEditableTime = (value: number | string | undefined | null, allowEmpty = false): string => {
     if (allowEmpty && (value === undefined || value === null || value === "")) {
       return "";
@@ -703,30 +724,73 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
 
     init.container.innerHTML = `
       <div class="editor-header">
-        <div class="editor-title">Scene + Timeline Editor</div>
+        <div class="editor-title">SCENE + TIMELINE EDITOR</div>
         <div class="editor-actions">
           <button type="button" data-action="import">Import JSON</button>
           <button type="button" data-action="export">Export JSON</button>
-          <button type="button" data-action="revert">Revert to file</button>
+          <button type="button" data-action="revert">Revert to File</button>
         </div>
       </div>
       ${state.error ? `<div class="editor-error" role="alert">${state.error}</div>` : ""}
       <div class="editor-body">
         <section class="editor-column editor-scenes">
-          <div class="editor-section-title">Scenes</div>
-          <div class="editor-selected-scene" data-region="selected-scene"></div>
+          <div class="editor-section-title">SCENES</div>
+          <label class="editor-search">
+            <span class="sr-only">Search scenes</span>
+            <input type="search" data-action="scene-search" value="${sceneSearchQuery}" placeholder="Search scenes…" />
+          </label>
           <div class="editor-scene-list" data-region="scene-list"></div>
-          <button type="button" class="editor-add" data-action="add-scene">+ Scene</button>
+          <button type="button" class="editor-add editor-add-scene" data-action="add-scene">+ NEW SCENE</button>
+          <div class="editor-scene-actions-block">
+            <div class="editor-section-title editor-subsection-title">SCENE ACTIONS</div>
+            <button type="button" data-action="duplicate-selected" ${state.selectedSceneId ? "" : "disabled"}>Duplicate</button>
+            <button type="button" data-action="delete-selected" ${state.selectedSceneId ? "" : "disabled"}>Delete</button>
+            <button type="button" data-action="select-current">Select Current</button>
+            <button type="button" data-action="select-loop-current">Select &amp; Loop</button>
+          </div>
         </section>
         <section class="editor-column editor-timeline">
-          <div class="editor-section-title">Timeline</div>
-          <div class="editor-preview">
-            <canvas data-region="preview-canvas" width="640" height="360"></canvas>
+          <div class="editor-workspace-tabs" role="tablist" aria-label="Editor workspace tabs">
+            <button type="button" class="editor-workspace-tab is-active" role="tab" aria-selected="true">Preview</button>
+            <button type="button" class="editor-workspace-tab" role="tab" aria-selected="false">Timeline</button>
           </div>
+          <div class="editor-preview-panel">
+            <div class="editor-preview-toolbar">
+              <div class="editor-section-title">PREVIEW</div>
+              <div class="editor-preview-fit-controls">
+                <select aria-label="Preview fit mode">
+                  <option>Fit</option>
+                </select>
+                <button type="button" aria-label="Toggle fullscreen preview" title="Fullscreen">⛶</button>
+              </div>
+            </div>
+            <div class="editor-preview">
+              <canvas data-region="preview-canvas" width="640" height="360"></canvas>
+            </div>
+            <div class="editor-preview-transport">
+              <span data-region="preview-time">${formatTime(currentDemoTime)} / ${formatTime(init.getAudioDuration())}</span>
+              <div class="editor-preview-transport-controls">
+                <button type="button" aria-label="Jump to start">⏮</button>
+                <button type="button" aria-label="Rewind">⏪</button>
+                <button type="button" data-action="preview-play-toggle" aria-label="Play or pause">⏯</button>
+                <button type="button" aria-label="Fast forward">⏩</button>
+                <button type="button" aria-label="Jump to end">⏭</button>
+              </div>
+              <div class="editor-preview-zoom">
+                <button type="button" aria-label="Zoom out timeline">−</button>
+                <span>100%</span>
+                <button type="button" aria-label="Zoom in timeline">+</button>
+              </div>
+            </div>
+          </div>
+          <div class="editor-section-title">TIMELINE</div>
           <div class="editor-timeline-view" data-region="timeline-view"></div>
         </section>
         <section class="editor-column editor-inspector">
-          <div class="editor-section-title">Inspector</div>
+          <div class="editor-inspector-header">
+            <div class="editor-section-title">INSPECTOR</div>
+            <button type="button" class="editor-icon-button" title="Refresh inspector" aria-label="Refresh inspector">↻</button>
+          </div>
           <div class="editor-inspector-body" data-region="inspector"></div>
         </section>
       </div>
@@ -765,79 +829,39 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     if (!list || !state.timeline) {
       return;
     }
-    const selectedScenePanel = init.container.querySelector<HTMLDivElement>("[data-region='selected-scene']");
     list.innerHTML = "";
-    const sections = state.timeline.sections;
-    const selectedScene = state.selectedSceneId ? getSceneById(state.selectedSceneId) : null;
-    if (selectedScenePanel) {
-      if (!selectedScene) {
-        selectedScenePanel.innerHTML = `<div class="editor-selected-scene-empty">No scene selected.</div>`;
-      } else {
-        selectedScenePanel.innerHTML = `
-          <div class="editor-selected-scene-label">Selected scene</div>
-          <button type="button" class="editor-selected-scene-id" data-action="jump-selected">${selectedScene.id}</button>
-          <div class="editor-selected-scene-actions">
-            <button type="button" data-action="select-current">Select current</button>
-            <button type="button" data-action="select-loop-current">Select and loop current</button>
-          </div>
-          <div class="editor-scene-meta">
-            <span>${formatTime(parseTimelineTimeValue(selectedScene.start))}</span>
-            <span>→</span>
-            <span>${formatTime(getSceneEnd(selectedScene))}</span>
-          </div>
-        `;
-        selectedScenePanel
-          .querySelector<HTMLButtonElement>("[data-action='jump-selected']")
-          ?.addEventListener("click", () => {
-            init.seek(computeSceneSeekTime(selectedScene.start, init.getAudioOffset()));
-          });
-
-        selectedScenePanel
-          .querySelector<HTMLButtonElement>("[data-action='select-current']")
-          ?.addEventListener("click", () => {
-            const currentScene = getScenePlayingAtTime(state.timeline?.sections ?? [], currentDemoTime);
-            if (!currentScene) {
-              return;
-            }
-            selectScene(currentScene.id);
-          });
-
-        selectedScenePanel
-          .querySelector<HTMLButtonElement>("[data-action='select-loop-current']")
-          ?.addEventListener("click", () => {
-            const currentScene = getScenePlayingAtTime(state.timeline?.sections ?? [], currentDemoTime);
-            if (!currentScene) {
-              return;
-            }
-            setState({ selectedSceneId: currentScene.id, loopEnabled: true });
-          });
-      }
-    }
+    const sections = state.timeline.sections.filter((scene) =>
+      scene.id.toLowerCase().includes(sceneSearchQuery.trim().toLowerCase())
+    );
     let dragIndex: number | null = null;
 
-    sections.forEach((scene, index) => {
+    sections.forEach((scene) => {
+      const originalIndex = state.timeline?.sections.findIndex((entry) => entry.id === scene.id) ?? -1;
+      if (originalIndex < 0) {
+        return;
+      }
       const item = document.createElement("div");
       item.className = "editor-scene-item";
       if (scene.id === state.selectedSceneId) {
         item.classList.add("is-selected");
       }
       item.draggable = true;
-      item.dataset.index = String(index);
+      item.dataset.index = String(originalIndex);
       item.innerHTML = `
-        <button type="button" class="editor-scene-select">${scene.id}</button>
+        <div class="editor-scene-card-header">
+          <span class="editor-scene-active-indicator" aria-hidden="true">${scene.id === state.selectedSceneId ? "▶" : ""}</span>
+          <button type="button" class="editor-scene-select">${scene.id}</button>
+          <button type="button" class="editor-scene-kebab" aria-label="Scene menu">⋮</button>
+        </div>
         <div class="editor-scene-meta">
           <span>${formatTime(parseTimelineTimeValue(scene.start))}</span>
           <span>→</span>
           <span>${formatTime(getSceneEnd(scene))}</span>
         </div>
-        <div class="editor-scene-actions">
-          <button type="button" data-action="duplicate">Duplicate</button>
-          <button type="button" data-action="delete">Delete</button>
-        </div>
       `;
 
       item.addEventListener("dragstart", () => {
-        dragIndex = index;
+        dragIndex = originalIndex;
       });
       item.addEventListener("dragover", (event) => {
         event.preventDefault();
@@ -859,28 +883,6 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         selectScene(scene.id);
         init.seek(computeSceneSeekTime(scene.start, init.getAudioOffset()));
       });
-
-      const duplicateButton = item.querySelector<HTMLButtonElement>("[data-action='duplicate']");
-      duplicateButton?.addEventListener("click", () => {
-        updateTimeline((draft) => {
-          const duplicated = duplicateScene(scene, `scene-${Math.random().toString(36).slice(2, 8)}`);
-          draft.sections.splice(index + 1, 0, duplicated);
-        });
-      });
-
-      const deleteButton = item.querySelector<HTMLButtonElement>("[data-action='delete']");
-      deleteButton?.addEventListener("click", () => {
-        if (window.confirm("Delete this scene?")) {
-          updateTimeline((draft) => {
-            draft.sections = deleteScene(draft.sections, scene.id);
-          });
-          if (state.selectedSceneId === scene.id) {
-            const nextId = state.timeline?.sections[0]?.id ?? null;
-            setState({ selectedSceneId: nextId });
-          }
-        }
-      });
-
       list.appendChild(item);
     });
   };
@@ -897,15 +899,15 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     const viewportEnd = Math.min(duration, playlistViewportStart + playlistViewportDuration);
     const layout = layoutPlaylistTracks(scenes, getSceneEnd);
     const ticks = Math.max(1, Math.ceil(playlistViewportDuration / 5));
+    const currentScene = getScenePlayingAtTime(scenes, currentDemoTime);
+    const focusScene =
+      (state.selectedSceneId ? scenes.find((scene) => scene.id === state.selectedSceneId) : null) ?? currentScene;
+    const playheadRatio = clamp((currentDemoTime - playlistViewportStart) / Math.max(playlistViewportDuration, 0.001), 0, 1);
 
     view.innerHTML = `
       <div class="editor-playlist-toolbar">
-        <span>Playlist</span>
-        <div class="editor-playlist-toolbar-actions">
-          <button type="button" data-action="playlist-zoom-out">−</button>
-          <button type="button" data-action="playlist-zoom-in">+</button>
-          <button type="button" data-action="playlist-reset">Reset</button>
-        </div>
+        <span>Track 1</span>
+        <button type="button" class="editor-add-track" data-action="add-track">+ ADD TRACK</button>
       </div>
       <div class="editor-ruler">
         ${Array.from({ length: ticks + 1 })
@@ -931,53 +933,39 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     if (!tracks || !scroll || !scrollbar || !scrollbarThumb) {
       return;
     }
-    tracks.style.setProperty("--playlist-track-count", String(layout.trackCount));
+    tracks.style.setProperty("--playlist-track-count", String(Math.max(1, layout.trackCount)));
+    const lane = document.createElement("div");
+    lane.className = "editor-playlist-track";
+    lane.dataset.track = "0";
+    lane.innerHTML = `<span class="editor-playlist-track-label">Track 1</span>`;
+    tracks.appendChild(lane);
 
-    for (let trackIndex = 0; trackIndex < layout.trackCount; trackIndex += 1) {
-      const lane = document.createElement("div");
-      lane.className = "editor-playlist-track";
-      lane.dataset.track = String(trackIndex);
-      lane.innerHTML = `<span class="editor-playlist-track-label">Track ${trackIndex + 1}</span>`;
-      tracks.appendChild(lane);
-    }
-
-    layout.clips.forEach((clip) => {
-      const scene = scenes.find((candidate) => candidate.id === clip.sceneId);
-      if (!scene) {
-        return;
-      }
-      const start = clip.start;
-      const end = clip.end;
-      const left = ((start - playlistViewportStart) / Math.max(playlistViewportDuration, 0.001)) * 100;
-      const width = ((end - start) / Math.max(playlistViewportDuration, 0.001)) * 100;
-      if (left > 100 || left + width < 0) {
-        return;
-      }
+    if (focusScene) {
+      const start = parseTimelineTimeValue(focusScene.start);
+      const end = getSceneEnd(focusScene);
+      const clipPercent = getClipPercent(start - playlistViewportStart, end - playlistViewportStart, playlistViewportDuration);
       const block = document.createElement("button");
       block.type = "button";
       block.className = "editor-block editor-playlist-clip";
-      block.style.left = `${Math.max(0, left)}%`;
-      block.style.width = `${Math.max(2, width)}%`;
-      block.style.top = `calc(${clip.track} * var(--editor-playlist-track-height) + 0.25rem)`;
-      block.textContent = scene.id;
-      block.title = `${scene.id} (${formatTime(start)} → ${formatTime(end)})`;
-      if (scene.id === state.selectedSceneId) {
+      block.style.left = `${clipPercent.left}%`;
+      block.style.width = `${Math.max(3, clipPercent.width)}%`;
+      block.style.top = "0.25rem";
+      block.textContent = focusScene.id;
+      block.title = `${focusScene.id} (${formatTime(start)} → ${formatTime(end)})`;
+      if (focusScene.id === state.selectedSceneId) {
         block.classList.add("is-selected");
       }
       block.addEventListener("click", () => {
-        selectScene(scene.id);
-        init.seek(computeSceneSeekTime(scene.start, init.getAudioOffset()));
-      });
-      block.draggable = true;
-      block.addEventListener("dragstart", (event) => {
-        event.dataTransfer?.setData("text/plain", scene.id);
-        block.classList.add("is-dragging");
-      });
-      block.addEventListener("dragend", () => {
-        block.classList.remove("is-dragging");
+        selectScene(focusScene.id);
+        init.seek(computeSceneSeekTime(focusScene.start, init.getAudioOffset()));
       });
       tracks.appendChild(block);
-    });
+    }
+
+    const playhead = document.createElement("div");
+    playhead.className = "editor-playhead";
+    playhead.style.left = `${playheadRatio * 100}%`;
+    tracks.appendChild(playhead);
 
     tracks.addEventListener("dragover", (event) => {
       event.preventDefault();
@@ -1098,6 +1086,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       playlistViewportDuration = Math.min(Math.max(20, duration * 0.4), duration);
       renderTimelineView();
     });
+    view.querySelector<HTMLButtonElement>("[data-action='add-track']")?.addEventListener("click", () => {
+      // TODO: Add real multi-track authoring if/when a track model exists.
+    });
   };
 
   const handleGlobalPlaylistPan = (event: PointerEvent): void => {
@@ -1185,7 +1176,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     inspector.dataset.sceneId = scene.id;
     inspector.innerHTML = `
       <div class="editor-group">
-        <div class="editor-group-title">Basic</div>
+        <div class="editor-group-title">BASIC</div>
         <label>
           <span>ID</span>
           <input type="text" data-field="id" value="${scene.id}" />
@@ -1220,7 +1211,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         </label>
       </div>
       <div class="editor-group">
-        <div class="editor-group-title">Main Slots (Top/Centre/Bottom)</div>
+        <div class="editor-group-title">MAIN SLOTS (Top/Centre/Bottom)</div>
         <div class="editor-note">Use these to stage up to three simultaneous “main” effects in mobile-fit mode.</div>
         ${(() => {
           const selection = getMainSlotSelection(scene);
@@ -1241,7 +1232,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         })()}
       </div>
       <div class="editor-group">
-        <div class="editor-group-title">Transition</div>
+        <div class="editor-group-title">TRANSITION</div>
         <label>
           <span>In</span>
           <select data-field="transition-in">
@@ -1258,6 +1249,11 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           <span>Duration (s)</span>
           <input type="number" step="0.1" data-field="transition-duration" value="${scene.transition?.duration ?? 0.8}" />
         </label>
+      </div>
+      <div class="editor-group">
+        <details class="editor-advanced-row">
+          <summary>ADVANCED</summary>
+        </details>
       </div>
       <div class="editor-group">
         <div class="editor-group-title">Scene Params</div>
@@ -2134,6 +2130,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       return;
     }
     playbackLabel = transport.querySelector<HTMLSpanElement>("[data-region='timestamp']");
+    previewPlaybackLabel = init.container.querySelector<HTMLSpanElement>("[data-region='preview-time']");
     playbackButton = transport.querySelector<HTMLButtonElement>("[data-action='play-toggle']");
 
     playbackButton?.addEventListener("click", async () => {
@@ -2143,6 +2140,15 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         await init.play();
       }
     });
+    init.container
+      .querySelector<HTMLButtonElement>("[data-action='preview-play-toggle']")
+      ?.addEventListener("click", async () => {
+        if (playbackButton?.dataset.state === "playing") {
+          init.pause();
+        } else {
+          await init.play();
+        }
+      });
 
     transport.querySelector<HTMLButtonElement>("[data-action='jump-scene']")?.addEventListener("click", () => {
       if (!state.selectedSceneId) {
@@ -2232,6 +2238,59 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         { selectedSceneId: newScene.id }
       );
     });
+
+    init.container.querySelector<HTMLInputElement>("[data-action='scene-search']")?.addEventListener("input", (event) => {
+      sceneSearchQuery = (event.target as HTMLInputElement).value;
+      renderSceneList();
+    });
+
+    init.container.querySelector<HTMLButtonElement>("[data-action='duplicate-selected']")?.addEventListener("click", () => {
+      if (!state.selectedSceneId || !state.timeline) {
+        return;
+      }
+      const index = state.timeline.sections.findIndex((scene) => scene.id === state.selectedSceneId);
+      const scene = index >= 0 ? state.timeline.sections[index] : null;
+      if (!scene) {
+        return;
+      }
+      updateTimeline((draft) => {
+        const duplicated = duplicateScene(scene, `scene-${Math.random().toString(36).slice(2, 8)}`);
+        draft.sections.splice(index + 1, 0, duplicated);
+      });
+    });
+
+    init.container.querySelector<HTMLButtonElement>("[data-action='delete-selected']")?.addEventListener("click", () => {
+      if (!state.selectedSceneId || !state.timeline) {
+        return;
+      }
+      const deletingSceneId = state.selectedSceneId;
+      const remainingIds = state.timeline.sections.filter((scene) => scene.id !== deletingSceneId).map((scene) => scene.id);
+      if (window.confirm("Delete this scene?")) {
+        updateTimeline((draft) => {
+          draft.sections = deleteScene(draft.sections, deletingSceneId);
+        });
+        const nextId = remainingIds[0] ?? null;
+        setState({ selectedSceneId: nextId });
+      }
+    });
+
+    init.container.querySelector<HTMLButtonElement>("[data-action='select-current']")?.addEventListener("click", () => {
+      const currentScene = getScenePlayingAtTime(state.timeline?.sections ?? [], currentDemoTime);
+      if (!currentScene) {
+        return;
+      }
+      selectScene(currentScene.id);
+    });
+
+    init.container
+      .querySelector<HTMLButtonElement>("[data-action='select-loop-current']")
+      ?.addEventListener("click", () => {
+        const currentScene = getScenePlayingAtTime(state.timeline?.sections ?? [], currentDemoTime);
+        if (!currentScene) {
+          return;
+        }
+        setState({ selectedSceneId: currentScene.id, loopEnabled: true });
+      });
   };
 
   await loadFromFile();
@@ -2247,6 +2306,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       isPlaying = playing;
       if (playbackLabel) {
         playbackLabel.textContent = formatTime(demoTime);
+      }
+      if (previewPlaybackLabel) {
+        previewPlaybackLabel.textContent = `${formatTime(demoTime)} / ${formatTime(init.getAudioDuration())}`;
       }
       if (playbackButton) {
         playbackButton.textContent = playing ? "Pause" : "Play";
