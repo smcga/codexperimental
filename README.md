@@ -372,6 +372,7 @@ npm run preview
 - Automation interaction model mirrors FL-style priorities in code: point hit > segment hit > empty hit, with optional grid-snapped step drawing and axis constraints for pulse-like horizontal/vertical edits.
 - Clip-edit operations preserve adjacent segment metadata when adding/removing points so curve/tension edits remain stable during iterative shaping.
 - Scene Automation rows now render an inline curve editor: click on empty graph space to add points, drag points to move (hold Shift to slide following points in time), right-click points to delete, and hold Alt while dragging/clicking to temporarily disable snap.
+- Timeline automation tracks now render envelope lines directly in-lane (matching inspector clips) and the playlist toolbar includes **V+ / V-** controls for vertical zoom in addition to horizontal zoom/pan.
 - While zoomed in, use **Shift + mouse wheel** (or horizontal trackpad scroll) to pan left/right across the playlist without resetting zoom.
 - Playlist quick controls: mouse wheel = zoom to cursor, Shift+wheel/horizontal scroll = pan timeline, drag empty lane = scrub pan.
 - The playlist now includes a dedicated timeline scrollbar under the lanes; the thumb shrinks as you zoom in and can be dragged/clicked for coarse navigation across the full song length.

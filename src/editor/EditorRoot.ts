@@ -536,6 +536,16 @@ export const panPlaylistViewport = (
   return clampPlaylistViewportStart(viewportStart + deltaSeconds, totalDuration, viewportDuration);
 };
 
+export const zoomPlaylistTrackHeight = (
+  currentHeightRem: number,
+  zoomFactor: number,
+  minHeightRem = 1.6,
+  maxHeightRem = 8
+): number => {
+  const nextHeight = currentHeightRem * zoomFactor;
+  return clamp(nextHeight, minHeightRem, maxHeightRem);
+};
+
 export const getPlaylistScrollbarMetrics = (
   totalDuration: number,
   viewportStart: number,
@@ -733,6 +743,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   let sceneListSortMode: SceneListSortMode = "timeline";
   let playlistViewportStart = 0;
   let playlistViewportDuration = 45;
+  let playlistTrackHeightRem = 3.5;
   let activePlaylistPan:
     | {
         pointerId: number;
@@ -1085,6 +1096,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     view.innerHTML = `
       <div class="editor-playlist-toolbar">
         <span>Track 1</span>
+        <div class="editor-playlist-zoom-controls">
+          <button type="button" data-action="playlist-vzoom-in" title="Vertical zoom in">V+</button>
+          <button type="button" data-action="playlist-vzoom-out" title="Vertical zoom out">V-</button>
+        </div>
       </div>
       <div class="editor-ruler" data-region="playlist-ruler">
         ${Array.from({ length: ticks + 1 })
@@ -1114,6 +1129,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     const minClipWidthPercent = getMinimumClipWidthPercent(playlistViewportDuration, scroll.clientWidth);
     const visualTracks = timelineTracks.length > 0 ? timelineTracks : [{ id: "empty", label: "Track 1", kind: "scene" as const, start: 0, end: 0 }];
     tracks.style.setProperty("--playlist-track-count", String(visualTracks.length));
+    tracks.style.setProperty("--editor-playlist-track-height", `${playlistTrackHeightRem}rem`);
 
     visualTracks.forEach((timelineTrack, index) => {
       const lane = document.createElement("div");
@@ -1199,6 +1215,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       block.style.top = `calc(${index} * var(--editor-playlist-track-height) + 0.25rem)`;
       block.textContent = focusScene.id;
       block.title = buildPlaylistClipTitle(focusScene.id, focusScene.effect, timelineTrack.start, timelineTrack.end);
+      if (timelineTrack.kind === "automation") {
+        block.textContent = "";
+      }
       if (focusScene.id === state.selectedSceneId) {
         block.classList.add("is-selected");
       }
@@ -1238,7 +1257,6 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
             })
             .join("")}</svg>`;
           block.appendChild(polyline);
-          block.textContent = "";
         }
       }
       tracks.appendChild(block);
@@ -1382,6 +1400,17 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     view.querySelector<HTMLButtonElement>("[data-action='playlist-reset']")?.addEventListener("click", () => {
       playlistViewportStart = 0;
       playlistViewportDuration = Math.min(Math.max(20, duration * 0.4), duration);
+      playlistTrackHeightRem = 3.5;
+      renderTimelineView();
+    });
+
+    view.querySelector<HTMLButtonElement>("[data-action='playlist-vzoom-in']")?.addEventListener("click", () => {
+      playlistTrackHeightRem = zoomPlaylistTrackHeight(playlistTrackHeightRem, 1.2);
+      renderTimelineView();
+    });
+
+    view.querySelector<HTMLButtonElement>("[data-action='playlist-vzoom-out']")?.addEventListener("click", () => {
+      playlistTrackHeightRem = zoomPlaylistTrackHeight(playlistTrackHeightRem, 1 / 1.2);
       renderTimelineView();
     });
   };

@@ -35,6 +35,8 @@ import {
   ensureAutomationPoints
   ,
   buildAutomationTrackPolyline
+  ,
+  zoomPlaylistTrackHeight
 } from "./EditorRoot";
 
 describe("formatTime", () => {
@@ -213,6 +215,15 @@ describe("buildAutomationTrackPolyline", () => {
       50
     );
     expect(polyline).toBe("0,50 50,25 100,0");
+  });
+});
+
+describe("zoomPlaylistTrackHeight", () => {
+  it("zooms and clamps vertical track height", () => {
+    expect(zoomPlaylistTrackHeight(3.5, 1.2)).toBeCloseTo(4.2);
+    expect(zoomPlaylistTrackHeight(3.5, 0.5)).toBeCloseTo(1.75);
+    expect(zoomPlaylistTrackHeight(7.5, 2)).toBe(8);
+    expect(zoomPlaylistTrackHeight(1.7, 0.1)).toBe(1.6);
   });
 });
 

@@ -956,6 +956,12 @@ body,
   cursor: grabbing;
 }
 
+.editor-playlist-zoom-controls {
+  margin-left: auto;
+  display: inline-flex;
+  gap: 0.3rem;
+}
+
 .editor-playlist-resize-handle {
   position: absolute;
   top: 0;
