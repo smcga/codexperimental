@@ -318,6 +318,15 @@ describe("transition selector sources", () => {
     });
   });
 
+  it("includes audio-reactive-particle in the shared editor transition options", () => {
+    expect(transitionOptions).toContainEqual({
+      value: "audio-reactive-particle",
+      label: "Audio-reactive Particle"
+    });
+    expect(buildTransitionOptionMarkup()).toContain(
+      "<option value=\"audio-reactive-particle\">Audio-reactive Particle</option>"
+    );
+  });
   it("builds the debug transition options from the same registry data", () => {
     expect(buildTransitionOptionMarkup({ includeAuto: true })).toContain(
       '<option value="bitplane-wipe">Bitplane Wipe</option>'

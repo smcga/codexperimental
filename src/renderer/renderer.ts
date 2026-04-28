@@ -610,11 +610,13 @@ export class Renderer {
       drawCameraPunchThrough: (context) => this.drawCameraPunchThroughTransition(context),
       drawBitplaneWipe: (context) => this.drawBitplaneWipeTransition(context),
       drawGlitch: (context) => this.drawGlitchTransition(context),
+      drawAudioReactiveParticle: (context) => this.drawAudioReactiveParticleTransition(context),
       drawMobileDefaultCrossfade: (context) => this.drawMobileDefaultCrossfade(context.ctx, context.progress, context.width, context.height),
       drawMobileShatter: (context) => this.drawMobileShatterTransition(context),
       drawMobileCameraPunchThrough: (context) =>
         this.drawCameraPunchThroughMobileTransition(context.ctx, context.progress, context.width, context.height),
-      drawMobileBitplaneWipe: (context) => this.drawMobileBitplaneWipeTransition(context)
+      drawMobileBitplaneWipe: (context) => this.drawMobileBitplaneWipeTransition(context),
+      drawMobileAudioReactiveParticle: (context) => this.drawMobileAudioReactiveParticleTransition(context)
     };
   }
 
@@ -860,6 +862,61 @@ export class Renderer {
       ctx.drawImage(this.transitionCanvas, offsetX + shakeX - split, offsetY + shakeY, width, height);
       ctx.restore();
     }
+  }
+
+
+
+  private drawAudioReactiveParticleTransition({
+    ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, smoothing, audio
+  }: TransitionDrawContext): void {
+    const width = this.baseWidth * scale;
+    const height = this.baseHeight * scale;
+    const rectX = offsetX + shakeX;
+    const rectY = offsetY + shakeY;
+    const safeProgress = clamp(progress, 0, 1);
+    const energy = clamp(audio.rms * 1.4 + audio.treble * 0.5 + audio.beatStrength * 0.35, 0, 1.5);
+
+    this.drawCanvasToRect(ctx, this.transitionCanvas, rectX, rectY, width, height, 1, camera, smoothing);
+    this.drawCanvasToRect(ctx, this.baseCanvas, rectX, rectY, width, height, Math.pow(safeProgress, 1.2), camera, smoothing);
+
+    const particleCount = Math.round(80 + energy * 140);
+    const maxRadius = width * (0.012 + energy * 0.01);
+    ctx.save();
+    ctx.globalCompositeOperation = "destination-out";
+    for (let i = 0; i < particleCount; i += 1) {
+      const seed = i * 78.233 + 19.19;
+      const px = rectX + ((Math.sin(seed) * 0.5 + 0.5) * width);
+      const py = rectY + ((Math.sin(seed * 1.73) * 0.5 + 0.5) * height);
+      const t = clamp((safeProgress - (Math.sin(seed * 0.37) * 0.5 + 0.5) * 0.75) / 0.25, 0, 1);
+      if (t <= 0) continue;
+      const r = maxRadius * (0.3 + (Math.sin(seed * 0.91) * 0.5 + 0.5)) * t;
+      ctx.beginPath(); ctx.arc(px, py, r, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  private drawMobileAudioReactiveParticleTransition({ ctx, progress, width, height, audio }: MobileTransitionDrawContext): void {
+    ctx.drawImage(this.mobileFromCanvas, 0, 0, width, height);
+    const reveal = clamp(progress, 0, 1);
+    ctx.save();
+    ctx.globalAlpha = Math.pow(reveal, 1.15);
+    ctx.drawImage(this.mobileToCanvas, 0, 0, width, height);
+    ctx.restore();
+
+    const energy = clamp(audio.rms * 1.5 + audio.treble * 0.4 + audio.beatStrength * 0.35, 0, 1.5);
+    const particles = Math.round(50 + energy * 90);
+    ctx.save();
+    ctx.globalCompositeOperation = "destination-out";
+    for (let i = 0; i < particles; i += 1) {
+      const seed = i * 63.17 + 2.41;
+      const t = clamp((reveal - (Math.sin(seed * 0.43) * 0.5 + 0.5) * 0.8) / 0.2, 0, 1);
+      if (t <= 0) continue;
+      const x = (Math.sin(seed) * 0.5 + 0.5) * width;
+      const y = (Math.sin(seed * 1.61) * 0.5 + 0.5) * height;
+      const r = (width * 0.008 + energy * width * 0.006) * (0.4 + t);
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
   }
 
   private drawShatterTransition({

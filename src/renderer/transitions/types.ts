@@ -35,10 +35,12 @@ export type TransitionRendererApi = {
   drawCameraPunchThrough: (context: TransitionDrawContext) => void;
   drawBitplaneWipe: (context: TransitionDrawContext) => void;
   drawGlitch: (context: TransitionDrawContext) => void;
+  drawAudioReactiveParticle: (context: TransitionDrawContext) => void;
   drawMobileDefaultCrossfade: (context: MobileTransitionDrawContext) => void;
   drawMobileShatter: (context: MobileTransitionDrawContext) => void;
   drawMobileCameraPunchThrough: (context: MobileTransitionDrawContext) => void;
   drawMobileBitplaneWipe: (context: MobileTransitionDrawContext) => void;
+  drawMobileAudioReactiveParticle: (context: MobileTransitionDrawContext) => void;
 };
 
 export type TransitionSetupContext = {

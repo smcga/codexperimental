@@ -17,7 +17,7 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 - `public/timeline.release.json` is the canonical timeline and adds per-section era presets plus a curated arc for the graphics-history progression.
 - The bundled timeline includes lyric-style overlays in `textCues`; adjust or replace those cues to change the on-screen callouts synced to the music.
 - Timeline playback now applies `audio.offset: -0.128` in `public/timeline.release.json` so the in-app timeline clock matches manual MP3 timing checks (e.g., Audacity) instead of drifting late.
-- Transition types include `fade`, `wipe`, `slide-left`, `slide-right`, `slide-up`, `slide-down`, `iris`, `flash`, `glitch`, `shatter`, `signal-collapse`, `camera-punch-through`, and `bitplane-wipe` (vertical VGA-style bands with staggered timing).
+- Transition types include `fade`, `wipe`, `slide-left`, `slide-right`, `slide-up`, `slide-down`, `iris`, `flash`, `glitch`, `shatter`, `signal-collapse`, `camera-punch-through`, `bitplane-wipe`, and `audio-reactive-particle` (vertical VGA-style bands with staggered timing).
 - Effect sections can include a `params` object to tune effect-specific settings such as starfield speed, warp, or turning intensity.
 - Effects can animate numeric params with an `automation` array on a section or a layer; entries are applied in array order (last wins) and ease over absolute demo time.
 - Sections can optionally define `layers` to mix multiple effects together, with `blend` modes like `screen` or `overlay` and per-layer `opacity`.
