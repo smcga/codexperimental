@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/transitions/index.ts`.
 
-Total transitions: **12**.
+Total transitions: **13**.
 
 ## Table of contents
 
@@ -14,6 +14,7 @@ Total transitions: **12**.
 - [Transition: slide-down](#transition-slide-down)
 - [Transition: iris](#transition-iris)
 - [Transition: flash](#transition-flash)
+- [Transition: glitch](#transition-glitch)
 - [Transition: shatter](#transition-shatter)
 - [Transition: signal-collapse](#transition-signal-collapse)
 - [Transition: camera-punch-through](#transition-camera-punch-through)
@@ -31,6 +32,7 @@ Total transitions: **12**.
 | `slide-down` | Slide Down | yes | no | no |
 | `iris` | Iris | yes | no | no |
 | `flash` | Flash | yes | no | no |
+| `glitch` | Glitch | yes | yes | no |
 | `shatter` | Shatter | yes | yes | yes |
 | `signal-collapse` | Signal Collapse | yes | no | no |
 | `camera-punch-through` | Camera Punch-Through | yes | yes | yes |
@@ -92,6 +94,13 @@ Total transitions: **12**.
 - **Label:** Flash
 - **Visible in editor/debug selectors:** yes
 - **Has mobile renderer:** no
+- **Has state builder:** no
+
+### Transition: glitch
+
+- **Label:** Glitch
+- **Visible in editor/debug selectors:** yes
+- **Has mobile renderer:** yes
 - **Has state builder:** no
 
 ### Transition: shatter
