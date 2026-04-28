@@ -185,6 +185,20 @@ export const buildPlaylistClipTitle = (
   ].join("\n");
 };
 
+export const getVisibleClipRange = (
+  start: number,
+  end: number,
+  viewportStart: number,
+  viewportEnd: number
+): { start: number; end: number } | null => {
+  const visibleStart = Math.max(start, viewportStart);
+  const visibleEnd = Math.min(end, viewportEnd);
+  if (visibleEnd <= visibleStart) {
+    return null;
+  }
+  return { start: visibleStart, end: visibleEnd };
+};
+
 function isMainSlotLayer(layer: RawSectionConfig["layers"][number]): boolean {
   const fitAlign = layer.fitAlign ?? "fill";
   return (
@@ -680,6 +694,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   let playbackButton: HTMLButtonElement | null = null;
   let previewCanvas: HTMLCanvasElement | null = null;
   let previewContext: CanvasRenderingContext2D | null = null;
+  let playheadElement: HTMLDivElement | null = null;
   let editorVisible = false;
   let currentDemoTime = 0;
   let isPlaying = false;
@@ -1030,7 +1045,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       <div class="editor-playlist-toolbar">
         <span>Track 1</span>
       </div>
-      <div class="editor-ruler">
+      <div class="editor-ruler" data-region="playlist-ruler">
         ${Array.from({ length: ticks + 1 })
           .map((_, index) => {
             const time = Math.min(viewportEnd, playlistViewportStart + (playlistViewportDuration / ticks) * index);
@@ -1049,9 +1064,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
 
     const tracks = view.querySelector<HTMLDivElement>("[data-region='playlist-tracks']");
     const scroll = view.querySelector<HTMLDivElement>("[data-region='playlist-scroll']");
+    const ruler = view.querySelector<HTMLDivElement>("[data-region='playlist-ruler']");
     const scrollbar = view.querySelector<HTMLDivElement>("[data-region='playlist-scrollbar']");
     const scrollbarThumb = view.querySelector<HTMLDivElement>("[data-region='playlist-scrollbar-thumb']");
-    if (!tracks || !scroll || !scrollbar || !scrollbarThumb) {
+    if (!tracks || !scroll || !scrollbar || !scrollbarThumb || !ruler) {
       return;
     }
     const minClipWidthPercent = getMinimumClipWidthPercent(playlistViewportDuration, scroll.clientWidth);
@@ -1070,12 +1086,13 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           if (!scene) {
             return;
           }
-          if (clip.end <= playlistViewportStart || clip.start >= viewportEnd) {
+          const visibleRange = getVisibleClipRange(clip.start, clip.end, playlistViewportStart, viewportEnd);
+          if (!visibleRange) {
             return;
           }
           const clipPercent = getClipPercent(
-            clip.start - playlistViewportStart,
-            clip.end - playlistViewportStart,
+            visibleRange.start - playlistViewportStart,
+            visibleRange.end - playlistViewportStart,
             playlistViewportDuration
           );
           const block = document.createElement("button");
@@ -1124,12 +1141,13 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         });
         return;
       }
-      if (timelineTrack.end <= playlistViewportStart || timelineTrack.start >= viewportEnd) {
+      const visibleRange = getVisibleClipRange(timelineTrack.start, timelineTrack.end, playlistViewportStart, viewportEnd);
+      if (!visibleRange) {
         return;
       }
       const clipPercent = getClipPercent(
-        timelineTrack.start - playlistViewportStart,
-        timelineTrack.end - playlistViewportStart,
+        visibleRange.start - playlistViewportStart,
+        visibleRange.end - playlistViewportStart,
         playlistViewportDuration
       );
       const block = document.createElement("button");
@@ -1155,10 +1173,19 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       tracks.appendChild(block);
     });
 
-    const playhead = document.createElement("div");
-    playhead.className = "editor-playhead";
-    playhead.style.left = `${playheadRatio * 100}%`;
-    tracks.appendChild(playhead);
+    playheadElement = document.createElement("div");
+    playheadElement.className = "editor-playhead";
+    playheadElement.style.left = `${playheadRatio * 100}%`;
+    tracks.appendChild(playheadElement);
+    ruler.addEventListener("pointerdown", (event) => {
+      const rect = ruler.getBoundingClientRect();
+      if (rect.width <= 0) {
+        return;
+      }
+      const ratio = clamp((event.clientX - rect.left) / rect.width, 0, 1);
+      const targetDemoTime = playlistViewportStart + ratio * playlistViewportDuration;
+      init.seek(Math.max(0, targetDemoTime - init.getAudioOffset()));
+    });
 
     tracks.addEventListener("dragover", (event) => {
       event.preventDefault();
@@ -2593,6 +2620,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       if (playbackButton) {
         playbackButton.textContent = playing ? "Pause" : "Play";
         playbackButton.dataset.state = playing ? "playing" : "paused";
+      }
+      if (playheadElement) {
+        const ratio = clamp((demoTime - playlistViewportStart) / Math.max(playlistViewportDuration, 0.001), 0, 1);
+        playheadElement.style.left = `${ratio * 100}%`;
       }
     },
     updatePreview: (source: HTMLCanvasElement) => {

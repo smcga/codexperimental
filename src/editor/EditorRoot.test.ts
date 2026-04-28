@@ -8,6 +8,7 @@ import {
   getClipPercent,
   getMinimumClipWidthPercent,
   buildPlaylistClipTitle,
+  getVisibleClipRange,
   buildEditorTimelineTracks,
   getSceneTimelineClips,
   getPlaylistScrollbarMetrics,
@@ -71,6 +72,17 @@ describe("buildPlaylistClipTitle", () => {
     expect(buildPlaylistClipTitle("Scene 7", "rain", 65.1, 70.4)).toBe(
       "Scene: Scene 7\nEffect: rain\nTime: 01:05.1 → 01:10.4"
     );
+  });
+});
+
+describe("getVisibleClipRange", () => {
+  it("clips ranges to the viewport bounds", () => {
+    expect(getVisibleClipRange(10, 20, 12, 18)).toEqual({ start: 12, end: 18 });
+  });
+
+  it("returns null when clip is fully outside viewport", () => {
+    expect(getVisibleClipRange(1, 2, 3, 4)).toBeNull();
+    expect(getVisibleClipRange(6, 7, 3, 4)).toBeNull();
   });
 });
 
