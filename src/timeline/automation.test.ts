@@ -99,6 +99,41 @@ describe("resolveAutomatedParams", () => {
     expect(params.speed).toBeCloseTo(1.5);
     expect(params.glow).toBeCloseTo(0.4);
   });
+
+  it("supports point-driven segment automation with hold curve", () => {
+    const holdParams = resolveAutomatedParams(2, { speed: 1 }, [
+      {
+        param: "speed",
+        from: 0,
+        to: 1,
+        t0: 0,
+        t1: 10,
+        points: [
+          { time: 0, value: 0.25 },
+          { time: 4, value: 0.75 },
+          { time: 8, value: 0.4 }
+        ],
+        segmentMeta: [{ curveType: "Hold", tension: 0 }, { curveType: "Linear", tension: 0 }]
+      }
+    ]);
+    const linearParams = resolveAutomatedParams(5, { speed: 1 }, [
+      {
+        param: "speed",
+        from: 0,
+        to: 1,
+        t0: 0,
+        t1: 10,
+        points: [
+          { time: 0, value: 0.25 },
+          { time: 4, value: 0.75 },
+          { time: 8, value: 0.4 }
+        ],
+        segmentMeta: [{ curveType: "Hold", tension: 0 }, { curveType: "Linear", tension: 0 }]
+      }
+    ]);
+    expect(holdParams.speed).toBeCloseTo(0.25);
+    expect(linearParams.speed).toBeCloseTo(0.6625);
+  });
 });
 
 describe("easeFn", () => {

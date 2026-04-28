@@ -24,6 +24,7 @@ import {
 import { clearTimelineDraft, downloadTimeline, loadTimelineDraft, saveTimelineDraft } from "./serialization";
 import { getManifestDebugConfig } from "../renderer/effects/manifest";
 import { transitionOptions } from "../renderer/transitions";
+import { createAutomationClip, insertPoint } from "./automationClip";
 
 const ERA_PRESETS: EraPreset[] = ["8bit", "16bit", "ps1", "pcdemo", "future"];
 const BLEND_MODES: BlendMode[] = [
@@ -596,6 +597,20 @@ export const splitCueWords = (value: string): string[] => {
     .split(/\s+/)
     .map((word) => word.trim())
     .filter((word) => word.length > 0);
+};
+
+export const ensureAutomationPoints = (entry: RawParamAutomation): RawParamAutomation => {
+  if (entry.points && entry.points.length >= 2) {
+    return entry;
+  }
+  return {
+    ...entry,
+    points: [
+      { time: parseTimelineTimeValue(entry.t0), value: entry.from },
+      { time: parseTimelineTimeValue(entry.t1), value: entry.to }
+    ],
+    segmentMeta: [{ curveType: "Linear", tension: 0 }]
+  };
 };
 
 
@@ -2055,6 +2070,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
               </select>
               <button type="button" data-action="move-up">↑</button>
               <button type="button" data-action="move-down">↓</button>
+              <button type="button" data-action="add-point">+Pt</button>
               <button type="button" data-action="delete">Delete</button>
             </div>`
           )
@@ -2104,6 +2120,29 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         }
         const next = [...automation];
         [next[index + 1], next[index]] = [next[index], next[index + 1]];
+        onChange(next);
+      });
+      row.querySelector<HTMLButtonElement>("[data-action='add-point']")?.addEventListener("click", () => {
+        const current = ensureAutomationPoints(automation[index]);
+        const clip = createAutomationClip(current.points ?? []);
+        const inserted = insertPoint(
+          { ...clip, segmentMeta: current.segmentMeta ?? clip.segmentMeta, mode: "free" },
+          {
+            time: (parseTimelineTimeValue(current.t0) + parseTimelineTimeValue(current.t1)) / 2,
+            value: (current.from + current.to) / 2
+          },
+          { gridSize: 0.1, snapEnabled: true }
+        );
+        const next = automation.map((entry, entryIndex) => {
+          if (entryIndex !== index) {
+            return entry;
+          }
+          return {
+            ...entry,
+            points: inserted.points,
+            segmentMeta: inserted.segmentMeta
+          };
+        });
         onChange(next);
       });
     });

@@ -31,7 +31,8 @@ import {
   splitCueWords,
   generateWordTextCues
   ,
-  sortScenesForEditorList
+  sortScenesForEditorList,
+  ensureAutomationPoints
 } from "./EditorRoot";
 
 describe("formatTime", () => {
@@ -177,6 +178,23 @@ describe("computeSceneSeekTime", () => {
 
   it("accepts scene start values provided as timeline strings", () => {
     expect(computeSceneSeekTime("00:12.5", 2.5)).toBe(10);
+  });
+});
+
+describe("ensureAutomationPoints", () => {
+  it("derives default two-point clip data from legacy from/to and t0/t1 values", () => {
+    const next = ensureAutomationPoints({
+      param: "speed",
+      from: 0.2,
+      to: 0.8,
+      t0: "00:10.0",
+      t1: "00:12.0"
+    });
+    expect(next.points).toEqual([
+      { time: 10, value: 0.2 },
+      { time: 12, value: 0.8 }
+    ]);
+    expect(next.segmentMeta).toEqual([{ curveType: "Linear", tension: 0 }]);
   });
 });
 

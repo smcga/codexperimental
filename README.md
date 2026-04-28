@@ -367,6 +367,10 @@ npm run preview
 - Append `?editor=1` in dev builds to open the Scene + Timeline Editor (or toggle "Editor mode" in the debug overlay). The editor shows a live preview, edits hot-apply to the running demo, and changes persist to localStorage.
 - The timeline editor layout uses a narrow Scenes sidebar, a center workspace with Preview plus a single accordion stack for Basic/Main Slots/Transition, and a right Inspector for scene/layer/cue editing. The Generate Text Cues tool opens from a bottom-left button as a modal.
 - The timeline area now dedicates at least half the editor height, renders all scenes on the main track, and adds extra rows for selected-scene layers and scene automation entries.
+- Automation clip editing foundations now treat automation as point-driven envelopes (per-segment curve type + tension metadata), with helpers for snapped point add/remove/move, slide-mode temporal shifting, and segment-level curve/tension updates for timeline UI integration.
+- In the Scene Automation table, each automation row now includes **+Pt** to seed/edit point-based clip data from legacy `from/to` ramps for timeline-envelope workflows.
+- Automation interaction model mirrors FL-style priorities in code: point hit > segment hit > empty hit, with optional grid-snapped step drawing and axis constraints for pulse-like horizontal/vertical edits.
+- Clip-edit operations preserve adjacent segment metadata when adding/removing points so curve/tension edits remain stable during iterative shaping.
 - While zoomed in, use **Shift + mouse wheel** (or horizontal trackpad scroll) to pan left/right across the playlist without resetting zoom.
 - Playlist quick controls: mouse wheel = zoom to cursor, Shift+wheel/horizontal scroll = pan timeline, drag empty lane = scrub pan.
 - The playlist now includes a dedicated timeline scrollbar under the lanes; the thumb shrinks as you zoom in and can be dragged/clicked for coarse navigation across the full song length.

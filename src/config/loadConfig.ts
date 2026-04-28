@@ -133,6 +133,11 @@ export type RawParamAutomation = {
   t0: number | string;
   t1: number | string;
   ease?: string;
+  points?: Array<{ time: number; value: number }>;
+  segmentMeta?: Array<{
+    curveType?: "Linear" | "SingleCurve" | "DoubleCurve" | "Hold" | "Stairs" | "Smooth" | "Pulse" | "Wave";
+    tension?: number;
+  }>;
 };
 
 export type TransitionConfig = {

@@ -28,6 +28,11 @@ export type ParamAutomation = {
   t0: number;
   t1: number;
   ease?: EaseName;
+  points?: Array<{ time: number; value: number }>;
+  segmentMeta?: Array<{
+    curveType?: "Linear" | "SingleCurve" | "DoubleCurve" | "Hold" | "Stairs" | "Smooth" | "Pulse" | "Wave";
+    tension?: number;
+  }>;
 };
 
 export const clamp01 = (value: number): number => (value < 0 ? 0 : value > 1 ? 1 : value);
@@ -154,6 +159,50 @@ export function lerp(a: number, b: number, t: number): number {
   return a + (b - a) * t;
 }
 
+function resolvePointAutomationValue(now: number, automation: ParamAutomation): number | null {
+  const points = automation.points;
+  if (!points || points.length < 2) {
+    return null;
+  }
+  const sorted = [...points].sort((a, b) => a.time - b.time);
+  if (now <= sorted[0].time) {
+    return sorted[0].value;
+  }
+  if (now >= sorted[sorted.length - 1].time) {
+    return sorted[sorted.length - 1].value;
+  }
+  const segmentIndex = sorted.findIndex((_, index) => index < sorted.length - 1 && now >= sorted[index].time && now <= sorted[index + 1].time);
+  if (segmentIndex < 0) {
+    return sorted[0].value;
+  }
+  const left = sorted[segmentIndex];
+  const right = sorted[segmentIndex + 1];
+  const rawProgress = clamp01((now - left.time) / Math.max(1e-6, right.time - left.time));
+  const curveType = automation.segmentMeta?.[segmentIndex]?.curveType ?? "Linear";
+  const tension = clamp01(((automation.segmentMeta?.[segmentIndex]?.tension ?? 0) + 1) / 2);
+  if (curveType === "Hold") {
+    return left.value;
+  }
+  if (curveType === "Stairs") {
+    const steps = Math.max(2, Math.round(2 + tension * 14));
+    const snapped = Math.floor(rawProgress * steps) / steps;
+    return lerp(left.value, right.value, snapped);
+  }
+  if (curveType === "Pulse" || curveType === "Wave") {
+    const frequency = 1 + tension * 8;
+    const oscillation = curveType === "Pulse" ? Math.sign(Math.sin(rawProgress * Math.PI * 2 * frequency)) : Math.sin(rawProgress * Math.PI * 2 * frequency);
+    const base = lerp(left.value, right.value, rawProgress);
+    return base + oscillation * 0.05 * Math.abs(right.value - left.value);
+  }
+  const easedProgress =
+    curveType === "SingleCurve"
+      ? Math.pow(rawProgress, 1 + tension * 3)
+      : curveType === "DoubleCurve" || curveType === "Smooth"
+        ? easeFn("easeInOutSine", rawProgress)
+        : rawProgress;
+  return lerp(left.value, right.value, easedProgress);
+}
+
 export function resolveAutomatedParams(
   now: number,
   baseParams: Record<string, number>,
@@ -173,7 +222,10 @@ export function resolveAutomatedParams(
       return;
     }
     let value: number;
-    if (t0 === t1) {
+    const pointValue = resolvePointAutomationValue(now, automation);
+    if (pointValue !== null) {
+      value = pointValue;
+    } else if (t0 === t1) {
       value = now < t0 ? from : to;
     } else if (now <= t0) {
       value = from;
