@@ -104,6 +104,7 @@ type CueTypography = {
 
 type MainSlot = "top" | "centre" | "bottom";
 type MainSlotSelection = Record<MainSlot, string | null>;
+export type SceneListSortMode = "timeline" | "alphabetical" | "start-time";
 
 const MAIN_SLOT_ORDER: MainSlot[] = ["centre", "top", "bottom"];
 const MAIN_SLOT_LABELS: Array<{ slot: MainSlot; label: string }> = [
@@ -219,6 +220,21 @@ export function applyMainSlotSelection(scene: RawSectionConfig, selection: MainS
     });
   scene.layers = [...slotLayers, ...preservedLayers];
 }
+
+export const sortScenesForEditorList = (
+  scenes: RawSectionConfig[],
+  sortMode: SceneListSortMode
+): RawSectionConfig[] => {
+  if (sortMode === "alphabetical") {
+    return [...scenes].sort((left, right) => left.id.localeCompare(right.id));
+  }
+  if (sortMode === "start-time") {
+    return [...scenes].sort(
+      (left, right) => parseTimelineTimeValue(left.start) - parseTimelineTimeValue(right.start) || left.id.localeCompare(right.id)
+    );
+  }
+  return scenes;
+};
 
 export const getScenePlayingAtTime = (
   scenes: RawSectionConfig[],
@@ -644,6 +660,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   let currentDemoTime = 0;
   let isPlaying = false;
   let sceneSearchQuery = "";
+  let sceneListSortMode: SceneListSortMode = "timeline";
   let playlistViewportStart = 0;
   let playlistViewportDuration = 45;
   let activePlaylistPan:
@@ -795,7 +812,17 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       ${state.error ? `<div class="editor-error" role="alert">${state.error}</div>` : ""}
       <div class="editor-body">
         <section class="editor-column editor-scenes">
-          <div class="editor-section-title">SCENES</div>
+          <div class="editor-scene-list-header">
+            <div class="editor-section-title">SCENES</div>
+            <details class="editor-sort-menu">
+              <summary class="editor-sort-trigger">Sort</summary>
+              <div class="editor-sort-flyout" role="menu" aria-label="Scene sort mode">
+                <button type="button" data-action="scene-sort" data-sort-mode="alphabetical">Alphabetical</button>
+                <button type="button" data-action="scene-sort" data-sort-mode="timeline">timeline.json order</button>
+                <button type="button" data-action="scene-sort" data-sort-mode="start-time">Start time</button>
+              </div>
+            </details>
+          </div>
           <label class="editor-search">
             <span class="sr-only">Search scenes</span>
             <input type="search" data-action="scene-search" value="${sceneSearchQuery}" placeholder="Search scenes…" />
@@ -876,8 +903,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       return;
     }
     list.innerHTML = "";
-    const sections = state.timeline.sections.filter((scene) =>
-      scene.id.toLowerCase().includes(sceneSearchQuery.trim().toLowerCase())
+    const sections = sortScenesForEditorList(
+      state.timeline.sections.filter((scene) => scene.id.toLowerCase().includes(sceneSearchQuery.trim().toLowerCase())),
+      sceneListSortMode
     );
     let dragIndex: number | null = null;
 
@@ -930,6 +958,21 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         init.seek(computeSceneSeekTime(scene.start, init.getAudioOffset()));
       });
       list.appendChild(item);
+    });
+
+    const sortButtons = init.container.querySelectorAll<HTMLButtonElement>("[data-action='scene-sort']");
+    sortButtons.forEach((button) => {
+      const active = button.dataset.sortMode === sceneListSortMode;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", active ? "true" : "false");
+      button.addEventListener("click", () => {
+        const selectedSort = button.dataset.sortMode as SceneListSortMode | undefined;
+        if (!selectedSort || sceneListSortMode === selectedSort) {
+          return;
+        }
+        sceneListSortMode = selectedSort;
+        renderSceneList();
+      });
     });
   };
 
