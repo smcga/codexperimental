@@ -366,7 +366,7 @@ npm run preview
 - Run `npm run test:integration` in an environment with the DB2 secrets set to verify the live Upstash database exists and can be read/written. If the DB2 URL is malformed, the APIs now fail closed instead of crashing with a 500 during Redis client creation. The serverless API modules also use explicit `.js` ESM imports so Vercel can resolve the emitted files correctly.
 - Append `?editor=1` in dev builds to open the Scene + Timeline Editor (or toggle "Editor mode" in the debug overlay). The editor shows a live preview, edits hot-apply to the running demo, and changes persist to localStorage.
 - The timeline editor layout now uses a cleaner shell with a narrow Scenes sidebar, a center workspace (Basic panel + Preview + Main Slots/Transition on the top row), and a right Inspector for deeper scene/layer/cue editing.
-- The timeline area now dedicates at least half the editor height and shows a main scene track plus additional tracks for selected-scene layers and scene automation entries.
+- The timeline area now dedicates at least half the editor height, renders all scenes on the main track, and adds extra rows for selected-scene layers and scene automation entries.
 - While zoomed in, use **Shift + mouse wheel** (or horizontal trackpad scroll) to pan left/right across the playlist without resetting zoom.
 - Playlist quick controls: mouse wheel = zoom to cursor, Shift+wheel/horizontal scroll = pan timeline, drag empty lane = scrub pan.
 - The playlist now includes a dedicated timeline scrollbar under the lanes; the thumb shrinks as you zoom in and can be dragged/clicked for coarse navigation across the full song length.

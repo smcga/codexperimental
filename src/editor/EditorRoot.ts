@@ -347,6 +347,20 @@ type EditorTimelineTrack = {
   end: number;
 };
 
+export const getSceneTimelineClips = (scenes: RawSectionConfig[], getSceneEnd: (scene: RawSectionConfig) => number) => {
+  return [...scenes]
+    .sort((a, b) => parseTimelineTimeValue(a.start) - parseTimelineTimeValue(b.start))
+    .map((scene) => {
+      const start = parseTimelineTimeValue(scene.start);
+      const end = Math.max(start + 0.05, getSceneEnd(scene));
+      return {
+        sceneId: scene.id,
+        start,
+        end
+      };
+    });
+};
+
 export const buildEditorTimelineTracks = (
   selectedScene: RawSectionConfig | null,
   selectedSceneEnd: number
@@ -935,6 +949,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       (state.selectedSceneId ? scenes.find((scene) => scene.id === state.selectedSceneId) : null) ?? currentScene;
     const focusSceneEnd = focusScene ? getSceneEnd(focusScene) : 0;
     const timelineTracks = buildEditorTimelineTracks(focusScene, focusSceneEnd);
+    const sceneClips = getSceneTimelineClips(scenes, getSceneEnd);
     const playheadRatio = clamp((currentDemoTime - playlistViewportStart) / Math.max(playlistViewportDuration, 0.001), 0, 1);
 
     view.innerHTML = `
@@ -974,7 +989,45 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       lane.dataset.track = String(index);
       lane.innerHTML = `<span class="editor-playlist-track-label">${timelineTrack.kind === "scene" ? "Track 1" : timelineTrack.label}</span>`;
       tracks.appendChild(lane);
-      if (!focusScene) {
+      if (timelineTrack.kind === "scene") {
+        sceneClips.forEach((clip) => {
+          const scene = scenes.find((entry) => entry.id === clip.sceneId);
+          if (!scene) {
+            return;
+          }
+          const clipPercent = getClipPercent(
+            clip.start - playlistViewportStart,
+            clip.end - playlistViewportStart,
+            playlistViewportDuration
+          );
+          if (clipPercent.left >= 100 || clipPercent.left + clipPercent.width <= 0) {
+            return;
+          }
+          const block = document.createElement("button");
+          block.type = "button";
+          block.className = "editor-block editor-playlist-clip";
+          block.style.left = `${clipPercent.left}%`;
+          block.style.width = `${Math.max(3, clipPercent.width)}%`;
+          block.style.top = `calc(${index} * var(--editor-playlist-track-height) + 0.25rem)`;
+          block.textContent = clip.sceneId;
+          block.title = `${clip.sceneId} (${formatTime(clip.start)} → ${formatTime(clip.end)})`;
+          if (clip.sceneId === state.selectedSceneId) {
+            block.classList.add("is-selected");
+          }
+          block.addEventListener("click", () => {
+            selectScene(clip.sceneId);
+            init.seek(computeSceneSeekTime(scene.start, init.getAudioOffset()));
+          });
+          block.draggable = true;
+          block.addEventListener("dragstart", (event) => {
+            event.dataTransfer?.setData("text/plain", clip.sceneId);
+            block.classList.add("is-dragging");
+          });
+          block.addEventListener("dragend", () => {
+            block.classList.remove("is-dragging");
+          });
+          tracks.appendChild(block);
+        });
         return;
       }
       const clipPercent = getClipPercent(
@@ -994,8 +1047,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         block.classList.add("is-selected");
       }
       block.addEventListener("click", () => {
-        selectScene(focusScene.id);
-        init.seek(computeSceneSeekTime(focusScene.start, init.getAudioOffset()));
+        if (focusScene) {
+          selectScene(focusScene.id);
+          init.seek(computeSceneSeekTime(focusScene.start, init.getAudioOffset()));
+        }
       });
       tracks.appendChild(block);
     });

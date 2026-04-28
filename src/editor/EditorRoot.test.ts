@@ -7,6 +7,7 @@ import {
   clampPlaylistViewportStart,
   getClipPercent,
   buildEditorTimelineTracks,
+  getSceneTimelineClips,
   getPlaylistScrollbarMetrics,
   getMainSlotSelection,
   applyMainSlotSelection,
@@ -78,6 +79,23 @@ describe("buildEditorTimelineTracks", () => {
 
   it("returns an empty list when no scene is selected", () => {
     expect(buildEditorTimelineTracks(null, 0)).toEqual([]);
+  });
+});
+
+describe("getSceneTimelineClips", () => {
+  it("returns sorted scene clips with computed end values", () => {
+    const clips = getSceneTimelineClips(
+      [
+        { id: "b", start: 20, effect: "rain" },
+        { id: "a", start: 10, effect: "starfield" }
+      ],
+      (scene) => (scene.id === "a" ? 18 : 25)
+    );
+
+    expect(clips).toEqual([
+      { sceneId: "a", start: 10, end: 18 },
+      { sceneId: "b", start: 20, end: 25 }
+    ]);
   });
 });
 
