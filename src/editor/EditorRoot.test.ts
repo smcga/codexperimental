@@ -6,6 +6,7 @@ import {
   formatTime,
   clampPlaylistViewportStart,
   getClipPercent,
+  getMinimumClipWidthPercent,
   buildEditorTimelineTracks,
   getSceneTimelineClips,
   getPlaylistScrollbarMetrics,
@@ -50,6 +51,17 @@ describe("getClipPercent", () => {
 
   it("clamps overflow values to timeline bounds", () => {
     expect(getClipPercent(-5, 140, 100)).toEqual({ left: 0, width: 100 });
+  });
+});
+
+describe("getMinimumClipWidthPercent", () => {
+  it("converts pixel minimum width to a percent of the timeline width", () => {
+    expect(getMinimumClipWidthPercent(45, 800, 2)).toBeCloseTo(0.25);
+  });
+
+  it("returns zero for invalid dimensions", () => {
+    expect(getMinimumClipWidthPercent(0, 800)).toBe(0);
+    expect(getMinimumClipWidthPercent(45, 0)).toBe(0);
   });
 });
 

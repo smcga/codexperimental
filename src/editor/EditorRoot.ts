@@ -161,6 +161,17 @@ export const getClipPercent = (
   };
 };
 
+export const getMinimumClipWidthPercent = (
+  viewportDuration: number,
+  timelineWidthPx: number,
+  minPixelWidth = 2
+): number => {
+  if (!Number.isFinite(viewportDuration) || viewportDuration <= 0 || !Number.isFinite(timelineWidthPx) || timelineWidthPx <= 0) {
+    return 0;
+  }
+  return (minPixelWidth / timelineWidthPx) * 100;
+};
+
 function isMainSlotLayer(layer: RawSectionConfig["layers"][number]): boolean {
   const fitAlign = layer.fitAlign ?? "fill";
   return (
@@ -1030,6 +1041,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     if (!tracks || !scroll || !scrollbar || !scrollbarThumb) {
       return;
     }
+    const minClipWidthPercent = getMinimumClipWidthPercent(playlistViewportDuration, scroll.clientWidth);
     const visualTracks = timelineTracks.length > 0 ? timelineTracks : [{ id: "empty", label: "Track 1", kind: "scene" as const, start: 0, end: 0 }];
     tracks.style.setProperty("--playlist-track-count", String(visualTracks.length));
 
@@ -1057,13 +1069,16 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           block.type = "button";
           block.className = "editor-block editor-playlist-clip";
           block.style.left = `${clipPercent.left}%`;
-          block.style.width = `${Math.max(3, clipPercent.width)}%`;
+          block.style.width = `${Math.max(minClipWidthPercent, clipPercent.width)}%`;
           block.style.top = `calc(${index} * var(--editor-playlist-track-height) + 0.25rem)`;
           block.textContent = clip.sceneId;
           block.title = `${clip.sceneId} (${formatTime(clip.start)} → ${formatTime(clip.end)})`;
           block.dataset.sceneId = clip.sceneId;
           if (clip.sceneId === state.selectedSceneId) {
             block.classList.add("is-selected");
+          }
+          if (clipPercent.width < 4) {
+            block.classList.add("is-compact");
           }
           block.addEventListener("click", () => {
             selectScene(clip.sceneId);
@@ -1105,12 +1120,15 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       block.type = "button";
       block.className = "editor-block editor-playlist-clip";
       block.style.left = `${clipPercent.left}%`;
-      block.style.width = `${Math.max(3, clipPercent.width)}%`;
+      block.style.width = `${Math.max(minClipWidthPercent, clipPercent.width)}%`;
       block.style.top = `calc(${index} * var(--editor-playlist-track-height) + 0.25rem)`;
       block.textContent = focusScene.id;
       block.title = `${timelineTrack.label} (${formatTime(timelineTrack.start)} → ${formatTime(timelineTrack.end)})`;
       if (focusScene.id === state.selectedSceneId) {
         block.classList.add("is-selected");
+      }
+      if (clipPercent.width < 4) {
+        block.classList.add("is-compact");
       }
       block.addEventListener("click", () => {
         if (focusScene) {

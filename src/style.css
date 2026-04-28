@@ -969,6 +969,11 @@ body,
   background: rgba(142, 249, 255, 0.3);
 }
 
+.editor-playlist-clip.is-compact {
+  padding: 0.05rem;
+  font-size: 0;
+}
+
 .editor-inspector-body {
   overflow-y: auto;
   overflow-x: hidden;
