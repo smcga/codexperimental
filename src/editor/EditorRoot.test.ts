@@ -33,6 +33,8 @@ import {
   ,
   sortScenesForEditorList,
   ensureAutomationPoints
+  ,
+  buildAutomationTrackPolyline
 } from "./EditorRoot";
 
 describe("formatTime", () => {
@@ -195,6 +197,22 @@ describe("ensureAutomationPoints", () => {
       { time: 12, value: 0.8 }
     ]);
     expect(next.segmentMeta).toEqual([{ curveType: "Linear", tension: 0 }]);
+  });
+});
+
+describe("buildAutomationTrackPolyline", () => {
+  it("maps point time/value pairs into SVG polyline coordinates", () => {
+    const polyline = buildAutomationTrackPolyline(
+      [
+        { time: 10, value: 0 },
+        { time: 15, value: 0.5 },
+        { time: 20, value: 1 }
+      ],
+      { start: 10, end: 20 },
+      100,
+      50
+    );
+    expect(polyline).toBe("0,50 50,25 100,0");
   });
 });
 

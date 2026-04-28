@@ -198,6 +198,25 @@ export const getVisibleClipRange = (
   return { start: visibleStart, end: visibleEnd };
 };
 
+export const buildAutomationTrackPolyline = (
+  points: Array<{ time: number; value: number }>,
+  range: { start: number; end: number },
+  width = 1000,
+  height = 64
+): string => {
+  if (points.length === 0) {
+    return "";
+  }
+  const span = Math.max(0.001, range.end - range.start);
+  return points
+    .map((point) => {
+      const x = clamp(((point.time - range.start) / span) * width, 0, width);
+      const y = clamp((1 - point.value) * height, 0, height);
+      return `${x},${y}`;
+    })
+    .join(" ");
+};
+
 function isMainSlotLayer(layer: RawSectionConfig["layers"][number]): boolean {
   const fitAlign = layer.fitAlign ?? "fill";
   return (
@@ -1192,6 +1211,36 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           init.seek(computeSceneSeekTime(focusScene.start, init.getAudioOffset()));
         }
       });
+      if (timelineTrack.kind === "automation") {
+        const trackMatch = timelineTrack.id.match(/:automation:(\d+)$/);
+        const automationIndex = trackMatch ? Number(trackMatch[1]) : -1;
+        const automationEntry = focusScene.automation?.[automationIndex];
+        if (automationEntry) {
+          const seeded = ensureAutomationPoints(automationEntry);
+          const polyline = document.createElement("div");
+          polyline.className = "editor-playlist-automation-line";
+          const pointsMarkup = buildAutomationTrackPolyline(
+            seeded.points ?? [],
+            { start: timelineTrack.start, end: timelineTrack.end },
+            1000,
+            64
+          );
+          polyline.innerHTML = `<svg viewBox="0 0 1000 64" preserveAspectRatio="none" style="width:100%;height:100%;pointer-events:none"><polyline points="${pointsMarkup}" fill="none" stroke="#79ffd7" stroke-width="2" />${(seeded.points ?? [])
+            .map((point) => {
+              const pointMarkup = buildAutomationTrackPolyline(
+                [point],
+                { start: timelineTrack.start, end: timelineTrack.end },
+                1000,
+                64
+              );
+              const [cx = "0", cy = "0"] = pointMarkup.split(",");
+              return `<circle cx="${cx}" cy="${cy}" r="2.5" fill="#cffff2" />`;
+            })
+            .join("")}</svg>`;
+          block.appendChild(polyline);
+          block.textContent = "";
+        }
+      }
       tracks.appendChild(block);
     });
 
