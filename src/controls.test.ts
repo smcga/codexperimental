@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { getEndSkipTime, getRelativeSeekTime, getSecondHalfSkipTime, shouldHandleGlobalShortcut } from "./controls";
+import {
+  getEditorShortcutAction,
+  getEndSkipTime,
+  getRelativeSeekTime,
+  getSecondHalfSkipTime,
+  shouldHandleGlobalShortcut
+} from "./controls";
 
 describe("getSecondHalfSkipTime", () => {
   it("skips forward to the configured second-half time", () => {
@@ -69,5 +75,21 @@ describe("shouldHandleGlobalShortcut", () => {
       closest: (selector: string) => (selector.includes("contenteditable") ? {} : null)
     } as EventTarget;
     expect(shouldHandleGlobalShortcut(target)).toBe(false);
+  });
+});
+
+
+describe("getEditorShortcutAction", () => {
+  it("maps spacebar to play/pause toggle", () => {
+    expect(getEditorShortcutAction(" ")).toBe("toggle-playback");
+  });
+
+  it("maps left/right arrows to 3-second seek actions", () => {
+    expect(getEditorShortcutAction("ArrowLeft")).toBe("seek-backward");
+    expect(getEditorShortcutAction("ArrowRight")).toBe("seek-forward");
+  });
+
+  it("returns null for unrelated keys", () => {
+    expect(getEditorShortcutAction("Enter")).toBeNull();
   });
 });
