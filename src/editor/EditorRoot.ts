@@ -18,7 +18,6 @@ import {
   duplicateScene,
   ensureTimelineShape,
   parseTimelineTimeValue,
-  parseAdvancedParamsJSON,
   reorderLayers,
   reorderScenes
 } from "./state/timelineStore";
@@ -77,7 +76,6 @@ type EditorState = {
   selectedSceneId: string | null;
   loopEnabled: boolean;
   error: string | null;
-  fieldErrors: Record<string, string>;
 };
 
 type EditorParamValue = number | string | boolean | null;
@@ -687,7 +685,6 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     selectedSceneId: null,
     loopEnabled: false,
     error: null,
-    fieldErrors: {}
   };
   let playbackLabel: HTMLSpanElement | null = null;
   let previewPlaybackLabel: HTMLSpanElement | null = null;
@@ -894,7 +891,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
                 <canvas data-region="preview-canvas" width="640" height="360"></canvas>
               </div>
             </div>
-            <div class="editor-top-panel" data-region="slots-panel"></div>
+            
           </div>
           <div class="editor-preview-transport">
             <span data-region="preview-time">${formatTime(currentDemoTime)} / ${formatTime(init.getAudioDuration())}</span>
@@ -914,6 +911,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         </section>
       </div>
       <div class="editor-transport" data-region="transport">
+        <button type="button" class="editor-generate-cues-trigger" data-action="open-cue-generator">Generate text cues</button>
         <div class="editor-transport-row">
           <button type="button" data-action="play-toggle">Play</button>
           <button type="button" data-action="jump-scene">Jump to scene</button>
@@ -922,6 +920,15 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
             <span>Loop scene</span>
           </label>
           <span class="editor-timestamp" data-region="timestamp">00:00.0</span>
+        </div>
+      </div>
+      <div class="editor-modal-backdrop is-hidden" data-region="cue-generator-modal">
+        <div class="editor-modal" role="dialog" aria-modal="true" aria-label="Generate text cues">
+          <div class="editor-modal-header">
+            <div class="editor-section-title">GENERATE TEXT CUES</div>
+            <button type="button" data-action="close-cue-generator">Close</button>
+          </div>
+          <div class="editor-modal-body" data-region="cue-generator-body"></div>
         </div>
       </div>
     `;
@@ -1439,7 +1446,6 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   const renderInspector = (): void => {
     const inspector = init.container.querySelector<HTMLDivElement>("[data-region='inspector']");
     const basicPanel = init.container.querySelector<HTMLDivElement>("[data-region='basic-panel']");
-    const slotsPanel = init.container.querySelector<HTMLDivElement>("[data-region='slots-panel']");
     if (!inspector || !state.timeline) {
       return;
     }
@@ -1447,9 +1453,6 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       inspector.innerHTML = `<div class="editor-empty">Select a scene to edit.</div>`;
       if (basicPanel) {
         basicPanel.innerHTML = "";
-      }
-      if (slotsPanel) {
-        slotsPanel.innerHTML = "";
       }
       return;
     }
@@ -1459,17 +1462,15 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       if (basicPanel) {
         basicPanel.innerHTML = "";
       }
-      if (slotsPanel) {
-        slotsPanel.innerHTML = "";
-      }
       return;
     }
 
     inspector.dataset.sceneId = scene.id;
     if (basicPanel) {
       basicPanel.innerHTML = `
-      <div class="editor-group">
-        <div class="editor-group-title">BASIC</div>
+      <details class="editor-accordion-panel" open>
+        <summary class="editor-group-title">BASIC</summary>
+        <div class="editor-group">
         <label>
           <span>ID</span>
           <input type="text" data-field="id" value="${scene.id}" />
@@ -1502,13 +1503,11 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
             ${FIT_ALIGN_OPTIONS.map((option) => `<option value="${option.value}" ${option.value === (scene.fitAlign ?? "fill") ? "selected" : ""}>${option.label}</option>`).join("")}
           </select>
         </label>
-      </div>
-    `;
-    }
-    if (slotsPanel) {
-      slotsPanel.innerHTML = `
-      <div class="editor-group">
-        <div class="editor-group-title">MAIN SLOTS (Top/Centre/Bottom)</div>
+        </div>
+      </details>
+      <details class="editor-accordion-panel">
+        <summary class="editor-group-title">MAIN SLOTS (Top/Centre/Bottom)</summary>
+        <div class="editor-group">
         <div class="editor-note">Use these to stage up to three simultaneous “main” effects in mobile-fit mode.</div>
         ${(() => {
           const selection = getMainSlotSelection(scene);
@@ -1527,9 +1526,11 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
             `;
           }).join("");
         })()}
-      </div>
-      <div class="editor-group">
-        <div class="editor-group-title">TRANSITION</div>
+        </div>
+      </details>
+      <details class="editor-accordion-panel">
+        <summary class="editor-group-title">TRANSITION</summary>
+        <div class="editor-group">
         <label>
           <span>In</span>
           <select data-field="transition-in">
@@ -1546,7 +1547,8 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           <span>Duration (s)</span>
           <input type="number" step="0.1" data-field="transition-duration" value="${scene.transition?.duration ?? 0.8}" />
         </label>
-      </div>
+        </div>
+      </details>
     `;
     }
     inspector.innerHTML = `
@@ -1565,60 +1567,28 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       </div>
       <div class="editor-group">
         <div class="editor-group-title">Text Cues</div>
-        <details class="editor-cue-bulk" open>
-          <summary>Bulk cue generator</summary>
-          <label>
-            <span>Words / lines</span>
-            <textarea data-bulk-cue-field="text" placeholder="Paste words here (split by spaces or new lines)"></textarea>
-          </label>
-          <div class="editor-cue-bulk-grid">
-            <label>
-              <span>Start (s)</span>
-              <input type="number" step="0.1" data-bulk-cue-field="start" value="${formatEditableTime(scene.start)}" />
-            </label>
-            <label>
-              <span>End (s)</span>
-              <input type="number" step="0.1" data-bulk-cue-field="end" value="${formatEditableTime(getSceneEnd(scene), true)}" />
-            </label>
-            <label>
-              <span>Size (px)</span>
-              <input type="number" step="1" min="1" data-bulk-cue-field="size" value="42" />
-            </label>
-            <label>
-              <span>Colour</span>
-              <input type="text" data-bulk-cue-field="color" value="#ffffff" />
-            </label>
-            <label>
-              <span>Font</span>
-              <input type="text" data-bulk-cue-field="font" value="inherit" />
-            </label>
-            <label>
-              <span>X (0..1)</span>
-              <input type="number" step="0.01" min="0" max="1" data-bulk-cue-field="x" value="0.5" />
-            </label>
-            <label>
-              <span>Y (0..1)</span>
-              <input type="number" step="0.01" min="0" max="1" data-bulk-cue-field="y" value="0.7" />
-            </label>
-            <label>
-              <span>Align</span>
-              <select data-bulk-cue-field="align">
-                <option value="left">Left</option>
-                <option value="center" selected>Center</option>
-                <option value="right">Right</option>
-              </select>
-            </label>
-          </div>
-          <label class="editor-toggle">
-            <input type="checkbox" data-bulk-cue-field="replace" />
-            <span>Replace cues already starting in this scene</span>
-          </label>
-          <button type="button" class="editor-add" data-action="generate-cues">Generate cues from words</button>
-        </details>
         <div data-region="text-cues"></div>
         <button type="button" class="editor-add" data-action="add-cue">+ Text cue</button>
       </div>
     `;
+    const cueModalBody = init.container.querySelector<HTMLElement>("[data-region='cue-generator-body']");
+    if (cueModalBody) {
+      cueModalBody.innerHTML = `
+        <label><span>Words / lines</span><textarea data-bulk-cue-field="text" placeholder="Paste words here (split by spaces or new lines)"></textarea></label>
+        <div class="editor-cue-bulk-grid">
+          <label><span>Start (s)</span><input type="number" step="0.1" data-bulk-cue-field="start" value="${formatEditableTime(scene.start)}" /></label>
+          <label><span>End (s)</span><input type="number" step="0.1" data-bulk-cue-field="end" value="${formatEditableTime(getSceneEnd(scene), true)}" /></label>
+          <label><span>Size (px)</span><input type="number" step="1" min="1" data-bulk-cue-field="size" value="42" /></label>
+          <label><span>Colour</span><input type="text" data-bulk-cue-field="color" value="#ffffff" /></label>
+          <label><span>Font</span><input type="text" data-bulk-cue-field="font" value="inherit" /></label>
+          <label><span>X (0..1)</span><input type="number" step="0.01" min="0" max="1" data-bulk-cue-field="x" value="0.5" /></label>
+          <label><span>Y (0..1)</span><input type="number" step="0.01" min="0" max="1" data-bulk-cue-field="y" value="0.7" /></label>
+          <label><span>Align</span><select data-bulk-cue-field="align"><option value="left">Left</option><option value="center" selected>Center</option><option value="right">Right</option></select></label>
+        </div>
+        <label class="editor-toggle"><input type="checkbox" data-bulk-cue-field="replace" /><span>Replace cues already starting in this scene</span></label>
+        <button type="button" class="editor-add" data-action="generate-cues">Generate cues from words</button>
+      `;
+    }
 
     bindInspectorInputs(scene, init.container);
     renderParamsEditor(
@@ -1655,6 +1625,13 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   };
 
   const bindInspectorInputs = (scene: RawSectionConfig, inspector: HTMLElement): void => {
+    const cueModal = init.container.querySelector<HTMLElement>("[data-region='cue-generator-modal']");
+    init.container.querySelector<HTMLButtonElement>("[data-action='open-cue-generator']")?.addEventListener("click", () => {
+      cueModal?.classList.remove("is-hidden");
+    });
+    init.container.querySelector<HTMLButtonElement>("[data-action='close-cue-generator']")?.addEventListener("click", () => {
+      cueModal?.classList.add("is-hidden");
+    });
     const updateField = (field: string, value: string): void => {
       updateTimeline((draft) => {
         const target = draft.sections.find((section) => section.id === scene.id);
@@ -1736,24 +1713,37 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       });
     });
 
-    const generateCuesButton = inspector.querySelector<HTMLButtonElement>("[data-action='generate-cues']");
+    inspector.querySelectorAll<HTMLDetailsElement>(".editor-accordion-panel").forEach((panel) => {
+      panel.addEventListener("toggle", () => {
+        if (!panel.open) {
+          return;
+        }
+        inspector.querySelectorAll<HTMLDetailsElement>(".editor-accordion-panel").forEach((other) => {
+          if (other !== panel) {
+            other.open = false;
+          }
+        });
+      });
+    });
+
+    const generateCuesButton = init.container.querySelector<HTMLButtonElement>("[data-action='generate-cues']");
     generateCuesButton?.addEventListener("click", () => {
       const text =
-        inspector.querySelector<HTMLTextAreaElement>("[data-bulk-cue-field='text']")?.value ?? "";
-      const start = Number(inspector.querySelector<HTMLInputElement>("[data-bulk-cue-field='start']")?.value ?? 0);
-      const end = Number(inspector.querySelector<HTMLInputElement>("[data-bulk-cue-field='end']")?.value ?? 0);
-      const size = Number(inspector.querySelector<HTMLInputElement>("[data-bulk-cue-field='size']")?.value ?? 42);
+        init.container.querySelector<HTMLTextAreaElement>("[data-bulk-cue-field='text']")?.value ?? "";
+      const start = Number(init.container.querySelector<HTMLInputElement>("[data-bulk-cue-field='start']")?.value ?? 0);
+      const end = Number(init.container.querySelector<HTMLInputElement>("[data-bulk-cue-field='end']")?.value ?? 0);
+      const size = Number(init.container.querySelector<HTMLInputElement>("[data-bulk-cue-field='size']")?.value ?? 42);
       const color =
-        inspector.querySelector<HTMLInputElement>("[data-bulk-cue-field='color']")?.value?.trim() || "#ffffff";
-      const font = inspector.querySelector<HTMLInputElement>("[data-bulk-cue-field='font']")?.value?.trim() || "inherit";
-      const x = Number(inspector.querySelector<HTMLInputElement>("[data-bulk-cue-field='x']")?.value ?? 0.5);
-      const y = Number(inspector.querySelector<HTMLInputElement>("[data-bulk-cue-field='y']")?.value ?? 0.7);
+        init.container.querySelector<HTMLInputElement>("[data-bulk-cue-field='color']")?.value?.trim() || "#ffffff";
+      const font = init.container.querySelector<HTMLInputElement>("[data-bulk-cue-field='font']")?.value?.trim() || "inherit";
+      const x = Number(init.container.querySelector<HTMLInputElement>("[data-bulk-cue-field='x']")?.value ?? 0.5);
+      const y = Number(init.container.querySelector<HTMLInputElement>("[data-bulk-cue-field='y']")?.value ?? 0.7);
       const align =
-        (inspector.querySelector<HTMLSelectElement>("[data-bulk-cue-field='align']")?.value as
+        (init.container.querySelector<HTMLSelectElement>("[data-bulk-cue-field='align']")?.value as
           | "left"
           | "center"
           | "right") ?? "center";
-      const replace = inspector.querySelector<HTMLInputElement>("[data-bulk-cue-field='replace']")?.checked ?? false;
+      const replace = init.container.querySelector<HTMLInputElement>("[data-bulk-cue-field='replace']")?.checked ?? false;
 
       updateTimeline((draft) => {
         const sceneStart = parseTimelineTimeValue(scene.start);
@@ -1800,7 +1790,6 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     const listId = createParamListId(errorKey);
     const existingKeys = new Set(Object.keys(params));
     const availableOptions = paramOptions.filter((option) => !existingKeys.has(option));
-    const error = state.fieldErrors[errorKey];
     container.innerHTML = `
       <datalist id="${listId}">
         ${paramOptions.map((option) => `<option value="${option}"></option>`).join("")}
@@ -1839,17 +1828,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
               <div class="editor-note">All known params are already added.</div>
             `
         }
-        <label>
-          <span>Custom param</span>
-          <input type="text" data-action="add-param-custom" placeholder="paramName" />
-        </label>
-        <button type="button" class="editor-add" data-action="add-param-custom-submit">+ Custom Param</button>
       </div>
-      <label class="editor-advanced">
-        <span>Advanced JSON</span>
-        <textarea data-action="advanced-json" spellcheck="false">${JSON.stringify(params, null, 2)}</textarea>
-      </label>
-      ${error ? `<div class="editor-error-inline">${error}</div>` : ""}
     `;
 
     const rows = container.querySelectorAll<HTMLDivElement>(".editor-param-row");
@@ -2031,29 +2010,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       onChange({ ...params, [key]: nextValue as unknown as number });
     });
 
-    const customParamSubmit = container.querySelector<HTMLButtonElement>("[data-action='add-param-custom-submit']");
-    customParamSubmit?.addEventListener("click", () => {
-      const input = container.querySelector<HTMLInputElement>("[data-action='add-param-custom']");
-      const key = input?.value.trim() ?? "";
-      if (!key) {
-        return;
-      }
-      input.value = "";
-      onChange({ ...params, [key]: 0 });
-    });
 
-    const advanced = container.querySelector<HTMLTextAreaElement>("[data-action='advanced-json']");
-    advanced?.addEventListener("change", () => {
-      const result = parseAdvancedParamsJSON(advanced.value, params);
-      if (result.error) {
-        setState({ fieldErrors: { ...state.fieldErrors, [errorKey]: result.error } });
-        return;
-      }
-      const nextErrors = { ...state.fieldErrors };
-      delete nextErrors[errorKey];
-      setState({ fieldErrors: nextErrors });
-      onChange(result.nextParams);
-    });
   };
 
   const renderAutomationEditor = (
