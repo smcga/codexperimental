@@ -24,6 +24,16 @@ import {
 import { clearTimelineDraft, downloadTimeline, loadTimelineDraft, saveTimelineDraft } from "./serialization";
 import { getManifestDebugConfig } from "../renderer/effects/manifest";
 import { transitionOptions } from "../renderer/transitions";
+import {
+  createAutomationClip,
+  insertPoint,
+  movePoint,
+  removePoint,
+  setSegmentCurveType,
+  setSegmentTension,
+  type AutomationClip,
+  type CurveType
+} from "./automationClip";
 
 const ERA_PRESETS: EraPreset[] = ["8bit", "16bit", "ps1", "pcdemo", "future"];
 const BLEND_MODES: BlendMode[] = [
@@ -68,6 +78,16 @@ const EASE_NAMES = [
   "easeOutBounce",
   "easeOutElastic",
   "easeInOutCirc"
+];
+const CURVE_TYPE_NAMES: CurveType[] = [
+  "Linear",
+  "SingleCurve",
+  "DoubleCurve",
+  "Hold",
+  "Stairs",
+  "Smooth",
+  "Pulse",
+  "Wave"
 ];
 
 type EditorState = {
@@ -676,6 +696,42 @@ export const generateWordTextCues = (options: BulkCueGenerationOptions): RawText
       units: "normalized"
     };
   });
+};
+
+export const toAutomationClip = (entry: RawParamAutomation): AutomationClip => {
+  const t0 = parseTimelineTimeValue(entry.t0);
+  const t1 = parseTimelineTimeValue(entry.t1);
+  const fallback = createAutomationClip([
+    { time: t0, value: entry.from },
+    { time: t1, value: entry.to }
+  ]);
+  if (!entry.clip?.points || entry.clip.points.length < 2) {
+    return fallback;
+  }
+  const clip = createAutomationClip(entry.clip.points, entry.clip.mode ?? "free");
+  clip.segmentMeta = clip.segmentMeta.map((meta, index) => ({
+    curveType: entry.clip?.segmentMeta?.[index]?.curveType ?? meta.curveType,
+    tension: entry.clip?.segmentMeta?.[index]?.tension ?? meta.tension
+  }));
+  return clip;
+};
+
+export const applyClipToAutomationEntry = (entry: RawParamAutomation, clip: AutomationClip): RawParamAutomation => {
+  const points = clip.points;
+  const first = points[0];
+  const last = points[points.length - 1];
+  return {
+    ...entry,
+    from: first.value,
+    to: last.value,
+    t0: first.time,
+    t1: last.time,
+    clip: {
+      mode: clip.mode,
+      points: points.map((point) => ({ ...point })),
+      segmentMeta: clip.segmentMeta.map((meta) => ({ ...meta }))
+    }
+  };
 };
 
 export async function createEditorRoot(init: EditorInit): Promise<EditorController> {
@@ -2056,6 +2112,19 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
               <button type="button" data-action="move-up">↑</button>
               <button type="button" data-action="move-down">↓</button>
               <button type="button" data-action="delete">Delete</button>
+              <details class="editor-automation-clip">
+                <summary>Edit clip points</summary>
+                <div class="editor-automation-clip-actions">
+                  <button type="button" data-action="clip-add-point">+ Point @ mid</button>
+                  <button type="button" data-action="clip-remove-point">- Last point</button>
+                </div>
+                <label>
+                  <span>Slide mode</span>
+                  <input type="checkbox" data-action="clip-slide-mode" />
+                </label>
+                <div class="editor-automation-clip-points"></div>
+                <div class="editor-automation-clip-segments"></div>
+              </details>
             </div>`
           )
           .join("")}
@@ -2106,6 +2175,102 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         [next[index + 1], next[index]] = [next[index], next[index + 1]];
         onChange(next);
       });
+
+      const renderClipEditors = (): void => {
+        const pointContainer = row.querySelector<HTMLDivElement>(".editor-automation-clip-points");
+        const segmentContainer = row.querySelector<HTMLDivElement>(".editor-automation-clip-segments");
+        if (!pointContainer || !segmentContainer) {
+          return;
+        }
+        const clip = toAutomationClip(automation[index]);
+        pointContainer.innerHTML = clip.points
+          .map(
+            (point, pointIndex) => `
+            <div class="editor-automation-clip-point" data-point-index="${pointIndex}">
+              <span>P${pointIndex + 1}</span>
+              <input type="number" step="0.05" data-point-field="time" value="${point.time}" />
+              <input type="number" step="0.05" min="0" max="1" data-point-field="value" value="${point.value}" />
+            </div>`
+          )
+          .join("");
+        segmentContainer.innerHTML = clip.segmentMeta
+          .map(
+            (segment, segmentIndex) => `
+            <div class="editor-automation-clip-segment" data-segment-index="${segmentIndex}">
+              <span>S${segmentIndex + 1}</span>
+              <select data-segment-field="curveType">
+                ${CURVE_TYPE_NAMES.map((name) => `<option value="${name}" ${name === segment.curveType ? "selected" : ""}>${name}</option>`).join("")}
+              </select>
+              <input type="number" step="0.05" min="-1" max="1" data-segment-field="tension" value="${segment.tension}" />
+            </div>`
+          )
+          .join("");
+
+        pointContainer.querySelectorAll<HTMLDivElement>(".editor-automation-clip-point").forEach((pointRow) => {
+          const pointIndex = Number(pointRow.dataset.pointIndex);
+          const applyPointMove = (): void => {
+            const timeValue = Number(pointRow.querySelector<HTMLInputElement>("[data-point-field='time']")?.value ?? 0);
+            const pointValue = Number(pointRow.querySelector<HTMLInputElement>("[data-point-field='value']")?.value ?? 0);
+            const slideEnabled = Boolean(
+              row.querySelector<HTMLInputElement>("[data-action='clip-slide-mode']")?.checked
+            );
+            const moved = movePoint(toAutomationClip(automation[index]), pointIndex, { time: timeValue, value: pointValue }, {
+              gridSize: 0.1,
+              snapEnabled: true,
+              slideMode: slideEnabled
+            });
+            const next = automation.map((entry) => ({ ...entry }));
+            next[index] = applyClipToAutomationEntry(next[index], moved);
+            onChange(next);
+          };
+          pointRow.querySelectorAll<HTMLInputElement>("[data-point-field]").forEach((input) => {
+            input.addEventListener("change", applyPointMove);
+          });
+          pointRow.addEventListener("contextmenu", (event) => {
+            event.preventDefault();
+            const removed = removePoint(toAutomationClip(automation[index]), pointIndex);
+            const next = automation.map((entry) => ({ ...entry }));
+            next[index] = applyClipToAutomationEntry(next[index], removed);
+            onChange(next);
+          });
+        });
+
+        segmentContainer.querySelectorAll<HTMLDivElement>(".editor-automation-clip-segment").forEach((segmentRow) => {
+          const segmentIndex = Number(segmentRow.dataset.segmentIndex);
+          segmentRow.querySelector<HTMLSelectElement>("[data-segment-field='curveType']")?.addEventListener("change", (event) => {
+            const select = event.currentTarget as HTMLSelectElement;
+            const updated = setSegmentCurveType(toAutomationClip(automation[index]), segmentIndex, select.value as CurveType);
+            const next = automation.map((entry) => ({ ...entry }));
+            next[index] = applyClipToAutomationEntry(next[index], updated);
+            onChange(next);
+          });
+          segmentRow.querySelector<HTMLInputElement>("[data-segment-field='tension']")?.addEventListener("change", (event) => {
+            const input = event.currentTarget as HTMLInputElement;
+            const updated = setSegmentTension(toAutomationClip(automation[index]), segmentIndex, Number(input.value));
+            const next = automation.map((entry) => ({ ...entry }));
+            next[index] = applyClipToAutomationEntry(next[index], updated);
+            onChange(next);
+          });
+        });
+      };
+
+      row.querySelector<HTMLButtonElement>("[data-action='clip-add-point']")?.addEventListener("click", () => {
+        const clip = toAutomationClip(automation[index]);
+        const midTime = (clip.points[0].time + clip.points[clip.points.length - 1].time) * 0.5;
+        const midValue = (clip.points[0].value + clip.points[clip.points.length - 1].value) * 0.5;
+        const updated = insertPoint(clip, { time: midTime, value: midValue }, { gridSize: 0.1, snapEnabled: true });
+        const next = automation.map((entry) => ({ ...entry }));
+        next[index] = applyClipToAutomationEntry(next[index], updated);
+        onChange(next);
+      });
+      row.querySelector<HTMLButtonElement>("[data-action='clip-remove-point']")?.addEventListener("click", () => {
+        const clip = toAutomationClip(automation[index]);
+        const updated = removePoint(clip, clip.points.length - 1);
+        const next = automation.map((entry) => ({ ...entry }));
+        next[index] = applyClipToAutomationEntry(next[index], updated);
+        onChange(next);
+      });
+      renderClipEditors();
     });
 
     container.querySelector<HTMLButtonElement>("[data-action='add-automation']")?.addEventListener("click", () => {
