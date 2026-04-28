@@ -4,6 +4,7 @@ import { CameraState } from "../camera";
 export type TransitionDrawContext = {
   ctx: CanvasRenderingContext2D;
   progress: number;
+  duration: number;
   scale: number;
   offsetX: number;
   offsetY: number;
@@ -19,6 +20,7 @@ export type TransitionDrawContext = {
 export type MobileTransitionDrawContext = {
   ctx: CanvasRenderingContext2D;
   progress: number;
+  duration: number;
   width: number;
   height: number;
   audio: AudioFeatures;

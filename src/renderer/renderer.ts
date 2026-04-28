@@ -32,6 +32,7 @@ export type RenderState = {
     to: SectionConfig;
     progress: number;
     type: TransitionType;
+    duration: number;
   };
   textCues: TextCue[];
   audio: AudioFeatures;
@@ -283,6 +284,7 @@ export class Renderer {
       definition.drawMobile?.(this.getTransitionRendererApi(), {
         ctx: targetCtx,
         progress: transition.progress,
+        duration: transition.duration,
         width,
         height,
         audio
@@ -299,6 +301,7 @@ export class Renderer {
   private drawCameraPunchThroughMobileTransition(
     targetCtx: CanvasRenderingContext2D,
     progress: number,
+    _duration: number,
     width: number,
     height: number
   ): void {
@@ -585,6 +588,7 @@ export class Renderer {
     definition.draw(this.getTransitionRendererApi(), {
       ctx,
       progress: transition.progress,
+      duration: transition.duration,
       scale,
       offsetX,
       offsetY,
@@ -611,7 +615,7 @@ export class Renderer {
       drawBitplaneWipe: (context) => this.drawBitplaneWipeTransition(context),
       drawGlitch: (context) => this.drawGlitchTransition(context),
       drawAudioReactiveParticle: (context) => this.drawAudioReactiveParticleTransition(context),
-      drawMobileDefaultCrossfade: (context) => this.drawMobileDefaultCrossfade(context.ctx, context.progress, context.width, context.height),
+      drawMobileDefaultCrossfade: (context) => this.drawMobileDefaultCrossfade(context.ctx, context.progress, context.duration, context.width, context.height),
       drawMobileShatter: (context) => this.drawMobileShatterTransition(context),
       drawMobileCameraPunchThrough: (context) =>
         this.drawCameraPunchThroughMobileTransition(context.ctx, context.progress, context.width, context.height),
@@ -635,6 +639,7 @@ export class Renderer {
   private drawMobileDefaultCrossfade(
     ctx: CanvasRenderingContext2D,
     progress: number,
+    _duration: number,
     width: number,
     height: number
   ): void {
@@ -867,7 +872,7 @@ export class Renderer {
 
 
   private drawAudioReactiveParticleTransition({
-    ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, smoothing, audio
+    ctx, progress, duration, scale, offsetX, offsetY, shakeX, shakeY, camera, smoothing, audio
   }: TransitionDrawContext): void {
     const width = this.baseWidth * scale;
     const height = this.baseHeight * scale;
@@ -882,12 +887,14 @@ export class Renderer {
       this.drawCanvasToRect(ctx, this.baseCanvas, rectX, rectY, width, height, baseReveal, camera, smoothing);
     }
 
-    const particleCount = Math.round(90 + energy * 150);
-    const maxRadius = width * (0.014 + energy * 0.012);
+    const durationScale = clamp(duration / 0.8, 0.75, 3.2);
+    const particleCount = Math.round(80 + energy * 130 + durationScale * 18);
+    const maxRadius = width * (0.04 + energy * 0.03) * durationScale;
     this.drawParticleReveal(
       ctx,
       this.baseCanvas,
       safeProgress,
+      durationScale,
       particleCount,
       maxRadius,
       rectX,
@@ -897,7 +904,7 @@ export class Renderer {
     );
   }
 
-  private drawMobileAudioReactiveParticleTransition({ ctx, progress, width, height, audio }: MobileTransitionDrawContext): void {
+  private drawMobileAudioReactiveParticleTransition({ ctx, progress, duration, width, height, audio }: MobileTransitionDrawContext): void {
     ctx.drawImage(this.mobileFromCanvas, 0, 0, width, height);
     const reveal = clamp(progress, 0, 1);
     const baseReveal = Math.pow(reveal, 1.15) * 0.22;
@@ -909,15 +916,17 @@ export class Renderer {
     }
 
     const energy = clamp(audio.rms * 1.5 + audio.treble * 0.4 + audio.beatStrength * 0.35, 0, 1.5);
-    const particles = Math.round(56 + energy * 98);
-    const maxRadius = width * (0.009 + energy * 0.007);
-    this.drawParticleReveal(ctx, this.mobileToCanvas, reveal, particles, maxRadius, 0, 0, width, height);
+    const durationScale = clamp(duration / 0.8, 0.75, 3.2);
+    const particles = Math.round(50 + energy * 88 + durationScale * 14);
+    const maxRadius = width * (0.024 + energy * 0.018) * durationScale;
+    this.drawParticleReveal(ctx, this.mobileToCanvas, reveal, durationScale, particles, maxRadius, 0, 0, width, height);
   }
 
   private drawParticleReveal(
     ctx: CanvasRenderingContext2D,
     revealCanvas: HTMLCanvasElement,
     progress: number,
+    durationScale: number,
     particleCount: number,
     maxRadius: number,
     rectX: number,
@@ -929,11 +938,12 @@ export class Renderer {
       const seed = i * 78.233 + 19.19;
       const px = rectX + (Math.sin(seed) * 0.5 + 0.5) * width;
       const py = rectY + (Math.sin(seed * 1.73) * 0.5 + 0.5) * height;
-      const t = clamp((progress - (Math.sin(seed * 0.37) * 0.5 + 0.5) * 0.75) / 0.25, 0, 1);
+      const revealWindow = clamp(0.2 + durationScale * 0.1, 0.2, 0.5);
+      const t = clamp((progress - (Math.sin(seed * 0.37) * 0.5 + 0.5) * (1 - revealWindow)) / revealWindow, 0, 1);
       if (t <= 0) {
         continue;
       }
-      const radius = maxRadius * (0.3 + (Math.sin(seed * 0.91) * 0.5 + 0.5)) * t;
+      const radius = maxRadius * (0.35 + (Math.sin(seed * 0.91) * 0.5 + 0.5)) * Math.pow(t, 0.8);
       if (radius <= 0.1) {
         continue;
       }
