@@ -136,7 +136,6 @@
     {
       "id": "era8bit-starfield",
       "start": "00:54.2",
-      "end": "01:05",
       "effect": "starfield",
       "params": {
         "speed": 0.62,
@@ -201,7 +200,6 @@
     {
       "id": "era8bit-rotozoom",
       "start": "01:05",
-      "end": "01:16.62",
       "effect": "rotozoom",
       "params": {
         "speed": 1
@@ -234,10 +232,52 @@
       ]
     },
     {
+      "id": "era8bit-rotozoomo",
+      "start": 72.9,
+      "effect": "endless_self_improving_loop",
+      "params": {
+        "speed": 1,
+        "twist": 3.15
+      },
+      "automation": [
+        {
+          "param": "speed",
+          "from": 1,
+          "to": 2.2,
+          "t0": 65,
+          "t1": 76.6,
+          "ease": "easeInSine"
+        },
+        {
+          "param": "hueShift",
+          "from": 0,
+          "to": 217.29999999999998,
+          "t0": 72.9,
+          "t1": 76.6,
+          "ease": "linear"
+        }
+      ],
+      "layers": [
+        {
+          "effect": "raster_bars",
+          "blend": "overlay",
+          "opacity": 0.12,
+          "params": {
+            "audioReact": 0.2
+          }
+        },
+        {
+          "effect": "kefrens_bars",
+          "blend": "screen",
+          "opacity": 0.1,
+          "params": {}
+        }
+      ]
+    },
+    {
       "id": "hook-hit-01160",
-      "start": "01:16.62",
-      "end": "01:18.8",
-      "effect": "glitch",
+      "start": 75.2,
+      "effect": "explosionBurst",
       "params": {
         "amount": 0.24
       },
@@ -265,7 +305,6 @@
     {
       "id": "era8bit-ribbons",
       "start": "01:18.8",
-      "end": "01:32",
       "effect": "ribbons",
       "params": {
         "speed": 0.92,
@@ -319,8 +358,7 @@
     },
     {
       "id": "era8bit-glitch",
-      "start": "01:32",
-      "end": "01:38.3",
+      "start": 96,
       "effect": "gameOfLife",
       "params": {
         "speed": 2.3,
@@ -343,9 +381,34 @@
       "fitAlign": "centre"
     },
     {
+      "id": "scene-7txety",
+      "start": 92.8,
+      "effect": "explicitpixels",
+      "params": {
+        "speed": 2.3,
+        "glow": 0.32
+      },
+      "layers": [
+        {
+          "effect": "shadebobs_bobs",
+          "blend": "screen",
+          "opacity": 0.3,
+          "params": {
+            "bobCount": 5
+          }
+        },
+        {
+          "effect": "bokeh",
+          "blend": "screen",
+          "opacity": 0.1,
+          "params": {}
+        }
+      ],
+      "fitAlign": "centre"
+    },
+    {
       "id": "era16bit-isogrid",
       "start": "01:38.3",
-      "end": "01:46.27",
       "effect": "isogrid",
       "params": {
         "speed": 1,
@@ -381,7 +444,6 @@
     {
       "id": "era16bit-rush1-01",
       "start": "01:46.27",
-      "end": "01:46.41",
       "effect": "ribbons",
       "params": {
         "speed": 0.9,
@@ -414,7 +476,6 @@
     {
       "id": "era16bit-rush1-02",
       "start": "01:46.41",
-      "end": "01:46.56",
       "effect": "plasma",
       "params": {
         "speed": 0.923,
@@ -447,7 +508,6 @@
     {
       "id": "era16bit-rush1-03",
       "start": "01:46.56",
-      "end": "01:46.7",
       "effect": "glitch",
       "params": {
         "speed": 0.947,
@@ -480,7 +540,6 @@
     {
       "id": "era16bit-rush1-04",
       "start": "01:46.7",
-      "end": "01:46.84",
       "effect": "isogrid",
       "params": {
         "speed": 0.97,
@@ -513,7 +572,6 @@
     {
       "id": "era16bit-rush1-05",
       "start": "01:46.84",
-      "end": "01:46.99",
       "effect": "equalizer",
       "params": {
         "speed": 0.993,
@@ -546,7 +604,6 @@
     {
       "id": "era16bit-rush1-06",
       "start": "01:46.99",
-      "end": "01:47.13",
       "effect": "neon",
       "params": {
         "speed": 1.017,
@@ -579,7 +636,6 @@
     {
       "id": "era16bit-rush1-07",
       "start": "01:47.13",
-      "end": "01:47.27",
       "effect": "lissajous",
       "params": {
         "speed": 1.04,
@@ -612,7 +668,6 @@
     {
       "id": "era16bit-rush1-08",
       "start": "01:47.27",
-      "end": "01:47.41",
       "effect": "tunnel",
       "params": {
         "speed": 1.063,
@@ -645,7 +700,6 @@
     {
       "id": "era16bit-rush1-09",
       "start": "01:47.41",
-      "end": "01:47.56",
       "effect": "ribbons",
       "params": {
         "speed": 1.087,
@@ -678,7 +732,6 @@
     {
       "id": "era16bit-rush1-10",
       "start": "01:47.56",
-      "end": "01:47.7",
       "effect": "plasma",
       "params": {
         "speed": 1.11,
@@ -711,7 +764,6 @@
     {
       "id": "era16bit-rush1-11",
       "start": "01:47.7",
-      "end": "01:47.84",
       "effect": "glitch",
       "params": {
         "speed": 1.133,
@@ -742,42 +794,8 @@
       ]
     },
     {
-      "id": "era16bit-rush1-12",
-      "start": "01:47.84",
-      "end": "01:47.99",
-      "effect": "isogrid",
-      "params": {
-        "speed": 1.157,
-        "glow": 0.389,
-        "alpha": 0.233,
-        "trail": 0.341,
-        "warp": 0.32,
-        "wobble": 0.227,
-        "shake": 0.167
-      },
-      "layers": [
-        {
-          "effect": "feedback",
-          "blend": "screen",
-          "opacity": 0.1,
-          "params": {
-            "alpha": 0.219
-          }
-        },
-        {
-          "effect": "vga_fire",
-          "blend": "lighter",
-          "opacity": 0.117,
-          "params": {
-            "audioReact": 0.2
-          }
-        }
-      ]
-    },
-    {
       "id": "era16bit-rush1-13",
       "start": "01:47.99",
-      "end": "01:48.13",
       "effect": "equalizer",
       "params": {
         "speed": 1.18,
@@ -810,7 +828,6 @@
     {
       "id": "era16bit-rush1-14",
       "start": "01:48.13",
-      "end": "01:48.27",
       "effect": "neon",
       "params": {
         "speed": 1.203,
@@ -843,7 +860,6 @@
     {
       "id": "era16bit-rush1-15",
       "start": "01:48.27",
-      "end": "01:48.42",
       "effect": "lissajous",
       "params": {
         "speed": 1.227,
@@ -876,7 +892,6 @@
     {
       "id": "era16bit-rush1-16",
       "start": "01:48.42",
-      "end": "01:48.56",
       "effect": "tunnel",
       "params": {
         "speed": 1.25,
@@ -907,29 +922,8 @@
       ]
     },
     {
-      "id": "era16bit-rush-6",
-      "start": "01:48.56",
-      "end": "01:49.16",
-      "effect": "ribbons",
-      "params": {
-        "speed": 1.22,
-        "glow": 0.46
-      },
-      "layers": [
-        {
-          "effect": "feedback",
-          "blend": "screen",
-          "opacity": 0.13,
-          "params": {
-            "alpha": 0.24
-          }
-        }
-      ]
-    },
-    {
       "id": "calm-sunset",
       "start": "01:49.16",
-      "end": "02:00.03",
       "effect": "synthwaveSunset",
       "params": {
         "sunRadius": 0.02,
@@ -992,7 +986,6 @@
     {
       "id": "snare-buildup",
       "start": "02:00.03",
-      "end": "02:10.8",
       "effect": "tunnel",
       "params": {
         "speed": 0.94,
@@ -1026,7 +1019,6 @@
     {
       "id": "spoken-word-a",
       "start": "02:10.8",
-      "end": "02:16.8",
       "effect": "chess",
       "params": {
         "speed": 0.45
@@ -1052,7 +1044,6 @@
     {
       "id": "spoken-word-b",
       "start": "02:16.8",
-      "end": "02:23.6",
       "effect": "physics_pile",
       "params": {
         "count": 10,
@@ -1098,7 +1089,6 @@
     {
       "id": "spoken-word-c",
       "start": "02:23.6",
-      "end": "02:25.9",
       "effect": "voxel_landscape",
       "params": {
         "speed": 0.36,
@@ -1126,7 +1116,6 @@
     {
       "id": "cool-hold",
       "start": "02:25.9",
-      "end": "02:27.0",
       "effect": "space_hangar",
       "params": {
         "speed": 0.62,
@@ -1147,7 +1136,6 @@
     {
       "id": "drop-hit",
       "start": "02:27.0",
-      "end": "02:43.5",
       "effect": "gl_fractal_tunnel",
       "params": {
         "speed": 1.06,
@@ -1208,7 +1196,6 @@
     {
       "id": "polygons-proper3d",
       "start": "02:43.5",
-      "end": "02:51.1",
       "effect": "proper3d",
       "params": {
         "rotationSpeed": 0.7,
@@ -1234,7 +1221,6 @@
     {
       "id": "polygons-rush2-01",
       "start": "02:51.1",
-      "end": "02:51.27",
       "effect": "fake3d",
       "params": {
         "speed": 0.9,
@@ -1267,7 +1253,6 @@
     {
       "id": "polygons-rush2-02",
       "start": "02:51.27",
-      "end": "02:51.44",
       "effect": "plasma",
       "params": {
         "speed": 0.927,
@@ -1300,7 +1285,6 @@
     {
       "id": "polygons-rush2-03",
       "start": "02:51.44",
-      "end": "02:51.61",
       "effect": "glitch",
       "params": {
         "speed": 0.953,
@@ -1333,7 +1317,6 @@
     {
       "id": "polygons-rush2-04",
       "start": "02:51.61",
-      "end": "02:51.78",
       "effect": "isogrid",
       "params": {
         "speed": 0.98,
@@ -1366,7 +1349,6 @@
     {
       "id": "polygons-rush2-05",
       "start": "02:51.78",
-      "end": "02:51.94",
       "effect": "equalizer",
       "params": {
         "speed": 1.007,
@@ -1399,7 +1381,6 @@
     {
       "id": "polygons-rush2-06",
       "start": "02:51.94",
-      "end": "02:52.11",
       "effect": "ribbons",
       "params": {
         "speed": 1.033,
@@ -1432,7 +1413,6 @@
     {
       "id": "polygons-rush2-07",
       "start": "02:52.11",
-      "end": "02:52.28",
       "effect": "neon",
       "params": {
         "speed": 1.06,
@@ -1465,7 +1445,6 @@
     {
       "id": "polygons-rush2-08",
       "start": "02:52.28",
-      "end": "02:52.45",
       "effect": "tunnel",
       "params": {
         "speed": 1.087,
@@ -1498,7 +1477,6 @@
     {
       "id": "polygons-rush2-09",
       "start": "02:52.45",
-      "end": "02:52.62",
       "effect": "fake3d",
       "params": {
         "speed": 1.113,
@@ -1531,7 +1509,6 @@
     {
       "id": "polygons-rush2-10",
       "start": "02:52.62",
-      "end": "02:52.79",
       "effect": "plasma",
       "params": {
         "speed": 1.14,
@@ -1564,7 +1541,6 @@
     {
       "id": "polygons-rush2-11",
       "start": "02:52.79",
-      "end": "02:52.96",
       "effect": "glitch",
       "params": {
         "speed": 1.167,
@@ -1597,7 +1573,6 @@
     {
       "id": "polygons-rush2-12",
       "start": "02:52.96",
-      "end": "02:53.12",
       "effect": "isogrid",
       "params": {
         "speed": 1.193,
@@ -1630,7 +1605,6 @@
     {
       "id": "polygons-rush2-13",
       "start": "02:53.12",
-      "end": "02:53.29",
       "effect": "equalizer",
       "params": {
         "speed": 1.22,
@@ -1663,7 +1637,6 @@
     {
       "id": "polygons-rush2-14",
       "start": "02:53.29",
-      "end": "02:53.46",
       "effect": "ribbons",
       "params": {
         "speed": 1.247,
@@ -1696,7 +1669,6 @@
     {
       "id": "polygons-rush2-15",
       "start": "02:53.46",
-      "end": "02:53.63",
       "effect": "neon",
       "params": {
         "speed": 1.273,
@@ -1729,7 +1701,6 @@
     {
       "id": "polygons-rush2-16",
       "start": "02:53.63",
-      "end": "02:53.8",
       "effect": "tunnel",
       "params": {
         "speed": 1.3,
@@ -1762,7 +1733,6 @@
     {
       "id": "chill-breakdown",
       "start": "02:53.8",
-      "end": "03:01.5",
       "effect": "spherecloud",
       "params": {
         "density": 0.3,
@@ -1804,7 +1774,6 @@
     {
       "id": "chill-breakdown-b",
       "start": "03:01.5",
-      "end": "03:09.6",
       "effect": "raytrace_spheres",
       "params": {
         "speed": 0.4,
@@ -1833,7 +1802,6 @@
     {
       "id": "this-callout-pre-rap-buildup",
       "start": "03:09.6",
-      "end": "03:15.7",
       "effect": "neon",
       "params": {
         "speed": 0.78,
@@ -1861,7 +1829,6 @@
     {
       "id": "this-callout-dnb-return",
       "start": "03:15.7",
-      "end": "03:24",
       "effect": "neon",
       "params": {
         "speed": 0.78,
@@ -1889,7 +1856,6 @@
     {
       "id": "this-callout-drum-fill-lead-in",
       "start": "03:24",
-      "end": "03:25.012",
       "effect": "neon",
       "params": {
         "speed": 0.78,
@@ -1917,7 +1883,6 @@
     {
       "id": "rap-launch-03130",
       "start": "03:25.012",
-      "end": "03:30",
       "effect": "sphere3d",
       "params": {
         "rotationSpeed": 0.42,
@@ -1938,7 +1903,6 @@
     {
       "id": "rap-grime-flow-03210",
       "start": "03:30",
-      "end": "03:34.8",
       "effect": "sphere3d",
       "params": {
         "rotationSpeed": 0.44,
@@ -1965,7 +1929,6 @@
     {
       "id": "rap-drill-pivot-03290",
       "start": "03:34.8",
-      "end": "03:39.6",
       "effect": "sphere3d",
       "params": {
         "rotationSpeed": 0.45,
@@ -1992,7 +1955,6 @@
     {
       "id": "rap-pressure-rise-03370",
       "start": "03:39.6",
-      "end": "03:44.4",
       "effect": "lens_wobbler",
       "params": {
         "speed": 0.46,
@@ -2014,7 +1976,6 @@
     {
       "id": "rap-punchline-stack-03450",
       "start": "03:44.4",
-      "end": "03:49.2",
       "effect": "infinitycloud",
       "params": {
         "density": 0.28,
@@ -2033,7 +1994,6 @@
     {
       "id": "rap-hook-hit-03520",
       "start": "03:49.2",
-      "end": "03:54",
       "effect": "sphere3d",
       "params": {
         "rotationSpeed": 0.4,
@@ -2054,7 +2014,6 @@
     {
       "id": "rap-switch-a-03560",
       "start": "03:54",
-      "end": "03:58.8",
       "effect": "sphere3d",
       "params": {
         "rotationSpeed": 0.46,
@@ -2081,7 +2040,6 @@
     {
       "id": "rap-switch-b-04030",
       "start": "03:58.8",
-      "end": "04:03.6",
       "effect": "neon_alley",
       "params": {
         "speed": 0.6,
@@ -2100,7 +2058,6 @@
     {
       "id": "rap-clarity-1",
       "start": "04:03.6",
-      "end": "04:08.4",
       "effect": "neon_alley",
       "params": {
         "speed": 0.64,
@@ -2119,7 +2076,6 @@
     {
       "id": "rap-clarity-2",
       "start": "04:08.4",
-      "end": "04:13.2",
       "effect": "space_hangar",
       "params": {
         "speed": 0.4,
@@ -2140,7 +2096,6 @@
     {
       "id": "rap-minimal-1",
       "start": "04:13.2",
-      "end": "04:18",
       "effect": "infinitycloud",
       "params": {
         "density": 0.18,
@@ -2159,7 +2114,6 @@
     {
       "id": "rap-ramp-1",
       "start": "04:18",
-      "end": "04:22",
       "effect": "neon_alley",
       "params": {
         "speed": 0.66,
@@ -2178,7 +2132,6 @@
     {
       "id": "rap-ramp-2",
       "start": "04:22",
-      "end": "04:25.7",
       "effect": "neon_alley",
       "params": {
         "speed": 0.72,
@@ -2205,7 +2158,6 @@
     {
       "id": "build-up",
       "start": "04:25.7",
-      "end": "04:32.15",
       "effect": "wireframeRide",
       "params": {
         "speed": 0.68,
@@ -2242,7 +2194,6 @@
     {
       "id": "build-phase-2",
       "start": "04:32.15",
-      "end": "04:40.73",
       "effect": "raymarch_fractal",
       "params": {
         "speed": 0.86,
@@ -2287,7 +2238,6 @@
     {
       "id": "mega-drop",
       "start": "04:40.73",
-      "end": "05:02.4",
       "effect": "gl_impossible_corridor",
       "params": {
         "speed": 1.12,
@@ -2344,7 +2294,6 @@
     {
       "id": "mega-drop-mutation",
       "start": "05:02.4",
-      "end": "05:19.66",
       "effect": "effect_evolution",
       "params": {
         "speed": 0.74,
@@ -2384,7 +2333,6 @@
     {
       "id": "mega-drop-regen",
       "start": "05:19.66",
-      "end": "05:25.39",
       "effect": "torus_orbit_3d",
       "params": {
         "speed": 0.82,
@@ -2423,7 +2371,6 @@
     {
       "id": "finale-layer",
       "start": "05:25.39",
-      "end": "05:40",
       "effect": "finale",
       "params": {
         "energy": 0.62,
@@ -2467,7 +2414,6 @@
     {
       "id": "credits-vibe",
       "start": "05:40",
-      "end": "05:56.3",
       "effect": "doodle_greetz_wall",
       "params": {
         "speed": 0.52,
@@ -2530,7 +2476,6 @@
     {
       "id": "credits-vibe-b",
       "start": "05:56.3",
-      "end": "06:12.6",
       "effect": "textured_cube",
       "params": {
         "speed": 0.56,
@@ -2578,7 +2523,6 @@
     {
       "id": "calm-outro",
       "start": "06:12.6",
-      "end": "06:22.87",
       "effect": "infinitycloud",
       "params": {
         "density": 0.16,
@@ -2597,7 +2541,6 @@
     {
       "id": "scene-94e4ts",
       "start": 104,
-      "end": 105,
       "effect": "finale",
       "era": "pcdemo",
       "transition": {
@@ -2613,7 +2556,6 @@
     {
       "id": "scene-aldn33",
       "start": 169,
-      "end": 171,
       "effect": "textured_cube",
       "era": "pcdemo",
       "transition": {
@@ -2648,7 +2590,6 @@
     {
       "id": "scene-rczf92",
       "start": 194.8,
-      "end": 196,
       "effect": "envmap_donut",
       "era": "pcdemo",
       "transition": {
@@ -2669,7 +2610,6 @@
     {
       "id": "Scene 001 - Dot Tunnel",
       "start": 60.280726,
-      "end": 65,
       "effect": "dotTunnel",
       "era": "pcdemo",
       "transition": {
@@ -2713,7 +2653,6 @@
     {
       "id": "Scene 002 - Neon Alley",
       "start": 82.461587,
-      "end": 92,
       "effect": "blobs",
       "era": "pcdemo",
       "transition": {
@@ -2754,7 +2693,6 @@
     {
       "id": "Scene 003 - Kefrens Bars",
       "start": 88.2,
-      "end": 92,
       "effect": "bokeh",
       "era": "pcdemo",
       "transition": {
@@ -2797,7 +2735,6 @@
     {
       "id": "Scene 004 - Sphere3d",
       "start": 104.259716,
-      "end": 106.27000000000001,
       "effect": "bumpmap_plane",
       "era": "pcdemo",
       "transition": {
@@ -2834,7 +2771,6 @@
     {
       "id": "Scene 005 - Sphere3d",
       "start": 104.889558,
-      "end": 106.27000000000001,
       "effect": "caustics",
       "era": "pcdemo",
       "transition": {
@@ -2871,7 +2807,6 @@
     {
       "id": "Scene 006 - Explicitpixels",
       "start": 105.458446,
-      "end": 106.27000000000001,
       "effect": "hexGridPulse",
       "era": "pcdemo",
       "transition": {
@@ -2910,7 +2845,6 @@
     {
       "id": "Scene 007 - Flyover",
       "start": 128.727744,
-      "end": 130.8,
       "effect": "flyover",
       "era": "pcdemo",
       "transition": {
@@ -2956,7 +2890,6 @@
     {
       "id": "Scene 008 - Kefrens Bars",
       "start": 142.407199,
-      "end": 143.6,
       "effect": "marble",
       "era": "pcdemo",
       "transition": {
@@ -3001,7 +2934,6 @@
     {
       "id": "Scene 009 - Amiga Showcase",
       "start": 158.243996,
-      "end": 163.5,
       "effect": "amiga_showcase",
       "era": "pcdemo",
       "transition": {
@@ -3062,7 +2994,6 @@
     {
       "id": "Scene 010 - Amiga Showcase",
       "start": 160.565991,
-      "end": 163.5,
       "effect": "reactionDiffusion",
       "era": "pcdemo",
       "transition": {
@@ -3115,7 +3046,6 @@
     {
       "id": "Scene 011 - Glenz Vectors",
       "start": 165,
-      "end": 169,
       "effect": "cloth_sim",
       "era": "pcdemo",
       "transition": {
@@ -3171,7 +3101,6 @@
     {
       "id": "Scene 012 - Glenz Vectors",
       "start": 180.159728,
-      "end": 181.5,
       "effect": "smoke_simulation",
       "era": "pcdemo",
       "transition": {
@@ -3227,7 +3156,6 @@
     {
       "id": "Scene 013 - Volumetric Clouds",
       "start": 185.538603,
-      "end": 189.6,
       "effect": "volumetric_clouds",
       "era": "pcdemo",
       "transition": {
@@ -3271,7 +3199,6 @@
     {
       "id": "Scene 014 - Lens Wobbler",
       "start": 188.478829,
-      "end": 189.6,
       "effect": "soft_shadows",
       "era": "pcdemo",
       "transition": {
@@ -3327,7 +3254,6 @@
     {
       "id": "Scene 015 - Dot Tunnel",
       "start": 194.698874,
-      "end": 194.8,
       "effect": "moving_shadow_map",
       "era": "pcdemo",
       "transition": {
@@ -3371,7 +3297,6 @@
     {
       "id": "Scene 016 - Feedback",
       "start": 198.946835,
-      "end": 205.012,
       "effect": "feedback",
       "era": "pcdemo",
       "transition": {
@@ -3412,7 +3337,6 @@
     {
       "id": "Scene 017 - Fractal",
       "start": 200.235542,
-      "end": 205.012,
       "effect": "water_drops",
       "era": "pcdemo",
       "transition": {
@@ -3453,7 +3377,6 @@
     {
       "id": "Scene 018 - Fractal",
       "start": 201.617129,
-      "end": 205.012,
       "effect": "voronoi_cells",
       "era": "pcdemo",
       "transition": {
@@ -3494,7 +3417,6 @@
     {
       "id": "Scene 019 - Ribbons",
       "start": 202.484974,
-      "end": 205.012,
       "effect": "polar_tunnel",
       "era": "pcdemo",
       "transition": {
@@ -3537,7 +3459,6 @@
     {
       "id": "Scene 020 - Sine Distorter",
       "start": 203.216403,
-      "end": 205.012,
       "effect": "infinite_zoom_droste",
       "era": "pcdemo",
       "transition": {
@@ -3586,7 +3507,6 @@
     {
       "id": "Scene 021 - Amiga Showcase",
       "start": 203.875269,
-      "end": 205.012,
       "effect": "infiniteMirror",
       "era": "pcdemo",
       "transition": {
@@ -3639,7 +3559,6 @@
     {
       "id": "Scene 022 - Rotozoom",
       "start": 204.577673,
-      "end": 205.012,
       "effect": "tilingMorph",
       "era": "pcdemo",
       "transition": {
@@ -3676,7 +3595,6 @@
     {
       "id": "Scene 023 - Lissajous",
       "start": 205.352975,
-      "end": 210,
       "effect": "lissajous",
       "era": "pcdemo",
       "transition": {
@@ -3718,7 +3636,6 @@
     {
       "id": "Scene 024 - Raymarch Fractal",
       "start": 207.051974,
-      "end": 210,
       "effect": "raymarch_fractal",
       "era": "pcdemo",
       "transition": {
@@ -3759,7 +3676,6 @@
     {
       "id": "Scene 025 - Gl Fractal Tunnel",
       "start": 207.922723,
-      "end": 210,
       "effect": "god_rays",
       "era": "pcdemo",
       "transition": {
@@ -3800,7 +3716,6 @@
     {
       "id": "Scene 026 - Raymarch Fractal",
       "start": 208.982133,
-      "end": 210,
       "effect": "lens_flare",
       "era": "pcdemo",
       "transition": {
@@ -3845,7 +3760,6 @@
     {
       "id": "Scene 027 - Road Drive",
       "start": 210.931103,
-      "end": 214.8,
       "effect": "roadDrive",
       "era": "pcdemo",
       "transition": {
@@ -3892,7 +3806,6 @@
     {
       "id": "Scene 028 - Finale",
       "start": 212.079785,
-      "end": 214.8,
       "effect": "explosionBurst",
       "era": "pcdemo",
       "transition": {
@@ -3936,7 +3849,6 @@
     {
       "id": "Scene 029 - Fractal Zoomer",
       "start": 213.089853,
-      "end": 214.8,
       "effect": "fireworks_display",
       "era": "pcdemo",
       "transition": {
@@ -3979,7 +3891,6 @@
     {
       "id": "Scene 030 - Copper Gradient Splits",
       "start": 214.20029,
-      "end": 214.8,
       "effect": "copper_gradient_splits",
       "era": "pcdemo",
       "transition": {
@@ -4033,7 +3944,6 @@
     {
       "id": "Scene 031 - Textured Cube",
       "start": 215.230217,
-      "end": 219.6,
       "effect": "textured_cube",
       "era": "pcdemo",
       "transition": {
@@ -4083,7 +3993,6 @@
     {
       "id": "Scene 032 - Metaballs",
       "start": 216.219967,
-      "end": 219.6,
       "effect": "skeletal_ribbon",
       "era": "pcdemo",
       "transition": {
@@ -4139,7 +4048,6 @@
     {
       "id": "Scene 033 - Rain",
       "start": 217.389672,
-      "end": 219.6,
       "effect": "prism_bloom",
       "era": "pcdemo",
       "transition": {
@@ -4185,7 +4093,6 @@
     {
       "id": "Scene 034 - Border Multiplex",
       "start": 218.4694,
-      "end": 219.6,
       "effect": "skyboxTransition",
       "era": "pcdemo",
       "transition": {
@@ -4230,7 +4137,6 @@
     {
       "id": "Scene 035 - Textmode Charset",
       "start": 219.5,
-      "end": 224.4,
       "effect": "textmode_charset",
       "era": "pcdemo",
       "transition": {
@@ -4274,7 +4180,6 @@
     {
       "id": "Scene 036 - Metaballs",
       "start": 221.95679,
-      "end": 224.4,
       "effect": "recursiveFracture",
       "era": "pcdemo",
       "transition": {
@@ -4330,7 +4235,6 @@
     {
       "id": "Scene 037 - Vga Fire",
       "start": 223.326767,
-      "end": 224.4,
       "effect": "taco_meteor_shower",
       "era": "pcdemo",
       "transition": {
@@ -4382,7 +4286,6 @@
     {
       "id": "Scene 038 - Raytrace Spheres",
       "start": 224.50518,
-      "end": 229.2,
       "effect": "raytrace_spheres",
       "era": "pcdemo",
       "transition": {
@@ -4441,7 +4344,6 @@
     {
       "id": "Scene 039 - Lens Wobbler",
       "start": 225.567492,
-      "end": 229.2,
       "effect": "cosmic_voyage",
       "era": "pcdemo",
       "transition": {
@@ -4497,7 +4399,6 @@
     {
       "id": "Scene 040 - Plasma",
       "start": 226.905542,
-      "end": 229.2,
       "effect": "voxel_world_builder",
       "era": "pcdemo",
       "transition": {
@@ -4534,7 +4435,6 @@
     {
       "id": "Scene 041 - Finale",
       "start": 228.336093,
-      "end": 229.2,
       "effect": "velvet_dreamscape",
       "era": "pcdemo",
       "transition": {
@@ -4578,7 +4478,6 @@
     {
       "id": "Scene 042 - Volumetric Clouds",
       "start": 229.1,
-      "end": 234,
       "effect": "volumetric_clouds",
       "era": "pcdemo",
       "transition": {
@@ -4622,7 +4521,6 @@
     {
       "id": "Scene 043 - Voxel Landscape",
       "start": 230.666796,
-      "end": 234,
       "effect": "voxel_landscape",
       "era": "pcdemo",
       "transition": {
@@ -4677,7 +4575,6 @@
     {
       "id": "Scene 044 - Tunnel",
       "start": 231.696634,
-      "end": 234,
       "effect": "platformerScroll",
       "era": "pcdemo",
       "transition": {
@@ -4714,7 +4611,6 @@
     {
       "id": "Scene 045 - Fluid",
       "start": 232.645749,
-      "end": 234,
       "effect": "particleAttractors",
       "era": "pcdemo",
       "transition": {
@@ -4757,7 +4653,6 @@
     {
       "id": "Scene 046 - Amiga Showcase",
       "start": 233.876407,
-      "end": 234.9,
       "effect": "amiga_showcase",
       "era": "pcdemo",
       "transition": {
@@ -4810,7 +4705,6 @@
     {
       "id": "Scene 047 - Kefrens Bars",
       "start": 234.924208,
-      "end": 238.8,
       "effect": "matrix_rain",
       "era": "pcdemo",
       "transition": {
@@ -4853,7 +4747,6 @@
     {
       "id": "Scene 048 - Equalizer",
       "start": 238.7,
-      "end": 245.8,
       "effect": "equalizer",
       "era": "pcdemo",
       "transition": {
@@ -4894,7 +4787,6 @@
     {
       "id": "Scene 049 - Glitch",
       "start": 240.885931,
-      "end": 243.6,
       "effect": "glitch",
       "era": "pcdemo",
       "transition": {
@@ -4939,7 +4831,6 @@
     {
       "id": "Scene 050 - Neon",
       "start": 242.276226,
-      "end": 243.6,
       "effect": "tetris_matrix",
       "era": "pcdemo",
       "transition": {
@@ -4981,7 +4872,6 @@
     {
       "id": "Scene 051 - Envmap Donut",
       "start": 243.023543,
-      "end": 243.6,
       "effect": "envmap_donut",
       "era": "pcdemo",
       "transition": {
@@ -5038,7 +4928,6 @@
     {
       "id": "Scene 052 - Vga Fire",
       "start": 244.503815,
-      "end": 248.4,
       "effect": "vga_fire",
       "era": "pcdemo",
       "transition": {
@@ -5090,7 +4979,6 @@
     {
       "id": "Scene 053 - Kefrens Bars",
       "start": 245.921546,
-      "end": 248.4,
       "effect": "kefrens_bars",
       "era": "pcdemo",
       "transition": {
@@ -5137,7 +5025,6 @@
     {
       "id": "Scene 054 - Envmap Donut",
       "start": 246.861954,
-      "end": 248.4,
       "effect": "twister",
       "era": "pcdemo",
       "transition": {
@@ -5194,7 +5081,6 @@
     {
       "id": "Scene 055 - Doodle Greetz Wall",
       "start": 248.162272,
-      "end": 248.4,
       "effect": "doodle_greetz_wall",
       "era": "pcdemo",
       "transition": {
@@ -5240,7 +5126,6 @@
     {
       "id": "Scene 056 - Amiga Showcase",
       "start": 248.3,
-      "end": 253.2,
       "effect": "amiga_showcase",
       "era": "pcdemo",
       "transition": {
@@ -5293,7 +5178,6 @@
     {
       "id": "Scene 057 - Vector3d Balls",
       "start": 250.709053,
-      "end": 253.2,
       "effect": "sine_scroller_logo",
       "era": "pcdemo",
       "transition": {
@@ -5348,7 +5232,6 @@
     {
       "id": "Scene 058 - Glenz Vectors",
       "start": 251.628161,
-      "end": 253.2,
       "effect": "kaleidoscope_symmetry",
       "era": "pcdemo",
       "transition": {
@@ -5404,7 +5287,6 @@
     {
       "id": "Scene 059 - Textured Cube",
       "start": 252.655644,
-      "end": 253.2,
       "effect": "lightning",
       "era": "pcdemo",
       "transition": {
@@ -5454,7 +5336,6 @@
     {
       "id": "Scene 060 - Flyover",
       "start": 253.1,
-      "end": 258,
       "effect": "flyover",
       "era": "pcdemo",
       "transition": {
@@ -5500,7 +5381,6 @@
     {
       "id": "Scene 061 - Neon Alley",
       "start": 255.195198,
-      "end": 258,
       "effect": "spectrum_analyzer",
       "era": "pcdemo",
       "transition": {
@@ -5541,7 +5421,6 @@
     {
       "id": "Scene 062 - Finale",
       "start": 256.294516,
-      "end": 258,
       "effect": "finale",
       "era": "pcdemo",
       "transition": {
@@ -5585,7 +5464,6 @@
     {
       "id": "Scene 063 - Boids Simulation",
       "start": 257.54549,
-      "end": 258,
       "effect": "boids_simulation",
       "era": "pcdemo",
       "transition": {
@@ -5631,7 +5509,6 @@
     {
       "id": "Scene 064 - Textmode Charset",
       "start": 257.8,
-      "end": 262,
       "effect": "textmode_charset",
       "era": "pcdemo",
       "transition": {
@@ -5675,7 +5552,6 @@
     {
       "id": "Scene 065 - Raster Bars",
       "start": 260.76656,
-      "end": 262,
       "effect": "raster_bars",
       "era": "pcdemo",
       "transition": {
@@ -5722,7 +5598,6 @@
     {
       "id": "Scene 066 - Effect Evolution",
       "start": 261.875313,
-      "end": 262,
       "effect": "effect_evolution",
       "era": "pcdemo",
       "transition": {
@@ -5763,7 +5638,6 @@
     {
       "id": "Scene 067 - Rain",
       "start": 262.1,
-      "end": 265.7,
       "effect": "rain",
       "era": "pcdemo",
       "transition": {
@@ -5809,7 +5683,6 @@
     {
       "id": "Scene 068 - Lissajous",
       "start": 264.908218,
-      "end": 265.7,
       "effect": "lissajous",
       "era": "pcdemo",
       "transition": {
@@ -5851,7 +5724,6 @@
     {
       "id": "Scene 069 - Wireframe Ride",
       "start": 266.176589,
-      "end": 272.15,
       "effect": "wireframeRide",
       "era": "pcdemo",
       "transition": {
@@ -5901,7 +5773,6 @@
     {
       "id": "Scene 070 - Textmode Charset",
       "start": 283.989195,
-      "end": 302.4,
       "effect": "textmode_charset",
       "era": "pcdemo",
       "transition": {
@@ -5945,7 +5816,6 @@
     {
       "id": "Scene 071 - Volumetric Clouds",
       "start": 285.227424,
-      "end": 302.4,
       "effect": "volumetric_clouds",
       "era": "pcdemo",
       "transition": {
@@ -5989,7 +5859,6 @@
     {
       "id": "Scene 072 - Tunnel",
       "start": 286.018039,
-      "end": 302.4,
       "effect": "tunnel",
       "era": "pcdemo",
       "transition": {
@@ -6026,7 +5895,6 @@
     {
       "id": "Scene 073 - Particles",
       "start": 287.004887,
-      "end": 302.4,
       "effect": "particles",
       "era": "pcdemo",
       "transition": {
@@ -6067,7 +5935,6 @@
     {
       "id": "Scene 074 - Tunnel",
       "start": 287.972248,
-      "end": 302.4,
       "effect": "tunnel",
       "era": "pcdemo",
       "transition": {
@@ -6104,7 +5971,6 @@
     {
       "id": "Scene 075 - Textured Cube",
       "start": 288.863314,
-      "end": 302.4,
       "effect": "textured_cube",
       "era": "pcdemo",
       "transition": {
@@ -6154,7 +6020,6 @@
     {
       "id": "Scene 076 - Effect Evolution",
       "start": 289.773287,
-      "end": 302.4,
       "effect": "effect_evolution",
       "era": "pcdemo",
       "transition": {
@@ -6195,7 +6060,6 @@
     {
       "id": "Scene 077 - Sphere3d",
       "start": 290.66145,
-      "end": 302.4,
       "effect": "sphere3d",
       "era": "pcdemo",
       "transition": {
@@ -6232,7 +6096,6 @@
     {
       "id": "Scene 078 - Glenz Vectors",
       "start": 291.44814,
-      "end": 302.4,
       "effect": "glenz_vectors",
       "era": "pcdemo",
       "transition": {
@@ -6288,7 +6151,6 @@
     {
       "id": "Scene 079 - Voxel Landscape",
       "start": 292.468924,
-      "end": 302.4,
       "effect": "voxel_landscape",
       "era": "pcdemo",
       "transition": {
@@ -6343,7 +6205,6 @@
     {
       "id": "Scene 080 - Fluid",
       "start": 293.409332,
-      "end": 302.4,
       "effect": "fluid",
       "era": "pcdemo",
       "transition": {
@@ -6386,7 +6247,6 @@
     {
       "id": "Scene 081 - Rain",
       "start": 294.288788,
-      "end": 302.4,
       "effect": "rain",
       "era": "pcdemo",
       "transition": {
@@ -6432,7 +6292,6 @@
     {
       "id": "Scene 082 - Vga Fire",
       "start": 295.428628,
-      "end": 302.4,
       "effect": "vga_fire",
       "era": "pcdemo",
       "transition": {
@@ -6484,7 +6343,6 @@
     {
       "id": "Scene 083 - Gl Fractal Tunnel",
       "start": 296.397566,
-      "end": 302.4,
       "effect": "gl_fractal_tunnel",
       "era": "pcdemo",
       "transition": {
@@ -6525,7 +6383,6 @@
     {
       "id": "Scene 084 - Fractal Zoomer",
       "start": 297.506319,
-      "end": 302.4,
       "effect": "fractal_zoomer",
       "era": "pcdemo",
       "transition": {
@@ -6568,7 +6425,6 @@
     {
       "id": "Scene 085 - Shadebobs Bobs",
       "start": 298.456912,
-      "end": 302.4,
       "effect": "shadebobs_bobs",
       "era": "pcdemo",
       "transition": {
@@ -6622,7 +6478,6 @@
     {
       "id": "Scene 086 - Wireframe Ride",
       "start": 299.606283,
-      "end": 302.4,
       "effect": "wireframeRide",
       "era": "pcdemo",
       "transition": {
@@ -6672,7 +6527,6 @@
     {
       "id": "Scene 087 - Voxel Landscape",
       "start": 300.565836,
-      "end": 302.4,
       "effect": "voxel_landscape",
       "era": "pcdemo",
       "transition": {
@@ -6727,7 +6581,6 @@
     {
       "id": "Scene 088 - Gl Impossible Corridor",
       "start": 301.352988,
-      "end": 302.4,
       "effect": "gl_impossible_corridor",
       "era": "pcdemo",
       "transition": {
@@ -6770,7 +6623,6 @@
     {
       "id": "Scene 089 - Lens Wobbler",
       "start": 301.843716,
-      "end": 302.4,
       "effect": "lens_wobbler",
       "era": "pcdemo",
       "transition": {
@@ -6826,7 +6678,6 @@
     {
       "id": "Scene 090 - Border Multiplex",
       "start": 309.033195,
-      "end": 319.66,
       "effect": "border_multiplex",
       "era": "pcdemo",
       "transition": {
@@ -6871,7 +6722,6 @@
     {
       "id": "Scene 091 - Equalizer",
       "start": 311.842726,
-      "end": 319.66,
       "effect": "equalizer",
       "era": "pcdemo",
       "transition": {
@@ -6912,7 +6762,6 @@
     {
       "id": "Scene 092 - Voxel Landscape",
       "start": 316.45072,
-      "end": 319.66,
       "effect": "voxel_landscape",
       "era": "pcdemo",
       "transition": {
@@ -6967,7 +6816,6 @@
     {
       "id": "Scene 093 - Moire Grid",
       "start": 320.180615,
-      "end": 325.39,
       "effect": "moire_grid",
       "era": "pcdemo",
       "transition": {
@@ -7010,7 +6858,6 @@
     {
       "id": "Scene 094 - Gl Fractal Tunnel",
       "start": 323.901613,
-      "end": 325.39,
       "effect": "gl_fractal_tunnel",
       "era": "pcdemo",
       "transition": {
@@ -7051,7 +6898,6 @@
     {
       "id": "Scene 095 - Tunnel",
       "start": 324.470502,
-      "end": 325.39,
       "effect": "tunnel",
       "era": "pcdemo",
       "transition": {
@@ -7088,7 +6934,6 @@
     {
       "id": "Scene 096 - Raytrace Spheres",
       "start": 325.248972,
-      "end": 325.39,
       "effect": "raytrace_spheres",
       "era": "pcdemo",
       "transition": {
@@ -7147,7 +6992,6 @@
     {
       "id": "Scene 097 - Raytrace Spheres",
       "start": 326.5203,
-      "end": 340,
       "effect": "raytrace_spheres",
       "era": "pcdemo",
       "transition": {
@@ -7206,7 +7050,6 @@
     {
       "id": "Scene 098 - Neon",
       "start": 327.528378,
-      "end": 340,
       "effect": "kefrens_bars",
       "era": "pcdemo",
       "transition": {
@@ -7248,7 +7091,6 @@
     {
       "id": "Scene 099 - Glenz Vectors",
       "start": 328.137877,
-      "end": 340,
       "effect": "glenz_vectors",
       "era": "pcdemo",
       "transition": {
@@ -7304,7 +7146,6 @@
     {
       "id": "Scene 100 - Feedback",
       "start": 328.718375,
-      "end": 340,
       "effect": "feedback",
       "era": "pcdemo",
       "transition": {
@@ -7345,7 +7186,6 @@
     {
       "id": "Scene 101 - Vector3d Balls",
       "start": 329.876496,
-      "end": 340,
       "effect": "vector3d_balls",
       "era": "pcdemo",
       "transition": {
@@ -7400,7 +7240,6 @@
     {
       "id": "Scene 102 - Neon",
       "start": 331.70713,
-      "end": 340,
       "effect": "metaballs",
       "era": "pcdemo",
       "transition": {
@@ -7442,7 +7281,6 @@
     {
       "id": "Scene 103 - Lens Wobbler",
       "start": 332.682649,
-      "end": 340,
       "effect": "lens_wobbler",
       "era": "pcdemo",
       "transition": {
@@ -7498,7 +7336,6 @@
     {
       "id": "Scene 104 - Road Drive",
       "start": 333.422785,
-      "end": 340,
       "effect": "roadDrive",
       "era": "pcdemo",
       "transition": {
@@ -7545,7 +7382,6 @@
     {
       "id": "Scene 105 - Textured Cube",
       "start": 334.563162,
-      "end": 340,
       "effect": "textured_cube",
       "era": "pcdemo",
       "transition": {
@@ -7595,7 +7431,6 @@
     {
       "id": "Scene 106 - Neon",
       "start": 337.512399,
-      "end": 340,
       "effect": "sine_distorter",
       "era": "pcdemo",
       "transition": {
@@ -7637,7 +7472,6 @@
     {
       "id": "Scene 107 - Road Drive",
       "start": 338.71389,
-      "end": 340,
       "effect": "roadDrive",
       "era": "pcdemo",
       "transition": {
@@ -7684,7 +7518,6 @@
     {
       "id": "Scene 108 - Poly Morph Showcase",
       "start": 339.253428,
-      "end": 340,
       "effect": "poly_morph_showcase",
       "era": "pcdemo",
       "transition": {
@@ -7744,7 +7577,6 @@
     {
       "id": "Scene 109 - Raster Bars",
       "start": 339.764691,
-      "end": 340,
       "effect": "raster_bars",
       "era": "pcdemo",
       "transition": {
@@ -7793,7 +7625,6 @@
     {
       "id": "Scene 110 - Spherecloud",
       "start": 357.761492,
-      "end": 372.6,
       "effect": "spherecloud",
       "era": "pcdemo",
       "transition": {
@@ -7830,7 +7661,6 @@
     {
       "id": "Scene 111 - Textmode Charset",
       "start": 358.498787,
-      "end": 372.6,
       "effect": "textmode_charset",
       "era": "pcdemo",
       "transition": {
@@ -7874,7 +7704,6 @@
     {
       "id": "Scene 112 - Starfield",
       "start": 359.167745,
-      "end": 372.6,
       "effect": "starfield",
       "era": "pcdemo",
       "transition": {
@@ -7917,7 +7746,6 @@
     {
       "id": "Scene 113 - Gl Fractal Tunnel",
       "start": 359.828841,
-      "end": 372.6,
       "effect": "gl_fractal_tunnel",
       "era": "pcdemo",
       "transition": {
@@ -7958,7 +7786,6 @@
     {
       "id": "Scene 114 - Vga Fire",
       "start": 362.216213,
-      "end": 372.6,
       "effect": "vga_fire",
       "era": "pcdemo",
       "transition": {
@@ -8010,7 +7837,6 @@
     {
       "id": "Scene 115 - Rain",
       "start": 364.9066,
-      "end": 372.6,
       "effect": "rain",
       "era": "pcdemo",
       "transition": {
@@ -8056,7 +7882,6 @@
     {
       "id": "Scene 116 - Spherecloud",
       "start": 366.575689,
-      "end": 372.6,
       "effect": "spherecloud",
       "era": "pcdemo",
       "transition": {
@@ -8093,7 +7918,6 @@
     {
       "id": "Scene 117 - Fractal",
       "start": 367.446449,
-      "end": 372.6,
       "effect": "fractal",
       "era": "pcdemo",
       "transition": {
@@ -8134,7 +7958,6 @@
     {
       "id": "Scene 118 - Torus Orbit 3d",
       "start": 368.337448,
-      "end": 372.6,
       "effect": "torus_orbit_3d",
       "era": "pcdemo",
       "transition": {
@@ -8180,7 +8003,6 @@
     {
       "id": "Scene 119 - Lissajous",
       "start": 368.967591,
-      "end": 372.6,
       "effect": "lissajous",
       "era": "pcdemo",
       "transition": {
@@ -8222,7 +8044,6 @@
     {
       "id": "Scene 120 - Explicitpixels",
       "start": 369.624158,
-      "end": 372.6,
       "effect": "explicitpixels",
       "era": "pcdemo",
       "transition": {
@@ -8261,7 +8082,6 @@
     {
       "id": "Scene 121 - Portrait",
       "start": 370.344228,
-      "end": 372.6,
       "effect": "raymarch_fractal",
       "era": "pcdemo",
       "transition": {
@@ -8302,7 +8122,6 @@
     {
       "id": "Scene 122 - Voxel Landscape",
       "start": 370.974063,
-      "end": 372.6,
       "effect": "voxel_landscape",
       "era": "pcdemo",
       "transition": {
@@ -8357,7 +8176,6 @@
     {
       "id": "Scene 123 - Space Hangar",
       "start": 371.684907,
-      "end": 372.6,
       "effect": "space_hangar",
       "era": "pcdemo",
       "transition": {
@@ -8398,7 +8216,6 @@
     {
       "id": "Scene 124 - Effect Evolution",
       "start": 372.323875,
-      "end": 372.6,
       "effect": "effect_evolution",
       "era": "pcdemo",
       "transition": {
@@ -8439,7 +8256,6 @@
     {
       "id": "Scene 125 - Starfield",
       "start": 372.923267,
-      "end": 382.923267,
       "effect": "starfield",
       "era": "pcdemo",
       "transition": {
@@ -8482,7 +8298,6 @@
     {
       "id": "Scene 126 - Infinitycloud",
       "start": 375.694896,
-      "end": 385.694896,
       "effect": "infinitycloud",
       "era": "pcdemo",
       "transition": {
@@ -8519,7 +8334,6 @@
     {
       "id": "Scene 127 - Particles",
       "start": 376.87362,
-      "end": 386.87362,
       "effect": "particles",
       "era": "pcdemo",
       "transition": {
@@ -8560,7 +8374,6 @@
     {
       "id": "Scene 128 - Lens Wobbler",
       "start": 377.802072,
-      "end": 387.802072,
       "effect": "lens_wobbler",
       "era": "pcdemo",
       "transition": {
@@ -8616,7 +8429,6 @@
     {
       "id": "Scene 129 - Road Drive",
       "start": 378.353809,
-      "end": 388.353809,
       "effect": "roadDrive",
       "era": "pcdemo",
       "transition": {
@@ -8663,7 +8475,6 @@
     {
       "id": "Scene 130 - Volumetric Clouds",
       "start": 379.383878,
-      "end": 389.383878,
       "effect": "volumetric_clouds",
       "era": "pcdemo",
       "transition": {
