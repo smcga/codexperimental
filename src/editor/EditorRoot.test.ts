@@ -31,7 +31,9 @@ import {
   splitCueWords,
   generateWordTextCues
   ,
-  sortScenesForEditorList
+  sortScenesForEditorList,
+  toAutomationClip,
+  applyClipToAutomationEntry
 } from "./EditorRoot";
 
 describe("formatTime", () => {
@@ -114,6 +116,31 @@ describe("buildEditorTimelineTracks", () => {
 
   it("returns an empty list when no scene is selected", () => {
     expect(buildEditorTimelineTracks(null, 0)).toEqual([]);
+  });
+});
+
+describe("automation clip conversion helpers", () => {
+  it("builds a fallback clip from standard automation fields", () => {
+    const clip = toAutomationClip({ param: "speed", from: 0.2, to: 0.8, t0: 10, t1: 12 });
+    expect(clip.points).toEqual([
+      { time: 10, value: 0.2 },
+      { time: 12, value: 0.8 }
+    ]);
+  });
+
+  it("writes clip metadata back to automation entry fields", () => {
+    const clip = toAutomationClip({ param: "speed", from: 0, to: 1, t0: 0, t1: 1 });
+    clip.points = [
+      { time: 8, value: 0.1 },
+      { time: 9, value: 0.5 },
+      { time: 11, value: 0.9 }
+    ];
+    const next = applyClipToAutomationEntry({ param: "speed", from: 0, to: 1, t0: 0, t1: 1 }, clip);
+    expect(next.from).toBe(0.1);
+    expect(next.to).toBe(0.9);
+    expect(next.t0).toBe(8);
+    expect(next.t1).toBe(11);
+    expect(next.clip?.points).toHaveLength(3);
   });
 });
 
