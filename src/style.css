@@ -940,10 +940,29 @@ body,
   bottom: auto;
   height: calc(var(--editor-playlist-track-height) - 0.5rem);
   z-index: 1;
+  cursor: grab;
+  user-select: none;
 }
 
 .editor-playlist-clip.is-dragging {
   opacity: 0.65;
+  cursor: grabbing;
+}
+
+.editor-playlist-resize-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0.45rem;
+  cursor: ew-resize;
+}
+
+.editor-playlist-resize-handle-start {
+  left: 0;
+}
+
+.editor-playlist-resize-handle-end {
+  right: 0;
 }
 
 .editor-block.is-selected {

@@ -677,6 +677,13 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         startViewport: number;
       }
     | null = null;
+  let activeClipResize:
+    | {
+        pointerId: number;
+        sceneId: string;
+        edge: "start" | "end";
+      }
+    | null = null;
 
   const getEffectParamOptions = (effectName: string | null | undefined): string[] => {
     const config = getManifestDebugConfig(effectName ?? null);
@@ -1054,6 +1061,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           block.style.top = `calc(${index} * var(--editor-playlist-track-height) + 0.25rem)`;
           block.textContent = clip.sceneId;
           block.title = `${clip.sceneId} (${formatTime(clip.start)} → ${formatTime(clip.end)})`;
+          block.dataset.sceneId = clip.sceneId;
           if (clip.sceneId === state.selectedSceneId) {
             block.classList.add("is-selected");
           }
@@ -1068,6 +1076,21 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           });
           block.addEventListener("dragend", () => {
             block.classList.remove("is-dragging");
+          });
+          (["start", "end"] as const).forEach((edge) => {
+            const handle = document.createElement("span");
+            handle.className = `editor-playlist-resize-handle editor-playlist-resize-handle-${edge}`;
+            handle.dataset.resizeEdge = edge;
+            handle.addEventListener("pointerdown", (event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              activeClipResize = {
+                pointerId: event.pointerId,
+                sceneId: clip.sceneId,
+                edge
+              };
+            });
+            block.appendChild(handle);
           });
           tracks.appendChild(block);
         });
@@ -1124,11 +1147,18 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         fallback: parseTimelineTimeValue(draggedScene.start)
       });
       updateTimeline((draft) => {
+        const ordered = [...draft.sections].sort((a, b) => parseTimelineTimeValue(a.start) - parseTimelineTimeValue(b.start));
+        const orderedIndex = ordered.findIndex((section) => section.id === clipId);
+        const previous = orderedIndex > 0 ? ordered[orderedIndex - 1] : null;
+        const next = orderedIndex >= 0 && orderedIndex < ordered.length - 1 ? ordered[orderedIndex + 1] : null;
+        const min = previous ? parseTimelineTimeValue(previous.start) + 0.05 : 0;
+        const max = next ? parseTimelineTimeValue(next.start) - 0.05 : duration;
+        const clampedDropTime = clamp(dropTime, min, Math.max(min, max));
         const target = draft.sections.find((section) => section.id === clipId);
         if (!target) {
           return;
         }
-        target.start = Number(dropTime.toFixed(3));
+        target.start = Number(clampedDropTime.toFixed(3));
       });
     });
 
@@ -1272,14 +1302,65 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     renderTimelineView();
   };
 
+  const handleGlobalClipResize = (event: PointerEvent): void => {
+    if (!activeClipResize || event.pointerId !== activeClipResize.pointerId || !state.timeline) {
+      return;
+    }
+    const scenes = getScenesByTime();
+    const sceneIndex = scenes.findIndex((scene) => scene.id === activeClipResize.sceneId);
+    if (sceneIndex < 0) {
+      return;
+    }
+    const scroll = init.container.querySelector<HTMLDivElement>("[data-region='playlist-scroll']");
+    if (!scroll) {
+      return;
+    }
+    const rect = scroll.getBoundingClientRect();
+    if (rect.width <= 0) {
+      return;
+    }
+    const duration = Math.max(5, scenes.reduce((max, scene) => Math.max(max, getSceneEnd(scene)), 0));
+    const ratio = clamp((event.clientX - rect.left) / rect.width, 0, 1);
+    const pointerTime = playlistViewportStart + ratio * playlistViewportDuration;
+    const previous = sceneIndex > 0 ? scenes[sceneIndex - 1] : null;
+    const current = scenes[sceneIndex];
+    const next = sceneIndex < scenes.length - 1 ? scenes[sceneIndex + 1] : null;
+    updateTimeline((draft) => {
+      const target = draft.sections.find((section) => section.id === current.id);
+      if (!target) {
+        return;
+      }
+      if (activeClipResize?.edge === "start") {
+        const min = previous ? parseTimelineTimeValue(previous.start) + 0.05 : 0;
+        const max = next ? parseTimelineTimeValue(next.start) - 0.05 : duration;
+        target.start = Number(clamp(pointerTime, min, Math.max(min, max)).toFixed(3));
+        return;
+      }
+      if (!next) {
+        return;
+      }
+      const min = parseTimelineTimeValue(current.start) + 0.05;
+      const max = sceneIndex < scenes.length - 2 ? parseTimelineTimeValue(scenes[sceneIndex + 2].start) - 0.05 : duration;
+      const resizedEnd = Number(clamp(pointerTime, min, Math.max(min, max)).toFixed(3));
+      const nextTarget = draft.sections.find((section) => section.id === next.id);
+      if (nextTarget) {
+        nextTarget.start = resizedEnd;
+      }
+    });
+  };
+
   window.addEventListener("pointermove", handleGlobalPlaylistPan);
   window.addEventListener("pointermove", handleGlobalScrollbarDrag);
+  window.addEventListener("pointermove", handleGlobalClipResize);
   window.addEventListener("pointerup", (event) => {
     if (activePlaylistPan && event.pointerId === activePlaylistPan.pointerId) {
       activePlaylistPan = null;
     }
     if (activeScrollbarDrag && event.pointerId === activeScrollbarDrag.pointerId) {
       activeScrollbarDrag = null;
+    }
+    if (activeClipResize && event.pointerId === activeClipResize.pointerId) {
+      activeClipResize = null;
     }
   });
   window.addEventListener("pointercancel", (event) => {
@@ -1288,6 +1369,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     }
     if (activeScrollbarDrag && event.pointerId === activeScrollbarDrag.pointerId) {
       activeScrollbarDrag = null;
+    }
+    if (activeClipResize && event.pointerId === activeClipResize.pointerId) {
+      activeClipResize = null;
     }
   });
 
