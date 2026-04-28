@@ -877,46 +877,74 @@ export class Renderer {
     const energy = clamp(audio.rms * 1.4 + audio.treble * 0.5 + audio.beatStrength * 0.35, 0, 1.5);
 
     this.drawCanvasToRect(ctx, this.transitionCanvas, rectX, rectY, width, height, 1, camera, smoothing);
-    this.drawCanvasToRect(ctx, this.baseCanvas, rectX, rectY, width, height, Math.pow(safeProgress, 1.2), camera, smoothing);
-
-    const particleCount = Math.round(80 + energy * 140);
-    const maxRadius = width * (0.012 + energy * 0.01);
-    ctx.save();
-    ctx.globalCompositeOperation = "destination-out";
-    for (let i = 0; i < particleCount; i += 1) {
-      const seed = i * 78.233 + 19.19;
-      const px = rectX + ((Math.sin(seed) * 0.5 + 0.5) * width);
-      const py = rectY + ((Math.sin(seed * 1.73) * 0.5 + 0.5) * height);
-      const t = clamp((safeProgress - (Math.sin(seed * 0.37) * 0.5 + 0.5) * 0.75) / 0.25, 0, 1);
-      if (t <= 0) continue;
-      const r = maxRadius * (0.3 + (Math.sin(seed * 0.91) * 0.5 + 0.5)) * t;
-      ctx.beginPath(); ctx.arc(px, py, r, 0, Math.PI * 2); ctx.fill();
+    const baseReveal = Math.pow(safeProgress, 1.15) * 0.22;
+    if (baseReveal > 0.001) {
+      this.drawCanvasToRect(ctx, this.baseCanvas, rectX, rectY, width, height, baseReveal, camera, smoothing);
     }
-    ctx.restore();
+
+    const particleCount = Math.round(90 + energy * 150);
+    const maxRadius = width * (0.014 + energy * 0.012);
+    this.drawParticleReveal(
+      ctx,
+      this.baseCanvas,
+      safeProgress,
+      particleCount,
+      maxRadius,
+      rectX,
+      rectY,
+      width,
+      height
+    );
   }
 
   private drawMobileAudioReactiveParticleTransition({ ctx, progress, width, height, audio }: MobileTransitionDrawContext): void {
     ctx.drawImage(this.mobileFromCanvas, 0, 0, width, height);
     const reveal = clamp(progress, 0, 1);
-    ctx.save();
-    ctx.globalAlpha = Math.pow(reveal, 1.15);
-    ctx.drawImage(this.mobileToCanvas, 0, 0, width, height);
-    ctx.restore();
+    const baseReveal = Math.pow(reveal, 1.15) * 0.22;
+    if (baseReveal > 0.001) {
+      ctx.save();
+      ctx.globalAlpha = baseReveal;
+      ctx.drawImage(this.mobileToCanvas, 0, 0, width, height);
+      ctx.restore();
+    }
 
     const energy = clamp(audio.rms * 1.5 + audio.treble * 0.4 + audio.beatStrength * 0.35, 0, 1.5);
-    const particles = Math.round(50 + energy * 90);
-    ctx.save();
-    ctx.globalCompositeOperation = "destination-out";
-    for (let i = 0; i < particles; i += 1) {
-      const seed = i * 63.17 + 2.41;
-      const t = clamp((reveal - (Math.sin(seed * 0.43) * 0.5 + 0.5) * 0.8) / 0.2, 0, 1);
-      if (t <= 0) continue;
-      const x = (Math.sin(seed) * 0.5 + 0.5) * width;
-      const y = (Math.sin(seed * 1.61) * 0.5 + 0.5) * height;
-      const r = (width * 0.008 + energy * width * 0.006) * (0.4 + t);
-      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+    const particles = Math.round(56 + energy * 98);
+    const maxRadius = width * (0.009 + energy * 0.007);
+    this.drawParticleReveal(ctx, this.mobileToCanvas, reveal, particles, maxRadius, 0, 0, width, height);
+  }
+
+  private drawParticleReveal(
+    ctx: CanvasRenderingContext2D,
+    revealCanvas: HTMLCanvasElement,
+    progress: number,
+    particleCount: number,
+    maxRadius: number,
+    rectX: number,
+    rectY: number,
+    width: number,
+    height: number
+  ): void {
+    for (let i = 0; i < particleCount; i += 1) {
+      const seed = i * 78.233 + 19.19;
+      const px = rectX + (Math.sin(seed) * 0.5 + 0.5) * width;
+      const py = rectY + (Math.sin(seed * 1.73) * 0.5 + 0.5) * height;
+      const t = clamp((progress - (Math.sin(seed * 0.37) * 0.5 + 0.5) * 0.75) / 0.25, 0, 1);
+      if (t <= 0) {
+        continue;
+      }
+      const radius = maxRadius * (0.3 + (Math.sin(seed * 0.91) * 0.5 + 0.5)) * t;
+      if (radius <= 0.1) {
+        continue;
+      }
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(px, py, radius, 0, Math.PI * 2);
+      ctx.clip();
+      ctx.globalAlpha = clamp(0.35 + t * 0.75, 0, 1);
+      ctx.drawImage(revealCanvas, rectX, rectY, width, height);
+      ctx.restore();
     }
-    ctx.restore();
   }
 
   private drawShatterTransition({
