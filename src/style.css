@@ -624,6 +624,50 @@ body,
   padding: 0.42rem 0.5rem;
 }
 
+.editor-scene-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.editor-sort-menu {
+  position: relative;
+}
+
+.editor-sort-trigger {
+  cursor: pointer;
+  list-style: none;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.editor-sort-menu[open] .editor-sort-flyout {
+  display: grid;
+}
+
+.editor-sort-flyout {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.35rem);
+  display: none;
+  gap: 0.2rem;
+  min-width: 9rem;
+  z-index: 10;
+  padding: 0.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(6, 8, 14, 0.95);
+}
+
+.editor-sort-flyout button {
+  text-align: left;
+}
+
+.editor-sort-flyout button.is-active {
+  color: #8ef9ff;
+}
+
 .editor-scene-list {
   overflow-y: auto;
   display: flex;

@@ -27,6 +27,8 @@ import {
   parseEditorParamInputValue,
   splitCueWords,
   generateWordTextCues
+  ,
+  sortScenesForEditorList
 } from "./EditorRoot";
 
 describe("formatTime", () => {
@@ -95,6 +97,38 @@ describe("getSceneTimelineClips", () => {
     expect(clips).toEqual([
       { sceneId: "a", start: 10, end: 18 },
       { sceneId: "b", start: 20, end: 25 }
+    ]);
+  });
+});
+
+describe("sortScenesForEditorList", () => {
+  const scenes = [
+    { id: "Scene Z", start: 20, effect: "rain" },
+    { id: "Scene A", start: 10, effect: "plasma" },
+    { id: "Scene M", start: 15, effect: "starfield" }
+  ];
+
+  it("keeps timeline.json ordering when mode is timeline", () => {
+    expect(sortScenesForEditorList(scenes, "timeline").map((scene) => scene.id)).toEqual([
+      "Scene Z",
+      "Scene A",
+      "Scene M"
+    ]);
+  });
+
+  it("sorts scenes alphabetically by id", () => {
+    expect(sortScenesForEditorList(scenes, "alphabetical").map((scene) => scene.id)).toEqual([
+      "Scene A",
+      "Scene M",
+      "Scene Z"
+    ]);
+  });
+
+  it("sorts scenes by start time", () => {
+    expect(sortScenesForEditorList(scenes, "start-time").map((scene) => scene.id)).toEqual([
+      "Scene A",
+      "Scene M",
+      "Scene Z"
     ]);
   });
 });
