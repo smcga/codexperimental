@@ -1,8 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { buildTransitionOptionMarkup, transitionOptions } from "../renderer/transitions";
 import {
+  clamp,
   computeSceneSeekTime,
+  formatTime,
   clampPlaylistViewportStart,
+  getClipPercent,
+  buildEditorTimelineTracks,
+  getSceneTimelineClips,
   getPlaylistScrollbarMetrics,
   getMainSlotSelection,
   applyMainSlotSelection,
@@ -23,6 +28,76 @@ import {
   splitCueWords,
   generateWordTextCues
 } from "./EditorRoot";
+
+describe("formatTime", () => {
+  it("formats seconds to mm:ss.t", () => {
+    expect(formatTime(0)).toBe("00:00.0");
+    expect(formatTime(65.34)).toBe("01:05.3");
+  });
+
+  it("clamps invalid or negative values to zero", () => {
+    expect(formatTime(-2)).toBe("00:00.0");
+    expect(formatTime(Number.NaN)).toBe("00:00.0");
+  });
+});
+
+describe("getClipPercent", () => {
+  it("returns clip left and width percentage from start/end/duration", () => {
+    expect(getClipPercent(10, 30, 100)).toEqual({ left: 10, width: 20 });
+  });
+
+  it("clamps overflow values to timeline bounds", () => {
+    expect(getClipPercent(-5, 140, 100)).toEqual({ left: 0, width: 100 });
+  });
+});
+
+describe("clamp", () => {
+  it("prevents values below min and above max", () => {
+    expect(clamp(-1, 0, 10)).toBe(0);
+    expect(clamp(11, 0, 10)).toBe(10);
+    expect(clamp(4, 0, 10)).toBe(4);
+  });
+});
+
+describe("buildEditorTimelineTracks", () => {
+  it("creates scene, layer, and automation tracks for the selected scene", () => {
+    const tracks = buildEditorTimelineTracks(
+      {
+        id: "scene-a",
+        start: 10,
+        effect: "starfield",
+        layers: [{ effect: "feedback" }, { effect: "rain" }],
+        automation: [{ param: "speed", from: 0.2, to: 1, start: 10.5, end: 12.5, ease: "linear" }]
+      },
+      14
+    );
+
+    expect(tracks.map((track) => track.kind)).toEqual(["scene", "layer", "layer", "automation"]);
+    expect(tracks[0]).toMatchObject({ start: 10, end: 14 });
+    expect(tracks[3]).toMatchObject({ start: 10.5, end: 12.5 });
+  });
+
+  it("returns an empty list when no scene is selected", () => {
+    expect(buildEditorTimelineTracks(null, 0)).toEqual([]);
+  });
+});
+
+describe("getSceneTimelineClips", () => {
+  it("returns sorted scene clips with computed end values", () => {
+    const clips = getSceneTimelineClips(
+      [
+        { id: "b", start: 20, effect: "rain" },
+        { id: "a", start: 10, effect: "starfield" }
+      ],
+      (scene) => (scene.id === "a" ? 18 : 25)
+    );
+
+    expect(clips).toEqual([
+      { sceneId: "a", start: 10, end: 18 },
+      { sceneId: "b", start: 20, end: 25 }
+    ]);
+  });
+});
 
 describe("computeSceneSeekTime", () => {
   it("subtracts audio offset from the scene start", () => {
