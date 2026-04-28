@@ -232,52 +232,9 @@
       ]
     },
     {
-      "id": "era8bit-rotozoomo",
-      "start": 72.9,
-      "effect": "endless_self_improving_loop",
-      "params": {
-        "speed": 1,
-        "twist": 3.15
-      },
-      "automation": [
-        {
-          "param": "speed",
-          "from": 1,
-          "to": 2.2,
-          "t0": 65,
-          "t1": 76.6,
-          "ease": "easeInSine"
-        },
-        {
-          "param": "hueShift",
-          "from": 0,
-          "to": 217.29999999999998,
-          "t0": 72.9,
-          "t1": 76.6,
-          "ease": "linear"
-        }
-      ],
-      "layers": [
-        {
-          "effect": "raster_bars",
-          "blend": "overlay",
-          "opacity": 0.12,
-          "params": {
-            "audioReact": 0.2
-          }
-        },
-        {
-          "effect": "kefrens_bars",
-          "blend": "screen",
-          "opacity": 0.1,
-          "params": {}
-        }
-      ]
-    },
-    {
       "id": "hook-hit-01160",
-      "start": 75.2,
-      "effect": "explosionBurst",
+      "start": "01:16.62",
+      "effect": "glitch",
       "params": {
         "amount": 0.24
       },
@@ -358,7 +315,7 @@
     },
     {
       "id": "era8bit-glitch",
-      "start": 96,
+      "start": "01:32",
       "effect": "gameOfLife",
       "params": {
         "speed": 2.3,
@@ -370,32 +327,6 @@
           "blend": "screen",
           "opacity": 0.1,
           "params": {}
-        },
-        {
-          "effect": "bokeh",
-          "blend": "screen",
-          "opacity": 0.1,
-          "params": {}
-        }
-      ],
-      "fitAlign": "centre"
-    },
-    {
-      "id": "scene-7txety",
-      "start": 92.8,
-      "effect": "explicitpixels",
-      "params": {
-        "speed": 2.3,
-        "glow": 0.32
-      },
-      "layers": [
-        {
-          "effect": "shadebobs_bobs",
-          "blend": "screen",
-          "opacity": 0.3,
-          "params": {
-            "bobCount": 5
-          }
         },
         {
           "effect": "bokeh",
@@ -486,29 +417,12 @@
         "wobble": 0.093,
         "shake": 0.061
       },
-      "layers": [
-        {
-          "effect": "feedback",
-          "blend": "screen",
-          "opacity": 0.1,
-          "params": {
-            "alpha": 0.165
-          }
-        },
-        {
-          "effect": "vga_fire",
-          "blend": "lighter",
-          "opacity": 0.083,
-          "params": {
-            "audioReact": 0.2
-          }
-        }
-      ]
+      "layers": []
     },
     {
       "id": "era16bit-rush1-03",
       "start": "01:46.56",
-      "effect": "glitch",
+      "effect": "border_multiplex",
       "params": {
         "speed": 0.947,
         "glow": 0.251,
@@ -520,14 +434,6 @@
       },
       "layers": [
         {
-          "effect": "feedback",
-          "blend": "screen",
-          "opacity": 0.1,
-          "params": {
-            "alpha": 0.171
-          }
-        },
-        {
           "effect": "vga_fire",
           "blend": "lighter",
           "opacity": 0.087,
@@ -535,12 +441,13 @@
             "audioReact": 0.2
           }
         }
-      ]
+      ],
+      "era": "16bit"
     },
     {
       "id": "era16bit-rush1-04",
       "start": "01:46.7",
-      "effect": "isogrid",
+      "effect": "fireworks_display",
       "params": {
         "speed": 0.97,
         "glow": 0.266,
@@ -572,7 +479,7 @@
     {
       "id": "era16bit-rush1-05",
       "start": "01:46.84",
-      "effect": "equalizer",
+      "effect": "Neon City Drift",
       "params": {
         "speed": 0.993,
         "glow": 0.281,
@@ -794,6 +701,38 @@
       ]
     },
     {
+      "id": "era16bit-rush1-12",
+      "start": "01:47.84",
+      "effect": "isogrid",
+      "params": {
+        "speed": 1.157,
+        "glow": 0.389,
+        "alpha": 0.233,
+        "trail": 0.341,
+        "warp": 0.32,
+        "wobble": 0.227,
+        "shake": 0.167
+      },
+      "layers": [
+        {
+          "effect": "feedback",
+          "blend": "screen",
+          "opacity": 0.1,
+          "params": {
+            "alpha": 0.219
+          }
+        },
+        {
+          "effect": "vga_fire",
+          "blend": "lighter",
+          "opacity": 0.117,
+          "params": {
+            "audioReact": 0.2
+          }
+        }
+      ]
+    },
+    {
       "id": "era16bit-rush1-13",
       "start": "01:47.99",
       "effect": "equalizer",
@@ -922,13 +861,37 @@
       ]
     },
     {
+      "id": "era16bit-rush-6",
+      "start": "01:48.56",
+      "effect": "ribbons",
+      "params": {
+        "speed": 1.22,
+        "glow": 0.46
+      },
+      "layers": [
+        {
+          "effect": "feedback",
+          "blend": "screen",
+          "opacity": 0.13,
+          "params": {
+            "alpha": 0.24
+          }
+        }
+      ]
+    },
+    {
       "id": "calm-sunset",
       "start": "01:49.16",
       "effect": "synthwaveSunset",
       "params": {
-        "sunRadius": 0.02,
+        "sunRadius": 0.1,
         "glow": 0.24,
-        "audioReactive": 0.2
+        "audioReactive": 0.2,
+        "scanlines": 0.55,
+        "stripeGap": 5,
+        "stripeHeight": 11,
+        "seaSpeed": 0.3,
+        "horizon": 0.68
       },
       "automation": [
         {
@@ -940,48 +903,8 @@
           "ease": "easeInOutQuad"
         }
       ],
-      "layers": [
-        {
-          "effect": "bokeh",
-          "blend": "screen",
-          "opacity": 0.11,
-          "params": {}
-        },
-        {
-          "effect": "skyboxTransition",
-          "blend": "soft-light",
-          "opacity": 0.26,
-          "params": {
-            "speed": 0.72,
-            "intensity": 0.9,
-            "horizon": 0.64,
-            "cloudAmount": 0.5,
-            "starAmount": 0.62,
-            "silhouetteAmount": 0.42,
-            "surrealness": 0.3,
-            "audioReactive": 0.2,
-            "phaseOffset": 0.18
-          }
-        },
-        {
-          "effect": "rain",
-          "blend": "screen",
-          "opacity": 0.08,
-          "params": {}
-        },
-        {
-          "effect": "starfield",
-          "blend": "screen",
-          "opacity": 0.16,
-          "params": {
-            "speed": 0.72,
-            "rainbowLength": 0.88,
-            "sparkle": 0.5,
-            "trailAlpha": 0.75,
-            "starDensity": 0.4
-          }
-        }
-      ]
+      "layers": [],
+      "era": "future"
     },
     {
       "id": "snare-buildup",
@@ -2844,13 +2767,13 @@
     },
     {
       "id": "Scene 007 - Flyover",
-      "start": 128.727744,
-      "effect": "flyover",
+      "start": 128.2,
+      "effect": "cosmic_voyage",
       "era": "pcdemo",
       "transition": {
-        "in": "slide-down",
+        "in": "iris",
         "out": "shatter",
-        "duration": 0.8
+        "duration": 0.6
       },
       "params": {
         "speed": 1.8,
@@ -3765,7 +3688,7 @@
       "transition": {
         "in": "slide-left",
         "out": "wipe",
-        "duration": 0.8
+        "duration": 0.2
       },
       "params": {
         "speed": 2.8,
@@ -3806,7 +3729,7 @@
     {
       "id": "Scene 028 - Finale",
       "start": 212.079785,
-      "effect": "explosionBurst",
+      "effect": "god_rays",
       "era": "pcdemo",
       "transition": {
         "in": "flash",
