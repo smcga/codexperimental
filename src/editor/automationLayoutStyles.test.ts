@@ -12,5 +12,7 @@ describe("automation editor layout styles", () => {
     expect(css).toContain("grid-template-columns: repeat(3, minmax(0, 1fr));");
     expect(css).toContain(".editor-layer-actions {");
     expect(css).toContain("flex-wrap: wrap;");
+    expect(css).toContain(".editor-playlist-vscrollbar {");
+    expect(css).toContain(".editor-playlist-scrollbar-handle-start {");
   });
 });

@@ -873,6 +873,28 @@ body,
   overflow: hidden;
 }
 
+.editor-playlist-vscrollbar {
+  position: absolute;
+  right: 0.2rem;
+  top: 2.5rem;
+  bottom: 1.4rem;
+  width: 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.editor-playlist-vscrollbar-thumb {
+  position: absolute;
+  left: 0;
+  right: 0;
+  min-height: 12%;
+  background: rgba(142, 249, 255, 0.45);
+  border: 1px solid rgba(142, 249, 255, 0.8);
+  border-radius: 999px;
+}
+
 .editor-playlist-scrollbar-thumb {
   position: absolute;
   top: 0;
@@ -883,6 +905,24 @@ body,
   background: rgba(142, 249, 255, 0.45);
   border: 1px solid rgba(142, 249, 255, 0.8);
   cursor: grab;
+}
+
+.editor-playlist-scrollbar-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0.45rem;
+  background: rgba(207, 255, 242, 0.45);
+}
+
+.editor-playlist-scrollbar-handle-start {
+  left: 0;
+  cursor: ew-resize;
+}
+
+.editor-playlist-scrollbar-handle-end {
+  right: 0;
+  cursor: ew-resize;
 }
 
 .editor-playlist-scrollbar-thumb:active {

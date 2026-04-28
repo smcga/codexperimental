@@ -758,6 +758,15 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         startViewport: number;
       }
     | null = null;
+  let activeScrollbarResize:
+    | {
+        pointerId: number;
+        edge: "start" | "end";
+        startX: number;
+        startViewport: number;
+        startDuration: number;
+      }
+    | null = null;
   let activeClipResize:
     | {
         pointerId: number;
@@ -1113,8 +1122,14 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       <div class="editor-playlist-scroll" data-region="playlist-scroll">
         <div class="editor-playlist-tracks" data-region="playlist-tracks"></div>
       </div>
+      <div class="editor-playlist-vscrollbar" data-region="playlist-vscrollbar">
+        <div class="editor-playlist-vscrollbar-thumb" data-region="playlist-vscrollbar-thumb"></div>
+      </div>
       <div class="editor-playlist-scrollbar" data-region="playlist-scrollbar">
-        <div class="editor-playlist-scrollbar-thumb" data-region="playlist-scrollbar-thumb"></div>
+        <div class="editor-playlist-scrollbar-thumb" data-region="playlist-scrollbar-thumb">
+          <span class="editor-playlist-scrollbar-handle editor-playlist-scrollbar-handle-start" data-resize-edge="start"></span>
+          <span class="editor-playlist-scrollbar-handle editor-playlist-scrollbar-handle-end" data-resize-edge="end"></span>
+        </div>
       </div>
     `;
 
@@ -1123,7 +1138,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     const ruler = view.querySelector<HTMLDivElement>("[data-region='playlist-ruler']");
     const scrollbar = view.querySelector<HTMLDivElement>("[data-region='playlist-scrollbar']");
     const scrollbarThumb = view.querySelector<HTMLDivElement>("[data-region='playlist-scrollbar-thumb']");
-    if (!tracks || !scroll || !scrollbar || !scrollbarThumb || !ruler) {
+    const vScrollbar = view.querySelector<HTMLDivElement>("[data-region='playlist-vscrollbar']");
+    const vScrollbarThumb = view.querySelector<HTMLDivElement>("[data-region='playlist-vscrollbar-thumb']");
+    if (!tracks || !scroll || !scrollbar || !scrollbarThumb || !ruler || !vScrollbar || !vScrollbarThumb) {
       return;
     }
     const minClipWidthPercent = getMinimumClipWidthPercent(playlistViewportDuration, scroll.clientWidth);
@@ -1355,6 +1372,17 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     scrollbarThumb.style.left = `${scrollbarMetrics.thumbStartRatio * 100}%`;
     scrollbar.addEventListener("pointerdown", (event) => {
       const target = event.target as HTMLElement;
+      const resizeEdge = target.closest<HTMLElement>("[data-resize-edge]")?.dataset.resizeEdge;
+      if (resizeEdge === "start" || resizeEdge === "end") {
+        activeScrollbarResize = {
+          pointerId: event.pointerId,
+          edge: resizeEdge,
+          startX: event.clientX,
+          startViewport: playlistViewportStart,
+          startDuration: playlistViewportDuration
+        };
+        return;
+      }
       if (target.closest("[data-region='playlist-scrollbar-thumb']")) {
         activeScrollbarDrag = {
           pointerId: event.pointerId,
@@ -1372,6 +1400,22 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       playlistViewportStart = clampPlaylistViewportStart(desiredStart, duration, playlistViewportDuration);
       renderTimelineView();
     });
+    const vSizeRatio = scroll.scrollHeight > 0 ? clamp(scroll.clientHeight / scroll.scrollHeight, 0.08, 1) : 1;
+    const vStartRatio =
+      scroll.scrollHeight > scroll.clientHeight
+        ? clamp(scroll.scrollTop / Math.max(1, scroll.scrollHeight - scroll.clientHeight), 0, 1) * (1 - vSizeRatio)
+        : 0;
+    vScrollbarThumb.style.height = `${vSizeRatio * 100}%`;
+    vScrollbarThumb.style.top = `${vStartRatio * 100}%`;
+    vScrollbar.onpointerdown = (event) => {
+      const rect = vScrollbar.getBoundingClientRect();
+      if (rect.height <= 0) {
+        return;
+      }
+      const ratio = clamp((event.clientY - rect.top) / rect.height, 0, 1);
+      scroll.scrollTop = ratio * Math.max(0, scroll.scrollHeight - scroll.clientHeight);
+      renderTimelineView();
+    };
 
     view.querySelector<HTMLButtonElement>("[data-action='playlist-zoom-in']")?.addEventListener("click", () => {
       const zoomed = zoomPlaylistViewport(
@@ -1440,6 +1484,28 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   };
 
   const handleGlobalScrollbarDrag = (event: PointerEvent): void => {
+    if (activeScrollbarResize && event.pointerId === activeScrollbarResize.pointerId) {
+      const scrollbar = init.container.querySelector<HTMLDivElement>("[data-region='playlist-scrollbar']");
+      if (!scrollbar) {
+        return;
+      }
+      const rect = scrollbar.getBoundingClientRect();
+      if (rect.width <= 0) {
+        return;
+      }
+      const deltaRatio = (event.clientX - activeScrollbarResize.startX) / rect.width;
+      const durationDelta = deltaRatio * activeScrollbarResize.startDuration;
+      if (activeScrollbarResize.edge === "end") {
+        playlistViewportDuration = Math.max(2, activeScrollbarResize.startDuration + durationDelta);
+      } else {
+        const nextDuration = Math.max(2, activeScrollbarResize.startDuration - durationDelta);
+        const end = activeScrollbarResize.startViewport + activeScrollbarResize.startDuration;
+        playlistViewportDuration = nextDuration;
+        playlistViewportStart = Math.max(0, end - nextDuration);
+      }
+      renderTimelineView();
+      return;
+    }
     if (!activeScrollbarDrag || event.pointerId !== activeScrollbarDrag.pointerId) {
       return;
     }
@@ -1520,6 +1586,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     if (activeScrollbarDrag && event.pointerId === activeScrollbarDrag.pointerId) {
       activeScrollbarDrag = null;
     }
+    if (activeScrollbarResize && event.pointerId === activeScrollbarResize.pointerId) {
+      activeScrollbarResize = null;
+    }
     if (activeClipResize && event.pointerId === activeClipResize.pointerId) {
       activeClipResize = null;
     }
@@ -1530,6 +1599,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     }
     if (activeScrollbarDrag && event.pointerId === activeScrollbarDrag.pointerId) {
       activeScrollbarDrag = null;
+    }
+    if (activeScrollbarResize && event.pointerId === activeScrollbarResize.pointerId) {
+      activeScrollbarResize = null;
     }
     if (activeClipResize && event.pointerId === activeClipResize.pointerId) {
       activeClipResize = null;
