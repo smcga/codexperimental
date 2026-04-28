@@ -76,3 +76,19 @@ export function shouldHandleGlobalShortcut(target: EventTarget | null): boolean 
 
   return true;
 }
+
+
+export type EditorShortcutAction = "toggle-playback" | "seek-backward" | "seek-forward" | null;
+
+export function getEditorShortcutAction(key: string): EditorShortcutAction {
+  if (key === " ") {
+    return "toggle-playback";
+  }
+  if (key === "ArrowLeft") {
+    return "seek-backward";
+  }
+  if (key === "ArrowRight") {
+    return "seek-forward";
+  }
+  return null;
+}

@@ -2224,6 +2224,34 @@ window.addEventListener("keydown", (event) => {
   if (!shouldHandleGlobalShortcut(event.target)) {
     return;
   }
+  if (editorController?.isVisible()) {
+    const editorShortcutAction = getEditorShortcutAction(event.key);
+    if (editorShortcutAction === "toggle-playback" && audioPlayer) {
+      event.preventDefault();
+      if (audioPlayer.paused) {
+        void audioPlayer.play();
+        if (!playbackSyncSuppressBroadcast) {
+          playbackSync.broadcastTransport("play");
+        }
+      } else {
+        audioPlayer.pause();
+        if (!playbackSyncSuppressBroadcast) {
+          playbackSync.broadcastTransport("pause");
+        }
+      }
+      return;
+    }
+    if ((editorShortcutAction === "seek-backward" || editorShortcutAction === "seek-forward") && audioPlayer) {
+      event.preventDefault();
+      const delta = editorShortcutAction === "seek-backward" ? -3 : 3;
+      const targetTime = getRelativeSeekTime(audioPlayer.currentTime, delta, audioPlayer.duration);
+      audioPlayer.seek(targetTime);
+      if (!playbackSyncSuppressBroadcast) {
+        playbackSync.broadcastTransport("seek", targetTime);
+      }
+      return;
+    }
+  }
   if (event.key === "Escape" && doodleModal && !doodleModal.classList.contains("hidden")) {
     setDoodleModalVisible(false);
     return;
