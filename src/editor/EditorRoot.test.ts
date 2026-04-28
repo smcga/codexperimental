@@ -6,6 +6,7 @@ import {
   formatTime,
   clampPlaylistViewportStart,
   getClipPercent,
+  buildEditorTimelineTracks,
   getPlaylistScrollbarMetrics,
   getMainSlotSelection,
   applyMainSlotSelection,
@@ -54,6 +55,29 @@ describe("clamp", () => {
     expect(clamp(-1, 0, 10)).toBe(0);
     expect(clamp(11, 0, 10)).toBe(10);
     expect(clamp(4, 0, 10)).toBe(4);
+  });
+});
+
+describe("buildEditorTimelineTracks", () => {
+  it("creates scene, layer, and automation tracks for the selected scene", () => {
+    const tracks = buildEditorTimelineTracks(
+      {
+        id: "scene-a",
+        start: 10,
+        effect: "starfield",
+        layers: [{ effect: "feedback" }, { effect: "rain" }],
+        automation: [{ param: "speed", from: 0.2, to: 1, start: 10.5, end: 12.5, ease: "linear" }]
+      },
+      14
+    );
+
+    expect(tracks.map((track) => track.kind)).toEqual(["scene", "layer", "layer", "automation"]);
+    expect(tracks[0]).toMatchObject({ start: 10, end: 14 });
+    expect(tracks[3]).toMatchObject({ start: 10.5, end: 12.5 });
+  });
+
+  it("returns an empty list when no scene is selected", () => {
+    expect(buildEditorTimelineTracks(null, 0)).toEqual([]);
   });
 });
 

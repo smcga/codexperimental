@@ -560,7 +560,7 @@ body,
 
 .editor-body {
   display: grid;
-  grid-template-columns: minmax(240px, 0.95fr) minmax(620px, 2.4fr) minmax(330px, 1.2fr);
+  grid-template-columns: minmax(180px, 230px) minmax(620px, 2.3fr) minmax(320px, 1.4fr);
   gap: 0.8rem;
   min-height: 0;
   overflow: hidden;
@@ -570,6 +570,22 @@ body,
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  min-height: 0;
+}
+
+.editor-workspace {
+  display: grid;
+  grid-template-rows: auto auto minmax(50vh, 1fr);
+}
+
+.editor-top-row {
+  display: grid;
+  grid-template-columns: minmax(200px, 240px) minmax(420px, 1fr) minmax(240px, 280px);
+  gap: 0.6rem;
+  align-items: stretch;
+}
+
+.editor-top-panel {
   min-height: 0;
 }
 
@@ -696,34 +712,14 @@ body,
   --editor-playlist-track-height: 2.3rem;
 }
 
-.editor-workspace-tabs {
-  display: flex;
-  gap: 0.4rem;
-}
-
-.editor-workspace-tab {
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  color: inherit;
-  padding: 0.35rem 0.7rem;
-  font-size: 0.73rem;
-}
-
-.editor-workspace-tab.is-active {
-  border-color: #8ef9ff;
-  background: rgba(142, 249, 255, 0.13);
-}
-
 .editor-preview-panel {
   display: grid;
   gap: 0.45rem;
 }
 
 .editor-preview-toolbar,
-.editor-preview-fit-controls,
 .editor-preview-transport,
-.editor-preview-transport-controls,
-.editor-preview-zoom {
+.editor-preview-transport-controls {
   display: flex;
   align-items: center;
 }
@@ -733,16 +729,11 @@ body,
   justify-content: space-between;
 }
 
-.editor-preview-fit-controls,
-.editor-preview-transport-controls,
-.editor-preview-zoom {
+.editor-preview-transport-controls {
   gap: 0.35rem;
 }
 
-.editor-preview-fit-controls select,
-.editor-preview-fit-controls button,
 .editor-preview-transport button,
-.editor-add-track,
 .editor-icon-button {
   background: rgba(255, 255, 255, 0.08);
   color: inherit;
@@ -755,7 +746,7 @@ body,
   border: 1px solid rgba(255, 255, 255, 0.15);
   background: rgba(0, 0, 0, 0.5);
   padding: 0.5rem;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 16 / 7;
   display: grid;
   place-items: center;
 }
@@ -802,15 +793,10 @@ body,
   min-width: 2rem;
 }
 
-.editor-add-track {
-  font-size: 0.66rem;
-  letter-spacing: 0.08em;
-}
-
 .editor-playlist-scroll {
   position: relative;
-  min-height: 9rem;
-  max-height: 14rem;
+  min-height: min(52vh, 520px);
+  max-height: none;
   overflow: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -917,6 +903,10 @@ body,
   flex-direction: column;
   gap: 1rem;
   padding-right: 0.25rem;
+}
+
+.editor-top-panel .editor-group {
+  margin-bottom: 0.6rem;
 }
 
 .editor-inspector-header {

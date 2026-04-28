@@ -339,6 +339,53 @@ export type PlaylistClipLayout = {
   track: number;
 };
 
+type EditorTimelineTrack = {
+  id: string;
+  label: string;
+  kind: "scene" | "layer" | "automation";
+  start: number;
+  end: number;
+};
+
+export const buildEditorTimelineTracks = (
+  selectedScene: RawSectionConfig | null,
+  selectedSceneEnd: number
+): EditorTimelineTrack[] => {
+  if (!selectedScene) {
+    return [];
+  }
+  const sceneStart = parseTimelineTimeValue(selectedScene.start);
+  const sceneEnd = Math.max(sceneStart + 0.05, selectedSceneEnd);
+  const tracks: EditorTimelineTrack[] = [
+    {
+      id: `${selectedScene.id}:scene`,
+      label: "Scene",
+      kind: "scene",
+      start: sceneStart,
+      end: sceneEnd
+    }
+  ];
+  (selectedScene.layers ?? []).forEach((layer, index) => {
+    tracks.push({
+      id: `${selectedScene.id}:layer:${index}`,
+      label: `Layer ${index + 1}: ${layer.effect}`,
+      kind: "layer",
+      start: sceneStart,
+      end: sceneEnd
+    });
+  });
+  (selectedScene.automation ?? []).forEach((entry, index) => {
+    tracks.push({
+      id: `${selectedScene.id}:automation:${index}`,
+      label: `Automation: ${entry.param}`,
+      kind: "automation",
+      start: parseTimelineTimeValue(entry.start ?? sceneStart),
+      end: parseTimelineTimeValue(entry.end ?? sceneEnd)
+    });
+  });
+  return tracks;
+};
+
 export const layoutPlaylistTracks = (scenes: RawSectionConfig[], getSceneEnd: (scene: RawSectionConfig) => number) => {
   const sorted = [...scenes].sort((a, b) => parseTimelineTimeValue(a.start) - parseTimelineTimeValue(b.start));
   const trackEnds: number[] = [];
@@ -749,38 +796,24 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
             <button type="button" data-action="select-loop-current">Select &amp; Loop</button>
           </div>
         </section>
-        <section class="editor-column editor-timeline">
-          <div class="editor-workspace-tabs" role="tablist" aria-label="Editor workspace tabs">
-            <button type="button" class="editor-workspace-tab is-active" role="tab" aria-selected="true">Preview</button>
-            <button type="button" class="editor-workspace-tab" role="tab" aria-selected="false">Timeline</button>
+        <section class="editor-column editor-workspace">
+          <div class="editor-top-row">
+            <div class="editor-top-panel" data-region="basic-panel"></div>
+            <div class="editor-preview-panel">
+              <div class="editor-preview-toolbar">
+                <div class="editor-section-title">PREVIEW</div>
+              </div>
+              <div class="editor-preview">
+                <canvas data-region="preview-canvas" width="640" height="360"></canvas>
+              </div>
+            </div>
+            <div class="editor-top-panel" data-region="slots-panel"></div>
           </div>
-          <div class="editor-preview-panel">
-            <div class="editor-preview-toolbar">
-              <div class="editor-section-title">PREVIEW</div>
-              <div class="editor-preview-fit-controls">
-                <select aria-label="Preview fit mode">
-                  <option>Fit</option>
-                </select>
-                <button type="button" aria-label="Toggle fullscreen preview" title="Fullscreen">⛶</button>
-              </div>
-            </div>
-            <div class="editor-preview">
-              <canvas data-region="preview-canvas" width="640" height="360"></canvas>
-            </div>
-            <div class="editor-preview-transport">
-              <span data-region="preview-time">${formatTime(currentDemoTime)} / ${formatTime(init.getAudioDuration())}</span>
-              <div class="editor-preview-transport-controls">
-                <button type="button" aria-label="Jump to start">⏮</button>
-                <button type="button" aria-label="Rewind">⏪</button>
-                <button type="button" data-action="preview-play-toggle" aria-label="Play or pause">⏯</button>
-                <button type="button" aria-label="Fast forward">⏩</button>
-                <button type="button" aria-label="Jump to end">⏭</button>
-              </div>
-              <div class="editor-preview-zoom">
-                <button type="button" aria-label="Zoom out timeline">−</button>
-                <span>100%</span>
-                <button type="button" aria-label="Zoom in timeline">+</button>
-              </div>
+          <div class="editor-preview-transport">
+            <span data-region="preview-time">${formatTime(currentDemoTime)} / ${formatTime(init.getAudioDuration())}</span>
+            <div class="editor-preview-transport-controls">
+              <button type="button" data-action="play-toggle-inline">Play</button>
+              <button type="button" data-action="jump-scene-inline">Jump to scene</button>
             </div>
           </div>
           <div class="editor-section-title">TIMELINE</div>
@@ -789,7 +822,6 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         <section class="editor-column editor-inspector">
           <div class="editor-inspector-header">
             <div class="editor-section-title">INSPECTOR</div>
-            <button type="button" class="editor-icon-button" title="Refresh inspector" aria-label="Refresh inspector">↻</button>
           </div>
           <div class="editor-inspector-body" data-region="inspector"></div>
         </section>
@@ -897,17 +929,17 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     playlistViewportDuration = Math.min(Math.max(2, playlistViewportDuration), duration);
     playlistViewportStart = clampPlaylistViewportStart(playlistViewportStart, duration, playlistViewportDuration);
     const viewportEnd = Math.min(duration, playlistViewportStart + playlistViewportDuration);
-    const layout = layoutPlaylistTracks(scenes, getSceneEnd);
     const ticks = Math.max(1, Math.ceil(playlistViewportDuration / 5));
     const currentScene = getScenePlayingAtTime(scenes, currentDemoTime);
     const focusScene =
       (state.selectedSceneId ? scenes.find((scene) => scene.id === state.selectedSceneId) : null) ?? currentScene;
+    const focusSceneEnd = focusScene ? getSceneEnd(focusScene) : 0;
+    const timelineTracks = buildEditorTimelineTracks(focusScene, focusSceneEnd);
     const playheadRatio = clamp((currentDemoTime - playlistViewportStart) / Math.max(playlistViewportDuration, 0.001), 0, 1);
 
     view.innerHTML = `
       <div class="editor-playlist-toolbar">
         <span>Track 1</span>
-        <button type="button" class="editor-add-track" data-action="add-track">+ ADD TRACK</button>
       </div>
       <div class="editor-ruler">
         ${Array.from({ length: ticks + 1 })
@@ -933,25 +965,31 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     if (!tracks || !scroll || !scrollbar || !scrollbarThumb) {
       return;
     }
-    tracks.style.setProperty("--playlist-track-count", String(Math.max(1, layout.trackCount)));
-    const lane = document.createElement("div");
-    lane.className = "editor-playlist-track";
-    lane.dataset.track = "0";
-    lane.innerHTML = `<span class="editor-playlist-track-label">Track 1</span>`;
-    tracks.appendChild(lane);
+    const visualTracks = timelineTracks.length > 0 ? timelineTracks : [{ id: "empty", label: "Track 1", kind: "scene" as const, start: 0, end: 0 }];
+    tracks.style.setProperty("--playlist-track-count", String(visualTracks.length));
 
-    if (focusScene) {
-      const start = parseTimelineTimeValue(focusScene.start);
-      const end = getSceneEnd(focusScene);
-      const clipPercent = getClipPercent(start - playlistViewportStart, end - playlistViewportStart, playlistViewportDuration);
+    visualTracks.forEach((timelineTrack, index) => {
+      const lane = document.createElement("div");
+      lane.className = "editor-playlist-track";
+      lane.dataset.track = String(index);
+      lane.innerHTML = `<span class="editor-playlist-track-label">${timelineTrack.kind === "scene" ? "Track 1" : timelineTrack.label}</span>`;
+      tracks.appendChild(lane);
+      if (!focusScene) {
+        return;
+      }
+      const clipPercent = getClipPercent(
+        timelineTrack.start - playlistViewportStart,
+        timelineTrack.end - playlistViewportStart,
+        playlistViewportDuration
+      );
       const block = document.createElement("button");
       block.type = "button";
       block.className = "editor-block editor-playlist-clip";
       block.style.left = `${clipPercent.left}%`;
       block.style.width = `${Math.max(3, clipPercent.width)}%`;
-      block.style.top = "0.25rem";
+      block.style.top = `calc(${index} * var(--editor-playlist-track-height) + 0.25rem)`;
       block.textContent = focusScene.id;
-      block.title = `${focusScene.id} (${formatTime(start)} → ${formatTime(end)})`;
+      block.title = `${timelineTrack.label} (${formatTime(timelineTrack.start)} → ${formatTime(timelineTrack.end)})`;
       if (focusScene.id === state.selectedSceneId) {
         block.classList.add("is-selected");
       }
@@ -960,7 +998,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         init.seek(computeSceneSeekTime(focusScene.start, init.getAudioOffset()));
       });
       tracks.appendChild(block);
-    }
+    });
 
     const playhead = document.createElement("div");
     playhead.className = "editor-playhead";
@@ -1086,9 +1124,6 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       playlistViewportDuration = Math.min(Math.max(20, duration * 0.4), duration);
       renderTimelineView();
     });
-    view.querySelector<HTMLButtonElement>("[data-action='add-track']")?.addEventListener("click", () => {
-      // TODO: Add real multi-track authoring if/when a track model exists.
-    });
   };
 
   const handleGlobalPlaylistPan = (event: PointerEvent): void => {
@@ -1160,21 +1195,36 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
 
   const renderInspector = (): void => {
     const inspector = init.container.querySelector<HTMLDivElement>("[data-region='inspector']");
+    const basicPanel = init.container.querySelector<HTMLDivElement>("[data-region='basic-panel']");
+    const slotsPanel = init.container.querySelector<HTMLDivElement>("[data-region='slots-panel']");
     if (!inspector || !state.timeline) {
       return;
     }
     if (!state.selectedSceneId) {
       inspector.innerHTML = `<div class="editor-empty">Select a scene to edit.</div>`;
+      if (basicPanel) {
+        basicPanel.innerHTML = "";
+      }
+      if (slotsPanel) {
+        slotsPanel.innerHTML = "";
+      }
       return;
     }
     const scene = getSceneById(state.selectedSceneId);
     if (!scene) {
       inspector.innerHTML = `<div class="editor-empty">Scene not found.</div>`;
+      if (basicPanel) {
+        basicPanel.innerHTML = "";
+      }
+      if (slotsPanel) {
+        slotsPanel.innerHTML = "";
+      }
       return;
     }
 
     inspector.dataset.sceneId = scene.id;
-    inspector.innerHTML = `
+    if (basicPanel) {
+      basicPanel.innerHTML = `
       <div class="editor-group">
         <div class="editor-group-title">BASIC</div>
         <label>
@@ -1210,6 +1260,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           </select>
         </label>
       </div>
+    `;
+    }
+    if (slotsPanel) {
+      slotsPanel.innerHTML = `
       <div class="editor-group">
         <div class="editor-group-title">MAIN SLOTS (Top/Centre/Bottom)</div>
         <div class="editor-note">Use these to stage up to three simultaneous “main” effects in mobile-fit mode.</div>
@@ -1250,11 +1304,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           <input type="number" step="0.1" data-field="transition-duration" value="${scene.transition?.duration ?? 0.8}" />
         </label>
       </div>
-      <div class="editor-group">
-        <details class="editor-advanced-row">
-          <summary>ADVANCED</summary>
-        </details>
-      </div>
+    `;
+    }
+    inspector.innerHTML = `
       <div class="editor-group">
         <div class="editor-group-title">Scene Params</div>
         <div data-region="scene-params"></div>
@@ -1325,11 +1377,11 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       </div>
     `;
 
-    bindInspectorInputs(scene, inspector);
+    bindInspectorInputs(scene, init.container);
     renderParamsEditor(
       scene.effect,
       scene.params ?? {},
-      inspector.querySelector("[data-region='scene-params']"),
+      init.container.querySelector("[data-region='scene-params']"),
       (params) => {
         updateTimeline((draft) => {
           const target = draft.sections.find((section) => section.id === scene.id);
@@ -1343,7 +1395,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     renderAutomationEditor(
       scene.effect,
       scene.automation ?? [],
-      inspector.querySelector("[data-region='scene-automation']"),
+      init.container.querySelector("[data-region='scene-automation']"),
       (automation) => {
         updateTimeline((draft) => {
           const target = draft.sections.find((section) => section.id === scene.id);
@@ -1355,8 +1407,8 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       parseTimelineTimeValue(scene.start),
       getSceneEnd(scene)
     );
-    renderLayers(scene, inspector.querySelector("[data-region='layers']"));
-    renderTextCues(scene, inspector.querySelector("[data-region='text-cues']"));
+    renderLayers(scene, init.container.querySelector("[data-region='layers']"));
+    renderTextCues(scene, init.container.querySelector("[data-region='text-cues']"));
   };
 
   const bindInspectorInputs = (scene: RawSectionConfig, inspector: HTMLElement): void => {
@@ -2141,13 +2193,25 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       }
     });
     init.container
-      .querySelector<HTMLButtonElement>("[data-action='preview-play-toggle']")
+      .querySelector<HTMLButtonElement>("[data-action='play-toggle-inline']")
       ?.addEventListener("click", async () => {
         if (playbackButton?.dataset.state === "playing") {
           init.pause();
         } else {
           await init.play();
         }
+      });
+    init.container
+      .querySelector<HTMLButtonElement>("[data-action='jump-scene-inline']")
+      ?.addEventListener("click", () => {
+        if (!state.selectedSceneId) {
+          return;
+        }
+        const scene = getSceneById(state.selectedSceneId);
+        if (!scene) {
+          return;
+        }
+        init.seek(computeSceneSeekTime(scene.start, init.getAudioOffset()));
       });
 
     transport.querySelector<HTMLButtonElement>("[data-action='jump-scene']")?.addEventListener("click", () => {
