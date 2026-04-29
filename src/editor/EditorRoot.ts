@@ -767,6 +767,13 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         startDuration: number;
       }
     | null = null;
+  let activeVScrollbarDrag:
+    | {
+        pointerId: number;
+        startY: number;
+        startScrollTop: number;
+      }
+    | null = null;
   let activeClipResize:
     | {
         pointerId: number;
@@ -1408,6 +1415,15 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     vScrollbarThumb.style.height = `${vSizeRatio * 100}%`;
     vScrollbarThumb.style.top = `${vStartRatio * 100}%`;
     vScrollbar.onpointerdown = (event) => {
+      const target = event.target as HTMLElement;
+      if (target.closest("[data-region='playlist-vscrollbar-thumb']")) {
+        activeVScrollbarDrag = {
+          pointerId: event.pointerId,
+          startY: event.clientY,
+          startScrollTop: scroll.scrollTop
+        };
+        return;
+      }
       const rect = vScrollbar.getBoundingClientRect();
       if (rect.height <= 0) {
         return;
@@ -1484,6 +1500,20 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   };
 
   const handleGlobalScrollbarDrag = (event: PointerEvent): void => {
+    if (activeVScrollbarDrag && event.pointerId === activeVScrollbarDrag.pointerId) {
+      const scroll = init.container.querySelector<HTMLDivElement>("[data-region='playlist-scroll']");
+      const vScrollbar = init.container.querySelector<HTMLDivElement>("[data-region='playlist-vscrollbar']");
+      if (!scroll || !vScrollbar) {
+        return;
+      }
+      const rect = vScrollbar.getBoundingClientRect();
+      const scrollRange = Math.max(1, scroll.scrollHeight - scroll.clientHeight);
+      const ratioPerPixel = scrollRange / Math.max(1, rect.height);
+      const deltaY = event.clientY - activeVScrollbarDrag.startY;
+      scroll.scrollTop = clamp(activeVScrollbarDrag.startScrollTop + deltaY * ratioPerPixel, 0, scrollRange);
+      renderTimelineView();
+      return;
+    }
     if (activeScrollbarResize && event.pointerId === activeScrollbarResize.pointerId) {
       const scrollbar = init.container.querySelector<HTMLDivElement>("[data-region='playlist-scrollbar']");
       if (!scrollbar) {
@@ -1589,6 +1619,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     if (activeScrollbarResize && event.pointerId === activeScrollbarResize.pointerId) {
       activeScrollbarResize = null;
     }
+    if (activeVScrollbarDrag && event.pointerId === activeVScrollbarDrag.pointerId) {
+      activeVScrollbarDrag = null;
+    }
     if (activeClipResize && event.pointerId === activeClipResize.pointerId) {
       activeClipResize = null;
     }
@@ -1602,6 +1635,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     }
     if (activeScrollbarResize && event.pointerId === activeScrollbarResize.pointerId) {
       activeScrollbarResize = null;
+    }
+    if (activeVScrollbarDrag && event.pointerId === activeVScrollbarDrag.pointerId) {
+      activeVScrollbarDrag = null;
     }
     if (activeClipResize && event.pointerId === activeClipResize.pointerId) {
       activeClipResize = null;

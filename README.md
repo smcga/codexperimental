@@ -375,6 +375,7 @@ npm run preview
 - Timeline automation tracks now render envelope lines directly in-lane (matching inspector clips) and the playlist toolbar includes **V+ / V-** controls for vertical zoom in addition to horizontal zoom/pan.
 - The timeline now shows both horizontal and vertical custom scrollbars; drag the horizontal thumb to pan time, drag its end handles to zoom the visible time window, and use the vertical thumb for tall track stacks.
 - Timeline custom scrollbars are anchored inside the timeline panel (not the full page edge) and reserve internal right/bottom padding so bars remain visible on narrow screens.
+- The vertical timeline scrollbar thumb is draggable (not just clickable) and the timeline/preview sizing now prioritises keeping the horizontal timeline scrollbar visible at normal 100% browser zoom on 1080p layouts.
 - While zoomed in, use **Shift + mouse wheel** (or horizontal trackpad scroll) to pan left/right across the playlist without resetting zoom.
 - Playlist quick controls: mouse wheel = zoom to cursor, Shift+wheel/horizontal scroll = pan timeline, drag empty lane = scrub pan.
 - The playlist now includes a dedicated timeline scrollbar under the lanes; the thumb shrinks as you zoom in and can be dragged/clicked for coarse navigation across the full song length.

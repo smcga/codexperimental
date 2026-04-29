@@ -15,7 +15,7 @@ describe("automation editor layout styles", () => {
     expect(css).toContain(".editor-playlist-vscrollbar {");
     expect(css).toContain(".editor-playlist-scrollbar-handle-start {");
     expect(css).toContain("grid-template-columns: minmax(170px, 210px) minmax(0, 2.45fr) minmax(260px, 1fr);");
-    expect(css).toContain("min-height: clamp(280px, 42vh, 520px);");
+    expect(css).toContain("min-height: clamp(250px, 36vh, 460px);");
     expect(css).toContain("position: relative;");
     expect(css).toContain("padding-right: 1.05rem;");
   });

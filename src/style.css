@@ -758,7 +758,7 @@ body,
   padding: 0.5rem;
   display: grid;
   gap: 0.5rem;
-  min-height: clamp(280px, 42vh, 520px);
+  min-height: clamp(250px, 36vh, 460px);
   --editor-playlist-track-height: 2.3rem;
   min-width: 0;
   overflow: hidden;
@@ -803,7 +803,7 @@ body,
   background: rgba(0, 0, 0, 0.5);
   padding: 0.5rem;
   aspect-ratio: 16 / 8;
-  max-height: 34vh;
+  max-height: 28vh;
   display: grid;
   place-items: center;
 }
@@ -877,6 +877,8 @@ body,
   overflow: hidden;
   margin-right: 0.9rem;
   z-index: 2;
+  position: sticky;
+  bottom: 0;
 }
 
 .editor-playlist-vscrollbar {
