@@ -762,6 +762,9 @@ body,
   --editor-playlist-track-height: 2.3rem;
   min-width: 0;
   overflow: hidden;
+  position: relative;
+  padding-right: 1.05rem;
+  padding-bottom: 0.65rem;
 }
 
 .editor-preview-panel {
@@ -867,23 +870,26 @@ body,
 
 .editor-playlist-scrollbar {
   position: relative;
-  height: 0.8rem;
+  height: 0.9rem;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.06);
   border-radius: 999px;
   overflow: hidden;
+  margin-right: 0.9rem;
+  z-index: 2;
 }
 
 .editor-playlist-vscrollbar {
   position: absolute;
   right: 0.2rem;
-  top: 2.5rem;
-  bottom: 1.4rem;
+  top: 3.9rem;
+  bottom: 2.1rem;
   width: 0.7rem;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.04);
   border-radius: 999px;
   overflow: hidden;
+  z-index: 3;
 }
 
 .editor-playlist-vscrollbar-thumb {
