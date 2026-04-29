@@ -4,6 +4,7 @@ import { CameraState } from "../camera";
 export type TransitionDrawContext = {
   ctx: CanvasRenderingContext2D;
   progress: number;
+  duration: number;
   scale: number;
   offsetX: number;
   offsetY: number;
@@ -19,6 +20,7 @@ export type TransitionDrawContext = {
 export type MobileTransitionDrawContext = {
   ctx: CanvasRenderingContext2D;
   progress: number;
+  duration: number;
   width: number;
   height: number;
   audio: AudioFeatures;
@@ -35,10 +37,12 @@ export type TransitionRendererApi = {
   drawCameraPunchThrough: (context: TransitionDrawContext) => void;
   drawBitplaneWipe: (context: TransitionDrawContext) => void;
   drawGlitch: (context: TransitionDrawContext) => void;
+  drawAudioReactiveParticle: (context: TransitionDrawContext) => void;
   drawMobileDefaultCrossfade: (context: MobileTransitionDrawContext) => void;
   drawMobileShatter: (context: MobileTransitionDrawContext) => void;
   drawMobileCameraPunchThrough: (context: MobileTransitionDrawContext) => void;
   drawMobileBitplaneWipe: (context: MobileTransitionDrawContext) => void;
+  drawMobileAudioReactiveParticle: (context: MobileTransitionDrawContext) => void;
 };
 
 export type TransitionSetupContext = {

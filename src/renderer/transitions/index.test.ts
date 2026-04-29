@@ -12,6 +12,7 @@ describe("transition registry", () => {
       }))
     );
     expect(transitionRegistry["bitplane-wipe"].label).toBe("Bitplane Wipe");
+    expect(transitionRegistry["audio-reactive-particle"].label).toBe("Audio-reactive Particle");
     expect(transitionRegistry["camera-punch-through"].drawMobile).toBeTypeOf("function");
   });
 

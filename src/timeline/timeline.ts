@@ -9,6 +9,7 @@ export type TimelineState = {
     to: SectionConfig;
     progress: number;
     type: TransitionType;
+    duration: number;
   };
   activeTextCues: TextCue[];
   introTime: number;
@@ -95,7 +96,8 @@ export class Timeline {
       from: prevSection,
       to: section,
       progress,
-      type
+      type,
+      duration
     };
   }
 

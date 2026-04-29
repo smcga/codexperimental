@@ -92,7 +92,9 @@ describe("Timeline mode switching", () => {
     const timeline = new Timeline(config);
 
     expect(timeline.getState(60.25).transition?.type).toBe("flash");
+    expect(timeline.getState(60.25).transition?.duration).toBe(1);
     expect(timeline.getState(66.25).transition?.type).toBe("fade");
+    expect(timeline.getState(66.25).transition?.duration).toBe(1);
   });
 
   it("extends final section when its end comes from audio duration", () => {

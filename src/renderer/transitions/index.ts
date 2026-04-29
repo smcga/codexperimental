@@ -11,6 +11,7 @@ import { slideLeftTransition } from "./slideLeft";
 import { slideRightTransition } from "./slideRight";
 import { slideUpTransition } from "./slideUp";
 import { wipeTransition } from "./wipe";
+import { audioReactiveParticleTransition } from "./audioReactiveParticleTransition";
 
 export type { MobileTransitionDrawContext, TransitionDefinition, TransitionDrawContext, TransitionRendererApi } from "./types";
 
@@ -27,7 +28,8 @@ export const transitionDefinitions = [
   shatterTransition,
   signalCollapseTransition,
   cameraPunchThroughTransition,
-  bitplaneWipeTransition
+  bitplaneWipeTransition,
+  audioReactiveParticleTransition
 ] as const;
 
 export type TransitionType = (typeof transitionDefinitions)[number]["key"];

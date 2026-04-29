@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/transitions/index.ts`.
 
-Total transitions: **13**.
+Total transitions: **14**.
 
 ## Table of contents
 
@@ -19,6 +19,7 @@ Total transitions: **13**.
 - [Transition: signal-collapse](#transition-signal-collapse)
 - [Transition: camera-punch-through](#transition-camera-punch-through)
 - [Transition: bitplane-wipe](#transition-bitplane-wipe)
+- [Transition: audio-reactive-particle](#transition-audio-reactive-particle)
 
 ## Transition matrix
 
@@ -37,6 +38,7 @@ Total transitions: **13**.
 | `signal-collapse` | Signal Collapse | yes | no | no |
 | `camera-punch-through` | Camera Punch-Through | yes | yes | yes |
 | `bitplane-wipe` | Bitplane Wipe | yes | yes | yes |
+| `audio-reactive-particle` | Audio-reactive Particle | yes | yes | no |
 
 ## Transitions
 
@@ -130,3 +132,10 @@ Total transitions: **13**.
 - **Visible in editor/debug selectors:** yes
 - **Has mobile renderer:** yes
 - **Has state builder:** yes
+
+### Transition: audio-reactive-particle
+
+- **Label:** Audio-reactive Particle
+- **Visible in editor/debug selectors:** yes
+- **Has mobile renderer:** yes
+- **Has state builder:** no
