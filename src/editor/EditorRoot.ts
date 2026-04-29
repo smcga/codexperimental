@@ -744,6 +744,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   let playlistViewportStart = 0;
   let playlistViewportDuration = 45;
   let playlistTrackHeightRem = 3.5;
+  let playlistVerticalScrollTop = 0;
   let activePlaylistPan:
     | {
         pointerId: number;
@@ -1154,6 +1155,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     const visualTracks = timelineTracks.length > 0 ? timelineTracks : [{ id: "empty", label: "Track 1", kind: "scene" as const, start: 0, end: 0 }];
     tracks.style.setProperty("--playlist-track-count", String(visualTracks.length));
     tracks.style.setProperty("--editor-playlist-track-height", `${playlistTrackHeightRem}rem`);
+    scroll.scrollTop = clamp(playlistVerticalScrollTop, 0, Math.max(0, scroll.scrollHeight - scroll.clientHeight));
+    scroll.addEventListener("scroll", () => {
+      playlistVerticalScrollTop = scroll.scrollTop;
+    });
 
     visualTracks.forEach((timelineTrack, index) => {
       const lane = document.createElement("div");
@@ -1429,7 +1434,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         return;
       }
       const ratio = clamp((event.clientY - rect.top) / rect.height, 0, 1);
-      scroll.scrollTop = ratio * Math.max(0, scroll.scrollHeight - scroll.clientHeight);
+      playlistVerticalScrollTop = ratio * Math.max(0, scroll.scrollHeight - scroll.clientHeight);
       renderTimelineView();
     };
 
@@ -1510,7 +1515,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       const scrollRange = Math.max(1, scroll.scrollHeight - scroll.clientHeight);
       const ratioPerPixel = scrollRange / Math.max(1, rect.height);
       const deltaY = event.clientY - activeVScrollbarDrag.startY;
-      scroll.scrollTop = clamp(activeVScrollbarDrag.startScrollTop + deltaY * ratioPerPixel, 0, scrollRange);
+      playlistVerticalScrollTop = clamp(activeVScrollbarDrag.startScrollTop + deltaY * ratioPerPixel, 0, scrollRange);
       renderTimelineView();
       return;
     }
