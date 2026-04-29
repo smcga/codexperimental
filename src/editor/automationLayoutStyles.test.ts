@@ -12,5 +12,11 @@ describe("automation editor layout styles", () => {
     expect(css).toContain("grid-template-columns: repeat(3, minmax(0, 1fr));");
     expect(css).toContain(".editor-layer-actions {");
     expect(css).toContain("flex-wrap: wrap;");
+    expect(css).toContain(".editor-playlist-vscrollbar {");
+    expect(css).toContain(".editor-playlist-scrollbar-handle-start {");
+    expect(css).toContain("grid-template-columns: minmax(170px, 210px) minmax(0, 2.45fr) minmax(260px, 1fr);");
+    expect(css).toContain("min-height: clamp(250px, 36vh, 460px);");
+    expect(css).toContain("position: relative;");
+    expect(css).toContain("padding-right: 1.05rem;");
   });
 });

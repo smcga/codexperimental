@@ -560,10 +560,11 @@ body,
 
 .editor-body {
   display: grid;
-  grid-template-columns: minmax(180px, 220px) minmax(0, 2fr) minmax(0, 1.25fr);
+  grid-template-columns: minmax(170px, 210px) minmax(0, 2.45fr) minmax(260px, 1fr);
   gap: 0.8rem;
   min-height: 0;
   overflow: hidden;
+  min-width: 0;
 }
 
 .editor-column {
@@ -757,10 +758,13 @@ body,
   padding: 0.5rem;
   display: grid;
   gap: 0.5rem;
-  min-height: max(50vh, 320px);
+  min-height: clamp(250px, 36vh, 460px);
   --editor-playlist-track-height: 2.3rem;
   min-width: 0;
   overflow: hidden;
+  position: relative;
+  padding-right: 1.05rem;
+  padding-bottom: 0.65rem;
 }
 
 .editor-preview-panel {
@@ -799,7 +803,7 @@ body,
   background: rgba(0, 0, 0, 0.5);
   padding: 0.5rem;
   aspect-ratio: 16 / 8;
-  max-height: 34vh;
+  max-height: 28vh;
   display: grid;
   place-items: center;
 }
@@ -866,11 +870,38 @@ body,
 
 .editor-playlist-scrollbar {
   position: relative;
-  height: 0.8rem;
+  height: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-right: 0.9rem;
+  z-index: 2;
+  position: sticky;
+  bottom: 0;
+}
+
+.editor-playlist-vscrollbar {
+  position: absolute;
+  right: 0.2rem;
+  top: 3.9rem;
+  bottom: 2.1rem;
+  width: 0.7rem;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.04);
   border-radius: 999px;
   overflow: hidden;
+  z-index: 3;
+}
+
+.editor-playlist-vscrollbar-thumb {
+  position: absolute;
+  left: 0;
+  right: 0;
+  min-height: 12%;
+  background: rgba(142, 249, 255, 0.45);
+  border: 1px solid rgba(142, 249, 255, 0.8);
+  border-radius: 999px;
 }
 
 .editor-playlist-scrollbar-thumb {
@@ -883,6 +914,24 @@ body,
   background: rgba(142, 249, 255, 0.45);
   border: 1px solid rgba(142, 249, 255, 0.8);
   cursor: grab;
+}
+
+.editor-playlist-scrollbar-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0.45rem;
+  background: rgba(207, 255, 242, 0.45);
+}
+
+.editor-playlist-scrollbar-handle-start {
+  left: 0;
+  cursor: ew-resize;
+}
+
+.editor-playlist-scrollbar-handle-end {
+  right: 0;
+  cursor: ew-resize;
 }
 
 .editor-playlist-scrollbar-thumb:active {
@@ -944,9 +993,22 @@ body,
   user-select: none;
 }
 
+.editor-playlist-automation-line {
+  position: absolute;
+  inset: 0.15rem 0.2rem;
+  pointer-events: none;
+  opacity: 0.95;
+}
+
 .editor-playlist-clip.is-dragging {
   opacity: 0.65;
   cursor: grabbing;
+}
+
+.editor-playlist-zoom-controls {
+  margin-left: auto;
+  display: inline-flex;
+  gap: 0.3rem;
 }
 
 .editor-playlist-resize-handle {

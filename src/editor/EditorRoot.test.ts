@@ -31,7 +31,12 @@ import {
   splitCueWords,
   generateWordTextCues
   ,
-  sortScenesForEditorList
+  sortScenesForEditorList,
+  ensureAutomationPoints
+  ,
+  buildAutomationTrackPolyline
+  ,
+  zoomPlaylistTrackHeight
 } from "./EditorRoot";
 
 describe("formatTime", () => {
@@ -177,6 +182,48 @@ describe("computeSceneSeekTime", () => {
 
   it("accepts scene start values provided as timeline strings", () => {
     expect(computeSceneSeekTime("00:12.5", 2.5)).toBe(10);
+  });
+});
+
+describe("ensureAutomationPoints", () => {
+  it("derives default two-point clip data from legacy from/to and t0/t1 values", () => {
+    const next = ensureAutomationPoints({
+      param: "speed",
+      from: 0.2,
+      to: 0.8,
+      t0: "00:10.0",
+      t1: "00:12.0"
+    });
+    expect(next.points).toEqual([
+      { time: 10, value: 0.2 },
+      { time: 12, value: 0.8 }
+    ]);
+    expect(next.segmentMeta).toEqual([{ curveType: "Linear", tension: 0 }]);
+  });
+});
+
+describe("buildAutomationTrackPolyline", () => {
+  it("maps point time/value pairs into SVG polyline coordinates", () => {
+    const polyline = buildAutomationTrackPolyline(
+      [
+        { time: 10, value: 0 },
+        { time: 15, value: 0.5 },
+        { time: 20, value: 1 }
+      ],
+      { start: 10, end: 20 },
+      100,
+      50
+    );
+    expect(polyline).toBe("0,50 50,25 100,0");
+  });
+});
+
+describe("zoomPlaylistTrackHeight", () => {
+  it("zooms and clamps vertical track height", () => {
+    expect(zoomPlaylistTrackHeight(3.5, 1.2)).toBeCloseTo(4.2);
+    expect(zoomPlaylistTrackHeight(3.5, 0.5)).toBeCloseTo(1.75);
+    expect(zoomPlaylistTrackHeight(7.5, 2)).toBe(8);
+    expect(zoomPlaylistTrackHeight(1.7, 0.1)).toBe(1.6);
   });
 });
 

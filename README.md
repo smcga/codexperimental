@@ -368,6 +368,15 @@ npm run preview
 - Append `?editor=1` in dev builds to open the Scene + Timeline Editor (or toggle "Editor mode" in the debug overlay). The editor shows a live preview, edits hot-apply to the running demo, and changes persist to localStorage.
 - The timeline editor layout uses a narrow Scenes sidebar, a center workspace with Preview plus a single accordion stack for Basic/Main Slots/Transition, and a right Inspector for scene/layer/cue editing. The Generate Text Cues tool opens from a bottom-left button as a modal.
 - The timeline area now dedicates at least half the editor height, renders all scenes on the main track, and adds extra rows for selected-scene layers and scene automation entries.
+- Automation clip editing foundations now treat automation as point-driven envelopes (per-segment curve type + tension metadata), with helpers for snapped point add/remove/move, slide-mode temporal shifting, and segment-level curve/tension updates for timeline UI integration.
+- In the Scene Automation table, each automation row now includes **+Pt** to seed/edit point-based clip data from legacy `from/to` ramps for timeline-envelope workflows.
+- Automation interaction model mirrors FL-style priorities in code: point hit > segment hit > empty hit, with optional grid-snapped step drawing and axis constraints for pulse-like horizontal/vertical edits.
+- Clip-edit operations preserve adjacent segment metadata when adding/removing points so curve/tension edits remain stable during iterative shaping.
+- Scene Automation rows now render an inline curve editor: click on empty graph space to add points, drag points to move (hold Shift to slide following points in time), right-click points to delete, and hold Alt while dragging/clicking to temporarily disable snap.
+- Timeline automation tracks now render envelope lines directly in-lane (matching inspector clips) and the playlist toolbar includes **V+ / V-** controls for vertical zoom in addition to horizontal zoom/pan.
+- The timeline now shows both horizontal and vertical custom scrollbars; drag the horizontal thumb to pan time, drag its end handles to zoom the visible time window, and use the vertical thumb for tall track stacks.
+- Timeline custom scrollbars are anchored inside the timeline panel (not the full page edge) and reserve internal right/bottom padding so bars remain visible on narrow screens.
+- The vertical timeline scrollbar thumb is draggable (not just clickable) and the timeline/preview sizing now prioritises keeping the horizontal timeline scrollbar visible at normal 100% browser zoom on 1080p layouts.
 - While zoomed in, use **Shift + mouse wheel** (or horizontal trackpad scroll) to pan left/right across the playlist without resetting zoom.
 - Playlist quick controls: mouse wheel = zoom to cursor, Shift+wheel/horizontal scroll = pan timeline, drag empty lane = scrub pan.
 - The playlist now includes a dedicated timeline scrollbar under the lanes; the thumb shrinks as you zoom in and can be dragged/clicked for coarse navigation across the full song length.

@@ -24,6 +24,7 @@ import {
 import { clearTimelineDraft, downloadTimeline, loadTimelineDraft, saveTimelineDraft } from "./serialization";
 import { getManifestDebugConfig } from "../renderer/effects/manifest";
 import { transitionOptions } from "../renderer/transitions";
+import { createAutomationClip, insertPoint, movePoint, removePoint } from "./automationClip";
 
 const ERA_PRESETS: EraPreset[] = ["8bit", "16bit", "ps1", "pcdemo", "future"];
 const BLEND_MODES: BlendMode[] = [
@@ -195,6 +196,25 @@ export const getVisibleClipRange = (
     return null;
   }
   return { start: visibleStart, end: visibleEnd };
+};
+
+export const buildAutomationTrackPolyline = (
+  points: Array<{ time: number; value: number }>,
+  range: { start: number; end: number },
+  width = 1000,
+  height = 64
+): string => {
+  if (points.length === 0) {
+    return "";
+  }
+  const span = Math.max(0.001, range.end - range.start);
+  return points
+    .map((point) => {
+      const x = clamp(((point.time - range.start) / span) * width, 0, width);
+      const y = clamp((1 - point.value) * height, 0, height);
+      return `${x},${y}`;
+    })
+    .join(" ");
 };
 
 function isMainSlotLayer(layer: RawSectionConfig["layers"][number]): boolean {
@@ -516,6 +536,16 @@ export const panPlaylistViewport = (
   return clampPlaylistViewportStart(viewportStart + deltaSeconds, totalDuration, viewportDuration);
 };
 
+export const zoomPlaylistTrackHeight = (
+  currentHeightRem: number,
+  zoomFactor: number,
+  minHeightRem = 1.6,
+  maxHeightRem = 8
+): number => {
+  const nextHeight = currentHeightRem * zoomFactor;
+  return clamp(nextHeight, minHeightRem, maxHeightRem);
+};
+
 export const getPlaylistScrollbarMetrics = (
   totalDuration: number,
   viewportStart: number,
@@ -596,6 +626,20 @@ export const splitCueWords = (value: string): string[] => {
     .split(/\s+/)
     .map((word) => word.trim())
     .filter((word) => word.length > 0);
+};
+
+export const ensureAutomationPoints = (entry: RawParamAutomation): RawParamAutomation => {
+  if (entry.points && entry.points.length >= 2) {
+    return entry;
+  }
+  return {
+    ...entry,
+    points: [
+      { time: parseTimelineTimeValue(entry.t0), value: entry.from },
+      { time: parseTimelineTimeValue(entry.t1), value: entry.to }
+    ],
+    segmentMeta: [{ curveType: "Linear", tension: 0 }]
+  };
 };
 
 
@@ -699,6 +743,8 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   let sceneListSortMode: SceneListSortMode = "timeline";
   let playlistViewportStart = 0;
   let playlistViewportDuration = 45;
+  let playlistTrackHeightRem = 3.5;
+  let playlistVerticalScrollTop = 0;
   let activePlaylistPan:
     | {
         pointerId: number;
@@ -711,6 +757,22 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         pointerId: number;
         startX: number;
         startViewport: number;
+      }
+    | null = null;
+  let activeScrollbarResize:
+    | {
+        pointerId: number;
+        edge: "start" | "end";
+        startX: number;
+        startViewport: number;
+        startDuration: number;
+      }
+    | null = null;
+  let activeVScrollbarDrag:
+    | {
+        pointerId: number;
+        startY: number;
+        startScrollTop: number;
       }
     | null = null;
   let activeClipResize:
@@ -1051,6 +1113,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     view.innerHTML = `
       <div class="editor-playlist-toolbar">
         <span>Track 1</span>
+        <div class="editor-playlist-zoom-controls">
+          <button type="button" data-action="playlist-vzoom-in" title="Vertical zoom in">V+</button>
+          <button type="button" data-action="playlist-vzoom-out" title="Vertical zoom out">V-</button>
+        </div>
       </div>
       <div class="editor-ruler" data-region="playlist-ruler">
         ${Array.from({ length: ticks + 1 })
@@ -1064,8 +1130,14 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       <div class="editor-playlist-scroll" data-region="playlist-scroll">
         <div class="editor-playlist-tracks" data-region="playlist-tracks"></div>
       </div>
+      <div class="editor-playlist-vscrollbar" data-region="playlist-vscrollbar">
+        <div class="editor-playlist-vscrollbar-thumb" data-region="playlist-vscrollbar-thumb"></div>
+      </div>
       <div class="editor-playlist-scrollbar" data-region="playlist-scrollbar">
-        <div class="editor-playlist-scrollbar-thumb" data-region="playlist-scrollbar-thumb"></div>
+        <div class="editor-playlist-scrollbar-thumb" data-region="playlist-scrollbar-thumb">
+          <span class="editor-playlist-scrollbar-handle editor-playlist-scrollbar-handle-start" data-resize-edge="start"></span>
+          <span class="editor-playlist-scrollbar-handle editor-playlist-scrollbar-handle-end" data-resize-edge="end"></span>
+        </div>
       </div>
     `;
 
@@ -1074,12 +1146,19 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     const ruler = view.querySelector<HTMLDivElement>("[data-region='playlist-ruler']");
     const scrollbar = view.querySelector<HTMLDivElement>("[data-region='playlist-scrollbar']");
     const scrollbarThumb = view.querySelector<HTMLDivElement>("[data-region='playlist-scrollbar-thumb']");
-    if (!tracks || !scroll || !scrollbar || !scrollbarThumb || !ruler) {
+    const vScrollbar = view.querySelector<HTMLDivElement>("[data-region='playlist-vscrollbar']");
+    const vScrollbarThumb = view.querySelector<HTMLDivElement>("[data-region='playlist-vscrollbar-thumb']");
+    if (!tracks || !scroll || !scrollbar || !scrollbarThumb || !ruler || !vScrollbar || !vScrollbarThumb) {
       return;
     }
     const minClipWidthPercent = getMinimumClipWidthPercent(playlistViewportDuration, scroll.clientWidth);
     const visualTracks = timelineTracks.length > 0 ? timelineTracks : [{ id: "empty", label: "Track 1", kind: "scene" as const, start: 0, end: 0 }];
     tracks.style.setProperty("--playlist-track-count", String(visualTracks.length));
+    tracks.style.setProperty("--editor-playlist-track-height", `${playlistTrackHeightRem}rem`);
+    scroll.scrollTop = clamp(playlistVerticalScrollTop, 0, Math.max(0, scroll.scrollHeight - scroll.clientHeight));
+    scroll.addEventListener("scroll", () => {
+      playlistVerticalScrollTop = scroll.scrollTop;
+    });
 
     visualTracks.forEach((timelineTrack, index) => {
       const lane = document.createElement("div");
@@ -1165,6 +1244,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       block.style.top = `calc(${index} * var(--editor-playlist-track-height) + 0.25rem)`;
       block.textContent = focusScene.id;
       block.title = buildPlaylistClipTitle(focusScene.id, focusScene.effect, timelineTrack.start, timelineTrack.end);
+      if (timelineTrack.kind === "automation") {
+        block.textContent = "";
+      }
       if (focusScene.id === state.selectedSceneId) {
         block.classList.add("is-selected");
       }
@@ -1177,6 +1259,35 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           init.seek(computeSceneSeekTime(focusScene.start, init.getAudioOffset()));
         }
       });
+      if (timelineTrack.kind === "automation") {
+        const trackMatch = timelineTrack.id.match(/:automation:(\d+)$/);
+        const automationIndex = trackMatch ? Number(trackMatch[1]) : -1;
+        const automationEntry = focusScene.automation?.[automationIndex];
+        if (automationEntry) {
+          const seeded = ensureAutomationPoints(automationEntry);
+          const polyline = document.createElement("div");
+          polyline.className = "editor-playlist-automation-line";
+          const pointsMarkup = buildAutomationTrackPolyline(
+            seeded.points ?? [],
+            { start: timelineTrack.start, end: timelineTrack.end },
+            1000,
+            64
+          );
+          polyline.innerHTML = `<svg viewBox="0 0 1000 64" preserveAspectRatio="none" style="width:100%;height:100%;pointer-events:none"><polyline points="${pointsMarkup}" fill="none" stroke="#79ffd7" stroke-width="2" />${(seeded.points ?? [])
+            .map((point) => {
+              const pointMarkup = buildAutomationTrackPolyline(
+                [point],
+                { start: timelineTrack.start, end: timelineTrack.end },
+                1000,
+                64
+              );
+              const [cx = "0", cy = "0"] = pointMarkup.split(",");
+              return `<circle cx="${cx}" cy="${cy}" r="2.5" fill="#cffff2" />`;
+            })
+            .join("")}</svg>`;
+          block.appendChild(polyline);
+        }
+      }
       tracks.appendChild(block);
     });
 
@@ -1273,6 +1384,17 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     scrollbarThumb.style.left = `${scrollbarMetrics.thumbStartRatio * 100}%`;
     scrollbar.addEventListener("pointerdown", (event) => {
       const target = event.target as HTMLElement;
+      const resizeEdge = target.closest<HTMLElement>("[data-resize-edge]")?.dataset.resizeEdge;
+      if (resizeEdge === "start" || resizeEdge === "end") {
+        activeScrollbarResize = {
+          pointerId: event.pointerId,
+          edge: resizeEdge,
+          startX: event.clientX,
+          startViewport: playlistViewportStart,
+          startDuration: playlistViewportDuration
+        };
+        return;
+      }
       if (target.closest("[data-region='playlist-scrollbar-thumb']")) {
         activeScrollbarDrag = {
           pointerId: event.pointerId,
@@ -1290,6 +1412,37 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       playlistViewportStart = clampPlaylistViewportStart(desiredStart, duration, playlistViewportDuration);
       renderTimelineView();
     });
+    const syncVerticalScrollbarThumb = (): void => {
+      const vSizeRatio = scroll.scrollHeight > 0 ? clamp(scroll.clientHeight / scroll.scrollHeight, 0.08, 1) : 1;
+      const vStartRatio =
+        scroll.scrollHeight > scroll.clientHeight
+          ? clamp(scroll.scrollTop / Math.max(1, scroll.scrollHeight - scroll.clientHeight), 0, 1) * (1 - vSizeRatio)
+          : 0;
+      vScrollbarThumb.style.height = `${vSizeRatio * 100}%`;
+      vScrollbarThumb.style.top = `${vStartRatio * 100}%`;
+    };
+    syncVerticalScrollbarThumb();
+    vScrollbar.onpointerdown = (event) => {
+      const target = event.target as HTMLElement;
+      if (target.closest("[data-region='playlist-vscrollbar-thumb']")) {
+        event.preventDefault();
+        vScrollbar.setPointerCapture(event.pointerId);
+        activeVScrollbarDrag = {
+          pointerId: event.pointerId,
+          startY: event.clientY,
+          startScrollTop: scroll.scrollTop
+        };
+        return;
+      }
+      const rect = vScrollbar.getBoundingClientRect();
+      if (rect.height <= 0) {
+        return;
+      }
+      const ratio = clamp((event.clientY - rect.top) / rect.height, 0, 1);
+      playlistVerticalScrollTop = ratio * Math.max(0, scroll.scrollHeight - scroll.clientHeight);
+      scroll.scrollTop = playlistVerticalScrollTop;
+      syncVerticalScrollbarThumb();
+    };
 
     view.querySelector<HTMLButtonElement>("[data-action='playlist-zoom-in']")?.addEventListener("click", () => {
       const zoomed = zoomPlaylistViewport(
@@ -1318,6 +1471,17 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     view.querySelector<HTMLButtonElement>("[data-action='playlist-reset']")?.addEventListener("click", () => {
       playlistViewportStart = 0;
       playlistViewportDuration = Math.min(Math.max(20, duration * 0.4), duration);
+      playlistTrackHeightRem = 3.5;
+      renderTimelineView();
+    });
+
+    view.querySelector<HTMLButtonElement>("[data-action='playlist-vzoom-in']")?.addEventListener("click", () => {
+      playlistTrackHeightRem = zoomPlaylistTrackHeight(playlistTrackHeightRem, 1.2);
+      renderTimelineView();
+    });
+
+    view.querySelector<HTMLButtonElement>("[data-action='playlist-vzoom-out']")?.addEventListener("click", () => {
+      playlistTrackHeightRem = zoomPlaylistTrackHeight(playlistTrackHeightRem, 1 / 1.2);
       renderTimelineView();
     });
   };
@@ -1347,6 +1511,42 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   };
 
   const handleGlobalScrollbarDrag = (event: PointerEvent): void => {
+    if (activeVScrollbarDrag && event.pointerId === activeVScrollbarDrag.pointerId) {
+      const scroll = init.container.querySelector<HTMLDivElement>("[data-region='playlist-scroll']");
+      const vScrollbar = init.container.querySelector<HTMLDivElement>("[data-region='playlist-vscrollbar']");
+      if (!scroll || !vScrollbar) {
+        return;
+      }
+      const rect = vScrollbar.getBoundingClientRect();
+      const scrollRange = Math.max(1, scroll.scrollHeight - scroll.clientHeight);
+      const ratioPerPixel = scrollRange / Math.max(1, rect.height);
+      const deltaY = event.clientY - activeVScrollbarDrag.startY;
+      playlistVerticalScrollTop = clamp(activeVScrollbarDrag.startScrollTop + deltaY * ratioPerPixel, 0, scrollRange);
+      scroll.scrollTop = playlistVerticalScrollTop;
+      return;
+    }
+    if (activeScrollbarResize && event.pointerId === activeScrollbarResize.pointerId) {
+      const scrollbar = init.container.querySelector<HTMLDivElement>("[data-region='playlist-scrollbar']");
+      if (!scrollbar) {
+        return;
+      }
+      const rect = scrollbar.getBoundingClientRect();
+      if (rect.width <= 0) {
+        return;
+      }
+      const deltaRatio = (event.clientX - activeScrollbarResize.startX) / rect.width;
+      const durationDelta = deltaRatio * activeScrollbarResize.startDuration;
+      if (activeScrollbarResize.edge === "end") {
+        playlistViewportDuration = Math.max(2, activeScrollbarResize.startDuration + durationDelta);
+      } else {
+        const nextDuration = Math.max(2, activeScrollbarResize.startDuration - durationDelta);
+        const end = activeScrollbarResize.startViewport + activeScrollbarResize.startDuration;
+        playlistViewportDuration = nextDuration;
+        playlistViewportStart = Math.max(0, end - nextDuration);
+      }
+      renderTimelineView();
+      return;
+    }
     if (!activeScrollbarDrag || event.pointerId !== activeScrollbarDrag.pointerId) {
       return;
     }
@@ -1427,6 +1627,12 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     if (activeScrollbarDrag && event.pointerId === activeScrollbarDrag.pointerId) {
       activeScrollbarDrag = null;
     }
+    if (activeScrollbarResize && event.pointerId === activeScrollbarResize.pointerId) {
+      activeScrollbarResize = null;
+    }
+    if (activeVScrollbarDrag && event.pointerId === activeVScrollbarDrag.pointerId) {
+      activeVScrollbarDrag = null;
+    }
     if (activeClipResize && event.pointerId === activeClipResize.pointerId) {
       activeClipResize = null;
     }
@@ -1437,6 +1643,12 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     }
     if (activeScrollbarDrag && event.pointerId === activeScrollbarDrag.pointerId) {
       activeScrollbarDrag = null;
+    }
+    if (activeScrollbarResize && event.pointerId === activeScrollbarResize.pointerId) {
+      activeScrollbarResize = null;
+    }
+    if (activeVScrollbarDrag && event.pointerId === activeVScrollbarDrag.pointerId) {
+      activeVScrollbarDrag = null;
     }
     if (activeClipResize && event.pointerId === activeClipResize.pointerId) {
       activeClipResize = null;
@@ -2055,7 +2267,11 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
               </select>
               <button type="button" data-action="move-up">↑</button>
               <button type="button" data-action="move-down">↓</button>
+              <button type="button" data-action="add-point">+Pt</button>
               <button type="button" data-action="delete">Delete</button>
+            </div>
+            <div class="editor-automation-curve" data-curve-index="${index}">
+              <svg viewBox="0 0 1000 140" preserveAspectRatio="none" data-curve-svg="${index}" style="width:100%;height:92px;background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.15);border-radius:4px;cursor:crosshair;"></svg>
             </div>`
           )
           .join("")}
@@ -2106,7 +2322,115 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         [next[index + 1], next[index]] = [next[index], next[index + 1]];
         onChange(next);
       });
+      row.querySelector<HTMLButtonElement>("[data-action='add-point']")?.addEventListener("click", () => {
+        const current = ensureAutomationPoints(automation[index]);
+        const clip = createAutomationClip(current.points ?? []);
+        const inserted = insertPoint(
+          { ...clip, segmentMeta: current.segmentMeta ?? clip.segmentMeta, mode: "free" },
+          {
+            time: (parseTimelineTimeValue(current.t0) + parseTimelineTimeValue(current.t1)) / 2,
+            value: (current.from + current.to) / 2
+          },
+          { gridSize: 0.1, snapEnabled: true }
+        );
+        const next = automation.map((entry, entryIndex) => {
+          if (entryIndex !== index) {
+            return entry;
+          }
+          return {
+            ...entry,
+            points: inserted.points,
+            segmentMeta: inserted.segmentMeta
+          };
+        });
+        onChange(next);
+      });
     });
+
+    const drawCurve = (entry: RawParamAutomation, index: number): void => {
+      const svg = container.querySelector<SVGSVGElement>(`[data-curve-svg='${index}']`);
+      if (!svg) {
+        return;
+      }
+      const seeded = ensureAutomationPoints(entry);
+      const points = seeded.points ?? [];
+      const minTime = parseTimelineTimeValue(seeded.t0);
+      const maxTime = Math.max(minTime + 0.001, parseTimelineTimeValue(seeded.t1));
+      const xOf = (time: number): number => ((time - minTime) / (maxTime - minTime)) * 1000;
+      const yOf = (value: number): number => (1 - clamp(value, 0, 1)) * 140;
+      svg.innerHTML = `<polyline points="${points.map((point) => `${xOf(point.time)},${yOf(point.value)}`).join(" ")}" fill="none" stroke="#d8f5be" stroke-width="2" />`;
+      points.forEach((point, pointIndex) => {
+        const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        dot.setAttribute("cx", String(xOf(point.time)));
+        dot.setAttribute("cy", String(yOf(point.value)));
+        dot.setAttribute("r", "5");
+        dot.setAttribute("fill", "#e6ffd0");
+        dot.setAttribute("stroke", "#2e5f2e");
+        dot.dataset.pointIndex = String(pointIndex);
+        svg.appendChild(dot);
+      });
+      svg.oncontextmenu = (event) => event.preventDefault();
+      svg.onclick = (event) => {
+        if ((event.target as Element).tagName.toLowerCase() === "circle") {
+          return;
+        }
+        const rect = svg.getBoundingClientRect();
+        const x = clamp((event.clientX - rect.left) / rect.width, 0, 1);
+        const y = clamp((event.clientY - rect.top) / rect.height, 0, 1);
+        const next = automation.map((item, itemIndex) => {
+          if (itemIndex !== index) {
+            return item;
+          }
+          const base = ensureAutomationPoints(item);
+          const inserted = insertPoint(createAutomationClip(base.points ?? []), { time: minTime + x * (maxTime - minTime), value: 1 - y }, { gridSize: 0.05, snapEnabled: !event.altKey });
+          return { ...item, points: inserted.points, segmentMeta: inserted.segmentMeta };
+        });
+        onChange(next);
+      };
+      svg.querySelectorAll<SVGCircleElement>("circle").forEach((dot) => {
+        const pointIndex = Number(dot.dataset.pointIndex);
+        dot.oncontextmenu = () => {
+          const next = automation.map((item, itemIndex) => {
+            if (itemIndex !== index) {
+              return item;
+            }
+            const base = ensureAutomationPoints(item);
+            const removed = removePoint(createAutomationClip(base.points ?? []), pointIndex);
+            return { ...item, points: removed.points, segmentMeta: removed.segmentMeta };
+          });
+          onChange(next);
+        };
+        dot.onpointerdown = (pointerEvent) => {
+          pointerEvent.preventDefault();
+          const onMove = (moveEvent: PointerEvent): void => {
+            const rect = svg.getBoundingClientRect();
+            const x = clamp((moveEvent.clientX - rect.left) / rect.width, 0, 1);
+            const y = clamp((moveEvent.clientY - rect.top) / rect.height, 0, 1);
+            const next = automation.map((item, itemIndex) => {
+              if (itemIndex !== index) {
+                return item;
+              }
+              const base = ensureAutomationPoints(item);
+              const moved = movePoint(
+                createAutomationClip(base.points ?? []),
+                pointIndex,
+                { time: minTime + x * (maxTime - minTime), value: 1 - y },
+                { gridSize: 0.05, snapEnabled: !moveEvent.altKey, slideMode: moveEvent.shiftKey }
+              );
+              return { ...item, points: moved.points, segmentMeta: moved.segmentMeta };
+            });
+            onChange(next);
+          };
+          const onUp = (): void => {
+            window.removeEventListener("pointermove", onMove);
+            window.removeEventListener("pointerup", onUp);
+          };
+          window.addEventListener("pointermove", onMove);
+          window.addEventListener("pointerup", onUp);
+        };
+      });
+    };
+    automation.forEach((entry, index) => drawCurve(entry, index));
 
     container.querySelector<HTMLButtonElement>("[data-action='add-automation']")?.addEventListener("click", () => {
       const defaultParam = paramOptions[0] ?? "speed";
