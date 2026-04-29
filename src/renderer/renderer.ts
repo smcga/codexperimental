@@ -615,6 +615,15 @@ export class Renderer {
       drawBitplaneWipe: (context) => this.drawBitplaneWipeTransition(context),
       drawGlitch: (context) => this.drawGlitchTransition(context),
       drawAudioReactiveParticle: (context) => this.drawAudioReactiveParticleTransition(context),
+      drawCheckerboardWipe: (context) => this.drawCheckerboardWipeTransition(context),
+      drawVenetianBlinds: (context) => this.drawVenetianBlindsTransition(context),
+      drawRadialWipe: (context) => this.drawRadialWipeTransition(context),
+      drawNoiseThreshold: (context) => this.drawNoiseThresholdTransition(context),
+      drawPortalZoom: (context) => this.drawPortalZoomTransition(context),
+      drawWhipPan: (context) => this.drawWhipPanTransition(context),
+      drawQuantumSlice: (context) => this.drawQuantumSliceTransition(context),
+      drawChromaticBloom: (context) => this.drawChromaticBloomTransition(context),
+      drawNeuralFeedback: (context) => this.drawNeuralFeedbackTransition(context),
       drawMobileDefaultCrossfade: (context) => this.drawMobileDefaultCrossfade(context.ctx, context.progress, context.duration, context.width, context.height),
       drawMobileShatter: (context) => this.drawMobileShatterTransition(context),
       drawMobileCameraPunchThrough: (context) =>
@@ -724,6 +733,262 @@ export class Renderer {
     ctx.clip();
     this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1, camera, smoothing);
     ctx.restore();
+  }
+
+  private drawCheckerboardWipeTransition({
+    ctx,
+    progress,
+    scale,
+    offsetX,
+    offsetY,
+    shakeX,
+    shakeY,
+    camera,
+    smoothing
+  }: TransitionDrawContext): void {
+    const width = this.baseWidth * scale;
+    const height = this.baseHeight * scale;
+    this.drawScaled(ctx, this.transitionCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1, camera, smoothing);
+
+    const cols = 12;
+    const rows = 8;
+    const tileWidth = width / cols;
+    const tileHeight = height / rows;
+
+    ctx.save();
+    ctx.beginPath();
+    for (let row = 0; row < rows; row += 1) {
+      for (let col = 0; col < cols; col += 1) {
+        const threshold = (row + col) / (rows + cols - 2);
+        if (progress >= threshold) {
+          ctx.rect(offsetX + shakeX + col * tileWidth, offsetY + shakeY + row * tileHeight, Math.ceil(tileWidth), Math.ceil(tileHeight));
+        }
+      }
+    }
+    ctx.clip();
+    this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1, camera, smoothing);
+    ctx.restore();
+  }
+
+  private drawVenetianBlindsTransition({
+    ctx,
+    progress,
+    scale,
+    offsetX,
+    offsetY,
+    shakeX,
+    shakeY,
+    camera,
+    smoothing
+  }: TransitionDrawContext): void {
+    const width = this.baseWidth * scale;
+    const height = this.baseHeight * scale;
+    this.drawScaled(ctx, this.transitionCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1, camera, smoothing);
+
+    const bands = 24;
+    const bandHeight = height / bands;
+    for (let band = 0; band < bands; band += 1) {
+      const y = offsetY + shakeY + band * bandHeight;
+      const bandReveal = Math.max(0, Math.min(1, (progress - band / bands) * 1.8));
+      if (bandReveal <= 0) {
+        continue;
+      }
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(offsetX + shakeX, y, width * bandReveal, Math.ceil(bandHeight));
+      ctx.clip();
+      this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1, camera, smoothing);
+      ctx.restore();
+    }
+  }
+
+  private drawRadialWipeTransition({
+    ctx,
+    progress,
+    scale,
+    offsetX,
+    offsetY,
+    shakeX,
+    shakeY,
+    camera,
+    smoothing
+  }: TransitionDrawContext): void {
+    const width = this.baseWidth * scale;
+    const height = this.baseHeight * scale;
+    const centerX = offsetX + shakeX + width / 2;
+    const centerY = offsetY + shakeY + height / 2;
+    this.drawScaled(ctx, this.transitionCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1, camera, smoothing);
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY);
+    ctx.arc(centerX, centerY, Math.hypot(width, height), -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * progress, false);
+    ctx.closePath();
+    ctx.clip();
+    this.drawScaled(ctx, this.baseCanvas, scale, offsetX, offsetY, shakeX, shakeY, 1, camera, smoothing);
+    ctx.restore();
+  }
+
+  private drawNoiseThresholdTransition({
+    ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, smoothing
+  }: TransitionDrawContext): void {
+    const width = this.baseWidth * scale;
+    const height = this.baseHeight * scale;
+    const rectX = offsetX + shakeX;
+    const rectY = offsetY + shakeY;
+    const safeProgress = clamp(progress, 0, 1);
+    this.drawCanvasToRect(ctx, this.transitionCanvas, rectX, rectY, width, height, 1, camera, smoothing);
+
+    const cols = 96;
+    const rows = 54;
+    const cellW = width / cols;
+    const cellH = height / rows;
+    ctx.save();
+    ctx.beginPath();
+    for (let y = 0; y < rows; y += 1) {
+      for (let x = 0; x < cols; x += 1) {
+        const seed = x * 12.9898 + y * 78.233;
+        const noise = Math.sin(seed) * 43758.5453;
+        const normalized = noise - Math.floor(noise);
+        if (normalized <= safeProgress) {
+          ctx.rect(rectX + x * cellW, rectY + y * cellH, Math.ceil(cellW), Math.ceil(cellH));
+        }
+      }
+    }
+    ctx.clip();
+    this.drawCanvasToRect(ctx, this.baseCanvas, rectX, rectY, width, height, 1, camera, smoothing);
+    ctx.restore();
+  }
+
+  private drawPortalZoomTransition({
+    ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, smoothing
+  }: TransitionDrawContext): void {
+    const width = this.baseWidth * scale;
+    const height = this.baseHeight * scale;
+    const rectX = offsetX + shakeX;
+    const rectY = offsetY + shakeY;
+    const safeProgress = clamp(progress, 0, 1);
+
+    const fromScale = 1 + safeProgress * 2.2;
+    const fromAlpha = 1 - Math.pow(safeProgress, 0.7);
+    const fromW = width * fromScale;
+    const fromH = height * fromScale;
+    const fromX = rectX - (fromW - width) * 0.5;
+    const fromY = rectY - (fromH - height) * 0.5;
+    this.drawCanvasToRect(ctx, this.transitionCanvas, fromX, fromY, fromW, fromH, fromAlpha, camera, smoothing);
+
+    const reveal = Math.pow(safeProgress, 1.6);
+    const toScale = 1.25 - reveal * 0.25;
+    const toW = width * toScale;
+    const toH = height * toScale;
+    const toX = rectX - (toW - width) * 0.5;
+    const toY = rectY - (toH - height) * 0.5;
+    this.drawCanvasToRect(ctx, this.baseCanvas, toX, toY, toW, toH, reveal, camera, smoothing);
+  }
+
+  private drawWhipPanTransition({
+    ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, smoothing
+  }: TransitionDrawContext): void {
+    const width = this.baseWidth * scale;
+    const height = this.baseHeight * scale;
+    const safeProgress = clamp(progress, 0, 1);
+    const direction = Math.sin(safeProgress * Math.PI * 3.0) >= 0 ? 1 : -1;
+    const pan = width * 1.35 * safeProgress;
+
+    this.drawCanvasToRect(ctx, this.transitionCanvas, offsetX + shakeX + pan * direction, offsetY + shakeY, width, height, 1, camera, smoothing);
+    this.drawCanvasToRect(ctx, this.baseCanvas, offsetX + shakeX - (width * (1 - safeProgress) * direction), offsetY + shakeY, width, height, safeProgress, camera, smoothing);
+
+    const blurPasses = 4;
+    for (let i = 0; i < blurPasses; i += 1) {
+      const t = i / Math.max(1, blurPasses - 1);
+      const trail = (t - 0.5) * width * 0.03 * safeProgress;
+      ctx.save();
+      ctx.globalAlpha = 0.08 * safeProgress;
+      ctx.drawImage(ctx.canvas, trail * direction, 0);
+      ctx.restore();
+    }
+  }
+
+  private drawQuantumSliceTransition({
+    ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, smoothing
+  }: TransitionDrawContext): void {
+    const width = this.baseWidth * scale;
+    const height = this.baseHeight * scale;
+    const safe = clamp(progress, 0, 1);
+    const slices = 36;
+    this.drawCanvasToRect(ctx, this.transitionCanvas, offsetX + shakeX, offsetY + shakeY, width, height, 1, camera, smoothing);
+
+    for (let i = 0; i < slices; i += 1) {
+      const y0 = (i / slices) * height;
+      const h = Math.ceil(height / slices) + 1;
+      const gate = (Math.sin(i * 1.73) * 0.5 + 0.5) * 0.7 + i / slices * 0.3;
+      if (safe < gate) continue;
+      const phase = safe * 18 + i * 0.33;
+      const xJitter = Math.sin(phase) * width * 0.06 * (1 - safe);
+      ctx.drawImage(this.baseCanvas, 0, y0 / scale, this.baseWidth, h / scale, offsetX + shakeX + xJitter, offsetY + shakeY + y0, width, h);
+    }
+  }
+
+  private drawChromaticBloomTransition({
+    ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, smoothing
+  }: TransitionDrawContext): void {
+    const width = this.baseWidth * scale;
+    const height = this.baseHeight * scale;
+    const safe = clamp(progress, 0, 1);
+    const rectX = offsetX + shakeX;
+    const rectY = offsetY + shakeY;
+
+    this.drawCanvasToRect(ctx, this.transitionCanvas, rectX, rectY, width, height, 1 - safe * 0.2, camera, smoothing);
+    const split = width * (0.02 + 0.04 * Math.sin(safe * Math.PI));
+
+    ctx.save();
+    ctx.globalCompositeOperation = "screen";
+    ctx.globalAlpha = Math.pow(safe, 0.7);
+    this.drawCanvasToRect(ctx, this.baseCanvas, rectX - split, rectY, width, height, 0.38, camera, smoothing);
+    ctx.fillStyle = "rgba(255, 40, 40, 0.22)";
+    ctx.fillRect(rectX, rectY, width, height);
+    this.drawCanvasToRect(ctx, this.baseCanvas, rectX + split, rectY, width, height, 0.38, camera, smoothing);
+    ctx.fillStyle = "rgba(40, 120, 255, 0.2)";
+    ctx.fillRect(rectX, rectY, width, height);
+    this.drawCanvasToRect(ctx, this.baseCanvas, rectX, rectY, width, height, safe, camera, smoothing);
+    ctx.restore();
+
+    const flash = Math.exp(-Math.pow((safe - 0.55) / 0.18, 2));
+    if (flash > 0.01) {
+      ctx.save();
+      ctx.globalCompositeOperation = "screen";
+      ctx.globalAlpha = flash * 0.5;
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(rectX, rectY, width, height);
+      ctx.restore();
+    }
+  }
+
+  private drawNeuralFeedbackTransition({
+    ctx, progress, scale, offsetX, offsetY, shakeX, shakeY, camera, smoothing
+  }: TransitionDrawContext): void {
+    const width = this.baseWidth * scale;
+    const height = this.baseHeight * scale;
+    const safe = clamp(progress, 0, 1);
+    const rectX = offsetX + shakeX;
+    const rectY = offsetY + shakeY;
+
+    this.drawCanvasToRect(ctx, this.transitionCanvas, rectX, rectY, width, height, 1, camera, smoothing);
+    const feedbackPasses = 7;
+    for (let i = 0; i < feedbackPasses; i += 1) {
+      const t = i / Math.max(1, feedbackPasses - 1);
+      const alpha = (0.06 + t * 0.08) * (1 - safe * 0.25);
+      const drift = (0.5 - t) * width * 0.025 * (1 + safe);
+      const warp = 1 + (0.01 + t * 0.015) * (1 - safe);
+      const w = width * warp;
+      const h = height * warp;
+      const x = rectX - (w - width) * 0.5 + drift;
+      const y = rectY - (h - height) * 0.5;
+      this.drawCanvasToRect(ctx, this.transitionCanvas, x, y, w, h, alpha, camera, smoothing);
+    }
+
+    const reveal = Math.pow(safe, 1.2);
+    this.drawCanvasToRect(ctx, this.baseCanvas, rectX, rectY, width, height, reveal, camera, smoothing);
   }
 
   private drawFlashTransition(context: TransitionDrawContext): void {
