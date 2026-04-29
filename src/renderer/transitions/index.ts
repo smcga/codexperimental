@@ -12,6 +12,15 @@ import { slideRightTransition } from "./slideRight";
 import { slideUpTransition } from "./slideUp";
 import { wipeTransition } from "./wipe";
 import { audioReactiveParticleTransition } from "./audioReactiveParticleTransition";
+import { radialWipeTransition } from "./radialWipe";
+import { checkerboardWipeTransition } from "./checkerboardWipe";
+import { venetianBlindsTransition } from "./venetianBlinds";
+import { noiseThresholdTransition } from "./noiseThreshold";
+import { portalZoomTransition } from "./portalZoom";
+import { whipPanTransition } from "./whipPan";
+import { quantumSliceTransition } from "./quantumSlice";
+import { chromaticBloomTransition } from "./chromaticBloom";
+import { neuralFeedbackTransition } from "./neuralFeedback";
 
 export type { MobileTransitionDrawContext, TransitionDefinition, TransitionDrawContext, TransitionRendererApi } from "./types";
 
@@ -29,7 +38,16 @@ export const transitionDefinitions = [
   signalCollapseTransition,
   cameraPunchThroughTransition,
   bitplaneWipeTransition,
-  audioReactiveParticleTransition
+  audioReactiveParticleTransition,
+  checkerboardWipeTransition,
+  venetianBlindsTransition,
+  radialWipeTransition,
+  noiseThresholdTransition,
+  portalZoomTransition,
+  whipPanTransition,
+  quantumSliceTransition,
+  chromaticBloomTransition,
+  neuralFeedbackTransition
 ] as const;
 
 export type TransitionType = (typeof transitionDefinitions)[number]["key"];
