@@ -1412,16 +1412,21 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       playlistViewportStart = clampPlaylistViewportStart(desiredStart, duration, playlistViewportDuration);
       renderTimelineView();
     });
-    const vSizeRatio = scroll.scrollHeight > 0 ? clamp(scroll.clientHeight / scroll.scrollHeight, 0.08, 1) : 1;
-    const vStartRatio =
-      scroll.scrollHeight > scroll.clientHeight
-        ? clamp(scroll.scrollTop / Math.max(1, scroll.scrollHeight - scroll.clientHeight), 0, 1) * (1 - vSizeRatio)
-        : 0;
-    vScrollbarThumb.style.height = `${vSizeRatio * 100}%`;
-    vScrollbarThumb.style.top = `${vStartRatio * 100}%`;
+    const syncVerticalScrollbarThumb = (): void => {
+      const vSizeRatio = scroll.scrollHeight > 0 ? clamp(scroll.clientHeight / scroll.scrollHeight, 0.08, 1) : 1;
+      const vStartRatio =
+        scroll.scrollHeight > scroll.clientHeight
+          ? clamp(scroll.scrollTop / Math.max(1, scroll.scrollHeight - scroll.clientHeight), 0, 1) * (1 - vSizeRatio)
+          : 0;
+      vScrollbarThumb.style.height = `${vSizeRatio * 100}%`;
+      vScrollbarThumb.style.top = `${vStartRatio * 100}%`;
+    };
+    syncVerticalScrollbarThumb();
     vScrollbar.onpointerdown = (event) => {
       const target = event.target as HTMLElement;
       if (target.closest("[data-region='playlist-vscrollbar-thumb']")) {
+        event.preventDefault();
+        vScrollbar.setPointerCapture(event.pointerId);
         activeVScrollbarDrag = {
           pointerId: event.pointerId,
           startY: event.clientY,
@@ -1435,7 +1440,8 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       }
       const ratio = clamp((event.clientY - rect.top) / rect.height, 0, 1);
       playlistVerticalScrollTop = ratio * Math.max(0, scroll.scrollHeight - scroll.clientHeight);
-      renderTimelineView();
+      scroll.scrollTop = playlistVerticalScrollTop;
+      syncVerticalScrollbarThumb();
     };
 
     view.querySelector<HTMLButtonElement>("[data-action='playlist-zoom-in']")?.addEventListener("click", () => {
@@ -1516,7 +1522,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       const ratioPerPixel = scrollRange / Math.max(1, rect.height);
       const deltaY = event.clientY - activeVScrollbarDrag.startY;
       playlistVerticalScrollTop = clamp(activeVScrollbarDrag.startScrollTop + deltaY * ratioPerPixel, 0, scrollRange);
-      renderTimelineView();
+      scroll.scrollTop = playlistVerticalScrollTop;
       return;
     }
     if (activeScrollbarResize && event.pointerId === activeScrollbarResize.pointerId) {
