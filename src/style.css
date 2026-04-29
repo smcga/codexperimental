@@ -1321,6 +1321,28 @@ body,
   z-index: 2;
 }
 
+.editor--mobile .editor-body {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "workspace"
+    "scenes"
+    "inspector";
+}
+
+.editor--mobile .editor-top-row {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.editor--mobile .editor-preview canvas {
+  width: 100%;
+  height: auto;
+}
+
+.editor--mobile .editor-scenes,
+.editor--mobile .editor-inspector {
+  max-height: none;
+}
+
 .editor-transport-row {
   display: flex;
   align-items: center;

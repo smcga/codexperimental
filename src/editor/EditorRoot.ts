@@ -115,12 +115,17 @@ const MAIN_SLOT_LABELS: Array<{ slot: MainSlot; label: string }> = [
 type EditorInit = {
   container: HTMLElement;
   effectNames: string[];
+  layoutMode?: "desktop" | "mobile";
   applyTimeline: (raw: RawTimelineConfig) => Promise<string | null>;
   play: () => Promise<void>;
   pause: () => void;
   seek: (time: number) => void;
   getAudioOffset: () => number;
   getAudioDuration: () => number;
+};
+
+export const getEditorLayoutClass = (layoutMode: EditorInit["layoutMode"]): string => {
+  return layoutMode === "mobile" ? "editor editor--mobile" : "editor";
 };
 
 export type EditorController = {
@@ -905,6 +910,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     const previousSceneList = init.container.querySelector<HTMLDivElement>(".editor-scene-list");
     const sceneListScrollTop = previousSceneList?.scrollTop ?? 0;
 
+    init.container.className = getEditorLayoutClass(init.layoutMode);
     init.container.innerHTML = `
       <div class="editor-header">
         <div class="editor-title">SCENE + TIMELINE EDITOR</div>
