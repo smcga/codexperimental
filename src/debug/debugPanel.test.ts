@@ -7,6 +7,7 @@ import {
   getDebugEffectSelectorOptions,
   getDebugEffectSelectorValue,
   getNextDebugEffectSelection,
+  pickRandomDebugEffect,
   shouldShowEffectPanel
 } from "./debugPanel";
 import { getRegistryEffectNames } from "../renderer/effects/effectsDocGenerator";
@@ -77,6 +78,22 @@ describe("shouldShowEffectPanel", () => {
   });
 });
 
+
+
+describe("pickRandomDebugEffect", () => {
+  it("returns null when no effects are available", () => {
+    expect(pickRandomDebugEffect([], 0.5)).toBeNull();
+  });
+
+  it("maps random values to a stable effect index", () => {
+    const names = ["starfield", "kefrens_bars", "roadDrive"];
+    expect(pickRandomDebugEffect(names, 0)).toBe("starfield");
+    expect(pickRandomDebugEffect(names, 0.5)).toBe("kefrens_bars");
+    expect(pickRandomDebugEffect(names, 0.99)).toBe("roadDrive");
+    expect(pickRandomDebugEffect(names, 1)).toBe("roadDrive");
+  });
+});
+
 describe("debug effect selector helpers", () => {
   it("maps null forced effect to timeline", () => {
     expect(getDebugEffectSelectorValue(null)).toBe("timeline");
@@ -115,6 +132,7 @@ describe("debug effect selector helpers", () => {
       forcedEffect: null,
       shouldReset: false
     });
+    expect(getNextDebugEffectSelection(null, "__random", ["starfield", "roadDrive"]).forcedEffect).toMatch(/starfield|roadDrive/);
   });
 });
 
