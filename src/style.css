@@ -560,10 +560,11 @@ body,
 
 .editor-body {
   display: grid;
-  grid-template-columns: minmax(180px, 220px) minmax(0, 2fr) minmax(0, 1.25fr);
+  grid-template-columns: minmax(170px, 210px) minmax(0, 2.45fr) minmax(260px, 1fr);
   gap: 0.8rem;
   min-height: 0;
   overflow: hidden;
+  min-width: 0;
 }
 
 .editor-column {
@@ -757,7 +758,7 @@ body,
   padding: 0.5rem;
   display: grid;
   gap: 0.5rem;
-  min-height: max(50vh, 320px);
+  min-height: clamp(280px, 42vh, 520px);
   --editor-playlist-track-height: 2.3rem;
   min-width: 0;
   overflow: hidden;
@@ -851,9 +852,8 @@ body,
   min-height: min(46vh, 520px);
   max-height: none;
   overflow: auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(142, 249, 255, 0.75) rgba(255, 255, 255, 0.08);
-  -ms-overflow-style: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 40%),
@@ -861,18 +861,8 @@ body,
 }
 
 .editor-playlist-scroll::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-
-.editor-playlist-scroll::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.06);
-}
-
-.editor-playlist-scroll::-webkit-scrollbar-thumb {
-  background: rgba(142, 249, 255, 0.55);
-  border-radius: 999px;
-  border: 1px solid rgba(142, 249, 255, 0.85);
+  width: 0;
+  height: 0;
 }
 
 .editor-playlist-scrollbar {
