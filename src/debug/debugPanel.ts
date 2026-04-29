@@ -16,6 +16,15 @@ export type DebugRenderSelection = {
 
 export const DEBUG_PANEL_SECTIONS = ["transport", "effects", "render"] as const;
 export type DebugPanelSection = (typeof DEBUG_PANEL_SECTIONS)[number];
+export const DEBUG_RANDOM_EFFECT_EASTER_EGG = "__random";
+
+export function pickRandomDebugEffect(effectNames: string[], randomValue = Math.random()): string | null {
+  if (effectNames.length === 0) {
+    return null;
+  }
+  const index = Math.min(effectNames.length - 1, Math.floor(randomValue * effectNames.length));
+  return effectNames[index] ?? null;
+}
 
 export function shouldShowEffectPanel(debugEnabled: boolean, forcedEffect: string | null): boolean {
   return debugEnabled && forcedEffect !== null;
@@ -38,9 +47,14 @@ export function getDebugPanelSection(selected: string | null | undefined): Debug
 
 export function getNextDebugEffectSelection(
   currentForcedEffect: string | null,
-  selectedValue: string
+  selectedValue: string,
+  effectNames: string[] = []
 ): { forcedEffect: string | null; shouldReset: boolean } {
-  const forcedEffect = selectedValue === "timeline" ? null : selectedValue;
+  const forcedEffect = selectedValue === "timeline"
+    ? null
+    : selectedValue === DEBUG_RANDOM_EFFECT_EASTER_EGG
+      ? pickRandomDebugEffect(effectNames)
+      : selectedValue;
   return {
     forcedEffect,
     shouldReset: forcedEffect !== null && forcedEffect !== currentForcedEffect

@@ -1187,7 +1187,7 @@ function createEffectSelector(): void {
   });
 
   debugEffectSelect.addEventListener("change", () => {
-    const selection = getNextDebugEffectSelection(debugState.forcedEffect, debugEffectSelect.value);
+    const selection = getNextDebugEffectSelection(debugState.forcedEffect, debugEffectSelect.value, availableEffectNames);
     debugState.forcedEffect = selection.forcedEffect;
     if (selection.shouldReset && selection.forcedEffect) {
       effectRegistry[selection.forcedEffect]?.reset?.();
