@@ -29,6 +29,7 @@ import { createQualityState, updateQualityState } from "./renderer/qualityContro
 import { getQualityPresetById, resolveInitialQualityPresetId, QualityPresetId } from "./renderer/qualityPresets";
 import { getRenderSettings } from "./renderer/renderSettings";
 import {
+  getDebugOverlayVisibilityAfterEditorToggle,
   getFullscreenAction,
   getEndSkipTime,
   getIntroSkipTime,
@@ -1766,6 +1767,9 @@ if (!releaseMode) {
         debugEditorToggle.checked = editorModeFromQuery;
         debugEditorToggle.addEventListener("change", () => {
           controller.setVisible(debugEditorToggle.checked);
+          setDebugOverlayVisible(
+            getDebugOverlayVisibilityAfterEditorToggle(debugEditorToggle.checked, debugState.enabled)
+          );
         });
       }
       controller.setVisible(debugEditorToggle?.checked ?? editorModeFromQuery);

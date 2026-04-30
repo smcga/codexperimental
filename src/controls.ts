@@ -6,6 +6,13 @@ export function getNextDebugOverlayVisibility(isVisible: boolean): boolean {
   return !isVisible;
 }
 
+export function getDebugOverlayVisibilityAfterEditorToggle(isEditorEnabled: boolean, isDebugOverlayVisible: boolean): boolean {
+  if (isEditorEnabled) {
+    return false;
+  }
+  return isDebugOverlayVisible;
+}
+
 export function getIntroSkipTime(introEnd: number, audioOffset: number, currentTime: number): number {
   const targetTime = Math.max(0, introEnd - audioOffset);
   return Math.max(currentTime, targetTime);
