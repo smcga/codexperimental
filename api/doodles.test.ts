@@ -50,7 +50,7 @@ function createMockRedis(initialApproved: unknown[] = [], initialPending: unknow
     }),
     ltrim: vi.fn(async (_key: string, _start: number, stop: number) => {
       approved.splice(stop + 1);
-      return "OK";
+      return "OK" as const;
     })
   };
 }
@@ -62,7 +62,7 @@ describe("api/doodles handler", () => {
   beforeEach(() => {
     vi.resetModules();
     process.env = { ...originalEnv };
-    globalThis.fetch = vi.fn(async () => ({ ok: true, status: 200 })) as typeof fetch;
+    globalThis.fetch = vi.fn(async () => new Response(null, { status: 200 })) as typeof fetch;
   });
 
   afterEach(() => {

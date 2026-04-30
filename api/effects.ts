@@ -1216,7 +1216,7 @@ async function improvePromptTemplate(args: {
   } catch {
     // Fall back to plain text output.
   }
-  const safeTemplate = rawTemplate.replaceAll(args.userPrompt, "").trim();
+  const safeTemplate = rawTemplate.split(args.userPrompt).join("").trim();
   if (safeTemplate.length < 120) {
     return args.currentTemplate;
   }
