@@ -559,6 +559,16 @@ export const zoomPlaylistTrackHeight = (
   return clamp(nextHeight, minHeightRem, maxHeightRem);
 };
 
+export const resizePlaylistTrackHeightFromScrollbar = (
+  currentHeightRem: number,
+  edge: "start" | "end",
+  deltaRatio: number
+): number => {
+  const direction = edge === "end" ? 1 : -1;
+  const scale = 1 - direction * deltaRatio * 1.8;
+  return zoomPlaylistTrackHeight(currentHeightRem, scale);
+};
+
 export const getPlaylistScrollbarMetrics = (
   totalDuration: number,
   viewportStart: number,
@@ -787,6 +797,16 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         pointerId: number;
         startY: number;
         startScrollTop: number;
+      }
+    | null = null;
+  let activeVScrollbarResize:
+    | {
+        pointerId: number;
+        edge: "start" | "end";
+        startY: number;
+        startTrackHeightRem: number;
+        startScrollTop: number;
+        startBottomScroll: number;
       }
     | null = null;
   let activeClipResize:
@@ -1153,7 +1173,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         <div class="editor-playlist-tracks" data-region="playlist-tracks"></div>
       </div>
       <div class="editor-playlist-vscrollbar" data-region="playlist-vscrollbar">
-        <div class="editor-playlist-vscrollbar-thumb" data-region="playlist-vscrollbar-thumb"></div>
+        <div class="editor-playlist-vscrollbar-thumb" data-region="playlist-vscrollbar-thumb">
+          <span class="editor-playlist-vscrollbar-handle editor-playlist-vscrollbar-handle-start" data-vresize-edge="start"></span>
+          <span class="editor-playlist-vscrollbar-handle editor-playlist-vscrollbar-handle-end" data-vresize-edge="end"></span>
+        </div>
       </div>
       <div class="editor-playlist-scrollbar" data-region="playlist-scrollbar">
         <div class="editor-playlist-scrollbar-thumb" data-region="playlist-scrollbar-thumb">
@@ -1485,6 +1508,20 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     syncVerticalScrollbarThumb();
     vScrollbar.onpointerdown = (event) => {
       const target = event.target as HTMLElement;
+      const resizeEdge = target.closest<HTMLElement>("[data-vresize-edge]")?.dataset.vresizeEdge;
+      if (resizeEdge === "start" || resizeEdge === "end") {
+        event.preventDefault();
+        vScrollbar.setPointerCapture(event.pointerId);
+        activeVScrollbarResize = {
+          pointerId: event.pointerId,
+          edge: resizeEdge,
+          startY: event.clientY,
+          startTrackHeightRem: playlistTrackHeightRem,
+          startScrollTop: scroll.scrollTop,
+          startBottomScroll: scroll.scrollTop + scroll.clientHeight
+        };
+        return;
+      }
       if (target.closest("[data-region='playlist-vscrollbar-thumb']")) {
         event.preventDefault();
         vScrollbar.setPointerCapture(event.pointerId);
@@ -1563,6 +1600,28 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   };
 
   const handleGlobalScrollbarDrag = (event: PointerEvent): void => {
+    if (activeVScrollbarResize && event.pointerId === activeVScrollbarResize.pointerId) {
+      const scroll = init.container.querySelector<HTMLDivElement>("[data-region='playlist-scroll']");
+      const vScrollbar = init.container.querySelector<HTMLDivElement>("[data-region='playlist-vscrollbar']");
+      if (!scroll || !vScrollbar) {
+        return;
+      }
+      const rect = vScrollbar.getBoundingClientRect();
+      const deltaRatio = rect.height > 0 ? (event.clientY - activeVScrollbarResize.startY) / rect.height : 0;
+      playlistTrackHeightRem = resizePlaylistTrackHeightFromScrollbar(
+        activeVScrollbarResize.startTrackHeightRem,
+        activeVScrollbarResize.edge,
+        deltaRatio
+      );
+      const scrollRange = Math.max(0, scroll.scrollHeight - scroll.clientHeight);
+      if (activeVScrollbarResize.edge === "start") {
+        playlistVerticalScrollTop = clamp(activeVScrollbarResize.startBottomScroll - scroll.clientHeight, 0, scrollRange);
+      } else {
+        playlistVerticalScrollTop = clamp(activeVScrollbarResize.startScrollTop, 0, scrollRange);
+      }
+      renderTimelineView();
+      return;
+    }
     if (activeVScrollbarDrag && event.pointerId === activeVScrollbarDrag.pointerId) {
       const scroll = init.container.querySelector<HTMLDivElement>("[data-region='playlist-scroll']");
       const vScrollbar = init.container.querySelector<HTMLDivElement>("[data-region='playlist-vscrollbar']");
@@ -1685,6 +1744,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     if (activeVScrollbarDrag && event.pointerId === activeVScrollbarDrag.pointerId) {
       activeVScrollbarDrag = null;
     }
+    if (activeVScrollbarResize && event.pointerId === activeVScrollbarResize.pointerId) {
+      activeVScrollbarResize = null;
+    }
     if (activeClipResize && event.pointerId === activeClipResize.pointerId) {
       activeClipResize = null;
     }
@@ -1701,6 +1763,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     }
     if (activeVScrollbarDrag && event.pointerId === activeVScrollbarDrag.pointerId) {
       activeVScrollbarDrag = null;
+    }
+    if (activeVScrollbarResize && event.pointerId === activeVScrollbarResize.pointerId) {
+      activeVScrollbarResize = null;
     }
     if (activeClipResize && event.pointerId === activeClipResize.pointerId) {
       activeClipResize = null;
