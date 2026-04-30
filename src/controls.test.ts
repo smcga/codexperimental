@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { getEndSkipTime, getRelativeSeekTime, getSecondHalfSkipTime, shouldHandleGlobalShortcut } from "./controls";
+import {
+  getDebugOverlayVisibilityAfterEditorToggle,
+  getEndSkipTime,
+  getRelativeSeekTime,
+  getSecondHalfSkipTime,
+  shouldHandleGlobalShortcut
+} from "./controls";
 
 describe("getSecondHalfSkipTime", () => {
   it("skips forward to the configured second-half time", () => {
@@ -69,5 +75,16 @@ describe("shouldHandleGlobalShortcut", () => {
       closest: (selector: string) => (selector.includes("contenteditable") ? {} : null)
     } as EventTarget;
     expect(shouldHandleGlobalShortcut(target)).toBe(false);
+  });
+});
+
+describe("getDebugOverlayVisibilityAfterEditorToggle", () => {
+  it("dismisses the debug overlay when editor mode turns on", () => {
+    expect(getDebugOverlayVisibilityAfterEditorToggle(true, true)).toBe(false);
+  });
+
+  it("keeps the current debug overlay visibility when editor mode is off", () => {
+    expect(getDebugOverlayVisibilityAfterEditorToggle(false, true)).toBe(true);
+    expect(getDebugOverlayVisibilityAfterEditorToggle(false, false)).toBe(false);
   });
 });
