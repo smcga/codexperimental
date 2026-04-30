@@ -54,7 +54,7 @@ function createMockRedis(initialApproved: unknown[] = [], initialPending: unknow
     }),
     ltrim: vi.fn(async (_key: string, _start: number, stop: number) => {
       approved.splice(stop + 1);
-      return "OK";
+      return "OK" as const;
     })
   };
 }
@@ -67,19 +67,21 @@ describe("api/effects", () => {
     vi.resetModules();
     process.env = { ...originalEnv };
     process.env.EFFECT_GENERATE_ALLOWLIST_IPS = "127.0.0.1";
-    globalThis.fetch = vi.fn(async () => ({
-      ok: true,
-      status: 200,
-      json: async () => ({
-        output_text: JSON.stringify({
-          name: "Nebula",
-          typescriptCode: "ts",
-          runtimeCode: "return { render() {} };",
-          params: [{ key: "speed", label: "Speed", type: "number", defaultValue: 0.5, min: 0, max: 1 }],
-          docs: { description: "Generated effect", parameters: "- speed: movement speed." }
-        })
-      })
-    })) as typeof fetch;
+    globalThis.fetch = vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({
+            output_text: JSON.stringify({
+              name: "Nebula",
+              typescriptCode: "ts",
+              runtimeCode: "return { render() {} };",
+              params: [{ key: "speed", label: "Speed", type: "number", defaultValue: 0.5, min: 0, max: 1 }],
+              docs: { description: "Generated effect", parameters: "- speed: movement speed." }
+            })
+          }),
+          { status: 200, headers: { "Content-Type": "application/json" } }
+        )
+    ) as typeof fetch;
   });
 
   afterEach(() => {
@@ -208,11 +210,13 @@ describe("api/effects", () => {
 
   it("returns raw model output when generation response cannot be parsed", async () => {
     process.env.OPENAI_API_KEY = "sk-test";
-    globalThis.fetch = vi.fn(async () => ({
-      ok: true,
-      status: 200,
-      json: async () => ({ output_text: "I can help with that! First, let's discuss..." })
-    })) as typeof fetch;
+    globalThis.fetch = vi.fn(
+      async () =>
+        new Response(JSON.stringify({ output_text: "I can help with that! First, let's discuss..." }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" }
+        })
+    ) as typeof fetch;
     const redis = createMockRedis();
     vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
     const { default: handler } = await import("./effects");
@@ -331,7 +335,9 @@ describe("api/effects", () => {
     process.env.EFFECT_GENERATE_ALERT_NTFY_TOKEN = "alert-token";
     process.env.EFFECT_GENERATE_ALERT_COOLDOWN_MS = "600000";
     delete process.env.OPENAI_API_KEY;
-    globalThis.fetch = vi.fn(async () => ({ ok: true, status: 200, json: async () => ({}) })) as typeof fetch;
+    globalThis.fetch = vi.fn(
+      async () => new Response(JSON.stringify({}), { status: 200, headers: { "Content-Type": "application/json" } })
+    ) as typeof fetch;
     const redis = createMockRedis();
     vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
     const { default: handler } = await import("./effects");
