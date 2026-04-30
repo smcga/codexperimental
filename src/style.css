@@ -1053,10 +1053,40 @@ body,
   color: #d9fcff;
   padding: 0;
   line-height: 0.65rem;
-  font-size: 0.52rem;
+  font-size: 0.62rem;
   text-align: center;
   transform: translateX(-50%);
   z-index: 2;
+}
+
+.editor-text-cue-marker.is-selected {
+  background: rgba(142, 249, 255, 0.95);
+  color: #02212a;
+  border-color: #d5fcff;
+}
+
+.editor-text-cue-duration.is-selected {
+  background: rgba(142, 249, 255, 0.24);
+  border-color: rgba(213, 252, 255, 0.9);
+}
+
+.editor-cue-properties-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: end;
+}
+
+.editor-cue-properties-grid > label,
+.editor-cue-properties-grid > button {
+  min-width: 0;
+}
+
+.editor-cue-color-control {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.editor-cue-color-input.is-hidden {
+  display: none;
 }
 
 .editor-playlist-automation-line {

@@ -1305,10 +1305,15 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           marker.style.left = `${clipPercent.left}%`;
           marker.style.top = `calc(${index} * var(--editor-playlist-track-height) + ${getCueMarkerTopOffset(cueIndex)})`;
           marker.textContent = cue.text?.trim().slice(0, 1).toUpperCase() || "•";
+          if (cue.id === state.selectedTextCueId) {
+            marker.classList.add("is-selected");
+            durationBar.classList.add("is-selected");
+          }
           marker.title = `${cue.id}: ${formatTime(cueStart)} → ${formatTime(cueEnd)}`;
           marker.addEventListener("click", () => {
             selectTextCue(cue.id);
-            const timeToSeek = cueStart - init.getAudioOffset();
+            const previewSeekTime = cueStart + Math.min(0.2, Math.max(0.05, (cueEnd - cueStart) * 0.5));
+            const timeToSeek = previewSeekTime - init.getAudioOffset();
             init.seek(Math.max(0, Number.isFinite(timeToSeek) ? timeToSeek : 0));
           });
           lane.appendChild(marker);
@@ -1932,18 +1937,14 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       basicPanel.innerHTML = `
       <details class="editor-accordion-panel" open>
         <summary class="editor-group-title">TEXT CUE</summary>
-        <div class="editor-group">
-          <label>
-            <span>ID</span>
-            <input type="text" data-selected-cue-field="id" value="${selectedCue.id}" />
-          </label>
+        <div class="editor-group editor-cue-properties-grid">
           <label>
             <span>Start (s)</span>
-            <input type="number" step="0.1" data-selected-cue-field="start" value="${formatEditableTime(selectedCue.start)}" />
+            <input type="text" data-selected-cue-field="start" value="${formatTime(parseTimelineTimeValue(selectedCue.start))}" />
           </label>
           <label>
             <span>End (s)</span>
-            <input type="number" step="0.1" data-selected-cue-field="end" value="${formatEditableTime(selectedCue.end, true)}" />
+            <input type="text" data-selected-cue-field="end" value="${formatTime(parseTimelineTimeValue(selectedCue.end))}" />
           </label>
           <label>
             <span>Text</span>
@@ -1951,11 +1952,16 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           </label>
           <label>
             <span>Font</span>
-            <input type="text" data-selected-cue-field="font" value="${typography.font}" />
+            <select data-selected-cue-field="font">
+              ${["inherit", "Arial", "Helvetica", "Verdana", "Tahoma", "Trebuchet MS", "Times New Roman", "Georgia", "Garamond", "Courier New", "Consolas", "Impact", "Comic Sans MS"]
+                .map((font) => `<option value="${font}" ${font === typography.font ? "selected" : ""}>${font}</option>`)
+                .join("")}
+            </select>
           </label>
-          <label>
+          <label class="editor-cue-color-control">
             <span>Colour</span>
-            <input type="text" data-selected-cue-field="color" value="${typography.color}" />
+            <button type="button" data-selected-cue-action="toggle-color" style="background:${typography.color}">${typography.color}</button>
+            <input type="color" data-selected-cue-field="color" value="${typography.color}" class="editor-cue-color-input is-hidden" />
           </label>
           <label>
             <span>Size (px)</span>
@@ -2225,13 +2231,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
             return;
           }
           const field = input.dataset.selectedCueField ?? "";
-          if (field === "id") {
-            targetCue.id = input.value;
-            setState({ selectedTextCueId: input.value });
-          } else if (field === "start") {
-            targetCue.start = Number(input.value);
+          if (field === "start") {
+            targetCue.start = parseTimelineTimeValue(input.value);
           } else if (field === "end") {
-            targetCue.end = Number(input.value);
+            targetCue.end = parseTimelineTimeValue(input.value);
           } else if (field === "text") {
             targetCue.text = input.value;
             if (targetCue.spans && targetCue.spans.length > 0) {
@@ -2272,6 +2275,18 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         draft.textCues = draft.textCues?.filter((cue) => cue.id !== cueId) ?? [];
       });
       setState({ selectedTextCueId: null });
+    });
+
+    inspector.querySelector<HTMLButtonElement>("[data-selected-cue-action='toggle-color']")?.addEventListener("click", () => {
+      const colorInput = inspector.querySelector<HTMLInputElement>(".editor-cue-color-input");
+      if (!colorInput) {
+        return;
+      }
+      colorInput.classList.toggle("is-hidden");
+      if (!colorInput.classList.contains("is-hidden")) {
+        colorInput.focus();
+        colorInput.click();
+      }
     });
 
     inspector.querySelectorAll<HTMLDetailsElement>(".editor-accordion-panel").forEach((panel) => {
