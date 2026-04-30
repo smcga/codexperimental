@@ -593,6 +593,17 @@ export const roundTimelineSeconds = (value: number): number => Number(value.toFi
 export const hasTimelineTimeChanged = (current: number, next: number): boolean =>
   roundTimelineSeconds(current) !== roundTimelineSeconds(next);
 
+export const getResizePreviewOffset = (
+  time: number,
+  viewportStart: number,
+  viewportDuration: number
+): number => {
+  if (!Number.isFinite(viewportDuration) || viewportDuration <= 0) {
+    return 0;
+  }
+  return clamp((time - viewportStart) / viewportDuration, 0, 1);
+};
+
 export const parseEditorParamInputValue = (input: string): EditorParamValue => {
   const trimmed = input.trim();
   if (!trimmed) {
@@ -1177,6 +1188,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       </div>
       <div class="editor-playlist-scroll" data-region="playlist-scroll">
         <div class="editor-playlist-tracks" data-region="playlist-tracks"></div>
+        <div class="editor-playlist-resize-preview" data-region="playlist-resize-preview" data-visible="false"></div>
       </div>
       <div class="editor-playlist-vscrollbar" data-region="playlist-vscrollbar">
         <div class="editor-playlist-vscrollbar-thumb" data-region="playlist-vscrollbar-thumb">
@@ -1715,6 +1727,12 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       const min = previous ? parseTimelineTimeValue(previous.start) + 0.05 : 0;
       const max = next ? parseTimelineTimeValue(next.start) - 0.05 : duration;
       activeClipResize.pendingTime = Number(clamp(pointerTime, min, Math.max(min, max)).toFixed(3));
+      const preview = init.container.querySelector<HTMLElement>("[data-region='playlist-resize-preview']");
+      if (preview) {
+        const offset = getResizePreviewOffset(activeClipResize.pendingTime, playlistViewportStart, playlistViewportDuration);
+        preview.style.left = `${offset * 100}%`;
+        preview.dataset.visible = "true";
+      }
       return;
     }
     if (!next) {
@@ -1723,6 +1741,12 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     const min = parseTimelineTimeValue(current.start) + 0.05;
     const max = sceneIndex < scenes.length - 2 ? parseTimelineTimeValue(scenes[sceneIndex + 2].start) - 0.05 : duration;
     activeClipResize.pendingTime = Number(clamp(pointerTime, min, Math.max(min, max)).toFixed(3));
+    const preview = init.container.querySelector<HTMLElement>("[data-region='playlist-resize-preview']");
+    if (preview) {
+      const offset = getResizePreviewOffset(activeClipResize.pendingTime, playlistViewportStart, playlistViewportDuration);
+      preview.style.left = `${offset * 100}%`;
+      preview.dataset.visible = "true";
+    }
   };
 
   window.addEventListener("pointermove", handleGlobalPlaylistPan);
@@ -1771,6 +1795,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           }
         });
       }
+      const preview = init.container.querySelector<HTMLElement>("[data-region='playlist-resize-preview']");
+      if (preview) {
+        preview.dataset.visible = "false";
+      }
       activeClipResize = null;
     }
   });
@@ -1791,6 +1819,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       activeVScrollbarResize = null;
     }
     if (activeClipResize && event.pointerId === activeClipResize.pointerId) {
+      const preview = init.container.querySelector<HTMLElement>("[data-region='playlist-resize-preview']");
+      if (preview) {
+        preview.dataset.visible = "false";
+      }
       activeClipResize = null;
     }
   });

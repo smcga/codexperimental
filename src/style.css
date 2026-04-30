@@ -1045,6 +1045,24 @@ body,
   cursor: grabbing;
 }
 
+.editor-playlist-resize-preview {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(255, 238, 139, 0.95);
+  box-shadow: 0 0 0 1px rgba(24, 24, 18, 0.35);
+  pointer-events: none;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 80ms linear;
+  z-index: 5;
+}
+
+.editor-playlist-resize-preview[data-visible="true"] {
+  opacity: 1;
+}
+
 .editor-playlist-zoom-controls {
   margin-left: auto;
   display: inline-flex;

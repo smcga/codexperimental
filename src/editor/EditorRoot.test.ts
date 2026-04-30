@@ -40,7 +40,8 @@ import {
   zoomPlaylistTrackHeight,
   resizePlaylistTrackHeightFromScrollbar,
   roundTimelineSeconds,
-  hasTimelineTimeChanged
+  hasTimelineTimeChanged,
+  getResizePreviewOffset
 } from "./EditorRoot";
 
 describe("formatTime", () => {
@@ -123,6 +124,17 @@ describe("timeline rounding helpers", () => {
   it("only reports meaningful timeline changes after millisecond rounding", () => {
     expect(hasTimelineTimeChanged(12.3454, 12.34549)).toBe(false);
     expect(hasTimelineTimeChanged(12.3454, 12.3462)).toBe(true);
+  });
+});
+
+describe("getResizePreviewOffset", () => {
+  it("normalizes a timeline time into viewport ratio", () => {
+    expect(getResizePreviewOffset(15, 10, 20)).toBe(0.25);
+  });
+
+  it("clamps offsets to the visible viewport", () => {
+    expect(getResizePreviewOffset(5, 10, 20)).toBe(0);
+    expect(getResizePreviewOffset(35, 10, 20)).toBe(1);
   });
 });
 
