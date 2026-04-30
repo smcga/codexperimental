@@ -47,6 +47,10 @@ import {
   getResizePreviewOffset
   ,
   updateInspectorAccordionState
+  ,
+  clampWorkspaceTopRatio,
+  getWorkspaceTopRatioFromPointer,
+  getWorkspaceTopHeightPx
 } from "./EditorRoot";
 
 describe("formatTime", () => {
@@ -117,6 +121,28 @@ describe("clamp", () => {
     expect(clamp(-1, 0, 10)).toBe(0);
     expect(clamp(11, 0, 10)).toBe(10);
     expect(clamp(4, 0, 10)).toBe(4);
+  });
+});
+
+describe("workspace splitter helpers", () => {
+  it("clamps workspace top ratio into allowed bounds", () => {
+    expect(clampWorkspaceTopRatio(-1)).toBe(0.2);
+    expect(clampWorkspaceTopRatio(1.5)).toBe(0.8);
+    expect(clampWorkspaceTopRatio(0.42)).toBe(0.42);
+    expect(clampWorkspaceTopRatio(Number.NaN)).toBe(0.5);
+  });
+
+  it("computes workspace top ratio from pointer position", () => {
+    const rect = { top: 100, height: 400 } as DOMRect;
+    expect(getWorkspaceTopRatioFromPointer(300, rect)).toBe(0.5);
+    expect(getWorkspaceTopRatioFromPointer(50, rect)).toBe(0.2);
+    expect(getWorkspaceTopRatioFromPointer(600, rect)).toBe(0.8);
+  });
+
+  it("computes a constrained pixel height for the top workspace row", () => {
+    expect(getWorkspaceTopHeightPx(900, 0.5)).toBe(450);
+    expect(getWorkspaceTopHeightPx(400, 0.9)).toBe(180);
+    expect(getWorkspaceTopHeightPx(1200, 0.95)).toBe(940);
   });
 });
 

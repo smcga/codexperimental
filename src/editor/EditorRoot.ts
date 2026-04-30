@@ -147,6 +147,34 @@ export const clamp = (value: number, min: number, max: number): number => {
   return Math.min(max, Math.max(min, value));
 };
 
+export const clampWorkspaceTopRatio = (ratio: number, min = 0.2, max = 0.8): number => {
+  if (!Number.isFinite(ratio)) {
+    return 0.5;
+  }
+  return clamp(ratio, min, max);
+};
+
+export const getWorkspaceTopRatioFromPointer = (pointerY: number, workspaceRect: DOMRect): number => {
+  if (workspaceRect.height <= 0) {
+    return 0.5;
+  }
+  return clampWorkspaceTopRatio((pointerY - workspaceRect.top) / workspaceRect.height);
+};
+
+export const getWorkspaceTopHeightPx = (
+  workspaceHeight: number,
+  ratio: number,
+  minTopHeightPx = 180,
+  minBottomHeightPx = 260
+): number => {
+  if (!Number.isFinite(workspaceHeight) || workspaceHeight <= 0) {
+    return minTopHeightPx;
+  }
+  const safeRatio = clampWorkspaceTopRatio(ratio);
+  const maxTopHeight = Math.max(minTopHeightPx, workspaceHeight - minBottomHeightPx);
+  return clamp(workspaceHeight * safeRatio, minTopHeightPx, maxTopHeight);
+};
+
 export const formatTime = (value: number): string => {
   const safeValue = Number.isFinite(value) ? Math.max(0, value) : 0;
   const minutes = Math.floor(safeValue / 60);
@@ -833,6 +861,8 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   let playlistViewportDuration = 45;
   let playlistTrackHeightRem = 3.5;
   let playlistVerticalScrollTop = 0;
+  let workspaceTopRatio = 0.48;
+  let activeWorkspaceResizePointerId: number | null = null;
   let activePlaylistPan:
     | {
         pointerId: number;
@@ -1061,6 +1091,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
             </div>
             
           </div>
+          <div class="editor-workspace-resize-handle" data-region="workspace-resize-handle" role="separator" aria-orientation="horizontal" aria-label="Resize top and timeline panels"></div>
           <div class="editor-preview-transport">
             <span data-region="preview-time">${formatTime(currentDemoTime)} / ${formatTime(init.getAudioDuration())}</span>
             <div class="editor-preview-transport-controls">
@@ -1118,6 +1149,27 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     if (nextSceneList) {
       nextSceneList.scrollTop = sceneListScrollTop;
     }
+    const workspace = init.container.querySelector<HTMLElement>(".editor-workspace");
+    if (workspace) {
+      const topRow = workspace.querySelector<HTMLElement>(".editor-top-row");
+      if (topRow) {
+        topRow.style.height = `${getWorkspaceTopHeightPx(workspace.clientHeight, workspaceTopRatio)}px`;
+      }
+    }
+    const workspaceResizeHandle = init.container.querySelector<HTMLElement>("[data-region='workspace-resize-handle']");
+    workspaceResizeHandle?.addEventListener("pointerdown", (event) => {
+      const currentWorkspace = init.container.querySelector<HTMLElement>(".editor-workspace");
+      if (!currentWorkspace) {
+        return;
+      }
+      activeWorkspaceResizePointerId = event.pointerId;
+      workspaceTopRatio = getWorkspaceTopRatioFromPointer(event.clientY, currentWorkspace.getBoundingClientRect());
+      const topRow = currentWorkspace.querySelector<HTMLElement>(".editor-top-row");
+      if (topRow) {
+        topRow.style.height = `${getWorkspaceTopHeightPx(currentWorkspace.clientHeight, workspaceTopRatio)}px`;
+      }
+      event.preventDefault();
+    });
   };
 
   const renderSceneList = (): void => {
@@ -1843,9 +1895,25 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     }
   };
 
+  const handleWorkspaceResizeDrag = (event: PointerEvent): void => {
+    if (activeWorkspaceResizePointerId !== event.pointerId) {
+      return;
+    }
+    const workspace = init.container.querySelector<HTMLElement>(".editor-workspace");
+    if (!workspace) {
+      return;
+    }
+    workspaceTopRatio = getWorkspaceTopRatioFromPointer(event.clientY, workspace.getBoundingClientRect());
+    const topRow = workspace.querySelector<HTMLElement>(".editor-top-row");
+    if (topRow) {
+      topRow.style.height = `${getWorkspaceTopHeightPx(workspace.clientHeight, workspaceTopRatio)}px`;
+    }
+  };
+
   window.addEventListener("pointermove", handleGlobalPlaylistPan);
   window.addEventListener("pointermove", handleGlobalScrollbarDrag);
   window.addEventListener("pointermove", handleGlobalClipResize);
+  window.addEventListener("pointermove", handleWorkspaceResizeDrag);
   window.addEventListener("pointerup", (event) => {
     if (activePlaylistPan && event.pointerId === activePlaylistPan.pointerId) {
       activePlaylistPan = null;
@@ -1895,6 +1963,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       }
       activeClipResize = null;
     }
+    if (activeWorkspaceResizePointerId === event.pointerId) {
+      activeWorkspaceResizePointerId = null;
+    }
   });
   window.addEventListener("pointercancel", (event) => {
     if (activePlaylistPan && event.pointerId === activePlaylistPan.pointerId) {
@@ -1918,6 +1989,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         preview.dataset.visible = "false";
       }
       activeClipResize = null;
+    }
+    if (activeWorkspaceResizePointerId === event.pointerId) {
+      activeWorkspaceResizePointerId = null;
     }
   });
 
