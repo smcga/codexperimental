@@ -152,9 +152,9 @@ describe("buildEditorTimelineTracks", () => {
       true
     );
 
-    expect(tracks.map((track) => track.kind)).toEqual(["scene", "layer", "layer", "automation", "text-cues"]);
-    expect(tracks[0]).toMatchObject({ start: 10, end: 14 });
-    expect(tracks[3]).toMatchObject({ start: 10.5, end: 12.5 });
+    expect(tracks.map((track) => track.kind)).toEqual(["text-cues", "scene", "layer", "layer", "automation"]);
+    expect(tracks[1]).toMatchObject({ start: 10, end: 14 });
+    expect(tracks[4]).toMatchObject({ start: 10.5, end: 12.5 });
   });
 
   it("returns an empty list when no scene is selected", () => {

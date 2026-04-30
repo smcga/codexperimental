@@ -466,15 +466,23 @@ export const buildEditorTimelineTracks = (
   }
   const sceneStart = parseTimelineTimeValue(selectedScene.start);
   const sceneEnd = Math.max(sceneStart + 0.05, selectedSceneEnd);
-  const tracks: EditorTimelineTrack[] = [
-    {
-      id: `${selectedScene.id}:scene`,
-      label: "Scene",
-      kind: "scene",
-      start: sceneStart,
-      end: sceneEnd
-    }
-  ];
+  const tracks: EditorTimelineTrack[] = [];
+  if (hasTextCues) {
+    tracks.push({
+      id: "text-cues:global",
+      label: "Text Cues",
+      kind: "text-cues",
+      start: 0,
+      end: 0
+    });
+  }
+  tracks.push({
+    id: `${selectedScene.id}:scene`,
+    label: "Scene",
+    kind: "scene",
+    start: sceneStart,
+    end: sceneEnd
+  });
   (selectedScene.layers ?? []).forEach((layer, index) => {
     tracks.push({
       id: `${selectedScene.id}:layer:${index}`,
@@ -493,15 +501,6 @@ export const buildEditorTimelineTracks = (
       end: parseTimelineTimeValue(entry.end ?? sceneEnd)
     });
   });
-  if (hasTextCues) {
-    tracks.push({
-      id: "text-cues:global",
-      label: "Text Cues",
-      kind: "text-cues",
-      start: 0,
-      end: 0
-    });
-  }
   return tracks;
 };
 
@@ -1277,7 +1276,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           block.className = "editor-block editor-playlist-clip";
           block.style.left = `${clipPercent.left}%`;
           block.style.width = `${Math.max(minClipWidthPercent, clipPercent.width)}%`;
-          block.style.top = `calc(${index} * var(--editor-playlist-track-height) + 0.25rem)`;
+          block.style.top = "0.25rem";
           block.textContent = cue.id;
           block.title = `${cue.id}: ${formatTime(cueStart)} → ${formatTime(cueEnd)}`;
           block.addEventListener("click", () => {
@@ -1311,7 +1310,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           block.className = "editor-block editor-playlist-clip";
           block.style.left = `${clipPercent.left}%`;
           block.style.width = `${Math.max(minClipWidthPercent, clipPercent.width)}%`;
-          block.style.top = `calc(${index} * var(--editor-playlist-track-height) + 0.25rem)`;
+          block.style.top = "0.25rem";
           block.textContent = clip.sceneId;
           block.title = buildPlaylistClipTitle(clip.sceneId, scene.effect, clip.start, clip.end);
           block.dataset.sceneId = clip.sceneId;
