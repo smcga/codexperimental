@@ -76,6 +76,7 @@ type EditorState = {
   originalTimeline: RawTimelineConfig | null;
   selectedSceneId: string | null;
   loopEnabled: boolean;
+  loopRange: { start: number; end: number } | null;
   error: string | null;
 };
 
@@ -196,6 +197,18 @@ export const getVisibleClipRange = (
     return null;
   }
   return { start: visibleStart, end: visibleEnd };
+};
+
+export const normalizeLoopRange = (a: number, b: number, minimumDuration = 0.05): { start: number; end: number } | null => {
+  if (!Number.isFinite(a) || !Number.isFinite(b)) {
+    return null;
+  }
+  const start = Math.min(a, b);
+  const end = Math.max(a, b);
+  if (end - start < minimumDuration) {
+    return null;
+  }
+  return { start, end };
 };
 
 export const buildAutomationTrackPolyline = (
@@ -728,6 +741,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     originalTimeline: null,
     selectedSceneId: null,
     loopEnabled: false,
+    loopRange: null,
     error: null,
   };
   let playbackLabel: HTMLSpanElement | null = null;
@@ -962,6 +976,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
               <button type="button" data-action="jump-scene-inline">Jump to scene</button>
             </div>
           </div>
+          <div class="editor-loop-summary">
+            ${state.loopRange ? `Loop selection: ${formatTime(state.loopRange.start)} → ${formatTime(state.loopRange.end)}` : "Loop selection: none"}
+            <button type="button" data-action="clear-loop-selection" ${state.loopRange ? "" : "disabled"}>Clear loop selection</button>
+          </div>
           <div class="editor-section-title">TIMELINE</div>
           <div class="editor-timeline-view" data-region="timeline-view"></div>
         </section>
@@ -1109,6 +1127,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     const timelineTracks = buildEditorTimelineTracks(focusScene, focusSceneEnd);
     const sceneClips = getSceneTimelineClips(scenes, getSceneEnd);
     const playheadRatio = clamp((currentDemoTime - playlistViewportStart) / Math.max(playlistViewportDuration, 0.001), 0, 1);
+    const visibleLoopRange = state.loopRange
+      ? getVisibleClipRange(state.loopRange.start, state.loopRange.end, playlistViewportStart, viewportEnd)
+      : null;
 
     view.innerHTML = `
       <div class="editor-playlist-toolbar">
@@ -1119,6 +1140,11 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         </div>
       </div>
       <div class="editor-ruler" data-region="playlist-ruler">
+        ${
+          visibleLoopRange
+            ? `<div class="editor-ruler-loop-selection" style="left:${((visibleLoopRange.start - playlistViewportStart) / Math.max(playlistViewportDuration, 0.001)) * 100}%;width:${((visibleLoopRange.end - visibleLoopRange.start) / Math.max(playlistViewportDuration, 0.001)) * 100}%"></div>`
+            : ""
+        }
         ${Array.from({ length: ticks + 1 })
           .map((_, index) => {
             const time = Math.min(viewportEnd, playlistViewportStart + (playlistViewportDuration / ticks) * index);
@@ -1198,7 +1224,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           }
           block.addEventListener("click", () => {
             selectScene(clip.sceneId);
-            init.seek(computeSceneSeekTime(scene.start, init.getAudioOffset()));
+            if (!state.loopRange) {
+              init.seek(computeSceneSeekTime(scene.start, init.getAudioOffset()));
+            }
           });
           block.draggable = true;
           block.addEventListener("dragstart", (event) => {
@@ -1256,7 +1284,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       block.addEventListener("click", () => {
         if (focusScene) {
           selectScene(focusScene.id);
-          init.seek(computeSceneSeekTime(focusScene.start, init.getAudioOffset()));
+          if (!state.loopRange) {
+            init.seek(computeSceneSeekTime(focusScene.start, init.getAudioOffset()));
+          }
         }
       });
       if (timelineTrack.kind === "automation") {
@@ -1296,13 +1326,41 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     playheadElement.style.left = `${playheadRatio * 100}%`;
     tracks.appendChild(playheadElement);
     ruler.addEventListener("pointerdown", (event) => {
+      if (event.button !== 0) {
+        return;
+      }
       const rect = ruler.getBoundingClientRect();
       if (rect.width <= 0) {
         return;
       }
-      const ratio = clamp((event.clientX - rect.left) / rect.width, 0, 1);
-      const targetDemoTime = playlistViewportStart + ratio * playlistViewportDuration;
-      init.seek(Math.max(0, targetDemoTime - init.getAudioOffset()));
+      const pointerId = event.pointerId;
+      const startRatio = clamp((event.clientX - rect.left) / rect.width, 0, 1);
+      const anchorTime = playlistViewportStart + startRatio * playlistViewportDuration;
+      let dragStarted = false;
+      const onPointerMove = (moveEvent: PointerEvent): void => {
+        if (moveEvent.pointerId !== pointerId) {
+          return;
+        }
+        const ratio = clamp((moveEvent.clientX - rect.left) / rect.width, 0, 1);
+        const currentTime = playlistViewportStart + ratio * playlistViewportDuration;
+        const nextLoopRange = normalizeLoopRange(anchorTime, currentTime);
+        if (nextLoopRange) {
+          dragStarted = true;
+          setState({ loopRange: nextLoopRange, loopEnabled: true });
+        }
+      };
+      const onPointerUp = (upEvent: PointerEvent): void => {
+        if (upEvent.pointerId !== pointerId) {
+          return;
+        }
+        window.removeEventListener("pointermove", onPointerMove);
+        window.removeEventListener("pointerup", onPointerUp);
+        if (!dragStarted) {
+          init.seek(Math.max(0, anchorTime - init.getAudioOffset()));
+        }
+      };
+      window.addEventListener("pointermove", onPointerMove);
+      window.addEventListener("pointerup", onPointerUp);
     });
 
     tracks.addEventListener("dragover", (event) => {
@@ -2726,7 +2784,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         if (!scene) {
           return;
         }
-        init.seek(computeSceneSeekTime(scene.start, init.getAudioOffset()));
+        if (!state.loopRange) {
+          init.seek(computeSceneSeekTime(scene.start, init.getAudioOffset()));
+        }
       });
 
     transport.querySelector<HTMLButtonElement>("[data-action='jump-scene']")?.addEventListener("click", () => {
@@ -2737,7 +2797,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       if (!scene) {
         return;
       }
-      init.seek(computeSceneSeekTime(scene.start, init.getAudioOffset()));
+      if (!state.loopRange) {
+        init.seek(computeSceneSeekTime(scene.start, init.getAudioOffset()));
+      }
     });
 
     transport
@@ -2746,6 +2808,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         const target = event.target as HTMLInputElement;
         setState({ loopEnabled: target.checked });
       });
+    init.container.querySelector<HTMLButtonElement>("[data-action='clear-loop-selection']")?.addEventListener("click", () => {
+      setState({ loopRange: null, loopEnabled: false });
+    });
   };
 
   const bindHeaderActions = (): void => {
@@ -2918,6 +2983,13 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       previewContext.drawImage(source, offsetX, offsetY, drawWidth, drawHeight);
     },
     getLoopState: () => {
+      if (state.loopEnabled && state.loopRange) {
+        return {
+          enabled: true,
+          start: state.loopRange.start,
+          end: state.loopRange.end
+        };
+      }
       if (!state.loopEnabled || !state.selectedSceneId || !state.timeline) {
         return null;
       }

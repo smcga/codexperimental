@@ -9,6 +9,7 @@ import {
   getMinimumClipWidthPercent,
   buildPlaylistClipTitle,
   getVisibleClipRange,
+  normalizeLoopRange,
   buildEditorTimelineTracks,
   getSceneTimelineClips,
   getPlaylistScrollbarMetrics,
@@ -88,6 +89,17 @@ describe("getVisibleClipRange", () => {
   it("returns null when clip is fully outside viewport", () => {
     expect(getVisibleClipRange(1, 2, 3, 4)).toBeNull();
     expect(getVisibleClipRange(6, 7, 3, 4)).toBeNull();
+  });
+});
+
+describe("normalizeLoopRange", () => {
+  it("orders start and end timestamps from any drag direction", () => {
+    expect(normalizeLoopRange(22, 10)).toEqual({ start: 10, end: 22 });
+  });
+
+  it("returns null for tiny or invalid ranges", () => {
+    expect(normalizeLoopRange(3, 3.01)).toBeNull();
+    expect(normalizeLoopRange(Number.NaN, 3)).toBeNull();
   });
 });
 

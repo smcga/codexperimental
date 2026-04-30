@@ -821,6 +821,15 @@ body,
   font-size: 0.65rem;
   color: rgba(215, 247, 255, 0.7);
 }
+.editor-ruler-loop-selection {
+  position: absolute;
+  top: 0.15rem;
+  bottom: 0.15rem;
+  border-radius: 0.25rem;
+  background: rgba(121, 255, 215, 0.25);
+  border: 1px solid rgba(121, 255, 215, 0.8);
+  pointer-events: none;
+}
 
 .editor-ruler span {
   position: absolute;
@@ -839,6 +848,14 @@ body,
   font-size: 0.72rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+.editor-loop-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.68rem;
+  color: rgba(215, 247, 255, 0.8);
+  margin: 0.2rem 0 0.3rem;
 }
 
 .editor-playlist-toolbar-actions {
