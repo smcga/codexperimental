@@ -10,7 +10,6 @@ const baseSection: SectionConfig = {
   era: "pcdemo",
   transition: {
     in: "fade",
-    out: "fade",
     duration: 0.8
   },
   params: {},

@@ -142,7 +142,6 @@ export type RawParamAutomation = {
 
 export type TransitionConfig = {
   in: TransitionType;
-  out: TransitionType;
   duration: number;
 };
 
@@ -224,7 +223,6 @@ export type TimelineConfig = {
 
 const DEFAULT_TRANSITION: TransitionConfig = {
   in: "fade",
-  out: "fade",
   duration: 0.8
 };
 
@@ -392,19 +390,15 @@ function assertString(value: unknown, label: string): string {
 
 function normalizeTransition(transition?: RawSectionConfig["transition"]): TransitionConfig {
   const incoming = transition?.in ?? DEFAULT_TRANSITION.in;
-  const outgoing = transition?.out ?? DEFAULT_TRANSITION.out;
   const duration = transition?.duration ?? DEFAULT_TRANSITION.duration;
   const allowedList = transitionKeys.map((type) => `"${type}"`).join(", ");
   if (!transitionKeys.includes(incoming)) {
     throw new Error(`transition.in must be one of ${allowedList}`);
   }
-  if (!transitionKeys.includes(outgoing)) {
-    throw new Error(`transition.out must be one of ${allowedList}`);
-  }
   if (duration <= 0) {
     throw new Error("transition.duration must be positive");
   }
-  return { in: incoming, out: outgoing, duration };
+  return { in: incoming, duration };
 }
 
 function normalizeEra(value: unknown, label: string): EraPreset {

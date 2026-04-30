@@ -1750,12 +1750,6 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           </select>
         </label>
         <label>
-          <span>Out</span>
-          <select data-field="transition-out">
-            ${transitionOptions.map((option) => `<option value="${option.value}" ${option.value === scene.transition?.out ? "selected" : ""}>${option.label}</option>`).join("")}
-          </select>
-        </label>
-        <label>
           <span>Duration (s)</span>
           <input type="number" step="0.1" data-field="transition-duration" value="${scene.transition?.duration ?? 0.8}" />
         </label>
@@ -1860,13 +1854,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         } else if (field === "era") {
           target.era = value as EraPreset;
         } else if (field === "transition-in") {
-          target.transition = target.transition ?? { in: "fade", out: "fade", duration: 0.8 };
+          target.transition = target.transition ?? { in: "fade", duration: 0.8 };
           target.transition.in = value as TransitionType;
-        } else if (field === "transition-out") {
-          target.transition = target.transition ?? { in: "fade", out: "fade", duration: 0.8 };
-          target.transition.out = value as TransitionType;
         } else if (field === "transition-duration") {
-          target.transition = target.transition ?? { in: "fade", out: "fade", duration: 0.8 };
+          target.transition = target.transition ?? { in: "fade", duration: 0.8 };
           target.transition.duration = Number(value);
         } else if (field === "fitAlign") {
           target.fitAlign = value as FitAlign;

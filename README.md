@@ -121,7 +121,7 @@ Automation supports numeric params only; non-numeric values fall back to the bas
       "end": "01:10.00",
       "effect": "neon",
       "era": "future",
-      "transition": { "in": "fade", "out": "flash", "duration": 0.8 },
+      "transition": { "in": "fade", "duration": 0.8 },
       "fitAlign": "fill",
       "params": { "speed": 1.2 },
       "automation": [

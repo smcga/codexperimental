@@ -91,7 +91,7 @@ export class Timeline {
     if (progress <= 0 || progress >= 1) {
       return undefined;
     }
-    const type = section.transition.in ?? prevSection.transition.out;
+    const type = section.transition.in;
     return {
       from: prevSection,
       to: section,
