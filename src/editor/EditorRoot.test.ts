@@ -38,6 +38,7 @@ import {
   buildAutomationTrackPolyline
   ,
   zoomPlaylistTrackHeight,
+  getPlaylistClipTop,
   resizePlaylistTrackHeightFromScrollbar,
   roundTimelineSeconds,
   hasTimelineTimeChanged,
@@ -135,6 +136,13 @@ describe("getResizePreviewOffset", () => {
   it("clamps offsets to the visible viewport", () => {
     expect(getResizePreviewOffset(5, 10, 20)).toBe(0);
     expect(getResizePreviewOffset(35, 10, 20)).toBe(1);
+  });
+});
+
+describe("getPlaylistClipTop", () => {
+  it("returns a track-index based top offset expression", () => {
+    expect(getPlaylistClipTop(0)).toBe("calc(0 * var(--editor-playlist-track-height) + 0.25rem)");
+    expect(getPlaylistClipTop(3)).toBe("calc(3 * var(--editor-playlist-track-height) + 0.25rem)");
   });
 });
 

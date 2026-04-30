@@ -539,6 +539,10 @@ export const clampPlaylistViewportStart = (start: number, duration: number, view
   return Math.min(maxStart, Math.max(0, start));
 };
 
+export const getPlaylistClipTop = (trackIndex: number): string => {
+  return `calc(${trackIndex} * var(--editor-playlist-track-height) + 0.25rem)`;
+};
+
 export const zoomPlaylistViewport = (
   viewportStart: number,
   viewportDuration: number,
@@ -1287,7 +1291,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           block.className = "editor-block editor-playlist-clip";
           block.style.left = `${clipPercent.left}%`;
           block.style.width = `${Math.max(minClipWidthPercent, clipPercent.width)}%`;
-          block.style.top = "0.25rem";
+          block.style.top = getPlaylistClipTop(index);
           block.textContent = cue.id;
           block.title = `${cue.id}: ${formatTime(cueStart)} → ${formatTime(cueEnd)}`;
           block.addEventListener("click", () => {
@@ -1322,7 +1326,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           block.className = "editor-block editor-playlist-clip";
           block.style.left = `${clipPercent.left}%`;
           block.style.width = `${Math.max(minClipWidthPercent, clipPercent.width)}%`;
-          block.style.top = "0.25rem";
+          block.style.top = getPlaylistClipTop(index);
           block.textContent = clip.sceneId;
           block.title = buildPlaylistClipTitle(clip.sceneId, scene.effect, clip.start, clip.end);
           block.dataset.sceneId = clip.sceneId;
@@ -1380,7 +1384,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       block.className = "editor-block editor-playlist-clip";
       block.style.left = `${clipPercent.left}%`;
       block.style.width = `${Math.max(minClipWidthPercent, clipPercent.width)}%`;
-      block.style.top = `calc(${index} * var(--editor-playlist-track-height) + 0.25rem)`;
+      block.style.top = getPlaylistClipTop(index);
       block.textContent = focusScene.id;
       block.title = buildPlaylistClipTitle(focusScene.id, focusScene.effect, timelineTrack.start, timelineTrack.end);
       if (timelineTrack.kind === "automation") {
