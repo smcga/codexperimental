@@ -40,6 +40,7 @@ import {
   zoomPlaylistTrackHeight,
   getPlaylistClipTop,
   getCueMarkerTopOffset,
+  getCueDurationBarTop,
   resizePlaylistTrackHeightFromScrollbar,
   roundTimelineSeconds,
   hasTimelineTimeChanged,
@@ -153,6 +154,14 @@ describe("getCueMarkerTopOffset", () => {
     expect(getCueMarkerTopOffset(1, 3)).toBe("0.75rem");
     expect(getCueMarkerTopOffset(2, 3)).toBe("1.3rem");
     expect(getCueMarkerTopOffset(3, 3)).toBe("0.2rem");
+  });
+});
+
+describe("getCueDurationBarTop", () => {
+  it("aligns duration bars to the marker rows for each cue", () => {
+    expect(getCueDurationBarTop(0, 0)).toBe("calc(0 * var(--editor-playlist-track-height) + 0.36rem)");
+    expect(getCueDurationBarTop(0, 1)).toBe("calc(0 * var(--editor-playlist-track-height) + 0.91rem)");
+    expect(getCueDurationBarTop(2, 2)).toBe("calc(2 * var(--editor-playlist-track-height) + 1.46rem)");
   });
 });
 

@@ -549,6 +549,10 @@ export const getCueMarkerTopOffset = (cueIndex: number, rows = 3): string => {
   return `${0.2 + row * 0.55}rem`;
 };
 
+export const getCueDurationBarTop = (trackIndex: number, cueIndex: number): string => {
+  return `calc(${trackIndex} * var(--editor-playlist-track-height) + ${0.36 + (cueIndex % 3) * 0.55}rem)`;
+};
+
 export const zoomPlaylistViewport = (
   viewportStart: number,
   viewportDuration: number,
@@ -1296,7 +1300,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           durationBar.className = "editor-text-cue-duration";
           durationBar.style.left = `${clipPercent.left}%`;
           durationBar.style.width = `${Math.max(minClipWidthPercent, clipPercent.width)}%`;
-          durationBar.style.top = getPlaylistClipTop(index);
+          durationBar.style.top = getCueDurationBarTop(index, cueIndex);
           lane.appendChild(durationBar);
 
           const marker = document.createElement("button");
@@ -1935,8 +1939,8 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     if (basicPanel && selectedCue) {
       const typography = getCueTypography(selectedCue);
       basicPanel.innerHTML = `
-      <details class="editor-accordion-panel" open>
-        <summary class="editor-group-title">TEXT CUE</summary>
+      <div class="editor-group">
+        <div class="editor-group-title">TEXT CUE</div>
         <div class="editor-group editor-cue-properties-grid">
           <label>
             <span>Start (s)</span>
@@ -1985,7 +1989,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           </label>
           <button type="button" data-selected-cue-action="delete">Delete cue</button>
         </div>
-      </details>
+      </div>
     `;
     } else if (basicPanel) {
       basicPanel.innerHTML = `
