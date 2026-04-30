@@ -234,8 +234,8 @@ describe("zoomPlaylistTrackHeight", () => {
   it("zooms and clamps vertical track height", () => {
     expect(zoomPlaylistTrackHeight(3.5, 1.2)).toBeCloseTo(4.2);
     expect(zoomPlaylistTrackHeight(3.5, 0.5)).toBeCloseTo(1.75);
-    expect(zoomPlaylistTrackHeight(7.5, 2)).toBe(8);
-    expect(zoomPlaylistTrackHeight(1.7, 0.1)).toBe(1.6);
+    expect(zoomPlaylistTrackHeight(7.5, 2)).toBe(12);
+    expect(zoomPlaylistTrackHeight(1.7, 0.1)).toBe(1.2);
   });
 });
 
@@ -501,7 +501,7 @@ describe("playlist helpers", () => {
   it("clamps zoom duration to the allowed range", () => {
     const zoomedIn = zoomPlaylistViewport(0, 8, 0.1, 1, 120);
     const zoomedOut = zoomPlaylistViewport(0, 40, 10, 1, 120);
-    expect(zoomedIn.duration).toBeGreaterThanOrEqual(15);
+    expect(zoomedIn.duration).toBeGreaterThanOrEqual(4);
     expect(zoomedOut.duration).toBe(120);
   });
 

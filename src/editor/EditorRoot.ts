@@ -526,7 +526,7 @@ export const zoomPlaylistViewport = (
   focusTime: number,
   totalDuration: number
 ): { start: number; duration: number } => {
-  const minDuration = Math.max(2, Math.min(15, totalDuration));
+  const minDuration = Math.max(0.25, Math.min(4, totalDuration));
   const maxDuration = Math.max(minDuration, totalDuration);
   const unclampedDuration = viewportDuration * zoomFactor;
   const nextDuration = Math.min(maxDuration, Math.max(minDuration, unclampedDuration));
@@ -552,8 +552,8 @@ export const panPlaylistViewport = (
 export const zoomPlaylistTrackHeight = (
   currentHeightRem: number,
   zoomFactor: number,
-  minHeightRem = 1.6,
-  maxHeightRem = 8
+  minHeightRem = 1.2,
+  maxHeightRem = 12
 ): number => {
   const nextHeight = currentHeightRem * zoomFactor;
   return clamp(nextHeight, minHeightRem, maxHeightRem);
@@ -1134,10 +1134,6 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     view.innerHTML = `
       <div class="editor-playlist-toolbar">
         <span>Track 1</span>
-        <div class="editor-playlist-zoom-controls">
-          <button type="button" data-action="playlist-vzoom-in" title="Vertical zoom in">V+</button>
-          <button type="button" data-action="playlist-vzoom-out" title="Vertical zoom out">V-</button>
-        </div>
       </div>
       <div class="editor-ruler" data-region="playlist-ruler">
         ${
@@ -1182,8 +1178,18 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     tracks.style.setProperty("--playlist-track-count", String(visualTracks.length));
     tracks.style.setProperty("--editor-playlist-track-height", `${playlistTrackHeightRem}rem`);
     scroll.scrollTop = clamp(playlistVerticalScrollTop, 0, Math.max(0, scroll.scrollHeight - scroll.clientHeight));
+    const syncVerticalScrollbarThumb = (): void => {
+      const vSizeRatio = scroll.scrollHeight > 0 ? clamp(scroll.clientHeight / scroll.scrollHeight, 0.08, 1) : 1;
+      const vStartRatio =
+        scroll.scrollHeight > scroll.clientHeight
+          ? clamp(scroll.scrollTop / Math.max(1, scroll.scrollHeight - scroll.clientHeight), 0, 1) * (1 - vSizeRatio)
+          : 0;
+      vScrollbarThumb.style.height = `${vSizeRatio * 100}%`;
+      vScrollbarThumb.style.top = `${vStartRatio * 100}%`;
+    };
     scroll.addEventListener("scroll", () => {
       playlistVerticalScrollTop = scroll.scrollTop;
+      syncVerticalScrollbarThumb();
     });
 
     visualTracks.forEach((timelineTrack, index) => {
@@ -1412,6 +1418,12 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     scroll.addEventListener("wheel", (event) => {
       event.preventDefault();
       const rect = scroll.getBoundingClientRect();
+      if (event.altKey) {
+        const factor = event.deltaY > 0 ? 1 / 1.08 : 1.08;
+        playlistTrackHeightRem = zoomPlaylistTrackHeight(playlistTrackHeightRem, factor);
+        renderTimelineView();
+        return;
+      }
       if (event.shiftKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
         const pixels = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
         const secondsPerPixel = rect.width > 0 ? playlistViewportDuration / rect.width : 0;
@@ -1470,15 +1482,6 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       playlistViewportStart = clampPlaylistViewportStart(desiredStart, duration, playlistViewportDuration);
       renderTimelineView();
     });
-    const syncVerticalScrollbarThumb = (): void => {
-      const vSizeRatio = scroll.scrollHeight > 0 ? clamp(scroll.clientHeight / scroll.scrollHeight, 0.08, 1) : 1;
-      const vStartRatio =
-        scroll.scrollHeight > scroll.clientHeight
-          ? clamp(scroll.scrollTop / Math.max(1, scroll.scrollHeight - scroll.clientHeight), 0, 1) * (1 - vSizeRatio)
-          : 0;
-      vScrollbarThumb.style.height = `${vSizeRatio * 100}%`;
-      vScrollbarThumb.style.top = `${vStartRatio * 100}%`;
-    };
     syncVerticalScrollbarThumb();
     vScrollbar.onpointerdown = (event) => {
       const target = event.target as HTMLElement;
@@ -1533,15 +1536,6 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       renderTimelineView();
     });
 
-    view.querySelector<HTMLButtonElement>("[data-action='playlist-vzoom-in']")?.addEventListener("click", () => {
-      playlistTrackHeightRem = zoomPlaylistTrackHeight(playlistTrackHeightRem, 1.2);
-      renderTimelineView();
-    });
-
-    view.querySelector<HTMLButtonElement>("[data-action='playlist-vzoom-out']")?.addEventListener("click", () => {
-      playlistTrackHeightRem = zoomPlaylistTrackHeight(playlistTrackHeightRem, 1 / 1.2);
-      renderTimelineView();
-    });
   };
 
   const handleGlobalPlaylistPan = (event: PointerEvent): void => {
