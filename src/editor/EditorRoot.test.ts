@@ -148,16 +148,23 @@ describe("buildEditorTimelineTracks", () => {
         layers: [{ effect: "feedback" }, { effect: "rain" }],
         automation: [{ param: "speed", from: 0.2, to: 1, start: 10.5, end: 12.5, ease: "linear" }]
       },
-      14
+      14,
+      true
     );
 
-    expect(tracks.map((track) => track.kind)).toEqual(["scene", "layer", "layer", "automation"]);
+    expect(tracks.map((track) => track.kind)).toEqual(["scene", "layer", "layer", "automation", "text-cues"]);
     expect(tracks[0]).toMatchObject({ start: 10, end: 14 });
     expect(tracks[3]).toMatchObject({ start: 10.5, end: 12.5 });
   });
 
   it("returns an empty list when no scene is selected", () => {
-    expect(buildEditorTimelineTracks(null, 0)).toEqual([]);
+    expect(buildEditorTimelineTracks(null, 0, false)).toEqual([]);
+  });
+
+  it("shows a global text cue track even without scene selection", () => {
+    expect(buildEditorTimelineTracks(null, 0, true)).toEqual([
+      { id: "text-cues:global", label: "Text Cues", kind: "text-cues", start: 0, end: 0 }
+    ]);
   });
 });
 

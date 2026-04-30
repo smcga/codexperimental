@@ -427,7 +427,7 @@ export type PlaylistClipLayout = {
 type EditorTimelineTrack = {
   id: string;
   label: string;
-  kind: "scene" | "layer" | "automation";
+  kind: "scene" | "layer" | "automation" | "text-cues";
   start: number;
   end: number;
 };
@@ -448,10 +448,21 @@ export const getSceneTimelineClips = (scenes: RawSectionConfig[], getSceneEnd: (
 
 export const buildEditorTimelineTracks = (
   selectedScene: RawSectionConfig | null,
-  selectedSceneEnd: number
+  selectedSceneEnd: number,
+  hasTextCues: boolean
 ): EditorTimelineTrack[] => {
   if (!selectedScene) {
-    return [];
+    return hasTextCues
+      ? [
+          {
+            id: "text-cues:global",
+            label: "Text Cues",
+            kind: "text-cues",
+            start: 0,
+            end: 0
+          }
+        ]
+      : [];
   }
   const sceneStart = parseTimelineTimeValue(selectedScene.start);
   const sceneEnd = Math.max(sceneStart + 0.05, selectedSceneEnd);
@@ -482,6 +493,15 @@ export const buildEditorTimelineTracks = (
       end: parseTimelineTimeValue(entry.end ?? sceneEnd)
     });
   });
+  if (hasTextCues) {
+    tracks.push({
+      id: "text-cues:global",
+      label: "Text Cues",
+      kind: "text-cues",
+      start: 0,
+      end: 0
+    });
+  }
   return tracks;
 };
 
@@ -1161,7 +1181,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     const focusScene =
       (state.selectedSceneId ? scenes.find((scene) => scene.id === state.selectedSceneId) : null) ?? currentScene;
     const focusSceneEnd = focusScene ? getSceneEnd(focusScene) : 0;
-    const timelineTracks = buildEditorTimelineTracks(focusScene, focusSceneEnd);
+    const timelineTracks = buildEditorTimelineTracks(focusScene, focusSceneEnd, (state.timeline.textCues ?? []).length > 0);
     const sceneClips = getSceneTimelineClips(scenes, getSceneEnd);
     const playheadRatio = clamp((currentDemoTime - playlistViewportStart) / Math.max(playlistViewportDuration, 0.001), 0, 1);
     const visibleLoopRange = state.loopRange
@@ -1239,6 +1259,38 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       lane.dataset.track = String(index);
       lane.innerHTML = `<span class="editor-playlist-track-label">${timelineTrack.kind === "scene" ? "Track 1" : timelineTrack.label}</span>`;
       tracks.appendChild(lane);
+      if (timelineTrack.kind === "text-cues") {
+        (state.timeline.textCues ?? []).forEach((cue) => {
+          const cueStart = parseTimelineTimeValue(cue.start);
+          const cueEnd = Math.max(cueStart + 0.05, parseTimelineTimeValue(cue.end));
+          const visibleRange = getVisibleClipRange(cueStart, cueEnd, playlistViewportStart, viewportEnd);
+          if (!visibleRange) {
+            return;
+          }
+          const clipPercent = getClipPercent(
+            visibleRange.start - playlistViewportStart,
+            visibleRange.end - playlistViewportStart,
+            playlistViewportDuration
+          );
+          const block = document.createElement("button");
+          block.type = "button";
+          block.className = "editor-block editor-playlist-clip";
+          block.style.left = `${clipPercent.left}%`;
+          block.style.width = `${Math.max(minClipWidthPercent, clipPercent.width)}%`;
+          block.style.top = `calc(${index} * var(--editor-playlist-track-height) + 0.25rem)`;
+          block.textContent = cue.id;
+          block.title = `${cue.id}: ${formatTime(cueStart)} → ${formatTime(cueEnd)}`;
+          block.addEventListener("click", () => {
+            const timeToSeek = cueStart - init.getAudioOffset();
+            init.seek(Math.max(0, Number.isFinite(timeToSeek) ? timeToSeek : 0));
+          });
+          if (clipPercent.width < 4) {
+            block.classList.add("is-compact");
+          }
+          lane.appendChild(block);
+        });
+        return;
+      }
       if (timelineTrack.kind === "scene") {
         sceneClips.forEach((clip) => {
           const scene = scenes.find((entry) => entry.id === clip.sceneId);
@@ -1944,7 +1996,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         <button type="button" class="editor-add" data-action="add-layer">+ Layer</button>
       </div>
       <div class="editor-group">
-        <div class="editor-group-title">Text Cues</div>
+        <div class="editor-group-title">Text Cues (Global Track)</div>
         <div data-region="text-cues"></div>
         <button type="button" class="editor-add" data-action="add-cue">+ Text cue</button>
       </div>
@@ -2745,11 +2797,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     if (!container || !state.timeline) {
       return;
     }
-    const cues = (state.timeline.textCues ?? []).filter((cue) => {
-      const start = parseTimelineTimeValue(cue.start);
-      const sceneStart = parseTimelineTimeValue(scene.start);
-      return start >= sceneStart && start <= getSceneEnd(scene);
-    });
+    const cues = [...(state.timeline.textCues ?? [])].sort(
+      (a, b) => parseTimelineTimeValue(a.start) - parseTimelineTimeValue(b.start)
+    );
 
     container.innerHTML = cues
       .map(
