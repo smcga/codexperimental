@@ -49,7 +49,8 @@ import {
   updateInspectorAccordionState
   ,
   clampWorkspaceTopRatio,
-  getWorkspaceTopRatioFromPointer
+  getWorkspaceTopRatioFromPointer,
+  getWorkspaceTopHeightPx
 } from "./EditorRoot";
 
 describe("formatTime", () => {
@@ -136,6 +137,12 @@ describe("workspace splitter helpers", () => {
     expect(getWorkspaceTopRatioFromPointer(300, rect)).toBe(0.5);
     expect(getWorkspaceTopRatioFromPointer(50, rect)).toBe(0.2);
     expect(getWorkspaceTopRatioFromPointer(600, rect)).toBe(0.8);
+  });
+
+  it("computes a constrained pixel height for the top workspace row", () => {
+    expect(getWorkspaceTopHeightPx(900, 0.5)).toBe(450);
+    expect(getWorkspaceTopHeightPx(400, 0.9)).toBe(180);
+    expect(getWorkspaceTopHeightPx(1200, 0.95)).toBe(940);
   });
 });
 

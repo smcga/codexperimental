@@ -575,11 +575,10 @@ body,
 }
 
 .editor-workspace {
-  display: grid;
-  grid-template-rows: minmax(180px, auto) 0.65rem auto auto minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
   min-height: 0;
   overflow: hidden;
-  --editor-workspace-top-ratio: 0.48;
 }
 
 .editor-top-row {
@@ -588,10 +587,11 @@ body,
   gap: 0.6rem;
   align-items: stretch;
   min-width: 0;
-  max-height: min(52vh, 32rem);
+  flex: 0 0 auto;
 }
 
 .editor-workspace-resize-handle {
+  margin: 0.1rem 0 0.2rem;
   cursor: ns-resize;
   border-radius: 0.3rem;
   border: 1px solid rgba(142, 249, 255, 0.35);

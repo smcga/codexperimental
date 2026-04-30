@@ -161,6 +161,20 @@ export const getWorkspaceTopRatioFromPointer = (pointerY: number, workspaceRect:
   return clampWorkspaceTopRatio((pointerY - workspaceRect.top) / workspaceRect.height);
 };
 
+export const getWorkspaceTopHeightPx = (
+  workspaceHeight: number,
+  ratio: number,
+  minTopHeightPx = 180,
+  minBottomHeightPx = 260
+): number => {
+  if (!Number.isFinite(workspaceHeight) || workspaceHeight <= 0) {
+    return minTopHeightPx;
+  }
+  const safeRatio = clampWorkspaceTopRatio(ratio);
+  const maxTopHeight = Math.max(minTopHeightPx, workspaceHeight - minBottomHeightPx);
+  return clamp(workspaceHeight * safeRatio, minTopHeightPx, maxTopHeight);
+};
+
 export const formatTime = (value: number): string => {
   const safeValue = Number.isFinite(value) ? Math.max(0, value) : 0;
   const minutes = Math.floor(safeValue / 60);
@@ -1065,7 +1079,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           </div>
         </section>
         <section class="editor-column editor-workspace">
-          <div class="editor-top-row" style="height: calc(var(--editor-workspace-top-ratio, 0.48) * 100%);">
+          <div class="editor-top-row">
             <div class="editor-top-panel" data-region="basic-panel"></div>
             <div class="editor-preview-panel">
               <div class="editor-preview-toolbar">
@@ -1137,7 +1151,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     }
     const workspace = init.container.querySelector<HTMLElement>(".editor-workspace");
     if (workspace) {
-      workspace.style.setProperty("--editor-workspace-top-ratio", workspaceTopRatio.toFixed(4));
+      const topRow = workspace.querySelector<HTMLElement>(".editor-top-row");
+      if (topRow) {
+        topRow.style.height = `${getWorkspaceTopHeightPx(workspace.clientHeight, workspaceTopRatio)}px`;
+      }
     }
     const workspaceResizeHandle = init.container.querySelector<HTMLElement>("[data-region='workspace-resize-handle']");
     workspaceResizeHandle?.addEventListener("pointerdown", (event) => {
@@ -1147,7 +1164,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       }
       activeWorkspaceResizePointerId = event.pointerId;
       workspaceTopRatio = getWorkspaceTopRatioFromPointer(event.clientY, currentWorkspace.getBoundingClientRect());
-      currentWorkspace.style.setProperty("--editor-workspace-top-ratio", workspaceTopRatio.toFixed(4));
+      const topRow = currentWorkspace.querySelector<HTMLElement>(".editor-top-row");
+      if (topRow) {
+        topRow.style.height = `${getWorkspaceTopHeightPx(currentWorkspace.clientHeight, workspaceTopRatio)}px`;
+      }
       event.preventDefault();
     });
   };
@@ -1884,7 +1904,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       return;
     }
     workspaceTopRatio = getWorkspaceTopRatioFromPointer(event.clientY, workspace.getBoundingClientRect());
-    workspace.style.setProperty("--editor-workspace-top-ratio", workspaceTopRatio.toFixed(4));
+    const topRow = workspace.querySelector<HTMLElement>(".editor-top-row");
+    if (topRow) {
+      topRow.style.height = `${getWorkspaceTopHeightPx(workspace.clientHeight, workspaceTopRatio)}px`;
+    }
   };
 
   window.addEventListener("pointermove", handleGlobalPlaylistPan);
