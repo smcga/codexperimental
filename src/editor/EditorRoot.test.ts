@@ -39,6 +39,7 @@ import {
   ,
   zoomPlaylistTrackHeight,
   getPlaylistClipTop,
+  getCueMarkerTopOffset,
   resizePlaylistTrackHeightFromScrollbar,
   roundTimelineSeconds,
   hasTimelineTimeChanged,
@@ -143,6 +144,15 @@ describe("getPlaylistClipTop", () => {
   it("returns a track-index based top offset expression", () => {
     expect(getPlaylistClipTop(0)).toBe("calc(0 * var(--editor-playlist-track-height) + 0.25rem)");
     expect(getPlaylistClipTop(3)).toBe("calc(3 * var(--editor-playlist-track-height) + 0.25rem)");
+  });
+});
+
+describe("getCueMarkerTopOffset", () => {
+  it("cycles cue markers across sub-rows", () => {
+    expect(getCueMarkerTopOffset(0, 3)).toBe("0.2rem");
+    expect(getCueMarkerTopOffset(1, 3)).toBe("0.75rem");
+    expect(getCueMarkerTopOffset(2, 3)).toBe("1.3rem");
+    expect(getCueMarkerTopOffset(3, 3)).toBe("0.2rem");
   });
 });
 

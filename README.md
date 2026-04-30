@@ -370,6 +370,8 @@ npm run preview
 - The timeline editor layout uses a narrow Scenes sidebar, a center workspace with Preview plus a single accordion stack for Basic/Main Slots/Transition, and a right Inspector for scene/layer/cue editing. The Generate Text Cues tool opens from a bottom-left button as a modal.
 - The timeline area now dedicates at least half the editor height, renders all scenes on the main track, adds extra rows for selected-scene layers and scene automation entries, and exposes text cues on their own global timeline row for independent editing/seeking.
 - Selecting a text cue in the timeline now swaps the left-side top panel (where Basic/Main Slots/Transition normally appears) into a cue editor for that selected cue, instead of listing all cues in the right inspector.
+- The left top panel is now height-capped with internal scrolling, so long text-cue forms no longer push the timeline down.
+- Text-cue timeline rendering now uses duration bars plus compact start markers (click marker to select/seek), improving selection when many cues overlap.
 - Automation clip editing foundations now treat automation as point-driven envelopes (per-segment curve type + tension metadata), with helpers for snapped point add/remove/move, slide-mode temporal shifting, and segment-level curve/tension updates for timeline UI integration.
 - In the Scene Automation table, each automation row now includes **+Pt** to seed/edit point-based clip data from legacy `from/to` ramps for timeline-envelope workflows.
 - Automation interaction model mirrors FL-style priorities in code: point hit > segment hit > empty hit, with optional grid-snapped step drawing and axis constraints for pulse-like horizontal/vertical edits.

@@ -587,6 +587,7 @@ body,
   gap: 0.6rem;
   align-items: stretch;
   min-width: 0;
+  max-height: min(52vh, 32rem);
 }
 
 .editor-top-panel {
@@ -1031,6 +1032,31 @@ body,
   z-index: 1;
   cursor: grab;
   user-select: none;
+}
+
+.editor-text-cue-duration {
+  position: absolute;
+  height: calc(var(--editor-playlist-track-height) - 0.85rem);
+  border-radius: 0.25rem;
+  background: rgba(142, 249, 255, 0.12);
+  border: 1px solid rgba(142, 249, 255, 0.25);
+  pointer-events: none;
+}
+
+.editor-text-cue-marker {
+  position: absolute;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(142, 249, 255, 0.8);
+  background: rgba(12, 28, 34, 0.95);
+  color: #d9fcff;
+  padding: 0;
+  line-height: 0.65rem;
+  font-size: 0.52rem;
+  text-align: center;
+  transform: translateX(-50%);
+  z-index: 2;
 }
 
 .editor-playlist-automation-line {

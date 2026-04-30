@@ -543,6 +543,12 @@ export const getPlaylistClipTop = (trackIndex: number): string => {
   return `calc(${trackIndex} * var(--editor-playlist-track-height) + 0.25rem)`;
 };
 
+export const getCueMarkerTopOffset = (cueIndex: number, rows = 3): string => {
+  const safeRows = Math.max(1, rows);
+  const row = ((cueIndex % safeRows) + safeRows) % safeRows;
+  return `${0.2 + row * 0.55}rem`;
+};
+
 export const zoomPlaylistViewport = (
   viewportStart: number,
   viewportDuration: number,
@@ -1274,7 +1280,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       lane.innerHTML = `<span class="editor-playlist-track-label">${timelineTrack.kind === "scene" ? "Track 1" : timelineTrack.label}</span>`;
       tracks.appendChild(lane);
       if (timelineTrack.kind === "text-cues") {
-        (state.timeline.textCues ?? []).forEach((cue) => {
+        (state.timeline.textCues ?? []).forEach((cue, cueIndex) => {
           const cueStart = parseTimelineTimeValue(cue.start);
           const cueEnd = Math.max(cueStart + 0.05, parseTimelineTimeValue(cue.end));
           const visibleRange = getVisibleClipRange(cueStart, cueEnd, playlistViewportStart, viewportEnd);
@@ -1286,23 +1292,26 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
             visibleRange.end - playlistViewportStart,
             playlistViewportDuration
           );
-          const block = document.createElement("button");
-          block.type = "button";
-          block.className = "editor-block editor-playlist-clip";
-          block.style.left = `${clipPercent.left}%`;
-          block.style.width = `${Math.max(minClipWidthPercent, clipPercent.width)}%`;
-          block.style.top = getPlaylistClipTop(index);
-          block.textContent = cue.id;
-          block.title = `${cue.id}: ${formatTime(cueStart)} → ${formatTime(cueEnd)}`;
-          block.addEventListener("click", () => {
+          const durationBar = document.createElement("div");
+          durationBar.className = "editor-text-cue-duration";
+          durationBar.style.left = `${clipPercent.left}%`;
+          durationBar.style.width = `${Math.max(minClipWidthPercent, clipPercent.width)}%`;
+          durationBar.style.top = getPlaylistClipTop(index);
+          lane.appendChild(durationBar);
+
+          const marker = document.createElement("button");
+          marker.type = "button";
+          marker.className = "editor-text-cue-marker";
+          marker.style.left = `${clipPercent.left}%`;
+          marker.style.top = `calc(${index} * var(--editor-playlist-track-height) + ${getCueMarkerTopOffset(cueIndex)})`;
+          marker.textContent = cue.text?.trim().slice(0, 1).toUpperCase() || "•";
+          marker.title = `${cue.id}: ${formatTime(cueStart)} → ${formatTime(cueEnd)}`;
+          marker.addEventListener("click", () => {
             selectTextCue(cue.id);
             const timeToSeek = cueStart - init.getAudioOffset();
             init.seek(Math.max(0, Number.isFinite(timeToSeek) ? timeToSeek : 0));
           });
-          if (clipPercent.width < 4) {
-            block.classList.add("is-compact");
-          }
-          lane.appendChild(block);
+          lane.appendChild(marker);
         });
         return;
       }
