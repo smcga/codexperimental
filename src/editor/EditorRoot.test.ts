@@ -163,18 +163,18 @@ describe("getPlaylistClipTop", () => {
 
 describe("getCueMarkerTopOffset", () => {
   it("cycles cue markers across sub-rows", () => {
-    expect(getCueMarkerTopOffset(0, 3)).toBe("0.2rem");
-    expect(getCueMarkerTopOffset(1, 3)).toBe("0.75rem");
-    expect(getCueMarkerTopOffset(2, 3)).toBe("1.3rem");
-    expect(getCueMarkerTopOffset(3, 3)).toBe("0.2rem");
+    expect(getCueMarkerTopOffset(0, 3)).toBe("calc(0.08695652173913045 * var(--editor-playlist-track-height))");
+    expect(getCueMarkerTopOffset(1, 3)).toBe("calc(0.32608695652173914 * var(--editor-playlist-track-height))");
+    expect(getCueMarkerTopOffset(2, 3)).toBe("calc(0.5652173913043479 * var(--editor-playlist-track-height))");
+    expect(getCueMarkerTopOffset(3, 3)).toBe("calc(0.08695652173913045 * var(--editor-playlist-track-height))");
   });
 });
 
 describe("getCueDurationBarTop", () => {
   it("aligns duration bars to the marker rows for each cue", () => {
-    expect(getCueDurationBarTop(0, 0)).toBe("calc(0 * var(--editor-playlist-track-height) + 0.36rem)");
-    expect(getCueDurationBarTop(0, 1)).toBe("calc(0 * var(--editor-playlist-track-height) + 0.91rem)");
-    expect(getCueDurationBarTop(2, 2)).toBe("calc(2 * var(--editor-playlist-track-height) + 1.46rem)");
+    expect(getCueDurationBarTop(0)).toBe("calc(0.1565217391304348 * var(--editor-playlist-track-height))");
+    expect(getCueDurationBarTop(1)).toBe("calc(0.3956521739130435 * var(--editor-playlist-track-height))");
+    expect(getCueDurationBarTop(2)).toBe("calc(0.6347826086956522 * var(--editor-playlist-track-height))");
   });
 });
 

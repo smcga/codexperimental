@@ -552,11 +552,13 @@ export const getPlaylistClipTop = (trackIndex: number): string => {
 export const getCueMarkerTopOffset = (cueIndex: number, rows = 3): string => {
   const safeRows = Math.max(1, rows);
   const row = ((cueIndex % safeRows) + safeRows) % safeRows;
-  return `${0.2 + row * 0.55}rem`;
+  const normalizedOffset = (0.2 + row * 0.55) / 2.3;
+  return `calc(${normalizedOffset} * var(--editor-playlist-track-height))`;
 };
 
-export const getCueDurationBarTop = (trackIndex: number, cueIndex: number): string => {
-  return `calc(${trackIndex} * var(--editor-playlist-track-height) + ${0.36 + (cueIndex % 3) * 0.55}rem)`;
+export const getCueDurationBarTop = (cueIndex: number): string => {
+  const normalizedOffset = (0.36 + (cueIndex % 3) * 0.55) / 2.3;
+  return `calc(${normalizedOffset} * var(--editor-playlist-track-height))`;
 };
 
 export const zoomPlaylistViewport = (
@@ -1307,14 +1309,14 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           durationBar.className = "editor-text-cue-duration";
           durationBar.style.left = `${clipPercent.left}%`;
           durationBar.style.width = `${Math.max(minClipWidthPercent, clipPercent.width)}%`;
-          durationBar.style.top = getCueDurationBarTop(index, cueIndex);
+          durationBar.style.top = getCueDurationBarTop(cueIndex);
           lane.appendChild(durationBar);
 
           const marker = document.createElement("button");
           marker.type = "button";
           marker.className = "editor-text-cue-marker";
           marker.style.left = `${clipPercent.left}%`;
-          marker.style.top = `calc(${index} * var(--editor-playlist-track-height) + ${getCueMarkerTopOffset(cueIndex)})`;
+          marker.style.top = getCueMarkerTopOffset(cueIndex);
           marker.textContent = cue.text?.trim().slice(0, 1).toUpperCase() || "•";
           if (cue.id === state.selectedTextCueId) {
             marker.classList.add("is-selected");
