@@ -36,7 +36,8 @@ import {
   ,
   buildAutomationTrackPolyline
   ,
-  zoomPlaylistTrackHeight
+  zoomPlaylistTrackHeight,
+  getEditorLayoutClass
 } from "./EditorRoot";
 
 describe("formatTime", () => {
@@ -48,6 +49,14 @@ describe("formatTime", () => {
   it("clamps invalid or negative values to zero", () => {
     expect(formatTime(-2)).toBe("00:00.0");
     expect(formatTime(Number.NaN)).toBe("00:00.0");
+  });
+});
+
+describe("getEditorLayoutClass", () => {
+  it("returns mobile modifier class only for mobile layout mode", () => {
+    expect(getEditorLayoutClass("mobile")).toBe("editor editor--mobile");
+    expect(getEditorLayoutClass("desktop")).toBe("editor");
+    expect(getEditorLayoutClass(undefined)).toBe("editor");
   });
 });
 

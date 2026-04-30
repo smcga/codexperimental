@@ -134,6 +134,7 @@ const debugSkipEndButton = document.querySelector<HTMLButtonElement>("#debug-ski
 const debugSkipBackButton = document.querySelector<HTMLButtonElement>("#debug-skip-back");
 const debugSkipForwardButton = document.querySelector<HTMLButtonElement>("#debug-skip-forward");
 const debugEditorToggle = document.querySelector<HTMLInputElement>("#debug-editor-toggle");
+const debugEditorLayoutSelect = document.querySelector<HTMLSelectElement>("#debug-editor-layout");
 const debugTabButtons = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-debug-tab]"));
 const editorRoot = document.querySelector<HTMLDivElement>("#editor-root");
 const mobileControls = document.querySelector<HTMLDivElement>("#mobile-controls");
@@ -181,6 +182,7 @@ const effectIdeaSubmitButton = document.querySelector<HTMLButtonElement>("#effec
 const queryParams = new URLSearchParams(window.location.search);
 const releaseMode = queryParams.get("release") === "1";
 const editorModeFromQuery = queryParams.get("editor") === "1";
+const editorLayoutFromQuery = queryParams.get("editorLayout") === "mobile" ? "mobile" : "desktop";
 const renderSettings = getRenderSettings(queryParams);
 const qualityState = createQualityState(renderSettings.qualityScale, renderSettings.autoQuality);
 const initialQualityPresetId = resolveInitialQualityPresetId(qualityState.qualityScale, qualityState.autoQuality);
@@ -213,6 +215,7 @@ let isRunning = false;
 let pendingConfig: TimelineConfig | null = null;
 let currentAudioSrc = "";
 let editorController: EditorController | null = null;
+let editorLayoutMode: "desktop" | "mobile" = editorLayoutFromQuery;
 let lastFrameTimestamp = performance.now();
 let currentViewCount = 0;
 let overlayMode: OverlayMode = "start";
@@ -1732,9 +1735,10 @@ if (!releaseMode) {
     if (!editorRoot) {
       return;
     }
-    createEditorRoot({
+    const initEditor = (): Promise<EditorController> => createEditorRoot({
       container: editorRoot,
       effectNames: availableEffectNames,
+      layoutMode: editorLayoutMode,
       applyTimeline: applyRawTimeline,
       play: async () => {
         if (!audioPlayer) {
@@ -1760,12 +1764,24 @@ if (!releaseMode) {
       },
       getAudioOffset: () => timeline?.getAudioOffset() ?? 0,
       getAudioDuration: () => audioPlayer?.duration ?? 0
-    }).then((controller) => {
+    });
+
+    initEditor().then((controller) => {
       editorController = controller;
       if (debugEditorToggle) {
         debugEditorToggle.checked = editorModeFromQuery;
         debugEditorToggle.addEventListener("change", () => {
           controller.setVisible(debugEditorToggle.checked);
+        });
+      }
+      if (debugEditorLayoutSelect) {
+        debugEditorLayoutSelect.value = editorLayoutMode;
+        debugEditorLayoutSelect.addEventListener("change", () => {
+          editorLayoutMode = debugEditorLayoutSelect.value === "mobile" ? "mobile" : "desktop";
+          void initEditor().then((nextController) => {
+            editorController = nextController;
+            nextController.setVisible(debugEditorToggle?.checked ?? editorModeFromQuery);
+          });
         });
       }
       controller.setVisible(debugEditorToggle?.checked ?? editorModeFromQuery);
