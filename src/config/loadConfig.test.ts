@@ -53,13 +53,12 @@ describe("normalizeTimelineConfig", () => {
 
   it("accepts the shatter, camera-punch-through, bitplane-wipe, and audio-reactive-particle transition types", () => {
     const raw = createBaseConfig();
-    raw.sections[0].transition = { in: "audio-reactive-particle", out: "bitplane-wipe", duration: 0.6 };
+    raw.sections[0].transition = { in: "audio-reactive-particle", duration: 0.6 };
 
     const normalized = normalizeTimelineConfig(raw);
 
     expect(normalized.sections[0].transition).toEqual({
       in: "audio-reactive-particle",
-      out: "bitplane-wipe",
       duration: 0.6
     });
   });

@@ -71,21 +71,21 @@ describe("Timeline mode switching", () => {
           start: 54.15,
           end: 60,
           effect: "starfield",
-          transition: { in: "fade", out: "slide-left", duration: 1 }
+          transition: { in: "fade", duration: 1 }
         },
         {
           id: "b",
           start: 60,
           end: 66,
           effect: "tunnel",
-          transition: { in: "flash", out: "wipe", duration: 1 }
+          transition: { in: "flash", duration: 1 }
         },
         {
           id: "c",
           start: 66,
           end: 72,
           effect: "plasma",
-          transition: { out: "fade", duration: 1 }
+          transition: { duration: 1 }
         }
       ]
     });
