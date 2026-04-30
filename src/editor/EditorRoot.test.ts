@@ -38,6 +38,9 @@ import {
   buildAutomationTrackPolyline
   ,
   zoomPlaylistTrackHeight,
+  getPlaylistClipTop,
+  getCueMarkerTopOffset,
+  getCueDurationBarTop,
   resizePlaylistTrackHeightFromScrollbar,
   roundTimelineSeconds,
   hasTimelineTimeChanged,
@@ -138,6 +141,30 @@ describe("getResizePreviewOffset", () => {
   });
 });
 
+describe("getPlaylistClipTop", () => {
+  it("returns a track-index based top offset expression", () => {
+    expect(getPlaylistClipTop(0)).toBe("calc(0 * var(--editor-playlist-track-height) + 0.25rem)");
+    expect(getPlaylistClipTop(3)).toBe("calc(3 * var(--editor-playlist-track-height) + 0.25rem)");
+  });
+});
+
+describe("getCueMarkerTopOffset", () => {
+  it("cycles cue markers across sub-rows", () => {
+    expect(getCueMarkerTopOffset(0, 3)).toBe("0.2rem");
+    expect(getCueMarkerTopOffset(1, 3)).toBe("0.75rem");
+    expect(getCueMarkerTopOffset(2, 3)).toBe("1.3rem");
+    expect(getCueMarkerTopOffset(3, 3)).toBe("0.2rem");
+  });
+});
+
+describe("getCueDurationBarTop", () => {
+  it("aligns duration bars to the marker rows for each cue", () => {
+    expect(getCueDurationBarTop(0, 0)).toBe("calc(0 * var(--editor-playlist-track-height) + 0.36rem)");
+    expect(getCueDurationBarTop(0, 1)).toBe("calc(0 * var(--editor-playlist-track-height) + 0.91rem)");
+    expect(getCueDurationBarTop(2, 2)).toBe("calc(2 * var(--editor-playlist-track-height) + 1.46rem)");
+  });
+});
+
 describe("buildEditorTimelineTracks", () => {
   it("creates scene, layer, and automation tracks for the selected scene", () => {
     const tracks = buildEditorTimelineTracks(
@@ -148,16 +175,23 @@ describe("buildEditorTimelineTracks", () => {
         layers: [{ effect: "feedback" }, { effect: "rain" }],
         automation: [{ param: "speed", from: 0.2, to: 1, start: 10.5, end: 12.5, ease: "linear" }]
       },
-      14
+      14,
+      true
     );
 
-    expect(tracks.map((track) => track.kind)).toEqual(["scene", "layer", "layer", "automation"]);
-    expect(tracks[0]).toMatchObject({ start: 10, end: 14 });
-    expect(tracks[3]).toMatchObject({ start: 10.5, end: 12.5 });
+    expect(tracks.map((track) => track.kind)).toEqual(["text-cues", "scene", "layer", "layer", "automation"]);
+    expect(tracks[1]).toMatchObject({ start: 10, end: 14 });
+    expect(tracks[4]).toMatchObject({ start: 10.5, end: 12.5 });
   });
 
   it("returns an empty list when no scene is selected", () => {
-    expect(buildEditorTimelineTracks(null, 0)).toEqual([]);
+    expect(buildEditorTimelineTracks(null, 0, false)).toEqual([]);
+  });
+
+  it("shows a global text cue track even without scene selection", () => {
+    expect(buildEditorTimelineTracks(null, 0, true)).toEqual([
+      { id: "text-cues:global", label: "Text Cues", kind: "text-cues", start: 0, end: 0 }
+    ]);
   });
 });
 

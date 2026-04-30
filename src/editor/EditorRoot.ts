@@ -75,6 +75,7 @@ type EditorState = {
   timeline: RawTimelineConfig | null;
   originalTimeline: RawTimelineConfig | null;
   selectedSceneId: string | null;
+  selectedTextCueId: string | null;
   loopEnabled: boolean;
   loopRange: { start: number; end: number } | null;
   error: string | null;
@@ -427,7 +428,7 @@ export type PlaylistClipLayout = {
 type EditorTimelineTrack = {
   id: string;
   label: string;
-  kind: "scene" | "layer" | "automation";
+  kind: "scene" | "layer" | "automation" | "text-cues";
   start: number;
   end: number;
 };
@@ -448,22 +449,41 @@ export const getSceneTimelineClips = (scenes: RawSectionConfig[], getSceneEnd: (
 
 export const buildEditorTimelineTracks = (
   selectedScene: RawSectionConfig | null,
-  selectedSceneEnd: number
+  selectedSceneEnd: number,
+  hasTextCues: boolean
 ): EditorTimelineTrack[] => {
   if (!selectedScene) {
-    return [];
+    return hasTextCues
+      ? [
+          {
+            id: "text-cues:global",
+            label: "Text Cues",
+            kind: "text-cues",
+            start: 0,
+            end: 0
+          }
+        ]
+      : [];
   }
   const sceneStart = parseTimelineTimeValue(selectedScene.start);
   const sceneEnd = Math.max(sceneStart + 0.05, selectedSceneEnd);
-  const tracks: EditorTimelineTrack[] = [
-    {
-      id: `${selectedScene.id}:scene`,
-      label: "Scene",
-      kind: "scene",
-      start: sceneStart,
-      end: sceneEnd
-    }
-  ];
+  const tracks: EditorTimelineTrack[] = [];
+  if (hasTextCues) {
+    tracks.push({
+      id: "text-cues:global",
+      label: "Text Cues",
+      kind: "text-cues",
+      start: 0,
+      end: 0
+    });
+  }
+  tracks.push({
+    id: `${selectedScene.id}:scene`,
+    label: "Scene",
+    kind: "scene",
+    start: sceneStart,
+    end: sceneEnd
+  });
   (selectedScene.layers ?? []).forEach((layer, index) => {
     tracks.push({
       id: `${selectedScene.id}:layer:${index}`,
@@ -517,6 +537,20 @@ export const layoutPlaylistTracks = (scenes: RawSectionConfig[], getSceneEnd: (s
 export const clampPlaylistViewportStart = (start: number, duration: number, viewportDuration: number): number => {
   const maxStart = Math.max(0, duration - viewportDuration);
   return Math.min(maxStart, Math.max(0, start));
+};
+
+export const getPlaylistClipTop = (trackIndex: number): string => {
+  return `calc(${trackIndex} * var(--editor-playlist-track-height) + 0.25rem)`;
+};
+
+export const getCueMarkerTopOffset = (cueIndex: number, rows = 3): string => {
+  const safeRows = Math.max(1, rows);
+  const row = ((cueIndex % safeRows) + safeRows) % safeRows;
+  return `${0.2 + row * 0.55}rem`;
+};
+
+export const getCueDurationBarTop = (trackIndex: number, cueIndex: number): string => {
+  return `calc(${trackIndex} * var(--editor-playlist-track-height) + ${0.36 + (cueIndex % 3) * 0.55}rem)`;
 };
 
 export const zoomPlaylistViewport = (
@@ -766,6 +800,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     timeline: null,
     originalTimeline: null,
     selectedSceneId: null,
+    selectedTextCueId: null,
     loopEnabled: false,
     loopRange: null,
     error: null,
@@ -865,6 +900,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         timeline: draft ?? timeline,
         originalTimeline: timeline,
         selectedSceneId: (draft ?? timeline).sections[0]?.id ?? null,
+        selectedTextCueId: null,
         error: null
       });
       if (draft) {
@@ -895,7 +931,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     stripSceneEnds(next.sections);
     saveTimelineDraft(next);
     if (options?.selectedSceneId !== undefined) {
-      setState({ timeline: next, selectedSceneId: options.selectedSceneId });
+      setState({ timeline: next, selectedSceneId: options.selectedSceneId, selectedTextCueId: null });
     } else {
       setState({ timeline: next });
     }
@@ -903,11 +939,19 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   };
 
   const selectScene = (id: string): void => {
-    setState({ selectedSceneId: id });
+    setState({ selectedSceneId: id, selectedTextCueId: null });
+  };
+
+  const selectTextCue = (id: string): void => {
+    setState({ selectedTextCueId: id });
   };
 
   const getSceneById = (id: string): RawSectionConfig | null => {
     return state.timeline?.sections.find((section) => section.id === id) ?? null;
+  };
+
+  const getTextCueById = (id: string): RawTextCue | null => {
+    return state.timeline?.textCues?.find((cue) => cue.id === id) ?? null;
   };
 
   const getScenesByTime = (): RawSectionConfig[] => {
@@ -1161,7 +1205,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     const focusScene =
       (state.selectedSceneId ? scenes.find((scene) => scene.id === state.selectedSceneId) : null) ?? currentScene;
     const focusSceneEnd = focusScene ? getSceneEnd(focusScene) : 0;
-    const timelineTracks = buildEditorTimelineTracks(focusScene, focusSceneEnd);
+    const timelineTracks = buildEditorTimelineTracks(focusScene, focusSceneEnd, (state.timeline.textCues ?? []).length > 0);
     const sceneClips = getSceneTimelineClips(scenes, getSceneEnd);
     const playheadRatio = clamp((currentDemoTime - playlistViewportStart) / Math.max(playlistViewportDuration, 0.001), 0, 1);
     const visibleLoopRange = state.loopRange
@@ -1239,6 +1283,47 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       lane.dataset.track = String(index);
       lane.innerHTML = `<span class="editor-playlist-track-label">${timelineTrack.kind === "scene" ? "Track 1" : timelineTrack.label}</span>`;
       tracks.appendChild(lane);
+      if (timelineTrack.kind === "text-cues") {
+        (state.timeline.textCues ?? []).forEach((cue, cueIndex) => {
+          const cueStart = parseTimelineTimeValue(cue.start);
+          const cueEnd = Math.max(cueStart + 0.05, parseTimelineTimeValue(cue.end));
+          const visibleRange = getVisibleClipRange(cueStart, cueEnd, playlistViewportStart, viewportEnd);
+          if (!visibleRange) {
+            return;
+          }
+          const clipPercent = getClipPercent(
+            visibleRange.start - playlistViewportStart,
+            visibleRange.end - playlistViewportStart,
+            playlistViewportDuration
+          );
+          const durationBar = document.createElement("div");
+          durationBar.className = "editor-text-cue-duration";
+          durationBar.style.left = `${clipPercent.left}%`;
+          durationBar.style.width = `${Math.max(minClipWidthPercent, clipPercent.width)}%`;
+          durationBar.style.top = getCueDurationBarTop(index, cueIndex);
+          lane.appendChild(durationBar);
+
+          const marker = document.createElement("button");
+          marker.type = "button";
+          marker.className = "editor-text-cue-marker";
+          marker.style.left = `${clipPercent.left}%`;
+          marker.style.top = `calc(${index} * var(--editor-playlist-track-height) + ${getCueMarkerTopOffset(cueIndex)})`;
+          marker.textContent = cue.text?.trim().slice(0, 1).toUpperCase() || "•";
+          if (cue.id === state.selectedTextCueId) {
+            marker.classList.add("is-selected");
+            durationBar.classList.add("is-selected");
+          }
+          marker.title = `${cue.id}: ${formatTime(cueStart)} → ${formatTime(cueEnd)}`;
+          marker.addEventListener("click", () => {
+            selectTextCue(cue.id);
+            const previewSeekTime = cueStart + Math.min(0.2, Math.max(0.05, (cueEnd - cueStart) * 0.5));
+            const timeToSeek = previewSeekTime - init.getAudioOffset();
+            init.seek(Math.max(0, Number.isFinite(timeToSeek) ? timeToSeek : 0));
+          });
+          lane.appendChild(marker);
+        });
+        return;
+      }
       if (timelineTrack.kind === "scene") {
         sceneClips.forEach((clip) => {
           const scene = scenes.find((entry) => entry.id === clip.sceneId);
@@ -1259,7 +1344,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           block.className = "editor-block editor-playlist-clip";
           block.style.left = `${clipPercent.left}%`;
           block.style.width = `${Math.max(minClipWidthPercent, clipPercent.width)}%`;
-          block.style.top = `calc(${index} * var(--editor-playlist-track-height) + 0.25rem)`;
+          block.style.top = getPlaylistClipTop(index);
           block.textContent = clip.sceneId;
           block.title = buildPlaylistClipTitle(clip.sceneId, scene.effect, clip.start, clip.end);
           block.dataset.sceneId = clip.sceneId;
@@ -1317,7 +1402,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       block.className = "editor-block editor-playlist-clip";
       block.style.left = `${clipPercent.left}%`;
       block.style.width = `${Math.max(minClipWidthPercent, clipPercent.width)}%`;
-      block.style.top = `calc(${index} * var(--editor-playlist-track-height) + 0.25rem)`;
+      block.style.top = getPlaylistClipTop(index);
       block.textContent = focusScene.id;
       block.title = buildPlaylistClipTitle(focusScene.id, focusScene.effect, timelineTrack.start, timelineTrack.end);
       if (timelineTrack.kind === "automation") {
@@ -1850,7 +1935,63 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     }
 
     inspector.dataset.sceneId = scene.id;
-    if (basicPanel) {
+    const selectedCue = state.selectedTextCueId ? getTextCueById(state.selectedTextCueId) : null;
+    if (basicPanel && selectedCue) {
+      const typography = getCueTypography(selectedCue);
+      basicPanel.innerHTML = `
+      <div class="editor-group">
+        <div class="editor-group-title">TEXT CUE</div>
+        <div class="editor-group editor-cue-properties-grid">
+          <label>
+            <span>Start (s)</span>
+            <input type="text" data-selected-cue-field="start" value="${formatTime(parseTimelineTimeValue(selectedCue.start))}" />
+          </label>
+          <label>
+            <span>End (s)</span>
+            <input type="text" data-selected-cue-field="end" value="${formatTime(parseTimelineTimeValue(selectedCue.end))}" />
+          </label>
+          <label>
+            <span>Text</span>
+            <input type="text" data-selected-cue-field="text" value="${selectedCue.text ?? ""}" />
+          </label>
+          <label>
+            <span>Font</span>
+            <select data-selected-cue-field="font">
+              ${["inherit", "Arial", "Helvetica", "Verdana", "Tahoma", "Trebuchet MS", "Times New Roman", "Georgia", "Garamond", "Courier New", "Consolas", "Impact", "Comic Sans MS"]
+                .map((font) => `<option value="${font}" ${font === typography.font ? "selected" : ""}>${font}</option>`)
+                .join("")}
+            </select>
+          </label>
+          <label class="editor-cue-color-control">
+            <span>Colour</span>
+            <button type="button" data-selected-cue-action="toggle-color" style="background:${typography.color}">${typography.color}</button>
+            <input type="color" data-selected-cue-field="color" value="${typography.color}" class="editor-cue-color-input is-hidden" />
+          </label>
+          <label>
+            <span>Size (px)</span>
+            <input type="number" step="1" min="1" data-selected-cue-field="size" value="${typography.size}" />
+          </label>
+          <label>
+            <span>X (0..1)</span>
+            <input type="number" step="0.01" data-selected-cue-field="x" value="${selectedCue.x ?? 0.5}" />
+          </label>
+          <label>
+            <span>Y (0..1)</span>
+            <input type="number" step="0.01" data-selected-cue-field="y" value="${selectedCue.y ?? 0.7}" />
+          </label>
+          <label>
+            <span>Align</span>
+            <select data-selected-cue-field="align">
+              <option value="left" ${selectedCue.align === "left" ? "selected" : ""}>Left</option>
+              <option value="center" ${selectedCue.align === "center" ? "selected" : ""}>Center</option>
+              <option value="right" ${selectedCue.align === "right" ? "selected" : ""}>Right</option>
+            </select>
+          </label>
+          <button type="button" data-selected-cue-action="delete">Delete cue</button>
+        </div>
+      </div>
+    `;
+    } else if (basicPanel) {
       basicPanel.innerHTML = `
       <details class="editor-accordion-panel" open>
         <summary class="editor-group-title">BASIC</summary>
@@ -1943,11 +2084,6 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         <div data-region="layers"></div>
         <button type="button" class="editor-add" data-action="add-layer">+ Layer</button>
       </div>
-      <div class="editor-group">
-        <div class="editor-group-title">Text Cues</div>
-        <div data-region="text-cues"></div>
-        <button type="button" class="editor-add" data-action="add-cue">+ Text cue</button>
-      </div>
     `;
     const cueModalBody = init.container.querySelector<HTMLElement>("[data-region='cue-generator-body']");
     if (cueModalBody) {
@@ -1999,7 +2135,6 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       getSceneEnd(scene)
     );
     renderLayers(scene, init.container.querySelector("[data-region='layers']"));
-    renderTextCues(scene, init.container.querySelector("[data-region='text-cues']"));
   };
 
   const bindInspectorInputs = (scene: RawSectionConfig, inspector: HTMLElement): void => {
@@ -2086,6 +2221,76 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       updateTimeline((draft) => {
         draft.textCues = [...(draft.textCues ?? []), createTextCue({ start, end })];
       });
+    });
+
+    inspector.querySelectorAll<HTMLInputElement | HTMLSelectElement>("[data-selected-cue-field]").forEach((input) => {
+      input.addEventListener("change", () => {
+        const cueId = state.selectedTextCueId;
+        if (!cueId) {
+          return;
+        }
+        updateTimeline((draft) => {
+          const targetCue = draft.textCues?.find((cue) => cue.id === cueId);
+          if (!targetCue) {
+            return;
+          }
+          const field = input.dataset.selectedCueField ?? "";
+          if (field === "start") {
+            targetCue.start = parseTimelineTimeValue(input.value);
+          } else if (field === "end") {
+            targetCue.end = parseTimelineTimeValue(input.value);
+          } else if (field === "text") {
+            targetCue.text = input.value;
+            if (targetCue.spans && targetCue.spans.length > 0) {
+              targetCue.spans[0].text = input.value;
+            }
+          } else if (field === "font") {
+            const typography = getCueTypography(targetCue);
+            applyCueTypography(targetCue, { ...typography, font: input.value || typography.font });
+          } else if (field === "color") {
+            const typography = getCueTypography(targetCue);
+            applyCueTypography(targetCue, { ...typography, color: input.value || typography.color });
+          } else if (field === "size") {
+            const typography = getCueTypography(targetCue);
+            const nextSize = Number(input.value);
+            applyCueTypography(targetCue, {
+              ...typography,
+              size: Number.isFinite(nextSize) && nextSize > 0 ? nextSize : typography.size
+            });
+          } else if (field === "x") {
+            targetCue.x = Number(input.value);
+            targetCue.units = "normalized";
+          } else if (field === "y") {
+            targetCue.y = Number(input.value);
+            targetCue.units = "normalized";
+          } else if (field === "align") {
+            targetCue.align = input.value as "left" | "center" | "right";
+          }
+        });
+      });
+    });
+
+    inspector.querySelector<HTMLButtonElement>("[data-selected-cue-action='delete']")?.addEventListener("click", () => {
+      const cueId = state.selectedTextCueId;
+      if (!cueId) {
+        return;
+      }
+      updateTimeline((draft) => {
+        draft.textCues = draft.textCues?.filter((cue) => cue.id !== cueId) ?? [];
+      });
+      setState({ selectedTextCueId: null });
+    });
+
+    inspector.querySelector<HTMLButtonElement>("[data-selected-cue-action='toggle-color']")?.addEventListener("click", () => {
+      const colorInput = inspector.querySelector<HTMLInputElement>(".editor-cue-color-input");
+      if (!colorInput) {
+        return;
+      }
+      colorInput.classList.toggle("is-hidden");
+      if (!colorInput.classList.contains("is-hidden")) {
+        colorInput.focus();
+        colorInput.click();
+      }
     });
 
     inspector.querySelectorAll<HTMLDetailsElement>(".editor-accordion-panel").forEach((panel) => {
@@ -2745,11 +2950,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     if (!container || !state.timeline) {
       return;
     }
-    const cues = (state.timeline.textCues ?? []).filter((cue) => {
-      const start = parseTimelineTimeValue(cue.start);
-      const sceneStart = parseTimelineTimeValue(scene.start);
-      return start >= sceneStart && start <= getSceneEnd(scene);
-    });
+    const cues = [...(state.timeline.textCues ?? [])].sort(
+      (a, b) => parseTimelineTimeValue(a.start) - parseTimelineTimeValue(b.start)
+    );
 
     container.innerHTML = cues
       .map(
