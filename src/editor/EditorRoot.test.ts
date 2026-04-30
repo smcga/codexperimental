@@ -45,6 +45,8 @@ import {
   roundTimelineSeconds,
   hasTimelineTimeChanged,
   getResizePreviewOffset
+  ,
+  updateInspectorAccordionState
 } from "./EditorRoot";
 
 describe("formatTime", () => {
@@ -138,6 +140,17 @@ describe("getResizePreviewOffset", () => {
   it("clamps offsets to the visible viewport", () => {
     expect(getResizePreviewOffset(5, 10, 20)).toBe(0);
     expect(getResizePreviewOffset(35, 10, 20)).toBe(1);
+  });
+});
+
+describe("updateInspectorAccordionState", () => {
+  it("updates only the requested accordion panel key", () => {
+    const next = updateInspectorAccordionState(
+      { basic: false, "main-slots": true, transition: false },
+      "transition",
+      true
+    );
+    expect(next).toEqual({ basic: false, "main-slots": true, transition: true });
   });
 });
 

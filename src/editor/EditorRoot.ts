@@ -80,6 +80,12 @@ type EditorState = {
   loopRange: { start: number; end: number } | null;
   error: string | null;
 };
+type InspectorAccordionKey = "basic" | "main-slots" | "transition";
+export const updateInspectorAccordionState = (
+  current: Record<InspectorAccordionKey, boolean>,
+  key: InspectorAccordionKey,
+  open: boolean
+): Record<InspectorAccordionKey, boolean> => ({ ...current, [key]: open });
 
 type EditorParamValue = number | string | boolean | null;
 
@@ -816,6 +822,11 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   let isPlaying = false;
   let sceneSearchQuery = "";
   let sceneListSortMode: SceneListSortMode = "timeline";
+  let inspectorAccordionState: Record<InspectorAccordionKey, boolean> = {
+    basic: true,
+    "main-slots": false,
+    transition: false
+  };
   let playlistViewportStart = 0;
   let playlistViewportDuration = 45;
   let playlistTrackHeightRem = 3.5;
@@ -1028,13 +1039,11 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
             <input type="search" data-action="scene-search" value="${sceneSearchQuery}" placeholder="Search scenes…" />
           </label>
           <div class="editor-scene-list" data-region="scene-list"></div>
-          <button type="button" class="editor-add editor-add-scene" data-action="add-scene">+ NEW SCENE</button>
           <div class="editor-scene-actions-block">
             <div class="editor-section-title editor-subsection-title">SCENE ACTIONS</div>
+            <button type="button" class="editor-add editor-add-scene" data-action="add-scene">+ New scene</button>
             <button type="button" data-action="duplicate-selected" ${state.selectedSceneId ? "" : "disabled"}>Duplicate</button>
             <button type="button" data-action="delete-selected" ${state.selectedSceneId ? "" : "disabled"}>Delete</button>
-            <button type="button" data-action="select-current">Select Current</button>
-            <button type="button" data-action="select-loop-current">Select &amp; Loop</button>
           </div>
         </section>
         <section class="editor-column editor-workspace">
@@ -1054,7 +1063,6 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
             <span data-region="preview-time">${formatTime(currentDemoTime)} / ${formatTime(init.getAudioDuration())}</span>
             <div class="editor-preview-transport-controls">
               <button type="button" data-action="play-toggle-inline">Play</button>
-              <button type="button" data-action="jump-scene-inline">Jump to scene</button>
             </div>
           </div>
           <div class="editor-loop-summary">
@@ -1075,7 +1083,6 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         <button type="button" class="editor-generate-cues-trigger" data-action="open-cue-generator">Generate text cues</button>
         <div class="editor-transport-row">
           <button type="button" data-action="play-toggle">Play</button>
-          <button type="button" data-action="jump-scene">Jump to scene</button>
           <label class="editor-toggle">
             <input type="checkbox" data-action="loop-toggle" ${state.loopEnabled ? "checked" : ""} />
             <span>Loop scene</span>
@@ -1993,7 +2000,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     `;
     } else if (basicPanel) {
       basicPanel.innerHTML = `
-      <details class="editor-accordion-panel" open>
+      <details class="editor-accordion-panel" data-accordion-key="basic" ${inspectorAccordionState.basic ? "open" : ""}>
         <summary class="editor-group-title">BASIC</summary>
         <div class="editor-group">
         <label>
@@ -2030,7 +2037,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         </label>
         </div>
       </details>
-      <details class="editor-accordion-panel">
+      <details class="editor-accordion-panel" data-accordion-key="main-slots" ${inspectorAccordionState["main-slots"] ? "open" : ""}>
         <summary class="editor-group-title">MAIN SLOTS (Top/Centre/Bottom)</summary>
         <div class="editor-group">
         <div class="editor-note">Use these to stage up to three simultaneous “main” effects in mobile-fit mode.</div>
@@ -2053,7 +2060,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         })()}
         </div>
       </details>
-      <details class="editor-accordion-panel">
+      <details class="editor-accordion-panel" data-accordion-key="transition" ${inspectorAccordionState.transition ? "open" : ""}>
         <summary class="editor-group-title">TRANSITION</summary>
         <div class="editor-group">
         <label>
@@ -2295,14 +2302,11 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
 
     inspector.querySelectorAll<HTMLDetailsElement>(".editor-accordion-panel").forEach((panel) => {
       panel.addEventListener("toggle", () => {
-        if (!panel.open) {
+        const key = panel.dataset.accordionKey as InspectorAccordionKey | undefined;
+        if (!key) {
           return;
         }
-        inspector.querySelectorAll<HTMLDetailsElement>(".editor-accordion-panel").forEach((other) => {
-          if (other !== panel) {
-            other.open = false;
-          }
-        });
+        inspectorAccordionState = updateInspectorAccordionState(inspectorAccordionState, key, panel.open);
       });
     });
 
@@ -3091,33 +3095,6 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           await init.play();
         }
       });
-    init.container
-      .querySelector<HTMLButtonElement>("[data-action='jump-scene-inline']")
-      ?.addEventListener("click", () => {
-        if (!state.selectedSceneId) {
-          return;
-        }
-        const scene = getSceneById(state.selectedSceneId);
-        if (!scene) {
-          return;
-        }
-        if (!state.loopRange) {
-          init.seek(computeSceneSeekTime(scene.start, init.getAudioOffset()));
-        }
-      });
-
-    transport.querySelector<HTMLButtonElement>("[data-action='jump-scene']")?.addEventListener("click", () => {
-      if (!state.selectedSceneId) {
-        return;
-      }
-      const scene = getSceneById(state.selectedSceneId);
-      if (!scene) {
-        return;
-      }
-      if (!state.loopRange) {
-        init.seek(computeSceneSeekTime(scene.start, init.getAudioOffset()));
-      }
-    });
 
     transport
       .querySelector<HTMLInputElement>("[data-action='loop-toggle']")
@@ -3235,23 +3212,6 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       }
     });
 
-    init.container.querySelector<HTMLButtonElement>("[data-action='select-current']")?.addEventListener("click", () => {
-      const currentScene = getScenePlayingAtTime(state.timeline?.sections ?? [], currentDemoTime);
-      if (!currentScene) {
-        return;
-      }
-      selectScene(currentScene.id);
-    });
-
-    init.container
-      .querySelector<HTMLButtonElement>("[data-action='select-loop-current']")
-      ?.addEventListener("click", () => {
-        const currentScene = getScenePlayingAtTime(state.timeline?.sections ?? [], currentDemoTime);
-        if (!currentScene) {
-          return;
-        }
-        setState({ selectedSceneId: currentScene.id, loopEnabled: true });
-      });
   };
 
   await loadFromFile();
