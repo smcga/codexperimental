@@ -919,6 +919,29 @@ body,
   background: rgba(142, 249, 255, 0.45);
   border: 1px solid rgba(142, 249, 255, 0.8);
   border-radius: 999px;
+  cursor: grab;
+}
+
+.editor-playlist-vscrollbar-thumb:active {
+  cursor: grabbing;
+}
+
+.editor-playlist-vscrollbar-handle {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0.35rem;
+  background: rgba(207, 255, 242, 0.45);
+}
+
+.editor-playlist-vscrollbar-handle-start {
+  top: 0;
+  cursor: ns-resize;
+}
+
+.editor-playlist-vscrollbar-handle-end {
+  bottom: 0;
+  cursor: ns-resize;
 }
 
 .editor-playlist-scrollbar-thumb {

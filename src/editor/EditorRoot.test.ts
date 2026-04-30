@@ -37,7 +37,8 @@ import {
   ,
   buildAutomationTrackPolyline
   ,
-  zoomPlaylistTrackHeight
+  zoomPlaylistTrackHeight,
+  resizePlaylistTrackHeightFromScrollbar
 } from "./EditorRoot";
 
 describe("formatTime", () => {
@@ -234,8 +235,22 @@ describe("zoomPlaylistTrackHeight", () => {
   it("zooms and clamps vertical track height", () => {
     expect(zoomPlaylistTrackHeight(3.5, 1.2)).toBeCloseTo(4.2);
     expect(zoomPlaylistTrackHeight(3.5, 0.5)).toBeCloseTo(1.75);
-    expect(zoomPlaylistTrackHeight(7.5, 2)).toBe(8);
-    expect(zoomPlaylistTrackHeight(1.7, 0.1)).toBe(1.6);
+    expect(zoomPlaylistTrackHeight(7.5, 2)).toBe(12);
+    expect(zoomPlaylistTrackHeight(1.7, 0.1)).toBe(1.2);
+  });
+});
+
+describe("resizePlaylistTrackHeightFromScrollbar", () => {
+  it("matches horizontal-scrollbar style edge semantics for vertical zoom", () => {
+    expect(resizePlaylistTrackHeightFromScrollbar(3.5, "end", 0.1)).toBeLessThan(3.5);
+    expect(resizePlaylistTrackHeightFromScrollbar(3.5, "end", -0.1)).toBeGreaterThan(3.5);
+    expect(resizePlaylistTrackHeightFromScrollbar(3.5, "start", 0.1)).toBeGreaterThan(3.5);
+    expect(resizePlaylistTrackHeightFromScrollbar(3.5, "start", -0.1)).toBeLessThan(3.5);
+  });
+
+  it("clamps resized track height to configured zoom bounds", () => {
+    expect(resizePlaylistTrackHeightFromScrollbar(12, "start", 0.9)).toBe(12);
+    expect(resizePlaylistTrackHeightFromScrollbar(1.2, "end", 0.9)).toBe(1.2);
   });
 });
 
@@ -501,7 +516,7 @@ describe("playlist helpers", () => {
   it("clamps zoom duration to the allowed range", () => {
     const zoomedIn = zoomPlaylistViewport(0, 8, 0.1, 1, 120);
     const zoomedOut = zoomPlaylistViewport(0, 40, 10, 1, 120);
-    expect(zoomedIn.duration).toBeGreaterThanOrEqual(15);
+    expect(zoomedIn.duration).toBeGreaterThanOrEqual(4);
     expect(zoomedOut.duration).toBe(120);
   });
 
