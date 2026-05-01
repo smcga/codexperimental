@@ -71,6 +71,7 @@ describe("editor workspace split sizing", () => {
     const css = readFileSync(new URL("./style.css", import.meta.url), "utf8");
 
     expect(css).toContain(".editor-top-row");
+    expect(css).toContain("align-items: stretch;");
     expect(css).toContain("overflow: hidden;");
     expect(css).toContain(".editor-top-row > *");
     expect(css).toContain("min-height: 0;");
@@ -82,6 +83,15 @@ describe("editor workspace split sizing", () => {
     expect(css).toContain(".editor-preview");
     expect(css).toContain("height: 100%;");
     expect(css).toContain("max-height: 100%;");
+  });
+});
+
+describe("editor heading copy", () => {
+  it("uses the simplified editor title text", () => {
+    const editorRoot = readFileSync(new URL("./editor/EditorRoot.ts", import.meta.url), "utf8");
+
+    expect(editorRoot).toContain("editor-title\">EDITOR<");
+    expect(editorRoot).not.toContain("SCENE + EDITOR");
   });
 });
 

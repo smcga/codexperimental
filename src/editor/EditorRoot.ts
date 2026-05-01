@@ -1202,7 +1202,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
 
     init.container.innerHTML = `
       <div class="editor-header">
-        <div class="editor-title">SCENE + EDITOR</div>
+        <div class="editor-title">EDITOR</div>
         <div class="editor-actions">
           <button type="button" data-action="import">Import JSON</button>
           <button type="button" data-action="export">Export JSON</button>
