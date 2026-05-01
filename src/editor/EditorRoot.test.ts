@@ -46,7 +46,8 @@ import {
   textCueFontOptions,
   clampWorkspaceTopRatio,
   getWorkspaceTopRatioFromPointer,
-  getWorkspaceTopHeightPx
+  getWorkspaceTopHeightPx,
+  getNormalizedPreviewPoint
 } from "./EditorRoot";
 
 describe("formatTime", () => {
@@ -139,6 +140,20 @@ describe("workspace splitter helpers", () => {
     expect(getWorkspaceTopHeightPx(900, 0.5)).toBe(450);
     expect(getWorkspaceTopHeightPx(400, 0.9)).toBe(180);
     expect(getWorkspaceTopHeightPx(1200, 0.95)).toBe(940);
+  });
+});
+
+describe("getNormalizedPreviewPoint", () => {
+  const previewRect = { left: 100, top: 50 } as DOMRect;
+  const drawRect = { x: 20, y: 10, width: 200, height: 100 };
+
+  it("maps pointer coordinates to normalized cue coordinates", () => {
+    expect(getNormalizedPreviewPoint(220, 110, previewRect, drawRect)).toEqual({ x: 0.5, y: 0.5 });
+  });
+
+  it("returns null when pointer is outside the rendered preview frame", () => {
+    expect(getNormalizedPreviewPoint(100, 110, previewRect, drawRect)).toBeNull();
+    expect(getNormalizedPreviewPoint(220, 40, previewRect, drawRect)).toBeNull();
   });
 });
 

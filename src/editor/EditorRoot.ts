@@ -216,6 +216,31 @@ export const getWorkspaceTopHeightPx = (
   return clamp(workspaceHeight * safeRatio, minTopHeightPx, maxTopHeight);
 };
 
+export const getNormalizedPreviewPoint = (
+  pointerX: number,
+  pointerY: number,
+  previewRect: DOMRect,
+  drawRect: { x: number; y: number; width: number; height: number }
+): { x: number; y: number } | null => {
+  if (drawRect.width <= 0 || drawRect.height <= 0) {
+    return null;
+  }
+  const localX = pointerX - previewRect.left;
+  const localY = pointerY - previewRect.top;
+  if (
+    localX < drawRect.x ||
+    localY < drawRect.y ||
+    localX > drawRect.x + drawRect.width ||
+    localY > drawRect.y + drawRect.height
+  ) {
+    return null;
+  }
+  return {
+    x: clamp((localX - drawRect.x) / drawRect.width, 0, 1),
+    y: clamp((localY - drawRect.y) / drawRect.height, 0, 1)
+  };
+};
+
 export const formatTime = (value: number): string => {
   const safeValue = Number.isFinite(value) ? Math.max(0, value) : 0;
   const minutes = Math.floor(safeValue / 60);
@@ -887,6 +912,8 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   let playbackButton: HTMLButtonElement | null = null;
   let previewCanvas: HTMLCanvasElement | null = null;
   let previewContext: CanvasRenderingContext2D | null = null;
+  let previewDrawRect = { x: 0, y: 0, width: 640, height: 360 };
+  let activeCueDragPointerId: number | null = null;
   let playheadElement: HTMLDivElement | null = null;
   let editorVisible = false;
   let currentDemoTime = 0;
@@ -1069,6 +1096,62 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   const refreshPreviewCanvas = (): void => {
     previewCanvas = init.container.querySelector<HTMLCanvasElement>("[data-region='preview-canvas']");
     previewContext = previewCanvas?.getContext("2d") ?? null;
+    previewCanvas?.addEventListener("pointerdown", (event) => {
+      if (!previewCanvas || isPlaying || !state.selectedTextCueId) {
+        return;
+      }
+      const point = getNormalizedPreviewPoint(
+        event.clientX,
+        event.clientY,
+        previewCanvas.getBoundingClientRect(),
+        previewDrawRect
+      );
+      if (!point) {
+        return;
+      }
+      activeCueDragPointerId = event.pointerId;
+      previewCanvas.setPointerCapture(event.pointerId);
+      updateTimeline((draft) => {
+        const cue = draft.textCues?.find((entry) => entry.id === state.selectedTextCueId);
+        if (!cue) {
+          return;
+        }
+        cue.x = roundTimelineSeconds(point.x);
+        cue.y = roundTimelineSeconds(point.y);
+        cue.units = "normalized";
+      });
+      event.preventDefault();
+    });
+    previewCanvas?.addEventListener("pointermove", (event) => {
+      if (!previewCanvas || activeCueDragPointerId !== event.pointerId || !state.selectedTextCueId) {
+        return;
+      }
+      const point = getNormalizedPreviewPoint(
+        event.clientX,
+        event.clientY,
+        previewCanvas.getBoundingClientRect(),
+        previewDrawRect
+      );
+      if (!point) {
+        return;
+      }
+      updateTimeline((draft) => {
+        const cue = draft.textCues?.find((entry) => entry.id === state.selectedTextCueId);
+        if (!cue) {
+          return;
+        }
+        cue.x = roundTimelineSeconds(point.x);
+        cue.y = roundTimelineSeconds(point.y);
+        cue.units = "normalized";
+      });
+    });
+    previewCanvas?.addEventListener("pointerup", (event) => {
+      if (activeCueDragPointerId !== event.pointerId) {
+        return;
+      }
+      activeCueDragPointerId = null;
+      previewCanvas?.releasePointerCapture(event.pointerId);
+    });
   };
 
   const render = (): void => {
@@ -3373,6 +3456,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       }
       const offsetX = (width - drawWidth) / 2;
       const offsetY = (height - drawHeight) / 2;
+      previewDrawRect = { x: offsetX, y: offsetY, width: drawWidth, height: drawHeight };
       previewContext.clearRect(0, 0, width, height);
       previewContext.drawImage(source, offsetX, offsetY, drawWidth, drawHeight);
     },
