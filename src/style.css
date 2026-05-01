@@ -575,8 +575,8 @@ body,
 }
 
 .editor-workspace {
-  display: grid;
-  grid-template-rows: auto auto minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
   min-height: 0;
   overflow: hidden;
 }
@@ -587,7 +587,15 @@ body,
   gap: 0.6rem;
   align-items: stretch;
   min-width: 0;
-  max-height: min(52vh, 32rem);
+  flex: 0 0 auto;
+}
+
+.editor-workspace-resize-handle {
+  margin: 0.1rem 0 0.2rem;
+  cursor: ns-resize;
+  border-radius: 0.3rem;
+  border: 1px solid rgba(142, 249, 255, 0.35);
+  background: linear-gradient(90deg, rgba(142, 249, 255, 0.15), rgba(255, 255, 255, 0.04), rgba(142, 249, 255, 0.15));
 }
 
 .editor-top-panel {
