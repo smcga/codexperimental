@@ -267,6 +267,11 @@ export const getPreviewSurfaceSize = (
   return { width, height };
 };
 
+type PreviewPresentationMode = "desktop" | "mobile";
+
+export const getPreviewAspectRatioForMode = (mode: PreviewPresentationMode): number =>
+  mode === "mobile" ? 9 / 16 : 16 / 9;
+
 export const getClipPercent = (
   start: number,
   end: number,
@@ -948,6 +953,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   let playlistTrackHeightRem = 3.5;
   let playlistVerticalScrollTop = 0;
   let workspaceTopRatio = 0.48;
+  let previewPresentationMode: PreviewPresentationMode = "desktop";
   let activeWorkspaceResizePointerId: number | null = null;
   let activePlaylistPan:
     | {
@@ -1182,9 +1188,11 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     const toolbarHeight = previewToolbar?.offsetHeight ?? 0;
     const availableWidth = previewPanel.clientWidth;
     const availableHeight = Math.max(0, previewPanel.clientHeight - toolbarHeight - 4);
-    const size = getPreviewSurfaceSize(availableWidth, availableHeight);
+    const aspectRatio = getPreviewAspectRatioForMode(previewPresentationMode);
+    const size = getPreviewSurfaceSize(availableWidth, availableHeight, 720, aspectRatio);
     previewShell.style.width = `${size.width}px`;
     previewShell.style.height = `${size.height}px`;
+    previewShell.style.aspectRatio = `${aspectRatio}`;
   };
 
   const render = (): void => {
@@ -1241,6 +1249,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
             <div class="editor-preview-panel">
               <div class="editor-preview-toolbar">
                 <div class="editor-section-title">PREVIEW</div>
+                <div class="editor-preview-mode-group" role="group" aria-label="Preview presentation">
+                  <button type="button" data-action="preview-mode" data-preview-mode="desktop" ${previewPresentationMode === "desktop" ? "class=\"is-active\"" : ""}>Desktop</button>
+                  <button type="button" data-action="preview-mode" data-preview-mode="mobile" ${previewPresentationMode === "mobile" ? "class=\"is-active\"" : ""}>Mobile</button>
+                </div>
               </div>
               <div class="editor-preview">
                 <canvas data-region="preview-canvas" width="640" height="360"></canvas>
@@ -3432,6 +3444,17 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         const nextId = remainingIds[0] ?? null;
         setState({ selectedSceneId: nextId });
       }
+    });
+
+    init.container.querySelectorAll<HTMLButtonElement>("[data-action='preview-mode']").forEach((button) => {
+      button.addEventListener("click", () => {
+        const mode = button.dataset.previewMode;
+        if (mode !== "desktop" && mode !== "mobile") {
+          return;
+        }
+        previewPresentationMode = mode;
+        render();
+      });
     });
 
   };
