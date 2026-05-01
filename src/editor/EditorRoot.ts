@@ -177,6 +177,7 @@ export type EditorController = {
   isVisible: () => boolean;
   updatePlayback: (demoTime: number, playing: boolean) => void;
   updatePreview: (source: HTMLCanvasElement) => void;
+  getPreviewPresentationMode: () => PreviewPresentationMode;
   getLoopState: () => { enabled: boolean; start: number; end: number } | null;
 };
 
@@ -268,6 +269,7 @@ export const getPreviewSurfaceSize = (
 };
 
 type PreviewPresentationMode = "desktop" | "mobile";
+export type { PreviewPresentationMode };
 
 export const getPreviewAspectRatioForMode = (mode: PreviewPresentationMode): number =>
   mode === "mobile" ? 9 / 16 : 16 / 9;
@@ -3509,6 +3511,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       previewContext.clearRect(0, 0, width, height);
       previewContext.drawImage(source, offsetX, offsetY, drawWidth, drawHeight);
     },
+    getPreviewPresentationMode: () => previewPresentationMode,
     getLoopState: () => {
       if (state.loopEnabled && state.loopRange) {
         return {

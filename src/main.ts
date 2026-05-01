@@ -56,7 +56,7 @@ import {
   EffectParamLimitsByEffect
 } from "./debug/effectParamLimits";
 import { fetchGlobalEffectParamLimits, saveGlobalEffectParamLimits } from "./effectParamLimitsApi";
-import { createEditorRoot, EditorController } from "./editor/EditorRoot";
+import { createEditorRoot, EditorController, PreviewPresentationMode } from "./editor/EditorRoot";
 import { submitDoodle } from "./doodles";
 import {
   compileRuntimeEffect,
@@ -92,6 +92,12 @@ import { getEffectIdeaCloseBlockedMessage, shouldShowCommunityCarouselButtons } 
 import { generateEffectWithSelfImprovement } from "./effectIdeaSelfImprovement";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
+const editorMobilePreviewCanvas = document.createElement("canvas");
+const editorMobilePreviewCtx = editorMobilePreviewCanvas.getContext("2d");
+if (editorMobilePreviewCtx) {
+  editorMobilePreviewCanvas.width = 1080;
+  editorMobilePreviewCanvas.height = 1920;
+}
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
 const overlayKicker = document.querySelector<HTMLDivElement>("#overlay-kicker");
 const overlayText = overlay?.querySelector<HTMLDivElement>(".start-text");
@@ -1943,7 +1949,38 @@ function loop(): void {
     updateDebugSkipButtonState(demoTime);
   }
   editorController?.updatePlayback(demoTime, !audioPlayer.paused);
-  editorController?.updatePreview(canvas);
+  if (editorController && editorMobilePreviewCtx) {
+    const previewMode: PreviewPresentationMode = editorController.getPreviewPresentationMode();
+    if (previewMode === "mobile") {
+      renderer.render({
+        ctx: editorMobilePreviewCtx,
+        width: editorMobilePreviewCanvas.width,
+        height: editorMobilePreviewCanvas.height,
+        time: demoTime,
+        delta,
+        section: sectionOverride,
+        transition: transitionOverrideWithEra,
+        textCues: debugRenderSelection.textCues,
+        audio: audioFeatures,
+        monochromeOverride: debugState.monochromeOverride,
+        screenShake: explosionShake,
+        framingOverride: "mobileFit"
+      });
+      if (!debugRenderSelection.isolateEffect) {
+        renderExplosion(
+          editorMobilePreviewCtx,
+          editorMobilePreviewCanvas.width,
+          editorMobilePreviewCanvas.height,
+          explosionTime,
+          explosionState,
+          explosionShake
+        );
+      }
+      editorController.updatePreview(editorMobilePreviewCanvas);
+    } else {
+      editorController.updatePreview(canvas);
+    }
+  }
 
   if (audioPlayer.ended) {
     isRunning = false;

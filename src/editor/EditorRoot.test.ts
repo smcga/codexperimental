@@ -89,6 +89,13 @@ describe("getPreviewAspectRatioForMode", () => {
     expect(getPreviewAspectRatioForMode("desktop")).toBeCloseTo(16 / 9);
     expect(getPreviewAspectRatioForMode("mobile")).toBeCloseTo(9 / 16);
   });
+
+  it("supports portrait preview sizing when used with getPreviewSurfaceSize", () => {
+    const portraitRatio = getPreviewAspectRatioForMode("mobile");
+    const size = getPreviewSurfaceSize(500, 500, 720, portraitRatio);
+    expect(size.width).toBeCloseTo(281.25, 2);
+    expect(size.height).toBe(500);
+  });
 });
 
 describe("getClipPercent", () => {
