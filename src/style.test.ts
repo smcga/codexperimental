@@ -70,6 +70,10 @@ describe("editor workspace split sizing", () => {
   it("allows the top and timeline panes to resize together via the workspace splitter", () => {
     const css = readFileSync(new URL("./style.css", import.meta.url), "utf8");
 
+    expect(css).toContain(".editor-top-row");
+    expect(css).toContain("overflow: hidden;");
+    expect(css).toContain(".editor-top-row > *");
+    expect(css).toContain("min-height: 0;");
     expect(css).toContain(".editor-timeline-view");
     expect(css).toContain("min-height: 0;");
     expect(css).toContain("flex: 1 1 auto;");
