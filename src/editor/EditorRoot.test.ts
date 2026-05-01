@@ -4,6 +4,7 @@ import {
   clamp,
   computeSceneSeekTime,
   formatTime,
+  formatPlaybackTimeRange,
   clampPlaylistViewportStart,
   getClipPercent,
   getMinimumClipWidthPercent,
@@ -47,7 +48,8 @@ import {
   clampWorkspaceTopRatio,
   getWorkspaceTopRatioFromPointer,
   getWorkspaceTopHeightPx,
-  getNormalizedPreviewPoint
+  getNormalizedPreviewPoint,
+  getPreviewSurfaceSize
 } from "./EditorRoot";
 
 describe("formatTime", () => {
@@ -59,6 +61,25 @@ describe("formatTime", () => {
   it("clamps invalid or negative values to zero", () => {
     expect(formatTime(-2)).toBe("00:00.0");
     expect(formatTime(Number.NaN)).toBe("00:00.0");
+  });
+});
+
+describe("formatPlaybackTimeRange", () => {
+  it("formats current and total time into a single transport label", () => {
+    expect(formatPlaybackTimeRange(229.7, 382.9)).toBe("03:49.7 / 06:22.9");
+  });
+});
+
+describe("getPreviewSurfaceSize", () => {
+  it("shrinks preview to fit available height while preserving 16:9 ratio", () => {
+    const size = getPreviewSurfaceSize(900, 200);
+    expect(size.width).toBeCloseTo(355.56, 2);
+    expect(size.height).toBe(200);
+  });
+
+  it("caps preview width at 720 and returns zero size for invalid input", () => {
+    expect(getPreviewSurfaceSize(2000, 900)).toEqual({ width: 720, height: 405 });
+    expect(getPreviewSurfaceSize(0, 500)).toEqual({ width: 0, height: 0 });
   });
 });
 

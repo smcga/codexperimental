@@ -66,6 +66,35 @@ describe("editor playlist scrollbar styling", () => {
   });
 });
 
+describe("editor workspace split sizing", () => {
+  it("allows the top and timeline panes to resize together via the workspace splitter", () => {
+    const css = readFileSync(new URL("./style.css", import.meta.url), "utf8");
+
+    expect(css).toContain(".editor-top-row");
+    expect(css).toContain("align-items: stretch;");
+    expect(css).toContain("overflow: hidden;");
+    expect(css).toContain(".editor-top-row > *");
+    expect(css).toContain("min-height: 0;");
+    expect(css).toContain(".editor-timeline-view");
+    expect(css).toContain("min-height: 0;");
+    expect(css).toContain("flex: 1 1 auto;");
+    expect(css).toContain(".editor-preview-panel");
+    expect(css).toContain("grid-template-rows: auto minmax(0, 1fr);");
+    expect(css).toContain(".editor-preview");
+    expect(css).toContain("height: 100%;");
+    expect(css).toContain("max-height: 100%;");
+  });
+});
+
+describe("editor heading copy", () => {
+  it("uses the simplified editor title text", () => {
+    const editorRoot = readFileSync(new URL("./editor/EditorRoot.ts", import.meta.url), "utf8");
+
+    expect(editorRoot).toContain("editor-title\">EDITOR<");
+    expect(editorRoot).not.toContain("SCENE + EDITOR");
+  });
+});
+
 
 describe("editor inspector sizing", () => {
   it("prevents horizontal overflow by forcing inspector controls to fit available width", () => {
