@@ -786,10 +786,10 @@ body,
 
 .editor-preview-panel {
   display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
   gap: 0.2rem;
   min-width: 0;
   min-height: 0;
-  align-content: start;
   overflow: hidden;
 }
 
@@ -813,12 +813,15 @@ body,
   background: rgba(0, 0, 0, 0.5);
   padding: 0.35rem;
   aspect-ratio: 16 / 9;
-  width: min(100%, 720px);
-  max-width: 720px;
-  height: auto;
+  width: auto;
+  max-width: min(100%, 720px);
+  height: 100%;
+  max-height: 100%;
   display: grid;
   place-items: center;
   margin: 0 auto;
+  justify-self: center;
+  align-self: start;
 }
 
 .editor-preview canvas {

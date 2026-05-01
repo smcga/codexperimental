@@ -77,6 +77,11 @@ describe("editor workspace split sizing", () => {
     expect(css).toContain(".editor-timeline-view");
     expect(css).toContain("min-height: 0;");
     expect(css).toContain("flex: 1 1 auto;");
+    expect(css).toContain(".editor-preview-panel");
+    expect(css).toContain("grid-template-rows: auto minmax(0, 1fr);");
+    expect(css).toContain(".editor-preview");
+    expect(css).toContain("height: 100%;");
+    expect(css).toContain("max-height: 100%;");
   });
 });
 
