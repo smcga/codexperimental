@@ -1276,6 +1276,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       const topRow = workspace.querySelector<HTMLElement>(".editor-top-row");
       if (topRow) {
         topRow.style.height = `${getWorkspaceTopHeightPx(workspace.clientHeight, workspaceTopRatio)}px`;
+        refreshPreviewCanvas();
       }
     }
     const workspaceResizeHandle = init.container.querySelector<HTMLElement>("[data-region='workspace-resize-handle']");
@@ -1289,6 +1290,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       const topRow = currentWorkspace.querySelector<HTMLElement>(".editor-top-row");
       if (topRow) {
         topRow.style.height = `${getWorkspaceTopHeightPx(currentWorkspace.clientHeight, workspaceTopRatio)}px`;
+        refreshPreviewCanvas();
       }
       event.preventDefault();
     });
@@ -2029,6 +2031,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     const topRow = workspace.querySelector<HTMLElement>(".editor-top-row");
     if (topRow) {
       topRow.style.height = `${getWorkspaceTopHeightPx(workspace.clientHeight, workspaceTopRatio)}px`;
+      refreshPreviewCanvas();
     }
   };
 

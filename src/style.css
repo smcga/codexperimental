@@ -768,13 +768,14 @@ body,
   padding: 0.5rem;
   display: grid;
   gap: 0.5rem;
-  min-height: clamp(250px, 36vh, 460px);
+  min-height: 0;
   --editor-playlist-track-height: 2.3rem;
   min-width: 0;
   overflow: hidden;
   position: relative;
   padding-right: 1.05rem;
   padding-bottom: 0.65rem;
+  flex: 1 1 auto;
 }
 
 .editor-preview-panel {

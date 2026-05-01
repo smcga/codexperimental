@@ -66,6 +66,16 @@ describe("editor playlist scrollbar styling", () => {
   });
 });
 
+describe("editor workspace split sizing", () => {
+  it("allows the top and timeline panes to resize together via the workspace splitter", () => {
+    const css = readFileSync(new URL("./style.css", import.meta.url), "utf8");
+
+    expect(css).toContain(".editor-timeline-view");
+    expect(css).toContain("min-height: 0;");
+    expect(css).toContain("flex: 1 1 auto;");
+  });
+});
+
 
 describe("editor inspector sizing", () => {
   it("prevents horizontal overflow by forcing inspector controls to fit available width", () => {
