@@ -248,6 +248,9 @@ export const formatTime = (value: number): string => {
   return `${minutes.toString().padStart(2, "0")}:${seconds.toFixed(1).padStart(4, "0")}`;
 };
 
+export const formatPlaybackTimeRange = (currentTime: number, duration: number): string =>
+  `${formatTime(currentTime)} / ${formatTime(duration)}`;
+
 export const getClipPercent = (
   start: number,
   end: number,
@@ -908,7 +911,6 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     error: null,
   };
   let playbackLabel: HTMLSpanElement | null = null;
-  let previewPlaybackLabel: HTMLSpanElement | null = null;
   let playbackButton: HTMLButtonElement | null = null;
   let previewCanvas: HTMLCanvasElement | null = null;
   let previewContext: CanvasRenderingContext2D | null = null;
@@ -1169,7 +1171,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
 
     init.container.innerHTML = `
       <div class="editor-header">
-        <div class="editor-title">SCENE + TIMELINE EDITOR</div>
+        <div class="editor-title">SCENE + EDITOR</div>
         <div class="editor-actions">
           <button type="button" data-action="import">Import JSON</button>
           <button type="button" data-action="export">Export JSON</button>
@@ -1216,17 +1218,13 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
             
           </div>
           <div class="editor-workspace-resize-handle" data-region="workspace-resize-handle" role="separator" aria-orientation="horizontal" aria-label="Resize top and timeline panels"></div>
-          <div class="editor-preview-transport">
-            <span data-region="preview-time">${formatTime(currentDemoTime)} / ${formatTime(init.getAudioDuration())}</span>
-            <div class="editor-preview-transport-controls">
-              <button type="button" data-action="play-toggle-inline">Play</button>
+          <div class="editor-timeline-header">
+            <div class="editor-section-title">TIMELINE</div>
+            <div class="editor-loop-summary">
+              ${state.loopRange ? `Loop selection: ${formatTime(state.loopRange.start)} → ${formatTime(state.loopRange.end)}` : "Loop selection: none"}
+              <button type="button" data-action="clear-loop-selection" ${state.loopRange ? "" : "disabled"}>Clear loop selection</button>
             </div>
           </div>
-          <div class="editor-loop-summary">
-            ${state.loopRange ? `Loop selection: ${formatTime(state.loopRange.start)} → ${formatTime(state.loopRange.end)}` : "Loop selection: none"}
-            <button type="button" data-action="clear-loop-selection" ${state.loopRange ? "" : "disabled"}>Clear loop selection</button>
-          </div>
-          <div class="editor-section-title">TIMELINE</div>
           <div class="editor-timeline-view" data-region="timeline-view"></div>
         </section>
         <section class="editor-column editor-inspector">
@@ -1244,7 +1242,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
             <input type="checkbox" data-action="loop-toggle" ${state.loopEnabled ? "checked" : ""} />
             <span>Loop scene</span>
           </label>
-          <span class="editor-timestamp" data-region="timestamp">00:00.0</span>
+          <span class="editor-timestamp" data-region="timestamp">${formatPlaybackTimeRange(currentDemoTime, init.getAudioDuration())}</span>
         </div>
       </div>
       <div class="editor-modal-backdrop is-hidden" data-region="cue-generator-modal">
@@ -3276,7 +3274,6 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       return;
     }
     playbackLabel = transport.querySelector<HTMLSpanElement>("[data-region='timestamp']");
-    previewPlaybackLabel = init.container.querySelector<HTMLSpanElement>("[data-region='preview-time']");
     playbackButton = transport.querySelector<HTMLButtonElement>("[data-action='play-toggle']");
 
     playbackButton?.addEventListener("click", async () => {
@@ -3286,16 +3283,6 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         await init.play();
       }
     });
-    init.container
-      .querySelector<HTMLButtonElement>("[data-action='play-toggle-inline']")
-      ?.addEventListener("click", async () => {
-        if (playbackButton?.dataset.state === "playing") {
-          init.pause();
-        } else {
-          await init.play();
-        }
-      });
-
     transport
       .querySelector<HTMLInputElement>("[data-action='loop-toggle']")
       ?.addEventListener("change", (event) => {
@@ -3426,10 +3413,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       currentDemoTime = demoTime;
       isPlaying = playing;
       if (playbackLabel) {
-        playbackLabel.textContent = formatTime(demoTime);
-      }
-      if (previewPlaybackLabel) {
-        previewPlaybackLabel.textContent = `${formatTime(demoTime)} / ${formatTime(init.getAudioDuration())}`;
+        playbackLabel.textContent = formatPlaybackTimeRange(demoTime, init.getAudioDuration());
       }
       if (playbackButton) {
         playbackButton.textContent = playing ? "Pause" : "Play";

@@ -4,6 +4,7 @@ import {
   clamp,
   computeSceneSeekTime,
   formatTime,
+  formatPlaybackTimeRange,
   clampPlaylistViewportStart,
   getClipPercent,
   getMinimumClipWidthPercent,
@@ -59,6 +60,12 @@ describe("formatTime", () => {
   it("clamps invalid or negative values to zero", () => {
     expect(formatTime(-2)).toBe("00:00.0");
     expect(formatTime(Number.NaN)).toBe("00:00.0");
+  });
+});
+
+describe("formatPlaybackTimeRange", () => {
+  it("formats current and total time into a single transport label", () => {
+    expect(formatPlaybackTimeRange(229.7, 382.9)).toBe("03:49.7 / 06:22.9");
   });
 });
 
