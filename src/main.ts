@@ -1884,6 +1884,15 @@ function loop(): void {
   const baseAudioFeatures: AudioFeatures = audioPlayer.updateFeatures();
   const audioFeatures: AudioFeatures = manualBeatTrigger.apply(baseAudioFeatures, demoTime);
   const state = timeline.getState(demoTime);
+  let mobilePreviewRenderData:
+    | {
+        debugRenderSelection: ReturnType<typeof buildDebugRenderSelection>;
+        sectionOverride: TimelineConfig["sections"][number];
+        transitionOverrideWithEra: TimelineConfig["transitions"][number];
+        explosionTime: number;
+        explosionShake: number;
+      }
+    | null = null;
   if (state.mode === "intro") {
     introRenderer.render({
       ctx,
@@ -1910,6 +1919,13 @@ function loop(): void {
     const explosionTime =
       !debugRenderSelection.isolateEffect && sectionOverride.era === "future" ? demoTime - sectionOverride.start : -1;
     const explosionShake = getExplosionShake(explosionTime);
+    mobilePreviewRenderData = {
+      debugRenderSelection,
+      sectionOverride,
+      transitionOverrideWithEra,
+      explosionTime,
+      explosionShake
+    };
 
     renderer.render({
       ctx,
@@ -1949,7 +1965,7 @@ function loop(): void {
     updateDebugSkipButtonState(demoTime);
   }
   editorController?.updatePlayback(demoTime, !audioPlayer.paused);
-  if (editorController && editorMobilePreviewCtx) {
+  if (editorController && editorMobilePreviewCtx && mobilePreviewRenderData) {
     const previewMode: PreviewPresentationMode = editorController.getPreviewPresentationMode();
     if (previewMode === "mobile") {
       renderer.render({
@@ -1958,22 +1974,22 @@ function loop(): void {
         height: editorMobilePreviewCanvas.height,
         time: demoTime,
         delta,
-        section: sectionOverride,
-        transition: transitionOverrideWithEra,
-        textCues: debugRenderSelection.textCues,
+        section: mobilePreviewRenderData.sectionOverride,
+        transition: mobilePreviewRenderData.transitionOverrideWithEra,
+        textCues: mobilePreviewRenderData.debugRenderSelection.textCues,
         audio: audioFeatures,
         monochromeOverride: debugState.monochromeOverride,
-        screenShake: explosionShake,
+        screenShake: mobilePreviewRenderData.explosionShake,
         framingOverride: "mobileFit"
       });
-      if (!debugRenderSelection.isolateEffect) {
+      if (!mobilePreviewRenderData.debugRenderSelection.isolateEffect) {
         renderExplosion(
           editorMobilePreviewCtx,
           editorMobilePreviewCanvas.width,
           editorMobilePreviewCanvas.height,
-          explosionTime,
+          mobilePreviewRenderData.explosionTime,
           explosionState,
-          explosionShake
+          mobilePreviewRenderData.explosionShake
         );
       }
       editorController.updatePreview(editorMobilePreviewCanvas);
