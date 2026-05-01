@@ -46,7 +46,8 @@ import {
   hasTimelineTimeChanged,
   getResizePreviewOffset
   ,
-  updateInspectorAccordionState
+  updateInspectorAccordionState,
+  textCueFontOptions
 } from "./EditorRoot";
 
 describe("formatTime", () => {
@@ -727,5 +728,36 @@ describe("generateWordTextCues", () => {
     });
 
     expect(cues.map((cue) => cue.id)).toEqual(["scene-1-2", "scene-2-2"]);
+  });
+});
+
+
+describe("textCueFontOptions", () => {
+  it("includes the extended Google font families for text cues", () => {
+    expect(textCueFontOptions).toEqual(expect.arrayContaining([
+      "Audiowide",
+      "Bitcount",
+      "Bruno Ace",
+      "Coiny",
+      "Doto",
+      "Faster One",
+      "Frijole",
+      "Galindo",
+      "Indie Flower",
+      "Miss Fajardose",
+      "Nosifer",
+      "Orbitron",
+      "Press Start 2P",
+      "Rubik Glitch",
+      "SUSE",
+      "Sankofa Display",
+      "Schoolbell",
+      "Science Gothic",
+      "Silkscreen",
+      "Sixtyfour",
+      "Syne Mono",
+      "Trade Winds",
+      "Workbench"
+    ]));
   });
 });

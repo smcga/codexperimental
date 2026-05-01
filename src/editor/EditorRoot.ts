@@ -47,6 +47,47 @@ const FIT_ALIGN_OPTIONS: Array<{ label: string; value: FitAlign }> = [
   { label: "Stretch/Fill", value: "fill" }
 ];
 
+const TEXT_CUE_FONT_OPTIONS = [
+  "inherit",
+  "Arial",
+  "Helvetica",
+  "Verdana",
+  "Tahoma",
+  "Trebuchet MS",
+  "Times New Roman",
+  "Georgia",
+  "Garamond",
+  "Courier New",
+  "Consolas",
+  "Impact",
+  "Comic Sans MS",
+  "Audiowide",
+  "Bitcount",
+  "Bruno Ace",
+  "Coiny",
+  "Doto",
+  "Faster One",
+  "Frijole",
+  "Galindo",
+  "Indie Flower",
+  "Miss Fajardose",
+  "Nosifer",
+  "Orbitron",
+  "Press Start 2P",
+  "Rubik Glitch",
+  "SUSE",
+  "Sankofa Display",
+  "Schoolbell",
+  "Science Gothic",
+  "Silkscreen",
+  "Sixtyfour",
+  "Syne Mono",
+  "Trade Winds",
+  "Workbench"
+] as const;
+
+export const textCueFontOptions: readonly string[] = TEXT_CUE_FONT_OPTIONS;
+
 const EASE_NAMES = [
   "linear",
   "easeInOutQuad",
@@ -1966,7 +2007,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           <label>
             <span>Font</span>
             <select data-selected-cue-field="font">
-              ${["inherit", "Arial", "Helvetica", "Verdana", "Tahoma", "Trebuchet MS", "Times New Roman", "Georgia", "Garamond", "Courier New", "Consolas", "Impact", "Comic Sans MS"]
+              ${textCueFontOptions
                 .map((font) => `<option value="${font}" ${font === typography.font ? "selected" : ""}>${font}</option>`)
                 .join("")}
             </select>
