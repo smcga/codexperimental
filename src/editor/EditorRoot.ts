@@ -251,6 +251,22 @@ export const formatTime = (value: number): string => {
 export const formatPlaybackTimeRange = (currentTime: number, duration: number): string =>
   `${formatTime(currentTime)} / ${formatTime(duration)}`;
 
+export const getPreviewSurfaceSize = (
+  availableWidth: number,
+  availableHeight: number,
+  maxWidth = 720,
+  aspectRatio = 16 / 9
+): { width: number; height: number } => {
+  if (availableWidth <= 0 || availableHeight <= 0 || aspectRatio <= 0) {
+    return { width: 0, height: 0 };
+  }
+  const boundedWidth = Math.min(availableWidth, maxWidth);
+  const widthFromHeight = availableHeight * aspectRatio;
+  const width = Math.max(1, Math.min(boundedWidth, widthFromHeight));
+  const height = Math.max(1, width / aspectRatio);
+  return { width, height };
+};
+
 export const getClipPercent = (
   start: number,
   end: number,
@@ -1156,6 +1172,21 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     });
   };
 
+  const syncPreviewSurfaceSize = (): void => {
+    const previewPanel = init.container.querySelector<HTMLElement>(".editor-preview-panel");
+    const previewToolbar = init.container.querySelector<HTMLElement>(".editor-preview-toolbar");
+    const previewShell = init.container.querySelector<HTMLElement>(".editor-preview");
+    if (!previewPanel || !previewShell) {
+      return;
+    }
+    const toolbarHeight = previewToolbar?.offsetHeight ?? 0;
+    const availableWidth = previewPanel.clientWidth;
+    const availableHeight = Math.max(0, previewPanel.clientHeight - toolbarHeight - 4);
+    const size = getPreviewSurfaceSize(availableWidth, availableHeight);
+    previewShell.style.width = `${size.width}px`;
+    previewShell.style.height = `${size.height}px`;
+  };
+
   const render = (): void => {
     if (!state.timeline) {
       init.container.innerHTML = `<div class="editor-loading">Loading editor…</div>`;
@@ -1262,6 +1293,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     renderTransport();
     bindHeaderActions();
     refreshPreviewCanvas();
+    syncPreviewSurfaceSize();
 
     const nextInspector = init.container.querySelector<HTMLDivElement>(".editor-inspector-body");
     if (nextInspector && inspectorScrollState && inspectorScrollState.sceneId === state.selectedSceneId) {
@@ -1276,7 +1308,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       const topRow = workspace.querySelector<HTMLElement>(".editor-top-row");
       if (topRow) {
         topRow.style.height = `${getWorkspaceTopHeightPx(workspace.clientHeight, workspaceTopRatio)}px`;
-        refreshPreviewCanvas();
+        syncPreviewSurfaceSize();
       }
     }
     const workspaceResizeHandle = init.container.querySelector<HTMLElement>("[data-region='workspace-resize-handle']");
@@ -1290,7 +1322,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       const topRow = currentWorkspace.querySelector<HTMLElement>(".editor-top-row");
       if (topRow) {
         topRow.style.height = `${getWorkspaceTopHeightPx(currentWorkspace.clientHeight, workspaceTopRatio)}px`;
-        refreshPreviewCanvas();
+        syncPreviewSurfaceSize();
       }
       event.preventDefault();
     });
@@ -2031,7 +2063,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     const topRow = workspace.querySelector<HTMLElement>(".editor-top-row");
     if (topRow) {
       topRow.style.height = `${getWorkspaceTopHeightPx(workspace.clientHeight, workspaceTopRatio)}px`;
-      refreshPreviewCanvas();
+      syncPreviewSurfaceSize();
     }
   };
 
@@ -3430,6 +3462,13 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     updatePreview: (source: HTMLCanvasElement) => {
       if (!previewCanvas || !previewContext || !editorVisible) {
         return;
+      }
+      syncPreviewSurfaceSize();
+      const measuredWidth = Math.max(1, Math.floor(previewCanvas.clientWidth));
+      const measuredHeight = Math.max(1, Math.floor(previewCanvas.clientHeight));
+      if (previewCanvas.width !== measuredWidth || previewCanvas.height !== measuredHeight) {
+        previewCanvas.width = measuredWidth;
+        previewCanvas.height = measuredHeight;
       }
       const { width, height } = previewCanvas;
       const sourceRatio = source.width / source.height;
