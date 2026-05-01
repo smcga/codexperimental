@@ -3488,7 +3488,6 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       if (!previewCanvas || !previewContext || !editorVisible) {
         return;
       }
-      syncPreviewSurfaceSize();
       const measuredWidth = Math.max(1, Math.floor(previewCanvas.clientWidth));
       const measuredHeight = Math.max(1, Math.floor(previewCanvas.clientHeight));
       if (previewCanvas.width !== measuredWidth || previewCanvas.height !== measuredHeight) {
