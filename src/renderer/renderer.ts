@@ -6,6 +6,7 @@ import { CameraState, computeDynamicCamera } from "./camera";
 import { EraConstraints, getEraConstraints, quantizeToPalette } from "./eraConstraints";
 import { effectRegistry, resetEffects } from "./effects";
 import { computeFraming, FramingOverride, FramingState } from "./framing";
+import { drawMobileTransitionWithFallback } from "./mobileTransitionFallback";
 import { resolveMonochrome } from "./monochrome";
 import { computePresentTransform, computeScreenSafeRect } from "./present";
 import { renderTextCues } from "./text/textRenderer";
@@ -281,17 +282,23 @@ export class Renderer {
       this.renderSectionToMobileScreen(this.mobileFromCtx, transition.from, time, delta, audio, shakeX, shakeY, camera, framing);
       this.renderSectionToMobileScreen(this.mobileToCtx, transition.to, time, delta, audio, shakeX, shakeY, camera, framing);
       const definition = transitionRegistry[transition.type];
-      definition.drawMobile?.(this.getTransitionRendererApi(), {
+      const mobileContext = {
         ctx: targetCtx,
         progress: transition.progress,
         duration: transition.duration,
         width,
         height,
         audio
-      });
-      if (!definition.drawMobile) {
-        this.drawMobileDefaultCrossfade(targetCtx, transition.progress, width, height);
-      }
+      };
+      drawMobileTransitionWithFallback(
+        definition,
+        this.getTransitionRendererApi(),
+        mobileContext,
+        () => this.drawMobileDefaultCrossfade(targetCtx, transition.progress, transition.duration, width, height),
+        (error) => {
+          console.warn(`[renderer] Mobile transition "${transition.type}" failed; using crossfade fallback.`, error);
+        }
+      );
       return;
     }
 

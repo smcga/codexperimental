@@ -81,6 +81,7 @@ Automation supports numeric params only; non-numeric values fall back to the bas
   - A transition is active for `section.transition.duration` seconds after a section starts.
   - Transition progress is clamped from `0` to `1`.
   - The transition type uses the incoming section `transition.in` (normalized to `fade` when omitted in JSON).
+  - On mobile-fit renders, transitions without a dedicated mobile renderer (or transitions whose mobile renderer errors) automatically fall back to a crossfade so playback continues without blank frames.
   - Supported transition types: `fade`, `wipe`, `slide-left`, `slide-right`, `slide-up`, `slide-down`, `iris`, `flash`, `glitch`, `shatter`, `signal-collapse`, `camera-punch-through`, `bitplane-wipe`, `audio-reactive-particle`, `checkerboard-wipe`, `venetian-blinds`, `radial-wipe`, `noise-threshold`, `portal-zoom`, `whip-pan`, `quantum-slice`, `chromatic-bloom`, `neural-feedback`.
 - `textCues` are active only while `start <= currentTime <= end`.
 - If the final section omits an explicit `end`, it is treated as "until audio ends" and is finalized after audio metadata loads.
