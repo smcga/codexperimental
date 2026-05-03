@@ -19,6 +19,7 @@ import {
   getNewSceneTimeRange,
   getNextNewSectionName,
   splitSceneAtTime,
+  getSplitTargetSceneId,
   getRandomEffectParams,
   getRandomEffectSelection,
   getScenePlayingAtTime,
@@ -524,6 +525,26 @@ describe("splitSceneAtTime", () => {
     expect(splitSceneAtTime(sections, "b", 10)).toBeNull();
     expect(splitSceneAtTime(sections, "b", 20)).toBeNull();
     expect(splitSceneAtTime(sections, "missing", 15)).toBeNull();
+  });
+});
+
+describe("getSplitTargetSceneId", () => {
+  const sections = [
+    { id: "intro", start: 0, effect: "starfield" },
+    { id: "calm sunset", start: 100, effect: "sunset" },
+    { id: "outro", start: 140, effect: "tunnel" }
+  ];
+
+  it("uses selected scene id when it exists", () => {
+    expect(getSplitTargetSceneId("calm sunset", sections, 5)).toBe("calm sunset");
+  });
+
+  it("falls back to scene under the playhead when selection is missing", () => {
+    expect(getSplitTargetSceneId(null, sections, 110.8)).toBe("calm sunset");
+  });
+
+  it("returns null when there is no valid selected scene and no playhead scene", () => {
+    expect(getSplitTargetSceneId("missing", sections, Number.NaN)).toBeNull();
   });
 });
 

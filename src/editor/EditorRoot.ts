@@ -511,6 +511,17 @@ export const splitSceneAtTime = (
   return { sections: withSplit, splitSceneId: nextId };
 };
 
+export const getSplitTargetSceneId = (
+  selectedSceneId: string | null,
+  scenes: RawSectionConfig[],
+  playheadTime: number
+): string | null => {
+  if (selectedSceneId && scenes.some((scene) => scene.id === selectedSceneId)) {
+    return selectedSceneId;
+  }
+  return getScenePlayingAtTime(scenes, playheadTime)?.id ?? null;
+};
+
 export const getRandomEffectSelection = (effectNames: string[], randomValue = Math.random): string => {
   if (effectNames.length === 0) {
     return "starfield";
@@ -1261,7 +1272,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           <div class="editor-scene-actions-block">
             <div class="editor-section-title editor-subsection-title">SCENE ACTIONS</div>
             <button type="button" class="editor-add editor-add-scene" data-action="add-scene">+ New scene</button>
-            <button type="button" data-action="split-selected" ${state.selectedSceneId ? "" : "disabled"}>Split</button>
+            <button type="button" data-action="split-selected" ${(state.timeline?.sections.length ?? 0) > 0 ? "" : "disabled"}>Split</button>
             <button type="button" data-action="duplicate-selected" ${state.selectedSceneId ? "" : "disabled"}>Duplicate</button>
             <button type="button" data-action="delete-selected" ${state.selectedSceneId ? "" : "disabled"}>Delete</button>
           </div>
@@ -3461,10 +3472,14 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     });
 
     init.container.querySelector<HTMLButtonElement>("[data-action='split-selected']")?.addEventListener("click", () => {
-      if (!state.selectedSceneId || !state.timeline) {
+      if (!state.timeline) {
         return;
       }
-      const splitResult = splitSceneAtTime(state.timeline.sections, state.selectedSceneId, currentDemoTime, (baseId) => {
+      const targetSceneId = getSplitTargetSceneId(state.selectedSceneId, state.timeline.sections, currentDemoTime);
+      if (!targetSceneId) {
+        return;
+      }
+      const splitResult = splitSceneAtTime(state.timeline.sections, targetSceneId, currentDemoTime, (baseId) => {
         const used = new Set(state.timeline?.sections.map((scene) => scene.id) ?? []);
         let nextId = `${baseId} (split)`;
         let counter = 2;
