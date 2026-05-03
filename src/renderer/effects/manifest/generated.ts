@@ -40,6 +40,7 @@ import { kefrens_barsManifest } from "./kefrens_bars.manifest";
 import { lens_flareManifest } from "./lens_flare.manifest";
 import { lens_wobblerManifest } from "./lens_wobbler.manifest";
 import { lightningManifest } from "./lightning.manifest";
+import { liveDomWaveOpticsManifest } from "./liveDomWaveOptics.manifest";
 import { lissajousManifest } from "./lissajous.manifest";
 import { marbleManifest } from "./marble.manifest";
 import { matrix_rainManifest } from "./matrix_rain.manifest";
@@ -140,6 +141,7 @@ export const generatedEffectManifests = [
   lens_flareManifest,
   lens_wobblerManifest,
   lightningManifest,
+  liveDomWaveOpticsManifest,
   lissajousManifest,
   marbleManifest,
   matrix_rainManifest,

@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/transitions/index.ts`.
 
-Total transitions: **14**.
+Total transitions: **23**.
 
 ## Table of contents
 
@@ -20,6 +20,15 @@ Total transitions: **14**.
 - [Transition: camera-punch-through](#transition-camera-punch-through)
 - [Transition: bitplane-wipe](#transition-bitplane-wipe)
 - [Transition: audio-reactive-particle](#transition-audio-reactive-particle)
+- [Transition: checkerboard-wipe](#transition-checkerboard-wipe)
+- [Transition: venetian-blinds](#transition-venetian-blinds)
+- [Transition: radial-wipe](#transition-radial-wipe)
+- [Transition: noise-threshold](#transition-noise-threshold)
+- [Transition: portal-zoom](#transition-portal-zoom)
+- [Transition: whip-pan](#transition-whip-pan)
+- [Transition: quantum-slice](#transition-quantum-slice)
+- [Transition: chromatic-bloom](#transition-chromatic-bloom)
+- [Transition: neural-feedback](#transition-neural-feedback)
 
 ## Transition matrix
 
@@ -39,6 +48,15 @@ Total transitions: **14**.
 | `camera-punch-through` | Camera Punch-Through | yes | yes | yes |
 | `bitplane-wipe` | Bitplane Wipe | yes | yes | yes |
 | `audio-reactive-particle` | Audio-reactive Particle | yes | yes | no |
+| `checkerboard-wipe` | Checkerboard Wipe | yes | no | no |
+| `venetian-blinds` | Venetian Blinds | yes | no | no |
+| `radial-wipe` | Radial Wipe | yes | no | no |
+| `noise-threshold` | Noise Threshold | yes | no | no |
+| `portal-zoom` | Portal Zoom | yes | no | no |
+| `whip-pan` | Whip Pan | yes | no | no |
+| `quantum-slice` | Quantum Slice | yes | no | no |
+| `chromatic-bloom` | Chromatic Bloom | yes | no | no |
+| `neural-feedback` | Neural Feedback | yes | no | no |
 
 ## Transitions
 
@@ -138,4 +156,67 @@ Total transitions: **14**.
 - **Label:** Audio-reactive Particle
 - **Visible in editor/debug selectors:** yes
 - **Has mobile renderer:** yes
+- **Has state builder:** no
+
+### Transition: checkerboard-wipe
+
+- **Label:** Checkerboard Wipe
+- **Visible in editor/debug selectors:** yes
+- **Has mobile renderer:** no
+- **Has state builder:** no
+
+### Transition: venetian-blinds
+
+- **Label:** Venetian Blinds
+- **Visible in editor/debug selectors:** yes
+- **Has mobile renderer:** no
+- **Has state builder:** no
+
+### Transition: radial-wipe
+
+- **Label:** Radial Wipe
+- **Visible in editor/debug selectors:** yes
+- **Has mobile renderer:** no
+- **Has state builder:** no
+
+### Transition: noise-threshold
+
+- **Label:** Noise Threshold
+- **Visible in editor/debug selectors:** yes
+- **Has mobile renderer:** no
+- **Has state builder:** no
+
+### Transition: portal-zoom
+
+- **Label:** Portal Zoom
+- **Visible in editor/debug selectors:** yes
+- **Has mobile renderer:** no
+- **Has state builder:** no
+
+### Transition: whip-pan
+
+- **Label:** Whip Pan
+- **Visible in editor/debug selectors:** yes
+- **Has mobile renderer:** no
+- **Has state builder:** no
+
+### Transition: quantum-slice
+
+- **Label:** Quantum Slice
+- **Visible in editor/debug selectors:** yes
+- **Has mobile renderer:** no
+- **Has state builder:** no
+
+### Transition: chromatic-bloom
+
+- **Label:** Chromatic Bloom
+- **Visible in editor/debug selectors:** yes
+- **Has mobile renderer:** no
+- **Has state builder:** no
+
+### Transition: neural-feedback
+
+- **Label:** Neural Feedback
+- **Visible in editor/debug selectors:** yes
+- **Has mobile renderer:** no
 - **Has state builder:** no

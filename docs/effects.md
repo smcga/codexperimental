@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **98**.
+Total effects: **99**.
 
 ## Table of contents
 
@@ -49,6 +49,7 @@ Total effects: **98**.
 - [Effect: lens_wobbler](#effect-lens-wobbler)
 - [Effect: lightning](#effect-lightning)
 - [Effect: lissajous](#effect-lissajous)
+- [Effect: liveDomWaveOptics](#effect-liveDomWaveOptics)
 - [Effect: marble](#effect-marble)
 - [Effect: matrix_rain](#effect-matrix-rain)
 - [Effect: metaballs](#effect-metaballs)
@@ -124,11 +125,11 @@ Total effects: **98**.
 ### Common parameter patterns
 
 - `speed` (used in 48 effects)
-- `seed` (used in 46 effects)
+- `seed` (used in 47 effects)
 - `audioReact` (used in 34 effects)
 - `glow` (used in 19 effects)
 - `beatKick` (used in 14 effects)
-- `audioReactive` (used in 13 effects)
+- `audioReactive` (used in 14 effects)
 - `trail` (used in 10 effects)
 - `scale` (used in 10 effects)
 - `palette` (used in 10 effects)
@@ -1747,6 +1748,41 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 ```json
 {
   "effect": "lissajous",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: liveDomWaveOptics
+
+- **Registry key:** `liveDomWaveOptics`
+- **Implementation:** `src/renderer/effects/liveDomWaveOpticsEffect.ts` (class `LiveDomWaveOpticsEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Procedural approximation of optical diffraction/caustic behavior over a synthetic DOM-like panel lattice; designed as an art-direction stand-in for physically-accurate live DOM light transport.
+- **Audio features:** beat, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.animationSpeed` | number | 1 | min 0, max 3 | Animation Speed | yes |
+| `params.audioReactive` | number | 0.35 | min 0, max 1 | Audio Reactive | yes |
+| `params.causticStrength` | number | 0.9 | min 0, max 2 | Caustic Strength | yes |
+| `params.diffraction` | number | 0.75 | min 0, max 1.5 | Diffraction | yes |
+| `params.dispersion` | number | 0.8 | min 0, max 1.5 | Dispersion | yes |
+| `params.geometryDensity` | number | 1 | min 0.25, max 2 | Geometry Density | yes |
+| `params.gloss` | number | 0.5 | min 0, max 1.5 | Gloss | yes |
+| `params.interference` | number | 0.7 | min 0, max 2 | Interference | yes |
+| `params.refraction` | number | 0.6 | min 0, max 1.5 | Refraction | yes |
+| `params.seed` | number | 7 | min 0, max 9999 | Seed | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "liveDomWaveOptics",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
