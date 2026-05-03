@@ -77,6 +77,7 @@ import {
   normalizeDoodleBrushColor
 } from "./doodleComposer";
 import { registerViewOncePerSession, subscribeToLiveViews } from "./viewCounter";
+import { isReleaseMode, shouldEnableCommunityFeatures, shouldEnableViewCounter, shouldShowShareUi } from "./releaseMode";
 import { buildSharePayload, canUseNativeShare, getShareLink, ShareLinkPlatform } from "./share";
 import { getOverlayPresentation, OverlayMode } from "./overlayContent";
 import { buildTransitionOptionMarkup } from "./renderer/transitions";
@@ -180,7 +181,10 @@ const effectIdeaGenerateButton = document.querySelector<HTMLButtonElement>("#eff
 const effectIdeaSubmitButton = document.querySelector<HTMLButtonElement>("#effect-idea-submit");
 
 const queryParams = new URLSearchParams(window.location.search);
-const releaseMode = queryParams.get("release") === "1";
+const releaseMode = isReleaseMode(queryParams);
+const communityFeaturesEnabled = shouldEnableCommunityFeatures(releaseMode);
+const viewCounterEnabled = shouldEnableViewCounter(releaseMode);
+const shareUiEnabled = shouldShowShareUi(releaseMode);
 const editorModeFromQuery = queryParams.get("editor") === "1";
 const renderSettings = getRenderSettings(queryParams);
 const qualityState = createQualityState(renderSettings.qualityScale, renderSettings.autoQuality);
@@ -338,6 +342,9 @@ function updateViewCounter(count: number): void {
 }
 
 async function handlePlaybackStarted(): Promise<void> {
+  if (!viewCounterEnabled) {
+    return;
+  }
   const count = await registerViewOncePerSession();
   if (count !== null) {
     updateViewCounter(count);
@@ -389,9 +396,13 @@ window.addEventListener(
   { once: true }
 );
 
-subscribeToLiveViews((count) => {
-  updateViewCounter(count);
-});
+if (viewCounterEnabled) {
+  subscribeToLiveViews((count) => {
+    updateViewCounter(count);
+  });
+} else {
+  viewCounter?.classList.add("hidden");
+}
 
 function updateOverlayActions(): void {
   if (!overlay || !overlayActions) {
@@ -421,7 +432,7 @@ function updateOverlayActions(): void {
   if (overlayShareButton) {
     overlayShareButton.textContent = presentation.shareLabel;
   }
-  overlayShareButton?.classList.toggle("hidden", !presentation.showShare);
+  overlayShareButton?.classList.toggle("hidden", !presentation.showShare || !shareUiEnabled);
   if (overlayRestartButton) {
     overlayRestartButton.textContent = presentation.restartLabel;
   }
@@ -429,11 +440,11 @@ function updateOverlayActions(): void {
   if (addDoodleButton) {
     addDoodleButton.textContent = presentation.doodleLabel;
   }
-  addDoodleButton?.classList.toggle("hidden", !presentation.showDoodle);
+  addDoodleButton?.classList.toggle("hidden", !presentation.showDoodle || !communityFeaturesEnabled);
   if (addEffectIdeaButton) {
     addEffectIdeaButton.textContent = presentation.effectIdeaLabel;
   }
-  addEffectIdeaButton?.classList.toggle("hidden", !presentation.showEffectIdea);
+  addEffectIdeaButton?.classList.toggle("hidden", !presentation.showEffectIdea || !communityFeaturesEnabled);
   if (!presentation.showActions) {
     setSharePanelVisible(false);
     setShareStatus("");
@@ -501,6 +512,9 @@ async function copyShareLink(): Promise<void> {
 }
 
 async function shareDemo(): Promise<void> {
+  if (!shareUiEnabled) {
+    return;
+  }
   syncShareLinks();
   const payload = buildSharePayload(getShareUrl());
   if (canUseNativeShare(navigator.share)) {
@@ -584,6 +598,9 @@ function resetDoodleCanvas(): void {
 }
 
 function setDoodleModalVisible(visible: boolean): void {
+  if (!communityFeaturesEnabled) {
+    return;
+  }
   if (!doodleModal) {
     return;
   }
@@ -866,6 +883,9 @@ function previewGeneratedIdea(): void {
 }
 
 function setEffectIdeaModalVisible(visible: boolean): void {
+  if (!communityFeaturesEnabled) {
+    return;
+  }
   if (!effectIdeaModal) {
     return;
   }
