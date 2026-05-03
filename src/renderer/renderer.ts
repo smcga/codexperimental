@@ -10,6 +10,7 @@ import { resolveMonochrome } from "./monochrome";
 import { computePresentTransform, computeScreenSafeRect } from "./present";
 import { renderTextCues } from "./text/textRenderer";
 import {
+  MobileSlotRect,
   MobileTransitionDrawContext,
   TransitionDrawContext,
   TransitionRendererApi,
@@ -281,21 +282,50 @@ export class Renderer {
       this.renderSectionToMobileScreen(this.mobileFromCtx, transition.from, time, delta, audio, shakeX, shakeY, camera, framing);
       this.renderSectionToMobileScreen(this.mobileToCtx, transition.to, time, delta, audio, shakeX, shakeY, camera, framing);
       const definition = transitionRegistry[transition.type];
-      definition.drawMobile?.(this.getTransitionRendererApi(), {
-        ctx: targetCtx,
-        progress: transition.progress,
-        duration: transition.duration,
-        width,
-        height,
-        audio
-      });
-      if (!definition.drawMobile) {
+      if (definition.drawMobile) {
+        try {
+          definition.drawMobile(this.getTransitionRendererApi(), {
+            ctx: targetCtx,
+            progress: transition.progress,
+            duration: transition.duration,
+            width,
+            height,
+            audio,
+            fromSlots: this.getMobileSlotRects(transition.from, framing),
+            toSlots: this.getMobileSlotRects(transition.to, framing)
+          });
+        } catch (error) {
+          console.warn(`[renderer] mobile transition "${transition.type}" failed, falling back to crossfade`, error);
+          this.drawMobileDefaultCrossfade(targetCtx, transition.progress, transition.duration, width, height);
+        }
+      } else {
         this.drawMobileDefaultCrossfade(targetCtx, transition.progress, width, height);
       }
       return;
     }
 
     this.renderSectionToMobileScreen(targetCtx, section, time, delta, audio, shakeX, shakeY, camera, framing);
+  }
+
+  private getMobileSlotRects(section: SectionConfig, framing: FramingState): MobileSlotRect[] {
+    const entries = [{ fitAlign: section.fitAlign }, ...section.layers.map((layer) => ({ fitAlign: layer.fitAlign }))];
+    return entries.map(({ fitAlign }) => {
+      const transform = computePresentTransform(
+        framing.screenW,
+        framing.screenH,
+        this.baseWidth,
+        this.baseHeight,
+        fitAlign,
+        fitAlign === "fill" ? "desktopCinematic" : "containAlign"
+      );
+      return {
+        align: fitAlign,
+        x: transform.dx,
+        y: transform.dy,
+        w: this.baseWidth * transform.scale,
+        h: this.baseHeight * transform.scale
+      };
+    });
   }
 
   private drawCameraPunchThroughMobileTransition(
@@ -627,7 +657,7 @@ export class Renderer {
       drawMobileDefaultCrossfade: (context) => this.drawMobileDefaultCrossfade(context.ctx, context.progress, context.duration, context.width, context.height),
       drawMobileShatter: (context) => this.drawMobileShatterTransition(context),
       drawMobileCameraPunchThrough: (context) =>
-        this.drawCameraPunchThroughMobileTransition(context.ctx, context.progress, context.width, context.height),
+        this.drawCameraPunchThroughMobileTransition(context.ctx, context.progress, context.duration, context.width, context.height),
       drawMobileBitplaneWipe: (context) => this.drawMobileBitplaneWipeTransition(context),
       drawMobileAudioReactiveParticle: (context) => this.drawMobileAudioReactiveParticleTransition(context)
     };

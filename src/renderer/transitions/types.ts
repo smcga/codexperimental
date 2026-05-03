@@ -1,4 +1,5 @@
 import { AudioFeatures } from "../../audio/audioPlayer";
+import { FitAlign } from "../../config/loadConfig";
 import { CameraState } from "../camera";
 
 export type TransitionDrawContext = {
@@ -17,6 +18,14 @@ export type TransitionDrawContext = {
   audio: AudioFeatures;
 };
 
+export type MobileSlotRect = {
+  align: FitAlign;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+};
+
 export type MobileTransitionDrawContext = {
   ctx: CanvasRenderingContext2D;
   progress: number;
@@ -24,6 +33,8 @@ export type MobileTransitionDrawContext = {
   width: number;
   height: number;
   audio: AudioFeatures;
+  fromSlots: MobileSlotRect[];
+  toSlots: MobileSlotRect[];
 };
 
 export type TransitionRendererApi = {
