@@ -26,7 +26,16 @@ describe("glitchTransition", () => {
 
   it("routes mobile draw to default crossfade", () => {
     const drawMobileDefaultCrossfade = vi.fn();
-    const mobileContext = { ctx: {} as CanvasRenderingContext2D, progress: 0.5, width: 320, height: 180, audio: mockContext.audio };
+    const mobileContext = {
+      ctx: {} as CanvasRenderingContext2D,
+      progress: 0.5,
+      duration: 1.2,
+      width: 320,
+      height: 180,
+      audio: mockContext.audio,
+      fromSlots: [],
+      toSlots: []
+    };
     glitchTransition.drawMobile?.({ drawMobileDefaultCrossfade } as never, mobileContext);
     expect(drawMobileDefaultCrossfade).toHaveBeenCalledWith(mobileContext);
   });
