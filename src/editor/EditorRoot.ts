@@ -2848,32 +2848,42 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         ${paramOptions.map((option) => `<option value="${option}"></option>`).join("")}
       </datalist>
       <div class="editor-automation-header">
-        <span>Param</span>
-        <span>From</span>
-        <span>To</span>
-        <span>Start</span>
-        <span>End</span>
-        <span>Ease</span>
-        <span class="editor-automation-actions-label">Actions</span>
+        <div class="editor-automation-header-row editor-automation-header-row-primary">
+          <span>Param</span>
+          <span>From</span>
+          <span>To</span>
+          <span>Start</span>
+          <span>End</span>
+        </div>
+        <div class="editor-automation-header-row editor-automation-header-row-secondary">
+          <span>Ease</span>
+          <span class="editor-automation-actions-label">Actions</span>
+        </div>
       </div>
       <div class="editor-automation-list">
         ${automation
           .map(
             (entry, index) => `
             <div class="editor-automation-row" data-index="${index}">
-              <input type="text" list="${listId}" data-field="param" value="${entry.param}" />
-              <input type="number" step="0.1" data-field="from" value="${entry.from}" />
-              <input type="number" step="0.1" data-field="to" value="${entry.to}" />
-              <input type="number" step="0.1" data-field="t0" value="${formatEditableTime(entry.t0)}" />
-              <input type="number" step="0.1" data-field="t1" value="${formatEditableTime(entry.t1)}" />
-              <select data-field="ease">
-                <option value="">(none)</option>
-                ${EASE_NAMES.map((name) => `<option value="${name}" ${name === entry.ease ? "selected" : ""}>${name}</option>`).join("")}
-              </select>
-              <button type="button" data-action="move-up">↑</button>
-              <button type="button" data-action="move-down">↓</button>
-              <button type="button" data-action="add-point">+Pt</button>
-              <button type="button" data-action="delete">Delete</button>
+              <div class="editor-automation-row-primary">
+                <input type="text" list="${listId}" data-field="param" value="${entry.param}" />
+                <input type="number" step="0.1" data-field="from" value="${entry.from}" />
+                <input type="number" step="0.1" data-field="to" value="${entry.to}" />
+                <input type="number" step="0.1" data-field="t0" value="${formatEditableTime(entry.t0)}" />
+                <input type="number" step="0.1" data-field="t1" value="${formatEditableTime(entry.t1)}" />
+              </div>
+              <div class="editor-automation-row-secondary">
+                <select data-field="ease">
+                  <option value="">(none)</option>
+                  ${EASE_NAMES.map((name) => `<option value="${name}" ${name === entry.ease ? "selected" : ""}>${name}</option>`).join("")}
+                </select>
+                <div class="editor-automation-row-actions">
+                  <button type="button" data-action="move-up">↑</button>
+                  <button type="button" data-action="move-down">↓</button>
+                  <button type="button" data-action="add-point">+Pt</button>
+                  <button type="button" data-action="delete">Delete</button>
+                </div>
+              </div>
             </div>
             <div class="editor-automation-curve" data-curve-index="${index}">
               <svg viewBox="0 0 1000 140" preserveAspectRatio="none" data-curve-svg="${index}" style="width:100%;height:92px;background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.15);border-radius:4px;cursor:crosshair;"></svg>

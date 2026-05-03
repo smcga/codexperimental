@@ -1390,14 +1390,26 @@ body,
 
 .editor-automation-header {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr)) minmax(140px, 1fr) auto;
-  gap: 0.4rem;
+  gap: 0.3rem;
   font-size: 0.65rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: rgba(215, 247, 255, 0.7);
   padding-bottom: 0.2rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.editor-automation-header-row {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.editor-automation-header-row-primary {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.editor-automation-header-row-secondary {
+  grid-template-columns: minmax(120px, 1fr) auto;
 }
 
 .editor-automation-actions-label {
@@ -1412,7 +1424,25 @@ body,
 }
 
 .editor-automation-row {
-  grid-template-columns: repeat(5, minmax(0, 1fr)) minmax(120px, 1fr) auto auto auto;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.editor-automation-row-primary {
+  display: grid;
+  gap: 0.4rem;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.editor-automation-row-secondary {
+  display: grid;
+  gap: 0.4rem;
+  grid-template-columns: minmax(120px, 1fr) auto;
+}
+
+.editor-automation-row-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.4rem;
 }
 
 .editor-automation-row input,
@@ -1421,9 +1451,22 @@ body,
 }
 
 @media (max-width: 1100px) {
-  .editor-automation-header,
-  .editor-automation-row {
+  .editor-automation-header-row-primary {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .editor-automation-header-row-secondary,
+  .editor-automation-row-secondary {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .editor-automation-row-primary {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .editor-automation-row-actions {
+    justify-content: flex-start;
+    flex-wrap: wrap;
   }
 
   .editor-automation-actions-label {
