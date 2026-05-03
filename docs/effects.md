@@ -2,11 +2,12 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **98**.
+Total effects: **99**.
 
 ## Table of contents
 
 - [Effect: amiga_showcase](#effect-amiga-showcase)
+- [Effect: ascii_arcade_mashup](#effect-ascii-arcade-mashup)
 - [Effect: blobs](#effect-blobs)
 - [Effect: boids_simulation](#effect-boids-simulation)
 - [Effect: bokeh](#effect-bokeh)
@@ -123,10 +124,10 @@ Total effects: **98**.
 
 ### Common parameter patterns
 
-- `speed` (used in 48 effects)
-- `seed` (used in 46 effects)
+- `speed` (used in 49 effects)
+- `seed` (used in 47 effects)
 - `audioReact` (used in 34 effects)
-- `glow` (used in 19 effects)
+- `glow` (used in 20 effects)
 - `beatKick` (used in 14 effects)
 - `audioReactive` (used in 13 effects)
 - `trail` (used in 10 effects)
@@ -134,7 +135,7 @@ Total effects: **98**.
 - `palette` (used in 10 effects)
 - `hueShift` (used in 9 effects)
 - `lineWidth` (used in 9 effects)
-- `count` (used in 8 effects)
+- `scanlines` (used in 8 effects)
 
 ## Demoscene chronology (inferred)
 
@@ -282,6 +283,37 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 ```json
 {
   "effect": "amiga_showcase",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: ascii_arcade_mashup
+
+- **Registry key:** `ascii_arcade_mashup`
+- **Implementation:** `src/renderer/effects/asciiArcadeMashup.ts` (class `AsciiArcadeMashupEffect`)
+- **Renderer:** Canvas2D
+- **Description:** ASCII mini-scenes inspired by arcade classics (Pong, maze chase, asteroid field, invader wave) that dither-blend into each other.
+- **Audio features:** None detected
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.blend` | number | 0.5 | min 0, max 1 | Blend Bias | yes |
+| `params.density` | number | 1 | min 0.5, max 1.8 | Density | yes |
+| `params.glow` | number | 0.45 | min 0, max 1 | Glow | yes |
+| `params.scanlines` | number | 0.28 | min 0, max 1 | Scanlines | yes |
+| `params.seed` | number | 1980 | min 0, max 9999 | Seed | yes |
+| `params.speed` | number | 1 | min 0.2, max 3 | Speed | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "ascii_arcade_mashup",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
