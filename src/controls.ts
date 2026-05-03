@@ -83,3 +83,7 @@ export function shouldHandleGlobalShortcut(target: EventTarget | null): boolean 
 
   return true;
 }
+
+export function isPlayPauseShortcutKey(key: string, code: string): boolean {
+  return key === " " || key.toLowerCase() === "spacebar" || code === "Space";
+}
