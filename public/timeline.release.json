@@ -169,7 +169,7 @@
     },
     {
       "id": "era8bit-rotozoom",
-      "start": "01:05",
+      "start": 65.972,
       "effect": "rotozoom",
       "params": {
         "speed": 1
@@ -178,7 +178,7 @@
         {
           "param": "speed",
           "from": 1,
-          "to": 2.2,
+          "to": 6,
           "t0": 65,
           "t1": 76.6,
           "ease": "easeInSine"
@@ -199,7 +199,11 @@
           "opacity": 0.1,
           "params": {}
         }
-      ]
+      ],
+      "transition": {
+        "in": "checkerboard-wipe",
+        "duration": 0.8
+      }
     },
     {
       "id": "scene-kgx2ic",
@@ -229,7 +233,7 @@
     },
     {
       "id": "hook-hit-01160",
-      "start": 74.796,
+      "start": 74.436,
       "effect": "glitch",
       "params": {
         "amount": 0.24
@@ -261,7 +265,7 @@
     },
     {
       "id": "era8bit-ribbons",
-      "start": 78.09,
+      "start": 77.85,
       "effect": "ribbons",
       "params": {
         "speed": 0.92,
@@ -315,7 +319,7 @@
     },
     {
       "id": "era8bit-glitch",
-      "start": "01:32",
+      "start": 94.183,
       "effect": "gameOfLife",
       "params": {
         "speed": 2.3,
@@ -374,7 +378,7 @@
     },
     {
       "id": "scene-cecavf",
-      "start": 96.545,
+      "start": 97.819,
       "effect": "fireworks_display",
       "params": {
         "speed": 1,
