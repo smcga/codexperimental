@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   getDebugOverlayVisibilityAfterEditorToggle,
   getEndSkipTime,
+  isPlayPauseShortcutKey,
   getRelativeSeekTime,
   getSecondHalfSkipTime,
   shouldHandleGlobalShortcut
@@ -86,5 +87,19 @@ describe("getDebugOverlayVisibilityAfterEditorToggle", () => {
   it("keeps the current debug overlay visibility when editor mode is off", () => {
     expect(getDebugOverlayVisibilityAfterEditorToggle(false, true)).toBe(true);
     expect(getDebugOverlayVisibilityAfterEditorToggle(false, false)).toBe(false);
+  });
+});
+
+describe("isPlayPauseShortcutKey", () => {
+  it("accepts modern KeyboardEvent space key values", () => {
+    expect(isPlayPauseShortcutKey(" ", "Space")).toBe(true);
+  });
+
+  it("accepts legacy spacebar key values", () => {
+    expect(isPlayPauseShortcutKey("Spacebar", "")).toBe(true);
+  });
+
+  it("rejects non-space keys", () => {
+    expect(isPlayPauseShortcutKey("k", "KeyK")).toBe(false);
   });
 });
