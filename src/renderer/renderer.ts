@@ -299,7 +299,7 @@ export class Renderer {
           this.drawMobileDefaultCrossfade(targetCtx, transition.progress, transition.duration, width, height);
         }
       } else {
-        this.drawMobileDefaultCrossfade(targetCtx, transition.progress, width, height);
+        this.drawMobileDefaultCrossfade(targetCtx, transition.progress, transition.duration, width, height);
       }
       return;
     }

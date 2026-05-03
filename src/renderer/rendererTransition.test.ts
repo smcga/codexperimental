@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
 import { computeCameraPunchThroughTransitionState } from "./transitions/cameraPunchThrough";
 
@@ -18,5 +20,12 @@ describe("computeCameraPunchThroughTransitionState", () => {
     expect(mid.toAlpha).toBeGreaterThan(start.toAlpha);
     expect(end.impactAlpha).toBeGreaterThan(mid.impactAlpha);
     expect(end.fromAlpha).toBeLessThan(mid.fromAlpha);
+  });
+});
+
+describe("renderer mobile transition fallback wiring", () => {
+  it("passes duration into the default mobile crossfade fallback call", () => {
+    const source = readFileSync(join(process.cwd(), "src/renderer/renderer.ts"), "utf8");
+    expect(source).toContain("this.drawMobileDefaultCrossfade(targetCtx, transition.progress, transition.duration, width, height);");
   });
 });
