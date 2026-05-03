@@ -290,7 +290,7 @@ export class Renderer {
         audio
       });
       if (!definition.drawMobile) {
-        this.drawMobileDefaultCrossfade(targetCtx, transition.progress, width, height);
+        this.drawMobileDefaultCrossfade(targetCtx, transition.progress, transition.duration, width, height);
       }
       return;
     }
