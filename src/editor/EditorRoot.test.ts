@@ -18,6 +18,8 @@ import {
   applyMainSlotSelection,
   getNewSceneTimeRange,
   getNextNewSectionName,
+  splitSceneAtTime,
+  getSplitTargetSceneId,
   getRandomEffectParams,
   getRandomEffectSelection,
   getScenePlayingAtTime,
@@ -496,6 +498,57 @@ describe("getNewSceneTimeRange", () => {
 
   it("clamps negative playback time to zero", () => {
     expect(getNewSceneTimeRange(scenes, -3)).toEqual({ start: 0, end: 10 });
+  });
+});
+
+describe("splitSceneAtTime", () => {
+  it("splits a selected scene into two copies at the playhead time", () => {
+    const sections = [
+      { id: "intro", start: 0, effect: "starfield" },
+      { id: "calm sunset", start: 100, effect: "sunset", params: { glow: 0.6 } },
+      { id: "outro", start: 140, effect: "tunnel" }
+    ];
+    const result = splitSceneAtTime(sections, "calm sunset", 110.8, () => "calm sunset (split)");
+    expect(result).not.toBeNull();
+    expect(result?.splitSceneId).toBe("calm sunset (split)");
+    expect(result?.sections.map((scene) => scene.id)).toEqual(["intro", "calm sunset", "calm sunset (split)", "outro"]);
+    expect(result?.sections[1]).toMatchObject({ id: "calm sunset", start: 100, effect: "sunset", params: { glow: 0.6 } });
+    expect(result?.sections[2]).toMatchObject({ id: "calm sunset (split)", start: 110.8, effect: "sunset", params: { glow: 0.6 } });
+  });
+
+  it("returns null when split time falls outside the selected scene bounds", () => {
+    const sections = [
+      { id: "a", start: 0, effect: "starfield" },
+      { id: "b", start: 10, effect: "plasma" },
+      { id: "c", start: 20, effect: "tunnel" }
+    ];
+    expect(splitSceneAtTime(sections, "b", 10)).toBeNull();
+    expect(splitSceneAtTime(sections, "b", 20)).toBeNull();
+    expect(splitSceneAtTime(sections, "missing", 15)).toBeNull();
+  });
+});
+
+describe("getSplitTargetSceneId", () => {
+  const sections = [
+    { id: "intro", start: 0, effect: "starfield" },
+    { id: "calm sunset", start: 100, effect: "sunset" },
+    { id: "outro", start: 140, effect: "tunnel" }
+  ];
+
+  it("prefers the scene under the playhead, regardless of selection", () => {
+    expect(getSplitTargetSceneId("intro", sections, 110.8)).toBe("calm sunset");
+  });
+
+  it("uses selected scene id when playhead is outside all scenes", () => {
+    expect(getSplitTargetSceneId("calm sunset", sections, Number.NaN)).toBe("calm sunset");
+  });
+
+  it("falls back to scene under the playhead when selection is missing", () => {
+    expect(getSplitTargetSceneId(null, sections, 110.8)).toBe("calm sunset");
+  });
+
+  it("returns null when there is no valid selected scene and no playhead scene", () => {
+    expect(getSplitTargetSceneId("missing", sections, Number.NaN)).toBeNull();
   });
 });
 

@@ -481,6 +481,51 @@ export const getNextNewSectionName = (scenes: RawSectionConfig[]): string => {
   return `New Section ${nextNumber + 1}`;
 };
 
+export const splitSceneAtTime = (
+  scenes: RawSectionConfig[],
+  sceneId: string,
+  splitTime: number,
+  idGenerator: (baseId: string) => string = (baseId) => `${baseId}-split-${Math.random().toString(36).slice(2, 8)}`
+): { sections: RawSectionConfig[]; splitSceneId: string } | null => {
+  if (!Number.isFinite(splitTime)) {
+    return null;
+  }
+  const sorted = [...scenes].sort((a, b) => parseTimelineTimeValue(a.start) - parseTimelineTimeValue(b.start));
+  const index = sorted.findIndex((scene) => scene.id === sceneId);
+  if (index < 0) {
+    return null;
+  }
+  const target = sorted[index];
+  const sceneStart = parseTimelineTimeValue(target.start);
+  const sceneEnd = index < sorted.length - 1 ? parseTimelineTimeValue(sorted[index + 1].start) : sceneStart + 10;
+  const roundedSplit = roundTimelineSeconds(splitTime);
+  if (roundedSplit <= sceneStart || roundedSplit >= sceneEnd) {
+    return null;
+  }
+  const nextId = idGenerator(target.id);
+  const secondHalf = structuredClone(target);
+  secondHalf.id = nextId;
+  secondHalf.start = roundedSplit;
+  const withSplit = [...sorted];
+  withSplit.splice(index + 1, 0, secondHalf);
+  return { sections: withSplit, splitSceneId: nextId };
+};
+
+export const getSplitTargetSceneId = (
+  selectedSceneId: string | null,
+  scenes: RawSectionConfig[],
+  playheadTime: number
+): string | null => {
+  const playheadSceneId = getScenePlayingAtTime(scenes, playheadTime)?.id ?? null;
+  if (playheadSceneId) {
+    return playheadSceneId;
+  }
+  if (selectedSceneId && scenes.some((scene) => scene.id === selectedSceneId)) {
+    return selectedSceneId;
+  }
+  return null;
+};
+
 export const getRandomEffectSelection = (effectNames: string[], randomValue = Math.random): string => {
   if (effectNames.length === 0) {
     return "starfield";
@@ -1231,6 +1276,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           <div class="editor-scene-actions-block">
             <div class="editor-section-title editor-subsection-title">SCENE ACTIONS</div>
             <button type="button" class="editor-add editor-add-scene" data-action="add-scene">+ New scene</button>
+            <button type="button" data-action="split-selected" ${(state.timeline?.sections.length ?? 0) > 0 ? "" : "disabled"}>Split</button>
             <button type="button" data-action="duplicate-selected" ${state.selectedSceneId ? "" : "disabled"}>Duplicate</button>
             <button type="button" data-action="delete-selected" ${state.selectedSceneId ? "" : "disabled"}>Delete</button>
           </div>
@@ -3427,6 +3473,35 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         const duplicated = duplicateScene(scene, `scene-${Math.random().toString(36).slice(2, 8)}`);
         draft.sections.splice(index + 1, 0, duplicated);
       });
+    });
+
+    init.container.querySelector<HTMLButtonElement>("[data-action='split-selected']")?.addEventListener("click", () => {
+      if (!state.timeline) {
+        return;
+      }
+      const targetSceneId = getSplitTargetSceneId(state.selectedSceneId, state.timeline.sections, currentDemoTime);
+      if (!targetSceneId) {
+        return;
+      }
+      const splitResult = splitSceneAtTime(state.timeline.sections, targetSceneId, currentDemoTime, (baseId) => {
+        const used = new Set(state.timeline?.sections.map((scene) => scene.id) ?? []);
+        let nextId = `${baseId} (split)`;
+        let counter = 2;
+        while (used.has(nextId)) {
+          nextId = `${baseId} (split ${counter})`;
+          counter += 1;
+        }
+        return nextId;
+      });
+      if (!splitResult) {
+        return;
+      }
+      updateTimeline(
+        (draft) => {
+          draft.sections = splitResult.sections;
+        },
+        { selectedSceneId: splitResult.splitSceneId }
+      );
     });
 
     init.container.querySelector<HTMLButtonElement>("[data-action='delete-selected']")?.addEventListener("click", () => {
