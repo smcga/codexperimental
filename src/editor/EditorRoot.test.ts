@@ -535,8 +535,12 @@ describe("getSplitTargetSceneId", () => {
     { id: "outro", start: 140, effect: "tunnel" }
   ];
 
-  it("uses selected scene id when it exists", () => {
-    expect(getSplitTargetSceneId("calm sunset", sections, 5)).toBe("calm sunset");
+  it("prefers the scene under the playhead, regardless of selection", () => {
+    expect(getSplitTargetSceneId("intro", sections, 110.8)).toBe("calm sunset");
+  });
+
+  it("uses selected scene id when playhead is outside all scenes", () => {
+    expect(getSplitTargetSceneId("calm sunset", sections, Number.NaN)).toBe("calm sunset");
   });
 
   it("falls back to scene under the playhead when selection is missing", () => {

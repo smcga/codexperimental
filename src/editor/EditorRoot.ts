@@ -516,10 +516,14 @@ export const getSplitTargetSceneId = (
   scenes: RawSectionConfig[],
   playheadTime: number
 ): string | null => {
+  const playheadSceneId = getScenePlayingAtTime(scenes, playheadTime)?.id ?? null;
+  if (playheadSceneId) {
+    return playheadSceneId;
+  }
   if (selectedSceneId && scenes.some((scene) => scene.id === selectedSceneId)) {
     return selectedSceneId;
   }
-  return getScenePlayingAtTime(scenes, playheadTime)?.id ?? null;
+  return null;
 };
 
 export const getRandomEffectSelection = (effectNames: string[], randomValue = Math.random): string => {
