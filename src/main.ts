@@ -1063,6 +1063,15 @@ function formatTimestamp(time: number): string {
   return `${minutes.toString().padStart(2, "0")}:${seconds.toFixed(1).padStart(4, "0")}`;
 }
 
+function formatDebugTimeDomainLabel(domain: "audio" | "demo", time: number): string {
+  const prefix = domain === "audio" ? "AUDIO" : "DEMO";
+  const safeTime = Number.isFinite(time) ? Math.max(0, time) : 0;
+  const minutes = Math.floor(safeTime / 60);
+  const seconds = Math.floor(safeTime % 60);
+  const milliseconds = Math.floor((safeTime - Math.floor(safeTime)) * 1000);
+  return `${prefix} ${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}.${milliseconds.toString().padStart(3, "0")}`;
+}
+
 function setDebugOverlayVisible(visible: boolean): void {
   if (releaseMode) {
     debugState.enabled = false;
@@ -1665,8 +1674,30 @@ if (!releaseMode && debugSkipIntroButton) {
     if (!audioPlayer || !timeline || !introConfig) {
       return;
     }
+    const beforeAudioTime = audioPlayer.currentTime;
+    const audioOffset = timeline.getAudioOffset();
+    const beforeDemoTime = beforeAudioTime + audioOffset;
     const targetTime = getIntroSkipTime(introConfig.end, timeline.getAudioOffset(), audioPlayer.currentTime);
     audioPlayer.seek(targetTime);
+    const afterAudioTime = audioPlayer.currentTime;
+    const afterDemoTime = afterAudioTime + audioOffset;
+    console.debug("[debug:skip-intro]", {
+      event: "skip-intro",
+      introEnd: introConfig.end,
+      audioOffset,
+      before: {
+        audioTime: beforeAudioTime,
+        demoTime: beforeDemoTime
+      },
+      target: {
+        audioTime: targetTime,
+        demoTime: targetTime + audioOffset
+      },
+      after: {
+        audioTime: afterAudioTime,
+        demoTime: afterDemoTime
+      }
+    });
     if (!playbackSyncSuppressBroadcast) {
       playbackSync.broadcastTransport("seek", targetTime);
     }
@@ -1927,7 +1958,18 @@ function loop(): void {
     }
   }
 
-  debugTimestamp.textContent = formatTimestamp(demoTime);
+  const audioTime = audioPlayer.currentTime;
+  const audioOffset = timeline.getAudioOffset();
+  const introEnd = introConfig.end;
+  const introSkipAudioTarget = getIntroSkipTime(introEnd, audioOffset, audioTime);
+  const introSkipDemoTarget = introSkipAudioTarget + audioOffset;
+  debugTimestamp.textContent =
+    `${formatTimestamp(demoTime)} | ` +
+    `${formatDebugTimeDomainLabel("audio", audioTime)} | ` +
+    `${formatDebugTimeDomainLabel("demo", demoTime)} | ` +
+    `OFFSET ${audioOffset.toFixed(3)} | ` +
+    `INTRO END ${formatDebugTimeDomainLabel("demo", introEnd)} | ` +
+    `SKIP→ ${formatDebugTimeDomainLabel("audio", introSkipAudioTarget)} / ${formatDebugTimeDomainLabel("demo", introSkipDemoTarget)}`;
   if (debugWebglStatus) {
     debugWebglStatus.textContent = getWebGLStatusLabel();
   }
