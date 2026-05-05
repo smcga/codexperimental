@@ -57,7 +57,8 @@ import {
   getTimelineSourceAfterLocalEdit,
   REVERT_TO_FILE_TOOLTIP,
   DISCARD_LOCAL_DRAFT_TOOLTIP,
-  isPrimaryPointerButton
+  isPrimaryPointerButton,
+  getNextSelectedTextCueIds
 } from "./EditorRoot";
 import { RawTimelineConfig } from "../config/loadConfig";
 
@@ -950,5 +951,17 @@ describe("textCueFontOptions", () => {
       "Trade Winds",
       "Workbench"
     ]));
+  });
+});
+
+
+describe("getNextSelectedTextCueIds", () => {
+  it("replaces selection on plain click", () => {
+    expect(getNextSelectedTextCueIds(["cue-1", "cue-2"], "cue-3", false)).toEqual(["cue-3"]);
+  });
+
+  it("toggles membership on ctrl/shift click", () => {
+    expect(getNextSelectedTextCueIds(["cue-1"], "cue-2", true)).toEqual(["cue-1", "cue-2"]);
+    expect(getNextSelectedTextCueIds(["cue-1", "cue-2"], "cue-1", true)).toEqual(["cue-2"]);
   });
 });

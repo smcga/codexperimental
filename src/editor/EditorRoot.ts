@@ -121,9 +121,21 @@ type EditorState = {
   timelineSource: "repo" | "draft";
   selectedSceneId: string | null;
   selectedTextCueId: string | null;
+  selectedTextCueIds: string[];
   loopEnabled: boolean;
   loopRange: { start: number; end: number } | null;
   error: string | null;
+};
+
+export const getNextSelectedTextCueIds = (
+  selectedIds: string[],
+  cueId: string,
+  extendSelection: boolean
+): string[] => {
+  if (!extendSelection) {
+    return [cueId];
+  }
+  return selectedIds.includes(cueId) ? selectedIds.filter((id) => id !== cueId) : [...selectedIds, cueId];
 };
 
 export type TimelineDiffSummary = {
@@ -1025,6 +1037,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     timelineSource: "repo",
     selectedSceneId: null,
     selectedTextCueId: null,
+    selectedTextCueIds: [],
     loopEnabled: false,
     loopRange: null,
     error: null,
@@ -1035,6 +1048,14 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   let previewContext: CanvasRenderingContext2D | null = null;
   let previewDrawRect = { x: 0, y: 0, width: 640, height: 360 };
   let activeCueDragPointerId: number | null = null;
+  let activeTimelineCueDrag:
+    | {
+        pointerId: number;
+        cueIds: string[];
+        startClientX: number;
+        cueTimes: Map<string, { start: number; end: number }>;
+      }
+    | null = null;
   let playheadElement: HTMLDivElement | null = null;
   let editorVisible = false;
   let currentDemoTime = 0;
@@ -1138,6 +1159,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         timelineSource: initialTimelineState.timelineSource,
         selectedSceneId: initialTimelineState.timeline.sections[0]?.id ?? null,
         selectedTextCueId: null,
+        selectedTextCueIds: [],
         error: null
       });
       await applyTimelineIfValid(initialTimelineState.timeline);
@@ -1170,7 +1192,8 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         localDraftTimeline: structuredClone(next),
         timelineSource: sourceAfterEdit,
         selectedSceneId: options.selectedSceneId,
-        selectedTextCueId: null
+        selectedTextCueId: null,
+        selectedTextCueIds: []
       });
     } else {
       setState({ timeline: next, localDraftTimeline: structuredClone(next), timelineSource: sourceAfterEdit });
@@ -1179,11 +1202,12 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   };
 
   const selectScene = (id: string): void => {
-    setState({ selectedSceneId: id, selectedTextCueId: null });
+    setState({ selectedSceneId: id, selectedTextCueId: null, selectedTextCueIds: [] });
   };
 
-  const selectTextCue = (id: string): void => {
-    setState({ selectedTextCueId: id });
+  const selectTextCue = (id: string, options?: { extendSelection?: boolean }): void => {
+    const selectedTextCueIds = getNextSelectedTextCueIds(state.selectedTextCueIds, id, options?.extendSelection ?? false);
+    setState({ selectedTextCueId: selectedTextCueIds[selectedTextCueIds.length - 1] ?? null, selectedTextCueIds });
   };
 
   const getSceneById = (id: string): RawSectionConfig | null => {
@@ -1664,16 +1688,43 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           marker.style.left = `${clipPercent.left}%`;
           marker.style.top = getCueMarkerTopOffset(cueIndex);
           marker.textContent = cue.text?.trim().slice(0, 1).toUpperCase() || "•";
-          if (cue.id === state.selectedTextCueId) {
+          if (state.selectedTextCueIds.includes(cue.id)) {
             marker.classList.add("is-selected");
             durationBar.classList.add("is-selected");
           }
           marker.title = `${cue.id}: ${formatTime(cueStart)} → ${formatTime(cueEnd)}`;
-          marker.addEventListener("click", () => {
-            selectTextCue(cue.id);
+          marker.addEventListener("click", (event) => {
+            selectTextCue(cue.id, { extendSelection: event.ctrlKey || event.shiftKey || event.metaKey });
             const previewSeekTime = cueStart + Math.min(0.2, Math.max(0.05, (cueEnd - cueStart) * 0.5));
             const timeToSeek = previewSeekTime - init.getAudioOffset();
             init.seek(Math.max(0, Number.isFinite(timeToSeek) ? timeToSeek : 0));
+          });
+
+          marker.addEventListener("pointerdown", (event) => {
+            if (!isPrimaryPointerButton(event.button)) {
+              return;
+            }
+            const selection = state.selectedTextCueIds.includes(cue.id) ? state.selectedTextCueIds : [cue.id];
+            const cueTimes = new Map<string, { start: number; end: number }>();
+            const cuesById = new Map((state.timeline?.textCues ?? []).map((entry) => [entry.id, entry]));
+            selection.forEach((id) => {
+              const entry = cuesById.get(id);
+              if (!entry) {
+                return;
+              }
+              const start = parseTimelineTimeValue(entry.start);
+              const end = parseTimelineTimeValue(entry.end ?? start + 0.05);
+              cueTimes.set(id, { start, end });
+            });
+            if (cueTimes.size === 0) {
+              return;
+            }
+            activeTimelineCueDrag = {
+              pointerId: event.pointerId,
+              cueIds: selection,
+              startClientX: event.clientX,
+              cueTimes
+            };
           });
           lane.appendChild(marker);
         });
@@ -2193,6 +2244,34 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     }
   };
 
+
+  const handleGlobalTimelineCueDrag = (event: PointerEvent): void => {
+    if (!activeTimelineCueDrag || event.pointerId !== activeTimelineCueDrag.pointerId) {
+      return;
+    }
+    const scroll = init.container.querySelector<HTMLDivElement>("[data-region='playlist-scroll']");
+    if (!scroll || scroll.clientWidth <= 0) {
+      return;
+    }
+    const scenes = getScenesByTime();
+    const duration = Math.max(5, scenes.reduce((max, scene) => Math.max(max, getSceneEnd(scene)), 0));
+    const deltaSeconds = ((event.clientX - activeTimelineCueDrag.startClientX) / scroll.clientWidth) * playlistViewportDuration;
+    updateTimeline((draft) => {
+      const cues = draft.textCues ?? [];
+      activeTimelineCueDrag?.cueIds.forEach((cueId) => {
+        const cue = cues.find((entry) => entry.id === cueId);
+        const original = activeTimelineCueDrag?.cueTimes.get(cueId);
+        if (!cue || !original) {
+          return;
+        }
+        const nextStart = clamp(original.start + deltaSeconds, 0, duration);
+        const nextEnd = Math.max(nextStart + 0.05, original.end + deltaSeconds);
+        cue.start = roundTimelineSeconds(nextStart);
+        cue.end = roundTimelineSeconds(nextEnd);
+      });
+    });
+  };
+
   const handleWorkspaceResizeDrag = (event: PointerEvent): void => {
     if (activeWorkspaceResizePointerId !== event.pointerId) {
       return;
@@ -2212,6 +2291,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   window.addEventListener("pointermove", handleGlobalPlaylistPan);
   window.addEventListener("pointermove", handleGlobalScrollbarDrag);
   window.addEventListener("pointermove", handleGlobalClipResize);
+  window.addEventListener("pointermove", handleGlobalTimelineCueDrag);
   window.addEventListener("pointermove", handleWorkspaceResizeDrag);
   window.addEventListener("pointerup", (event) => {
     if (activePlaylistPan && event.pointerId === activePlaylistPan.pointerId) {
@@ -2265,6 +2345,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     if (activeWorkspaceResizePointerId === event.pointerId) {
       activeWorkspaceResizePointerId = null;
     }
+    if (activeTimelineCueDrag && event.pointerId === activeTimelineCueDrag.pointerId) {
+      activeTimelineCueDrag = null;
+    }
   });
   window.addEventListener("pointercancel", (event) => {
     if (activePlaylistPan && event.pointerId === activePlaylistPan.pointerId) {
@@ -2292,6 +2375,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     if (activeWorkspaceResizePointerId === event.pointerId) {
       activeWorkspaceResizePointerId = null;
     }
+    if (activeTimelineCueDrag && event.pointerId === activeTimelineCueDrag.pointerId) {
+      activeTimelineCueDrag = null;
+    }
   });
 
   const renderInspector = (): void => {
@@ -2318,7 +2404,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
 
     inspector.dataset.sceneId = scene.id;
     const selectedCue = state.selectedTextCueId ? getTextCueById(state.selectedTextCueId) : null;
-    if (basicPanel && selectedCue) {
+    if (basicPanel && state.selectedTextCueIds.length > 1) {
+      basicPanel.innerHTML = `<div class="editor-group"><div class="editor-group-title">${state.selectedTextCueIds.length} text cues selected</div></div>`;
+    } else if (basicPanel && selectedCue) {
       const typography = getCueTypography(selectedCue);
       basicPanel.innerHTML = `
       <div class="editor-group">
@@ -2660,7 +2748,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       updateTimeline((draft) => {
         draft.textCues = draft.textCues?.filter((cue) => cue.id !== cueId) ?? [];
       });
-      setState({ selectedTextCueId: null });
+      setState({ selectedTextCueId: null, selectedTextCueIds: [] });
     });
 
     inspector.querySelector<HTMLButtonElement>("[data-selected-cue-action='toggle-color']")?.addEventListener("click", () => {
