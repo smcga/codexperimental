@@ -539,7 +539,19 @@ body,
 
 .editor-actions {
   display: flex;
+  align-items: center;
+  flex-wrap: wrap;
   gap: 0.5rem;
+}
+
+.editor-source-badge {
+  border: 1px solid rgba(142, 249, 255, 0.45);
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(190, 251, 255, 0.95);
 }
 
 .editor-actions button,
@@ -1290,6 +1302,12 @@ body,
 }
 .editor-modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem; }
 .editor-modal-body { display:grid; gap:0.6rem; }
+.editor-draft-summary {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: rgba(215, 247, 255, 0.86);
+}
 .editor-generate-cues-trigger { position:absolute; left:0.75rem; bottom:3.2rem; z-index:5; }
 
 .editor-cue {
