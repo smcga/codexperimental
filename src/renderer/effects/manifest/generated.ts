@@ -1,4 +1,5 @@
 import { amiga_showcaseManifest } from "./amiga_showcase.manifest";
+import { ascii_arcade_mashupManifest } from "./ascii_arcade_mashup.manifest";
 import { blobsManifest } from "./blobs.manifest";
 import { boids_simulationManifest } from "./boids_simulation.manifest";
 import { bokehManifest } from "./bokeh.manifest";
@@ -99,6 +100,7 @@ import { wireframeRideManifest } from "./wireframeRide.manifest";
 
 export const generatedEffectManifests = [
   amiga_showcaseManifest,
+  ascii_arcade_mashupManifest,
   blobsManifest,
   boids_simulationManifest,
   bokehManifest,
