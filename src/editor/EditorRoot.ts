@@ -140,6 +140,15 @@ export const getNextSelectedTextCueIds = (
 
 const CUE_FIELD_SET = new Set(["start", "end", "text", "font", "color", "size", "x", "y", "align"]);
 export const shouldSkipSceneNormalizationForCueField = (field: string): boolean => CUE_FIELD_SET.has(field);
+export const isTimelineCueDragClassName = (className: string): boolean =>
+  className.includes("editor-text-cue-marker") || className.includes("editor-text-cue-duration");
+export const isTimelineCueDragTarget = (target: EventTarget | null): boolean => {
+  if (!(target instanceof Element)) {
+    return false;
+  }
+  const matched = target.closest(".editor-text-cue-marker, .editor-text-cue-duration");
+  return Boolean(matched && isTimelineCueDragClassName(matched.className));
+};
 
 export type TimelineDiffSummary = {
   cueCount: number;
@@ -1701,6 +1710,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           }
           marker.title = `${cue.id}: ${formatTime(cueStart)} → ${formatTime(cueEnd)}`;
           marker.addEventListener("click", (event) => {
+            event.stopPropagation();
             if (suppressNextCueMarkerClick) {
               suppressNextCueMarkerClick = false;
               return;
@@ -1715,6 +1725,8 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
             if (!isPrimaryPointerButton(event.button)) {
               return;
             }
+            event.preventDefault();
+            event.stopPropagation();
             const selection = state.selectedTextCueIds.includes(cue.id) ? state.selectedTextCueIds : [cue.id];
             const cueTimes = new Map<string, { start: number; end: number }>();
             const cuesById = new Map((state.timeline?.textCues ?? []).map((entry) => [entry.id, entry]));
@@ -1953,6 +1965,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
 
     scroll.addEventListener("pointerdown", (event) => {
       if ((event.target as HTMLElement).closest(".editor-playlist-clip")) {
+        return;
+      }
+      if (isTimelineCueDragTarget(event.target)) {
         return;
       }
       if (isPrimaryPointerButton(event.button)) {
