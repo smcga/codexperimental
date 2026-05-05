@@ -22,4 +22,12 @@ describe("qualityController", () => {
     expect(updated).toBe(false);
     expect(state.qualityScale).toBe(1);
   });
+
+  it("degrades complexity after repeated slow-frame overruns", () => {
+    const state = createQualityState(1, true);
+    updateQualityState(state, 30, 100);
+    updateQualityState(state, 31, 200);
+    updateQualityState(state, 32, 300);
+    expect(state.complexityScale).toBeCloseTo(0.9, 5);
+  });
 });
