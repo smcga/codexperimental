@@ -79,6 +79,7 @@ import {
 } from "./doodleComposer";
 import { registerViewOncePerSession, subscribeToLiveViews } from "./viewCounter";
 import { buildSharePayload, canUseNativeShare, getShareLink, ShareLinkPlatform } from "./share";
+import { isDebugMode } from "./runtimeMode";
 import { getOverlayPresentation, OverlayMode } from "./overlayContent";
 import { buildTransitionOptionMarkup } from "./renderer/transitions";
 import { createPlaybackSyncController, shouldApplyRemoteState } from "./playbackSync";
@@ -181,7 +182,8 @@ const effectIdeaGenerateButton = document.querySelector<HTMLButtonElement>("#eff
 const effectIdeaSubmitButton = document.querySelector<HTMLButtonElement>("#effect-idea-submit");
 
 const queryParams = new URLSearchParams(window.location.search);
-const releaseMode = queryParams.get("release") === "1";
+const debugMode = isDebugMode(window.location.search);
+const releaseMode = !debugMode;
 const editorModeFromQuery = queryParams.get("editor") === "1";
 const renderSettings = getRenderSettings(queryParams);
 const qualityState = createQualityState(renderSettings.qualityScale, renderSettings.autoQuality);
