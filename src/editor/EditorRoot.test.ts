@@ -56,7 +56,8 @@ import {
   resolveInitialTimelineState,
   getTimelineSourceAfterLocalEdit,
   REVERT_TO_FILE_TOOLTIP,
-  DISCARD_LOCAL_DRAFT_TOOLTIP
+  DISCARD_LOCAL_DRAFT_TOOLTIP,
+  isPrimaryPointerButton
 } from "./EditorRoot";
 import { RawTimelineConfig } from "../config/loadConfig";
 
@@ -208,6 +209,14 @@ describe("normalizeLoopRange", () => {
   });
 });
 
+
+describe("isPrimaryPointerButton", () => {
+  it("returns true only for primary-button pointer interactions", () => {
+    expect(isPrimaryPointerButton(0)).toBe(true);
+    expect(isPrimaryPointerButton(1)).toBe(false);
+    expect(isPrimaryPointerButton(2)).toBe(false);
+  });
+});
 describe("clamp", () => {
   it("prevents values below min and above max", () => {
     expect(clamp(-1, 0, 10)).toBe(0);

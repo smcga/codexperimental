@@ -240,6 +240,8 @@ export const clamp = (value: number, min: number, max: number): number => {
   return Math.min(max, Math.max(min, value));
 };
 
+export const isPrimaryPointerButton = (button: number): boolean => button === 0;
+
 export const clampWorkspaceTopRatio = (ratio: number, min = 0.2, max = 0.8): number => {
   if (!Number.isFinite(ratio)) {
     return 0.5;
@@ -1812,9 +1814,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     playheadElement.style.left = `${playheadRatio * 100}%`;
     tracks.appendChild(playheadElement);
     ruler.addEventListener("pointerdown", (event) => {
-      if (event.button !== 0) {
+      if (!isPrimaryPointerButton(event.button)) {
         return;
       }
+      event.preventDefault();
       const rect = ruler.getBoundingClientRect();
       if (rect.width <= 0) {
         return;
@@ -1888,6 +1891,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     scroll.addEventListener("pointerdown", (event) => {
       if ((event.target as HTMLElement).closest(".editor-playlist-clip")) {
         return;
+      }
+      if (isPrimaryPointerButton(event.button)) {
+        event.preventDefault();
       }
       activePlaylistPan = {
         pointerId: event.pointerId,
