@@ -54,7 +54,9 @@ import {
   getPreviewSurfaceSize,
   buildTimelineDiffSummary,
   resolveInitialTimelineState,
-  getTimelineSourceAfterLocalEdit
+  getTimelineSourceAfterLocalEdit,
+  REVERT_TO_FILE_TOOLTIP,
+  DISCARD_LOCAL_DRAFT_TOOLTIP
 } from "./EditorRoot";
 import { RawTimelineConfig } from "../config/loadConfig";
 
@@ -124,6 +126,15 @@ describe("buildTimelineDiffSummary", () => {
 describe("getTimelineSourceAfterLocalEdit", () => {
   it("marks edited timelines as draft sourced", () => {
     expect(getTimelineSourceAfterLocalEdit()).toBe("draft");
+  });
+});
+
+describe("editor draft action tooltips", () => {
+  it("documents the difference between reverting and discarding local draft", () => {
+    expect(REVERT_TO_FILE_TOOLTIP).toContain("timeline.release.json");
+    expect(REVERT_TO_FILE_TOOLTIP).toContain("clear");
+    expect(DISCARD_LOCAL_DRAFT_TOOLTIP).toContain("Delete the saved local draft");
+    expect(DISCARD_LOCAL_DRAFT_TOOLTIP).toContain("currently loaded timeline");
   });
 });
 

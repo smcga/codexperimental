@@ -169,6 +169,10 @@ export const resolveInitialTimelineState = (
 };
 
 export const getTimelineSourceAfterLocalEdit = (): "draft" => "draft";
+export const REVERT_TO_FILE_TOOLTIP =
+  "Reload the editor timeline from timeline.release.json and clear the saved local draft.";
+export const DISCARD_LOCAL_DRAFT_TOOLTIP =
+  "Delete the saved local draft only. Keep the currently loaded timeline in the editor.";
 type InspectorAccordionKey = "basic" | "main-slots" | "transition";
 export const updateInspectorAccordionState = (
   current: Record<InspectorAccordionKey, boolean>,
@@ -1312,8 +1316,8 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           <span class="editor-source-badge">Current source: ${state.timelineSource === "draft" ? "Draft" : "Repo"}</span>
           <button type="button" data-action="import">Import JSON</button>
           <button type="button" data-action="export">Export JSON</button>
-          <button type="button" data-action="revert">Revert to File</button>
-          <button type="button" data-action="discard-draft">Discard local draft</button>
+          <button type="button" data-action="revert" title="${REVERT_TO_FILE_TOOLTIP}">Revert to File</button>
+          <button type="button" data-action="discard-draft" title="${DISCARD_LOCAL_DRAFT_TOOLTIP}">Discard local draft</button>
         </div>
       </div>
       ${state.error ? `<div class="editor-error" role="alert">${state.error}</div>` : ""}
