@@ -15,7 +15,10 @@
     "docs:check": "vitest run src/renderer/effects/effectsDocs.test.ts src/renderer/transitions/transitionsDocs.test.ts",
     "gen:explicitpixels": "tsx scripts/generateExplicitPixels.ts",
     "test:integration": "vitest run api/kv.integration.test.ts",
-    "docs:transitions": "tsx scripts/generateTransitionsDocs.ts"
+    "docs:transitions": "tsx scripts/generateTransitionsDocs.ts",
+    "build:release": "npm run test && npm run docs:check && vite build --mode release",
+    "release:check": "npm run test && npm run docs:check && npm run build:release",
+    "package:release": "tsx scripts/packageRelease.ts"
   },
   "dependencies": {
     "@upstash/redis": "^1.34.0"

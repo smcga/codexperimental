@@ -2,6 +2,17 @@
 
 Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, and Web Audio API.
 
+## Release-facing docs
+
+- `RELEASE.md` — what the canonical demo release is and how to run it.
+- `AI_AUTHORSHIP.md` — how AI assistance is used and bounded.
+- `CREDITS.md` — credits, thanks, and scene-facing context.
+- `REPRODUCIBILITY.md` — build, runtime, and archival notes.
+- `docs/sacred-musical-anchors.md` — locked timing anchors for the soundtrack.
+- `docs/art-direction.md` — dramatic arc and pruning rules for release curation.
+
+Codexperimental is an AI-assisted real-time web demo. It keeps the AI premise visible while documenting the human direction, timing, selection, editing, and release constraints required to make the result a coherent production.
+
 - The on-page view counter fetches `/api/views` continuously (default every 5 seconds) so audience totals can update live while the page is open.
 
 ## Requirements
@@ -10,7 +21,9 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 
 ## Audio + timeline configuration
 
-- Place an MP3 at `public/song.mp3` (replace the placeholder file).
+- `public/song.mp3` is required for canonical playback (use the exact release soundtrack).
+- For archival releases, include the exact soundtrack file when licensing allows; otherwise document title/source/licence/hash as TODO metadata in release notes.
+- The demo timing is not meaningfully reproducible with a different MP3.
 - Edit `public/timeline.release.json` to change the intro terminal script, section timings, transitions, or text cues. Use `mm:ss` or `mm:ss.s` time strings for section and cue start/end values (for example, `01:44.5`).
 - **Sacred anchor policy:** before changing timeline timings, read `docs/sacred-musical-anchors.md`. The listed musical anchor timestamps are mandatory and must remain locked unless the soundtrack itself is intentionally recut; secondary effect-switch cues in that doc are advisory and must never override the sacred anchors.
 - Rap lyric cue timing is also locked: the rap starts at **03:25.012** on the word **“All”**, and the detailed lyric cue anchors in `docs/sacred-musical-anchors.md` must be preserved when editing `textCues`.
