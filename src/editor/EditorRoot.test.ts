@@ -59,6 +59,8 @@ import {
   DISCARD_LOCAL_DRAFT_TOOLTIP,
   isPrimaryPointerButton,
   getNextSelectedTextCueIds
+  ,
+  shouldSkipSceneNormalizationForCueField
 } from "./EditorRoot";
 import { RawTimelineConfig } from "../config/loadConfig";
 
@@ -963,5 +965,17 @@ describe("getNextSelectedTextCueIds", () => {
   it("toggles membership on ctrl/shift click", () => {
     expect(getNextSelectedTextCueIds(["cue-1"], "cue-2", true)).toEqual(["cue-1", "cue-2"]);
     expect(getNextSelectedTextCueIds(["cue-1", "cue-2"], "cue-1", true)).toEqual(["cue-2"]);
+  });
+});
+
+describe("shouldSkipSceneNormalizationForCueField", () => {
+  it("returns true for text cue field edits", () => {
+    expect(shouldSkipSceneNormalizationForCueField("start")).toBe(true);
+    expect(shouldSkipSceneNormalizationForCueField("align")).toBe(true);
+  });
+
+  it("returns false for unrelated fields", () => {
+    expect(shouldSkipSceneNormalizationForCueField("effect")).toBe(false);
+    expect(shouldSkipSceneNormalizationForCueField("")).toBe(false);
   });
 });

@@ -138,6 +138,9 @@ export const getNextSelectedTextCueIds = (
   return selectedIds.includes(cueId) ? selectedIds.filter((id) => id !== cueId) : [...selectedIds, cueId];
 };
 
+const CUE_FIELD_SET = new Set(["start", "end", "text", "font", "color", "size", "x", "y", "align"]);
+export const shouldSkipSceneNormalizationForCueField = (field: string): boolean => CUE_FIELD_SET.has(field);
+
 export type TimelineDiffSummary = {
   cueCount: number;
   firstCueTime: string;
@@ -1054,8 +1057,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         cueIds: string[];
         startClientX: number;
         cueTimes: Map<string, { start: number; end: number }>;
+        didMove: boolean;
       }
     | null = null;
+  let suppressNextCueMarkerClick = false;
   let playheadElement: HTMLDivElement | null = null;
   let editorVisible = false;
   let currentDemoTime = 0;
@@ -1176,14 +1181,16 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
 
   const updateTimeline = (
     updater: (draft: RawTimelineConfig) => void,
-    options?: { selectedSceneId?: string | null }
+    options?: { selectedSceneId?: string | null; skipSceneNormalization?: boolean }
   ): void => {
     if (!state.timeline) {
       return;
     }
     const next = structuredClone(state.timeline);
     updater(next);
-    stripSceneEnds(next.sections);
+    if (!options?.skipSceneNormalization) {
+      stripSceneEnds(next.sections);
+    }
     saveTimelineDraft(next);
     const sourceAfterEdit = getTimelineSourceAfterLocalEdit();
     if (options?.selectedSceneId !== undefined) {
@@ -1694,6 +1701,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           }
           marker.title = `${cue.id}: ${formatTime(cueStart)} → ${formatTime(cueEnd)}`;
           marker.addEventListener("click", (event) => {
+            if (suppressNextCueMarkerClick) {
+              suppressNextCueMarkerClick = false;
+              return;
+            }
             selectTextCue(cue.id, { extendSelection: event.ctrlKey || event.shiftKey || event.metaKey });
             const previewSeekTime = cueStart + Math.min(0.2, Math.max(0.05, (cueEnd - cueStart) * 0.5));
             const timeToSeek = previewSeekTime - init.getAudioOffset();
@@ -1723,7 +1734,8 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
               pointerId: event.pointerId,
               cueIds: selection,
               startClientX: event.clientX,
-              cueTimes
+              cueTimes,
+              didMove: false
             };
           });
           lane.appendChild(marker);
@@ -2256,6 +2268,9 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     const scenes = getScenesByTime();
     const duration = Math.max(5, scenes.reduce((max, scene) => Math.max(max, getSceneEnd(scene)), 0));
     const deltaSeconds = ((event.clientX - activeTimelineCueDrag.startClientX) / scroll.clientWidth) * playlistViewportDuration;
+    if (Math.abs(deltaSeconds) > 0.001) {
+      activeTimelineCueDrag.didMove = true;
+    }
     updateTimeline((draft) => {
       const cues = draft.textCues ?? [];
       activeTimelineCueDrag?.cueIds.forEach((cueId) => {
@@ -2269,7 +2284,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         cue.start = roundTimelineSeconds(nextStart);
         cue.end = roundTimelineSeconds(nextEnd);
       });
-    });
+    }, { skipSceneNormalization: true });
   };
 
   const handleWorkspaceResizeDrag = (event: PointerEvent): void => {
@@ -2346,6 +2361,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       activeWorkspaceResizePointerId = null;
     }
     if (activeTimelineCueDrag && event.pointerId === activeTimelineCueDrag.pointerId) {
+      suppressNextCueMarkerClick = activeTimelineCueDrag.didMove;
       activeTimelineCueDrag = null;
     }
   });
@@ -2736,7 +2752,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           } else if (field === "align") {
             targetCue.align = input.value as "left" | "center" | "right";
           }
-        });
+        }, { skipSceneNormalization: shouldSkipSceneNormalizationForCueField(input.dataset.selectedCueField ?? "") });
       });
     });
 
