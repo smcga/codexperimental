@@ -256,16 +256,36 @@ describe("effect ideas client", () => {
     `)).not.toThrow();
   });
 
-  it("allows dynamic code helpers when runtime behavior is otherwise safe", () => {
+  it("rejects obfuscated constructor escapes", () => {
     expect(() => validateGeneratedRuntimeCode(`
-      const factory = new Function("return 6 * 7;");
-      const imported = import("./optional-effect-helper.js");
-      const maybeRequired = require("./optional-effect-helper");
-      const value = eval("factory()");
-      void imported;
-      void maybeRequired;
-      void value;
-    `)).not.toThrow();
+      const ctor = globalThis["con" + "structor"];
+      return ctor("return 42")();
+    `)).toThrow("Generated runtime code blocked by safety policy");
+  });
+
+  it("rejects computed-property prototype poisoning attempts", () => {
+    expect(() => validateGeneratedRuntimeCode(`
+      const target = {};
+      target["__proto__"] = { polluted: true };
+    `)).toThrow("Generated runtime code blocked by safety policy");
+  });
+
+  it("rejects infinite loops", () => {
+    expect(() => validateGeneratedRuntimeCode(`
+      while (true) {
+        break;
+      }
+    `)).toThrow("Generated runtime code blocked by safety policy");
+  });
+
+
+  it("kills effects after repeated budget violations", () => {
+    const effect = compileRuntimeEffect("return { render(ctx) { for (let i = 0; i < 5_000_000; i += 1) { Math.sqrt(i); } } };");
+    expect(() => {
+      effect.render({ width: 1000, height: 1000 } as never);
+      effect.render({ width: 1000, height: 1000 } as never);
+      effect.render({ width: 1000, height: 1000 } as never);
+    }).toThrow("sandbox kill switch");
   });
 
   it("surfaces API error messages for generation failures", async () => {
