@@ -49,7 +49,7 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 - Visuals include subtle camera zoom and panning that respond to audio energy.
 - While the demo is running, tapping/clicking the main canvas injects an extra-strong manual beat pulse so audio-reactive effects (especially `physics_pile`) thump like a kick hit.
 - Post-intro effects render on a 16:9 base canvas; landscape uses letterboxing, while portrait screens scale to fill the height and crop the sides.
-- Append `?release=1` to the URL to disable the debug overlay/keybinds.
+- Append `?debug=1` to the URL to enable the debug overlay/keybinds.
 - Rendering quality can be tuned via URL query params:
   - `?baseScale=2` multiplies the base canvas size (default `1`, clamped to `1`-`4`).
   - `?baseW=640&baseH=360` overrides the base canvas dimensions (must be 16:9 and between `320×180` and `1920×1080`).
