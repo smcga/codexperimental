@@ -1,3 +1,5 @@
+import ts from "typescript";
+
 import { Effect } from "./renderer/effects/types";
 
 export type GeneratedEffectParamOption = {
@@ -80,24 +82,6 @@ export class EffectIdeaApiError extends Error {
   }
 }
 
-type RuntimeSafetyRule = {
-  pattern: RegExp;
-  reason: string;
-};
-
-const RUNTIME_CODE_SAFETY_RULES: RuntimeSafetyRule[] = [
-  { pattern: /\bprocess\s*\.\s*env\b/iu, reason: "accessing environment variables (process.env)" },
-  { pattern: /\b(?:globalThis|window)\s*\.\s*process\b/iu, reason: "accessing process globals" },
-  { pattern: /\b(?:Deno|Bun)\s*\.\s*env\b/iu, reason: "accessing runtime environment variables" },
-  { pattern: /\bdocument\s*\.\s*cookie\b/iu, reason: "reading browser cookies" },
-  { pattern: /\b(?:localStorage|sessionStorage|indexedDB)\b/iu, reason: "accessing browser storage" },
-  { pattern: /\bfetch\s*\(/iu, reason: "making network requests with fetch" },
-  { pattern: /\bXMLHttpRequest\b/iu, reason: "making network requests with XMLHttpRequest" },
-  { pattern: /\bnavigator\s*\.\s*sendBeacon\b/iu, reason: "sending background network beacons" },
-  { pattern: /\bWebSocket\b/iu, reason: "opening network sockets" },
-  { pattern: /\bEventSource\b/iu, reason: "opening server-sent event streams" }
-];
-
 function stripRuntimeStringLiteralsAndComments(source: string): string {
   return source
     .replace(/\/\*[\s\S]*?\*\//gu, " ")
@@ -129,14 +113,65 @@ function normalizeGeneratedCode(rawCode: string): string {
     });
 }
 
+const BLOCKED_GLOBALS = new Set(["eval", "Function", "AsyncFunction", "GeneratorFunction", "fetch", "XMLHttpRequest", "WebSocket", "EventSource", "localStorage", "sessionStorage", "indexedDB", "navigator"]);
+const BLOCKED_OBJECT_MEMBERS = new Map<string, Set<string>>([
+  ["document", new Set(["cookie"])],
+  ["navigator", new Set(["sendBeacon"])],
+  ["Object", new Set(["setPrototypeOf"])],
+  ["Reflect", new Set(["setPrototypeOf", "construct"])]
+]);
+const BLOCKED_PROTO_MEMBERS = new Set(["__proto__", "prototype"]);
+const BLOCKED_IDENTIFIERS = new Set(["process", "global", "globalThis", "window", "self", "Deno", "Bun"]);
+
+function reportSafetyViolation(reason: string): never {
+  throw new Error(`Generated runtime code blocked by safety policy: ${reason}.`);
+}
+
 export function validateGeneratedRuntimeCode(runtimeCode: string): void {
   const normalizedCode = normalizeGeneratedCode(runtimeCode);
-  const codeForValidation = stripRuntimeStringLiteralsAndComments(normalizedCode);
-  const violated = RUNTIME_CODE_SAFETY_RULES.find((rule) => rule.pattern.test(codeForValidation));
-  if (!violated) {
-    return;
-  }
-  throw new Error(`Generated runtime code blocked by safety policy: ${violated.reason}.`);
+  const sourceFile = ts.createSourceFile("generated-effect.ts", normalizedCode, ts.ScriptTarget.ESNext, true, ts.ScriptKind.TS);
+
+  const walk = (node: ts.Node): void => {
+    if (ts.isIdentifier(node) && BLOCKED_GLOBALS.has(node.text)) {
+      reportSafetyViolation(`using dynamic or network primitive (${node.text})`);
+    }
+    if (ts.isIdentifier(node) && BLOCKED_IDENTIFIERS.has(node.text)) {
+      reportSafetyViolation(`accessing runtime global (${node.text})`);
+    }
+    if (ts.isCallExpression(node) && ts.isIdentifier(node.expression) && node.expression.text === "setTimeout") {
+      reportSafetyViolation("using async scheduling APIs (setTimeout)");
+    }
+    if (ts.isWhileStatement(node) || ts.isDoStatement(node)) {
+      reportSafetyViolation("unbounded loop constructs");
+    }
+    if (ts.isForStatement(node) && !node.condition) {
+      reportSafetyViolation("unbounded loop constructs");
+    }
+    if (ts.isPropertyAccessExpression(node)) {
+      const objectName = ts.isIdentifier(node.expression) ? node.expression.text : "";
+      if (BLOCKED_OBJECT_MEMBERS.get(objectName)?.has(node.name.text)) {
+        reportSafetyViolation(`accessing restricted property (${objectName}.${node.name.text})`);
+      }
+      if (BLOCKED_PROTO_MEMBERS.has(node.name.text)) {
+        reportSafetyViolation(`mutating prototype chain (${node.name.text})`);
+      }
+    }
+    if (ts.isElementAccessExpression(node)) {
+      const arg = node.argumentExpression;
+      if (arg && ts.isStringLiteralLike(arg) && BLOCKED_PROTO_MEMBERS.has(arg.text)) {
+        reportSafetyViolation(`mutating prototype chain (${arg.text})`);
+      }
+      if (ts.isIdentifier(node.expression) && BLOCKED_IDENTIFIERS.has(node.expression.text)) {
+        reportSafetyViolation(`global escape attempt (${node.expression.text})`);
+      }
+    }
+    if (ts.isBinaryExpression(node) && ts.isPropertyAccessExpression(node.left) && BLOCKED_PROTO_MEMBERS.has(node.left.name.text)) {
+      reportSafetyViolation(`prototype mutation assignment (${node.left.name.text})`);
+    }
+    ts.forEachChild(node, walk);
+  };
+
+  walk(sourceFile);
 }
 
 function isRecord(value: unknown): value is EffectIdeaRecord {
@@ -182,6 +217,8 @@ async function requestEffects(path = "/api/effects", init?: RequestInit): Promis
   return payload;
 }
 
+const DEFAULT_EXECUTION_BUDGET = { maxRenderMs: 12, maxViolations: 3, maxComplexityScore: 40000 };
+
 export function compileRuntimeEffect(runtimeCode: string): Effect {
   const normalizedCode = normalizeGeneratedCode(runtimeCode);
   validateGeneratedRuntimeCode(normalizedCode);
@@ -208,7 +245,25 @@ return (() => {${normalizedCode}})();`
   if (!effect || typeof effect.render !== "function") {
     throw new Error("Generated effect is missing a render function.");
   }
-  return effect;
+  let violations = 0;
+  return {
+    ...effect,
+    render(context) {
+      const startedAt = performance.now();
+      const score = (context?.width ?? 0) * (context?.height ?? 0);
+      if (score > DEFAULT_EXECUTION_BUDGET.maxComplexityScore) {
+        violations += 1;
+      }
+      effect.render(context);
+      const elapsed = performance.now() - startedAt;
+      if (elapsed > DEFAULT_EXECUTION_BUDGET.maxRenderMs) {
+        violations += 1;
+      }
+      if (violations >= DEFAULT_EXECUTION_BUDGET.maxViolations) {
+        throw new Error("Generated runtime code terminated by sandbox kill switch.");
+      }
+    }
+  };
 }
 
 export async function generateEffectIdea(prompt: string, options: EffectIdeaGenerationRequest = {}): Promise<EffectIdeaGenerationResult> {
