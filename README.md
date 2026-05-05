@@ -355,6 +355,7 @@ npm run preview
 - For best generation reliability, favor prompts that imply deterministic helper functions, lookup tables, and explicit state updates.
 - `F` to toggle fullscreen (if supported)
 - `D` to toggle the debug overlay (timestamp, skip intro, skip to second half, skip to end, transition selection, effect overrides, monochrome toggle)
+- Timing diagnostics in the debug overlay now show both `AUDIO` time (`audio.currentTime`) and `DEMO` time (`audio.currentTime + audio offset`), plus `audioOffset`, `introEnd`, and the computed skip-intro target in both time domains.
 - The debug overlay shows WebGL status as `OK` or `FALLBACK` when available.
 - The debug overlay now groups controls into `Transport`, `Effects`, and `Render` sections; on mobile/touch it uses tabs plus an internal scroll region so controls stay reachable without page scrolling.
 - Selecting an effect in the `Effects` section reveals effect-specific controls (or a note when none are available) and still supports copying timeline-ready JSON.
@@ -397,6 +398,15 @@ npm run preview
 - Playback now auto-syncs across same-origin tabs/windows via `BroadcastChannel`, so play/pause/seek/restart actions in one editor window mirror to the others (handy for running multiple preview sizes side-by-side).
 - The editor's Text Cues panel now includes a bulk generator: paste words/new lines, set font/colour/size/position/alignment plus start/end timing, and auto-create evenly timed cue sequences (useful for ~100 words over ~30 seconds).
 - On touch devices, two floating buttons appear in the lower-right corner: `DBG` toggles the debug overlay and `⛶` toggles fullscreen.
+
+### Troubleshooting skip-intro timing
+
+If skip-intro feels "late" or "early," compare the debug overlay's `AUDIO` and `DEMO` timestamps:
+
+- `AUDIO` is the raw media playback clock from the browser audio element.
+- `DEMO` is timeline time (`AUDIO + audioOffset`) used for section/effect scheduling.
+
+Skip-intro seeks in the `AUDIO` domain so the demo lands on the intro boundary in the `DEMO` domain. When `audioOffset` is non-zero, the visible seek target in audio time will intentionally differ from the demo-time anchor, which can look like drift even when timing is correct.
 
 ### Phone notifications via ntfy (recommended)
 

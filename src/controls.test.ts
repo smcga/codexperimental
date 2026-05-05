@@ -3,11 +3,30 @@ import { describe, expect, it } from "vitest";
 import {
   getDebugOverlayVisibilityAfterEditorToggle,
   getEndSkipTime,
+  getIntroSkipTime,
   isPlayPauseShortcutKey,
   getRelativeSeekTime,
   getSecondHalfSkipTime,
   shouldHandleGlobalShortcut
 } from "./controls";
+
+describe("getIntroSkipTime", () => {
+  it("uses intro end directly when audio offset is zero", () => {
+    expect(getIntroSkipTime(54.2, 0, 10)).toBe(54.2);
+  });
+
+  it("accounts for negative audio offset by skipping further into the audio track", () => {
+    expect(getIntroSkipTime(54.2, -0.5, 10)).toBe(54.7);
+  });
+
+  it("accounts for positive audio offset by skipping earlier in the audio track", () => {
+    expect(getIntroSkipTime(54.2, 0.5, 10)).toBe(53.7);
+  });
+
+  it("does not rewind when current audio time is already beyond the skip target", () => {
+    expect(getIntroSkipTime(54.2, 0.5, 60)).toBe(60);
+  });
+});
 
 describe("getSecondHalfSkipTime", () => {
   it("skips forward to the configured second-half time", () => {
