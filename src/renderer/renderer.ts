@@ -19,6 +19,10 @@ import {
 import { computeBitplaneWipeTransitionState } from "./transitions/bitplaneWipe";
 import { CameraPunchThroughTransitionState, computeCameraPunchThroughTransitionState } from "./transitions/cameraPunchThrough";
 import { computeShatterTransitionState } from "./transitions/shatter";
+import { getEffectManifest } from "./effects";
+import { sanitizeRuntimeEffectParams } from "./effectRuntimeSafety";
+
+const EFFECT_FAILURE_STREAK_LIMIT = 3;
 
 export type RenderState = {
   ctx: CanvasRenderingContext2D;
@@ -46,6 +50,7 @@ type FitAlignDebug = {
   layerFitAligns: FitAlign[];
 };
 
+
 export class Renderer {
   private baseCanvas: HTMLCanvasElement;
   private baseCtx: CanvasRenderingContext2D;
@@ -65,6 +70,9 @@ export class Renderer {
   private baseHeight: number;
   private lastFramingState: FramingState | null = null;
   private lastFitAlignDebug: FitAlignDebug | null = null;
+  private effectFailureStreaks = new Map<string, number>();
+  private frameOverrunStreak = 0;
+  private runtimeComplexityScale = 1;
 
   constructor(baseWidth = 320, baseHeight = 180) {
     this.baseWidth = baseWidth;
@@ -177,6 +185,7 @@ export class Renderer {
     screenShake,
     framingOverride
   }: RenderState): void {
+    const frameStartMs = typeof performance !== "undefined" ? performance.now() : Date.now();
     const activeSection = transition?.to ?? section;
     const eraConstraints = getEraConstraints(activeSection.era, this.baseWidth, this.baseHeight);
     const framing = computeFraming(
@@ -254,6 +263,22 @@ export class Renderer {
 
     if (monochrome) {
       ctx.restore();
+    }
+    const frameMs = (typeof performance !== "undefined" ? performance.now() : Date.now()) - frameStartMs;
+    this.updateRuntimeWatchdog(frameMs);
+  }
+
+  getRuntimeComplexityScale(): number {
+    return this.runtimeComplexityScale;
+  }
+
+  private updateRuntimeWatchdog(frameMs: number): void {
+    this.frameOverrunStreak = frameMs > 24 ? this.frameOverrunStreak + 1 : 0;
+    if (this.frameOverrunStreak >= 3) {
+      this.frameOverrunStreak = 0;
+      this.runtimeComplexityScale = clamp(this.runtimeComplexityScale - 0.1, 0.5, 1);
+    } else if (frameMs < 16.5) {
+      this.runtimeComplexityScale = clamp(this.runtimeComplexityScale + 0.02, 0.5, 1);
     }
   }
 
@@ -588,18 +613,41 @@ export class Renderer {
       targetCtx.fillText(`Missing effect: ${effectName}`, 12, 24);
       return;
     }
-    effect.render({
+    const manifest = getEffectManifest(effectName);
+    const safeParams = sanitizeRuntimeEffectParams(params, manifest?.debug.controls);
+    const scaledWidth = Math.max(1, Math.floor(width * this.runtimeComplexityScale));
+    const scaledHeight = Math.max(1, Math.floor(height * this.runtimeComplexityScale));
+    try {
+      effect.render({
       ctx: targetCtx,
-      width,
-      height,
+      width: scaledWidth,
+      height: scaledHeight,
       time,
       delta,
       audio,
-      params,
+      params: safeParams,
       era,
       framing,
       safeRect: this.mapSafeRectToRenderSpace(framing.safe, framing, width, height)
-    });
+      });
+      this.effectFailureStreaks.set(effectName, 0);
+    } catch (error) {
+      const nextFailures = (this.effectFailureStreaks.get(effectName) ?? 0) + 1;
+      this.effectFailureStreaks.set(effectName, nextFailures);
+      console.warn(`[renderer] effect "${effectName}" failed during render`, error);
+      this.drawFallbackEffect(targetCtx, width, height, effectName);
+      if (nextFailures >= EFFECT_FAILURE_STREAK_LIMIT) {
+        this.runtimeComplexityScale = clamp(this.runtimeComplexityScale - 0.1, 0.5, 1);
+      }
+    }
+  }
+
+  private drawFallbackEffect(ctx: CanvasRenderingContext2D, width: number, height: number, effectName: string): void {
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, width, height);
+    ctx.fillStyle = "#f66";
+    ctx.font = "12px monospace";
+    ctx.fillText(`Fallback effect active (${effectName})`, 12, 24);
   }
 
   private drawTransition(

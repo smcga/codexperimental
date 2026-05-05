@@ -54,7 +54,7 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
   - `?baseScale=2` multiplies the base canvas size (default `1`, clamped to `1`-`4`).
   - `?baseW=640&baseH=360` overrides the base canvas dimensions (must be 16:9 and between `320×180` and `1920×1080`).
   - `?quality=0.85` scales the effective base resolution for performance (default `1.0`, clamped to `0.65`-`1.0`).
-  - `?autoQuality=1` enables dynamic quality scaling based on frame time (adjusts by `0.05` at most once per second).
+  - `?autoQuality=1` enables dynamic quality scaling based on frame time (adjusts by `0.05` at most once per second), plus runtime watchdog degradation that lowers effect complexity after repeated frame overruns.
   - The start overlay includes a **render quality** selector (`Best performance`, `Balanced`, `Maximum`) so users can pick sensible defaults without query-string tuning.
   - Recommended: `baseScale=2` for 1080p-class displays, `baseScale=3` for 1440p+ if your GPU/CPU allows.
 
