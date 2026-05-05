@@ -167,6 +167,8 @@ export const resolveInitialTimelineState = (
   }
   return { timeline: draftTimeline, pendingDraftChoice: false, timelineSource: "draft" };
 };
+
+export const getTimelineSourceAfterLocalEdit = (): "draft" => "draft";
 type InspectorAccordionKey = "basic" | "main-slots" | "transition";
 export const updateInspectorAccordionState = (
   current: Record<InspectorAccordionKey, boolean>,
@@ -1155,10 +1157,17 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     updater(next);
     stripSceneEnds(next.sections);
     saveTimelineDraft(next);
+    const sourceAfterEdit = getTimelineSourceAfterLocalEdit();
     if (options?.selectedSceneId !== undefined) {
-      setState({ timeline: next, selectedSceneId: options.selectedSceneId, selectedTextCueId: null });
+      setState({
+        timeline: next,
+        localDraftTimeline: structuredClone(next),
+        timelineSource: sourceAfterEdit,
+        selectedSceneId: options.selectedSceneId,
+        selectedTextCueId: null
+      });
     } else {
-      setState({ timeline: next });
+      setState({ timeline: next, localDraftTimeline: structuredClone(next), timelineSource: sourceAfterEdit });
     }
     void applyTimelineIfValid(next);
   };

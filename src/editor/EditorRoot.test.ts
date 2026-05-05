@@ -53,7 +53,8 @@ import {
   getNormalizedPreviewPoint,
   getPreviewSurfaceSize,
   buildTimelineDiffSummary,
-  resolveInitialTimelineState
+  resolveInitialTimelineState,
+  getTimelineSourceAfterLocalEdit
 } from "./EditorRoot";
 import { RawTimelineConfig } from "../config/loadConfig";
 
@@ -117,6 +118,12 @@ describe("buildTimelineDiffSummary", () => {
   it("summarizes cue count and first/last cue start times", () => {
     const summary = buildTimelineDiffSummary(makeTimeline([1.2, 9.8, 4.4]));
     expect(summary).toEqual({ cueCount: 3, firstCueTime: "00:01.2", lastCueTime: "00:09.8" });
+  });
+});
+
+describe("getTimelineSourceAfterLocalEdit", () => {
+  it("marks edited timelines as draft sourced", () => {
+    expect(getTimelineSourceAfterLocalEdit()).toBe("draft");
   });
 });
 
