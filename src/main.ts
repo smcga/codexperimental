@@ -57,7 +57,7 @@ import {
   EffectParamLimitsByEffect
 } from "./debug/effectParamLimits";
 import { fetchGlobalEffectParamLimits, saveGlobalEffectParamLimits } from "./effectParamLimitsApi";
-import { createEditorRoot, EditorController } from "./editor/EditorRoot";
+import { createEditorRoot, EditorController, PreviewPresentationMode } from "./editor/EditorRoot";
 import { submitDoodle } from "./doodles";
 import {
   compileRuntimeEffect,
@@ -93,6 +93,12 @@ import { getEffectIdeaCloseBlockedMessage, shouldShowCommunityCarouselButtons } 
 import { generateEffectWithSelfImprovement } from "./effectIdeaSelfImprovement";
 
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
+const editorMobilePreviewCanvas = document.createElement("canvas");
+const editorMobilePreviewCtx = editorMobilePreviewCanvas.getContext("2d");
+if (editorMobilePreviewCtx) {
+  editorMobilePreviewCanvas.width = 1080;
+  editorMobilePreviewCanvas.height = 1920;
+}
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
 const overlayKicker = document.querySelector<HTMLDivElement>("#overlay-kicker");
 const overlayText = overlay?.querySelector<HTMLDivElement>(".start-text");
@@ -1879,6 +1885,15 @@ function loop(): void {
   const baseAudioFeatures: AudioFeatures = audioPlayer.updateFeatures();
   const audioFeatures: AudioFeatures = manualBeatTrigger.apply(baseAudioFeatures, demoTime);
   const state = timeline.getState(demoTime);
+  let mobilePreviewRenderData:
+    | {
+        debugRenderSelection: ReturnType<typeof buildDebugRenderSelection>;
+        sectionOverride: TimelineConfig["sections"][number];
+        transitionOverrideWithEra: TimelineConfig["transitions"][number];
+        explosionTime: number;
+        explosionShake: number;
+      }
+    | null = null;
   if (state.mode === "intro") {
     introRenderer.render({
       ctx,
@@ -1905,6 +1920,13 @@ function loop(): void {
     const explosionTime =
       !debugRenderSelection.isolateEffect && sectionOverride.era === "future" ? demoTime - sectionOverride.start : -1;
     const explosionShake = getExplosionShake(explosionTime);
+    mobilePreviewRenderData = {
+      debugRenderSelection,
+      sectionOverride,
+      transitionOverrideWithEra,
+      explosionTime,
+      explosionShake
+    };
 
     renderer.render({
       ctx,
@@ -1944,7 +1966,38 @@ function loop(): void {
     updateDebugSkipButtonState(demoTime);
   }
   editorController?.updatePlayback(demoTime, !audioPlayer.paused);
-  editorController?.updatePreview(canvas);
+  if (editorController && editorMobilePreviewCtx && mobilePreviewRenderData) {
+    const previewMode: PreviewPresentationMode = editorController.getPreviewPresentationMode();
+    if (previewMode === "mobile") {
+      renderer.render({
+        ctx: editorMobilePreviewCtx,
+        width: editorMobilePreviewCanvas.width,
+        height: editorMobilePreviewCanvas.height,
+        time: demoTime,
+        delta,
+        section: mobilePreviewRenderData.sectionOverride,
+        transition: mobilePreviewRenderData.transitionOverrideWithEra,
+        textCues: mobilePreviewRenderData.debugRenderSelection.textCues,
+        audio: audioFeatures,
+        monochromeOverride: debugState.monochromeOverride,
+        screenShake: mobilePreviewRenderData.explosionShake,
+        framingOverride: "mobileFit"
+      });
+      if (!mobilePreviewRenderData.debugRenderSelection.isolateEffect) {
+        renderExplosion(
+          editorMobilePreviewCtx,
+          editorMobilePreviewCanvas.width,
+          editorMobilePreviewCanvas.height,
+          mobilePreviewRenderData.explosionTime,
+          explosionState,
+          mobilePreviewRenderData.explosionShake
+        );
+      }
+      editorController.updatePreview(editorMobilePreviewCanvas);
+    } else {
+      editorController.updatePreview(canvas);
+    }
+  }
 
   if (audioPlayer.ended) {
     isRunning = false;

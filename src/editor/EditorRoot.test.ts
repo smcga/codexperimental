@@ -51,6 +51,7 @@ import {
   getWorkspaceTopRatioFromPointer,
   getWorkspaceTopHeightPx,
   getNormalizedPreviewPoint,
+  getPreviewAspectRatioForMode,
   getPreviewSurfaceSize
 } from "./EditorRoot";
 
@@ -82,6 +83,20 @@ describe("getPreviewSurfaceSize", () => {
   it("caps preview width at 720 and returns zero size for invalid input", () => {
     expect(getPreviewSurfaceSize(2000, 900)).toEqual({ width: 720, height: 405 });
     expect(getPreviewSurfaceSize(0, 500)).toEqual({ width: 0, height: 0 });
+  });
+});
+
+describe("getPreviewAspectRatioForMode", () => {
+  it("returns desktop and mobile aspect ratios", () => {
+    expect(getPreviewAspectRatioForMode("desktop")).toBeCloseTo(16 / 9);
+    expect(getPreviewAspectRatioForMode("mobile")).toBeCloseTo(9 / 16);
+  });
+
+  it("supports portrait preview sizing when used with getPreviewSurfaceSize", () => {
+    const portraitRatio = getPreviewAspectRatioForMode("mobile");
+    const size = getPreviewSurfaceSize(500, 500, 720, portraitRatio);
+    expect(size.width).toBeCloseTo(281.25, 2);
+    expect(size.height).toBe(500);
   });
 });
 

@@ -799,6 +799,16 @@ body,
   justify-content: space-between;
 }
 
+.editor-preview-mode-group {
+  display: inline-flex;
+  gap: 0.35rem;
+}
+
+.editor-preview-mode-group button.is-active {
+  border-color: rgba(132, 219, 255, 0.85);
+  background: rgba(132, 219, 255, 0.25);
+}
+
 .editor-preview-transport button,
 .editor-icon-button {
   background: rgba(255, 255, 255, 0.08);
