@@ -57,7 +57,12 @@ import {
   getTimelineSourceAfterLocalEdit,
   REVERT_TO_FILE_TOOLTIP,
   DISCARD_LOCAL_DRAFT_TOOLTIP,
-  isPrimaryPointerButton
+  isPrimaryPointerButton,
+  getNextSelectedTextCueIds
+  ,
+  shouldSkipSceneNormalizationForCueField
+  ,
+  isTimelineCueDragClassName
 } from "./EditorRoot";
 import { RawTimelineConfig } from "../config/loadConfig";
 
@@ -950,5 +955,41 @@ describe("textCueFontOptions", () => {
       "Trade Winds",
       "Workbench"
     ]));
+  });
+});
+
+
+describe("getNextSelectedTextCueIds", () => {
+  it("replaces selection on plain click", () => {
+    expect(getNextSelectedTextCueIds(["cue-1", "cue-2"], "cue-3", false)).toEqual(["cue-3"]);
+  });
+
+  it("toggles membership on ctrl/shift click", () => {
+    expect(getNextSelectedTextCueIds(["cue-1"], "cue-2", true)).toEqual(["cue-1", "cue-2"]);
+    expect(getNextSelectedTextCueIds(["cue-1", "cue-2"], "cue-1", true)).toEqual(["cue-2"]);
+  });
+});
+
+describe("shouldSkipSceneNormalizationForCueField", () => {
+  it("returns true for text cue field edits", () => {
+    expect(shouldSkipSceneNormalizationForCueField("start")).toBe(true);
+    expect(shouldSkipSceneNormalizationForCueField("align")).toBe(true);
+  });
+
+  it("returns false for unrelated fields", () => {
+    expect(shouldSkipSceneNormalizationForCueField("effect")).toBe(false);
+    expect(shouldSkipSceneNormalizationForCueField("")).toBe(false);
+  });
+});
+
+describe("isTimelineCueDragClassName", () => {
+  it("returns true for cue marker and duration classes", () => {
+    expect(isTimelineCueDragClassName("editor-text-cue-marker")).toBe(true);
+    expect(isTimelineCueDragClassName("editor-text-cue-duration is-selected")).toBe(true);
+  });
+
+  it("returns false for unrelated classes", () => {
+    expect(isTimelineCueDragClassName("editor-playlist-clip")).toBe(false);
+    expect(isTimelineCueDragClassName("")).toBe(false);
   });
 });
