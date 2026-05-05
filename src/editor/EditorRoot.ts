@@ -115,11 +115,57 @@ const EASE_NAMES = [
 type EditorState = {
   timeline: RawTimelineConfig | null;
   originalTimeline: RawTimelineConfig | null;
+  repoTimeline: RawTimelineConfig | null;
+  localDraftTimeline: RawTimelineConfig | null;
+  pendingDraftChoice: boolean;
+  timelineSource: "repo" | "draft";
   selectedSceneId: string | null;
   selectedTextCueId: string | null;
   loopEnabled: boolean;
   loopRange: { start: number; end: number } | null;
   error: string | null;
+};
+
+export type TimelineDiffSummary = {
+  cueCount: number;
+  firstCueTime: string;
+  lastCueTime: string;
+};
+
+const NO_CUES_LABEL = "none";
+
+const getCueRangeTimes = (timeline: RawTimelineConfig): { first: number | null; last: number | null } => {
+  const cues = timeline.textCues ?? [];
+  if (cues.length === 0) {
+    return { first: null, last: null };
+  }
+  const starts = cues.map((cue) => parseTimelineTimeValue(cue.start));
+  return { first: Math.min(...starts), last: Math.max(...starts) };
+};
+
+export const buildTimelineDiffSummary = (timeline: RawTimelineConfig): TimelineDiffSummary => {
+  const { first, last } = getCueRangeTimes(timeline);
+  return {
+    cueCount: timeline.textCues?.length ?? 0,
+    firstCueTime: first === null ? NO_CUES_LABEL : formatTime(first),
+    lastCueTime: last === null ? NO_CUES_LABEL : formatTime(last)
+  };
+};
+
+export const timelinesDiffer = (repoTimeline: RawTimelineConfig, draftTimeline: RawTimelineConfig): boolean =>
+  JSON.stringify(repoTimeline) !== JSON.stringify(draftTimeline);
+
+export const resolveInitialTimelineState = (
+  repoTimeline: RawTimelineConfig,
+  draftTimeline: RawTimelineConfig | null
+): { timeline: RawTimelineConfig; pendingDraftChoice: boolean; timelineSource: "repo" | "draft" } => {
+  if (!draftTimeline) {
+    return { timeline: repoTimeline, pendingDraftChoice: false, timelineSource: "repo" };
+  }
+  if (timelinesDiffer(repoTimeline, draftTimeline)) {
+    return { timeline: repoTimeline, pendingDraftChoice: true, timelineSource: "repo" };
+  }
+  return { timeline: draftTimeline, pendingDraftChoice: false, timelineSource: "draft" };
 };
 type InspectorAccordionKey = "basic" | "main-slots" | "transition";
 export const updateInspectorAccordionState = (
@@ -965,6 +1011,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
   const state: EditorState = {
     timeline: null,
     originalTimeline: null,
+    repoTimeline: null,
+    localDraftTimeline: null,
+    pendingDraftChoice: false,
+    timelineSource: "repo",
     selectedSceneId: null,
     selectedTextCueId: null,
     loopEnabled: false,
@@ -1070,18 +1120,19 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       const raw = (await response.json()) as RawTimelineConfig;
       const timeline = ensureTimelineShape(raw);
       const draft = loadTimelineDraft();
+      const initialTimelineState = resolveInitialTimelineState(timeline, draft);
       setState({
-        timeline: draft ?? timeline,
+        timeline: initialTimelineState.timeline,
         originalTimeline: timeline,
-        selectedSceneId: (draft ?? timeline).sections[0]?.id ?? null,
+        repoTimeline: timeline,
+        localDraftTimeline: draft,
+        pendingDraftChoice: initialTimelineState.pendingDraftChoice,
+        timelineSource: initialTimelineState.timelineSource,
+        selectedSceneId: initialTimelineState.timeline.sections[0]?.id ?? null,
         selectedTextCueId: null,
         error: null
       });
-      if (draft) {
-        await applyTimelineIfValid(draft);
-      } else {
-        await applyTimelineIfValid(timeline);
-      }
+      await applyTimelineIfValid(initialTimelineState.timeline);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to load timeline";
       setState({ error: message });
@@ -1249,9 +1300,11 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       <div class="editor-header">
         <div class="editor-title">EDITOR</div>
         <div class="editor-actions">
+          <span class="editor-source-badge">Current source: ${state.timelineSource === "draft" ? "Draft" : "Repo"}</span>
           <button type="button" data-action="import">Import JSON</button>
           <button type="button" data-action="export">Export JSON</button>
           <button type="button" data-action="revert">Revert to File</button>
+          <button type="button" data-action="discard-draft">Discard local draft</button>
         </div>
       </div>
       ${state.error ? `<div class="editor-error" role="alert">${state.error}</div>` : ""}
@@ -1331,6 +1384,21 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           <div class="editor-modal-body" data-region="cue-generator-body"></div>
         </div>
       </div>
+      <div class="editor-modal-backdrop ${state.pendingDraftChoice ? "" : "is-hidden"}" data-region="draft-conflict-modal">
+        <div class="editor-modal" role="dialog" aria-modal="true" aria-label="Timeline draft conflict">
+          <div class="editor-modal-header">
+            <div class="editor-section-title">LOCAL DRAFT CONFLICT</div>
+          </div>
+          <div class="editor-modal-body">
+            <p>A local timeline draft differs from the repository timeline.</p>
+            <div class="editor-draft-summary" data-region="draft-summary"></div>
+            <div class="editor-actions">
+              <button type="button" data-action="choose-repo">Use repo timeline</button>
+              <button type="button" data-action="choose-draft">Use local draft</button>
+            </div>
+          </div>
+        </div>
+      </div>
     `;
 
     renderSceneList();
@@ -1338,6 +1406,15 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     renderInspector();
     renderTransport();
     bindHeaderActions();
+    const draftSummary = init.container.querySelector<HTMLElement>("[data-region='draft-summary']");
+    if (draftSummary && state.repoTimeline && state.localDraftTimeline) {
+      const repoSummary = buildTimelineDiffSummary(state.repoTimeline);
+      const draftSummaryData = buildTimelineDiffSummary(state.localDraftTimeline);
+      draftSummary.innerHTML = `
+        <div>Repo: cues ${repoSummary.cueCount}, first ${repoSummary.firstCueTime}, last ${repoSummary.lastCueTime}</div>
+        <div>Draft: cues ${draftSummaryData.cueCount}, first ${draftSummaryData.firstCueTime}, last ${draftSummaryData.lastCueTime}</div>
+      `;
+    }
     refreshPreviewCanvas();
     syncPreviewSurfaceSize();
 
@@ -3432,6 +3509,37 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         error: null
       });
       void applyTimelineIfValid(state.originalTimeline);
+    });
+
+    init.container.querySelector<HTMLButtonElement>("[data-action='discard-draft']")?.addEventListener("click", () => {
+      clearTimelineDraft();
+      setState({ localDraftTimeline: null, pendingDraftChoice: false, timelineSource: "repo" });
+    });
+
+    init.container.querySelector<HTMLButtonElement>("[data-action='choose-repo']")?.addEventListener("click", () => {
+      if (!state.repoTimeline) {
+        return;
+      }
+      setState({
+        timeline: structuredClone(state.repoTimeline),
+        selectedSceneId: state.repoTimeline.sections[0]?.id ?? null,
+        pendingDraftChoice: false,
+        timelineSource: "repo"
+      });
+      void applyTimelineIfValid(state.repoTimeline);
+    });
+
+    init.container.querySelector<HTMLButtonElement>("[data-action='choose-draft']")?.addEventListener("click", () => {
+      if (!state.localDraftTimeline) {
+        return;
+      }
+      setState({
+        timeline: structuredClone(state.localDraftTimeline),
+        selectedSceneId: state.localDraftTimeline.sections[0]?.id ?? null,
+        pendingDraftChoice: false,
+        timelineSource: "draft"
+      });
+      void applyTimelineIfValid(state.localDraftTimeline);
     });
 
     init.container.querySelector<HTMLButtonElement>("[data-action='add-scene']")?.addEventListener("click", () => {

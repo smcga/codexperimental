@@ -51,8 +51,19 @@ import {
   getWorkspaceTopRatioFromPointer,
   getWorkspaceTopHeightPx,
   getNormalizedPreviewPoint,
-  getPreviewSurfaceSize
+  getPreviewSurfaceSize,
+  buildTimelineDiffSummary,
+  resolveInitialTimelineState
 } from "./EditorRoot";
+import { RawTimelineConfig } from "../config/loadConfig";
+
+const makeTimeline = (cueStarts: number[]): RawTimelineConfig =>
+  ({
+    audio: { file: "song.mp3" },
+    intro: { duration: 0 },
+    sections: [{ id: "scene-1", start: 0, effect: "rain" }],
+    textCues: cueStarts.map((start, index) => ({ id: `cue-${index + 1}`, text: "word", start }))
+  }) as RawTimelineConfig;
 
 describe("formatTime", () => {
   it("formats seconds to mm:ss.t", () => {
@@ -63,6 +74,49 @@ describe("formatTime", () => {
   it("clamps invalid or negative values to zero", () => {
     expect(formatTime(-2)).toBe("00:00.0");
     expect(formatTime(Number.NaN)).toBe("00:00.0");
+  });
+});
+
+describe("resolveInitialTimelineState", () => {
+  it("loads repo timeline when no local draft exists", () => {
+    const repo = makeTimeline([3, 7]);
+    const result = resolveInitialTimelineState(repo, null);
+    expect(result.timeline).toBe(repo);
+    expect(result.pendingDraftChoice).toBe(false);
+    expect(result.timelineSource).toBe("repo");
+  });
+
+  it("shows draft prompt when local draft differs from repo", () => {
+    const repo = makeTimeline([3, 7]);
+    const draft = makeTimeline([4, 8, 9]);
+    const result = resolveInitialTimelineState(repo, draft);
+    expect(result.timeline).toBe(repo);
+    expect(result.pendingDraftChoice).toBe(true);
+    expect(result.timelineSource).toBe("repo");
+  });
+
+  it("choosing repo keeps repo timeline active", () => {
+    const repo = makeTimeline([3, 7]);
+    const draft = makeTimeline([3, 9]);
+    const result = resolveInitialTimelineState(repo, draft);
+    expect(result.timeline).toBe(repo);
+    expect(result.timelineSource).toBe("repo");
+  });
+
+  it("choosing draft applies draft when it matches repo timeline", () => {
+    const repo = makeTimeline([3, 7]);
+    const draft = structuredClone(repo);
+    const result = resolveInitialTimelineState(repo, draft);
+    expect(result.timeline).toBe(draft);
+    expect(result.pendingDraftChoice).toBe(false);
+    expect(result.timelineSource).toBe("draft");
+  });
+});
+
+describe("buildTimelineDiffSummary", () => {
+  it("summarizes cue count and first/last cue start times", () => {
+    const summary = buildTimelineDiffSummary(makeTimeline([1.2, 9.8, 4.4]));
+    expect(summary).toEqual({ cueCount: 3, firstCueTime: "00:01.2", lastCueTime: "00:09.8" });
   });
 });
 
