@@ -1804,6 +1804,7 @@ body,
 #effect-idea-modal .doodle-panel {
   max-height: min(92vh, 56rem);
   overflow-y: auto;
+  scrollbar-gutter: stable;
   overscroll-behavior: contain;
 }
 
