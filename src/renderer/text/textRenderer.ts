@@ -145,6 +145,10 @@ export function renderTextCues(
     const cueX = mobileFit ? cue.mobile.x : cue.x;
     const cueY = mobileFit ? cue.mobile.y : cue.y;
     const cueSize = mobileFit ? cue.mobile.size : cue.size;
+    if (mobileFit && cue.size > 0 && cueSize > 0) {
+      const sizeScale = cueSize / cue.size;
+      spans = spans.map((span) => ({ ...span, size: Math.max(1, span.size * sizeScale) }));
+    }
     const initialX = cue.units === "px" ? cueX : cueX * width;
     const initialY = cue.units === "px" ? cueY : cueY * height;
     const shouldUseSafe = cue.safe ?? mobileFit;
