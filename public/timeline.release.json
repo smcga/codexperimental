@@ -398,7 +398,7 @@
     },
     {
       "id": "Scene 003 - Kefrens Bars",
-      "start": 85.754,
+      "start": 86.042,
       "effect": "amiga_showcase",
       "era": "16bit",
       "transition": {
@@ -554,7 +554,7 @@
     },
     {
       "id": "era8bit-glitch",
-      "start": 93.583,
+      "start": 92.921,
       "effect": "gameOfLife",
       "params": {
         "speed": 2.3,
@@ -574,7 +574,7 @@
     },
     {
       "id": "era8bit-glitch (split 2)",
-      "start": 96.653,
+      "start": 95.54,
       "effect": "Beat Sway Ropes",
       "params": {
         "speed": 2.3,
@@ -588,6 +588,30 @@
           "params": {},
           "automation": [],
           "fitAlign": "fill"
+        }
+      ],
+      "fitAlign": "centre"
+    },
+    {
+      "id": "era8bit-glitch (split)",
+      "start": 96.791,
+      "effect": "NeonPulseSpiral",
+      "params": {
+        "speed": 2.3,
+        "glow": 0.32
+      },
+      "layers": [
+        {
+          "effect": "lissajous",
+          "blend": "screen",
+          "opacity": 0.1,
+          "params": {}
+        },
+        {
+          "effect": "bokeh",
+          "blend": "screen",
+          "opacity": 0.1,
+          "params": {}
         }
       ],
       "fitAlign": "centre"
@@ -11093,7 +11117,7 @@
       "id": "scene-042-volumetric-clouds-20",
       "start": 234.891,
       "end": 236.59,
-      "text": "‘cause",
+      "text": "\u2018cause",
       "x": 0.5,
       "y": 0.58,
       "align": "center",
@@ -11107,7 +11131,7 @@
       },
       "spans": [
         {
-          "text": "‘cause",
+          "text": "\u2018cause",
           "color": "#ff7ad9",
           "size": 34,
           "weight": "bold",
@@ -11337,7 +11361,7 @@
       "id": "scene-047-kefrens-bars-6",
       "start": 237.607,
       "end": 239.298,
-      "text": "‘cause",
+      "text": "\u2018cause",
       "x": 0.174,
       "y": 0.507,
       "align": "left",
@@ -11353,7 +11377,7 @@
       },
       "spans": [
         {
-          "text": "‘cause",
+          "text": "\u2018cause",
           "color": "#a5b4fc",
           "size": 37,
           "weight": "bold",
@@ -12652,7 +12676,7 @@
       "id": "scene-056-amiga-showcase-5",
       "start": 250.74,
       "end": 251.925,
-      "text": "’em",
+      "text": "\u2019em",
       "x": 0.5,
       "y": 0.393,
       "align": "center",
@@ -12666,7 +12690,7 @@
       },
       "spans": [
         {
-          "text": "’em",
+          "text": "\u2019em",
           "color": "#f7e9a4",
           "size": 45,
           "weight": "bold",
@@ -12704,7 +12728,7 @@
       "id": "scene-056-amiga-showcase-7",
       "start": 251.159,
       "end": 251.925,
-      "text": "“where’s",
+      "text": "\u201cwhere\u2019s",
       "x": 0.5,
       "y": 0.607,
       "align": "center",
@@ -12720,7 +12744,7 @@
       },
       "spans": [
         {
-          "text": "“where’s",
+          "text": "\u201cwhere\u2019s",
           "color": "#ffb86c",
           "size": 37,
           "weight": "bold",
@@ -12761,7 +12785,7 @@
       "id": "scene-056-amiga-showcase-9",
       "start": 251.669,
       "end": 251.925,
-      "text": "soul?”",
+      "text": "soul?\u201d",
       "x": 0.5,
       "y": 0.82,
       "align": "center",
@@ -12775,7 +12799,7 @@
       },
       "spans": [
         {
-          "text": "soul?”",
+          "text": "soul?\u201d",
           "color": "#ffffff",
           "size": 60,
           "weight": "900",
@@ -12816,7 +12840,7 @@
       "id": "scene-056-amiga-showcase-11",
       "start": 252.18,
       "end": 253.033,
-      "text": "“where’s",
+      "text": "\u201cwhere\u2019s",
       "x": 0.157,
       "y": 0.36,
       "align": "left",
@@ -12830,7 +12854,7 @@
       },
       "spans": [
         {
-          "text": "“where’s",
+          "text": "\u201cwhere\u2019s",
           "color": "#f7e9a4",
           "size": 43,
           "weight": "bold",
@@ -12868,7 +12892,7 @@
       "id": "scene-056-amiga-showcase-13",
       "start": 252.749,
       "end": 253.033,
-      "text": "feeling?”",
+      "text": "feeling?\u201d",
       "x": 0.21,
       "y": 0.8,
       "align": "left",
@@ -12884,7 +12908,7 @@
       },
       "spans": [
         {
-          "text": "feeling?”",
+          "text": "feeling?\u201d",
           "color": "#ffb86c",
           "size": 51,
           "weight": "900",
@@ -13005,7 +13029,7 @@
       "id": "scene-056-amiga-showcase-18",
       "start": 253.706,
       "end": 255.91,
-      "text": "—",
+      "text": "\u2014",
       "x": 0.843,
       "y": 0.367,
       "align": "right",
@@ -13019,7 +13043,7 @@
       },
       "spans": [
         {
-          "text": "—",
+          "text": "\u2014",
           "color": "#a5b4fc",
           "size": 45,
           "weight": "bold",
@@ -13057,7 +13081,7 @@
       "id": "scene-056-amiga-showcase-20",
       "start": 254.034,
       "end": 255.91,
-      "text": "I’ve",
+      "text": "I\u2019ve",
       "x": 0.83,
       "y": 0.47,
       "align": "right",
@@ -13073,7 +13097,7 @@
       },
       "spans": [
         {
-          "text": "I’ve",
+          "text": "I\u2019ve",
           "color": "#f7e9a4",
           "size": 37,
           "weight": "bold",
@@ -13630,7 +13654,7 @@
       "id": "scene-064-textmode-charset-1",
       "start": 259.31,
       "end": 261.833,
-      "text": "’bout",
+      "text": "\u2019bout",
       "x": 0.177,
       "y": 0.53,
       "align": "left",
@@ -13647,7 +13671,7 @@
       },
       "spans": [
         {
-          "text": "’bout",
+          "text": "\u2019bout",
           "color": "#ff7ad9",
           "size": 40,
           "weight": "bold",
@@ -13848,7 +13872,7 @@
       "id": "scene-064-textmode-charset-9",
       "start": 261.304,
       "end": 261.833,
-      "text": "you’re",
+      "text": "you\u2019re",
       "x": 0.206,
       "y": 0.77,
       "align": "left",
@@ -13865,7 +13889,7 @@
       },
       "spans": [
         {
-          "text": "you’re",
+          "text": "you\u2019re",
           "color": "#9ef0ff",
           "size": 40,
           "weight": "bold",
@@ -13903,7 +13927,7 @@
       "id": "scene-064-textmode-charset-11",
       "start": 261.833,
       "end": 267.259,
-      "text": "It’s",
+      "text": "It\u2019s",
       "x": 0.87,
       "y": 0.16,
       "align": "right",
@@ -13920,7 +13944,7 @@
       },
       "spans": [
         {
-          "text": "It’s",
+          "text": "It\u2019s",
           "color": "#ff7ad9",
           "size": 40,
           "weight": "bold",
