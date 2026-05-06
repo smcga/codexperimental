@@ -193,6 +193,24 @@ export const resolveInitialTimelineState = (
 };
 
 export const getTimelineSourceAfterLocalEdit = (): "draft" => "draft";
+export const TIMELINE_DRAFT_STORAGE_KEY = "codexperimental.timeline.editor.draft";
+export const shouldApplyRemoteDraftStorageEvent = (
+  event: Pick<StorageEvent, "key" | "newValue">,
+  currentTimeline: RawTimelineConfig | null
+): RawTimelineConfig | null => {
+  if (event.key !== TIMELINE_DRAFT_STORAGE_KEY || !event.newValue) {
+    return null;
+  }
+  try {
+    const parsed = ensureTimelineShape(JSON.parse(event.newValue) as RawTimelineConfig);
+    if (currentTimeline && !timelinesDiffer(currentTimeline, parsed)) {
+      return null;
+    }
+    return parsed;
+  } catch (error) {
+    return null;
+  }
+};
 export const REVERT_TO_FILE_TOOLTIP =
   "Reload the editor timeline from timeline.release.json and clear the saved local draft.";
 export const DISCARD_LOCAL_DRAFT_TOOLTIP =
@@ -1187,6 +1205,23 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     const message = await init.applyTimeline(nextTimeline);
     setState({ error: message });
   };
+  const handleStorageSync = (event: StorageEvent): void => {
+    const remoteTimeline = shouldApplyRemoteDraftStorageEvent(event, state.timeline);
+    if (!remoteTimeline) {
+      return;
+    }
+    setState({
+      timeline: remoteTimeline,
+      localDraftTimeline: structuredClone(remoteTimeline),
+      timelineSource: "draft",
+      pendingDraftChoice: false,
+      selectedSceneId: remoteTimeline.sections[0]?.id ?? null,
+      selectedTextCueId: null,
+      selectedTextCueIds: []
+    });
+    void applyTimelineIfValid(remoteTimeline);
+  };
+  window.addEventListener("storage", handleStorageSync);
 
   const updateTimeline = (
     updater: (draft: RawTimelineConfig) => void,

@@ -55,6 +55,8 @@ import {
   buildTimelineDiffSummary,
   resolveInitialTimelineState,
   getTimelineSourceAfterLocalEdit,
+  shouldApplyRemoteDraftStorageEvent,
+  TIMELINE_DRAFT_STORAGE_KEY,
   REVERT_TO_FILE_TOOLTIP,
   DISCARD_LOCAL_DRAFT_TOOLTIP,
   isPrimaryPointerButton,
@@ -132,6 +134,26 @@ describe("buildTimelineDiffSummary", () => {
 describe("getTimelineSourceAfterLocalEdit", () => {
   it("marks edited timelines as draft sourced", () => {
     expect(getTimelineSourceAfterLocalEdit()).toBe("draft");
+  });
+});
+
+describe("shouldApplyRemoteDraftStorageEvent", () => {
+  it("returns parsed timeline when another window writes a changed draft", () => {
+    const draft = makeTimeline([2, 5]);
+    const result = shouldApplyRemoteDraftStorageEvent(
+      { key: TIMELINE_DRAFT_STORAGE_KEY, newValue: JSON.stringify(draft) },
+      makeTimeline([1, 4])
+    );
+    expect(result).toEqual(draft);
+  });
+
+  it("ignores non-draft keys, invalid JSON, and unchanged timelines", () => {
+    const current = makeTimeline([3, 7]);
+    expect(shouldApplyRemoteDraftStorageEvent({ key: "other", newValue: JSON.stringify(current) }, current)).toBeNull();
+    expect(shouldApplyRemoteDraftStorageEvent({ key: TIMELINE_DRAFT_STORAGE_KEY, newValue: "{" }, current)).toBeNull();
+    expect(
+      shouldApplyRemoteDraftStorageEvent({ key: TIMELINE_DRAFT_STORAGE_KEY, newValue: JSON.stringify(current) }, current)
+    ).toBeNull();
   });
 });
 
