@@ -138,7 +138,29 @@ export const getNextSelectedTextCueIds = (
   return selectedIds.includes(cueId) ? selectedIds.filter((id) => id !== cueId) : [...selectedIds, cueId];
 };
 
-const CUE_FIELD_SET = new Set(["start", "end", "text", "font", "color", "size", "x", "y", "align"]);
+const CUE_FIELD_SET = new Set([
+  "start",
+  "end",
+  "text",
+  "font",
+  "color",
+  "size",
+  "x",
+  "y",
+  "align",
+  "blend",
+  "outlineWidth",
+  "outlineColor",
+  "fadeIn",
+  "fadeOut",
+  "mobileX",
+  "mobileY",
+  "mobileSize",
+  "effectGlitchIn",
+  "effectShadow",
+  "effectScanlineMask",
+  "effectTypewriterSpeed"
+]);
 export const shouldSkipSceneNormalizationForCueField = (field: string): boolean => CUE_FIELD_SET.has(field);
 export const isTimelineCueDragClassName = (className: string): boolean =>
   className.includes("editor-text-cue-marker") || className.includes("editor-text-cue-duration");
@@ -2509,6 +2531,22 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
               ${BLEND_MODES.map((mode) => `<option value="${mode}" ${mode === (selectedCue.blend ?? "source-over") ? "selected" : ""}>${mode}</option>`).join("")}
             </select>
           </label>
+          <label class="editor-toggle">
+            <input type="checkbox" data-selected-cue-field="effectGlitchIn" ${selectedCue.effects?.glitchIn ? "checked" : ""} />
+            <span>Glitch In</span>
+          </label>
+          <label class="editor-toggle">
+            <input type="checkbox" data-selected-cue-field="effectShadow" ${selectedCue.effects?.shadow ? "checked" : ""} />
+            <span>Shadow</span>
+          </label>
+          <label>
+            <span>Scanline Mask</span>
+            <input type="number" step="0.01" min="0" max="1" data-selected-cue-field="effectScanlineMask" value="${selectedCue.effects?.scanlineMask ?? 0}" />
+          </label>
+          <label>
+            <span>Typewriter Speed</span>
+            <input type="number" step="0.1" min="0" data-selected-cue-field="effectTypewriterSpeed" value="${selectedCue.effects?.typewriter?.speed ?? 0}" />
+          </label>
           <label>
             <span>Outline width (px)</span>
             <input type="number" step="1" min="0" data-selected-cue-field="outlineWidth" value="${selectedCue.outlineWidth ?? 0}" />
@@ -2517,6 +2555,14 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
             <span>Outline colour</span>
             <button type="button" data-selected-cue-action="toggle-outline-color" style="background:${selectedCue.outlineColor ?? "#000000"}">${selectedCue.outlineColor ?? "#000000"}</button>
             <input type="color" data-selected-cue-field="outlineColor" value="${selectedCue.outlineColor ?? "#000000"}" class="editor-cue-outline-color-input is-hidden" />
+          </label>
+          <label>
+            <span>Fade In (s)</span>
+            <input type="number" step="0.05" min="0" data-selected-cue-field="fadeIn" value="${selectedCue.fadeIn ?? 0.4}" />
+          </label>
+          <label>
+            <span>Fade Out (s)</span>
+            <input type="number" step="0.05" min="0" data-selected-cue-field="fadeOut" value="${selectedCue.fadeOut ?? 0.4}" />
           </label>
           <label>
             <span>Size (px)</span>
@@ -2847,6 +2893,30 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
             targetCue.outlineWidth = Number.isFinite(parsed) ? Math.max(0, parsed) : 0;
           } else if (field === "outlineColor") {
             targetCue.outlineColor = input.value || "#000000";
+          } else if (field === "fadeIn") {
+            const parsed = Number(input.value);
+            targetCue.fadeIn = Number.isFinite(parsed) ? Math.max(0, parsed) : 0.4;
+          } else if (field === "fadeOut") {
+            const parsed = Number(input.value);
+            targetCue.fadeOut = Number.isFinite(parsed) ? Math.max(0, parsed) : 0.4;
+          } else if (field === "effectGlitchIn") {
+            targetCue.effects = targetCue.effects ?? { scanlineMask: 0 };
+            targetCue.effects.glitchIn = (input as HTMLInputElement).checked;
+          } else if (field === "effectShadow") {
+            targetCue.effects = targetCue.effects ?? { scanlineMask: 0 };
+            targetCue.effects.shadow = (input as HTMLInputElement).checked;
+          } else if (field === "effectScanlineMask") {
+            targetCue.effects = targetCue.effects ?? { scanlineMask: 0 };
+            const parsed = Number(input.value);
+            targetCue.effects.scanlineMask = Number.isFinite(parsed) ? Math.max(0, Math.min(1, parsed)) : 0;
+          } else if (field === "effectTypewriterSpeed") {
+            targetCue.effects = targetCue.effects ?? { scanlineMask: 0 };
+            const parsed = Number(input.value);
+            if (Number.isFinite(parsed) && parsed > 0) {
+              targetCue.effects.typewriter = { speed: parsed };
+            } else {
+              delete targetCue.effects.typewriter;
+            }
           }
         }, { skipSceneNormalization: shouldSkipSceneNormalizationForCueField(input.dataset.selectedCueField ?? "") });
       });

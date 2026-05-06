@@ -131,6 +131,8 @@ export function createTextCue(options?: { id?: string; start?: number; end?: num
     blend: "source-over",
     outlineWidth: 0,
     outlineColor: "#000000",
+    fadeIn: 0.4,
+    fadeOut: 0.4,
     units: "normalized",
     effects: {
       glitchIn: false,

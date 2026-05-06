@@ -120,8 +120,10 @@ export function renderTextCues(
   const mobileFit = options.framingMode === "mobileFit";
 
   cues.forEach((cue) => {
-    const fadeIn = clamp((time - cue.start) / DEFAULT_FADE, 0, 1);
-    const fadeOut = clamp((cue.end - time) / DEFAULT_FADE, 0, 1);
+    const fadeInDuration = Math.max(0, cue.fadeIn ?? DEFAULT_FADE);
+    const fadeOutDuration = Math.max(0, cue.fadeOut ?? DEFAULT_FADE);
+    const fadeIn = fadeInDuration > 0 ? clamp((time - cue.start) / fadeInDuration, 0, 1) : 1;
+    const fadeOut = fadeOutDuration > 0 ? clamp((cue.end - time) / fadeOutDuration, 0, 1) : 1;
     const opacity = Math.min(fadeIn, fadeOut);
     if (opacity <= 0) {
       return;
