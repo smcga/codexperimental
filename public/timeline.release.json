@@ -5,7 +5,7 @@
   },
   "intro": {
     "mode": "terminal",
-    "end": 55.4,
+    "end": 54.1,
     "theme": {
       "bg": "#0b0f14",
       "fg": "#b7c7d6",
@@ -135,7 +135,7 @@
   "sections": [
     {
       "id": "era8bit-starfield",
-      "start": "00:55.4",
+      "start": "00:54.1",
       "effect": "starfield",
       "params": {
         "warp": 0.7,
