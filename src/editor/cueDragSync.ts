@@ -45,7 +45,7 @@ export const applyCueDragPosition = (
   cueId: string,
   point: { x: number; y: number },
   mobileFit: boolean,
-  round = (value: number): number => Number(value.toFixed(4))
+  round = (value: number): number => Number(value.toFixed(3))
 ): boolean => {
   const cue = timeline.textCues?.find((entry) => entry.id === cueId);
   if (!cue) {

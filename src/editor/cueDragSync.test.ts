@@ -28,16 +28,16 @@ describe("cueDragSync", () => {
 
   it("updates desktop cue coordinates when not in mobile fit", () => {
     const timeline = makeTimeline();
-    expect(applyCueDragPosition(timeline, "a", { x: 0.33333, y: 0.77777 }, false)).toBe(true);
-    expect(timeline.textCues?.[0].x).toBe(0.3333);
-    expect(timeline.textCues?.[0].y).toBe(0.7778);
+    expect(applyCueDragPosition(timeline, "a", { x: 0.3333, y: 0.77777 }, false)).toBe(true);
+    expect(timeline.textCues?.[0].x).toBe(0.333);
+    expect(timeline.textCues?.[0].y).toBe(0.778);
     expect(timeline.textCues?.[0].units).toBe("normalized");
   });
 
   it("updates only mobile cue coordinates in mobile fit", () => {
     const timeline = makeTimeline();
-    expect(applyCueDragPosition(timeline, "b", { x: 0.22222, y: 0.11111 }, true)).toBe(true);
-    expect(timeline.textCues?.[1].mobile).toMatchObject({ x: 0.2222, y: 0.1111, size: 30 });
+    expect(applyCueDragPosition(timeline, "b", { x: 0.2222, y: 0.1111 }, true)).toBe(true);
+    expect(timeline.textCues?.[1].mobile).toMatchObject({ x: 0.222, y: 0.111, size: 30 });
     expect(timeline.textCues?.[1].x).toBe(0.5);
     expect(timeline.textCues?.[1].y).toBe(0.6);
   });
