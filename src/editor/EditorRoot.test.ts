@@ -996,6 +996,10 @@ describe("shouldSkipSceneNormalizationForCueField", () => {
   it("returns true for text cue field edits", () => {
     expect(shouldSkipSceneNormalizationForCueField("start")).toBe(true);
     expect(shouldSkipSceneNormalizationForCueField("align")).toBe(true);
+    expect(shouldSkipSceneNormalizationForCueField("blend")).toBe(true);
+    expect(shouldSkipSceneNormalizationForCueField("effectGlitchIn")).toBe(true);
+    expect(shouldSkipSceneNormalizationForCueField("effectScanlineMask")).toBe(true);
+    expect(shouldSkipSceneNormalizationForCueField("effectTypewriterSpeed")).toBe(true);
   });
 
   it("returns false for unrelated fields", () => {
