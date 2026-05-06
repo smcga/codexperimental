@@ -151,6 +151,8 @@ const CUE_FIELD_SET = new Set([
   "blend",
   "outlineWidth",
   "outlineColor",
+  "fadeIn",
+  "fadeOut",
   "mobileX",
   "mobileY",
   "mobileSize",
@@ -2555,6 +2557,14 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
             <input type="color" data-selected-cue-field="outlineColor" value="${selectedCue.outlineColor ?? "#000000"}" class="editor-cue-outline-color-input is-hidden" />
           </label>
           <label>
+            <span>Fade In (s)</span>
+            <input type="number" step="0.05" min="0" data-selected-cue-field="fadeIn" value="${selectedCue.fadeIn ?? 0.4}" />
+          </label>
+          <label>
+            <span>Fade Out (s)</span>
+            <input type="number" step="0.05" min="0" data-selected-cue-field="fadeOut" value="${selectedCue.fadeOut ?? 0.4}" />
+          </label>
+          <label>
             <span>Size (px)</span>
             <input type="number" step="1" min="1" data-selected-cue-field="size" value="${typography.size}" />
           </label>
@@ -2883,6 +2893,12 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
             targetCue.outlineWidth = Number.isFinite(parsed) ? Math.max(0, parsed) : 0;
           } else if (field === "outlineColor") {
             targetCue.outlineColor = input.value || "#000000";
+          } else if (field === "fadeIn") {
+            const parsed = Number(input.value);
+            targetCue.fadeIn = Number.isFinite(parsed) ? Math.max(0, parsed) : 0.4;
+          } else if (field === "fadeOut") {
+            const parsed = Number(input.value);
+            targetCue.fadeOut = Number.isFinite(parsed) ? Math.max(0, parsed) : 0.4;
           } else if (field === "effectGlitchIn") {
             targetCue.effects = targetCue.effects ?? { scanlineMask: 0 };
             targetCue.effects.glitchIn = (input as HTMLInputElement).checked;

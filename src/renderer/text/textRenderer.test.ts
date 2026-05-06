@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { TextCue } from "../../config/loadConfig";
 import { renderTextCues } from "./textRenderer";
 
-type DrawCall = { font: string; text: string };
+type DrawCall = { font: string; text: string; alpha: number };
 
 function createMockContext(): CanvasRenderingContext2D & { drawCalls: DrawCall[] } {
   const state = {
@@ -31,7 +31,7 @@ function createMockContext(): CanvasRenderingContext2D & { drawCalls: DrawCall[]
       return { width: text.length * size * 0.6 } as TextMetrics;
     },
     fillText(text: string) {
-      state.drawCalls.push({ font: state.font, text });
+      state.drawCalls.push({ font: state.font, text, alpha: state.globalAlpha });
     },
     set font(value: string) {
       state.font = value;
@@ -106,6 +106,8 @@ const baseCue: TextCue = {
   blend: "source-over",
   outlineWidth: 0,
   outlineColor: "#000000",
+  fadeIn: 0.4,
+  fadeOut: 0.4,
   units: "normalized",
   effects: { glitchIn: false, shadow: false, scanlineMask: 0 },
   mobile: { x: 0.5, y: 0.5, size: 20 }
@@ -126,5 +128,18 @@ describe("renderTextCues mobile size", () => {
 
     expect(ctx.drawCalls.length).toBeGreaterThan(0);
     expect(ctx.drawCalls[0].font).toContain("40px");
+  });
+
+  it("uses per-cue fadeIn and fadeOut durations", () => {
+    const ctx = createMockContext();
+    const cue: TextCue = { ...baseCue, fadeIn: 2, fadeOut: 2 };
+    renderTextCues(ctx, 320, 180, [cue], 1, { framingMode: "desktopCinematic" });
+    expect(ctx.drawCalls.length).toBeGreaterThan(0);
+    expect(ctx.drawCalls[0].alpha).toBeCloseTo(0.5, 2);
+
+    const ctxFadeOut = createMockContext();
+    renderTextCues(ctxFadeOut, 320, 180, [cue], 3, { framingMode: "desktopCinematic" });
+    expect(ctxFadeOut.drawCalls.length).toBeGreaterThan(0);
+    expect(ctxFadeOut.drawCalls[0].alpha).toBeCloseTo(0.5, 2);
   });
 });

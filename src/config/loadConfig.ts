@@ -109,6 +109,8 @@ export type RawTextCue = {
   blend?: BlendMode;
   outlineWidth?: number;
   outlineColor?: string;
+  fadeIn?: number;
+  fadeOut?: number;
   units?: "px";
   effects?: {
     glitchIn?: boolean;
@@ -209,6 +211,8 @@ export type TextCue = {
   blend: BlendMode;
   outlineWidth: number;
   outlineColor: string;
+  fadeIn: number;
+  fadeOut: number;
   units: "px" | "normalized";
   effects: {
     glitchIn: boolean;
@@ -247,6 +251,7 @@ const DEFAULT_TEXT_COLOR = "#ffffff";
 const DEFAULT_TEXT_BLEND: BlendMode = "source-over";
 const DEFAULT_TEXT_OUTLINE_WIDTH = 0;
 const DEFAULT_TEXT_OUTLINE_COLOR = "#000000";
+const DEFAULT_TEXT_FADE = 0.4;
 const DEFAULT_TEXT_ALIGN: "left" | "center" | "right" = "center";
 const DEFAULT_TEXT_X = 0.5;
 const DEFAULT_TEXT_Y = 0.7;
@@ -631,6 +636,8 @@ export function normalizeTimelineConfig(raw: RawTimelineConfig): TimelineConfig 
       blend: cue.blend === undefined ? DEFAULT_TEXT_BLEND : normalizeBlendMode(cue.blend, `textCues[${index}].blend`),
       outlineWidth: Math.max(0, cue.outlineWidth ?? DEFAULT_TEXT_OUTLINE_WIDTH),
       outlineColor: cue.outlineColor ?? DEFAULT_TEXT_OUTLINE_COLOR,
+      fadeIn: Math.max(0, cue.fadeIn ?? DEFAULT_TEXT_FADE),
+      fadeOut: Math.max(0, cue.fadeOut ?? DEFAULT_TEXT_FADE),
       units: cue.units === "px" ? "px" : "normalized",
       effects: {
         glitchIn: cue.effects?.glitchIn ?? false,
