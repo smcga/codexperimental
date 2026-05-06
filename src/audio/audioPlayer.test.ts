@@ -124,4 +124,36 @@ describe("AudioPlayer (Web Audio clock)", () => {
     expect(features.frequency).toHaveLength(1024);
     expect(fakeAnalyser.getByteFrequencyData).toHaveBeenCalled();
   });
+
+  it("tries fallback file extensions when initial decode fails", async () => {
+    const fetchMock = vi.fn(async (url: string) => ({
+      ok: true,
+      arrayBuffer: async () => new TextEncoder().encode(url).buffer
+    }));
+    vi.stubGlobal("fetch", fetchMock);
+    mockContext.decodeAudioData = vi.fn(async (buffer: ArrayBuffer) => {
+      const marker = new TextDecoder().decode(buffer);
+      if (marker.includes(".ogg")) {
+        throw new Error("unsupported format");
+      }
+      return fakeBuffer;
+    });
+
+    const player = new AudioPlayer("/song.ogg");
+    await player.load();
+
+    expect(fetchMock).toHaveBeenNthCalledWith(1, "/song.ogg");
+    expect(fetchMock).toHaveBeenNthCalledWith(2, "/song.mp3");
+    expect(player.duration).toBeCloseTo(12.5, 6);
+  });
+
+  it("applies loop preference to newly created sources", async () => {
+    const player = new AudioPlayer("/song.ogg");
+    await player.load();
+    player.setLoop(true);
+
+    await player.play();
+
+    expect(sources[0].loop).toBe(true);
+  });
 });

@@ -36,6 +36,7 @@ export class AudioPlayer {
   private pausedAt = 0;
   private playing = false;
   private stoppingSource = false;
+  private loop = false;
   onStarted?: () => void;
 
   constructor(src: string) {
@@ -55,16 +56,42 @@ export class AudioPlayer {
     if (this.buffer) {
       return;
     }
-    const response = await fetch(this.src);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch audio: ${response.status}`);
-    }
-    const encodedAudio = await response.arrayBuffer();
-    this.buffer = await this.context.decodeAudioData(encodedAudio);
+    this.buffer = await this.loadFirstSupportedBuffer(this.src);
     this.configureFrequencyRanges();
     if (this.pausedAt > this.buffer.duration) {
       this.pausedAt = this.buffer.duration;
     }
+  }
+
+  private async loadFirstSupportedBuffer(src: string): Promise<AudioBuffer> {
+    const candidates = this.getSourceCandidates(src);
+    let lastError: unknown = null;
+    for (const candidate of candidates) {
+      try {
+        const response = await fetch(candidate);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch audio: ${response.status}`);
+        }
+        const encodedAudio = await response.arrayBuffer();
+        return await this.context.decodeAudioData(encodedAudio);
+      } catch (error) {
+        lastError = error;
+      }
+    }
+    throw new Error(`Failed to decode audio from ${src}${lastError ? `: ${String(lastError)}` : ""}`);
+  }
+
+  private getSourceCandidates(src: string): string[] {
+    const match = src.match(/^(.*?)(\.[a-z0-9]+)([?#].*)?$/i);
+    if (!match) {
+      return [src];
+    }
+    const [, base, extension, suffix = ""] = match;
+    const fallbackExtensions = [".mp3", ".m4a", ".aac", ".wav"];
+    const ordered = [extension, ...fallbackExtensions]
+      .filter((value, index, values) => values.indexOf(value) === index)
+      .map((value) => `${base}${value}${suffix}`);
+    return ordered;
   }
 
   private configureFrequencyRanges(): void {
@@ -116,6 +143,7 @@ export class AudioPlayer {
     }
     const source = this.context.createBufferSource();
     source.buffer = this.buffer;
+    source.loop = this.loop;
     source.connect(this.analyser);
     source.onended = () => {
       if (this.stoppingSource) {
@@ -162,6 +190,7 @@ export class AudioPlayer {
   }
 
   setLoop(loop: boolean): void {
+    this.loop = loop;
     if (this.source) {
       this.source.loop = loop;
     }
