@@ -130,9 +130,23 @@ type EditorState = {
 export const getNextSelectedTextCueIds = (
   selectedIds: string[],
   cueId: string,
-  extendSelection: boolean
+  options: {
+    ctrlOrMetaKey: boolean;
+    shiftKey: boolean;
+    orderedCueIds: string[];
+    anchorCueId: string | null;
+  }
 ): string[] => {
-  if (!extendSelection) {
+  if (options.shiftKey && options.orderedCueIds.length > 0) {
+    const anchorId = options.anchorCueId ?? selectedIds[selectedIds.length - 1] ?? cueId;
+    const startIndex = options.orderedCueIds.indexOf(anchorId);
+    const endIndex = options.orderedCueIds.indexOf(cueId);
+    if (startIndex >= 0 && endIndex >= 0) {
+      const [from, to] = startIndex <= endIndex ? [startIndex, endIndex] : [endIndex, startIndex];
+      return options.orderedCueIds.slice(from, to + 1);
+    }
+  }
+  if (!options.ctrlOrMetaKey) {
     return [cueId];
   }
   return selectedIds.includes(cueId) ? selectedIds.filter((id) => id !== cueId) : [...selectedIds, cueId];
@@ -1278,8 +1292,16 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     setState({ selectedSceneId: id, selectedTextCueId: null, selectedTextCueIds: [] });
   };
 
-  const selectTextCue = (id: string, options?: { extendSelection?: boolean }): void => {
-    const selectedTextCueIds = getNextSelectedTextCueIds(state.selectedTextCueIds, id, options?.extendSelection ?? false);
+  const selectTextCue = (id: string, options?: { ctrlOrMetaKey?: boolean; shiftKey?: boolean }): void => {
+    const orderedCueIds = [...(state.timeline?.textCues ?? [])]
+      .sort((a, b) => parseTimelineTimeValue(a.start) - parseTimelineTimeValue(b.start))
+      .map((cue) => cue.id);
+    const selectedTextCueIds = getNextSelectedTextCueIds(state.selectedTextCueIds, id, {
+      ctrlOrMetaKey: options?.ctrlOrMetaKey ?? false,
+      shiftKey: options?.shiftKey ?? false,
+      orderedCueIds,
+      anchorCueId: state.selectedTextCueId
+    });
     setState({ selectedTextCueId: selectedTextCueIds[selectedTextCueIds.length - 1] ?? null, selectedTextCueIds });
   };
 
@@ -1772,7 +1794,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
               suppressNextCueMarkerClick = false;
               return;
             }
-            selectTextCue(cue.id, { extendSelection: event.ctrlKey || event.shiftKey || event.metaKey });
+            selectTextCue(cue.id, { ctrlOrMetaKey: event.ctrlKey || event.metaKey, shiftKey: event.shiftKey });
             const previewSeekTime = cueStart + Math.min(0.2, Math.max(0.05, (cueEnd - cueStart) * 0.5));
             const timeToSeek = previewSeekTime - init.getAudioOffset();
             init.seek(Math.max(0, Number.isFinite(timeToSeek) ? timeToSeek : 0));
@@ -2074,6 +2096,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     scrollbarThumb.style.width = `${scrollbarMetrics.thumbSizeRatio * 100}%`;
     scrollbarThumb.style.left = `${scrollbarMetrics.thumbStartRatio * 100}%`;
     scrollbar.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
       const target = event.target as HTMLElement;
       const resizeEdge = target.closest<HTMLElement>("[data-resize-edge]")?.dataset.resizeEdge;
       if (resizeEdge === "start" || resizeEdge === "end") {
@@ -2558,11 +2581,11 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           </label>
           <label>
             <span>Fade In (s)</span>
-            <input type="number" step="0.05" min="0" data-selected-cue-field="fadeIn" value="${selectedCue.fadeIn ?? 0.4}" />
+            <input type="number" step="0.05" min="0" data-selected-cue-field="fadeIn" value="${selectedCue.fadeIn ?? 0.1}" />
           </label>
           <label>
             <span>Fade Out (s)</span>
-            <input type="number" step="0.05" min="0" data-selected-cue-field="fadeOut" value="${selectedCue.fadeOut ?? 0.4}" />
+            <input type="number" step="0.05" min="0" data-selected-cue-field="fadeOut" value="${selectedCue.fadeOut ?? 0.1}" />
           </label>
           <label>
             <span>Size (px)</span>
@@ -2895,10 +2918,10 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
             targetCue.outlineColor = input.value || "#000000";
           } else if (field === "fadeIn") {
             const parsed = Number(input.value);
-            targetCue.fadeIn = Number.isFinite(parsed) ? Math.max(0, parsed) : 0.4;
+            targetCue.fadeIn = Number.isFinite(parsed) ? Math.max(0, parsed) : 0.1;
           } else if (field === "fadeOut") {
             const parsed = Number(input.value);
-            targetCue.fadeOut = Number.isFinite(parsed) ? Math.max(0, parsed) : 0.4;
+            targetCue.fadeOut = Number.isFinite(parsed) ? Math.max(0, parsed) : 0.1;
           } else if (field === "effectGlitchIn") {
             targetCue.effects = targetCue.effects ?? { scanlineMask: 0 };
             targetCue.effects.glitchIn = (input as HTMLInputElement).checked;
