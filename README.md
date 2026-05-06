@@ -20,6 +20,7 @@ Single-page demoscene-style web demo built with Vite + TypeScript, Canvas 2D, an
 - Transition types include `fade`, `wipe`, `slide-left`, `slide-right`, `slide-up`, `slide-down`, `iris`, `flash`, `glitch`, `shatter`, `signal-collapse`, `camera-punch-through`, `bitplane-wipe`, and `audio-reactive-particle` (vertical VGA-style bands with staggered timing).
 - Effect sections can include a `params` object to tune effect-specific settings such as starfield speed, warp, or turning intensity.
 - Generated effect responses now include `attempts` and `safeRegenerated` metadata when the API automatically retries after a security-policy block, so the UI can report "Generating attempt X/Y" and "Regenerated safely" states.
+- Runtime security-policy enforcement for **database-approved community effects** is now forward-only: effects submitted before **2026-05-06 00:00:00 UTC** keep legacy behavior for compatibility, while newer generated effects are enforced under the stricter policy.
 - Effects can animate numeric params with an `automation` array on a section or a layer; entries are applied in array order (last wins) and ease over absolute demo time.
 - Sections can optionally define `layers` to mix multiple effects together, with `blend` modes like `screen` or `overlay` and per-layer `opacity`.
 - The timeline includes two 3D showcase effects: `proper3d` (perspective projection + lighting) and `fake3d` (2D skew/shading tricks). The `sphere3d` effect renders a rotating lit point sphere with orbiting satellites.

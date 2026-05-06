@@ -93,6 +93,12 @@ import { installAnimatedTitle } from "./titleFx";
 import { getEffectIdeaCloseBlockedMessage, shouldShowCommunityCarouselButtons } from "./effectIdeaModalClose";
 import { generateEffectWithSelfImprovement } from "./effectIdeaSelfImprovement";
 
+const GENERATED_EFFECT_POLICY_ENFORCED_FROM = Date.UTC(2026, 4, 6, 0, 0, 0, 0);
+
+function shouldEnforceGeneratedEffectPolicy(createdAt: number): boolean {
+  return Number.isFinite(createdAt) && createdAt >= GENERATED_EFFECT_POLICY_ENFORCED_FROM;
+}
+
 const canvas = document.querySelector<HTMLCanvasElement>("#demo");
 const overlay = document.querySelector<HTMLDivElement>("#start-overlay");
 const overlayKicker = document.querySelector<HTMLDivElement>("#overlay-kicker");
@@ -764,7 +770,7 @@ async function hydrateEffectIdeaCarousel(): Promise<void> {
     try {
       return [{
         name: entry.name,
-        effect: compileRuntimeEffect(entry.runtimeCode),
+        effect: compileRuntimeEffect(entry.runtimeCode, { enforceSafetyPolicy: shouldEnforceGeneratedEffectPolicy(entry.createdAt) }),
         params: getGeneratedEffectDefaultParams(entry.params),
         paramDefs: entry.params ?? []
       }];
@@ -1281,7 +1287,7 @@ async function hydrateApprovedEffects(): Promise<void> {
     const approved = await fetchApprovedEffects();
     approved.forEach((entry) => {
       try {
-        const runtimeEffect = compileRuntimeEffect(entry.runtimeCode);
+        const runtimeEffect = compileRuntimeEffect(entry.runtimeCode, { enforceSafetyPolicy: shouldEnforceGeneratedEffectPolicy(entry.createdAt) });
         effectRegistry[entry.name] = runtimeEffect;
         registerRuntimeEffectManifest({
           key: entry.name,

