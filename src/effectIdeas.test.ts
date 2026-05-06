@@ -256,6 +256,16 @@ describe("effect ideas client", () => {
     `)).not.toThrow();
   });
 
+  it("rejects dynamic code execution helpers", () => {
+    expect(() => validateGeneratedRuntimeCode(`
+      const factory = new Function("return 6 * 7;");
+      const imported = import("./optional-effect-helper.js");
+      const maybeRequired = require("./optional-effect-helper");
+      const value = eval("factory()");
+      void imported;
+      void maybeRequired;
+      void value;
+    `)).toThrow("dynamic_code_exec");
   it("rejects obfuscated constructor escapes", () => {
     expect(() => validateGeneratedRuntimeCode(`
       const ctor = globalThis["con" + "structor"];

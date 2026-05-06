@@ -179,8 +179,10 @@ describe("api/effects", () => {
       body: JSON.stringify({ prompt: "make stars" })
     }, res.response);
     expect(res.response.statusCode).toBe(200);
-    expect(JSON.parse(res.getBody()).generation.name).toBe("Nebula");
-    expect(JSON.parse(res.getBody()).generation.params).toEqual([
+    const generated = JSON.parse(res.getBody()).generation;
+    expect(generated.name).toBe("Nebula");
+    expect(generated.attempts).toBeGreaterThanOrEqual(1);
+    expect(generated.params).toEqual([
       { key: "speed", label: "Speed", type: "number", defaultValue: 0.5, min: 0, max: 1 }
     ]);
     expect(globalThis.fetch).toHaveBeenCalledWith(
@@ -533,7 +535,9 @@ describe("api/effects", () => {
     );
 
     expect(res.response.statusCode).toBe(200);
-    expect(JSON.parse(res.getBody()).generation.name).toBe("Nebula");
+    const generated = JSON.parse(res.getBody()).generation;
+    expect(generated.name).toBe("Nebula");
+    expect(generated.attempts).toBeGreaterThanOrEqual(1);
   });
 
   it("allows generate via moderation bearer token", async () => {
@@ -556,7 +560,9 @@ describe("api/effects", () => {
     );
 
     expect(res.response.statusCode).toBe(200);
-    expect(JSON.parse(res.getBody()).generation.name).toBe("Nebula");
+    const generated = JSON.parse(res.getBody()).generation;
+    expect(generated.name).toBe("Nebula");
+    expect(generated.attempts).toBeGreaterThanOrEqual(1);
   });
 
   it("rate limits generate requests by identity", async () => {
@@ -614,7 +620,25 @@ describe("api/effects", () => {
     expect(JSON.parse(res.getBody()).error).toContain("3000");
   });
 
-  it("enforces a global daily generation cap", async () => {
+  
+
+  it("retries generation when first attempt violates policy and succeeds safely", async () => {
+    process.env.OPENAI_API_KEY = "sk-test";
+    globalThis.fetch = (vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ output_text: JSON.stringify({ name: "Bad", typescriptCode: "ts", runtimeCode: "return { render() { fetch(\"https://evil.invalid\"); } };" }) }), { status: 200, headers: { "Content-Type": "application/json" } }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ output_text: JSON.stringify({ name: "Good", typescriptCode: "ts", runtimeCode: "return { render() {} };" }) }), { status: 200, headers: { "Content-Type": "application/json" } }))) as unknown as typeof fetch;
+    const redis = createMockRedis();
+    vi.doMock("./kv.js", () => ({ createKvClients: () => ({ readClient: redis, writeClient: redis }) }));
+    const { default: handler } = await import("./effects");
+    const res = createResponse();
+    await handler({ method: "POST", url: "/api/effects?action=generate", headers: { "x-forwarded-for": "127.0.0.1" }, body: JSON.stringify({ prompt: "make stars" }) }, res.response);
+    expect(res.response.statusCode).toBe(200);
+    const payload = JSON.parse(res.getBody());
+    expect(payload.generation.name).toBe("Good");
+    expect(payload.generation.attempts).toBe(2);
+    expect(payload.generation.safeRegenerated).toBe(true);
+  });
+it("enforces a global daily generation cap", async () => {
     process.env.OPENAI_API_KEY = "sk-test";
     process.env.EFFECT_GENERATE_DAILY_CAP = "1";
     process.env.EFFECT_GENERATE_RATE_LIMIT_MAX = "10";
