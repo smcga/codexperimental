@@ -142,8 +142,11 @@ export function renderTextCues(
       }
     }
 
-    const initialX = cue.units === "px" ? cue.x : cue.x * width;
-    const initialY = cue.units === "px" ? cue.y : cue.y * height;
+    const cueX = mobileFit ? cue.mobile.x : cue.x;
+    const cueY = mobileFit ? cue.mobile.y : cue.y;
+    const cueSize = mobileFit ? cue.mobile.size : cue.size;
+    const initialX = cue.units === "px" ? cueX : cueX * width;
+    const initialY = cue.units === "px" ? cueY : cueY * height;
     const shouldUseSafe = cue.safe ?? mobileFit;
     const { px: x, py: y } = shouldUseSafe
       ? resolveTextPosition(cue.align, initialX, initialY, safeRect, width, height)
@@ -151,7 +154,7 @@ export function renderTextCues(
 
     const maxWidth = cue.maxWidth ?? (mobileFit && shouldUseSafe ? safeRect.w : Number.POSITIVE_INFINITY);
     const lines = wrapSpans(ctx, spans, maxWidth);
-    const lineHeight = Math.max(...spans.map((span) => span.size), cue.size) * 1.2;
+    const lineHeight = Math.max(...spans.map((span) => span.size), cueSize) * 1.2;
     const blockHeight = lineHeight * lines.length;
     const glitchAmount = cue.effects.glitchIn ? 1 - fadeIn : 0;
 
@@ -183,9 +186,9 @@ export function renderTextCues(
       if (cue.effects.scanlineMask > 0) {
         ctx.globalCompositeOperation = "source-atop";
         ctx.globalAlpha = opacity * cue.effects.scanlineMask;
-        const scanHeight = Math.max(2, cue.size * 0.1);
-        const top = -cue.size * 0.6 + yOffset;
-        const areaHeight = cue.size * 1.2;
+        const scanHeight = Math.max(2, cueSize * 0.1);
+        const top = -cueSize * 0.6 + yOffset;
+        const areaHeight = cueSize * 1.2;
         for (let lineY = top; lineY < top + areaHeight; lineY += scanHeight * 2) {
           ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
           ctx.fillRect(lineLayout.startX, lineY, lineLayout.totalWidth, scanHeight);

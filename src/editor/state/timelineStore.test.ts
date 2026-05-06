@@ -3,6 +3,7 @@ import {
   addLayer,
   createLayer,
   createAutomationEntry,
+  createTextCue,
   createScene,
   deleteScene,
   parseAdvancedParamsJSON,
@@ -129,5 +130,10 @@ describe("timelineStore", () => {
     });
     expect(serialized).not.toContain("__editor");
     expect(serialized).toContain("\"sections\"");
+  });
+
+  it("createTextCue includes independent mobile position and size defaults", () => {
+    const cue = createTextCue({ start: 2, end: 5 });
+    expect(cue.mobile).toEqual({ x: 0.5, y: 0.7, size: 42 });
   });
 });

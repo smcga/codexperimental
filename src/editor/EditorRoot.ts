@@ -2523,12 +2523,24 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
             <input type="number" step="1" min="1" data-selected-cue-field="size" value="${typography.size}" />
           </label>
           <label>
+            <span>Mobile Size (px)</span>
+            <input type="number" step="1" min="1" data-selected-cue-field="mobileSize" value="${selectedCue.mobile?.size ?? typography.size}" />
+          </label>
+          <label>
             <span>X (0..1)</span>
             <input type="number" step="0.01" data-selected-cue-field="x" value="${selectedCue.x ?? 0.5}" />
           </label>
           <label>
             <span>Y (0..1)</span>
             <input type="number" step="0.01" data-selected-cue-field="y" value="${selectedCue.y ?? 0.7}" />
+          </label>
+          <label>
+            <span>Mobile X (0..1)</span>
+            <input type="number" step="0.01" data-selected-cue-field="mobileX" value="${selectedCue.mobile?.x ?? selectedCue.x ?? 0.5}" />
+          </label>
+          <label>
+            <span>Mobile Y (0..1)</span>
+            <input type="number" step="0.01" data-selected-cue-field="mobileY" value="${selectedCue.mobile?.y ?? selectedCue.y ?? 0.7}" />
           </label>
           <label>
             <span>Align</span>
@@ -2814,6 +2826,18 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
           } else if (field === "y") {
             targetCue.y = Number(input.value);
             targetCue.units = "normalized";
+          } else if (field === "mobileX") {
+            targetCue.mobile = targetCue.mobile ?? { x: targetCue.x ?? 0.5, y: targetCue.y ?? 0.7, size: getCueTypography(targetCue).size };
+            targetCue.mobile.x = Number(input.value);
+            targetCue.units = "normalized";
+          } else if (field === "mobileY") {
+            targetCue.mobile = targetCue.mobile ?? { x: targetCue.x ?? 0.5, y: targetCue.y ?? 0.7, size: getCueTypography(targetCue).size };
+            targetCue.mobile.y = Number(input.value);
+            targetCue.units = "normalized";
+          } else if (field === "mobileSize") {
+            targetCue.mobile = targetCue.mobile ?? { x: targetCue.x ?? 0.5, y: targetCue.y ?? 0.7, size: getCueTypography(targetCue).size };
+            const nextSize = Number(input.value);
+            targetCue.mobile.size = Number.isFinite(nextSize) && nextSize > 0 ? nextSize : targetCue.mobile.size;
           } else if (field === "align") {
             targetCue.align = input.value as "left" | "center" | "right";
           } else if (field === "blend") {
