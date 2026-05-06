@@ -16,6 +16,23 @@ const DEFAULT_FFT_SIZE = 2048;
 const BEAT_THRESHOLD = 0.08;
 const BEAT_COOLDOWN = 0.2;
 
+export function computePresentationTime(
+  mediaTime: number,
+  paused: boolean,
+  nowMs: number,
+  state: { anchorMediaTime: number; anchorNowMs: number; lastPresentedTime: number },
+  maxLeadSeconds = 0.12
+): number {
+  if (!Number.isFinite(mediaTime) || mediaTime < 0) {
+    return Math.max(0, state.lastPresentedTime);
+  }
+  const elapsedSeconds = Math.max(0, (nowMs - state.anchorNowMs) / 1000);
+  const predicted = paused ? mediaTime : state.anchorMediaTime + elapsedSeconds;
+  const boundedPrediction = Math.min(predicted, mediaTime + Math.max(0, maxLeadSeconds));
+  const next = paused ? mediaTime : Math.max(mediaTime, boundedPrediction);
+  return Math.max(0, Math.max(state.lastPresentedTime, next));
+}
+
 export class AudioPlayer {
   private audio: HTMLAudioElement;
   private context: AudioContext;
@@ -29,6 +46,9 @@ export class AudioPlayer {
   private midRange: [number, number] = [0, 0];
   private trebleRange: [number, number] = [0, 0];
   private hasStarted = false;
+  private anchorMediaTime = 0;
+  private anchorNowMs = 0;
+  private lastPresentedTime = 0;
   onStarted?: () => void;
 
   constructor(src: string) {
@@ -44,6 +64,7 @@ export class AudioPlayer {
     this.analyser.connect(this.context.destination);
     this.timeDomain = new Uint8Array(this.analyser.fftSize);
     this.frequency = new Uint8Array(this.analyser.frequencyBinCount);
+    this.anchorNowMs = performance.now();
   }
 
   async load(): Promise<void> {
@@ -83,6 +104,8 @@ export class AudioPlayer {
   async play(): Promise<void> {
     await this.context.resume();
     await this.audio.play();
+    this.anchorMediaTime = this.audio.currentTime;
+    this.anchorNowMs = performance.now();
     if (!this.hasStarted) {
       this.hasStarted = true;
       this.onStarted?.();
@@ -91,6 +114,8 @@ export class AudioPlayer {
 
   pause(): void {
     this.audio.pause();
+    this.anchorMediaTime = this.audio.currentTime;
+    this.anchorNowMs = performance.now();
   }
 
 
@@ -106,10 +131,16 @@ export class AudioPlayer {
     const duration = this.duration;
     const target = duration ? clamp(time, 0, duration) : Math.max(0, time);
     this.audio.currentTime = target;
+    this.anchorMediaTime = target;
+    this.anchorNowMs = performance.now();
+    this.lastPresentedTime = target;
   }
 
   async restart(): Promise<void> {
     this.audio.currentTime = 0;
+    this.anchorMediaTime = 0;
+    this.anchorNowMs = performance.now();
+    this.lastPresentedTime = 0;
     this.lastRms = 0;
     this.lastBeatTime = -Infinity;
     await this.play();
@@ -122,7 +153,18 @@ export class AudioPlayer {
   }
 
   get currentTime(): number {
-    return this.audio.currentTime;
+    const mediaTime = this.audio.currentTime;
+    const next = computePresentationTime(mediaTime, this.audio.paused, performance.now(), {
+      anchorMediaTime: this.anchorMediaTime,
+      anchorNowMs: this.anchorNowMs,
+      lastPresentedTime: this.lastPresentedTime
+    });
+    if (Math.abs(mediaTime - this.anchorMediaTime) > 0.03) {
+      this.anchorMediaTime = mediaTime;
+      this.anchorNowMs = performance.now();
+    }
+    this.lastPresentedTime = next;
+    return next;
   }
 
   get duration(): number {
