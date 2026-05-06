@@ -56,75 +56,36 @@ export class AudioPlayer {
     if (this.buffer) {
       return;
     }
-    this.buffer = await this.loadFirstSupportedBuffer(this.src);
+    await this.unlock();
+    this.buffer = await this.loadBuffer(this.src);
     this.configureFrequencyRanges();
     if (this.pausedAt > this.buffer.duration) {
       this.pausedAt = this.buffer.duration;
     }
   }
 
-  private async loadFirstSupportedBuffer(src: string): Promise<AudioBuffer> {
-    const candidates = this.getSourceCandidates(src);
-    let lastError: unknown = null;
-    for (const candidate of candidates) {
-      try {
-        const response = await fetch(candidate);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch audio: ${response.status}`);
-        }
-        const encodedAudio = await response.arrayBuffer();
-        return await this.decodeAudioData(encodedAudio);
-      } catch (error) {
-        lastError = error;
-      }
+  async unlock(): Promise<void> {
+    if (this.context.state === "running") {
+      return;
     }
-    throw new Error(`Failed to decode audio from ${src}${lastError ? `: ${String(lastError)}` : ""}`);
+    await this.context.resume();
+  }
+
+  private async loadBuffer(src: string): Promise<AudioBuffer> {
+    const response = await fetch(src);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch audio ${src}: ${response.status}`);
+    }
+    const encodedAudio = await response.arrayBuffer();
+    return await this.decodeAudioData(encodedAudio);
   }
 
   private async decodeAudioData(encodedAudio: ArrayBuffer): Promise<AudioBuffer> {
-    const decode = this.context.decodeAudioData.bind(this.context);
-    const maybePromise = decode(
-      encodedAudio,
-      undefined as unknown as DecodeSuccessCallback,
-      undefined as unknown as DecodeErrorCallback
-    ) as Promise<AudioBuffer> | void;
-
-    if (maybePromise && typeof (maybePromise as Promise<AudioBuffer>).then === "function") {
-      const decoded = await maybePromise;
-      if (!decoded) {
-        throw new Error("Decoded audio buffer is empty");
-      }
-      return decoded;
+    const decoded = await this.context.decodeAudioData(encodedAudio);
+    if (!decoded || decoded.duration <= 0) {
+      throw new Error("Decoded audio buffer is empty");
     }
-
-    return await new Promise<AudioBuffer>((resolve, reject) => {
-      decode(
-        encodedAudio.slice(0),
-        (decoded) => {
-          if (!decoded) {
-            reject(new Error("Decoded audio buffer is empty"));
-            return;
-          }
-          resolve(decoded);
-        },
-        (error) => {
-          reject(error);
-        }
-      );
-    });
-  }
-
-  private getSourceCandidates(src: string): string[] {
-    const match = src.match(/^(.*?)(\.[a-z0-9]+)([?#].*)?$/i);
-    if (!match) {
-      return [src];
-    }
-    const [, base, extension, suffix = ""] = match;
-    const fallbackExtensions = [".mp3", ".m4a", ".aac", ".wav"];
-    const ordered = [extension, ...fallbackExtensions]
-      .filter((value, index, values) => values.indexOf(value) === index)
-      .map((value) => `${base}${value}${suffix}`);
-    return ordered;
+    return decoded;
   }
 
   private configureFrequencyRanges(): void {
@@ -200,8 +161,9 @@ export class AudioPlayer {
     if (this.playing) {
       return;
     }
-    await this.context.resume();
-    this.createSource(this.pausedAt);
+    await this.unlock();
+    const offset = this.buffer && this.pausedAt >= this.buffer.duration ? 0 : this.pausedAt;
+    this.createSource(offset);
     this.playing = true;
     if (!this.hasStarted) {
       this.hasStarted = true;
