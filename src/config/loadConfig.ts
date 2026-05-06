@@ -120,6 +120,11 @@ export type RawTextCue = {
   };
   safe?: boolean;
   maxWidth?: number;
+  mobile?: {
+    x?: number;
+    y?: number;
+    size?: number;
+  };
 };
 
 export type RawTimelineConfig = {
@@ -215,6 +220,11 @@ export type TextCue = {
   };
   safe?: boolean;
   maxWidth?: number;
+  mobile: {
+    x: number;
+    y: number;
+    size: number;
+  };
 };
 
 export type TimelineConfig = {
@@ -629,7 +639,12 @@ export function normalizeTimelineConfig(raw: RawTimelineConfig): TimelineConfig 
         typewriter: cue.effects?.typewriter
       },
       safe: cue.safe,
-      maxWidth: cue.maxWidth
+      maxWidth: cue.maxWidth,
+      mobile: {
+        x: cue.mobile?.x ?? cue.x ?? 0.5,
+        y: cue.mobile?.y ?? cue.y ?? 0.7,
+        size: cue.mobile?.size ?? cue.size ?? DEFAULT_TEXT_SIZE
+      }
     };
   });
 

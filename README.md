@@ -159,6 +159,7 @@ Automation supports numeric params only; non-numeric values fall back to the bas
   - In mobile-fit presentation, `fitAlign: top|centre|bottom` now maps each render into its own vertical third so multiple non-`fill` layers can be shown simultaneously without fullscreen overlap.
   - To author three simultaneous “main” effects in timeline JSON, set the section’s main `effect` + `fitAlign` to one slot and add additional `layers` using `blend: "source-over"`, `opacity: 1`, and `fitAlign` set to the other slots.
 - `textCues`: optional overlay callouts with timing, position, typography, and optional per-cue visual effects (glitch, shadow, scanline mask, and typewriter speed), plus per-cue text blending (`blend`) and outlines (`outlineWidth`, `outlineColor`).
+  - Text cues now support optional `mobile` overrides (`mobile.x`, `mobile.y`, `mobile.size`) so mobile-fit rendering can use different placement and font size than desktop.
 - Time fields accept either seconds (`number`) or timeline strings (`mm:ss` / `mm:ss.s`).
 
 ### Effect catalog

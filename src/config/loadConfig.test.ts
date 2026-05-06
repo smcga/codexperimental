@@ -305,3 +305,24 @@ it("defaults text cue blend and outline styling when omitted", () => {
   expect(normalized.textCues[0].outlineWidth).toBe(0);
   expect(normalized.textCues[0].outlineColor).toBe("#000000");
 });
+
+it("supports mobile-specific text cue position and font size overrides", () => {
+  const base = createBaseConfig();
+  base.textCues = [
+    { id: "cue-mobile", start: 1, text: "mobile", x: 0.4, y: 0.6, size: 30, mobile: { x: 0.3, y: 0.8, size: 22 } }
+  ];
+  const normalized = normalizeTimelineConfig(base);
+
+  expect(normalized.textCues[0].x).toBe(0.4);
+  expect(normalized.textCues[0].y).toBe(0.6);
+  expect(normalized.textCues[0].size).toBe(30);
+  expect(normalized.textCues[0].mobile).toEqual({ x: 0.3, y: 0.8, size: 22 });
+});
+
+it("defaults mobile-specific text cue values to desktop values when omitted", () => {
+  const base = createBaseConfig();
+  base.textCues = [{ id: "cue-mobile-default", start: 1, text: "mobile defaults", x: 0.2, y: 0.4, size: 28 }];
+  const normalized = normalizeTimelineConfig(base);
+
+  expect(normalized.textCues[0].mobile).toEqual({ x: 0.2, y: 0.4, size: 28 });
+});

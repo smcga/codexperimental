@@ -120,6 +120,11 @@ export function createTextCue(options?: { id?: string; start?: number; end?: num
     text: "New cue",
     x: 0.5,
     y: 0.7,
+    mobile: {
+      x: 0.5,
+      y: 0.7,
+      size: 42
+    },
     align: "center",
     size: 42,
     color: "#ffffff",
