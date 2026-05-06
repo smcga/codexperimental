@@ -8637,8 +8637,8 @@
       "start": 210.4,
       "end": 214.186,
       "text": "well",
-      "x": 0.87,
-      "y": 0.16,
+      "x": 0.513,
+      "y": 0.284,
       "align": "right",
       "size": 34,
       "color": "#ff7ad9",
@@ -8661,10 +8661,10 @@
     {
       "id": "scene-023-lissajous-30",
       "start": 210.613,
-      "end": 214.267,
+      "end": 211.1,
       "text": "man,",
-      "x": 0.859,
-      "y": 0.249,
+      "x": 0.827,
+      "y": 0.318,
       "align": "right",
       "size": 37,
       "color": "#a5b4fc",
@@ -8688,11 +8688,11 @@
     },
     {
       "id": "scene-023-lissajous-31",
-      "start": 210.788,
-      "end": 214.31,
+      "start": 210.765,
+      "end": 212.1,
       "text": "Now",
-      "x": 0.847,
-      "y": 0.337,
+      "x": 0.423,
+      "y": 0.472,
       "align": "right",
       "size": 42,
       "color": "#9ef0ff",
@@ -8712,6 +8712,209 @@
           "size": 42,
           "weight": "bold",
           "font": "Courier New"
+        }
+      ]
+    },
+    {
+      "id": "scene-023-lissajous-everybody",
+      "start": 210.992,
+      "end": 212.1,
+      "text": "got",
+      "x": 0.236,
+      "y": 0.732,
+      "align": "center",
+      "size": 28,
+      "color": "#9ef0ff",
+      "units": "normalized",
+      "effects": {
+        "shadow": true,
+        "scanlineMask": 0.12,
+        "glitchIn": true,
+        "typewriter": {
+          "speed": 42
+        }
+      },
+      "spans": [
+        {
+          "text": "got",
+          "font": "Courier New",
+          "color": "#9ef0ff",
+          "size": 28,
+          "weight": "bold"
+        }
+      ]
+    },
+    {
+      "id": "scene-023-lissajous-31got",
+      "start": 210.894,
+      "end": 212.1,
+      "text": "everybodyy",
+      "x": 0.891,
+      "y": 0.58,
+      "align": "right",
+      "size": 42,
+      "color": "#9ef0ff",
+      "units": "normalized",
+      "effects": {
+        "shadow": true,
+        "scanlineMask": 0.12,
+        "glitchIn": true,
+        "typewriter": {
+          "speed": 42
+        }
+      },
+      "spans": [
+        {
+          "text": "everybodyy",
+          "color": "#9ef0ff",
+          "size": 42,
+          "weight": "bold",
+          "font": "Courier New"
+        }
+      ]
+    },
+    {
+      "id": "scene-023-lissajous-31the",
+      "start": 211.149,
+      "end": 212.1,
+      "text": "the",
+      "x": 0.508,
+      "y": 0.778,
+      "align": "right",
+      "size": 42,
+      "color": "#9ef0ff",
+      "units": "normalized",
+      "effects": {
+        "shadow": true,
+        "scanlineMask": 0.12,
+        "glitchIn": true,
+        "typewriter": {
+          "speed": 42
+        }
+      },
+      "spans": [
+        {
+          "text": "the",
+          "color": "#9ef0ff",
+          "size": 42,
+          "weight": "bold",
+          "font": "Courier New"
+        }
+      ]
+    },
+    {
+      "id": "scene-023-lissajous-31skl",
+      "start": 211.262,
+      "end": 212.1,
+      "text": "skills,",
+      "x": 0.951,
+      "y": 0.852,
+      "align": "right",
+      "size": 42,
+      "color": "#9ef0ff",
+      "units": "normalized",
+      "effects": {
+        "shadow": true,
+        "scanlineMask": 0.12,
+        "glitchIn": true,
+        "typewriter": {
+          "speed": 42
+        }
+      },
+      "spans": [
+        {
+          "text": "skills,",
+          "color": "#9ef0ff",
+          "size": 42,
+          "weight": "bold",
+          "font": "Courier New"
+        }
+      ]
+    },
+    {
+      "id": "scene-023-lissajous-31mn",
+      "start": 211.428,
+      "end": 211.9,
+      "text": "Now",
+      "x": 0.557,
+      "y": 0.108,
+      "align": "right",
+      "size": 42,
+      "color": "#9ef0ff",
+      "units": "normalized",
+      "effects": {
+        "shadow": true,
+        "scanlineMask": 0.12,
+        "glitchIn": true,
+        "typewriter": {
+          "speed": 42
+        }
+      },
+      "spans": [
+        {
+          "text": "Now",
+          "color": "#9ef0ff",
+          "size": 42,
+          "weight": "bold",
+          "font": "Courier New"
+        }
+      ]
+    },
+    {
+      "id": "scene-023-lissajous-31evr",
+      "start": 211.563,
+      "end": 212.1,
+      "text": "everybody",
+      "x": 0.597,
+      "y": 0.228,
+      "align": "right",
+      "size": 27,
+      "color": "#847010",
+      "units": "normalized",
+      "effects": {
+        "shadow": true,
+        "scanlineMask": 0.12,
+        "glitchIn": true,
+        "typewriter": {
+          "speed": 42
+        }
+      },
+      "spans": [
+        {
+          "text": "everybody",
+          "font": "Science Gothic",
+          "color": "#847010",
+          "size": 27,
+          "weight": "bold"
+        }
+      ]
+    },
+    {
+      "id": "scene-023-lissajous-31cn",
+      "start": 211.758,
+      "end": 212.1,
+      "text": "can!",
+      "x": 0.859,
+      "y": 0.225,
+      "align": "right",
+      "size": 28,
+      "color": "#498e1a",
+      "units": "normalized",
+      "effects": {
+        "shadow": true,
+        "scanlineMask": 0.12,
+        "glitchIn": true,
+        "typewriter": {
+          "speed": 42
+        }
+      },
+      "spans": [
+        {
+          "text": "can!",
+          "font": "Science Gothic",
+          "color": "#498e1a",
+          "size": 28,
+          "weight": "bold"
         }
       ]
     },
