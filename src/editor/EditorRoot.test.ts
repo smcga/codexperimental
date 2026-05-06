@@ -56,6 +56,8 @@ import {
   resolveInitialTimelineState,
   getTimelineSourceAfterLocalEdit,
   shouldApplyRemoteDraftStorageEvent,
+  getSelectionAfterRemoteTimelineSync,
+  ensureCueMobileBaseline,
   TIMELINE_DRAFT_STORAGE_KEY,
   REVERT_TO_FILE_TOOLTIP,
   DISCARD_LOCAL_DRAFT_TOOLTIP,
@@ -157,6 +159,52 @@ describe("shouldApplyRemoteDraftStorageEvent", () => {
   });
 });
 
+
+
+describe("ensureCueMobileBaseline", () => {
+  it("captures the current desktop values when mobile overrides are missing", () => {
+    const cue = { id: "cue-1", start: 1, text: "word", x: 0.2, y: 0.4, size: 30 };
+    ensureCueMobileBaseline(cue);
+    cue.x = 0.8;
+    cue.y = 0.9;
+    expect(cue.mobile).toEqual({ x: 0.2, y: 0.4, size: 30 });
+  });
+
+  it("leaves existing mobile overrides untouched", () => {
+    const cue = { id: "cue-2", start: 1, text: "word", x: 0.2, y: 0.4, size: 30, mobile: { x: 0.7, y: 0.6, size: 18 } };
+    ensureCueMobileBaseline(cue);
+    expect(cue.mobile).toEqual({ x: 0.7, y: 0.6, size: 18 });
+  });
+});
+describe("getSelectionAfterRemoteTimelineSync", () => {
+  it("preserves selected cue ids that still exist after remote draft sync", () => {
+    const timeline = makeTimeline([2, 5]);
+    timeline.textCues = [
+      { id: "cue-1", text: "one", start: 2 },
+      { id: "cue-2", text: "two", start: 5 }
+    ];
+    const selection = getSelectionAfterRemoteTimelineSync(timeline, {
+      selectedSceneId: timeline.sections[0]?.id ?? null,
+      selectedTextCueId: "cue-1",
+      selectedTextCueIds: ["cue-1"]
+    });
+    expect(selection.selectedTextCueId).toBe("cue-1");
+    expect(selection.selectedTextCueIds).toEqual(["cue-1"]);
+  });
+
+  it("drops missing selected cues and falls back to existing scene", () => {
+    const timeline = makeTimeline([2]);
+    timeline.textCues = [{ id: "cue-2", text: "two", start: 2 }];
+    const selection = getSelectionAfterRemoteTimelineSync(timeline, {
+      selectedSceneId: "missing-scene",
+      selectedTextCueId: "missing-cue",
+      selectedTextCueIds: ["missing-cue"]
+    });
+    expect(selection.selectedTextCueId).toBeNull();
+    expect(selection.selectedTextCueIds).toEqual([]);
+    expect(selection.selectedSceneId).toBe(timeline.sections[0]?.id ?? null);
+  });
+});
 describe("editor draft action tooltips", () => {
   it("documents the difference between reverting and discarding local draft", () => {
     expect(REVERT_TO_FILE_TOOLTIP).toContain("timeline.release.json");

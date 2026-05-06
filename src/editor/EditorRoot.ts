@@ -247,6 +247,24 @@ export const shouldApplyRemoteDraftStorageEvent = (
     return null;
   }
 };
+export const getSelectionAfterRemoteTimelineSync = (
+  timeline: RawTimelineConfig,
+  selection: { selectedSceneId: string | null; selectedTextCueId: string | null; selectedTextCueIds: string[] }
+): { selectedSceneId: string | null; selectedTextCueId: string | null; selectedTextCueIds: string[] } => {
+  const sceneIds = new Set(timeline.sections.map((section) => section.id));
+  const cueIds = new Set((timeline.textCues ?? []).map((cue) => cue.id));
+  const selectedTextCueIds = selection.selectedTextCueIds.filter((id) => cueIds.has(id));
+  const selectedTextCueId = selectedTextCueIds.includes(selection.selectedTextCueId ?? "")
+    ? selection.selectedTextCueId
+    : selectedTextCueIds[selectedTextCueIds.length - 1] ?? null;
+  return {
+    selectedSceneId: selection.selectedSceneId && sceneIds.has(selection.selectedSceneId)
+      ? selection.selectedSceneId
+      : timeline.sections[0]?.id ?? null,
+    selectedTextCueId,
+    selectedTextCueIds
+  };
+};
 export const REVERT_TO_FILE_TOOLTIP =
   "Reload the editor timeline from timeline.release.json and clear the saved local draft.";
 export const DISCARD_LOCAL_DRAFT_TOOLTIP =
@@ -1014,6 +1032,10 @@ export const ensureAutomationPoints = (entry: RawParamAutomation): RawParamAutom
 };
 
 
+export const ensureCueMobileBaseline = (cue: RawTextCue): void => {
+  cue.mobile = cue.mobile ?? { x: cue.x ?? 0.5, y: cue.y ?? 0.7, size: cue.size ?? 42 };
+};
+
 export const getCueTypography = (cue: RawTextCue): CueTypography => {
   const firstSpan = cue.spans?.[0];
   return {
@@ -1246,14 +1268,17 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
     if (!remoteTimeline) {
       return;
     }
+    const syncedSelection = getSelectionAfterRemoteTimelineSync(remoteTimeline, {
+      selectedSceneId: state.selectedSceneId,
+      selectedTextCueId: state.selectedTextCueId,
+      selectedTextCueIds: state.selectedTextCueIds
+    });
     setState({
       timeline: remoteTimeline,
       localDraftTimeline: structuredClone(remoteTimeline),
       timelineSource: "draft",
       pendingDraftChoice: false,
-      selectedSceneId: remoteTimeline.sections[0]?.id ?? null,
-      selectedTextCueId: null,
-      selectedTextCueIds: []
+      ...syncedSelection
     });
     void applyTimelineIfValid(remoteTimeline);
   };
@@ -1364,6 +1389,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         if (!cue) {
           return;
         }
+        ensureCueMobileBaseline(cue);
         cue.x = roundTimelineSeconds(point.x);
         cue.y = roundTimelineSeconds(point.y);
         cue.units = "normalized";
@@ -1388,6 +1414,7 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
         if (!cue) {
           return;
         }
+        ensureCueMobileBaseline(cue);
         cue.x = roundTimelineSeconds(point.x);
         cue.y = roundTimelineSeconds(point.y);
         cue.units = "normalized";
