@@ -398,7 +398,7 @@
     },
     {
       "id": "Scene 003 - Kefrens Bars",
-      "start": 86.042,
+      "start": 85.754,
       "effect": "amiga_showcase",
       "era": "16bit",
       "transition": {
@@ -554,7 +554,7 @@
     },
     {
       "id": "era8bit-glitch",
-      "start": 92.921,
+      "start": 93.583,
       "effect": "gameOfLife",
       "params": {
         "speed": 2.3,
@@ -574,7 +574,7 @@
     },
     {
       "id": "era8bit-glitch (split 2)",
-      "start": 95.54,
+      "start": 96.653,
       "effect": "Beat Sway Ropes",
       "params": {
         "speed": 2.3,
@@ -588,30 +588,6 @@
           "params": {},
           "automation": [],
           "fitAlign": "fill"
-        }
-      ],
-      "fitAlign": "centre"
-    },
-    {
-      "id": "era8bit-glitch (split)",
-      "start": 96.791,
-      "effect": "NeonPulseSpiral",
-      "params": {
-        "speed": 2.3,
-        "glow": 0.32
-      },
-      "layers": [
-        {
-          "effect": "lissajous",
-          "blend": "screen",
-          "opacity": 0.1,
-          "params": {}
-        },
-        {
-          "effect": "bokeh",
-          "blend": "screen",
-          "opacity": 0.1,
-          "params": {}
         }
       ],
       "fitAlign": "centre"
