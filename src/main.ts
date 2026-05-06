@@ -90,6 +90,7 @@ import {
 } from "./generatedEffectControls";
 import { installGlobalNumberInputWheelGuard } from "./numberInputWheel";
 import { installAnimatedTitle } from "./titleFx";
+import { getDemoTimeFromAudio } from "./playbackTiming";
 import { getEffectIdeaCloseBlockedMessage, shouldShowCommunityCarouselButtons } from "./effectIdeaModalClose";
 import { generateEffectWithSelfImprovement } from "./effectIdeaSelfImprovement";
 
@@ -250,6 +251,13 @@ let availableEffectNames = getEffectRegistryKeys();
 let playbackSyncSuppressBroadcast = false;
 let lastPlaybackSyncStateSentAt = 0;
 const manualBeatTrigger = createManualBeatTrigger();
+const getCurrentDemoTime = (): number => {
+  if (!audioPlayer || !timeline) {
+    return 0;
+  }
+  return getDemoTimeFromAudio(audioPlayer.currentTime, timeline.getAudioOffset(), audioPlayer.outputLatency);
+};
+
 const playbackSync = createPlaybackSyncController(
   {
     onRemoteTransport: (action, time) => {
@@ -1130,7 +1138,7 @@ async function applyTimelineConfig(config: TimelineConfig): Promise<void> {
   timeline = new Timeline(config);
   timeline.setAudioDuration(audioPlayer.duration);
   audioPlayer.seek(currentTime);
-  lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+  lastDemoTime = getCurrentDemoTime();
   updateDebugSkipButtonState(lastDemoTime);
   setOverlay("", false);
   if (!wasPaused) {
@@ -1846,7 +1854,7 @@ async function startDemo(): Promise<void> {
     }
     renderer.reset();
     isRunning = true;
-    lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+    lastDemoTime = getCurrentDemoTime();
     lastFrameTimestamp = performance.now();
     setOverlay("", false, false, "status");
     if (!releaseMode) {
@@ -1873,7 +1881,7 @@ async function restartDemo(): Promise<void> {
     playbackSync.broadcastTransport("restart");
   }
   renderer.reset();
-  lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+  lastDemoTime = getCurrentDemoTime();
   lastFrameTimestamp = performance.now();
   if (!releaseMode) {
     updateDebugSkipButtonState(lastDemoTime);
@@ -1899,11 +1907,11 @@ function loop(): void {
     applyQualityScale();
   }
 
-  let demoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+  let demoTime = getCurrentDemoTime();
   const loopState = editorController?.getLoopState();
   if (loopState && !audioPlayer.paused && demoTime >= loopState.end) {
     audioPlayer.seek(loopState.start - timeline.getAudioOffset());
-    demoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+    demoTime = getCurrentDemoTime();
     lastDemoTime = demoTime;
   }
   const delta = Math.max(0, demoTime - lastDemoTime);
@@ -2009,7 +2017,7 @@ if (canvas) {
     if (!audioPlayer || !timeline || overlayMode === "start") {
       return;
     }
-    const demoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+    const demoTime = getCurrentDemoTime();
     manualBeatTrigger.trigger(demoTime);
   });
 }
