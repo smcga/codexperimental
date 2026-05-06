@@ -7873,7 +7873,7 @@
     {
       "id": "scene-023-lissajous-1",
       "start": 206.07,
-      "end": 209.777,
+      "end": 207.3,
       "text": "All",
       "x": 0.13,
       "y": 0.14,
@@ -7894,12 +7894,14 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "blend": "lighter",
+      "outlineWidth": 2
     },
     {
       "id": "scene-023-lissajous-2",
       "start": 206.27,
-      "end": 209.777,
+      "end": 207.3,
       "text": "I",
       "x": 0.386,
       "y": 0.198,
@@ -7922,18 +7924,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "blend": "lighter",
+      "outlineWidth": 2
     },
     {
       "id": "scene-023-lissajous-3",
       "start": 206.47,
-      "end": 209.777,
+      "end": 207.3,
       "text": "had",
       "x": 0.54,
       "y": 0.166,
       "align": "left",
       "size": 42,
-      "color": "#7ee787",
+      "color": "#d926b8",
       "units": "normalized",
       "effects": {
         "shadow": true,
@@ -7946,17 +7950,19 @@
       "spans": [
         {
           "text": "had",
-          "color": "#7ee787",
+          "font": "Courier New",
+          "color": "#d926b8",
           "size": 42,
-          "weight": "bold",
-          "font": "Courier New"
+          "weight": "bold"
         }
-      ]
+      ],
+      "blend": "lighter",
+      "outlineWidth": 2
     },
     {
       "id": "scene-023-lissajous-4",
       "start": 206.57,
-      "end": 209.777,
+      "end": 207.3,
       "text": "to",
       "x": 0.152,
       "y": 0.32,
@@ -7977,12 +7983,13 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "blend": "lighter"
     },
     {
       "id": "scene-023-lissajous-5",
       "start": 206.77,
-      "end": 209.777,
+      "end": 207.4,
       "text": "do",
       "x": 0.337,
       "y": 0.375,
@@ -8003,12 +8010,13 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "blend": "lighter"
     },
     {
       "id": "scene-023-lissajous-6",
       "start": 206.97,
-      "end": 209.777,
+      "end": 207.6,
       "text": "was",
       "x": 0.507,
       "y": 0.369,
@@ -8031,18 +8039,19 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "blend": "lighter"
     },
     {
       "id": "scene-023-lissajous-7",
       "start": 207.17,
-      "end": 209.777,
+      "end": 207.6,
       "text": "ask,",
       "x": 0.493,
       "y": 0.606,
       "align": "center",
-      "size": 56,
-      "color": "#9ef0ff",
+      "size": 60,
+      "color": "#ffffff",
       "units": "normalized",
       "effects": {
         "shadow": true,
@@ -8055,20 +8064,23 @@
       "spans": [
         {
           "text": "ask,",
+          "font": "SUSE",
           "color": "#ffffff",
           "size": 60,
-          "weight": "900",
-          "font": "Courier New"
+          "weight": "900"
         }
-      ]
+      ],
+      "blend": "screen",
+      "outlineWidth": 4,
+      "outlineColor": "#000000"
     },
     {
       "id": "scene-023-lissajous-8",
-      "start": 207.27,
-      "end": 209.777,
+      "start": 207.595,
+      "end": 208.4,
       "text": "now",
-      "x": 0.181,
-      "y": 0.56,
+      "x": 0.193,
+      "y": 0.232,
       "align": "left",
       "size": 45,
       "color": "#f7e9a4",
@@ -8081,20 +8093,21 @@
       "spans": [
         {
           "text": "now",
+          "font": "Trade Winds",
           "color": "#f7e9a4",
           "size": 45,
-          "weight": "bold",
-          "font": "Courier New"
+          "weight": "bold"
         }
-      ]
+      ],
+      "blend": "difference"
     },
     {
       "id": "scene-023-lissajous-9",
-      "start": 207.37,
-      "end": 209.777,
+      "start": 207.741,
+      "end": 208.4,
       "text": "it's",
-      "x": 0.188,
-      "y": 0.62,
+      "x": 0.482,
+      "y": 0.255,
       "align": "left",
       "size": 34,
       "color": "#7ee787",
@@ -8107,23 +8120,24 @@
       "spans": [
         {
           "text": "it's",
+          "font": "Trade Winds",
           "color": "#7ee787",
           "size": 34,
-          "weight": "bold",
-          "font": "Courier New"
+          "weight": "bold"
         }
-      ]
+      ],
+      "blend": "color-dodge"
     },
     {
       "id": "scene-023-lissajous-10",
-      "start": 207.57,
-      "end": 209.777,
+      "start": 207.872,
+      "end": 208.4,
       "text": "real,",
-      "x": 0.5,
-      "y": 0.68,
+      "x": 0.538,
+      "y": 0.454,
       "align": "center",
-      "size": 56,
-      "color": "#ffb86c",
+      "size": 60,
+      "color": "#ffffff",
       "units": "normalized",
       "effects": {
         "shadow": true,
@@ -8135,22 +8149,23 @@
       "spans": [
         {
           "text": "real,",
+          "font": "Trade Winds",
           "color": "#ffffff",
           "size": 60,
-          "weight": "900",
-          "font": "Courier New"
+          "weight": "900"
         }
-      ]
+      ],
+      "blend": "color-dodge"
     },
     {
       "id": "scene-023-lissajous-11",
-      "start": 207.67,
-      "end": 209.777,
+      "start": 208,
+      "end": 208.4,
       "text": "it",
-      "x": 0.203,
-      "y": 0.74,
+      "x": 0.311,
+      "y": 0.705,
       "align": "left",
-      "size": 42,
+      "size": 35,
       "color": "#ff7ad9",
       "units": "normalized",
       "effects": {
@@ -8164,22 +8179,23 @@
       "spans": [
         {
           "text": "it",
+          "font": "Audiowide",
           "color": "#ff7ad9",
-          "size": 42,
-          "weight": "bold",
-          "font": "Courier New"
+          "size": 35,
+          "weight": "bold"
         }
-      ]
+      ],
+      "blend": "color-dodge"
     },
     {
       "id": "scene-023-lissajous-12",
-      "start": 207.77,
-      "end": 209.777,
+      "start": 208.123,
+      "end": 208.4,
       "text": "exists.",
-      "x": 0.21,
-      "y": 0.8,
+      "x": 0.42,
+      "y": 0.691,
       "align": "left",
-      "size": 53,
+      "size": 41,
       "color": "#a5b4fc",
       "units": "normalized",
       "effects": {
@@ -8190,20 +8206,22 @@
       "spans": [
         {
           "text": "exists.",
+          "font": "Audiowide",
           "color": "#a5b4fc",
-          "size": 57,
-          "weight": "900",
-          "font": "Courier New"
+          "size": 41,
+          "weight": "900"
         }
-      ]
+      ],
+      "blend": "color-dodge",
+      "outlineWidth": 0
     },
     {
       "id": "scene-023-lissajous-13",
       "start": 208.33,
-      "end": 211.671,
+      "end": 209.7,
       "text": "From",
-      "x": 0.87,
-      "y": 0.16,
+      "x": 0.395,
+      "y": 0.235,
       "align": "right",
       "size": 37,
       "color": "#f7e9a4",
@@ -8218,23 +8236,24 @@
       "spans": [
         {
           "text": "From",
+          "font": "Doto",
           "color": "#f7e9a4",
           "size": 37,
-          "weight": "bold",
-          "font": "Courier New"
+          "weight": "bold"
         }
-      ]
+      ],
+      "blend": "difference"
     },
     {
       "id": "scene-023-lissajous-14",
       "start": 208.431,
       "end": 209.841,
-      "text": "an",
-      "x": 0.86,
-      "y": 0.237,
+      "text": "a",
+      "x": 0.504,
+      "y": 0.238,
       "align": "right",
-      "size": 42,
-      "color": "#7ee787",
+      "size": 35,
+      "color": "#c4e882",
       "units": "normalized",
       "effects": {
         "shadow": true,
@@ -8246,21 +8265,22 @@
       },
       "spans": [
         {
-          "text": "an",
-          "color": "#7ee787",
-          "size": 42,
-          "weight": "bold",
-          "font": "Courier New"
+          "text": "a",
+          "font": "Doto",
+          "color": "#c4e882",
+          "size": 35,
+          "weight": "bold"
         }
-      ]
+      ],
+      "blend": "difference"
     },
     {
       "id": "scene-023-lissajous-15",
       "start": 208.554,
       "end": 209.841,
       "text": "vibe,",
-      "x": 0.85,
-      "y": 0.315,
+      "x": 0.615,
+      "y": 0.397,
       "align": "right",
       "size": 43,
       "color": "#ffb86c",
@@ -8273,22 +8293,23 @@
       "spans": [
         {
           "text": "vibe,",
+          "font": "Doto",
           "color": "#ffb86c",
           "size": 43,
-          "weight": "bold",
-          "font": "Courier New"
+          "weight": "bold"
         }
-      ]
+      ],
+      "blend": "difference"
     },
     {
       "id": "scene-023-lissajous-16",
       "start": 208.678,
-      "end": 209.841,
+      "end": 209.3,
       "text": "from",
-      "x": 0.84,
-      "y": 0.392,
+      "x": 0.391,
+      "y": 0.56,
       "align": "right",
-      "size": 34,
+      "size": 32,
       "color": "#ff7ad9",
       "units": "normalized",
       "effects": {
@@ -8299,23 +8320,25 @@
       "spans": [
         {
           "text": "from",
+          "font": "Coiny",
           "color": "#ff7ad9",
-          "size": 34,
-          "weight": "bold",
-          "font": "Courier New"
+          "size": 32,
+          "weight": "bold"
         }
-      ]
+      ],
+      "blend": "difference",
+      "outlineWidth": 2
     },
     {
       "id": "scene-023-lissajous-17",
       "start": 208.801,
       "end": 209.841,
       "text": "an",
-      "x": 0.83,
-      "y": 0.47,
+      "x": 0.468,
+      "y": 0.611,
       "align": "right",
       "size": 39,
-      "color": "#a5b4fc",
+      "color": "#9c33c1",
       "units": "normalized",
       "effects": {
         "shadow": true,
@@ -8327,22 +8350,23 @@
       "spans": [
         {
           "text": "an",
-          "color": "#a5b4fc",
+          "font": "Coiny",
+          "color": "#9c33c1",
           "size": 39,
-          "weight": "bold",
-          "font": "Courier New"
+          "weight": "bold"
         }
-      ]
+      ],
+      "blend": "difference"
     },
     {
       "id": "scene-023-lissajous-18",
       "start": 208.925,
       "end": 209.841,
       "text": "idea,",
-      "x": 0.82,
-      "y": 0.547,
+      "x": 0.677,
+      "y": 0.66,
       "align": "right",
-      "size": 50,
+      "size": 33,
       "color": "#9ef0ff",
       "units": "normalized",
       "effects": {
@@ -8356,23 +8380,24 @@
       "spans": [
         {
           "text": "idea,",
+          "font": "Coiny",
           "color": "#9ef0ff",
-          "size": 54,
-          "weight": "900",
-          "font": "Courier New"
+          "size": 33,
+          "weight": "900"
         }
-      ]
+      ],
+      "blend": "difference"
     },
     {
       "id": "scene-023-lissajous-19",
       "start": 209.048,
       "end": 209.841,
       "text": "I",
-      "x": 0.81,
-      "y": 0.625,
+      "x": 0.25,
+      "y": 0.791,
       "align": "right",
       "size": 45,
-      "color": "#f7e9a4",
+      "color": "#a6f7c9",
       "units": "normalized",
       "effects": {
         "shadow": true,
@@ -8382,22 +8407,23 @@
       "spans": [
         {
           "text": "I",
-          "color": "#f7e9a4",
+          "font": "Courier New",
+          "color": "#a6f7c9",
           "size": 45,
-          "weight": "bold",
-          "font": "Courier New"
+          "weight": "bold"
         }
-      ]
+      ],
+      "blend": "xor"
     },
     {
       "id": "scene-023-lissajous-20",
       "start": 209.12,
       "end": 209.789,
       "text": "spawned",
-      "x": 0.8,
-      "y": 0.702,
+      "x": 0.644,
+      "y": 0.794,
       "align": "right",
-      "size": 44,
+      "size": 30,
       "color": "#7ee787",
       "units": "normalized",
       "effects": {
@@ -8408,23 +8434,24 @@
       "spans": [
         {
           "text": "spawned",
+          "font": "Courier New",
           "color": "#7ee787",
-          "size": 48,
-          "weight": "900",
-          "font": "Courier New"
+          "size": 30,
+          "weight": "900"
         }
-      ]
+      ],
+      "blend": "xor"
     },
     {
       "id": "scene-023-lissajous-21",
       "start": 209.201,
       "end": 209.536,
       "text": "this.",
-      "x": 0.79,
-      "y": 0.78,
+      "x": 0.932,
+      "y": 0.777,
       "align": "right",
-      "size": 37,
-      "color": "#ffb86c",
+      "size": 29,
+      "color": "#66ff00",
       "units": "normalized",
       "effects": {
         "shadow": true,
@@ -8436,12 +8463,13 @@
       "spans": [
         {
           "text": "this.",
-          "color": "#ffb86c",
-          "size": 37,
-          "weight": "bold",
-          "font": "Courier New"
+          "font": "Frijole",
+          "color": "#66ff00",
+          "size": 29,
+          "weight": "bold"
         }
-      ]
+      ],
+      "blend": "difference"
     },
     {
       "id": "scene-023-lissajous-22",
@@ -8527,7 +8555,7 @@
     {
       "id": "scene-023-lissajous-25",
       "start": 209.885,
-      "end": 210.017,
+      "end": 210.4,
       "text": "beat?",
       "x": 0.5,
       "y": 0.82,
@@ -8555,7 +8583,7 @@
     {
       "id": "scene-023-lissajous-26",
       "start": 210.055,
-      "end": 210.451,
+      "end": 210.8,
       "text": "write",
       "x": 0.13,
       "y": 0.14,
@@ -8581,7 +8609,7 @@
     {
       "id": "scene-023-lissajous-27",
       "start": 210.144,
-      "end": 210.408,
+      "end": 210.6,
       "text": "an",
       "x": 0.17,
       "y": 0.47,
@@ -8607,7 +8635,7 @@
     {
       "id": "scene-023-lissajous-28",
       "start": 210.276,
-      "end": 210.408,
+      "end": 210.7,
       "text": "app?",
       "x": 0.21,
       "y": 0.8,
@@ -8635,7 +8663,7 @@
     {
       "id": "scene-023-lissajous-29",
       "start": 210.4,
-      "end": 214.186,
+      "end": 211.2,
       "text": "well",
       "x": 0.513,
       "y": 0.284,
