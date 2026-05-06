@@ -80,6 +80,17 @@ describe("AudioPlayer", () => {
     expect(sourceA.start).toHaveBeenCalledWith(20.03, 5);
   });
 
+
+  it("play from ended position restarts from zero offset", async () => {
+    const player = new AudioPlayer("/song.mp3");
+    await player.load();
+    player.seek(999);
+
+    await player.play();
+
+    expect(sourceA.start).toHaveBeenCalledWith(20.03, 0);
+  });
+
   it("pause stops source without disconnecting analyser to destination", async () => {
     const player = new AudioPlayer("/song.mp3");
     await player.load();

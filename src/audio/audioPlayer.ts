@@ -35,6 +35,7 @@ export class AudioPlayer {
   private pausedAt = 0;
   private playing = false;
   private intentionallyStoppingSource = false;
+  private outputGraphConnected = false;
   private src: string;
   private loop = false;
   onStarted?: () => void;
@@ -45,8 +46,7 @@ export class AudioPlayer {
     this.analyser = this.context.createAnalyser();
     this.gain = this.context.createGain();
     this.analyser.fftSize = DEFAULT_FFT_SIZE;
-    this.gain.connect(this.analyser);
-    this.analyser.connect(this.context.destination);
+    this.ensureOutputGraphConnected();
     this.timeDomain = new Uint8Array(this.analyser.fftSize);
     this.frequency = new Uint8Array(this.analyser.frequencyBinCount);
     this.configureFrequencyRanges();
@@ -83,6 +83,15 @@ export class AudioPlayer {
     return Math.min(bounded, this.buffer.duration);
   }
 
+  private ensureOutputGraphConnected(): void {
+    if (this.outputGraphConnected) {
+      return;
+    }
+    this.gain.connect(this.analyser);
+    this.analyser.connect(this.context.destination);
+    this.outputGraphConnected = true;
+  }
+
   private createAndConnectSource(): AudioBufferSourceNode {
     if (!this.buffer) {
       throw new Error("Audio buffer is not loaded");
@@ -111,7 +120,11 @@ export class AudioPlayer {
     const sourceToStop = this.source;
     this.source = null;
     sourceToStop.onended = null;
-    sourceToStop.stop();
+    try {
+      sourceToStop.stop();
+    } catch {
+      // Source may already be stopped or not yet started.
+    }
     sourceToStop.disconnect();
     this.intentionallyStoppingSource = false;
   }
@@ -126,7 +139,10 @@ export class AudioPlayer {
     await this.context.resume();
     const source = this.createAndConnectSource();
     const startAt = this.context.currentTime + START_LEAD_SECONDS;
-    const offset = this.clampPlaybackTime(this.pausedAt);
+    let offset = this.clampPlaybackTime(this.pausedAt);
+    if (this.buffer.duration > 0 && offset >= this.buffer.duration) {
+      offset = 0;
+    }
     this.startedAt = startAt - offset;
     source.start(startAt, offset);
     this.pausedAt = offset;
