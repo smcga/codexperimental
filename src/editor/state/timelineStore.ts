@@ -123,6 +123,9 @@ export function createTextCue(options?: { id?: string; start?: number; end?: num
     align: "center",
     size: 42,
     color: "#ffffff",
+    blend: "source-over",
+    outlineWidth: 0,
+    outlineColor: "#000000",
     units: "normalized",
     effects: {
       glitchIn: false,

@@ -2469,6 +2469,21 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
             <input type="color" data-selected-cue-field="color" value="${typography.color}" class="editor-cue-color-input is-hidden" />
           </label>
           <label>
+            <span>Blend</span>
+            <select data-selected-cue-field="blend">
+              ${BLEND_MODES.map((mode) => `<option value="${mode}" ${mode === (selectedCue.blend ?? "source-over") ? "selected" : ""}>${mode}</option>`).join("")}
+            </select>
+          </label>
+          <label>
+            <span>Outline width (px)</span>
+            <input type="number" step="1" min="0" data-selected-cue-field="outlineWidth" value="${selectedCue.outlineWidth ?? 0}" />
+          </label>
+          <label class="editor-cue-color-control">
+            <span>Outline colour</span>
+            <button type="button" data-selected-cue-action="toggle-outline-color" style="background:${selectedCue.outlineColor ?? "#000000"}">${selectedCue.outlineColor ?? "#000000"}</button>
+            <input type="color" data-selected-cue-field="outlineColor" value="${selectedCue.outlineColor ?? "#000000"}" class="editor-cue-outline-color-input is-hidden" />
+          </label>
+          <label>
             <span>Size (px)</span>
             <input type="number" step="1" min="1" data-selected-cue-field="size" value="${typography.size}" />
           </label>
@@ -2766,6 +2781,13 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
             targetCue.units = "normalized";
           } else if (field === "align") {
             targetCue.align = input.value as "left" | "center" | "right";
+          } else if (field === "blend") {
+            targetCue.blend = input.value as BlendMode;
+          } else if (field === "outlineWidth") {
+            const parsed = Number(input.value);
+            targetCue.outlineWidth = Number.isFinite(parsed) ? Math.max(0, parsed) : 0;
+          } else if (field === "outlineColor") {
+            targetCue.outlineColor = input.value || "#000000";
           }
         }, { skipSceneNormalization: shouldSkipSceneNormalizationForCueField(input.dataset.selectedCueField ?? "") });
       });
@@ -2784,6 +2806,17 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
 
     inspector.querySelector<HTMLButtonElement>("[data-selected-cue-action='toggle-color']")?.addEventListener("click", () => {
       const colorInput = inspector.querySelector<HTMLInputElement>(".editor-cue-color-input");
+      if (!colorInput) {
+        return;
+      }
+      colorInput.classList.toggle("is-hidden");
+      if (!colorInput.classList.contains("is-hidden")) {
+        colorInput.focus();
+        colorInput.click();
+      }
+    });
+    inspector.querySelector<HTMLButtonElement>("[data-selected-cue-action='toggle-outline-color']")?.addEventListener("click", () => {
+      const colorInput = inspector.querySelector<HTMLInputElement>(".editor-cue-outline-color-input");
       if (!colorInput) {
         return;
       }

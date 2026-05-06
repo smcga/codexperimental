@@ -280,3 +280,32 @@ it("preserves optional text safe settings", () => {
   expect(normalized.textCues[0].safe).toBe(true);
   expect(normalized.textCues[0].maxWidth).toBe(123);
 });
+
+it("supports text cue blend and outline styling", () => {
+  const base = createBaseConfig();
+  base.textCues = [
+    {
+      id: "cue-style",
+      start: 1.2,
+      text: "styled",
+      blend: "difference",
+      outlineWidth: 3,
+      outlineColor: "#ff00aa"
+    }
+  ];
+  const normalized = normalizeTimelineConfig(base);
+
+  expect(normalized.textCues[0].blend).toBe("difference");
+  expect(normalized.textCues[0].outlineWidth).toBe(3);
+  expect(normalized.textCues[0].outlineColor).toBe("#ff00aa");
+});
+
+it("defaults text cue blend and outline styling when omitted", () => {
+  const base = createBaseConfig();
+  base.textCues = [{ id: "cue-style-defaults", start: 0.5, text: "default styled" }];
+  const normalized = normalizeTimelineConfig(base);
+
+  expect(normalized.textCues[0].blend).toBe("source-over");
+  expect(normalized.textCues[0].outlineWidth).toBe(0);
+  expect(normalized.textCues[0].outlineColor).toBe("#000000");
+});
