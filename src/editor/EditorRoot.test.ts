@@ -983,12 +983,43 @@ describe("textCueFontOptions", () => {
 
 describe("getNextSelectedTextCueIds", () => {
   it("replaces selection on plain click", () => {
-    expect(getNextSelectedTextCueIds(["cue-1", "cue-2"], "cue-3", false)).toEqual(["cue-3"]);
+    expect(getNextSelectedTextCueIds(["cue-1", "cue-2"], "cue-3", {
+      ctrlOrMetaKey: false,
+      shiftKey: false,
+      orderedCueIds: ["cue-1", "cue-2", "cue-3"],
+      anchorCueId: "cue-2"
+    })).toEqual(["cue-3"]);
   });
 
-  it("toggles membership on ctrl/shift click", () => {
-    expect(getNextSelectedTextCueIds(["cue-1"], "cue-2", true)).toEqual(["cue-1", "cue-2"]);
-    expect(getNextSelectedTextCueIds(["cue-1", "cue-2"], "cue-1", true)).toEqual(["cue-2"]);
+  it("toggles membership on ctrl/meta click", () => {
+    expect(getNextSelectedTextCueIds(["cue-1"], "cue-2", {
+      ctrlOrMetaKey: true,
+      shiftKey: false,
+      orderedCueIds: ["cue-1", "cue-2", "cue-3"],
+      anchorCueId: "cue-1"
+    })).toEqual(["cue-1", "cue-2"]);
+    expect(getNextSelectedTextCueIds(["cue-1", "cue-2"], "cue-1", {
+      ctrlOrMetaKey: true,
+      shiftKey: false,
+      orderedCueIds: ["cue-1", "cue-2", "cue-3"],
+      anchorCueId: "cue-2"
+    })).toEqual(["cue-2"]);
+  });
+
+  it("selects a contiguous range on shift click", () => {
+    expect(getNextSelectedTextCueIds(["cue-2"], "cue-4", {
+      ctrlOrMetaKey: false,
+      shiftKey: true,
+      orderedCueIds: ["cue-1", "cue-2", "cue-3", "cue-4", "cue-5"],
+      anchorCueId: "cue-2"
+    })).toEqual(["cue-2", "cue-3", "cue-4"]);
+
+    expect(getNextSelectedTextCueIds(["cue-4"], "cue-2", {
+      ctrlOrMetaKey: false,
+      shiftKey: true,
+      orderedCueIds: ["cue-1", "cue-2", "cue-3", "cue-4", "cue-5"],
+      anchorCueId: "cue-4"
+    })).toEqual(["cue-2", "cue-3", "cue-4"]);
   });
 });
 
