@@ -57,7 +57,9 @@ import {
   EffectParamLimitsByEffect
 } from "./debug/effectParamLimits";
 import { fetchGlobalEffectParamLimits, saveGlobalEffectParamLimits } from "./effectParamLimitsApi";
-import { createEditorRoot, EditorController } from "./editor/EditorRoot";
+import { createEditorRoot, EditorController, TIMELINE_DRAFT_STORAGE_KEY } from "./editor/EditorRoot";
+import { loadTimelineDraft, saveTimelineDraft } from "./editor/serialization";
+import { applyCueDragPosition, pickCueForDrag, toNormalizedCanvasPoint } from "./editor/cueDragSync";
 import { submitDoodle } from "./doodles";
 import {
   compileRuntimeEffect,
@@ -227,6 +229,7 @@ let isRunning = false;
 let pendingConfig: TimelineConfig | null = null;
 let currentAudioSrc = "";
 let editorController: EditorController | null = null;
+let activeRuntimeCueDrag: { pointerId: number; cueId: string } | null = null;
 let lastFrameTimestamp = performance.now();
 let currentViewCount = 0;
 let overlayMode: OverlayMode = "start";
@@ -2033,13 +2036,86 @@ function loop(): void {
 }
 
 if (canvas) {
-  canvas.addEventListener("pointerdown", () => {
-    if (!audioPlayer || !timeline || overlayMode === "start") {
-      return;
+  const tryStartRuntimeCueDrag = (event: PointerEvent): boolean => {
+    if (editorController?.isVisible() || !audioPlayer || !timeline || overlayMode === "start") {
+      return false;
+    }
+    const editorDraftPresent = localStorage.getItem(TIMELINE_DRAFT_STORAGE_KEY);
+    if (!editorDraftPresent) {
+      return false;
+    }
+    const rawDraft = loadTimelineDraft();
+    if (!rawDraft?.textCues?.length) {
+      return false;
+    }
+    const point = toNormalizedCanvasPoint(event.clientX, event.clientY, canvas.getBoundingClientRect());
+    if (!point) {
+      return false;
     }
     const demoTime = audioPlayer.currentTime + timeline.getAudioOffset() + deviceVisualOffsetSeconds;
-    manualBeatTrigger.trigger(demoTime);
+    const activeCues = timeline.getState(demoTime).activeTextCues;
+    if (activeCues.length === 0) {
+      return false;
+    }
+    const framingMode = renderer.getCurrentFramingState()?.mode ?? "desktopCinematic";
+    const cueIds = activeCues.map((cue) => cue.id);
+    const cuePositions = new Map(
+      activeCues.map((cue) => [cue.id, { x: framingMode === "mobileFit" ? cue.mobile.x : cue.x, y: framingMode === "mobileFit" ? cue.mobile.y : cue.y }])
+    );
+    const cueId = pickCueForDrag(cueIds, cuePositions, point);
+    if (!cueId) {
+      return false;
+    }
+    if (!applyCueDragPosition(rawDraft, cueId, point, framingMode === "mobileFit")) {
+      return false;
+    }
+    saveTimelineDraft(rawDraft);
+    void applyRawTimeline(rawDraft);
+    activeRuntimeCueDrag = { pointerId: event.pointerId, cueId };
+    canvas.setPointerCapture(event.pointerId);
+    event.preventDefault();
+    return true;
+  };
+
+  canvas.addEventListener("pointerdown", (event) => {
+    if (!tryStartRuntimeCueDrag(event)) {
+      if (!audioPlayer || !timeline || overlayMode === "start") {
+        return;
+      }
+      const demoTime = audioPlayer.currentTime + timeline.getAudioOffset() + deviceVisualOffsetSeconds;
+      manualBeatTrigger.trigger(demoTime);
+    }
   });
+
+  canvas.addEventListener("pointermove", (event) => {
+    if (!activeRuntimeCueDrag || activeRuntimeCueDrag.pointerId !== event.pointerId) {
+      return;
+    }
+    const rawDraft = loadTimelineDraft();
+    const point = toNormalizedCanvasPoint(event.clientX, event.clientY, canvas.getBoundingClientRect());
+    if (!rawDraft || !point) {
+      return;
+    }
+    const framingMode = renderer.getCurrentFramingState()?.mode ?? "desktopCinematic";
+    if (!applyCueDragPosition(rawDraft, activeRuntimeCueDrag.cueId, point, framingMode === "mobileFit")) {
+      return;
+    }
+    saveTimelineDraft(rawDraft);
+    void applyRawTimeline(rawDraft);
+  });
+
+  const stopRuntimeCueDrag = (event: PointerEvent): void => {
+    if (!activeRuntimeCueDrag || activeRuntimeCueDrag.pointerId !== event.pointerId) {
+      return;
+    }
+    activeRuntimeCueDrag = null;
+    if (canvas.hasPointerCapture(event.pointerId)) {
+      canvas.releasePointerCapture(event.pointerId);
+    }
+  };
+
+  canvas.addEventListener("pointerup", stopRuntimeCueDrag);
+  canvas.addEventListener("pointercancel", stopRuntimeCueDrag);
 }
 
 overlay.addEventListener("click", () => {
