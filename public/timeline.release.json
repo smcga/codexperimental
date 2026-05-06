@@ -169,7 +169,7 @@
     },
     {
       "id": "Scene 001 - Dot Tunnel",
-      "start": 60.987,
+      "start": 59.72,
       "effect": "dotTunnel",
       "era": "pcdemo",
       "transition": {
@@ -208,7 +208,7 @@
     },
     {
       "id": "era8bit-rotozoom",
-      "start": 66.249,
+      "start": 64.781,
       "effect": "rotozoom",
       "params": {
         "speed": 1
@@ -246,7 +246,7 @@
     },
     {
       "id": "scene-kgx2ic",
-      "start": 71.471,
+      "start": 70.405,
       "effect": "glitch",
       "params": {
         "speed": 6,
@@ -272,7 +272,7 @@
     },
     {
       "id": "hook-hit-01160",
-      "start": 74.042,
+      "start": 72.936,
       "effect": "glitch",
       "params": {
         "amount": 0.24
@@ -304,7 +304,7 @@
     },
     {
       "id": "era8bit-ribbons",
-      "start": 77.376,
+      "start": 76.431,
       "effect": "ribbons",
       "params": {
         "speed": 0.92,
@@ -358,7 +358,7 @@
     },
     {
       "id": "Scene 002 - Neon Alley",
-      "start": 83.195,
+      "start": 81.968,
       "effect": "blobs",
       "era": "pcdemo",
       "transition": {
@@ -398,7 +398,7 @@
     },
     {
       "id": "Scene 003 - Kefrens Bars",
-      "start": 85.754,
+      "start": 84.66,
       "effect": "amiga_showcase",
       "era": "16bit",
       "transition": {
@@ -440,7 +440,7 @@
     },
     {
       "id": "Scene 003 - Kefrens Bars (split)",
-      "start": 88.337,
+      "start": 87.351,
       "effect": "space_hangar",
       "era": "pcdemo",
       "transition": {
