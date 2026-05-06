@@ -73,12 +73,45 @@ export class AudioPlayer {
           throw new Error(`Failed to fetch audio: ${response.status}`);
         }
         const encodedAudio = await response.arrayBuffer();
-        return await this.context.decodeAudioData(encodedAudio);
+        return await this.decodeAudioData(encodedAudio);
       } catch (error) {
         lastError = error;
       }
     }
     throw new Error(`Failed to decode audio from ${src}${lastError ? `: ${String(lastError)}` : ""}`);
+  }
+
+  private async decodeAudioData(encodedAudio: ArrayBuffer): Promise<AudioBuffer> {
+    const decode = this.context.decodeAudioData.bind(this.context);
+    const maybePromise = decode(
+      encodedAudio,
+      undefined as unknown as DecodeSuccessCallback,
+      undefined as unknown as DecodeErrorCallback
+    ) as Promise<AudioBuffer> | void;
+
+    if (maybePromise && typeof (maybePromise as Promise<AudioBuffer>).then === "function") {
+      const decoded = await maybePromise;
+      if (!decoded) {
+        throw new Error("Decoded audio buffer is empty");
+      }
+      return decoded;
+    }
+
+    return await new Promise<AudioBuffer>((resolve, reject) => {
+      decode(
+        encodedAudio.slice(0),
+        (decoded) => {
+          if (!decoded) {
+            reject(new Error("Decoded audio buffer is empty"));
+            return;
+          }
+          resolve(decoded);
+        },
+        (error) => {
+          reject(error);
+        }
+      );
+    });
   }
 
   private getSourceCandidates(src: string): string[] {

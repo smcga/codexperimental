@@ -156,4 +156,20 @@ describe("AudioPlayer (Web Audio clock)", () => {
 
     expect(sources[0].loop).toBe(true);
   });
+
+  it("supports callback-style decodeAudioData implementations", async () => {
+    mockContext.decodeAudioData = vi.fn(
+      (encoded: ArrayBuffer, onSuccess?: (value: AudioBuffer) => void, _onError?: (reason: unknown) => void) => {
+        if (typeof onSuccess === "function") {
+          onSuccess(fakeBuffer);
+        }
+        return undefined;
+      }
+    );
+    const player = new AudioPlayer("/song.mp3");
+    await player.load();
+    await player.play();
+    expect(player.duration).toBeCloseTo(12.5, 6);
+    expect(sources).toHaveLength(1);
+  });
 });
