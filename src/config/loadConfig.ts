@@ -106,6 +106,9 @@ export type RawTextCue = {
   align?: "left" | "center" | "right";
   size?: number;
   color?: string;
+  blend?: BlendMode;
+  outlineWidth?: number;
+  outlineColor?: string;
   units?: "px";
   effects?: {
     glitchIn?: boolean;
@@ -198,6 +201,9 @@ export type TextCue = {
   align: "left" | "center" | "right";
   size: number;
   color: string;
+  blend: BlendMode;
+  outlineWidth: number;
+  outlineColor: string;
   units: "px" | "normalized";
   effects: {
     glitchIn: boolean;
@@ -228,6 +234,9 @@ const DEFAULT_TRANSITION: TransitionConfig = {
 
 const DEFAULT_TEXT_SIZE = 42;
 const DEFAULT_TEXT_COLOR = "#ffffff";
+const DEFAULT_TEXT_BLEND: BlendMode = "source-over";
+const DEFAULT_TEXT_OUTLINE_WIDTH = 0;
+const DEFAULT_TEXT_OUTLINE_COLOR = "#000000";
 const DEFAULT_TEXT_ALIGN: "left" | "center" | "right" = "center";
 const DEFAULT_TEXT_X = 0.5;
 const DEFAULT_TEXT_Y = 0.7;
@@ -609,6 +618,9 @@ export function normalizeTimelineConfig(raw: RawTimelineConfig): TimelineConfig 
       align: cue.align ?? DEFAULT_TEXT_ALIGN,
       size: cue.size ?? DEFAULT_TEXT_SIZE,
       color: cue.color ?? DEFAULT_TEXT_COLOR,
+      blend: cue.blend === undefined ? DEFAULT_TEXT_BLEND : normalizeBlendMode(cue.blend, `textCues[${index}].blend`),
+      outlineWidth: Math.max(0, cue.outlineWidth ?? DEFAULT_TEXT_OUTLINE_WIDTH),
+      outlineColor: cue.outlineColor ?? DEFAULT_TEXT_OUTLINE_COLOR,
       units: cue.units === "px" ? "px" : "normalized",
       effects: {
         glitchIn: cue.effects?.glitchIn ?? false,

@@ -11,8 +11,9 @@ type TextRenderOptions = {
   framingMode?: FramingMode;
   safeRect?: Rect;
 };
+type RenderSpan = TextSpan & { outlineWidth: number; outlineColor: string };
 
-function sliceSpansByChars(spans: TextSpan[], charCount: number): TextSpan[] {
+function sliceSpansByChars(spans: RenderSpan[], charCount: number): RenderSpan[] {
   if (charCount <= 0) {
     return [];
   }
@@ -26,7 +27,7 @@ function sliceSpansByChars(spans: TextSpan[], charCount: number): TextSpan[] {
       remaining -= text.length;
       return { ...span, text };
     })
-    .filter((span): span is TextSpan => span !== null && span.text.length > 0);
+    .filter((span): span is RenderSpan => span !== null && span.text.length > 0);
 }
 
 function measureText(ctx: CanvasRenderingContext2D, text: string, span: TextSpan): number {
@@ -59,15 +60,15 @@ export function resolveTextPosition(
 
 function wrapSpans(
   ctx: CanvasRenderingContext2D,
-  spans: TextSpan[],
+  spans: RenderSpan[],
   maxWidth: number
-): Array<{ spans: TextSpan[]; layout: ReturnType<typeof layoutSpans> }> {
+): Array<{ spans: RenderSpan[]; layout: ReturnType<typeof layoutSpans> }> {
   if (!Number.isFinite(maxWidth) || maxWidth <= 0) {
     return [{ spans, layout: layoutSpans(spans, "left", (text, span) => measureText(ctx, text, span)) }];
   }
 
-  const lines: TextSpan[][] = [];
-  let current: TextSpan[] = [];
+  const lines: RenderSpan[][] = [];
+  let current: RenderSpan[] = [];
   let currentWidth = 0;
 
   const pushCurrent = (): void => {
@@ -127,7 +128,11 @@ export function renderTextCues(
     }
 
     const revealSpeed = cue.effects.typewriter?.speed ?? 0;
-    let spans = cue.spans;
+    let spans: RenderSpan[] = cue.spans.map((span) => ({
+      ...span,
+      outlineWidth: cue.outlineWidth ?? 0,
+      outlineColor: cue.outlineColor ?? "#000000"
+    }));
     if (revealSpeed > 0) {
       const totalChars = cue.spans.reduce((sum, span) => sum + span.text.length, 0);
       const visibleChars = Math.floor((time - cue.start) * revealSpeed);
@@ -153,6 +158,7 @@ export function renderTextCues(
     ctx.save();
     ctx.translate(x, y - blockHeight / 2 + lineHeight / 2);
     ctx.textBaseline = "middle";
+    ctx.globalCompositeOperation = cue.blend ?? "source-over";
 
     if (cue.effects.shadow) {
       ctx.shadowColor = "rgba(80, 220, 255, 0.8)";
@@ -199,6 +205,11 @@ function drawSpans(
 ): void {
   layout.spans.forEach((span) => {
     ctx.font = `${span.weight} ${span.size}px ${span.font}`;
+    if (span.outlineWidth > 0) {
+      ctx.lineWidth = span.outlineWidth;
+      ctx.strokeStyle = span.outlineColor;
+      ctx.strokeText(span.text, span.x + offsetX, offsetY);
+    }
     ctx.fillStyle = span.color;
     ctx.fillText(span.text, span.x + offsetX, offsetY);
   });
