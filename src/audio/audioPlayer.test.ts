@@ -172,4 +172,45 @@ describe("AudioPlayer (Web Audio clock)", () => {
     expect(player.duration).toBeCloseTo(12.5, 6);
     expect(sources).toHaveLength(1);
   });
+
+  it("keeps currentTime monotonic while playing", async () => {
+    mockContext.getOutputTimestamp = vi
+      .fn()
+      .mockReturnValueOnce({ contextTime: 10, performanceTime: 1_000 })
+      .mockReturnValueOnce({ contextTime: 9.8, performanceTime: 1_000 });
+    vi.spyOn(performance, "now").mockReturnValue(1_000);
+    const player = new AudioPlayer("/song.ogg");
+    await player.load();
+    await player.play();
+
+    const first = player.currentTime;
+    const second = player.currentTime;
+
+    expect(second).toBeGreaterThanOrEqual(first);
+  });
+
+  it("play() from track end restarts from zero", async () => {
+    const player = new AudioPlayer("/song.ogg");
+    await player.load();
+    player.seek(12.5);
+
+    await player.play();
+
+    expect(sources[0].start).toHaveBeenCalledWith(5.05, 0);
+  });
+
+  it("exposes debug timing diagnostics", async () => {
+    mockContext.getOutputTimestamp = vi.fn(() => ({ contextTime: 10, performanceTime: 1_000 }));
+    mockContext.outputLatency = 0.12;
+    mockContext.baseLatency = 0.03;
+    const player = new AudioPlayer("/song.ogg");
+    await player.load();
+    await player.play();
+
+    const info = player.getDebugTimingInfo();
+    expect(info.usingOutputTimestamp).toBe(true);
+    expect(info.outputLatency).toBeCloseTo(0.12, 6);
+    expect(info.baseLatency).toBeCloseTo(0.03, 6);
+    expect(info.currentTime).toBeGreaterThanOrEqual(0);
+  });
 });

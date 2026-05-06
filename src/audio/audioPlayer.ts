@@ -35,6 +35,7 @@ export class AudioPlayer {
   private startedAt = 0;
   private pausedAt = 0;
   private playing = false;
+  private lastPresentedTime = 0;
   private stoppingSource = false;
   private loop = false;
   onStarted?: () => void;
@@ -201,7 +202,10 @@ export class AudioPlayer {
       return;
     }
     await this.context.resume();
-    this.createSource(this.pausedAt);
+    const offset = this.pausedAt >= this.buffer.duration ? 0 : this.pausedAt;
+    this.pausedAt = offset;
+    this.lastPresentedTime = offset;
+    this.createSource(offset);
     this.playing = true;
     if (!this.hasStarted) {
       this.hasStarted = true;
@@ -214,6 +218,7 @@ export class AudioPlayer {
       return;
     }
     this.pausedAt = this.currentTime;
+    this.lastPresentedTime = this.pausedAt;
     this.stopSource();
     this.playing = false;
   }
@@ -231,6 +236,7 @@ export class AudioPlayer {
 
   seek(time: number): void {
     this.pausedAt = this.clampSeekTime(time);
+    this.lastPresentedTime = this.pausedAt;
     if (!this.playing) {
       return;
     }
@@ -260,10 +266,26 @@ export class AudioPlayer {
       return this.pausedAt;
     }
     const rawTime = Math.max(0, this.getAudibleContextTime() - this.startedAt);
-    if (!this.buffer) {
-      return rawTime;
-    }
-    return Math.min(rawTime, this.buffer.duration);
+    const bounded = this.buffer ? Math.min(rawTime, this.buffer.duration) : rawTime;
+    const next = Math.max(this.lastPresentedTime, bounded);
+    this.lastPresentedTime = next;
+    return next;
+  }
+
+  getDebugTimingInfo(): {
+    contextTime: number;
+    outputLatency: number | null;
+    baseLatency: number | null;
+    currentTime: number;
+    usingOutputTimestamp: boolean;
+  } {
+    return {
+      contextTime: this.context.currentTime,
+      outputLatency: this.context.outputLatency ?? null,
+      baseLatency: this.context.baseLatency ?? null,
+      currentTime: this.currentTime,
+      usingOutputTimestamp: Boolean(this.context.getOutputTimestamp)
+    };
   }
 
   get duration(): number {
