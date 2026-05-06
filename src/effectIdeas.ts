@@ -146,10 +146,6 @@ const BLOCKED_OBJECT_MEMBERS = new Map<string, Set<string>>([
 const BLOCKED_PROTO_MEMBERS = new Set(["__proto__", "prototype"]);
 const BLOCKED_IDENTIFIERS = new Set(["process", "global", "globalThis", "window", "self", "Deno", "Bun"]);
 
-function reportSafetyViolation(reason: string): never {
-  throw new Error(`Generated runtime code blocked by safety policy: ${reason}.`);
-}
-
 export function validateGeneratedRuntimeCode(runtimeCode: string): void {
   const violation = getRuntimeSafetyViolation(runtimeCode);
   if (!violation) {
@@ -163,51 +159,62 @@ export function getRuntimeSafetyViolation(runtimeCode: string): { category: Runt
   const normalizedCode = normalizeGeneratedCode(runtimeCode);
   const codeForValidation = stripRuntimeStringLiteralsAndComments(normalizedCode);
   const violated = RUNTIME_CODE_SAFETY_RULES.find((rule) => rule.pattern.test(codeForValidation));
-  if (!violated) return null;
-  return { category: violated.category, reason: violated.reason };
+  if (violated) {
+    return { category: violated.category, reason: violated.reason };
+  }
   const sourceFile = ts.createSourceFile("generated-effect.ts", normalizedCode, ts.ScriptTarget.ESNext, true, ts.ScriptKind.TS);
+  let astViolation: { category: RuntimeSafetyViolationCategory; reason: string } | null = null;
+  const flagAstViolation = (reason: string): void => {
+    if (!astViolation) {
+      astViolation = { category: "runtime_global_escape", reason };
+    }
+  };
 
   const walk = (node: ts.Node): void => {
+    if (astViolation) {
+      return;
+    }
     if (ts.isIdentifier(node) && BLOCKED_GLOBALS.has(node.text)) {
-      reportSafetyViolation(`using dynamic or network primitive (${node.text})`);
+      flagAstViolation(`using dynamic or network primitive (${node.text})`);
     }
     if (ts.isIdentifier(node) && BLOCKED_IDENTIFIERS.has(node.text)) {
-      reportSafetyViolation(`accessing runtime global (${node.text})`);
+      flagAstViolation(`accessing runtime global (${node.text})`);
     }
     if (ts.isCallExpression(node) && ts.isIdentifier(node.expression) && node.expression.text === "setTimeout") {
-      reportSafetyViolation("using async scheduling APIs (setTimeout)");
+      flagAstViolation("using async scheduling APIs (setTimeout)");
     }
     if (ts.isWhileStatement(node) || ts.isDoStatement(node)) {
-      reportSafetyViolation("unbounded loop constructs");
+      flagAstViolation("unbounded loop constructs");
     }
     if (ts.isForStatement(node) && !node.condition) {
-      reportSafetyViolation("unbounded loop constructs");
+      flagAstViolation("unbounded loop constructs");
     }
     if (ts.isPropertyAccessExpression(node)) {
       const objectName = ts.isIdentifier(node.expression) ? node.expression.text : "";
       if (BLOCKED_OBJECT_MEMBERS.get(objectName)?.has(node.name.text)) {
-        reportSafetyViolation(`accessing restricted property (${objectName}.${node.name.text})`);
+        flagAstViolation(`accessing restricted property (${objectName}.${node.name.text})`);
       }
       if (BLOCKED_PROTO_MEMBERS.has(node.name.text)) {
-        reportSafetyViolation(`mutating prototype chain (${node.name.text})`);
+        flagAstViolation(`mutating prototype chain (${node.name.text})`);
       }
     }
     if (ts.isElementAccessExpression(node)) {
       const arg = node.argumentExpression;
       if (arg && ts.isStringLiteralLike(arg) && BLOCKED_PROTO_MEMBERS.has(arg.text)) {
-        reportSafetyViolation(`mutating prototype chain (${arg.text})`);
+        flagAstViolation(`mutating prototype chain (${arg.text})`);
       }
       if (ts.isIdentifier(node.expression) && BLOCKED_IDENTIFIERS.has(node.expression.text)) {
-        reportSafetyViolation(`global escape attempt (${node.expression.text})`);
+        flagAstViolation(`global escape attempt (${node.expression.text})`);
       }
     }
     if (ts.isBinaryExpression(node) && ts.isPropertyAccessExpression(node.left) && BLOCKED_PROTO_MEMBERS.has(node.left.name.text)) {
-      reportSafetyViolation(`prototype mutation assignment (${node.left.name.text})`);
+      flagAstViolation(`prototype mutation assignment (${node.left.name.text})`);
     }
     ts.forEachChild(node, walk);
   };
 
   walk(sourceFile);
+  return astViolation;
 }
 
 function isRecord(value: unknown): value is EffectIdeaRecord {
@@ -253,7 +260,12 @@ async function requestEffects(path = "/api/effects", init?: RequestInit): Promis
   return payload;
 }
 
-const DEFAULT_EXECUTION_BUDGET = { maxRenderMs: 12, maxViolations: 3, maxComplexityScore: 40000 };
+const DEFAULT_EXECUTION_BUDGET = {
+  maxRenderMs: 12,
+  maxViolations: 3,
+  // 640x360 baseline to avoid penalizing normal demo/editor canvas sizes.
+  maxComplexityScore: 230_400
+};
 
 export function compileRuntimeEffect(runtimeCode: string): Effect {
   const normalizedCode = normalizeGeneratedCode(runtimeCode);

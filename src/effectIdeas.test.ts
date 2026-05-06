@@ -266,6 +266,8 @@ describe("effect ideas client", () => {
       void maybeRequired;
       void value;
     `)).toThrow("dynamic_code_exec");
+  });
+
   it("rejects obfuscated constructor escapes", () => {
     expect(() => validateGeneratedRuntimeCode(`
       const ctor = globalThis["con" + "structor"];
@@ -296,6 +298,16 @@ describe("effect ideas client", () => {
       effect.render({ width: 1000, height: 1000 } as never);
       effect.render({ width: 1000, height: 1000 } as never);
     }).toThrow("sandbox kill switch");
+  });
+
+  it("does not trigger the kill switch from normal canvas size alone", () => {
+    const effect = compileRuntimeEffect("return { render() { return; } };");
+    expect(() => {
+      effect.render({ width: 320, height: 180 } as never);
+      effect.render({ width: 320, height: 180 } as never);
+      effect.render({ width: 320, height: 180 } as never);
+      effect.render({ width: 320, height: 180 } as never);
+    }).not.toThrow();
   });
 
   it("surfaces API error messages for generation failures", async () => {
