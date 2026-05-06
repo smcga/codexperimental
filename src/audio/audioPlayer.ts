@@ -129,6 +129,15 @@ export class AudioPlayer {
     return this.audio.duration || 0;
   }
 
+  get outputLatency(): number {
+    const contextWithOutputLatency = this.context as AudioContext & { outputLatency?: number };
+    const outputLatency = Number.isFinite(contextWithOutputLatency.outputLatency)
+      ? (contextWithOutputLatency.outputLatency as number)
+      : 0;
+    const baseLatency = Number.isFinite(this.context.baseLatency) ? this.context.baseLatency : 0;
+    return Math.max(0, outputLatency + baseLatency);
+  }
+
   get ended(): boolean {
     return this.audio.ended;
   }
