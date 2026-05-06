@@ -25,6 +25,14 @@ export interface PlaybackSyncController {
   destroy: () => void;
 }
 
+export function shouldApplyRemotePlayingState(
+  localPlaying: boolean,
+  remotePlaying: boolean,
+  allowStateDrivenTransport = false
+): boolean {
+  return allowStateDrivenTransport && localPlaying !== remotePlaying;
+}
+
 export function shouldApplyRemoteState(localTime: number, remoteTime: number, thresholdSeconds = 0.2): boolean {
   if (!Number.isFinite(localTime) || !Number.isFinite(remoteTime) || !Number.isFinite(thresholdSeconds) || thresholdSeconds < 0) {
     return false;

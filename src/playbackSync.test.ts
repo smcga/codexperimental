@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { createPlaybackSyncController, shouldApplyRemoteState } from "./playbackSync";
+import { createPlaybackSyncController, shouldApplyRemotePlayingState, shouldApplyRemoteState } from "./playbackSync";
 
 class BroadcastChannelMock {
   static channels = new Map<string, Set<BroadcastChannelMock>>();
@@ -80,5 +80,18 @@ describe("createPlaybackSyncController", () => {
     } else {
       vi.unstubAllGlobals();
     }
+  });
+});
+
+
+describe("shouldApplyRemotePlayingState", () => {
+  it("does not let heartbeat state force play/pause by default", () => {
+    expect(shouldApplyRemotePlayingState(false, true)).toBe(false);
+    expect(shouldApplyRemotePlayingState(true, false)).toBe(false);
+  });
+
+  it("allows opting into state-driven play/pause synchronization", () => {
+    expect(shouldApplyRemotePlayingState(false, true, true)).toBe(true);
+    expect(shouldApplyRemotePlayingState(true, true, true)).toBe(false);
   });
 });

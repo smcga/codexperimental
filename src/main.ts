@@ -292,17 +292,13 @@ const playbackSync = createPlaybackSyncController(
         }, 0);
       }
     },
-    onRemoteState: ({ playing, time }) => {
+    onRemoteState: ({ time }) => {
       if (!audioPlayer) {
         return;
       }
-      if (playing !== !audioPlayer.paused) {
-        if (playing) {
-          void audioPlayer.play();
-        } else {
-          audioPlayer.pause();
-        }
-      }
+      // Play/pause is synchronized via transport events only. Applying `playing`
+      // from heartbeat state can cause remote autoplay failures or tab throttling
+      // to immediately undo a local spacebar toggle.
       if (shouldApplyRemoteState(audioPlayer.currentTime, time, 0.35)) {
         audioPlayer.seek(time);
       }
