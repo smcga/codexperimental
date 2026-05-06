@@ -107,6 +107,22 @@ describe("release timeline", () => {
     expect(rushB).toHaveLength(16);
   });
 
+  it("keeps the early drop transition sequence locked after export/import edits", () => {
+    const sectionById = new Map(timeline.sections.map((section) => [section.id, section]));
+    const expectedStarts: Array<[string, number]> = [
+      ["Scene 003 - Kefrens Bars", 86.042],
+      ["era8bit-glitch", 92.921],
+      ["era8bit-glitch (split 2)", 95.54],
+      ["era8bit-glitch (split)", 96.791]
+    ];
+
+    expectedStarts.forEach(([id, expectedStart]) => {
+      const section = sectionById.get(id);
+      expect(section).toBeDefined();
+      expect(toSeconds(section?.start ?? 0)).toBeCloseTo(expectedStart, 5);
+    });
+  });
+
   it("defines an ideological rap chapter from 03:25.012 to 04:25.7 with <=5s switches", () => {
     const rapStart = 3 * 60 + 25.012;
     const rapEnd = 4 * 60 + 25.7;
