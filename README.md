@@ -402,6 +402,7 @@ npm run preview
 - Scene/layer parameter editing now uses control-aware numeric inputs with clearer `Param`/`Value` labels: bounded params get a slider + numeric spinner with +/- nudge buttons, while unbounded numeric params get touch-friendly spinner controls. Focused `input[type=number]` fields now consume the mouse wheel globally (no page scroll) and step by their configured bounds/step values.
 - Playback now auto-syncs across same-origin tabs/windows via `BroadcastChannel`, so play/pause/seek/restart actions in one editor window mirror to the others (handy for running multiple preview sizes side-by-side).
 - Timeline edits now live-sync across same-origin editor windows via draft `localStorage` events, so scene/cue/param changes made in one window immediately apply in the other multi-preview window.
+- When at least one synced window is in Editor mode, non-editor synced windows can now drag active text cues directly on the main canvas; drag writes desktop positions in desktop framing and writes `mobile.x`/`mobile.y` in Mobile Fit view.
 - The editor's Text Cues panel now includes a bulk generator: paste words/new lines, set font/colour/size/position/alignment plus start/end timing, and auto-create evenly timed cue sequences (useful for ~100 words over ~30 seconds).
 - On touch devices, two floating buttons appear in the lower-right corner: `DBG` toggles the debug overlay and `⛶` toggles fullscreen.
 
