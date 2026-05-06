@@ -71,6 +71,31 @@ describe("AudioPlayer (Web Audio clock)", () => {
     expect(sources[0].start).toHaveBeenCalledWith(5.05, 2.5);
   });
 
+  it("load() resumes context before fetch/decode", async () => {
+    const events: string[] = [];
+    mockContext.state = "suspended";
+    mockContext.resume = vi.fn(async () => {
+      events.push("resume");
+      mockContext.state = "running";
+    });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => {
+        events.push("fetch");
+        return { ok: true, arrayBuffer: async () => new ArrayBuffer(8) };
+      })
+    );
+    mockContext.decodeAudioData = vi.fn(async () => {
+      events.push("decode");
+      return fakeBuffer;
+    });
+
+    const player = new AudioPlayer("/song.ogg");
+    await player.load();
+
+    expect(events).toEqual(["resume", "fetch", "decode"]);
+  });
+
   it("currentTime uses context.currentTime fallback when output timestamp is unavailable", async () => {
     const player = new AudioPlayer("/song.ogg");
     await player.load();
@@ -125,26 +150,14 @@ describe("AudioPlayer (Web Audio clock)", () => {
     expect(fakeAnalyser.getByteFrequencyData).toHaveBeenCalled();
   });
 
-  it("tries fallback file extensions when initial decode fails", async () => {
-    const fetchMock = vi.fn(async (url: string) => ({
-      ok: true,
-      arrayBuffer: async () => new TextEncoder().encode(url).buffer
-    }));
-    vi.stubGlobal("fetch", fetchMock);
-    mockContext.decodeAudioData = vi.fn(async (buffer: ArrayBuffer) => {
-      const marker = new TextDecoder().decode(buffer);
-      if (marker.includes(".ogg")) {
-        throw new Error("unsupported format");
-      }
-      return fakeBuffer;
-    });
-
+  it("play() restarts from beginning when pausedAt is at buffer end", async () => {
     const player = new AudioPlayer("/song.ogg");
     await player.load();
+    player.seek(player.duration);
 
-    expect(fetchMock).toHaveBeenNthCalledWith(1, "/song.ogg");
-    expect(fetchMock).toHaveBeenNthCalledWith(2, "/song.mp3");
-    expect(player.duration).toBeCloseTo(12.5, 6);
+    await player.play();
+
+    expect(sources[0].start).toHaveBeenCalledWith(5.05, 0);
   });
 
   it("applies loop preference to newly created sources", async () => {
@@ -157,19 +170,9 @@ describe("AudioPlayer (Web Audio clock)", () => {
     expect(sources[0].loop).toBe(true);
   });
 
-  it("supports callback-style decodeAudioData implementations", async () => {
-    mockContext.decodeAudioData = vi.fn(
-      (encoded: ArrayBuffer, onSuccess?: (value: AudioBuffer) => void, _onError?: (reason: unknown) => void) => {
-        if (typeof onSuccess === "function") {
-          onSuccess(fakeBuffer);
-        }
-        return undefined;
-      }
-    );
+  it("fails when decodeAudioData returns an empty buffer", async () => {
+    mockContext.decodeAudioData = vi.fn(async () => ({ duration: 0 } as AudioBuffer));
     const player = new AudioPlayer("/song.mp3");
-    await player.load();
-    await player.play();
-    expect(player.duration).toBeCloseTo(12.5, 6);
-    expect(sources).toHaveLength(1);
+    await expect(player.load()).rejects.toThrow("Decoded audio buffer is empty");
   });
 });

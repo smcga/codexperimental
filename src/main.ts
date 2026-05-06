@@ -1124,6 +1124,7 @@ async function applyTimelineConfig(config: TimelineConfig): Promise<void> {
     audioPlayer.destroy();
     audioPlayer = new AudioPlayer(config.audio.src);
     attachAudioPlayerHandlers(audioPlayer);
+    await audioPlayer.unlock();
     await audioPlayer.load();
     currentAudioSrc = config.audio.src;
   }
@@ -1834,6 +1835,7 @@ async function startDemo(): Promise<void> {
     }
     audioPlayer = new AudioPlayer(config.audio.src);
     attachAudioPlayerHandlers(audioPlayer);
+    await audioPlayer.unlock();
     await audioPlayer.load();
     currentAudioSrc = config.audio.src;
 
