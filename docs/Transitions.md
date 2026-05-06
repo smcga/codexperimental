@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/transitions/index.ts`.
 
-Total transitions: **14**.
+Total transitions: **23**.
 
 ## Table of contents
 
@@ -20,25 +20,43 @@ Total transitions: **14**.
 - [Transition: camera-punch-through](#transition-camera-punch-through)
 - [Transition: bitplane-wipe](#transition-bitplane-wipe)
 - [Transition: audio-reactive-particle](#transition-audio-reactive-particle)
+- [Transition: checkerboard-wipe](#transition-checkerboard-wipe)
+- [Transition: venetian-blinds](#transition-venetian-blinds)
+- [Transition: radial-wipe](#transition-radial-wipe)
+- [Transition: noise-threshold](#transition-noise-threshold)
+- [Transition: portal-zoom](#transition-portal-zoom)
+- [Transition: whip-pan](#transition-whip-pan)
+- [Transition: quantum-slice](#transition-quantum-slice)
+- [Transition: chromatic-bloom](#transition-chromatic-bloom)
+- [Transition: neural-feedback](#transition-neural-feedback)
 
 ## Transition matrix
 
 | Key | Label | Visible in editor/debug selectors | Mobile renderer | State builder |
 | --- | --- | --- | --- | --- |
-| `fade` | Fade | yes | no | no |
-| `wipe` | Wipe | yes | no | no |
-| `slide-left` | Slide Left | yes | no | no |
-| `slide-right` | Slide Right | yes | no | no |
-| `slide-up` | Slide Up | yes | no | no |
-| `slide-down` | Slide Down | yes | no | no |
-| `iris` | Iris | yes | no | no |
-| `flash` | Flash | yes | no | no |
+| `fade` | Fade | yes | yes | no |
+| `wipe` | Wipe | yes | yes | no |
+| `slide-left` | Slide Left | yes | yes | no |
+| `slide-right` | Slide Right | yes | yes | no |
+| `slide-up` | Slide Up | yes | yes | no |
+| `slide-down` | Slide Down | yes | yes | no |
+| `iris` | Iris | yes | yes | no |
+| `flash` | Flash | yes | yes | no |
 | `glitch` | Glitch | yes | yes | no |
 | `shatter` | Shatter | yes | yes | yes |
-| `signal-collapse` | Signal Collapse | yes | no | no |
+| `signal-collapse` | Signal Collapse | yes | yes | no |
 | `camera-punch-through` | Camera Punch-Through | yes | yes | yes |
 | `bitplane-wipe` | Bitplane Wipe | yes | yes | yes |
 | `audio-reactive-particle` | Audio-reactive Particle | yes | yes | no |
+| `checkerboard-wipe` | Checkerboard Wipe | yes | yes | no |
+| `venetian-blinds` | Venetian Blinds | yes | yes | no |
+| `radial-wipe` | Radial Wipe | yes | yes | no |
+| `noise-threshold` | Noise Threshold | yes | yes | no |
+| `portal-zoom` | Portal Zoom | yes | yes | no |
+| `whip-pan` | Whip Pan | yes | yes | no |
+| `quantum-slice` | Quantum Slice | yes | yes | no |
+| `chromatic-bloom` | Chromatic Bloom | yes | yes | no |
+| `neural-feedback` | Neural Feedback | yes | yes | no |
 
 ## Transitions
 
@@ -46,56 +64,56 @@ Total transitions: **14**.
 
 - **Label:** Fade
 - **Visible in editor/debug selectors:** yes
-- **Has mobile renderer:** no
+- **Has mobile renderer:** yes
 - **Has state builder:** no
 
 ### Transition: wipe
 
 - **Label:** Wipe
 - **Visible in editor/debug selectors:** yes
-- **Has mobile renderer:** no
+- **Has mobile renderer:** yes
 - **Has state builder:** no
 
 ### Transition: slide-left
 
 - **Label:** Slide Left
 - **Visible in editor/debug selectors:** yes
-- **Has mobile renderer:** no
+- **Has mobile renderer:** yes
 - **Has state builder:** no
 
 ### Transition: slide-right
 
 - **Label:** Slide Right
 - **Visible in editor/debug selectors:** yes
-- **Has mobile renderer:** no
+- **Has mobile renderer:** yes
 - **Has state builder:** no
 
 ### Transition: slide-up
 
 - **Label:** Slide Up
 - **Visible in editor/debug selectors:** yes
-- **Has mobile renderer:** no
+- **Has mobile renderer:** yes
 - **Has state builder:** no
 
 ### Transition: slide-down
 
 - **Label:** Slide Down
 - **Visible in editor/debug selectors:** yes
-- **Has mobile renderer:** no
+- **Has mobile renderer:** yes
 - **Has state builder:** no
 
 ### Transition: iris
 
 - **Label:** Iris
 - **Visible in editor/debug selectors:** yes
-- **Has mobile renderer:** no
+- **Has mobile renderer:** yes
 - **Has state builder:** no
 
 ### Transition: flash
 
 - **Label:** Flash
 - **Visible in editor/debug selectors:** yes
-- **Has mobile renderer:** no
+- **Has mobile renderer:** yes
 - **Has state builder:** no
 
 ### Transition: glitch
@@ -116,7 +134,7 @@ Total transitions: **14**.
 
 - **Label:** Signal Collapse
 - **Visible in editor/debug selectors:** yes
-- **Has mobile renderer:** no
+- **Has mobile renderer:** yes
 - **Has state builder:** no
 
 ### Transition: camera-punch-through
@@ -136,6 +154,69 @@ Total transitions: **14**.
 ### Transition: audio-reactive-particle
 
 - **Label:** Audio-reactive Particle
+- **Visible in editor/debug selectors:** yes
+- **Has mobile renderer:** yes
+- **Has state builder:** no
+
+### Transition: checkerboard-wipe
+
+- **Label:** Checkerboard Wipe
+- **Visible in editor/debug selectors:** yes
+- **Has mobile renderer:** yes
+- **Has state builder:** no
+
+### Transition: venetian-blinds
+
+- **Label:** Venetian Blinds
+- **Visible in editor/debug selectors:** yes
+- **Has mobile renderer:** yes
+- **Has state builder:** no
+
+### Transition: radial-wipe
+
+- **Label:** Radial Wipe
+- **Visible in editor/debug selectors:** yes
+- **Has mobile renderer:** yes
+- **Has state builder:** no
+
+### Transition: noise-threshold
+
+- **Label:** Noise Threshold
+- **Visible in editor/debug selectors:** yes
+- **Has mobile renderer:** yes
+- **Has state builder:** no
+
+### Transition: portal-zoom
+
+- **Label:** Portal Zoom
+- **Visible in editor/debug selectors:** yes
+- **Has mobile renderer:** yes
+- **Has state builder:** no
+
+### Transition: whip-pan
+
+- **Label:** Whip Pan
+- **Visible in editor/debug selectors:** yes
+- **Has mobile renderer:** yes
+- **Has state builder:** no
+
+### Transition: quantum-slice
+
+- **Label:** Quantum Slice
+- **Visible in editor/debug selectors:** yes
+- **Has mobile renderer:** yes
+- **Has state builder:** no
+
+### Transition: chromatic-bloom
+
+- **Label:** Chromatic Bloom
+- **Visible in editor/debug selectors:** yes
+- **Has mobile renderer:** yes
+- **Has state builder:** no
+
+### Transition: neural-feedback
+
+- **Label:** Neural Feedback
 - **Visible in editor/debug selectors:** yes
 - **Has mobile renderer:** yes
 - **Has state builder:** no
