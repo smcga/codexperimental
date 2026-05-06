@@ -15,29 +15,14 @@ export type AudioFeatures = {
 const DEFAULT_FFT_SIZE = 2048;
 const BEAT_THRESHOLD = 0.08;
 const BEAT_COOLDOWN = 0.2;
-
-export function computePresentationTime(
-  mediaTime: number,
-  paused: boolean,
-  nowMs: number,
-  state: { anchorMediaTime: number; anchorNowMs: number; lastPresentedTime: number },
-  maxLeadSeconds = 0.12
-): number {
-  if (!Number.isFinite(mediaTime) || mediaTime < 0) {
-    return Math.max(0, state.lastPresentedTime);
-  }
-  const elapsedSeconds = Math.max(0, (nowMs - state.anchorNowMs) / 1000);
-  const predicted = paused ? mediaTime : state.anchorMediaTime + elapsedSeconds;
-  const boundedPrediction = Math.min(predicted, mediaTime + Math.max(0, maxLeadSeconds));
-  const next = paused ? mediaTime : Math.max(mediaTime, boundedPrediction);
-  return Math.max(0, Math.max(state.lastPresentedTime, next));
-}
+const START_LEAD_SECONDS = 0.03;
 
 export class AudioPlayer {
-  private audio: HTMLAudioElement;
   private context: AudioContext;
   private analyser: AnalyserNode;
-  private source: MediaElementAudioSourceNode;
+  private gain: GainNode;
+  private buffer: AudioBuffer | null = null;
+  private source: AudioBufferSourceNode | null = null;
   private timeDomain: Uint8Array;
   private frequency: Uint8Array;
   private lastRms = 0;
@@ -46,48 +31,37 @@ export class AudioPlayer {
   private midRange: [number, number] = [0, 0];
   private trebleRange: [number, number] = [0, 0];
   private hasStarted = false;
-  private anchorMediaTime = 0;
-  private anchorNowMs = 0;
-  private lastPresentedTime = 0;
+  private startedAt = 0;
+  private pausedAt = 0;
+  private playing = false;
+  private intentionallyStoppingSource = false;
+  private src: string;
+  private loop = false;
   onStarted?: () => void;
 
   constructor(src: string) {
-    this.audio = new Audio();
-    this.audio.src = src;
-    this.audio.preload = "auto";
-    this.audio.crossOrigin = "anonymous";
+    this.src = src;
     this.context = new AudioContext();
     this.analyser = this.context.createAnalyser();
+    this.gain = this.context.createGain();
     this.analyser.fftSize = DEFAULT_FFT_SIZE;
-    this.source = this.context.createMediaElementSource(this.audio);
-    this.source.connect(this.analyser);
+    this.gain.connect(this.analyser);
     this.analyser.connect(this.context.destination);
     this.timeDomain = new Uint8Array(this.analyser.fftSize);
     this.frequency = new Uint8Array(this.analyser.frequencyBinCount);
-    this.anchorNowMs = performance.now();
+    this.configureFrequencyRanges();
   }
 
   async load(): Promise<void> {
-    if (this.audio.readyState >= 1) {
-      this.configureFrequencyRanges();
+    if (this.buffer) {
       return;
     }
-    await new Promise<void>((resolve, reject) => {
-      const onLoaded = () => {
-        this.audio.removeEventListener("loadedmetadata", onLoaded);
-        this.audio.removeEventListener("error", onError);
-        this.configureFrequencyRanges();
-        resolve();
-      };
-      const onError = () => {
-        this.audio.removeEventListener("loadedmetadata", onLoaded);
-        this.audio.removeEventListener("error", onError);
-        reject(new Error("Failed to load audio metadata"));
-      };
-      this.audio.addEventListener("loadedmetadata", onLoaded);
-      this.audio.addEventListener("error", onError);
-      this.audio.load();
-    });
+    const response = await fetch(this.src);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch audio: ${response.status}`);
+    }
+    const audioData = await response.arrayBuffer();
+    this.buffer = await this.context.decodeAudioData(audioData);
   }
 
   private configureFrequencyRanges(): void {
@@ -101,11 +75,62 @@ export class AudioPlayer {
     this.trebleRange = [bandToIndex(2000), bandToIndex(8000)];
   }
 
+  private clampPlaybackTime(time: number): number {
+    const bounded = Math.max(0, time);
+    if (!this.buffer) {
+      return bounded;
+    }
+    return Math.min(bounded, this.buffer.duration);
+  }
+
+  private createAndConnectSource(): AudioBufferSourceNode {
+    if (!this.buffer) {
+      throw new Error("Audio buffer is not loaded");
+    }
+    const source = this.context.createBufferSource();
+    source.buffer = this.buffer;
+    source.loop = this.loop;
+    source.connect(this.gain);
+    source.onended = () => {
+      if (this.intentionallyStoppingSource) {
+        return;
+      }
+      this.playing = false;
+      this.pausedAt = this.buffer?.duration ?? this.pausedAt;
+      this.source = null;
+    };
+    this.source = source;
+    return source;
+  }
+
+  private stopCurrentSource(): void {
+    if (!this.source) {
+      return;
+    }
+    this.intentionallyStoppingSource = true;
+    const sourceToStop = this.source;
+    this.source = null;
+    sourceToStop.onended = null;
+    sourceToStop.stop();
+    sourceToStop.disconnect();
+    this.intentionallyStoppingSource = false;
+  }
+
   async play(): Promise<void> {
+    if (!this.buffer) {
+      throw new Error("Audio not loaded. Call load() before play().");
+    }
+    if (this.playing) {
+      return;
+    }
     await this.context.resume();
-    await this.audio.play();
-    this.anchorMediaTime = this.audio.currentTime;
-    this.anchorNowMs = performance.now();
+    const source = this.createAndConnectSource();
+    const startAt = this.context.currentTime + START_LEAD_SECONDS;
+    const offset = this.clampPlaybackTime(this.pausedAt);
+    this.startedAt = startAt - offset;
+    source.start(startAt, offset);
+    this.pausedAt = offset;
+    this.playing = true;
     if (!this.hasStarted) {
       this.hasStarted = true;
       this.onStarted?.();
@@ -113,70 +138,80 @@ export class AudioPlayer {
   }
 
   pause(): void {
-    this.audio.pause();
-    this.anchorMediaTime = this.audio.currentTime;
-    this.anchorNowMs = performance.now();
+    if (!this.playing) {
+      return;
+    }
+    this.pausedAt = this.currentTime;
+    this.stopCurrentSource();
+    this.playing = false;
   }
 
-
   setVolume(volume: number): void {
-    this.audio.volume = clamp(volume, 0, 1);
+    this.gain.gain.value = clamp(volume, 0, 1);
   }
 
   setLoop(loop: boolean): void {
-    this.audio.loop = loop;
+    this.loop = loop;
+    if (this.source) {
+      this.source.loop = loop;
+    }
   }
 
   seek(time: number): void {
-    const duration = this.duration;
-    const target = duration ? clamp(time, 0, duration) : Math.max(0, time);
-    this.audio.currentTime = target;
-    this.anchorMediaTime = target;
-    this.anchorNowMs = performance.now();
-    this.lastPresentedTime = target;
+    const target = this.clampPlaybackTime(time);
+    this.pausedAt = target;
+    if (this.playing) {
+      this.stopCurrentSource();
+      const source = this.createAndConnectSource();
+      const startAt = this.context.currentTime + START_LEAD_SECONDS;
+      this.startedAt = startAt - target;
+      source.start(startAt, target);
+    }
   }
 
   async restart(): Promise<void> {
-    this.audio.currentTime = 0;
-    this.anchorMediaTime = 0;
-    this.anchorNowMs = performance.now();
-    this.lastPresentedTime = 0;
     this.lastRms = 0;
     this.lastBeatTime = -Infinity;
-    await this.play();
+    this.seek(0);
+    if (!this.playing) {
+      await this.play();
+    }
   }
 
   destroy(): void {
-    this.audio.pause();
-    this.audio.src = "";
+    this.stopCurrentSource();
+    this.playing = false;
     this.context.close();
   }
 
-  get currentTime(): number {
-    const mediaTime = this.audio.currentTime;
-    const next = computePresentationTime(mediaTime, this.audio.paused, performance.now(), {
-      anchorMediaTime: this.anchorMediaTime,
-      anchorNowMs: this.anchorNowMs,
-      lastPresentedTime: this.lastPresentedTime
-    });
-    if (Math.abs(mediaTime - this.anchorMediaTime) > 0.03) {
-      this.anchorMediaTime = mediaTime;
-      this.anchorNowMs = performance.now();
+  private getAudibleContextTime(): number {
+    if (typeof this.context.getOutputTimestamp === "function") {
+      const timestamp = this.context.getOutputTimestamp();
+      const elapsed = (performance.now() - timestamp.performanceTime) / 1000;
+      return timestamp.contextTime + elapsed;
     }
-    this.lastPresentedTime = next;
-    return next;
+    return this.context.currentTime;
+  }
+
+  get currentTime(): number {
+    if (!this.playing) {
+      return this.pausedAt;
+    }
+    const audibleContextTime = this.getAudibleContextTime();
+    const time = Math.max(0, audibleContextTime - this.startedAt);
+    return this.buffer ? Math.min(time, this.buffer.duration) : time;
   }
 
   get duration(): number {
-    return this.audio.duration || 0;
+    return this.buffer?.duration ?? 0;
   }
 
   get ended(): boolean {
-    return this.audio.ended;
+    return !this.playing && this.buffer !== null && this.pausedAt >= this.buffer.duration;
   }
 
   get paused(): boolean {
-    return this.audio.paused;
+    return !this.playing;
   }
 
   updateFeatures(): AudioFeatures {
