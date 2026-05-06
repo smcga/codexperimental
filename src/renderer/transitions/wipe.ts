@@ -4,5 +4,6 @@ export const wipeTransition = {
   key: "wipe",
   label: "Wipe",
   visibleInValidator: true,
-  draw: (api, context) => api.drawWipe(context)
+  draw: (api, context) => api.drawWipe(context),
+  drawMobile: (api, context) => api.drawMobileDefaultCrossfade(context)
 } as const satisfies TransitionDefinition<"wipe">;

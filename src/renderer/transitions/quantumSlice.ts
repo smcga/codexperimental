@@ -4,5 +4,6 @@ export const quantumSliceTransition = {
   key: "quantum-slice",
   label: "Quantum Slice",
   visibleInValidator: true,
-  draw: (api, context) => api.drawQuantumSlice(context)
+  draw: (api, context) => api.drawQuantumSlice(context),
+  drawMobile: (api, context) => api.drawMobileDefaultCrossfade(context)
 } as const satisfies TransitionDefinition<"quantum-slice">;

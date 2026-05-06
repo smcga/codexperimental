@@ -25,6 +25,14 @@ describe("transition registry", () => {
     expect(transitionRegistry["neural-feedback"].label).toBe("Neural Feedback");
   });
 
+
+
+  it("provides a mobile transition renderer for every transition", () => {
+    for (const definition of transitionDefinitions) {
+      expect(definition.drawMobile).toBeTypeOf("function");
+    }
+  });
+
   it("builds debug select markup from the registry with an optional auto entry", () => {
     expect(buildTransitionOptionMarkup()).toContain('<option value="neural-feedback">Neural Feedback</option>');
     expect(buildTransitionOptionMarkup({ includeAuto: true })).toContain('<option value="auto">Auto</option>');
