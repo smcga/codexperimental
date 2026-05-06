@@ -253,7 +253,12 @@ async function requestEffects(path = "/api/effects", init?: RequestInit): Promis
   return payload;
 }
 
-const DEFAULT_EXECUTION_BUDGET = { maxRenderMs: 12, maxViolations: 3, maxComplexityScore: 40000 };
+const DEFAULT_EXECUTION_BUDGET = {
+  maxRenderMs: 12,
+  maxViolations: 3,
+  // 640x360 baseline to avoid penalizing normal demo/editor canvas sizes.
+  maxComplexityScore: 230_400
+};
 
 export function compileRuntimeEffect(runtimeCode: string): Effect {
   const normalizedCode = normalizeGeneratedCode(runtimeCode);
