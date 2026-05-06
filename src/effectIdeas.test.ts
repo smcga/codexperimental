@@ -256,7 +256,7 @@ describe("effect ideas client", () => {
     `)).not.toThrow();
   });
 
-  it("allows dynamic code helpers when runtime behavior is otherwise safe", () => {
+  it("rejects dynamic code execution helpers", () => {
     expect(() => validateGeneratedRuntimeCode(`
       const factory = new Function("return 6 * 7;");
       const imported = import("./optional-effect-helper.js");
@@ -265,7 +265,7 @@ describe("effect ideas client", () => {
       void imported;
       void maybeRequired;
       void value;
-    `)).not.toThrow();
+    `)).toThrow("dynamic_code_exec");
   });
 
   it("surfaces API error messages for generation failures", async () => {
