@@ -36,7 +36,7 @@ import {
   getNextDebugOverlayVisibility,
   getRelativeSeekTime,
   getSecondHalfSkipTime,
-  isPlayPauseShortcutKey,
+  shouldHandlePlayPauseShortcut,
   shouldHandleGlobalShortcut
 } from "./controls";
 import {
@@ -82,7 +82,11 @@ import { buildSharePayload, canUseNativeShare, getShareLink, ShareLinkPlatform }
 import { isDebugMode } from "./runtimeMode";
 import { getOverlayPresentation, OverlayMode } from "./overlayContent";
 import { buildTransitionOptionMarkup } from "./renderer/transitions";
-import { createPlaybackSyncController, shouldApplyRemoteState } from "./playbackSync";
+import {
+  createPlaybackSyncController,
+  shouldApplyRemotePlaybackModeSync,
+  shouldApplyRemoteTimeSync
+} from "./playbackSync";
 import {
   applyCurrentValuesAsGeneratedDefaults,
   getGeneratedEffectDefaultParams,
@@ -255,6 +259,7 @@ let effectIdeaAudioPreview = new EffectPreviewAudioController(EFFECT_PREVIEW_AUD
 let availableEffectNames = getEffectRegistryKeys();
 let playbackSyncSuppressBroadcast = false;
 let lastPlaybackSyncStateSentAt = 0;
+let lastLocalPlayPauseToggleAtMs = Number.NEGATIVE_INFINITY;
 const manualBeatTrigger = createManualBeatTrigger();
 const playbackSync = createPlaybackSyncController(
   {
@@ -296,14 +301,30 @@ const playbackSync = createPlaybackSyncController(
       if (!audioPlayer) {
         return;
       }
-      if (playing !== !audioPlayer.paused) {
+      const localPlaying = !audioPlayer.paused;
+      if (
+        shouldApplyRemotePlaybackModeSync({
+          localPlaying,
+          remotePlaying: playing,
+          nowMs: performance.now(),
+          lastLocalToggleAtMs: lastLocalPlayPauseToggleAtMs
+        })
+      ) {
         if (playing) {
           void audioPlayer.play();
         } else {
           audioPlayer.pause();
         }
       }
-      if (shouldApplyRemoteState(audioPlayer.currentTime, time, 0.35)) {
+      if (
+        shouldApplyRemoteTimeSync({
+          localTime: audioPlayer.currentTime,
+          remoteTime: time,
+          localPlaying: !audioPlayer.paused,
+          remotePlaying: playing,
+          thresholdSeconds: 0.35
+        })
+      ) {
         audioPlayer.seek(time);
       }
     }
@@ -2291,8 +2312,9 @@ window.addEventListener("keydown", (event) => {
   if (!releaseMode && event.key.toLowerCase() === "d") {
     toggleDebugOverlay();
   }
-  if (isPlayPauseShortcutKey(event.key, event.code) && editorController?.isVisible()) {
+  if (shouldHandlePlayPauseShortcut(event) && editorController?.isVisible()) {
     event.preventDefault();
+    lastLocalPlayPauseToggleAtMs = performance.now();
     if (audioPlayer.paused) {
       void audioPlayer.play();
     } else {

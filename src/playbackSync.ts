@@ -25,11 +25,50 @@ export interface PlaybackSyncController {
   destroy: () => void;
 }
 
+export function shouldApplyRemotePlayingState(
+  localPlaying: boolean,
+  remotePlaying: boolean,
+  allowStateDrivenTransport = false
+): boolean {
+  return allowStateDrivenTransport && localPlaying !== remotePlaying;
+}
+
 export function shouldApplyRemoteState(localTime: number, remoteTime: number, thresholdSeconds = 0.2): boolean {
   if (!Number.isFinite(localTime) || !Number.isFinite(remoteTime) || !Number.isFinite(thresholdSeconds) || thresholdSeconds < 0) {
     return false;
   }
   return Math.abs(localTime - remoteTime) > thresholdSeconds;
+}
+
+export function shouldApplyRemotePlaybackModeSync(options: {
+  localPlaying: boolean;
+  remotePlaying: boolean;
+  nowMs: number;
+  lastLocalToggleAtMs: number;
+  cooldownMs?: number;
+}): boolean {
+  const { localPlaying, remotePlaying, nowMs, lastLocalToggleAtMs, cooldownMs = 250 } = options;
+  if (localPlaying === remotePlaying) {
+    return false;
+  }
+  if (!Number.isFinite(nowMs) || !Number.isFinite(lastLocalToggleAtMs) || !Number.isFinite(cooldownMs) || cooldownMs < 0) {
+    return true;
+  }
+  return nowMs - lastLocalToggleAtMs >= cooldownMs;
+}
+
+export function shouldApplyRemoteTimeSync(options: {
+  localTime: number;
+  remoteTime: number;
+  localPlaying: boolean;
+  remotePlaying: boolean;
+  thresholdSeconds?: number;
+}): boolean {
+  const { localTime, remoteTime, localPlaying, remotePlaying, thresholdSeconds = 0.2 } = options;
+  if (!localPlaying || !remotePlaying) {
+    return false;
+  }
+  return shouldApplyRemoteState(localTime, remoteTime, thresholdSeconds);
 }
 
 function supportsBroadcastChannel(): boolean {

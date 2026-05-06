@@ -5,6 +5,7 @@ import {
   getEndSkipTime,
   getIntroSkipTime,
   isPlayPauseShortcutKey,
+  shouldHandlePlayPauseShortcut,
   getRelativeSeekTime,
   getSecondHalfSkipTime,
   shouldHandleGlobalShortcut
@@ -120,5 +121,17 @@ describe("isPlayPauseShortcutKey", () => {
 
   it("rejects non-space keys", () => {
     expect(isPlayPauseShortcutKey("k", "KeyK")).toBe(false);
+  });
+});
+
+
+describe("shouldHandlePlayPauseShortcut", () => {
+  it("handles only non-repeated spacebar keydown events", () => {
+    expect(shouldHandlePlayPauseShortcut({ key: " ", code: "Space", repeat: false })).toBe(true);
+    expect(shouldHandlePlayPauseShortcut({ key: " ", code: "Space", repeat: true })).toBe(false);
+  });
+
+  it("rejects non-space keys", () => {
+    expect(shouldHandlePlayPauseShortcut({ key: "k", code: "KeyK", repeat: false })).toBe(false);
   });
 });
