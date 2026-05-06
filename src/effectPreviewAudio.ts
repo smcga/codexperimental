@@ -32,22 +32,26 @@ export class EffectPreviewAudioController {
   }
 
   async start(): Promise<void> {
-    if (!this.player) {
-      this.player = new AudioPlayer(this.src);
-      await this.player.load();
-      this.player.setVolume(EFFECT_PREVIEW_AUDIO_VOLUME);
-      this.player.setLoop(true);
-    }
-
     this.syntheticTimelineTime = 0;
     this.timelineLastTickMs = performance.now();
     this.timelineRunning = true;
-    this.player.seek(0);
 
     try {
-      await this.player.play();
+      if (!this.player) {
+        this.player = new AudioPlayer(this.src);
+        await this.player.load();
+        this.player.setVolume(EFFECT_PREVIEW_AUDIO_VOLUME);
+        this.player.setLoop(true);
+      }
+      this.player.seek(0);
+      try {
+        await this.player.play();
+      } catch {
+        // Ignore autoplay rejections; preview rendering still runs with silent audio features.
+      }
     } catch {
-      // Ignore autoplay rejections; preview rendering still runs with silent audio features.
+      // Ignore initialization failures so preview animation can still run on synthetic timeline.
+      this.destroyPlayer();
     }
   }
 
