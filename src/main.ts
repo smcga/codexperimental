@@ -36,7 +36,7 @@ import {
   getNextDebugOverlayVisibility,
   getRelativeSeekTime,
   getSecondHalfSkipTime,
-  isPlayPauseShortcutKey,
+  shouldHandlePlayPauseShortcut,
   shouldHandleGlobalShortcut
 } from "./controls";
 import {
@@ -2291,7 +2291,7 @@ window.addEventListener("keydown", (event) => {
   if (!releaseMode && event.key.toLowerCase() === "d") {
     toggleDebugOverlay();
   }
-  if (isPlayPauseShortcutKey(event.key, event.code) && editorController?.isVisible()) {
+  if (shouldHandlePlayPauseShortcut(event) && editorController?.isVisible()) {
     event.preventDefault();
     if (audioPlayer.paused) {
       void audioPlayer.play();
