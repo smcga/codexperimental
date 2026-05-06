@@ -40,6 +40,37 @@ export function shouldApplyRemoteState(localTime: number, remoteTime: number, th
   return Math.abs(localTime - remoteTime) > thresholdSeconds;
 }
 
+export function shouldApplyRemotePlaybackModeSync(options: {
+  localPlaying: boolean;
+  remotePlaying: boolean;
+  nowMs: number;
+  lastLocalToggleAtMs: number;
+  cooldownMs?: number;
+}): boolean {
+  const { localPlaying, remotePlaying, nowMs, lastLocalToggleAtMs, cooldownMs = 250 } = options;
+  if (localPlaying === remotePlaying) {
+    return false;
+  }
+  if (!Number.isFinite(nowMs) || !Number.isFinite(lastLocalToggleAtMs) || !Number.isFinite(cooldownMs) || cooldownMs < 0) {
+    return true;
+  }
+  return nowMs - lastLocalToggleAtMs >= cooldownMs;
+}
+
+export function shouldApplyRemoteTimeSync(options: {
+  localTime: number;
+  remoteTime: number;
+  localPlaying: boolean;
+  remotePlaying: boolean;
+  thresholdSeconds?: number;
+}): boolean {
+  const { localTime, remoteTime, localPlaying, remotePlaying, thresholdSeconds = 0.2 } = options;
+  if (!localPlaying || !remotePlaying) {
+    return false;
+  }
+  return shouldApplyRemoteState(localTime, remoteTime, thresholdSeconds);
+}
+
 function supportsBroadcastChannel(): boolean {
   return typeof BroadcastChannel !== "undefined";
 }

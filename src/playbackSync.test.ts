@@ -1,5 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
-import { createPlaybackSyncController, shouldApplyRemotePlayingState, shouldApplyRemoteState } from "./playbackSync";
+import {
+  createPlaybackSyncController,
+  shouldApplyRemotePlaybackModeSync,
+  shouldApplyRemotePlayingState,
+  shouldApplyRemoteState,
+  shouldApplyRemoteTimeSync
+} from "./playbackSync";
 
 class BroadcastChannelMock {
   static channels = new Map<string, Set<BroadcastChannelMock>>();
@@ -93,5 +99,46 @@ describe("shouldApplyRemotePlayingState", () => {
   it("allows opting into state-driven play/pause synchronization", () => {
     expect(shouldApplyRemotePlayingState(false, true, true)).toBe(true);
     expect(shouldApplyRemotePlayingState(true, true, true)).toBe(false);
+  });
+});
+
+
+describe("shouldApplyRemotePlaybackModeSync", () => {
+  it("ignores remote mode flips during the local-toggle cooldown", () => {
+    expect(
+      shouldApplyRemotePlaybackModeSync({
+        localPlaying: false,
+        remotePlaying: true,
+        nowMs: 1000,
+        lastLocalToggleAtMs: 900,
+        cooldownMs: 250
+      })
+    ).toBe(false);
+  });
+
+  it("applies remote mode flips after cooldown expires", () => {
+    expect(
+      shouldApplyRemotePlaybackModeSync({
+        localPlaying: false,
+        remotePlaying: true,
+        nowMs: 1200,
+        lastLocalToggleAtMs: 900,
+        cooldownMs: 250
+      })
+    ).toBe(true);
+  });
+});
+
+describe("shouldApplyRemoteTimeSync", () => {
+  it("only applies time sync while both peers are actively playing", () => {
+    expect(
+      shouldApplyRemoteTimeSync({ localTime: 10, remoteTime: 10.8, localPlaying: true, remotePlaying: true, thresholdSeconds: 0.2 })
+    ).toBe(true);
+    expect(
+      shouldApplyRemoteTimeSync({ localTime: 10, remoteTime: 10.8, localPlaying: false, remotePlaying: true, thresholdSeconds: 0.2 })
+    ).toBe(false);
+    expect(
+      shouldApplyRemoteTimeSync({ localTime: 10, remoteTime: 10.8, localPlaying: true, remotePlaying: false, thresholdSeconds: 0.2 })
+    ).toBe(false);
   });
 });

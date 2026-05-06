@@ -82,7 +82,11 @@ import { buildSharePayload, canUseNativeShare, getShareLink, ShareLinkPlatform }
 import { isDebugMode } from "./runtimeMode";
 import { getOverlayPresentation, OverlayMode } from "./overlayContent";
 import { buildTransitionOptionMarkup } from "./renderer/transitions";
-import { createPlaybackSyncController, shouldApplyRemoteState } from "./playbackSync";
+import {
+  createPlaybackSyncController,
+  shouldApplyRemotePlaybackModeSync,
+  shouldApplyRemoteTimeSync
+} from "./playbackSync";
 import {
   applyCurrentValuesAsGeneratedDefaults,
   getGeneratedEffectDefaultParams,
@@ -255,6 +259,7 @@ let effectIdeaAudioPreview = new EffectPreviewAudioController(EFFECT_PREVIEW_AUD
 let availableEffectNames = getEffectRegistryKeys();
 let playbackSyncSuppressBroadcast = false;
 let lastPlaybackSyncStateSentAt = 0;
+let lastLocalPlayPauseToggleAtMs = Number.NEGATIVE_INFINITY;
 const manualBeatTrigger = createManualBeatTrigger();
 const playbackSync = createPlaybackSyncController(
   {
@@ -292,14 +297,34 @@ const playbackSync = createPlaybackSyncController(
         }, 0);
       }
     },
-    onRemoteState: ({ time }) => {
+    onRemoteState: ({ playing, time }) => {
       if (!audioPlayer) {
         return;
       }
-      // Play/pause is synchronized via transport events only. Applying `playing`
-      // from heartbeat state can cause remote autoplay failures or tab throttling
-      // to immediately undo a local spacebar toggle.
-      if (shouldApplyRemoteState(audioPlayer.currentTime, time, 0.35)) {
+      const localPlaying = !audioPlayer.paused;
+      if (
+        shouldApplyRemotePlaybackModeSync({
+          localPlaying,
+          remotePlaying: playing,
+          nowMs: performance.now(),
+          lastLocalToggleAtMs: lastLocalPlayPauseToggleAtMs
+        })
+      ) {
+        if (playing) {
+          void audioPlayer.play();
+        } else {
+          audioPlayer.pause();
+        }
+      }
+      if (
+        shouldApplyRemoteTimeSync({
+          localTime: audioPlayer.currentTime,
+          remoteTime: time,
+          localPlaying: !audioPlayer.paused,
+          remotePlaying: playing,
+          thresholdSeconds: 0.35
+        })
+      ) {
         audioPlayer.seek(time);
       }
     }
@@ -2289,6 +2314,7 @@ window.addEventListener("keydown", (event) => {
   }
   if (shouldHandlePlayPauseShortcut(event) && editorController?.isVisible()) {
     event.preventDefault();
+    lastLocalPlayPauseToggleAtMs = performance.now();
     if (audioPlayer.paused) {
       void audioPlayer.play();
     } else {
