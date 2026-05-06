@@ -182,6 +182,12 @@ const effectIdeaGenerateButton = document.querySelector<HTMLButtonElement>("#eff
 const effectIdeaSubmitButton = document.querySelector<HTMLButtonElement>("#effect-idea-submit");
 
 const queryParams = new URLSearchParams(window.location.search);
+const DEVICE_VISUAL_OFFSET_STORAGE_KEY = "deviceVisualOffsetSeconds";
+const deviceVisualOffsetQueryValue = Number.parseFloat(queryParams.get("deviceVisualOffsetSeconds") ?? "");
+const deviceVisualOffsetSeconds = Number.isFinite(deviceVisualOffsetQueryValue)
+  ? deviceVisualOffsetQueryValue
+  : Number.parseFloat(localStorage.getItem(DEVICE_VISUAL_OFFSET_STORAGE_KEY) ?? "0") || 0;
+localStorage.setItem(DEVICE_VISUAL_OFFSET_STORAGE_KEY, String(deviceVisualOffsetSeconds));
 const debugMode = isDebugMode(window.location.search);
 const releaseMode = !debugMode;
 const editorModeFromQuery = queryParams.get("editor") === "1";
@@ -1130,7 +1136,7 @@ async function applyTimelineConfig(config: TimelineConfig): Promise<void> {
   timeline = new Timeline(config);
   timeline.setAudioDuration(audioPlayer.duration);
   audioPlayer.seek(currentTime);
-  lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+  lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset() + deviceVisualOffsetSeconds;
   updateDebugSkipButtonState(lastDemoTime);
   setOverlay("", false);
   if (!wasPaused) {
@@ -1846,7 +1852,7 @@ async function startDemo(): Promise<void> {
     }
     renderer.reset();
     isRunning = true;
-    lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+    lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset() + deviceVisualOffsetSeconds;
     lastFrameTimestamp = performance.now();
     setOverlay("", false, false, "status");
     if (!releaseMode) {
@@ -1873,7 +1879,7 @@ async function restartDemo(): Promise<void> {
     playbackSync.broadcastTransport("restart");
   }
   renderer.reset();
-  lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+  lastDemoTime = audioPlayer.currentTime + timeline.getAudioOffset() + deviceVisualOffsetSeconds;
   lastFrameTimestamp = performance.now();
   if (!releaseMode) {
     updateDebugSkipButtonState(lastDemoTime);
@@ -1899,11 +1905,11 @@ function loop(): void {
     applyQualityScale();
   }
 
-  let demoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+  let demoTime = audioPlayer.currentTime + timeline.getAudioOffset() + deviceVisualOffsetSeconds;
   const loopState = editorController?.getLoopState();
   if (loopState && !audioPlayer.paused && demoTime >= loopState.end) {
-    audioPlayer.seek(loopState.start - timeline.getAudioOffset());
-    demoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+    audioPlayer.seek(loopState.start - timeline.getAudioOffset() - deviceVisualOffsetSeconds);
+    demoTime = audioPlayer.currentTime + timeline.getAudioOffset() + deviceVisualOffsetSeconds;
     lastDemoTime = demoTime;
   }
   const delta = Math.max(0, demoTime - lastDemoTime);
@@ -1968,6 +1974,7 @@ function loop(): void {
     `${formatDebugTimeDomainLabel("audio", audioTime)} | ` +
     `${formatDebugTimeDomainLabel("demo", demoTime)} | ` +
     `OFFSET ${audioOffset.toFixed(3)} | ` +
+    `VISUAL ${Math.round(deviceVisualOffsetSeconds * 1000)}ms | ` +
     `INTRO END ${formatDebugTimeDomainLabel("demo", introEnd)} | ` +
     `SKIP→ ${formatDebugTimeDomainLabel("audio", introSkipAudioTarget)} / ${formatDebugTimeDomainLabel("demo", introSkipDemoTarget)}`;
   if (debugWebglStatus) {
@@ -2009,7 +2016,7 @@ if (canvas) {
     if (!audioPlayer || !timeline || overlayMode === "start") {
       return;
     }
-    const demoTime = audioPlayer.currentTime + timeline.getAudioOffset();
+    const demoTime = audioPlayer.currentTime + timeline.getAudioOffset() + deviceVisualOffsetSeconds;
     manualBeatTrigger.trigger(demoTime);
   });
 }
