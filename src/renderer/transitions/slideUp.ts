@@ -5,5 +5,5 @@ export const slideUpTransition = {
   label: "Slide Up",
   visibleInValidator: true,
   draw: (api, context) => api.drawSlide(context, 0, -1),
-  drawMobile: (api, context) => api.drawMobileDefaultCrossfade(context)
+  drawMobile: (api, context) => api.drawMobileSlide(context, 0, -1)
 } as const satisfies TransitionDefinition<"slide-up">;

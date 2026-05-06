@@ -703,6 +703,12 @@ export class Renderer {
       drawChromaticBloom: (context) => this.drawChromaticBloomTransition(context),
       drawNeuralFeedback: (context) => this.drawNeuralFeedbackTransition(context),
       drawMobileDefaultCrossfade: (context) => this.drawMobileDefaultCrossfade(context.ctx, context.progress, context.duration, context.width, context.height),
+      drawMobileWipe: (context) => this.drawMobileWipeTransition(context),
+      drawMobileSlide: (context, directionX, directionY) => this.drawMobileSlideTransition(context, directionX, directionY),
+      drawMobileIris: (context) => this.drawMobileIrisTransition(context),
+      drawMobileCheckerboardWipe: (context) => this.drawMobileCheckerboardWipeTransition(context),
+      drawMobileVenetianBlinds: (context) => this.drawMobileVenetianBlindsTransition(context),
+      drawMobileRadialWipe: (context) => this.drawMobileRadialWipeTransition(context),
       drawMobileShatter: (context) => this.drawMobileShatterTransition(context),
       drawMobileCameraPunchThrough: (context) =>
         this.drawCameraPunchThroughMobileTransition(context.ctx, context.progress, context.duration, context.width, context.height),
@@ -734,6 +740,88 @@ export class Renderer {
     ctx.globalAlpha = 1 - clamp(progress, 0, 1);
     ctx.drawImage(this.mobileFromCanvas, 0, 0, width, height);
     ctx.globalAlpha = clamp(progress, 0, 1);
+    ctx.drawImage(this.mobileToCanvas, 0, 0, width, height);
+    ctx.restore();
+  }
+
+  private drawMobileWipeTransition(context: MobileTransitionDrawContext): void {
+    const { ctx, progress, width, height } = context;
+    const clamped = clamp(progress, 0, 1);
+    ctx.drawImage(this.mobileFromCanvas, 0, 0, width, height);
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, 0, width * clamped, height);
+    ctx.clip();
+    ctx.drawImage(this.mobileToCanvas, 0, 0, width, height);
+    ctx.restore();
+  }
+
+  private drawMobileSlideTransition(context: MobileTransitionDrawContext, directionX: number, directionY: number): void {
+    const { ctx, progress, width, height } = context;
+    const clamped = clamp(progress, 0, 1);
+    const offsetX = width * clamped * directionX;
+    const offsetY = height * clamped * directionY;
+    ctx.drawImage(this.mobileFromCanvas, offsetX, offsetY, width, height);
+    ctx.drawImage(this.mobileToCanvas, offsetX - width * directionX, offsetY - height * directionY, width, height);
+  }
+
+  private drawMobileIrisTransition(context: MobileTransitionDrawContext): void {
+    const { ctx, progress, width, height } = context;
+    const clamped = clamp(progress, 0, 1);
+    ctx.drawImage(this.mobileFromCanvas, 0, 0, width, height);
+    ctx.save();
+    ctx.beginPath();
+    const radius = Math.hypot(width, height) * clamped;
+    ctx.arc(width / 2, height / 2, radius, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.drawImage(this.mobileToCanvas, 0, 0, width, height);
+    ctx.restore();
+  }
+
+  private drawMobileCheckerboardWipeTransition(context: MobileTransitionDrawContext): void {
+    const { ctx, progress, width, height } = context;
+    const clamped = clamp(progress, 0, 1);
+    const cols = 12;
+    const rows = 8;
+    const tileW = width / cols;
+    const tileH = height / rows;
+    ctx.drawImage(this.mobileFromCanvas, 0, 0, width, height);
+    ctx.save();
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        const threshold = (x + y) / (cols + rows - 2);
+        if (clamped >= threshold) {
+          ctx.drawImage(this.mobileToCanvas, x * tileW, y * tileH, tileW, tileH, x * tileW, y * tileH, tileW, tileH);
+        }
+      }
+    }
+    ctx.restore();
+  }
+
+  private drawMobileVenetianBlindsTransition(context: MobileTransitionDrawContext): void {
+    const { ctx, progress, width, height } = context;
+    const clamped = clamp(progress, 0, 1);
+    const blinds = 12;
+    const blindH = height / blinds;
+    ctx.drawImage(this.mobileFromCanvas, 0, 0, width, height);
+    for (let i = 0; i < blinds; i++) {
+      const open = clamp(clamped * blinds - i, 0, 1);
+      if (open <= 0) continue;
+      const y = i * blindH;
+      ctx.drawImage(this.mobileToCanvas, 0, y, width, blindH * open, 0, y, width, blindH * open);
+    }
+  }
+
+  private drawMobileRadialWipeTransition(context: MobileTransitionDrawContext): void {
+    const { ctx, progress, width, height } = context;
+    const clamped = clamp(progress, 0, 1);
+    ctx.drawImage(this.mobileFromCanvas, 0, 0, width, height);
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(width / 2, height / 2);
+    ctx.arc(width / 2, height / 2, Math.hypot(width, height), -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * clamped);
+    ctx.closePath();
+    ctx.clip();
     ctx.drawImage(this.mobileToCanvas, 0, 0, width, height);
     ctx.restore();
   }

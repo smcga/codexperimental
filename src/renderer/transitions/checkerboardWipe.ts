@@ -5,5 +5,5 @@ export const checkerboardWipeTransition = {
   label: "Checkerboard Wipe",
   visibleInValidator: true,
   draw: (api, context) => api.drawCheckerboardWipe(context),
-  drawMobile: (api, context) => api.drawMobileDefaultCrossfade(context)
+  drawMobile: (api, context) => api.drawMobileCheckerboardWipe(context)
 } as const satisfies TransitionDefinition<"checkerboard-wipe">;

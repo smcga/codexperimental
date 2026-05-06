@@ -5,5 +5,5 @@ export const irisTransition = {
   label: "Iris",
   visibleInValidator: true,
   draw: (api, context) => api.drawIris(context),
-  drawMobile: (api, context) => api.drawMobileDefaultCrossfade(context)
+  drawMobile: (api, context) => api.drawMobileIris(context)
 } as const satisfies TransitionDefinition<"iris">;
