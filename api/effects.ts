@@ -97,6 +97,10 @@ type JsonResponse = {
     runtimeCode: string;
     params?: GeneratedEffectParam[];
     docs?: GeneratedEffectDocs;
+    attempts?: number;
+    safeRegenerated?: boolean;
+    failureCategory?: string;
+    failureReason?: string;
   };
   generateMetrics?: GenerateMetrics;
   recentGenerateErrors?: GenerateErrorSample[];
@@ -1083,6 +1087,21 @@ function parseJsonBlock(text: string): {
   }
 }
 
+function classifyRuntimePolicyViolation(runtimeCode: string): { category: string; reason: string } | null {
+  const checks: Array<{ pattern: RegExp; category: string; reason: string }> = [
+    { pattern: /\bfetch\s*\(/iu, category: "network_access", reason: "Network APIs like fetch are not allowed." },
+    { pattern: /\bXMLHttpRequest\b/iu, category: "network_access", reason: "Network APIs like XMLHttpRequest are not allowed." },
+    { pattern: /\b(?:WebSocket|EventSource)\b/iu, category: "network_access", reason: "Streaming/socket APIs are not allowed." },
+    { pattern: /\bdocument\s*\.\s*cookie\b/iu, category: "storage_access", reason: "Cookie access is not allowed." },
+    { pattern: /\b(?:localStorage|sessionStorage|indexedDB)\b/iu, category: "storage_access", reason: "Browser storage access is not allowed." },
+    { pattern: /\b(?:new\s+Function|eval\s*\(|import\s*\()/iu, category: "dynamic_code_exec", reason: "Dynamic code execution is not allowed." },
+    { pattern: /\b(?:Object|Array|Function)\s*\.\s*prototype\s*\./iu, category: "global_escape", reason: "Prototype mutation is not allowed." },
+    { pattern: /\b(?:process\s*\.\s*env|globalThis\s*\.\s*process|window\s*\.\s*process)\b/iu, category: "env_access", reason: "Environment/process access is not allowed." }
+  ];
+  const match = checks.find((check) => check.pattern.test(runtimeCode));
+  return match ? { category: match.category, reason: match.reason } : null;
+}
+
 function extractOutputText(payload: unknown): string {
   if (!payload || typeof payload !== "object") {
     return "";
@@ -1433,7 +1452,36 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
     }
     try {
       const promptTemplate = await readPromptTemplate();
-      const generation = await generateWithOpenAi(prompt, promptTemplate.template);
+      const maxAttempts = 3;
+      let attempts = 0;
+      let generation: Awaited<ReturnType<typeof generateWithOpenAi>> | null = null;
+      let safeRegenerated = false;
+      let failureCategory: string | undefined;
+      let failureReason: string | undefined;
+      for (let index = 0; index < maxAttempts; index += 1) {
+        attempts = index + 1;
+        const attemptPrompt = index === 0
+          ? prompt
+          : `${prompt}\n\nPrevious attempt was blocked by security policy.\nCategory: ${failureCategory ?? "unknown"}\nReason: ${failureReason ?? "unknown"}\nReturn strict compliant JSON and avoid blocked APIs.`;
+        const candidate = await generateWithOpenAi(attemptPrompt, promptTemplate.template);
+        const violation = classifyRuntimePolicyViolation(candidate.runtimeCode);
+        if (!violation) {
+          generation = candidate;
+          safeRegenerated = index > 0;
+          break;
+        }
+        failureCategory = violation.category;
+        failureReason = violation.reason;
+      }
+      if (!generation) {
+        const category = failureCategory ?? "policy_violation";
+        const reason = failureReason ?? "Generated code used a blocked capability.";
+        sendJson(res, 422, {
+          error: `Blocked by security policy (${category}). Fix: ${reason}`,
+          generation: { name: "", typescriptCode: "", runtimeCode: "", attempts, failureCategory: category, failureReason: reason }
+        });
+        return;
+      }
       logGenerateRequest({
         outcome: "accepted",
         httpStatus: 200,
@@ -1442,7 +1490,7 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
         promptLength: prompt.length,
         requestId
       });
-      sendJson(res, 200, { generation });
+      sendJson(res, 200, { generation: { ...generation, attempts, safeRegenerated } });
       await recordGenerateMonitoring({
         outcome: "accepted",
         httpStatus: 200,

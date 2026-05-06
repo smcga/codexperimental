@@ -41,6 +41,10 @@ export type EffectIdeaGenerationResult = {
   docs?: GeneratedEffectDocs;
 };
 
+export type CompileRuntimeEffectOptions = {
+  enforceSafetyPolicy?: boolean;
+};
+
 export type EffectIdeaGenerationRequest = {
   improvementAttempt?: number;
 };
@@ -83,19 +87,24 @@ export class EffectIdeaApiError extends Error {
 type RuntimeSafetyRule = {
   pattern: RegExp;
   reason: string;
+  category: "network_access" | "storage_access" | "env_access" | "dynamic_code_exec" | "global_escape";
 };
 
+export type RuntimeSafetyViolationCategory = RuntimeSafetyRule["category"];
+
 const RUNTIME_CODE_SAFETY_RULES: RuntimeSafetyRule[] = [
-  { pattern: /\bprocess\s*\.\s*env\b/iu, reason: "accessing environment variables (process.env)" },
-  { pattern: /\b(?:globalThis|window)\s*\.\s*process\b/iu, reason: "accessing process globals" },
-  { pattern: /\b(?:Deno|Bun)\s*\.\s*env\b/iu, reason: "accessing runtime environment variables" },
-  { pattern: /\bdocument\s*\.\s*cookie\b/iu, reason: "reading browser cookies" },
-  { pattern: /\b(?:localStorage|sessionStorage|indexedDB)\b/iu, reason: "accessing browser storage" },
-  { pattern: /\bfetch\s*\(/iu, reason: "making network requests with fetch" },
-  { pattern: /\bXMLHttpRequest\b/iu, reason: "making network requests with XMLHttpRequest" },
-  { pattern: /\bnavigator\s*\.\s*sendBeacon\b/iu, reason: "sending background network beacons" },
-  { pattern: /\bWebSocket\b/iu, reason: "opening network sockets" },
-  { pattern: /\bEventSource\b/iu, reason: "opening server-sent event streams" }
+  { pattern: /\bprocess\s*\.\s*env\b/iu, reason: "accessing environment variables (process.env)", category: "env_access" },
+  { pattern: /\b(?:globalThis|window)\s*\.\s*process\b/iu, reason: "accessing process globals", category: "env_access" },
+  { pattern: /\b(?:Deno|Bun)\s*\.\s*env\b/iu, reason: "accessing runtime environment variables", category: "env_access" },
+  { pattern: /\bdocument\s*\.\s*cookie\b/iu, reason: "reading browser cookies", category: "storage_access" },
+  { pattern: /\b(?:localStorage|sessionStorage|indexedDB)\b/iu, reason: "accessing browser storage", category: "storage_access" },
+  { pattern: /\bfetch\s*\(/iu, reason: "making network requests with fetch", category: "network_access" },
+  { pattern: /\bXMLHttpRequest\b/iu, reason: "making network requests with XMLHttpRequest", category: "network_access" },
+  { pattern: /\bnavigator\s*\.\s*sendBeacon\b/iu, reason: "sending background network beacons", category: "network_access" },
+  { pattern: /\bWebSocket\b/iu, reason: "opening network sockets", category: "network_access" },
+  { pattern: /\bEventSource\b/iu, reason: "opening server-sent event streams", category: "network_access" }
+  ,{ pattern: /\b(?:new\s+Function|eval\s*\(|import\s*\()/iu, reason: "using dynamic code execution primitives", category: "dynamic_code_exec" }
+  ,{ pattern: /\b(?:Object|Array|Function)\s*\.\s*prototype\s*\./iu, reason: "mutating shared prototypes", category: "global_escape" }
 ];
 
 function stripRuntimeStringLiteralsAndComments(source: string): string {
@@ -130,13 +139,20 @@ function normalizeGeneratedCode(rawCode: string): string {
 }
 
 export function validateGeneratedRuntimeCode(runtimeCode: string): void {
+  const violation = getRuntimeSafetyViolation(runtimeCode);
+  if (!violation) {
+    return;
+  }
+  throw new Error(`Generated runtime code blocked by safety policy (${violation.category}): ${violation.reason}.`);
+}
+
+
+export function getRuntimeSafetyViolation(runtimeCode: string): { category: RuntimeSafetyViolationCategory; reason: string } | null {
   const normalizedCode = normalizeGeneratedCode(runtimeCode);
   const codeForValidation = stripRuntimeStringLiteralsAndComments(normalizedCode);
   const violated = RUNTIME_CODE_SAFETY_RULES.find((rule) => rule.pattern.test(codeForValidation));
-  if (!violated) {
-    return;
-  }
-  throw new Error(`Generated runtime code blocked by safety policy: ${violated.reason}.`);
+  if (!violated) return null;
+  return { category: violated.category, reason: violated.reason };
 }
 
 function isRecord(value: unknown): value is EffectIdeaRecord {
@@ -182,9 +198,11 @@ async function requestEffects(path = "/api/effects", init?: RequestInit): Promis
   return payload;
 }
 
-export function compileRuntimeEffect(runtimeCode: string): Effect {
+export function compileRuntimeEffect(runtimeCode: string, options: CompileRuntimeEffectOptions = {}): Effect {
   const normalizedCode = normalizeGeneratedCode(runtimeCode);
-  validateGeneratedRuntimeCode(normalizedCode);
+  if (options.enforceSafetyPolicy !== false) {
+    validateGeneratedRuntimeCode(normalizedCode);
+  }
   const factory = new Function(
     `"use strict";
 ${normalizedCode}

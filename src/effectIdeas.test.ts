@@ -244,6 +244,11 @@ describe("effect ideas client", () => {
       .toThrow("Generated runtime code blocked by safety policy");
   });
 
+  it("allows legacy approved effects to bypass safety policy checks when explicitly requested", () => {
+    expect(() => compileRuntimeEffect("return { render() { return 'legacy'; } };", { enforceSafetyPolicy: false }))
+      .not.toThrow();
+  });
+
   it("allows comments and strings that mention blocked primitives", () => {
     expect(() => compileRuntimeEffect(`
       // Avoid eval() and new Function() in this effect.
@@ -256,7 +261,7 @@ describe("effect ideas client", () => {
     `)).not.toThrow();
   });
 
-  it("allows dynamic code helpers when runtime behavior is otherwise safe", () => {
+  it("rejects dynamic code execution helpers", () => {
     expect(() => validateGeneratedRuntimeCode(`
       const factory = new Function("return 6 * 7;");
       const imported = import("./optional-effect-helper.js");
@@ -265,7 +270,7 @@ describe("effect ideas client", () => {
       void imported;
       void maybeRequired;
       void value;
-    `)).not.toThrow();
+    `)).toThrow("dynamic_code_exec");
   });
 
   it("surfaces API error messages for generation failures", async () => {
