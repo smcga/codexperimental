@@ -664,7 +664,7 @@
     },
     {
       "id": "era16bit-isogrid (split)",
-      "start": 103.394,
+      "start": 104.168,
       "effect": "fireworks_display",
       "params": {
         "speed": 1,
@@ -689,17 +689,21 @@
           "t1": 106.3,
           "ease": "easeInCubic"
         }
-      ]
+      ],
+      "transition": {
+        "in": "fade",
+        "duration": 0.1
+      }
     },
     {
       "id": "Scene 004 - Sphere3d",
-      "start": 104.263,
+      "start": 104.644,
       "effect": "bumpmap_plane",
       "era": "pcdemo",
       "transition": {
         "in": "noise-threshold",
         "out": "flash",
-        "duration": 0.8
+        "duration": 0.2
       },
       "params": {
         "speed": 0.9
@@ -729,7 +733,7 @@
     },
     {
       "id": "Scene 006 - Explicitpixels",
-      "start": 105.41,
+      "start": 105.219,
       "effect": "hexGridPulse",
       "era": "pcdemo",
       "transition": {
@@ -768,7 +772,7 @@
     {
       "id": "era16bit-rush1-02",
       "start": 106.069,
-      "effect": "taco_meteor_shower",
+      "effect": "shadebobs_bobs",
       "params": {
         "speed": 0.923,
         "glow": 0.235,
@@ -780,14 +784,14 @@
       },
       "layers": [],
       "transition": {
-        "in": "fade",
-        "duration": 2
+        "in": "portal-zoom",
+        "duration": 1
       }
     },
     {
       "id": "era16bit-rush1-05",
-      "start": "01:46.84",
-      "effect": "Neon City Drift",
+      "start": 107.271,
+      "effect": "glenz_vectors",
       "params": {
         "speed": 0.993,
         "glow": 0.281,
@@ -816,85 +820,13 @@
         }
       ],
       "transition": {
-        "in": "fade",
-        "duration": 2
-      }
-    },
-    {
-      "id": "era16bit-rush1-10",
-      "start": "01:47.56",
-      "effect": "3am Vibes",
-      "params": {
-        "speed": 1.11,
-        "glow": 0.358,
-        "alpha": 0.22,
-        "trail": 0.312,
-        "warp": 0.28,
-        "wobble": 0.2,
-        "shake": 0.146
-      },
-      "layers": [
-        {
-          "effect": "feedback",
-          "blend": "screen",
-          "opacity": 0.1,
-          "params": {
-            "alpha": 0.208
-          }
-        },
-        {
-          "effect": "vga_fire",
-          "blend": "lighter",
-          "opacity": 0.11,
-          "params": {
-            "audioReact": 0.2
-          }
-        }
-      ],
-      "transition": {
-        "in": "fade",
-        "duration": 2
-      }
-    },
-    {
-      "id": "era16bit-rush1-14",
-      "start": "01:48.13",
-      "effect": "neon",
-      "params": {
-        "speed": 1.203,
-        "glow": 0.419,
-        "alpha": 0.247,
-        "trail": 0.371,
-        "warp": 0.36,
-        "wobble": 0.253,
-        "shake": 0.189
-      },
-      "layers": [
-        {
-          "effect": "feedback",
-          "blend": "screen",
-          "opacity": 0.1,
-          "params": {
-            "alpha": 0.229
-          }
-        },
-        {
-          "effect": "vga_fire",
-          "blend": "lighter",
-          "opacity": 0.123,
-          "params": {
-            "audioReact": 0.2
-          }
-        }
-      ],
-      "transition": {
-        "in": "fade",
-        "duration": 2
+        "in": "audio-reactive-particle",
+        "duration": 1
       }
     },
     {
       "id": "era16bit-rush-6",
-      "start": "01:48.56",
+      "start": 108.568,
       "effect": "prism_bloom",
       "params": {
         "speed": 1.22,
@@ -911,13 +843,44 @@
         }
       ],
       "transition": {
-        "in": "fade",
-        "duration": 3
+        "in": "whip-pan",
+        "duration": 0.6
       }
     },
     {
       "id": "calm-sunset",
       "start": "01:49.16",
+      "effect": "god_rays",
+      "params": {
+        "sunRadius": 0.1,
+        "glow": 0.24,
+        "audioReactive": 0.2,
+        "scanlines": 0.55,
+        "stripeGap": 5,
+        "stripeHeight": 11,
+        "seaSpeed": 0.3,
+        "horizon": 0.68
+      },
+      "automation": [
+        {
+          "param": "sunRadius",
+          "from": 0.02,
+          "to": 0.22,
+          "t0": 109.2,
+          "t1": 120,
+          "ease": "easeInOutQuad"
+        }
+      ],
+      "layers": [],
+      "era": "future",
+      "transition": {
+        "in": "fade",
+        "duration": 4
+      }
+    },
+    {
+      "id": "calm-sunset (split)",
+      "start": 109.832,
       "effect": "synthwaveSunset",
       "params": {
         "sunRadius": 0.1,
@@ -948,7 +911,7 @@
     },
     {
       "id": "snare-buildup",
-      "start": 119.808,
+      "start": 120.778,
       "effect": "tunnel",
       "params": {
         "speed": 0.94,
@@ -981,13 +944,13 @@
     },
     {
       "id": "Scene 007 - Flyover",
-      "start": 127.396,
+      "start": 125.988,
       "effect": "cosmic_voyage",
       "era": "pcdemo",
       "transition": {
         "in": "iris",
         "out": "shatter",
-        "duration": 1.4
+        "duration": 3
       },
       "params": {
         "speed": 1.8,
@@ -1026,7 +989,7 @@
     },
     {
       "id": "spoken-word-a",
-      "start": 130.138,
+      "start": 129.632,
       "effect": "chess",
       "params": {
         "speed": 0.45
@@ -1187,6 +1150,38 @@
     {
       "id": "drop-hit",
       "start": "02:27.0",
+      "effect": "tilingMorph",
+      "params": {
+        "speed": 1.06,
+        "intensity": 0.52
+      },
+      "automation": [
+        {
+          "param": "intensity",
+          "from": 0.52,
+          "to": 0.78,
+          "t0": "02:27.0",
+          "t1": "02:43.5",
+          "ease": "easeInOutQuad"
+        },
+        {
+          "param": "speed",
+          "from": 0,
+          "to": 2.1,
+          "t0": 147,
+          "t1": 163.5,
+          "ease": "linear"
+        }
+      ],
+      "layers": [],
+      "transition": {
+        "in": "quantum-slice",
+        "duration": 0.8
+      }
+    },
+    {
+      "id": "drop-hit (split 2)",
+      "start": 148.167,
       "effect": "gl_fractal_tunnel",
       "params": {
         "speed": 1.06,
@@ -1218,7 +1213,7 @@
     },
     {
       "id": "drop-hit (split)",
-      "start": 152.133,
+      "start": 151.002,
       "effect": "gl_fractal_tunnel",
       "params": {
         "speed": 1.06,
@@ -1252,7 +1247,7 @@
     },
     {
       "id": "drop-hit (split) (split)",
-      "start": 154.778,
+      "start": 153.645,
       "effect": "gl_fractal_tunnel",
       "params": {
         "speed": 1.06,
@@ -1286,7 +1281,7 @@
     },
     {
       "id": "drop-hit (split) (split) (split)",
-      "start": 157.148,
+      "start": 156.354,
       "effect": "Morphing Spheres to Pyramids",
       "params": {
         "speed": 1,
@@ -1303,7 +1298,7 @@
     },
     {
       "id": "Scene 009 - Amiga Showcase",
-      "start": 159.195,
+      "start": 158.915,
       "effect": "amiga_showcase",
       "era": "pcdemo",
       "transition": {
@@ -1436,7 +1431,7 @@
     },
     {
       "id": "Scene 011 - Glenz Vectors",
-      "start": 165.613,
+      "start": 164.605,
       "effect": "cloth_sim",
       "era": "pcdemo",
       "transition": {
@@ -1467,7 +1462,7 @@
     },
     {
       "id": "scene-aldn33",
-      "start": 168.063,
+      "start": 167.248,
       "effect": "textured_cube",
       "era": "pcdemo",
       "transition": {
@@ -1492,7 +1487,7 @@
     },
     {
       "id": "polygons-rush2-01",
-      "start": "02:51.1",
+      "start": 169.563,
       "effect": "boids_simulation",
       "params": {
         "speed": 0.9,
@@ -1528,7 +1523,7 @@
     },
     {
       "id": "polygons-rush2-02",
-      "start": "02:51.27",
+      "start": 169.924,
       "effect": "plasma",
       "params": {
         "speed": 0.927,
@@ -1564,7 +1559,7 @@
     },
     {
       "id": "polygons-rush2-03",
-      "start": "02:51.44",
+      "start": 170.302,
       "effect": "explicitpixels",
       "params": {
         "speed": 0.953,
@@ -1600,7 +1595,7 @@
     },
     {
       "id": "polygons-rush2-04",
-      "start": "02:51.61",
+      "start": 170.959,
       "effect": "tetris_matrix",
       "params": {
         "speed": 0.98,
@@ -1636,7 +1631,7 @@
     },
     {
       "id": "polygons-rush2-05",
-      "start": "02:51.78",
+      "start": 171.451,
       "effect": "glenz_vectors",
       "params": {
         "speed": 1.007,
@@ -1672,7 +1667,7 @@
     },
     {
       "id": "polygons-rush2-06",
-      "start": "02:51.94",
+      "start": 171.83,
       "effect": "twister",
       "params": {
         "speed": 1.033,
@@ -2069,6 +2064,70 @@
     {
       "id": "chill-breakdown",
       "start": "02:53.8",
+      "effect": "finale",
+      "params": {
+        "swing": 0.48,
+        "bpm": 177
+      },
+      "layers": [],
+      "transition": {
+        "in": "fade",
+        "duration": 0.2
+      },
+      "automation": [
+        {
+          "param": "rows",
+          "from": 0,
+          "to": 6,
+          "t0": 173.8,
+          "t1": 174.8,
+          "ease": "easeInCubic"
+        },
+        {
+          "param": "cols",
+          "from": 0,
+          "to": 8,
+          "t0": 173.8,
+          "t1": 174.8,
+          "ease": "easeInCubic"
+        }
+      ]
+    },
+    {
+      "id": "chill-breakdown (split 3)",
+      "start": 174.241,
+      "effect": "Synchronized Robot Army",
+      "params": {
+        "swing": 0.48,
+        "bpm": 177
+      },
+      "layers": [],
+      "transition": {
+        "in": "portal-zoom",
+        "duration": 0.2
+      },
+      "automation": [
+        {
+          "param": "rows",
+          "from": 0,
+          "to": 6,
+          "t0": 173.8,
+          "t1": 174.8,
+          "ease": "easeInCubic"
+        },
+        {
+          "param": "cols",
+          "from": 0,
+          "to": 8,
+          "t0": 173.8,
+          "t1": 174.8,
+          "ease": "easeInCubic"
+        }
+      ]
+    },
+    {
+      "id": "chill-breakdown (split 2)",
+      "start": 174.897,
       "effect": "spherecloud",
       "params": {
         "density": 0.3,
@@ -2107,7 +2166,7 @@
         }
       ],
       "transition": {
-        "in": "fade",
+        "in": "portal-zoom",
         "duration": 0.2
       }
     },
