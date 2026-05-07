@@ -1760,7 +1760,7 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 - **Registry key:** `lush_life_dance`
 - **Implementation:** `src/renderer/effects/lushLifeDanceEffect.ts` (class `LushLifeDanceEffect`)
 - **Renderer:** Canvas2D
-- **Description:** Concert-pop silhouette dance loop inspired by a lush-life stage routine.
+- **Description:** Concert-pop silhouette dance loop with stylized hair, outfit, sparkle, and stage lights.
 - **Audio features:** bass, beat, beatStrength, rms
 - **Performance notes:** None noted.
 
@@ -1773,8 +1773,13 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 | `params.audioReactive` | number | 0.6 | min 0, max 1 | Audio Reactive | yes |
 | `params.bounce` | number | 0.7 | min 0, max 1.2 | Bounce | yes |
 | `params.bpm` | number | 120 | min 60, max 180 | BPM | yes |
+| `params.fashionDetail` | number | 0.75 | min 0, max 1 | Fashion Detail | yes |
 | `params.glow` | number | 0.55 | min 0, max 1 | Glow | yes |
+| `params.hairHue` | number | 48 | min 0, max 360 | Hair Hue | yes |
+| `params.metalHue` | number | 200 | min 0, max 360 | Metal Hue | yes |
+| `params.outfitHue` | number | 316 | min 0, max 360 | Outfit Hue | yes |
 | `params.silhouetteScale` | number | 1 | min 0.5, max 1.5 | Silhouette Scale | yes |
+| `params.sparkle` | number | 0.65 | min 0, max 1 | Sparkle | yes |
 | `params.stageHue` | number | 316 | min 0, max 360 | Stage Hue | yes |
 | `params.trail` | number | 0.28 | min 0, max 0.9 | Trail | yes |
 

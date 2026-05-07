@@ -37,7 +37,12 @@ export const LUSH_LIFE_DANCE_DEFAULTS = {
   silhouetteScale: 1,
   stageHue: 316,
   accentHue: 186,
-  audioReactive: 0.6
+  audioReactive: 0.6,
+  hairHue: 48,
+  outfitHue: 316,
+  metalHue: 200,
+  sparkle: 0.65,
+  fashionDetail: 0.75
 } as const;
 
 const toNumber = (value: unknown, fallback: number): number =>
@@ -52,7 +57,12 @@ export const resolveLushLifeDanceParams = (params: Record<string, unknown>) => (
   silhouetteScale: clamp(toNumber(params.silhouetteScale, LUSH_LIFE_DANCE_DEFAULTS.silhouetteScale), 0.5, 1.5),
   stageHue: clamp(toNumber(params.stageHue, LUSH_LIFE_DANCE_DEFAULTS.stageHue), 0, 360),
   accentHue: clamp(toNumber(params.accentHue, LUSH_LIFE_DANCE_DEFAULTS.accentHue), 0, 360),
-  audioReactive: clamp(toNumber(params.audioReactive, LUSH_LIFE_DANCE_DEFAULTS.audioReactive), 0, 1)
+  audioReactive: clamp(toNumber(params.audioReactive, LUSH_LIFE_DANCE_DEFAULTS.audioReactive), 0, 1),
+  hairHue: clamp(toNumber(params.hairHue, LUSH_LIFE_DANCE_DEFAULTS.hairHue), 0, 360),
+  outfitHue: clamp(toNumber(params.outfitHue, LUSH_LIFE_DANCE_DEFAULTS.outfitHue), 0, 360),
+  metalHue: clamp(toNumber(params.metalHue, LUSH_LIFE_DANCE_DEFAULTS.metalHue), 0, 360),
+  sparkle: clamp(toNumber(params.sparkle, LUSH_LIFE_DANCE_DEFAULTS.sparkle), 0, 1),
+  fashionDetail: clamp(toNumber(params.fashionDetail, LUSH_LIFE_DANCE_DEFAULTS.fashionDetail), 0, 1)
 });
 
 const BASE_POSE: Pose = {
@@ -190,13 +200,106 @@ export class LushLifeDanceEffect implements Effect {
       rk: project(pose.rightKneeX, pose.rightKneeY),
       rf: project(pose.rightFootX, pose.rightFootY)
     };
+    const headRadius = Math.max(9, dancerScale * 0.05);
+    const shoulderWidth = dancerScale * (0.12 + cfg.fashionDetail * 0.07);
+    const leftShoulder: Point2D = [joints.chest[0] - shoulderWidth, joints.chest[1] - dancerScale * 0.015];
+    const rightShoulder: Point2D = [joints.chest[0] + shoulderWidth, joints.chest[1] - dancerScale * 0.015];
 
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctx.strokeStyle = `hsl(${cfg.accentHue.toFixed(1)} 95% ${(60 + drive * 18).toFixed(1)}%)`;
-    ctx.shadowColor = `hsla(${cfg.accentHue.toFixed(1)} 100% 65% / ${clamp(cfg.glow * (0.5 + drive), 0, 1).toFixed(3)})`;
-    ctx.shadowBlur = 28 * cfg.glow * (1 + drive);
-    ctx.lineWidth = Math.max(3, dancerScale * 0.028);
+    const drawStageLights = (): void => {
+      ctx.save();
+      const halo = ctx.createRadialGradient(centerX, centerY - dancerScale * 0.2, dancerScale * 0.1, centerX, centerY, dancerScale * 1.1);
+      halo.addColorStop(0, `hsla(${cfg.outfitHue.toFixed(1)} 95% 65% / ${(0.16 + drive * 0.18).toFixed(3)})`);
+      halo.addColorStop(1, "hsla(0 0% 0% / 0)");
+      ctx.fillStyle = halo;
+      ctx.fillRect(0, 0, width, floorY);
+
+      for (let i = 0; i < 3; i += 1) {
+        const t = beats * 0.85 + i * 1.9;
+        const x = width * (0.2 + i * 0.3) + Math.sin(t) * width * 0.05;
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x - width * 0.18, floorY);
+        ctx.lineTo(x + width * 0.18, floorY);
+        ctx.closePath();
+        ctx.fillStyle = `hsla(${(cfg.metalHue + i * 18).toFixed(1)} 100% 70% / ${(0.035 + drive * 0.05).toFixed(3)})`;
+        ctx.fill();
+      }
+      ctx.restore();
+    };
+
+    const drawGhostTrail = (): void => {
+      if (cfg.trail < 0.06) return;
+      ctx.save();
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.lineWidth = Math.max(2, dancerScale * 0.021);
+      ctx.strokeStyle = `hsla(${cfg.accentHue.toFixed(1)} 90% 68% / ${(cfg.trail * 0.28).toFixed(3)})`;
+      for (let i = 1; i <= 3; i += 1) {
+        const ghostPose = sampleLushLifePose(phraseProgress - i * 0.025);
+        const ghostX = centerX - i * 8 * cfg.amplitude;
+        const ghostY = centerY + i * 3;
+        const g = (x: number, y: number): Point2D => [ghostX + x * dancerScale * cfg.amplitude, ghostY + y * dancerScale];
+        const gh = {
+          head: g(ghostPose.headX, ghostPose.headY),
+          chest: g(ghostPose.chestX, ghostPose.chestY),
+          hip: g(ghostPose.hipX, ghostPose.hipY),
+          le: g(ghostPose.leftElbowX, ghostPose.leftElbowY),
+          lh: g(ghostPose.leftHandX, ghostPose.leftHandY),
+          re: g(ghostPose.rightElbowX, ghostPose.rightElbowY),
+          rh: g(ghostPose.rightHandX, ghostPose.rightHandY),
+          lk: g(ghostPose.leftKneeX, ghostPose.leftKneeY),
+          lf: g(ghostPose.leftFootX, ghostPose.leftFootY),
+          rk: g(ghostPose.rightKneeX, ghostPose.rightKneeY),
+          rf: g(ghostPose.rightFootX, ghostPose.rightFootY)
+        };
+        [[gh.head, gh.chest], [gh.chest, gh.hip], [gh.chest, gh.le], [gh.le, gh.lh], [gh.chest, gh.re], [gh.re, gh.rh], [gh.hip, gh.lk], [gh.lk, gh.lf], [gh.hip, gh.rk], [gh.rk, gh.rf]].forEach((seg) => {
+          ctx.beginPath(); ctx.moveTo(seg[0][0], seg[0][1]); ctx.lineTo(seg[1][0], seg[1][1]); ctx.stroke();
+        });
+      }
+      ctx.restore();
+    };
+    const drawHair = (): void => {
+      const sway = Math.sin(beats * 1.8) * dancerScale * 0.04 + drive * dancerScale * 0.02;
+      ctx.save();
+      ctx.globalAlpha = 0.88;
+      ctx.shadowColor = `hsla(${cfg.hairHue.toFixed(1)} 95% 65% / 0.45)`;
+      ctx.shadowBlur = 18 * (0.8 + cfg.fashionDetail * 0.5);
+      ctx.fillStyle = `hsl(${cfg.hairHue.toFixed(1)} 95% 62%)`;
+      ctx.beginPath();
+      ctx.moveTo(joints.head[0] - headRadius * 1.05, joints.head[1] - headRadius * 0.45);
+      ctx.bezierCurveTo(
+        joints.head[0] - headRadius * 1.25,
+        joints.head[1] + headRadius * 1.1,
+        joints.head[0] + headRadius * 1.18,
+        joints.head[1] + headRadius * 1.1,
+        joints.head[0] + headRadius * 1.05,
+        joints.head[1] - headRadius * 0.5
+      );
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = `hsla(${(cfg.hairHue + 12).toFixed(1)} 100% 72% / 0.72)`;
+      ctx.beginPath();
+      ctx.moveTo(joints.head[0] + headRadius * 0.85, joints.head[1] + headRadius * 0.08);
+      ctx.bezierCurveTo(
+        joints.head[0] + headRadius * 1.9 + sway,
+        joints.head[1] + headRadius * 0.35,
+        joints.head[0] + headRadius * 2.2 + sway,
+        joints.head[1] + headRadius * 1.3,
+        joints.head[0] + headRadius * 1.25,
+        joints.head[1] + headRadius * 1.45
+      );
+      ctx.bezierCurveTo(
+        joints.head[0] + headRadius * 1.75 + sway * 0.4,
+        joints.head[1] + headRadius * 0.9,
+        joints.head[0] + headRadius * 1.4 + sway * 0.5,
+        joints.head[1] + headRadius * 0.25,
+        joints.head[0] + headRadius * 0.8,
+        joints.head[1] + headRadius * 0.12
+      );
+      ctx.fill();
+      ctx.restore();
+    };
 
     const drawLimb = (a: Point2D, b: Point2D) => {
       ctx.beginPath();
@@ -205,6 +308,92 @@ export class LushLifeDanceEffect implements Effect {
       ctx.stroke();
     };
 
+    const drawOutfit = (): void => {
+      ctx.save();
+      ctx.shadowBlur = 12 * (0.8 + drive);
+      ctx.shadowColor = `hsla(${cfg.outfitHue.toFixed(1)} 100% 60% / 0.4)`;
+      ctx.fillStyle = `hsla(${cfg.outfitHue.toFixed(1)} 95% 58% / ${(0.55 + cfg.fashionDetail * 0.22).toFixed(3)})`;
+      ctx.beginPath();
+      ctx.moveTo(leftShoulder[0], leftShoulder[1] + dancerScale * 0.01);
+      ctx.lineTo(rightShoulder[0], rightShoulder[1] + dancerScale * 0.01);
+      ctx.lineTo(joints.chest[0] + dancerScale * 0.06, joints.chest[1] + dancerScale * 0.11);
+      ctx.lineTo(joints.chest[0] - dancerScale * 0.06, joints.chest[1] + dancerScale * 0.11);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = `hsla(${cfg.metalHue.toFixed(1)} 88% 72% / ${(0.42 + cfg.fashionDetail * 0.3).toFixed(3)})`;
+      ctx.fillRect(joints.hip[0] - dancerScale * 0.12, joints.hip[1] - dancerScale * 0.03, dancerScale * 0.24, dancerScale * 0.05);
+      ctx.fillStyle = `hsla(${cfg.outfitHue.toFixed(1)} 95% 62% / 0.62)`;
+      ctx.beginPath();
+      ctx.moveTo(joints.hip[0] - dancerScale * 0.1, joints.hip[1] + dancerScale * 0.03);
+      ctx.lineTo(joints.hip[0] - dancerScale * 0.02, joints.hip[1] + dancerScale * 0.18);
+      ctx.lineTo(joints.hip[0] + dancerScale * 0.02, joints.hip[1] + dancerScale * 0.18);
+      ctx.lineTo(joints.hip[0] + dancerScale * 0.1, joints.hip[1] + dancerScale * 0.03);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    };
+
+    const drawBoot = (knee: Point2D, foot: Point2D): void => {
+      const dx = foot[0] - knee[0];
+      const dy = foot[1] - knee[1];
+      const len = Math.hypot(dx, dy) || 1;
+      const nx = -dy / len;
+      const ny = dx / len;
+      ctx.save();
+      ctx.lineCap = "round";
+      ctx.shadowBlur = 8;
+      ctx.shadowColor = `hsla(${cfg.metalHue.toFixed(1)} 90% 70% / 0.5)`;
+      ctx.strokeStyle = `hsl(${cfg.metalHue.toFixed(1)} 70% 74%)`;
+      ctx.lineWidth = Math.max(4, dancerScale * 0.028);
+      ctx.beginPath();
+      ctx.moveTo(foot[0] - nx * dancerScale * 0.06, foot[1] - ny * dancerScale * 0.06);
+      ctx.lineTo(foot[0] + nx * dancerScale * 0.06, foot[1] + ny * dancerScale * 0.06);
+      ctx.stroke();
+      ctx.strokeStyle = `hsl(${cfg.outfitHue.toFixed(1)} 95% 62%)`;
+      ctx.lineWidth = Math.max(2, dancerScale * 0.018);
+      ctx.beginPath();
+      ctx.moveTo(foot[0] - nx * dancerScale * 0.045, foot[1] - ny * dancerScale * 0.045 + dancerScale * 0.012);
+      ctx.lineTo(foot[0] + nx * dancerScale * 0.045, foot[1] + ny * dancerScale * 0.045 + dancerScale * 0.012);
+      ctx.stroke();
+      ctx.restore();
+    };
+
+    const drawSparkles = (): void => {
+      ctx.save();
+      ctx.lineCap = "round";
+      const sparkleCount = 30;
+      for (let i = 0; i < sparkleCount; i += 1) {
+        const px = centerX + Math.sin(i * 3.17 + beats * 0.8) * dancerScale * (0.35 + ((i % 5) / 10));
+        const py = centerY - dancerScale * 0.3 + Math.cos(i * 2.41 + beats * 1.3) * dancerScale * 0.55;
+        const twinkle = 0.5 + 0.5 * Math.sin(beats * 4 + i * 1.7);
+        const alpha = cfg.sparkle * (0.06 + twinkle * 0.2) * (0.6 + drive * 0.7);
+        const size = dancerScale * (0.008 + twinkle * 0.006);
+        ctx.strokeStyle = `hsla(${(cfg.metalHue + i * 5).toFixed(1)} 100% 78% / ${alpha.toFixed(3)})`;
+        ctx.lineWidth = Math.max(1, dancerScale * 0.004);
+        ctx.beginPath();
+        ctx.moveTo(px - size, py);
+        ctx.lineTo(px + size, py);
+        ctx.moveTo(px, py - size);
+        ctx.lineTo(px, py + size);
+        ctx.stroke();
+      }
+      ctx.restore();
+    };
+
+    drawStageLights();
+    drawGhostTrail();
+    drawHair();
+
+    ctx.save();
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = `hsl(${cfg.accentHue.toFixed(1)} 95% ${(60 + drive * 18).toFixed(1)}%)`;
+    ctx.shadowColor = `hsla(${cfg.accentHue.toFixed(1)} 100% 65% / ${clamp(cfg.glow * (0.5 + drive), 0, 1).toFixed(3)})`;
+    ctx.shadowBlur = 28 * cfg.glow * (1 + drive);
+    ctx.lineWidth = Math.max(3, dancerScale * 0.028);
+
+    drawLimb(leftShoulder, rightShoulder);
     drawLimb(joints.head, joints.chest);
     drawLimb(joints.chest, joints.hip);
     drawLimb(joints.chest, joints.le);
@@ -231,10 +420,20 @@ export class LushLifeDanceEffect implements Effect {
 
     drawPalmAndFingers(joints.lh, joints.le, -1);
     drawPalmAndFingers(joints.rh, joints.re, 1);
+    ctx.restore();
+
+    drawOutfit();
+    drawBoot(joints.lk, joints.lf);
+    drawBoot(joints.rk, joints.rf);
 
     ctx.fillStyle = `hsl(${(cfg.stageHue + 28).toFixed(1)} 82% ${(54 + drive * 20).toFixed(1)}%)`;
     ctx.beginPath();
-    ctx.arc(joints.head[0], joints.head[1], Math.max(9, dancerScale * 0.05), 0, Math.PI * 2);
+    ctx.arc(joints.head[0], joints.head[1], headRadius, 0, Math.PI * 2);
     ctx.fill();
+    ctx.fillStyle = "hsla(0 0% 100% / 0.35)";
+    ctx.beginPath();
+    ctx.arc(joints.head[0] + headRadius * 0.3, joints.head[1] - headRadius * 0.28, headRadius * 0.18, 0, Math.PI * 2);
+    ctx.fill();
+    drawSparkles();
   }
 }

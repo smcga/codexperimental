@@ -10,12 +10,14 @@ import {
 
 describe("lushLifeDanceEffect helpers", () => {
   it("clamps params into safe ranges", () => {
-    const params = resolveLushLifeDanceParams({ bpm: 32, amplitude: 4, glow: -1, stageHue: 999 });
+    const params = resolveLushLifeDanceParams({ bpm: 32, amplitude: 4, glow: -1, stageHue: 999, sparkle: 2, fashionDetail: -2 });
 
     expect(params.bpm).toBe(60);
     expect(params.amplitude).toBe(1.8);
     expect(params.glow).toBe(0);
     expect(params.stageHue).toBe(360);
+    expect(params.sparkle).toBe(1);
+    expect(params.fashionDetail).toBe(0);
   });
 
   it("returns deterministic interpolated poses", () => {
@@ -53,7 +55,9 @@ describe("lushLifeDanceEffect helpers", () => {
     expect(LUSH_LIFE_DANCE_DEFAULTS).toMatchObject({
       bpm: 120,
       bounce: 0.7,
-      audioReactive: 0.6
+      audioReactive: 0.6,
+      hairHue: 48,
+      sparkle: 0.65
     });
   });
 });
