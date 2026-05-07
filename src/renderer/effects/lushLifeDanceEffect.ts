@@ -216,11 +216,6 @@ export class LushLifeDanceEffect implements Effect {
     drawLimb(joints.hip, joints.rk);
     drawLimb(joints.rk, joints.rf);
 
-    const shoulderWidth = dancerScale * 0.14;
-    const leftShoulder: Point2D = [joints.chest[0] - shoulderWidth, joints.chest[1] - dancerScale * 0.02];
-    const rightShoulder: Point2D = [joints.chest[0] + shoulderWidth, joints.chest[1] - dancerScale * 0.02];
-    drawLimb(leftShoulder, rightShoulder);
-
     const drawPalmAndFingers = (wrist: Point2D, elbow: Point2D, spread: number): void => {
       const palmRadius = Math.max(3, dancerScale * 0.018);
       ctx.beginPath();
@@ -236,11 +231,6 @@ export class LushLifeDanceEffect implements Effect {
 
     drawPalmAndFingers(joints.lh, joints.le, -1);
     drawPalmAndFingers(joints.rh, joints.re, 1);
-
-    ctx.fillStyle = `hsla(${cfg.accentHue.toFixed(1)} 100% 72% / ${(0.25 + drive * 0.22).toFixed(3)})`;
-    ctx.beginPath();
-    ctx.ellipse(joints.hip[0], joints.hip[1] + dancerScale * 0.06, dancerScale * 0.13, dancerScale * 0.09, 0, 0, Math.PI * 2);
-    ctx.fill();
 
     ctx.fillStyle = `hsl(${(cfg.stageHue + 28).toFixed(1)} 82% ${(54 + drive * 20).toFixed(1)}%)`;
     ctx.beginPath();

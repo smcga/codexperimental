@@ -43,6 +43,12 @@ describe("lushLifeDanceEffect helpers", () => {
     });
   });
 
+  it("mirrors finger fan direction by spread sign", () => {
+    const rightFan = buildHandFingerSegments([100, 100], [90, 100], 8, 1);
+    const leftFan = buildHandFingerSegments([100, 100], [90, 100], 8, -1);
+    expect(rightFan[0].to[1]).toBeGreaterThan(leftFan[0].to[1]);
+  });
+
   it("keeps defaults stable for docs", () => {
     expect(LUSH_LIFE_DANCE_DEFAULTS).toMatchObject({
       bpm: 120,
