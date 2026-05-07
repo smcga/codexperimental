@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { LUSH_LIFE_DANCE_DEFAULTS, resolveLushLifeDanceParams, sampleLushLifePose } from "./lushLifeDanceEffect";
+import {
+  LUSH_LIFE_DANCE_DEFAULTS,
+  resolveLushLifeDanceParams,
+  resolveLushLifePoseProgress,
+  sampleLushLifePose
+} from "./lushLifeDanceEffect";
 
 describe("lushLifeDanceEffect helpers", () => {
   it("clamps params into safe ranges", () => {
@@ -19,6 +24,12 @@ describe("lushLifeDanceEffect helpers", () => {
 
     expect(first).toEqual(second);
     expect(shifted.rightHandY).not.toBe(first.rightHandY);
+  });
+
+  it("plays limb choreography faster than beat bounce timing", () => {
+    expect(resolveLushLifePoseProgress(48)).toBeCloseTo(0);
+    expect(resolveLushLifePoseProgress(9.6)).toBeCloseTo(0);
+    expect(resolveLushLifePoseProgress(2.4)).toBeCloseTo(0.25);
   });
 
   it("keeps defaults stable for docs", () => {

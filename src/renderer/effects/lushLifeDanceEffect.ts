@@ -78,6 +78,8 @@ const BASE_POSE: Pose = {
   rightFootY: 0.48
 };
 
+const LIMB_CHOREOGRAPHY_SPEED_MULTIPLIER = 5;
+
 const buildPose = (overrides: Partial<Pose>): Pose => ({ ...BASE_POSE, ...overrides });
 
 const POSES: Pose[] = [
@@ -116,11 +118,14 @@ export const sampleLushLifePose = (phraseProgress: number): Pose => {
   return result;
 };
 
+export const resolveLushLifePoseProgress = (beats: number): number =>
+  ((beats * LIMB_CHOREOGRAPHY_SPEED_MULTIPLIER) / 48) % 1;
+
 export class LushLifeDanceEffect implements Effect {
   render({ ctx, width, height, time, audio, params }: EffectRenderContext): void {
     const cfg = resolveLushLifeDanceParams(params as Record<string, unknown>);
     const beats = time * (cfg.bpm / 60);
-    const phraseProgress = (beats / 48) % 1;
+    const phraseProgress = resolveLushLifePoseProgress(beats);
     const countPulse = beats % 1;
 
     const bass = clamp(audio.bass, 0, 1);
