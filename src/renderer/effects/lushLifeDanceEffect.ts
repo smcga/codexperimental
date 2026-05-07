@@ -26,6 +26,8 @@ type Pose = {
   rightFootY: number;
 };
 
+type Point2D = [number, number];
+
 export const LUSH_LIFE_DANCE_DEFAULTS = {
   bpm: 120,
   amplitude: 1,
@@ -121,6 +123,32 @@ export const sampleLushLifePose = (phraseProgress: number): Pose => {
 export const resolveLushLifePoseProgress = (beats: number): number =>
   ((beats * LIMB_CHOREOGRAPHY_SPEED_MULTIPLIER) / 48) % 1;
 
+export const buildHandFingerSegments = (
+  wrist: Point2D,
+  elbow: Point2D,
+  palmRadius: number,
+  spread: number
+): Array<{ from: Point2D; to: Point2D }> => {
+  const axisX = wrist[0] - elbow[0];
+  const axisY = wrist[1] - elbow[1];
+  const axisLen = Math.hypot(axisX, axisY) || 1;
+  const dirX = axisX / axisLen;
+  const dirY = axisY / axisLen;
+  const perpX = -dirY;
+  const perpY = dirX;
+
+  return [-0.9, -0.45, 0, 0.45, 0.9].map((offsetScale, index) => {
+    const baseX = wrist[0] + perpX * offsetScale * palmRadius * 0.9;
+    const baseY = wrist[1] + perpY * offsetScale * palmRadius * 0.9;
+    const fingerLength = palmRadius * (1.05 + (index === 2 ? 0.25 : 0));
+    const curl = 0.18 - Math.abs(offsetScale) * 0.08;
+    return {
+      from: [baseX, baseY] as Point2D,
+      to: [baseX + dirX * fingerLength + perpX * spread * curl, baseY + dirY * fingerLength + perpY * spread * curl] as Point2D
+    };
+  });
+};
+
 export class LushLifeDanceEffect implements Effect {
   render({ ctx, width, height, time, audio, params }: EffectRenderContext): void {
     const cfg = resolveLushLifeDanceParams(params as Record<string, unknown>);
@@ -170,7 +198,7 @@ export class LushLifeDanceEffect implements Effect {
     ctx.shadowBlur = 28 * cfg.glow * (1 + drive);
     ctx.lineWidth = Math.max(3, dancerScale * 0.028);
 
-    const drawLimb = (a: [number, number], b: [number, number]) => {
+    const drawLimb = (a: Point2D, b: Point2D) => {
       ctx.beginPath();
       ctx.moveTo(a[0], a[1]);
       ctx.lineTo(b[0], b[1]);
@@ -187,6 +215,32 @@ export class LushLifeDanceEffect implements Effect {
     drawLimb(joints.lk, joints.lf);
     drawLimb(joints.hip, joints.rk);
     drawLimb(joints.rk, joints.rf);
+
+    const shoulderWidth = dancerScale * 0.14;
+    const leftShoulder: Point2D = [joints.chest[0] - shoulderWidth, joints.chest[1] - dancerScale * 0.02];
+    const rightShoulder: Point2D = [joints.chest[0] + shoulderWidth, joints.chest[1] - dancerScale * 0.02];
+    drawLimb(leftShoulder, rightShoulder);
+
+    const drawPalmAndFingers = (wrist: Point2D, elbow: Point2D, spread: number): void => {
+      const palmRadius = Math.max(3, dancerScale * 0.018);
+      ctx.beginPath();
+      ctx.arc(wrist[0], wrist[1], palmRadius, 0, Math.PI * 2);
+      ctx.fillStyle = ctx.strokeStyle;
+      ctx.fill();
+
+      const fingers = buildHandFingerSegments(wrist, elbow, palmRadius, spread);
+      ctx.lineWidth = Math.max(1.3, dancerScale * 0.009);
+      fingers.forEach((finger) => drawLimb(finger.from, finger.to));
+      ctx.lineWidth = Math.max(3, dancerScale * 0.028);
+    };
+
+    drawPalmAndFingers(joints.lh, joints.le, -1);
+    drawPalmAndFingers(joints.rh, joints.re, 1);
+
+    ctx.fillStyle = `hsla(${cfg.accentHue.toFixed(1)} 100% 72% / ${(0.25 + drive * 0.22).toFixed(3)})`;
+    ctx.beginPath();
+    ctx.ellipse(joints.hip[0], joints.hip[1] + dancerScale * 0.06, dancerScale * 0.13, dancerScale * 0.09, 0, 0, Math.PI * 2);
+    ctx.fill();
 
     ctx.fillStyle = `hsl(${(cfg.stageHue + 28).toFixed(1)} 82% ${(54 + drive * 20).toFixed(1)}%)`;
     ctx.beginPath();

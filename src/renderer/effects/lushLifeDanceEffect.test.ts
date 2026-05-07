@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  buildHandFingerSegments,
   LUSH_LIFE_DANCE_DEFAULTS,
   resolveLushLifeDanceParams,
   resolveLushLifePoseProgress,
@@ -30,6 +31,16 @@ describe("lushLifeDanceEffect helpers", () => {
     expect(resolveLushLifePoseProgress(48)).toBeCloseTo(0);
     expect(resolveLushLifePoseProgress(9.6)).toBeCloseTo(0);
     expect(resolveLushLifePoseProgress(2.4)).toBeCloseTo(0.25);
+  });
+
+  it("builds five finger segments extending from each wrist", () => {
+    const segments = buildHandFingerSegments([100, 100], [90, 102], 8, 1);
+    expect(segments).toHaveLength(5);
+    segments.forEach((segment) => {
+      expect(segment.from).toHaveLength(2);
+      expect(segment.to).toHaveLength(2);
+      expect(segment.to[0]).toBeGreaterThan(segment.from[0]);
+    });
   });
 
   it("keeps defaults stable for docs", () => {
