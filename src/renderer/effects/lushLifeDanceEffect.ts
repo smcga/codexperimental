@@ -279,26 +279,54 @@ export class LushLifeDanceEffect implements Effect {
       ctx.restore();
     };
     const drawHair = (): void => {
-      const sway = Math.sin(beats * 0.7) * headRadius * 0.12 + drive * headRadius * 0.08;
-      const hairW = headRadius * 1.65;
-      const hairH = headRadius * 1.35;
+      const sway = Math.sin(beats * 0.7) * headRadius * 0.1 + drive * headRadius * 0.06;
+      const hairW = headRadius * 1.7;
+      const hairDrop = headRadius * 1.15;
       ctx.save();
-      ctx.globalAlpha = 0.9;
+      ctx.globalAlpha = 0.88;
       ctx.shadowColor = `hsla(${cfg.hairHue.toFixed(1)} 95% 65% / 0.42)`;
-      ctx.shadowBlur = 12 + 6 * cfg.fashionDetail;
+      ctx.shadowBlur = 9 + 5 * cfg.fashionDetail;
       ctx.fillStyle = `hsl(${cfg.hairHue.toFixed(1)} 95% 61%)`;
       ctx.beginPath();
-      ctx.moveTo(joints.head[0] - hairW * 0.68, joints.head[1] - hairH * 0.5);
-      ctx.bezierCurveTo(joints.head[0] - hairW * 1.0, joints.head[1] - hairH * 0.05, joints.head[0] - hairW * 0.9, joints.head[1] + hairH * 0.95, joints.head[0] - hairW * 0.25, joints.head[1] + hairH * 1.08);
-      ctx.bezierCurveTo(joints.head[0] + hairW * 0.58 + sway, joints.head[1] + hairH * 1.22, joints.head[0] + hairW * 0.95 + sway, joints.head[1] + hairH * 0.4, joints.head[0] + hairW * 0.6, joints.head[1] - hairH * 0.46);
-      ctx.bezierCurveTo(joints.head[0] + hairW * 0.2, joints.head[1] - hairH * 0.82, joints.head[0] - hairW * 0.22, joints.head[1] - hairH * 0.82, joints.head[0] - hairW * 0.68, joints.head[1] - hairH * 0.5);
+      ctx.moveTo(joints.head[0] - hairW * 0.52, joints.head[1] - headRadius * 0.42);
+      ctx.bezierCurveTo(
+        joints.head[0] - hairW * 0.95,
+        joints.head[1] - headRadius * 0.04,
+        joints.head[0] - hairW * 0.78,
+        joints.head[1] + hairDrop * 0.88,
+        joints.head[0] - hairW * 0.18,
+        joints.head[1] + hairDrop * 0.98
+      );
+      ctx.bezierCurveTo(
+        joints.head[0] + hairW * 0.42 + sway,
+        joints.head[1] + hairDrop * 0.92,
+        joints.head[0] + hairW * 0.78 + sway,
+        joints.head[1] + hairDrop * 0.28,
+        joints.head[0] + hairW * 0.5,
+        joints.head[1] - headRadius * 0.34
+      );
+      ctx.bezierCurveTo(
+        joints.head[0] + hairW * 0.14,
+        joints.head[1] - headRadius * 0.56,
+        joints.head[0] - hairW * 0.2,
+        joints.head[1] - headRadius * 0.56,
+        joints.head[0] - hairW * 0.52,
+        joints.head[1] - headRadius * 0.42
+      );
       ctx.closePath();
       ctx.fill();
 
-      ctx.fillStyle = `hsla(${(cfg.hairHue + 12).toFixed(1)} 100% 75% / 0.5)`;
+      ctx.fillStyle = `hsla(${(cfg.hairHue + 12).toFixed(1)} 100% 75% / 0.42)`;
       ctx.beginPath();
-      ctx.moveTo(joints.head[0] - hairW * 0.14, joints.head[1] - hairH * 0.16);
-      ctx.bezierCurveTo(joints.head[0] + hairW * 0.3, joints.head[1] - hairH * 0.3, joints.head[0] + hairW * 0.5 + sway * 0.25, joints.head[1] + hairH * 0.35, joints.head[0] + hairW * 0.08, joints.head[1] + hairH * 0.52);
+      ctx.moveTo(joints.head[0] - hairW * 0.12, joints.head[1] - headRadius * 0.1);
+      ctx.bezierCurveTo(
+        joints.head[0] + hairW * 0.24,
+        joints.head[1] - headRadius * 0.2,
+        joints.head[0] + hairW * 0.34 + sway * 0.2,
+        joints.head[1] + hairDrop * 0.28,
+        joints.head[0] + hairW * 0.02,
+        joints.head[1] + hairDrop * 0.38
+      );
       ctx.fill();
       ctx.restore();
     };
@@ -316,24 +344,34 @@ export class LushLifeDanceEffect implements Effect {
       ctx.shadowColor = `hsla(${cfg.outfitHue.toFixed(1)} 100% 60% / 0.35)`;
       ctx.fillStyle = `hsla(${cfg.outfitHue.toFixed(1)} 95% 58% / ${(0.52 + cfg.fashionDetail * 0.2).toFixed(3)})`;
       ctx.beginPath();
-      ctx.moveTo(lerp(anchors.leftShoulder[0], anchors.rightShoulder[0], 0.07), anchors.leftShoulder[1]);
-      ctx.lineTo(lerp(anchors.leftShoulder[0], anchors.rightShoulder[0], 0.93), anchors.rightShoulder[1]);
-      ctx.lineTo(anchors.rightWaist[0], anchors.rightWaist[1]);
-      ctx.lineTo(anchors.leftWaist[0], anchors.leftWaist[1]);
+      const topInset = dancerScale * 0.018;
+      const topBottomY = anchors.leftWaist[1] - dancerScale * 0.025;
+      ctx.moveTo(anchors.leftShoulder[0] + topInset, anchors.leftShoulder[1] + dancerScale * 0.004);
+      ctx.quadraticCurveTo(joints.chest[0], anchors.leftShoulder[1] - dancerScale * 0.006, anchors.rightShoulder[0] - topInset, anchors.rightShoulder[1] + dancerScale * 0.004);
+      ctx.lineTo(anchors.rightWaist[0] - dancerScale * 0.008, topBottomY);
+      ctx.lineTo(anchors.leftWaist[0] + dancerScale * 0.008, topBottomY);
       ctx.closePath();
       ctx.fill();
 
-      ctx.fillStyle = `hsla(${cfg.outfitHue.toFixed(1)} 92% 56% / 0.58)`;
+      ctx.fillStyle = `hsla(${cfg.outfitHue.toFixed(1)} 92% 56% / 0.5)`;
       ctx.beginPath();
-      ctx.moveTo(anchors.leftHip[0], anchors.leftHip[1]);
-      ctx.lineTo(anchors.rightHip[0], anchors.rightHip[1]);
-      ctx.lineTo(anchors.rightHip[0] - dancerScale * 0.022, anchors.rightHip[1] + dancerScale * 0.11);
-      ctx.lineTo(anchors.leftHip[0] + dancerScale * 0.022, anchors.leftHip[1] + dancerScale * 0.11);
+      const skirtTopY = anchors.leftHip[1] - dancerScale * 0.004;
+      const skirtBottomY = anchors.leftHip[1] + dancerScale * 0.095;
+      ctx.moveTo(anchors.leftHip[0] + dancerScale * 0.01, skirtTopY);
+      ctx.lineTo(anchors.rightHip[0] - dancerScale * 0.01, skirtTopY);
+      ctx.lineTo(anchors.rightHip[0] - dancerScale * 0.028, skirtBottomY);
+      ctx.lineTo(anchors.leftHip[0] + dancerScale * 0.028, skirtBottomY + dancerScale * 0.006);
       ctx.closePath();
       ctx.fill();
 
-      ctx.fillStyle = `hsla(${cfg.outfitHue.toFixed(1)} 85% 44% / 0.34)`;
-      ctx.fillRect(anchors.leftHip[0], anchors.leftHip[1] + dancerScale * 0.01, dancerScale * 0.06, dancerScale * 0.08);
+      ctx.fillStyle = `hsla(${cfg.outfitHue.toFixed(1)} 85% 44% / 0.26)`;
+      ctx.beginPath();
+      ctx.moveTo(anchors.leftHip[0] + dancerScale * 0.014, skirtTopY + dancerScale * 0.01);
+      ctx.lineTo(anchors.leftHip[0] + dancerScale * 0.06, skirtTopY + dancerScale * 0.006);
+      ctx.lineTo(anchors.leftHip[0] + dancerScale * 0.052, skirtBottomY - dancerScale * 0.008);
+      ctx.lineTo(anchors.leftHip[0] + dancerScale * 0.02, skirtBottomY + dancerScale * 0.001);
+      ctx.closePath();
+      ctx.fill();
       ctx.restore();
     };
 
@@ -341,7 +379,7 @@ export class LushLifeDanceEffect implements Effect {
       const y = lerp(anchors.leftWaist[1], anchors.leftHip[1], 0.5);
       ctx.save();
       ctx.fillStyle = `hsla(${cfg.metalHue.toFixed(1)} 88% 72% / ${(0.42 + cfg.fashionDetail * 0.22).toFixed(3)})`;
-      ctx.fillRect(anchors.leftHip[0] + dancerScale * 0.01, y - dancerScale * 0.012, anchors.rightHip[0] - anchors.leftHip[0] - dancerScale * 0.02, dancerScale * 0.025);
+      ctx.fillRect(anchors.leftHip[0] + dancerScale * 0.018, y - dancerScale * 0.01, anchors.rightHip[0] - anchors.leftHip[0] - dancerScale * 0.036, dancerScale * 0.02);
       ctx.restore();
     };
 
