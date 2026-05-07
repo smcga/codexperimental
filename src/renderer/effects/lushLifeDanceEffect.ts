@@ -259,43 +259,53 @@ export class LushLifeDanceEffect implements Effect {
       ctx.restore();
     };
     const drawHair = (): void => {
-      const sway = Math.sin(beats * 1.8) * dancerScale * 0.04 + drive * dancerScale * 0.02;
+      const sway = Math.sin(beats * 1.7) * dancerScale * 0.06 + drive * dancerScale * 0.03;
+      const hairW = headRadius * 1.95;
+      const hairH = headRadius * 1.55;
       ctx.save();
-      ctx.globalAlpha = 0.88;
+      ctx.globalAlpha = 0.92;
       ctx.shadowColor = `hsla(${cfg.hairHue.toFixed(1)} 95% 65% / 0.45)`;
-      ctx.shadowBlur = 18 * (0.8 + cfg.fashionDetail * 0.5);
+      ctx.shadowBlur = 24 * (0.9 + cfg.fashionDetail * 0.5);
       ctx.fillStyle = `hsl(${cfg.hairHue.toFixed(1)} 95% 62%)`;
       ctx.beginPath();
-      ctx.moveTo(joints.head[0] - headRadius * 1.05, joints.head[1] - headRadius * 0.45);
+      ctx.moveTo(joints.head[0] - hairW * 0.8, joints.head[1] - hairH * 0.45);
       ctx.bezierCurveTo(
-        joints.head[0] - headRadius * 1.25,
-        joints.head[1] + headRadius * 1.1,
-        joints.head[0] + headRadius * 1.18,
-        joints.head[1] + headRadius * 1.1,
-        joints.head[0] + headRadius * 1.05,
-        joints.head[1] - headRadius * 0.5
+        joints.head[0] - hairW * 1.1,
+        joints.head[1] + hairH * 0.65,
+        joints.head[0] - hairW * 0.45,
+        joints.head[1] + hairH * 1.45,
+        joints.head[0] + hairW * 0.15,
+        joints.head[1] + hairH * 1.15
+      );
+      ctx.bezierCurveTo(
+        joints.head[0] + hairW * 0.95,
+        joints.head[1] + hairH * 0.72,
+        joints.head[0] + hairW * 0.9,
+        joints.head[1] - hairH * 0.58,
+        joints.head[0] + hairW * 0.25,
+        joints.head[1] - hairH * 0.7
       );
       ctx.closePath();
       ctx.fill();
 
-      ctx.fillStyle = `hsla(${(cfg.hairHue + 12).toFixed(1)} 100% 72% / 0.72)`;
+      ctx.fillStyle = `hsla(${(cfg.hairHue + 12).toFixed(1)} 100% 72% / 0.62)`;
       ctx.beginPath();
-      ctx.moveTo(joints.head[0] + headRadius * 0.85, joints.head[1] + headRadius * 0.08);
+      ctx.moveTo(joints.head[0] + hairW * 0.2, joints.head[1] + hairH * 0.05);
       ctx.bezierCurveTo(
-        joints.head[0] + headRadius * 1.9 + sway,
-        joints.head[1] + headRadius * 0.35,
-        joints.head[0] + headRadius * 2.2 + sway,
-        joints.head[1] + headRadius * 1.3,
-        joints.head[0] + headRadius * 1.25,
-        joints.head[1] + headRadius * 1.45
+        joints.head[0] + hairW * 1.25 + sway,
+        joints.head[1] + hairH * 0.25,
+        joints.head[0] + hairW * 1.55 + sway,
+        joints.head[1] + hairH * 1.2,
+        joints.head[0] + hairW * 0.65 + sway * 0.5,
+        joints.head[1] + hairH * 1.35
       );
       ctx.bezierCurveTo(
-        joints.head[0] + headRadius * 1.75 + sway * 0.4,
-        joints.head[1] + headRadius * 0.9,
-        joints.head[0] + headRadius * 1.4 + sway * 0.5,
-        joints.head[1] + headRadius * 0.25,
-        joints.head[0] + headRadius * 0.8,
-        joints.head[1] + headRadius * 0.12
+        joints.head[0] + hairW * 0.95 + sway,
+        joints.head[1] + hairH * 0.95,
+        joints.head[0] + hairW * 0.45 + sway * 0.2,
+        joints.head[1] + hairH * 0.32,
+        joints.head[0] + hairW * 0.24,
+        joints.head[1] + hairH * 0.2
       );
       ctx.fill();
       ctx.restore();
@@ -313,22 +323,28 @@ export class LushLifeDanceEffect implements Effect {
       ctx.shadowBlur = 12 * (0.8 + drive);
       ctx.shadowColor = `hsla(${cfg.outfitHue.toFixed(1)} 100% 60% / 0.4)`;
       ctx.fillStyle = `hsla(${cfg.outfitHue.toFixed(1)} 95% 58% / ${(0.55 + cfg.fashionDetail * 0.22).toFixed(3)})`;
+      const waistY = joints.chest[1] + dancerScale * 0.12;
+      const hipY = joints.hip[1] + dancerScale * 0.01;
+      const waistHalf = dancerScale * (0.052 - cfg.fashionDetail * 0.006);
+      const hipHalf = dancerScale * (0.072 + cfg.fashionDetail * 0.012);
       ctx.beginPath();
-      ctx.moveTo(leftShoulder[0], leftShoulder[1] + dancerScale * 0.01);
-      ctx.lineTo(rightShoulder[0], rightShoulder[1] + dancerScale * 0.01);
-      ctx.lineTo(joints.chest[0] + dancerScale * 0.06, joints.chest[1] + dancerScale * 0.11);
-      ctx.lineTo(joints.chest[0] - dancerScale * 0.06, joints.chest[1] + dancerScale * 0.11);
+      ctx.moveTo(leftShoulder[0], leftShoulder[1] + dancerScale * 0.012);
+      ctx.lineTo(rightShoulder[0], rightShoulder[1] + dancerScale * 0.012);
+      ctx.lineTo(joints.chest[0] + waistHalf, waistY);
+      ctx.lineTo(joints.hip[0] + hipHalf, hipY);
+      ctx.lineTo(joints.hip[0] - hipHalf, hipY);
+      ctx.lineTo(joints.chest[0] - waistHalf, waistY);
       ctx.closePath();
       ctx.fill();
 
-      ctx.fillStyle = `hsla(${cfg.metalHue.toFixed(1)} 88% 72% / ${(0.42 + cfg.fashionDetail * 0.3).toFixed(3)})`;
-      ctx.fillRect(joints.hip[0] - dancerScale * 0.12, joints.hip[1] - dancerScale * 0.03, dancerScale * 0.24, dancerScale * 0.05);
+      ctx.fillStyle = `hsla(${cfg.metalHue.toFixed(1)} 88% 72% / ${(0.4 + cfg.fashionDetail * 0.28).toFixed(3)})`;
+      ctx.fillRect(joints.hip[0] - dancerScale * 0.11, joints.hip[1] - dancerScale * 0.025, dancerScale * 0.22, dancerScale * 0.042);
       ctx.fillStyle = `hsla(${cfg.outfitHue.toFixed(1)} 95% 62% / 0.62)`;
       ctx.beginPath();
-      ctx.moveTo(joints.hip[0] - dancerScale * 0.1, joints.hip[1] + dancerScale * 0.03);
-      ctx.lineTo(joints.hip[0] - dancerScale * 0.02, joints.hip[1] + dancerScale * 0.18);
-      ctx.lineTo(joints.hip[0] + dancerScale * 0.02, joints.hip[1] + dancerScale * 0.18);
-      ctx.lineTo(joints.hip[0] + dancerScale * 0.1, joints.hip[1] + dancerScale * 0.03);
+      ctx.moveTo(joints.hip[0] - dancerScale * 0.095, joints.hip[1] + dancerScale * 0.02);
+      ctx.lineTo(joints.hip[0] - dancerScale * 0.028, joints.hip[1] + dancerScale * 0.13);
+      ctx.lineTo(joints.hip[0] + dancerScale * 0.028, joints.hip[1] + dancerScale * 0.13);
+      ctx.lineTo(joints.hip[0] + dancerScale * 0.095, joints.hip[1] + dancerScale * 0.02);
       ctx.closePath();
       ctx.fill();
       ctx.restore();
@@ -345,16 +361,21 @@ export class LushLifeDanceEffect implements Effect {
       ctx.shadowBlur = 8;
       ctx.shadowColor = `hsla(${cfg.metalHue.toFixed(1)} 90% 70% / 0.5)`;
       ctx.strokeStyle = `hsl(${cfg.metalHue.toFixed(1)} 70% 74%)`;
-      ctx.lineWidth = Math.max(4, dancerScale * 0.028);
+      ctx.lineWidth = Math.max(6, dancerScale * 0.04);
       ctx.beginPath();
-      ctx.moveTo(foot[0] - nx * dancerScale * 0.06, foot[1] - ny * dancerScale * 0.06);
-      ctx.lineTo(foot[0] + nx * dancerScale * 0.06, foot[1] + ny * dancerScale * 0.06);
+      ctx.moveTo(foot[0] - nx * dancerScale * 0.075 - dx * 0.07, foot[1] - ny * dancerScale * 0.075 - dy * 0.07);
+      ctx.lineTo(foot[0] + nx * dancerScale * 0.075, foot[1] + ny * dancerScale * 0.075);
+      ctx.stroke();
+      ctx.lineWidth = Math.max(5, dancerScale * 0.032);
+      ctx.beginPath();
+      ctx.moveTo(foot[0] - nx * dancerScale * 0.09 + ny * dancerScale * 0.02, foot[1] - ny * dancerScale * 0.09 - nx * dancerScale * 0.02);
+      ctx.lineTo(foot[0] + nx * dancerScale * 0.1 + ny * dancerScale * 0.02, foot[1] + ny * dancerScale * 0.1 - nx * dancerScale * 0.02);
       ctx.stroke();
       ctx.strokeStyle = `hsl(${cfg.outfitHue.toFixed(1)} 95% 62%)`;
-      ctx.lineWidth = Math.max(2, dancerScale * 0.018);
+      ctx.lineWidth = Math.max(3, dancerScale * 0.022);
       ctx.beginPath();
-      ctx.moveTo(foot[0] - nx * dancerScale * 0.045, foot[1] - ny * dancerScale * 0.045 + dancerScale * 0.012);
-      ctx.lineTo(foot[0] + nx * dancerScale * 0.045, foot[1] + ny * dancerScale * 0.045 + dancerScale * 0.012);
+      ctx.moveTo(foot[0] - nx * dancerScale * 0.06 + ny * dancerScale * 0.004, foot[1] - ny * dancerScale * 0.06 - nx * dancerScale * 0.004);
+      ctx.lineTo(foot[0] + nx * dancerScale * 0.07 + ny * dancerScale * 0.004, foot[1] + ny * dancerScale * 0.07 - nx * dancerScale * 0.004);
       ctx.stroke();
       ctx.restore();
     };
