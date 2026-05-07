@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  buildLushLifeOutfitAnchors,
   buildHandFingerSegments,
   LUSH_LIFE_DANCE_DEFAULTS,
   resolveLushLifeDanceParams,
@@ -49,6 +50,15 @@ describe("lushLifeDanceEffect helpers", () => {
     const rightFan = buildHandFingerSegments([100, 100], [90, 100], 8, 1);
     const leftFan = buildHandFingerSegments([100, 100], [90, 100], 8, -1);
     expect(rightFan[0].to[1]).toBeGreaterThan(leftFan[0].to[1]);
+  });
+
+  it("builds anchored outfit silhouette with narrower waist than shoulders", () => {
+    const anchors = buildLushLifeOutfitAnchors({ chest: [100, 100], hip: [110, 140] }, 120);
+    const shoulderSpan = anchors.rightShoulder[0] - anchors.leftShoulder[0];
+    const waistSpan = anchors.rightWaist[0] - anchors.leftWaist[0];
+    const hipSpan = anchors.rightHip[0] - anchors.leftHip[0];
+    expect(waistSpan).toBeLessThan(shoulderSpan);
+    expect(waistSpan).toBeLessThan(hipSpan);
   });
 
   it("keeps defaults stable for docs", () => {
