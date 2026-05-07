@@ -42,6 +42,7 @@ import {
   getCueMarkerTopOffset,
   getCueDurationBarTop,
   resizePlaylistTrackHeightFromScrollbar,
+  resizePlaylistViewportFromScrollbar,
   roundTimelineSeconds,
   hasTimelineTimeChanged,
   getResizePreviewOffset,
@@ -869,6 +870,14 @@ describe("playlist helpers", () => {
   it("clamps scrollbar thumb to minimum visible size", () => {
     const metrics = getPlaylistScrollbarMetrics(300, 10, 1);
     expect(metrics.thumbSizeRatio).toBe(0.05);
+  });
+
+  it("resizes horizontal scrollbar edges at 1:1 cursor speed", () => {
+    const right = resizePlaylistViewportFromScrollbar(30, 20, "end", 0.1, 120);
+    expect(right).toEqual({ start: 30, duration: 32 });
+
+    const left = resizePlaylistViewportFromScrollbar(30, 20, "start", 0.1, 120);
+    expect(left).toEqual({ start: 42, duration: 8 });
   });
 });
 

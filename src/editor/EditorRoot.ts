@@ -938,6 +938,29 @@ export const getPlaylistScrollbarMetrics = (
   };
 };
 
+export const resizePlaylistViewportFromScrollbar = (
+  startViewport: number,
+  startDuration: number,
+  edge: "start" | "end",
+  deltaRatio: number,
+  totalDuration: number,
+  minDuration = 2
+): { start: number; duration: number } => {
+  const durationDelta = deltaRatio * totalDuration;
+  if (edge === "end") {
+    return {
+      start: startViewport,
+      duration: Math.max(minDuration, startDuration + durationDelta)
+    };
+  }
+  const nextDuration = Math.max(minDuration, startDuration - durationDelta);
+  const end = startViewport + startDuration;
+  return {
+    start: Math.max(0, end - nextDuration),
+    duration: nextDuration
+  };
+};
+
 export const roundTimelineSeconds = (value: number): number => Number(value.toFixed(3));
 
 export const hasTimelineTimeChanged = (current: number, next: number): boolean =>
@@ -2293,16 +2316,18 @@ export async function createEditorRoot(init: EditorInit): Promise<EditorControll
       if (rect.width <= 0) {
         return;
       }
+      const scenes = getScenesByTime();
+      const duration = Math.max(5, scenes.reduce((max, scene) => Math.max(max, getSceneEnd(scene)), 0));
       const deltaRatio = (event.clientX - activeScrollbarResize.startX) / rect.width;
-      const durationDelta = deltaRatio * activeScrollbarResize.startDuration;
-      if (activeScrollbarResize.edge === "end") {
-        playlistViewportDuration = Math.max(2, activeScrollbarResize.startDuration + durationDelta);
-      } else {
-        const nextDuration = Math.max(2, activeScrollbarResize.startDuration - durationDelta);
-        const end = activeScrollbarResize.startViewport + activeScrollbarResize.startDuration;
-        playlistViewportDuration = nextDuration;
-        playlistViewportStart = Math.max(0, end - nextDuration);
-      }
+      const resized = resizePlaylistViewportFromScrollbar(
+        activeScrollbarResize.startViewport,
+        activeScrollbarResize.startDuration,
+        activeScrollbarResize.edge,
+        deltaRatio,
+        duration
+      );
+      playlistViewportStart = resized.start;
+      playlistViewportDuration = resized.duration;
       renderTimelineView();
       return;
     }
