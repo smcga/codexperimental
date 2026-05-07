@@ -41,6 +41,7 @@ import { lens_flareManifest } from "./lens_flare.manifest";
 import { lens_wobblerManifest } from "./lens_wobbler.manifest";
 import { lightningManifest } from "./lightning.manifest";
 import { lissajousManifest } from "./lissajous.manifest";
+import { lush_life_danceManifest } from "./lush_life_dance.manifest";
 import { marbleManifest } from "./marble.manifest";
 import { matrix_rainManifest } from "./matrix_rain.manifest";
 import { metaballsManifest } from "./metaballs.manifest";
@@ -141,6 +142,7 @@ export const generatedEffectManifests = [
   lens_wobblerManifest,
   lightningManifest,
   lissajousManifest,
+  lush_life_danceManifest,
   marbleManifest,
   matrix_rainManifest,
   metaballsManifest,
