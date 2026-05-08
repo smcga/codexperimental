@@ -7760,8 +7760,8 @@
   "textCues": [
     {
       "id": "scene-023-lissajous-1",
-      "start": 206.07,
-      "end": 207.3,
+      "start": 204.892,
+      "end": 206.122,
       "text": "All",
       "x": 0.13,
       "y": 0.14,
@@ -7788,8 +7788,8 @@
     },
     {
       "id": "scene-023-lissajous-2",
-      "start": 206.27,
-      "end": 207.3,
+      "start": 204.987,
+      "end": 206.017,
       "text": "I",
       "x": 0.386,
       "y": 0.198,
@@ -7818,8 +7818,8 @@
     },
     {
       "id": "scene-023-lissajous-3",
-      "start": 206.47,
-      "end": 207.3,
+      "start": 205.068,
+      "end": 205.898,
       "text": "had",
       "x": 0.54,
       "y": 0.166,
@@ -7849,8 +7849,8 @@
     },
     {
       "id": "scene-023-lissajous-4",
-      "start": 206.57,
-      "end": 207.3,
+      "start": 205.175,
+      "end": 205.905,
       "text": "to",
       "x": 0.152,
       "y": 0.32,
@@ -7876,8 +7876,8 @@
     },
     {
       "id": "scene-023-lissajous-5",
-      "start": 206.77,
-      "end": 207.4,
+      "start": 205.311,
+      "end": 205.941,
       "text": "do",
       "x": 0.337,
       "y": 0.375,
@@ -7903,8 +7903,8 @@
     },
     {
       "id": "scene-023-lissajous-6",
-      "start": 206.97,
-      "end": 207.6,
+      "start": 205.464,
+      "end": 206.094,
       "text": "was",
       "x": 0.507,
       "y": 0.369,
@@ -7932,19 +7932,19 @@
     },
     {
       "id": "scene-023-lissajous-7",
-      "start": 207.17,
-      "end": 207.6,
+      "start": 205.627,
+      "end": 206.057,
       "text": "ask,",
       "x": 0.493,
       "y": 0.606,
       "align": "center",
       "size": 60,
-      "color": "#ffffff",
+      "color": "#ff00d0",
       "units": "normalized",
       "effects": {
-        "shadow": true,
+        "shadow": false,
         "scanlineMask": 0.12,
-        "glitchIn": true,
+        "glitchIn": false,
         "typewriter": {
           "speed": 42
         }
@@ -7953,19 +7953,19 @@
         {
           "text": "ask,",
           "font": "SUSE",
-          "color": "#ffffff",
+          "color": "#ff00d0",
           "size": 60,
           "weight": "900"
         }
       ],
-      "blend": "screen",
+      "blend": "source-over",
       "outlineWidth": 4,
       "outlineColor": "#000000"
     },
     {
       "id": "scene-023-lissajous-8",
-      "start": 207.595,
-      "end": 208.4,
+      "start": 205.962,
+      "end": 206.767,
       "text": "now",
       "x": 0.193,
       "y": 0.232,
@@ -7991,8 +7991,8 @@
     },
     {
       "id": "scene-023-lissajous-9",
-      "start": 207.741,
-      "end": 208.4,
+      "start": 206.108,
+      "end": 206.767,
       "text": "it's",
       "x": 0.482,
       "y": 0.255,
@@ -8018,8 +8018,8 @@
     },
     {
       "id": "scene-023-lissajous-10",
-      "start": 207.872,
-      "end": 208.4,
+      "start": 206.239,
+      "end": 206.767,
       "text": "real,",
       "x": 0.538,
       "y": 0.454,
@@ -8047,8 +8047,8 @@
     },
     {
       "id": "scene-023-lissajous-11",
-      "start": 208,
-      "end": 208.4,
+      "start": 206.367,
+      "end": 206.767,
       "text": "it",
       "x": 0.311,
       "y": 0.705,
@@ -8077,8 +8077,8 @@
     },
     {
       "id": "scene-023-lissajous-12",
-      "start": 208.123,
-      "end": 208.4,
+      "start": 206.49,
+      "end": 206.767,
       "text": "exists.",
       "x": 0.42,
       "y": 0.691,
@@ -8105,8 +8105,8 @@
     },
     {
       "id": "scene-023-lissajous-13",
-      "start": 208.33,
-      "end": 209.7,
+      "start": 206.754,
+      "end": 208.124,
       "text": "From",
       "x": 0.395,
       "y": 0.235,
@@ -8134,8 +8134,8 @@
     },
     {
       "id": "scene-023-lissajous-14",
-      "start": 208.431,
-      "end": 209.841,
+      "start": 206.855,
+      "end": 208.265,
       "text": "a",
       "x": 0.504,
       "y": 0.238,
@@ -8164,8 +8164,8 @@
     },
     {
       "id": "scene-023-lissajous-15",
-      "start": 208.554,
-      "end": 209.841,
+      "start": 206.978,
+      "end": 208.265,
       "text": "vibe,",
       "x": 0.615,
       "y": 0.397,
@@ -8191,8 +8191,8 @@
     },
     {
       "id": "scene-023-lissajous-16",
-      "start": 208.678,
-      "end": 209.3,
+      "start": 207.078,
+      "end": 207.7,
       "text": "from",
       "x": 0.391,
       "y": 0.56,
@@ -8219,8 +8219,8 @@
     },
     {
       "id": "scene-023-lissajous-17",
-      "start": 208.801,
-      "end": 209.841,
+      "start": 207.18,
+      "end": 208.22,
       "text": "an",
       "x": 0.468,
       "y": 0.611,
@@ -8248,8 +8248,8 @@
     },
     {
       "id": "scene-023-lissajous-18",
-      "start": 208.925,
-      "end": 209.841,
+      "start": 207.31,
+      "end": 208.226,
       "text": "idea,",
       "x": 0.677,
       "y": 0.66,
@@ -8278,8 +8278,8 @@
     },
     {
       "id": "scene-023-lissajous-19",
-      "start": 209.048,
-      "end": 209.841,
+      "start": 207.472,
+      "end": 208.265,
       "text": "I",
       "x": 0.25,
       "y": 0.791,
@@ -8305,8 +8305,8 @@
     },
     {
       "id": "scene-023-lissajous-20",
-      "start": 209.12,
-      "end": 209.789,
+      "start": 207.718,
+      "end": 208.387,
       "text": "spawned",
       "x": 0.644,
       "y": 0.794,
@@ -8332,8 +8332,8 @@
     },
     {
       "id": "scene-023-lissajous-21",
-      "start": 209.201,
-      "end": 209.536,
+      "start": 207.914,
+      "end": 208.249,
       "text": "this.",
       "x": 0.932,
       "y": 0.777,
@@ -8361,17 +8361,17 @@
     },
     {
       "id": "scene-023-lissajous-22",
-      "start": 209.514,
-      "end": 210.042,
+      "start": 208.237,
+      "end": 208.765,
       "text": "Wanna",
-      "x": 0.5,
-      "y": 0.18,
+      "x": 0.291,
+      "y": 0.215,
       "align": "center",
       "size": 40,
       "color": "#7ee787",
       "units": "normalized",
       "effects": {
-        "shadow": true,
+        "shadow": false,
         "scanlineMask": 0.2,
         "glitchIn": true,
         "typewriter": {
@@ -8386,74 +8386,93 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.5,
+        "y": 0.18,
+        "size": 40
+      }
     },
     {
       "id": "scene-023-lissajous-23",
-      "start": 209.715,
-      "end": 210.111,
+      "start": 208.438,
+      "end": 209.2,
       "text": "Make",
-      "x": 0.5,
-      "y": 0.393,
+      "x": 0.244,
+      "y": 0.38,
       "align": "center",
-      "size": 53,
+      "size": 29,
       "color": "#ffb86c",
       "units": "normalized",
       "effects": {
-        "shadow": true,
+        "shadow": false,
         "scanlineMask": 0.12,
         "glitchIn": false
       },
       "spans": [
         {
           "text": "Make",
+          "font": "Coiny",
           "color": "#ffb86c",
-          "size": 57,
-          "weight": "900",
-          "font": "Courier New"
+          "size": 29,
+          "weight": "900"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.5,
+        "y": 0.393,
+        "size": 53
+      },
+      "blend": "hard-light"
     },
     {
       "id": "scene-023-lissajous-24",
-      "start": 209.852,
-      "end": 210.116,
+      "start": 208.575,
+      "end": 209.2,
       "text": "a",
-      "x": 0.5,
-      "y": 0.607,
+      "x": 0.428,
+      "y": 0.377,
       "align": "center",
-      "size": 36,
-      "color": "#ff7ad9",
+      "size": 32,
+      "color": "#ffc87a",
       "units": "normalized",
       "effects": {
-        "shadow": true,
-        "scanlineMask": 0.16,
+        "shadow": false,
+        "scanlineMask": 0,
         "glitchIn": true
       },
       "spans": [
         {
           "text": "a",
-          "color": "#ff7ad9",
-          "size": 36,
-          "weight": "bold",
-          "font": "Courier New"
+          "font": "Audiowide",
+          "color": "#ffc87a",
+          "size": 32,
+          "weight": "bold"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.5,
+        "y": 0.607,
+        "size": 36
+      },
+      "outlineWidth": 1,
+      "blend": "hard-light",
+      "outlineColor": "#d3770d"
     },
     {
       "id": "scene-023-lissajous-25",
-      "start": 209.885,
-      "end": 210.4,
+      "start": 208.608,
+      "end": 210,
       "text": "beat?",
-      "x": 0.5,
-      "y": 0.82,
+      "x": 0.699,
+      "y": 0.404,
       "align": "center",
-      "size": 47,
-      "color": "#a5b4fc",
+      "size": 35,
+      "color": "#ff8800",
       "units": "normalized",
       "effects": {
-        "shadow": true,
-        "scanlineMask": 0.2,
+        "shadow": false,
+        "scanlineMask": 0,
         "typewriter": {
           "speed": 44
         }
@@ -8461,103 +8480,129 @@
       "spans": [
         {
           "text": "beat?",
-          "color": "#a5b4fc",
-          "size": 51,
-          "weight": "900",
-          "font": "Courier New"
+          "font": "Nosifer",
+          "color": "#ff8800",
+          "size": 35,
+          "weight": "900"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.5,
+        "y": 0.82,
+        "size": 43
+      },
+      "outlineWidth": 3,
+      "outlineColor": "#000000",
+      "blend": "difference"
     },
     {
       "id": "scene-023-lissajous-26",
-      "start": 210.055,
-      "end": 210.8,
+      "start": 208.778,
+      "end": 209.523,
       "text": "write",
-      "x": 0.13,
-      "y": 0.14,
+      "x": 0.125,
+      "y": 0.511,
       "align": "left",
-      "size": 43,
-      "color": "#ffb86c",
+      "size": 32,
+      "color": "#19cc1c",
       "units": "normalized",
       "effects": {
-        "shadow": true,
+        "shadow": false,
         "scanlineMask": 0.12,
         "glitchIn": false
       },
       "spans": [
         {
           "text": "write",
-          "color": "#ffb86c",
-          "size": 43,
-          "weight": "bold",
-          "font": "Courier New"
+          "font": "Courier New",
+          "color": "#19cc1c",
+          "size": 32,
+          "weight": "bold"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.13,
+        "y": 0.14,
+        "size": 43
+      },
+      "outlineWidth": 1
     },
     {
       "id": "scene-023-lissajous-27",
-      "start": 210.144,
-      "end": 210.6,
+      "start": 208.867,
+      "end": 209.323,
       "text": "an",
-      "x": 0.17,
-      "y": 0.47,
+      "x": 0.437,
+      "y": 0.511,
       "align": "left",
-      "size": 36,
-      "color": "#ff7ad9",
+      "size": 31,
+      "color": "#1fdf11",
       "units": "normalized",
       "effects": {
-        "shadow": true,
+        "shadow": false,
         "scanlineMask": 0.16,
         "glitchIn": true
       },
       "spans": [
         {
           "text": "an",
-          "color": "#ff7ad9",
-          "size": 36,
-          "weight": "bold",
-          "font": "Courier New"
+          "font": "Courier New",
+          "color": "#1fdf11",
+          "size": 31,
+          "weight": "bold"
         }
-      ]
+      ],
+      "outlineWidth": 2,
+      "mobile": {
+        "x": 0.17,
+        "y": 0.47,
+        "size": 31
+      }
     },
     {
       "id": "scene-023-lissajous-28",
-      "start": 210.276,
-      "end": 210.7,
+      "start": 208.999,
+      "end": 209.423,
       "text": "app?",
-      "x": 0.21,
-      "y": 0.8,
+      "x": 0.576,
+      "y": 0.508,
       "align": "left",
-      "size": 37,
-      "color": "#a5b4fc",
+      "size": 33,
+      "color": "#21e843",
       "units": "normalized",
       "effects": {
-        "shadow": true,
-        "scanlineMask": 0.2,
-        "typewriter": {
-          "speed": 48
-        }
+        "shadow": false,
+        "scanlineMask": 0,
+        "glitchIn": false
       },
       "spans": [
         {
           "text": "app?",
-          "color": "#a5b4fc",
-          "size": 37,
-          "weight": "bold",
-          "font": "Courier New"
+          "font": "Workbench",
+          "color": "#21e843",
+          "size": 33,
+          "weight": "bold"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.21,
+        "y": 0.8,
+        "size": 37
+      },
+      "blend": "source-over",
+      "outlineWidth": 2,
+      "outlineColor": "#000000"
     },
     {
       "id": "scene-023-lissajous-29",
-      "start": 210.4,
-      "end": 211.2,
-      "text": "well",
-      "x": 0.513,
-      "y": 0.284,
+      "start": 209.123,
+      "end": 209.923,
+      "text": "well,",
+      "x": 0.478,
+      "y": 0.743,
       "align": "right",
-      "size": 34,
-      "color": "#ff7ad9",
+      "size": 47,
+      "color": "#ff00b7",
       "units": "normalized",
       "effects": {
         "shadow": true,
@@ -8566,57 +8611,68 @@
       },
       "spans": [
         {
-          "text": "well",
-          "color": "#ff7ad9",
-          "size": 34,
-          "weight": "bold",
-          "font": "Courier New"
+          "text": "well,",
+          "font": "Sankofa Display",
+          "color": "#ff00b7",
+          "size": 47,
+          "weight": "bold"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.513,
+        "y": 0.284,
+        "size": 34
+      },
+      "outlineWidth": 2,
+      "blend": "hard-light"
     },
     {
       "id": "scene-023-lissajous-30",
-      "start": 210.613,
-      "end": 211.1,
-      "text": "man,",
-      "x": 0.827,
-      "y": 0.318,
-      "align": "right",
-      "size": 37,
-      "color": "#a5b4fc",
+      "start": 209.336,
+      "end": 209.6,
+      "text": "maaan...",
+      "x": 0.685,
+      "y": 0.8,
+      "align": "center",
+      "size": 34,
+      "color": "#6600ff",
       "units": "normalized",
       "effects": {
         "shadow": true,
-        "scanlineMask": 0.2,
-        "typewriter": {
-          "speed": 52
-        }
+        "scanlineMask": 0.2
       },
       "spans": [
         {
-          "text": "man,",
-          "color": "#a5b4fc",
-          "size": 37,
-          "weight": "bold",
-          "font": "Courier New"
+          "text": "maaan...",
+          "font": "Sankofa Display",
+          "color": "#6600ff",
+          "size": 34,
+          "weight": "bold"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.827,
+        "y": 0.318,
+        "size": 37
+      },
+      "blend": "hard-light",
+      "outlineWidth": 2
     },
     {
       "id": "scene-023-lissajous-31",
-      "start": 210.765,
-      "end": 212.1,
+      "start": 209.534,
+      "end": 210.869,
       "text": "Now",
-      "x": 0.423,
-      "y": 0.472,
+      "x": 0.212,
+      "y": 0.139,
       "align": "right",
-      "size": 42,
+      "size": 29,
       "color": "#9ef0ff",
       "units": "normalized",
       "effects": {
-        "shadow": true,
+        "shadow": false,
         "scanlineMask": 0.12,
-        "glitchIn": true,
+        "glitchIn": false,
         "typewriter": {
           "speed": 42
         }
@@ -8624,20 +8680,26 @@
       "spans": [
         {
           "text": "Now",
+          "font": "Indie Flower",
           "color": "#9ef0ff",
-          "size": 42,
-          "weight": "bold",
-          "font": "Courier New"
+          "size": 29,
+          "weight": "bold"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.423,
+        "y": 0.472,
+        "size": 27
+      },
+      "outlineWidth": 1
     },
     {
       "id": "scene-023-lissajous-everybody",
-      "start": 210.992,
-      "end": 212.1,
+      "start": 209.761,
+      "end": 210.869,
       "text": "got",
-      "x": 0.236,
-      "y": 0.732,
+      "x": 0.696,
+      "y": 0.139,
       "align": "center",
       "size": 28,
       "color": "#9ef0ff",
@@ -8658,134 +8720,23 @@
           "size": 28,
           "weight": "bold"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.236,
+        "y": 0.732,
+        "size": 28
+      }
     },
     {
       "id": "scene-023-lissajous-31got",
-      "start": 210.894,
-      "end": 212.1,
-      "text": "everybodyy",
-      "x": 0.891,
-      "y": 0.58,
-      "align": "right",
-      "size": 42,
-      "color": "#9ef0ff",
-      "units": "normalized",
-      "effects": {
-        "shadow": true,
-        "scanlineMask": 0.12,
-        "glitchIn": true,
-        "typewriter": {
-          "speed": 42
-        }
-      },
-      "spans": [
-        {
-          "text": "everybodyy",
-          "color": "#9ef0ff",
-          "size": 42,
-          "weight": "bold",
-          "font": "Courier New"
-        }
-      ]
-    },
-    {
-      "id": "scene-023-lissajous-31the",
-      "start": 211.149,
-      "end": 212.1,
-      "text": "the",
-      "x": 0.508,
-      "y": 0.778,
-      "align": "right",
-      "size": 42,
-      "color": "#9ef0ff",
-      "units": "normalized",
-      "effects": {
-        "shadow": true,
-        "scanlineMask": 0.12,
-        "glitchIn": true,
-        "typewriter": {
-          "speed": 42
-        }
-      },
-      "spans": [
-        {
-          "text": "the",
-          "color": "#9ef0ff",
-          "size": 42,
-          "weight": "bold",
-          "font": "Courier New"
-        }
-      ]
-    },
-    {
-      "id": "scene-023-lissajous-31skl",
-      "start": 211.262,
-      "end": 212.1,
-      "text": "skills,",
-      "x": 0.951,
-      "y": 0.852,
-      "align": "right",
-      "size": 42,
-      "color": "#9ef0ff",
-      "units": "normalized",
-      "effects": {
-        "shadow": true,
-        "scanlineMask": 0.12,
-        "glitchIn": true,
-        "typewriter": {
-          "speed": 42
-        }
-      },
-      "spans": [
-        {
-          "text": "skills,",
-          "color": "#9ef0ff",
-          "size": 42,
-          "weight": "bold",
-          "font": "Courier New"
-        }
-      ]
-    },
-    {
-      "id": "scene-023-lissajous-31mn",
-      "start": 211.428,
-      "end": 211.9,
-      "text": "Now",
-      "x": 0.557,
-      "y": 0.108,
-      "align": "right",
-      "size": 42,
-      "color": "#9ef0ff",
-      "units": "normalized",
-      "effects": {
-        "shadow": true,
-        "scanlineMask": 0.12,
-        "glitchIn": true,
-        "typewriter": {
-          "speed": 42
-        }
-      },
-      "spans": [
-        {
-          "text": "Now",
-          "color": "#9ef0ff",
-          "size": 42,
-          "weight": "bold",
-          "font": "Courier New"
-        }
-      ]
-    },
-    {
-      "id": "scene-023-lissajous-31evr",
-      "start": 211.563,
-      "end": 212.1,
+      "start": 209.663,
+      "end": 210.869,
       "text": "everybody",
-      "x": 0.597,
-      "y": 0.228,
-      "align": "right",
+      "x": 0.407,
+      "y": 0.16,
+      "align": "center",
       "size": 27,
-      "color": "#847010",
+      "color": "#9ef0ff",
       "units": "normalized",
       "effects": {
         "shadow": true,
@@ -8798,49 +8749,192 @@
       "spans": [
         {
           "text": "everybody",
-          "font": "Science Gothic",
-          "color": "#847010",
+          "font": "Indie Flower",
+          "color": "#9ef0ff",
           "size": 27,
           "weight": "bold"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.891,
+        "y": 0.58,
+        "size": 27
+      },
+      "outlineWidth": 1
     },
     {
-      "id": "scene-023-lissajous-31cn",
-      "start": 211.758,
-      "end": 212.1,
-      "text": "can!",
-      "x": 0.859,
-      "y": 0.225,
-      "align": "right",
-      "size": 28,
-      "color": "#498e1a",
+      "id": "scene-023-lissajous-31the",
+      "start": 209.918,
+      "end": 210.869,
+      "text": "the",
+      "x": 0.869,
+      "y": 0.157,
+      "align": "center",
+      "size": 26,
+      "color": "#9ef0ff",
       "units": "normalized",
       "effects": {
-        "shadow": true,
+        "shadow": false,
         "scanlineMask": 0.12,
-        "glitchIn": true,
+        "glitchIn": false,
         "typewriter": {
           "speed": 42
         }
       },
       "spans": [
         {
-          "text": "can!",
-          "font": "Science Gothic",
-          "color": "#498e1a",
-          "size": 28,
+          "text": "the",
+          "font": "Courier New",
+          "color": "#9ef0ff",
+          "size": 26,
           "weight": "bold"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.508,
+        "y": 0.778,
+        "size": 42
+      },
+      "outlineWidth": 2
+    },
+    {
+      "id": "scene-023-lissajous-31skl",
+      "start": 210.031,
+      "end": 210.869,
+      "text": "skills,",
+      "x": 0.52,
+      "y": 0.389,
+      "align": "center",
+      "size": 54,
+      "color": "#ff0000",
+      "units": "normalized",
+      "effects": {
+        "shadow": true,
+        "scanlineMask": 0.12,
+        "glitchIn": false
+      },
+      "spans": [
+        {
+          "text": "skills,",
+          "font": "Faster One",
+          "color": "#ff0000",
+          "size": 54,
+          "weight": "bold"
+        }
+      ],
+      "mobile": {
+        "x": 0.951,
+        "y": 0.852,
+        "size": 42
+      },
+      "blend": "hard-light",
+      "outlineWidth": 2,
+      "outlineColor": "#ffffff"
+    },
+    {
+      "id": "scene-023-lissajous-31mn",
+      "start": 210.197,
+      "end": 210.8,
+      "text": "Now",
+      "x": 0.32,
+      "y": 0.679,
+      "align": "right",
+      "size": 36,
+      "color": "#fbff00",
+      "units": "normalized",
+      "effects": {
+        "shadow": true,
+        "scanlineMask": 0.12,
+        "glitchIn": true
+      },
+      "spans": [
+        {
+          "text": "Now",
+          "font": "Syne Mono",
+          "color": "#fbff00",
+          "size": 36,
+          "weight": "bold"
+        }
+      ],
+      "mobile": {
+        "x": 0.557,
+        "y": 0.108,
+        "size": 42
+      },
+      "outlineWidth": 1
+    },
+    {
+      "id": "scene-023-lissajous-31evr",
+      "start": 210.332,
+      "end": 210.869,
+      "text": "everybody",
+      "x": 0.884,
+      "y": 0.685,
+      "align": "right",
+      "size": 27,
+      "color": "#ffd500",
+      "units": "normalized",
+      "effects": {
+        "shadow": true,
+        "scanlineMask": 0.12,
+        "glitchIn": true
+      },
+      "spans": [
+        {
+          "text": "everybody",
+          "font": "Science Gothic",
+          "color": "#ffd500",
+          "size": 27,
+          "weight": "bold"
+        }
+      ],
+      "outlineWidth": 1,
+      "mobile": {
+        "x": 0.597,
+        "y": 0.228,
+        "size": 27
+      }
+    },
+    {
+      "id": "scene-023-lissajous-31cn",
+      "start": 210.527,
+      "end": 210.869,
+      "text": "can",
+      "x": 0.673,
+      "y": 0.837,
+      "align": "right",
+      "size": 46,
+      "color": "#66ff00",
+      "units": "normalized",
+      "effects": {
+        "shadow": true,
+        "scanlineMask": 0.12,
+        "glitchIn": true
+      },
+      "spans": [
+        {
+          "text": "can",
+          "font": "Sixtyfour",
+          "color": "#66ff00",
+          "size": 46,
+          "weight": "bold"
+        }
+      ],
+      "mobile": {
+        "x": 0.859,
+        "y": 0.225,
+        "size": 28
+      },
+      "outlineWidth": 1,
+      "blend": "hard-light"
     },
     {
       "id": "scene-024-c64-raster-bars-1",
-      "start": 212.217,
-      "end": 214.258,
+      "start": 210.857,
+      "end": 212.898,
       "text": "Feed",
-      "x": 0.84,
-      "y": 0.42,
+      "x": 0.332,
+      "y": 0.175,
       "align": "right",
       "size": 42,
       "color": "#f7e9a4",
@@ -8858,15 +8952,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.84,
+        "y": 0.42,
+        "size": 42
+      }
     },
     {
       "id": "scene-024-c64-raster-bars-2",
-      "start": 212.316,
-      "end": 214.237,
+      "start": 210.956,
+      "end": 212.877,
       "text": "full",
-      "x": 0.828,
-      "y": 0.45,
+      "x": 0.641,
+      "y": 0.184,
       "align": "right",
       "size": 38,
       "color": "#7ee787",
@@ -8884,15 +8983,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.828,
+        "y": 0.45,
+        "size": 38
+      }
     },
     {
       "id": "scene-024-c64-raster-bars-3",
-      "start": 212.432,
-      "end": 214.233,
+      "start": 211.072,
+      "end": 212.873,
       "text": "of",
-      "x": 0.816,
-      "y": 0.48,
+      "x": 0.8,
+      "y": 0.191,
       "align": "right",
       "size": 35,
       "color": "#ffb86c",
@@ -8912,15 +9016,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.816,
+        "y": 0.48,
+        "size": 35
+      }
     },
     {
       "id": "scene-024-c64-raster-bars-4",
-      "start": 212.582,
-      "end": 214.263,
+      "start": 211.222,
+      "end": 212.903,
       "text": "fake",
-      "x": 0.804,
-      "y": 0.51,
+      "x": 0.404,
+      "y": 0.395,
       "align": "right",
       "size": 47,
       "color": "#ff7ad9",
@@ -8938,15 +9047,20 @@
           "weight": "900",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.804,
+        "y": 0.51,
+        "size": 47
+      }
     },
     {
       "id": "scene-024-c64-raster-bars-5",
-      "start": 212.727,
-      "end": 214.207,
+      "start": 211.367,
+      "end": 212.847,
       "text": "news,",
-      "x": 0.792,
-      "y": 0.54,
+      "x": 0.832,
+      "y": 0.413,
       "align": "right",
       "size": 44,
       "color": "#a5b4fc",
@@ -8964,17 +9078,22 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.792,
+        "y": 0.54,
+        "size": 44
+      }
     },
     {
       "id": "scene-024-c64-raster-bars-6",
-      "start": 213.019,
-      "end": 214.297,
-      "text": "lies,",
-      "x": 0.78,
-      "y": 0.57,
+      "start": 211.659,
+      "end": 212.937,
+      "text": "lies",
+      "x": 0.326,
+      "y": 0.587,
       "align": "right",
-      "size": 41,
+      "size": 37,
       "color": "#9ef0ff",
       "units": "normalized",
       "effects": {
@@ -8986,23 +9105,28 @@
       },
       "spans": [
         {
-          "text": "lies,",
+          "text": "lies",
+          "font": "Courier New",
           "color": "#9ef0ff",
-          "size": 41,
-          "weight": "bold",
-          "font": "Courier New"
+          "size": 37,
+          "weight": "bold"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.78,
+        "y": 0.57,
+        "size": 41
+      }
     },
     {
       "id": "scene-024-c64-raster-bars-7",
-      "start": 213.319,
-      "end": 214.396,
+      "start": 211.964,
+      "end": 213.041,
       "text": "slop",
-      "x": 0.768,
-      "y": 0.6,
+      "x": 0.617,
+      "y": 0.581,
       "align": "right",
-      "size": 50,
+      "size": 35,
       "color": "#ff7ad9",
       "units": "normalized",
       "effects": {
@@ -9013,20 +9137,25 @@
       "spans": [
         {
           "text": "slop",
+          "font": "Courier New",
           "color": "#ff7ad9",
-          "size": 54,
-          "weight": "900",
-          "font": "Courier New"
+          "size": 35,
+          "weight": "900"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.768,
+        "y": 0.6,
+        "size": 50
+      }
     },
     {
       "id": "scene-024-c64-raster-bars-8",
-      "start": 213.483,
-      "end": 214.358,
+      "start": 212.123,
+      "end": 212.998,
       "text": "and",
-      "x": 0.756,
-      "y": 0.63,
+      "x": 0.845,
+      "y": 0.575,
       "align": "right",
       "size": 36,
       "color": "#f7e9a4",
@@ -9044,17 +9173,22 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.756,
+        "y": 0.63,
+        "size": 36
+      }
     },
     {
       "id": "scene-024-c64-raster-bars-9",
-      "start": 213.688,
-      "end": 214.362,
+      "start": 212.328,
+      "end": 213.002,
       "text": "clickbait?",
-      "x": 0.744,
-      "y": 0.72,
+      "x": 0.83,
+      "y": 0.782,
       "align": "right",
-      "size": 40,
+      "size": 41,
       "color": "#7ee787",
       "units": "normalized",
       "effects": {
@@ -9068,17 +9202,22 @@
       "spans": [
         {
           "text": "clickbait?",
+          "font": "Courier New",
           "color": "#7ee787",
-          "size": 40,
-          "weight": "bold",
-          "font": "Courier New"
+          "size": 41,
+          "weight": "bold"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.744,
+        "y": 0.72,
+        "size": 40
+      }
     },
     {
       "id": "scene-024-c64-raster-bars-10",
-      "start": 214.285,
-      "end": 217.167,
+      "start": 212.916,
+      "end": 215.798,
       "text": "That",
       "x": 0.732,
       "y": 0.2,
@@ -9103,8 +9242,8 @@
     },
     {
       "id": "scene-024-c64-raster-bars-11",
-      "start": 214.428,
-      "end": 217.106,
+      "start": 213.059,
+      "end": 215.737,
       "text": "shit",
       "x": 0.72,
       "y": 0.3,
@@ -9129,8 +9268,8 @@
     },
     {
       "id": "scene-024-c64-raster-bars-12",
-      "start": 214.633,
-      "end": 217.106,
+      "start": 213.264,
+      "end": 215.737,
       "text": "was",
       "x": 0.708,
       "y": 0.4,
@@ -9158,8 +9297,8 @@
     },
     {
       "id": "scene-024-c64-raster-bars-13",
-      "start": 214.936,
-      "end": 217.205,
+      "start": 213.567,
+      "end": 215.836,
       "text": "a",
       "x": 0.696,
       "y": 0.5,
@@ -9184,8 +9323,8 @@
     },
     {
       "id": "scene-024-c64-raster-bars-14",
-      "start": 215.008,
-      "end": 217.072,
+      "start": 213.639,
+      "end": 215.703,
       "text": "problem",
       "x": 0.684,
       "y": 0.6,
@@ -9213,8 +9352,8 @@
     },
     {
       "id": "scene-030-copper-gradient-splits-1",
-      "start": 215.431,
-      "end": 217.291,
+      "start": 214.062,
+      "end": 215.922,
       "text": "before",
       "x": 0.836,
       "y": 0.7,
@@ -9239,8 +9378,8 @@
     },
     {
       "id": "scene-030-copper-gradient-splits-2",
-      "start": 215.682,
-      "end": 217.21,
+      "start": 214.313,
+      "end": 215.841,
       "text": "any",
       "x": 0.824,
       "y": 0.78,
@@ -9265,8 +9404,8 @@
     },
     {
       "id": "scene-030-copper-gradient-splits-2-5",
-      "start": 216.043,
-      "end": 217.24,
+      "start": 214.674,
+      "end": 215.871,
       "text": "models",
       "x": 0.818,
       "y": 0.86,
@@ -9294,8 +9433,8 @@
     },
     {
       "id": "scene-031-textured-cube-1",
-      "start": 216.336,
-      "end": 217.201,
+      "start": 214.967,
+      "end": 215.832,
       "text": "trained",
       "x": 0.813,
       "y": 0.93,
@@ -9322,8 +9461,8 @@
     },
     {
       "id": "scene-031-textured-cube-1-2",
-      "start": 216.332,
-      "end": 216.909,
+      "start": 214.963,
+      "end": 215.54,
       "text": "trained",
       "x": 0.801,
       "y": 0.96,
@@ -9351,8 +9490,8 @@
     },
     {
       "id": "scene-031-textured-cube-2-2",
-      "start": 216.634,
-      "end": 216.922,
+      "start": 215.265,
+      "end": 215.553,
       "text": "mate.",
       "x": 0.79,
       "y": 0.99,
@@ -9377,8 +9516,8 @@
     },
     {
       "id": "scene-031-textured-cube-3-2",
-      "start": 217.167,
-      "end": 219.711,
+      "start": 215.956,
+      "end": 217.2,
       "text": "You",
       "x": 0.5,
       "y": 0.18,
@@ -9405,11 +9544,11 @@
     },
     {
       "id": "scene-031-textured-cube-4-2",
-      "start": 217.26,
-      "end": 219.552,
+      "start": 216.049,
+      "end": 217.2,
       "text": "say",
-      "x": 0.5,
-      "y": 0.251,
+      "x": 0.546,
+      "y": 0.294,
       "align": "center",
       "size": 42,
       "color": "#9ef0ff",
@@ -9430,15 +9569,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.5,
+        "y": 0.251,
+        "size": 42
+      }
     },
     {
       "id": "scene-031-textured-cube-5-2",
-      "start": 217.44,
-      "end": 219.479,
+      "start": 216.229,
+      "end": 217.2,
       "text": "it's",
-      "x": 0.5,
-      "y": 0.322,
+      "x": 0.492,
+      "y": 0.416,
       "align": "center",
       "size": 43,
       "color": "#f7e9a4",
@@ -9456,15 +9600,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.5,
+        "y": 0.322,
+        "size": 43
+      }
     },
     {
       "id": "scene-031-textured-cube-6-2",
-      "start": 217.71,
-      "end": 219.496,
+      "start": 216.535,
+      "end": 217.2,
       "text": "fake,",
-      "x": 0.5,
-      "y": 0.393,
+      "x": 0.517,
+      "y": 0.584,
       "align": "center",
       "size": 44,
       "color": "#7ee787",
@@ -9482,15 +9631,20 @@
           "weight": "900",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.5,
+        "y": 0.393,
+        "size": 44
+      }
     },
     {
       "id": "scene-031-textured-cube-7-2",
-      "start": 218.194,
-      "end": 219.728,
+      "start": 217.002,
+      "end": 218.536,
       "text": "no",
-      "x": 0.5,
-      "y": 0.464,
+      "x": 0.125,
+      "y": 0.136,
       "align": "center",
       "size": 39,
       "color": "#ffb86c",
@@ -9510,17 +9664,22 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.5,
+        "y": 0.464,
+        "size": 39
+      }
     },
     {
       "id": "scene-031-textured-cube-8-2",
-      "start": 218.407,
-      "end": 219.685,
+      "start": 217.224,
+      "end": 218.502,
       "text": "skill,",
-      "x": 0.5,
-      "y": 0.536,
+      "x": 0.457,
+      "y": 0.145,
       "align": "center",
-      "size": 50,
+      "size": 42,
       "color": "#ff7ad9",
       "units": "normalized",
       "effects": {
@@ -9534,20 +9693,25 @@
       "spans": [
         {
           "text": "skill,",
+          "font": "Courier New",
           "color": "#ff7ad9",
-          "size": 54,
-          "weight": "900",
-          "font": "Courier New"
+          "size": 42,
+          "weight": "900"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.5,
+        "y": 0.536,
+        "size": 50
+      }
     },
     {
       "id": "scene-031-textured-cube-9",
-      "start": 218.593,
-      "end": 219.616,
+      "start": 217.401,
+      "end": 218.424,
       "text": "no",
-      "x": 0.5,
-      "y": 0.607,
+      "x": 0.14,
+      "y": 0.306,
       "align": "center",
       "size": 45,
       "color": "#a5b4fc",
@@ -9565,15 +9729,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.5,
+        "y": 0.607,
+        "size": 45
+      }
     },
     {
       "id": "scene-031-textured-cube-10",
-      "start": 218.703,
-      "end": 219.47,
+      "start": 217.511,
+      "end": 218.278,
       "text": "effort's",
-      "x": 0.5,
-      "y": 0.678,
+      "x": 0.513,
+      "y": 0.334,
       "align": "center",
       "size": 34,
       "color": "#9ef0ff",
@@ -9591,15 +9760,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.5,
+        "y": 0.678,
+        "size": 34
+      }
     },
     {
       "id": "scene-031-textured-cube-11",
-      "start": 219.019,
-      "end": 219.53,
+      "start": 217.827,
+      "end": 218.338,
       "text": "been",
-      "x": 0.5,
-      "y": 0.749,
+      "x": 0.191,
+      "y": 0.517,
       "align": "center",
       "size": 37,
       "color": "#f7e9a4",
@@ -9619,15 +9793,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.5,
+        "y": 0.749,
+        "size": 37
+      }
     },
     {
       "id": "scene-031-textured-cube-12",
-      "start": 219.291,
-      "end": 219.547,
+      "start": 218.099,
+      "end": 218.355,
       "text": "applied.",
-      "x": 0.5,
-      "y": 0.82,
+      "x": 0.584,
+      "y": 0.517,
       "align": "center",
       "size": 40,
       "color": "#7ee787",
@@ -9648,12 +9827,17 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.5,
+        "y": 0.82,
+        "size": 40
+      }
     },
     {
       "id": "scene-031-textured-cube-13",
-      "start": 219.732,
-      "end": 220.657,
+      "start": 218.571,
+      "end": 219.496,
       "text": "Why",
       "x": 0.13,
       "y": 0.14,
@@ -9681,8 +9865,8 @@
     },
     {
       "id": "scene-031-textured-cube-14",
-      "start": 219.844,
-      "end": 220.584,
+      "start": 218.683,
+      "end": 219.423,
       "text": "the",
       "x": 0.157,
       "y": 0.36,
@@ -9707,8 +9891,8 @@
     },
     {
       "id": "scene-031-textured-cube-15",
-      "start": 220.159,
-      "end": 220.713,
+      "start": 218.894,
+      "end": 219.448,
       "text": "hate,",
       "x": 0.183,
       "y": 0.58,
@@ -9733,8 +9917,8 @@
     },
     {
       "id": "scene-031-textured-cube-16",
-      "start": 220.449,
-      "end": 220.726,
+      "start": 219.103,
+      "end": 219.38,
       "text": "mate?",
       "x": 0.21,
       "y": 0.8,
@@ -9761,13 +9945,13 @@
     },
     {
       "id": "scene-035-textmode-charset-1",
-      "start": 220.726,
-      "end": 222.681,
+      "start": 219.33,
+      "end": 220,
       "text": "chill,",
-      "x": 0.87,
-      "y": 0.16,
+      "x": 0.969,
+      "y": 0.242,
       "align": "right",
-      "size": 43,
+      "size": 64,
       "color": "#f7e9a4",
       "units": "normalized",
       "effects": {
@@ -9778,17 +9962,22 @@
       "spans": [
         {
           "text": "chill,",
+          "font": "Trade Winds",
           "color": "#f7e9a4",
-          "size": 43,
-          "weight": "bold",
-          "font": "Courier New"
+          "size": 64,
+          "weight": "bold"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.87,
+        "y": 0.16,
+        "size": 43
+      }
     },
     {
       "id": "scene-035-textmode-charset-2",
-      "start": 220.908,
-      "end": 222.586,
+      "start": 219.688,
+      "end": 221.366,
       "text": "I've",
       "x": 0.854,
       "y": 0.284,
@@ -9813,8 +10002,8 @@
     },
     {
       "id": "scene-035-textmode-charset-3",
-      "start": 221.081,
-      "end": 222.423,
+      "start": 219.861,
+      "end": 221.203,
       "text": "found",
       "x": 0.838,
       "y": 0.408,
@@ -9841,8 +10030,8 @@
     },
     {
       "id": "scene-035-textmode-charset-4",
-      "start": 221.321,
-      "end": 222.328,
+      "start": 220.101,
+      "end": 221.108,
       "text": "new",
       "x": 0.822,
       "y": 0.532,
@@ -9870,8 +10059,8 @@
     },
     {
       "id": "scene-035-textmode-charset-5",
-      "start": 221.593,
-      "end": 222.264,
+      "start": 220.373,
+      "end": 221.044,
       "text": "creative",
       "x": 0.806,
       "y": 0.656,
@@ -9896,8 +10085,8 @@
     },
     {
       "id": "scene-035-textmode-charset-6",
-      "start": 222.096,
-      "end": 222.432,
+      "start": 220.876,
+      "end": 221.212,
       "text": "heights.",
       "x": 0.79,
       "y": 0.78,
@@ -9922,8 +10111,8 @@
     },
     {
       "id": "scene-035-textmode-charset-7",
-      "start": 222.548,
-      "end": 224.921,
+      "start": 221.342,
+      "end": 222,
       "text": "And",
       "x": 0.5,
       "y": 0.18,
@@ -9948,8 +10137,8 @@
     },
     {
       "id": "scene-035-textmode-charset-8",
-      "start": 222.775,
-      "end": 224.723,
+      "start": 221.569,
+      "end": 222,
       "text": "anyway,",
       "x": 0.5,
       "y": 0.251,
@@ -9976,8 +10165,8 @@
     },
     {
       "id": "scene-035-textmode-charset-9",
-      "start": 223.454,
-      "end": 224.976,
+      "start": 222.185,
+      "end": 223.707,
       "text": "Why",
       "x": 0.5,
       "y": 0.322,
@@ -10005,8 +10194,8 @@
     },
     {
       "id": "scene-035-textmode-charset-10",
-      "start": 223.627,
-      "end": 224.959,
+      "start": 222.39,
+      "end": 223.722,
       "text": "should",
       "x": 0.5,
       "y": 0.393,
@@ -10031,8 +10220,8 @@
     },
     {
       "id": "scene-035-textmode-charset-11",
-      "start": 223.797,
-      "end": 224.938,
+      "start": 222.492,
+      "end": 223.633,
       "text": "art",
       "x": 0.5,
       "y": 0.464,
@@ -10057,8 +10246,8 @@
     },
     {
       "id": "scene-035-textmode-charset-12",
-      "start": 223.983,
-      "end": 224.934,
+      "start": 222.633,
+      "end": 223.584,
       "text": "be",
       "x": 0.5,
       "y": 0.536,
@@ -10085,8 +10274,8 @@
     },
     {
       "id": "scene-035-textmode-charset-13",
-      "start": 224.168,
-      "end": 224.929,
+      "start": 222.84,
+      "end": 223.601,
       "text": "just",
       "x": 0.5,
       "y": 0.607,
@@ -10114,8 +10303,8 @@
     },
     {
       "id": "scene-035-textmode-charset-14",
-      "start": 224.337,
-      "end": 224.908,
+      "start": 222.996,
+      "end": 223.567,
       "text": "for",
       "x": 0.5,
       "y": 0.678,
@@ -10140,8 +10329,8 @@
     },
     {
       "id": "scene-035-textmode-charset-15",
-      "start": 224.468,
-      "end": 224.848,
+      "start": 223.136,
+      "end": 223.516,
       "text": "an",
       "x": 0.5,
       "y": 0.749,
@@ -10166,8 +10355,8 @@
     },
     {
       "id": "scene-035-textmode-charset-16",
-      "start": 224.619,
-      "end": 224.809,
+      "start": 223.35,
+      "end": 223.54,
       "text": "elite?",
       "x": 0.5,
       "y": 0.82,
@@ -10194,8 +10383,8 @@
     },
     {
       "id": "scene-035-textmode-charset-17",
-      "start": 225.002,
-      "end": 227.884,
+      "start": 223.728,
+      "end": 226.61,
       "text": "I",
       "x": 0.13,
       "y": 0.14,
@@ -10222,8 +10411,8 @@
     },
     {
       "id": "scene-035-textmode-charset-18",
-      "start": 225.089,
-      "end": 227.751,
+      "start": 223.815,
+      "end": 226.477,
       "text": "believe",
       "x": 0.137,
       "y": 0.2,
@@ -10251,8 +10440,8 @@
     },
     {
       "id": "scene-035-textmode-charset-19",
-      "start": 225.331,
-      "end": 227.773,
+      "start": 224.057,
+      "end": 226.499,
       "text": "that",
       "x": 0.145,
       "y": 0.26,
@@ -10277,8 +10466,8 @@
     },
     {
       "id": "scene-038-raytrace-spheres-1",
-      "start": 225.562,
-      "end": 227.785,
+      "start": 224.288,
+      "end": 226.511,
       "text": "everyone",
       "x": 0.5,
       "y": 0.32,
@@ -10303,8 +10492,8 @@
     },
     {
       "id": "scene-038-raytrace-spheres-2",
-      "start": 225.903,
-      "end": 227.906,
+      "start": 224.543,
+      "end": 226.546,
       "text": "should",
       "x": 0.159,
       "y": 0.38,
@@ -10331,8 +10520,8 @@
     },
     {
       "id": "scene-038-raytrace-spheres-3",
-      "start": 226.179,
-      "end": 227.962,
+      "start": 224.806,
+      "end": 226.589,
       "text": "be",
       "x": 0.166,
       "y": 0.44,
@@ -10360,8 +10549,8 @@
     },
     {
       "id": "scene-038-raytrace-spheres-4",
-      "start": 226.394,
-      "end": 227.957,
+      "start": 224.994,
+      "end": 226.557,
       "text": "able",
       "x": 0.174,
       "y": 0.5,
@@ -10386,8 +10575,8 @@
     },
     {
       "id": "scene-038-raytrace-spheres-5",
-      "start": 226.576,
-      "end": 227.919,
+      "start": 225.203,
+      "end": 226.546,
       "text": "to",
       "x": 0.181,
       "y": 0.56,
@@ -10412,8 +10601,8 @@
     },
     {
       "id": "scene-038-raytrace-spheres-6",
-      "start": 226.799,
-      "end": 227.923,
+      "start": 225.525,
+      "end": 226.649,
       "text": "make",
       "x": 0.188,
       "y": 0.62,
@@ -10440,8 +10629,8 @@
     },
     {
       "id": "scene-038-raytrace-spheres-7",
-      "start": 226.976,
-      "end": 227.88,
+      "start": 225.702,
+      "end": 226.606,
       "text": "their",
       "x": 0.195,
       "y": 0.68,
@@ -10469,8 +10658,8 @@
     },
     {
       "id": "scene-038-raytrace-spheres-8",
-      "start": 227.174,
-      "end": 227.858,
+      "start": 225.9,
+      "end": 226.584,
       "text": "own",
       "x": 0.203,
       "y": 0.74,
@@ -10495,8 +10684,8 @@
     },
     {
       "id": "scene-038-raytrace-spheres-9",
-      "start": 227.482,
-      "end": 227.824,
+      "start": 226.208,
+      "end": 226.55,
       "text": "beats.",
       "x": 0.21,
       "y": 0.8,
@@ -10521,11 +10710,11 @@
     },
     {
       "id": "scene-038-raytrace-spheres-10",
-      "start": 227.828,
-      "end": 233.593,
+      "start": 226.608,
+      "end": 228.3,
       "text": "If",
-      "x": 0.87,
-      "y": 0.16,
+      "x": 0.304,
+      "y": 0.187,
       "align": "right",
       "size": 42,
       "color": "#ff7ad9",
@@ -10546,15 +10735,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.87,
+        "y": 0.16,
+        "size": 42
+      }
     },
     {
       "id": "scene-038-raytrace-spheres-11",
-      "start": 228.05,
-      "end": 233.602,
+      "start": 226.83,
+      "end": 228.3,
       "text": "it",
-      "x": 0.867,
-      "y": 0.186,
+      "x": 0.529,
+      "y": 0.203,
       "align": "right",
       "size": 45,
       "color": "#a5b4fc",
@@ -10572,15 +10766,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.867,
+        "y": 0.186,
+        "size": 45
+      }
     },
     {
       "id": "scene-038-raytrace-spheres-12",
-      "start": 228.263,
-      "end": 233.602,
+      "start": 227.043,
+      "end": 228.3,
       "text": "was",
-      "x": 0.863,
-      "y": 0.212,
+      "x": 0.804,
+      "y": 0.169,
       "align": "right",
       "size": 36,
       "color": "#9ef0ff",
@@ -10598,15 +10797,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.863,
+        "y": 0.212,
+        "size": 36
+      }
     },
     {
       "id": "scene-038-raytrace-spheres-13",
-      "start": 228.432,
-      "end": 233.559,
+      "start": 227.212,
+      "end": 228.3,
       "text": "real",
-      "x": 0.5,
-      "y": 0.237,
+      "x": 0.312,
+      "y": 0.395,
       "align": "center",
       "size": 56,
       "color": "#f7e9a4",
@@ -10626,15 +10830,20 @@
           "weight": "900",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.5,
+        "y": 0.237,
+        "size": 56
+      }
     },
     {
       "id": "scene-038-raytrace-spheres-14",
-      "start": 228.55,
-      "end": 233.464,
+      "start": 227.33,
+      "end": 228.3,
       "text": "when",
-      "x": 0.857,
-      "y": 0.263,
+      "x": 0.85,
+      "y": 0.325,
       "align": "right",
       "size": 40,
       "color": "#7ee787",
@@ -10655,15 +10864,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.857,
+        "y": 0.263,
+        "size": 40
+      }
     },
     {
       "id": "scene-038-raytrace-spheres-15",
-      "start": 228.708,
-      "end": 233.409,
+      "start": 227.488,
+      "end": 228.3,
       "text": "you",
-      "x": 0.853,
-      "y": 0.289,
+      "x": 0.832,
+      "y": 0.456,
       "align": "right",
       "size": 45,
       "color": "#ffb86c",
@@ -10681,15 +10895,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.853,
+        "y": 0.289,
+        "size": 45
+      }
     },
     {
       "id": "scene-038-raytrace-spheres-16",
-      "start": 228.835,
-      "end": 233.323,
+      "start": 227.615,
+      "end": 228.3,
       "text": "sampled",
-      "x": 0.85,
-      "y": 0.315,
+      "x": 0.679,
+      "y": 0.596,
       "align": "right",
       "size": 44,
       "color": "#ff7ad9",
@@ -10707,15 +10926,20 @@
           "weight": "900",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.85,
+        "y": 0.315,
+        "size": 44
+      }
     },
     {
       "id": "scene-038-raytrace-spheres-17",
-      "start": 229.091,
-      "end": 233.366,
+      "start": 227.871,
+      "end": 228.3,
       "text": "the",
-      "x": 0.847,
-      "y": 0.341,
+      "x": 0.915,
+      "y": 0.627,
       "align": "right",
       "size": 39,
       "color": "#a5b4fc",
@@ -10735,15 +10959,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.847,
+        "y": 0.341,
+        "size": 39
+      }
     },
     {
       "id": "scene-038-raytrace-spheres-18",
-      "start": 229.377,
-      "end": 233.439,
+      "start": 228.044,
+      "end": 228.3,
       "text": "Beatles",
-      "x": 0.843,
-      "y": 0.367,
+      "x": 0.803,
+      "y": 0.804,
       "align": "right",
       "size": 50,
       "color": "#9ef0ff",
@@ -10764,15 +10993,20 @@
           "weight": "900",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.843,
+        "y": 0.367,
+        "size": 50
+      }
     },
     {
       "id": "scene-038-raytrace-spheres-19",
-      "start": 229.662,
-      "end": 233.512,
+      "start": 228.275,
+      "end": 229,
       "text": "and",
-      "x": 0.84,
-      "y": 0.392,
+      "x": 0.371,
+      "y": 0.27,
       "align": "right",
       "size": 45,
       "color": "#f7e9a4",
@@ -10790,17 +11024,22 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.84,
+        "y": 0.392,
+        "size": 45
+      }
     },
     {
       "id": "scene-038-raytrace-spheres-20",
-      "start": 229.974,
-      "end": 233.611,
+      "start": 228.542,
+      "end": 229,
       "text": "remixed",
-      "x": 0.837,
-      "y": 0.418,
+      "x": 0.762,
+      "y": 0.471,
       "align": "right",
-      "size": 34,
+      "size": 45,
       "color": "#7ee787",
       "units": "normalized",
       "effects": {
@@ -10811,45 +11050,61 @@
       "spans": [
         {
           "text": "remixed",
+          "font": "Rubik Glitch",
           "color": "#7ee787",
-          "size": 34,
-          "weight": "bold",
-          "font": "Courier New"
+          "size": 45,
+          "weight": "bold"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.837,
+        "y": 0.418,
+        "size": 34
+      },
+      "outlineWidth": 2,
+      "blend": "hard-light",
+      "fadeIn": 0.01,
+      "fadeOut": 0.01
     },
     {
       "id": "scene-042-volumetric-clouds-1",
-      "start": 230.26,
-      "end": 233.684,
+      "start": 228.868,
+      "end": 229,
       "text": "'ye,",
-      "x": 0.833,
-      "y": 0.444,
+      "x": 0.599,
+      "y": 0.691,
       "align": "right",
-      "size": 37,
-      "color": "#ffb86c",
+      "size": 67,
+      "color": "#ff8400",
       "units": "normalized",
       "effects": {
-        "shadow": true,
-        "scanlineMask": 0.12,
-        "typewriter": {
-          "speed": 36
-        }
+        "shadow": false,
+        "scanlineMask": 0,
+        "glitchIn": true
       },
       "spans": [
         {
           "text": "'ye,",
-          "color": "#ffb86c",
-          "size": 37,
-          "weight": "bold",
-          "font": "Courier New"
+          "font": "Sankofa Display",
+          "color": "#ff8400",
+          "size": 67,
+          "weight": "bold"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.833,
+        "y": 0.444,
+        "size": 37
+      },
+      "outlineWidth": 2,
+      "blend": "color-dodge",
+      "fadeIn": 0.01,
+      "fadeOut": 0.01
     },
     {
       "id": "scene-042-volumetric-clouds-2",
-      "start": 230.451,
-      "end": 233.662,
+      "start": 229.078,
+      "end": 232.289,
       "text": "Then",
       "x": 0.83,
       "y": 0.47,
@@ -10877,8 +11132,8 @@
     },
     {
       "id": "scene-042-volumetric-clouds-3",
-      "start": 230.539,
-      "end": 233.503,
+      "start": 229.166,
+      "end": 232.13,
       "text": "why",
       "x": 0.827,
       "y": 0.496,
@@ -10903,8 +11158,8 @@
     },
     {
       "id": "scene-042-volumetric-clouds-4",
-      "start": 230.778,
-      "end": 233.495,
+      "start": 229.405,
+      "end": 232.122,
       "text": "you",
       "x": 0.823,
       "y": 0.522,
@@ -10929,8 +11184,8 @@
     },
     {
       "id": "scene-042-volumetric-clouds-5",
-      "start": 230.973,
-      "end": 233.443,
+      "start": 229.6,
+      "end": 232.07,
       "text": "hatin'",
       "x": 0.82,
       "y": 0.547,
@@ -10957,8 +11212,8 @@
     },
     {
       "id": "scene-042-volumetric-clouds-6",
-      "start": 231.16,
-      "end": 233.383,
+      "start": 229.787,
+      "end": 232.01,
       "text": "on",
       "x": 0.817,
       "y": 0.573,
@@ -10986,8 +11241,8 @@
     },
     {
       "id": "scene-042-volumetric-clouds-7",
-      "start": 231.368,
-      "end": 233.344,
+      "start": 229.995,
+      "end": 231.971,
       "text": "this",
       "x": 0.813,
       "y": 0.599,
@@ -11012,8 +11267,8 @@
     },
     {
       "id": "scene-042-volumetric-clouds-8",
-      "start": 231.546,
-      "end": 233.275,
+      "start": 230.173,
+      "end": 231.902,
       "text": "mashup",
       "x": 0.81,
       "y": 0.625,
@@ -11038,8 +11293,8 @@
     },
     {
       "id": "scene-042-volumetric-clouds-9",
-      "start": 231.798,
-      "end": 233.28,
+      "start": 230.425,
+      "end": 231.907,
       "text": "of",
       "x": 0.807,
       "y": 0.651,
@@ -11066,8 +11321,8 @@
     },
     {
       "id": "scene-042-volumetric-clouds-10",
-      "start": 232.04,
-      "end": 233.275,
+      "start": 230.667,
+      "end": 231.902,
       "text": "the",
       "x": 0.803,
       "y": 0.677,
@@ -11095,8 +11350,8 @@
     },
     {
       "id": "scene-042-volumetric-clouds-11",
-      "start": 232.266,
-      "end": 233.254,
+      "start": 230.893,
+      "end": 231.881,
       "text": "whole",
       "x": 0.8,
       "y": 0.702,
@@ -11121,8 +11376,8 @@
     },
     {
       "id": "scene-042-volumetric-clouds-12",
-      "start": 232.41,
-      "end": 233.151,
+      "start": 231.037,
+      "end": 231.778,
       "text": "damn",
       "x": 0.797,
       "y": 0.728,
@@ -11147,8 +11402,8 @@
     },
     {
       "id": "scene-042-volumetric-clouds-13",
-      "start": 232.537,
-      "end": 233.031,
+      "start": 231.164,
+      "end": 231.658,
       "text": "human",
       "x": 0.5,
       "y": 0.754,
@@ -11175,8 +11430,8 @@
     },
     {
       "id": "scene-042-volumetric-clouds-14",
-      "start": 232.869,
-      "end": 233.116,
+      "start": 231.496,
+      "end": 231.743,
       "text": "race?",
       "x": 0.79,
       "y": 0.78,
@@ -11204,8 +11459,8 @@
     },
     {
       "id": "scene-042-volumetric-clouds-15",
-      "start": 233.516,
-      "end": 236.229,
+      "start": 232.174,
+      "end": 234.887,
       "text": "Would",
       "x": 0.5,
       "y": 0.18,
@@ -11230,8 +11485,8 @@
     },
     {
       "id": "scene-042-volumetric-clouds-16",
-      "start": 233.741,
-      "end": 236.251,
+      "start": 232.399,
+      "end": 234.909,
       "text": "You",
       "x": 0.5,
       "y": 0.26,
@@ -11256,8 +11511,8 @@
     },
     {
       "id": "scene-042-volumetric-clouds-17",
-      "start": 233.866,
-      "end": 236.173,
+      "start": 232.524,
+      "end": 234.831,
       "text": "blame",
       "x": 0.5,
       "y": 0.34,
@@ -11284,8 +11539,8 @@
     },
     {
       "id": "scene-042-volumetric-clouds-18",
-      "start": 234.064,
-      "end": 236.169,
+      "start": 232.722,
+      "end": 234.827,
       "text": "the",
       "x": 0.5,
       "y": 0.42,
@@ -11313,8 +11568,8 @@
     },
     {
       "id": "scene-042-volumetric-clouds-19",
-      "start": 234.185,
-      "end": 236.087,
+      "start": 232.843,
+      "end": 234.745,
       "text": "brush",
       "x": 0.5,
       "y": 0.5,
@@ -11339,8 +11594,8 @@
     },
     {
       "id": "scene-042-volumetric-clouds-20",
-      "start": 234.513,
-      "end": 236.212,
+      "start": 233.171,
+      "end": 234.87,
       "text": "‘cause",
       "x": 0.5,
       "y": 0.58,
@@ -11365,8 +11620,8 @@
     },
     {
       "id": "scene-042-volumetric-clouds-21",
-      "start": 234.735,
-      "end": 236.122,
+      "start": 233.393,
+      "end": 234.78,
       "text": "you",
       "x": 0.5,
       "y": 0.66,
@@ -11393,8 +11648,8 @@
     },
     {
       "id": "scene-046-amiga-showcase-1",
-      "start": 234.93,
-      "end": 236.006,
+      "start": 233.588,
+      "end": 234.664,
       "text": "painted",
       "x": 0.5,
       "y": 0.74,
@@ -11422,8 +11677,8 @@
     },
     {
       "id": "scene-046-amiga-showcase-2",
-      "start": 235.628,
-      "end": 236.392,
+      "start": 234.286,
+      "end": 235.05,
       "text": "crap?",
       "x": 0.5,
       "y": 0.82,
@@ -11448,8 +11703,8 @@
     },
     {
       "id": "scene-047-kefrens-bars-1",
-      "start": 236.195,
-      "end": 238.903,
+      "start": 234.853,
+      "end": 237.561,
       "text": "Would",
       "x": 0.13,
       "y": 0.14,
@@ -11474,8 +11729,8 @@
     },
     {
       "id": "scene-047-kefrens-bars-2",
-      "start": 236.398,
-      "end": 238.903,
+      "start": 235.056,
+      "end": 237.561,
       "text": "You",
       "x": 0.139,
       "y": 0.213,
@@ -11502,8 +11757,8 @@
     },
     {
       "id": "scene-047-kefrens-bars-3",
-      "start": 236.593,
-      "end": 238.894,
+      "start": 235.251,
+      "end": 237.552,
       "text": "blame",
       "x": 0.148,
       "y": 0.287,
@@ -11531,8 +11786,8 @@
     },
     {
       "id": "scene-047-kefrens-bars-4",
-      "start": 236.818,
-      "end": 238.916,
+      "start": 235.476,
+      "end": 237.574,
       "text": "the",
       "x": 0.157,
       "y": 0.36,
@@ -11557,8 +11812,8 @@
     },
     {
       "id": "scene-047-kefrens-bars-5",
-      "start": 237.03,
-      "end": 238.924,
+      "start": 235.688,
+      "end": 237.582,
       "text": "synth",
       "x": 0.166,
       "y": 0.433,
@@ -11583,8 +11838,8 @@
     },
     {
       "id": "scene-047-kefrens-bars-6",
-      "start": 237.315,
-      "end": 239.006,
+      "start": 235.973,
+      "end": 237.664,
       "text": "‘cause",
       "x": 0.174,
       "y": 0.507,
@@ -11611,8 +11866,8 @@
     },
     {
       "id": "scene-047-kefrens-bars-7",
-      "start": 237.532,
-      "end": 238.98,
+      "start": 236.19,
+      "end": 237.638,
       "text": "your",
       "x": 0.183,
       "y": 0.58,
@@ -11640,8 +11895,8 @@
     },
     {
       "id": "scene-047-kefrens-bars-8",
-      "start": 237.692,
-      "end": 238.898,
+      "start": 236.35,
+      "end": 237.556,
       "text": "tune",
       "x": 0.192,
       "y": 0.653,
@@ -11666,8 +11921,8 @@
     },
     {
       "id": "scene-047-kefrens-bars-9",
-      "start": 238.149,
-      "end": 239.113,
+      "start": 236.807,
+      "end": 237.771,
       "text": "was",
       "x": 0.201,
       "y": 0.727,
@@ -11692,8 +11947,8 @@
     },
     {
       "id": "scene-047-kefrens-bars-10",
-      "start": 238.401,
-      "end": 239.122,
+      "start": 237.059,
+      "end": 237.78,
       "text": "flat?",
       "x": 0.21,
       "y": 0.8,
@@ -11720,8 +11975,8 @@
     },
     {
       "id": "scene-047-kefrens-bars-11",
-      "start": 238.847,
-      "end": 241.291,
+      "start": 237.505,
+      "end": 239.949,
       "text": "Would",
       "x": 0.87,
       "y": 0.16,
@@ -11748,8 +12003,8 @@
     },
     {
       "id": "scene-047-kefrens-bars-12",
-      "start": 239.246,
-      "end": 241.488,
+      "start": 237.904,
+      "end": 240.146,
       "text": "You",
       "x": 0.861,
       "y": 0.229,
@@ -11777,8 +12032,8 @@
     },
     {
       "id": "scene-047-kefrens-bars-13",
-      "start": 239.445,
-      "end": 241.484,
+      "start": 238.103,
+      "end": 240.142,
       "text": "blame",
       "x": 0.852,
       "y": 0.298,
@@ -11803,8 +12058,8 @@
     },
     {
       "id": "scene-047-kefrens-bars-14",
-      "start": 239.609,
-      "end": 241.446,
+      "start": 238.267,
+      "end": 240.104,
       "text": "the",
       "x": 0.843,
       "y": 0.367,
@@ -11829,8 +12084,8 @@
     },
     {
       "id": "scene-048-equalizer-1",
-      "start": 239.777,
-      "end": 241.411,
+      "start": 238.435,
+      "end": 240.069,
       "text": "mirror",
       "x": 0.834,
       "y": 0.436,
@@ -11857,8 +12112,8 @@
     },
     {
       "id": "scene-048-equalizer-2",
-      "start": 239.992,
-      "end": 241.424,
+      "start": 238.65,
+      "end": 240.082,
       "text": "'cos",
       "x": 0.826,
       "y": 0.504,
@@ -11886,8 +12141,8 @@
     },
     {
       "id": "scene-048-equalizer-3",
-      "start": 240.222,
-      "end": 241.407,
+      "start": 238.88,
+      "end": 240.065,
       "text": "your",
       "x": 0.817,
       "y": 0.573,
@@ -11912,8 +12167,8 @@
     },
     {
       "id": "scene-048-equalizer-4",
-      "start": 240.405,
-      "end": 241.342,
+      "start": 239.063,
+      "end": 240,
       "text": "face",
       "x": 0.808,
       "y": 0.642,
@@ -11938,8 +12193,8 @@
     },
     {
       "id": "scene-048-equalizer-5",
-      "start": 240.658,
-      "end": 241.347,
+      "start": 239.316,
+      "end": 240.005,
       "text": "looks",
       "x": 0.799,
       "y": 0.711,
@@ -11966,8 +12221,8 @@
     },
     {
       "id": "scene-048-equalizer-6",
-      "start": 240.892,
-      "end": 241.334,
+      "start": 239.55,
+      "end": 239.992,
       "text": "chopped?",
       "x": 0.79,
       "y": 0.78,
@@ -11995,8 +12250,8 @@
     },
     {
       "id": "scene-048-equalizer-7",
-      "start": 241.523,
-      "end": 242.969,
+      "start": 240.181,
+      "end": 241.627,
       "text": "Nah,",
       "x": 0.5,
       "y": 0.18,
@@ -12024,8 +12279,8 @@
     },
     {
       "id": "scene-048-equalizer-8",
-      "start": 241.811,
-      "end": 242.943,
+      "start": 240.469,
+      "end": 241.601,
       "text": "so",
       "x": 0.5,
       "y": 0.34,
@@ -12050,8 +12305,8 @@
     },
     {
       "id": "scene-048-equalizer-9",
-      "start": 242.064,
-      "end": 242.896,
+      "start": 240.722,
+      "end": 241.554,
       "text": "why",
       "x": 0.5,
       "y": 0.5,
@@ -12076,8 +12331,8 @@
     },
     {
       "id": "scene-048-equalizer-10",
-      "start": 242.401,
-      "end": 242.934,
+      "start": 241.059,
+      "end": 241.592,
       "text": "blame",
       "x": 0.5,
       "y": 0.66,
@@ -12104,8 +12359,8 @@
     },
     {
       "id": "scene-048-equalizer-11",
-      "start": 242.776,
-      "end": 243.042,
+      "start": 241.434,
+      "end": 241.7,
       "text": "A.I.",
       "x": 0.5,
       "y": 0.82,
@@ -12133,8 +12388,8 @@
     },
     {
       "id": "scene-048-equalizer-12",
-      "start": 243.201,
-      "end": 244.747,
+      "start": 241.859,
+      "end": 243.405,
       "text": "for",
       "x": 0.13,
       "y": 0.14,
@@ -12159,8 +12414,8 @@
     },
     {
       "id": "scene-048-equalizer-13",
-      "start": 243.455,
-      "end": 244.734,
+      "start": 242.113,
+      "end": 243.392,
       "text": "all",
       "x": 0.157,
       "y": 0.36,
@@ -12185,8 +12440,8 @@
     },
     {
       "id": "scene-048-equalizer-14",
-      "start": 243.721,
-      "end": 244.734,
+      "start": 242.379,
+      "end": 243.392,
       "text": "the",
       "x": 0.183,
       "y": 0.58,
@@ -12213,8 +12468,8 @@
     },
     {
       "id": "scene-048-equalizer-15",
-      "start": 243.988,
-      "end": 244.734,
+      "start": 242.646,
+      "end": 243.392,
       "text": "slop?",
       "x": 0.21,
       "y": 0.8,
@@ -12242,11 +12497,11 @@
     },
     {
       "id": "scene-048-equalizer-16",
-      "start": 244.339,
-      "end": 249.927,
+      "start": 242.997,
+      "end": 248.585,
       "text": "This",
-      "x": 0.87,
-      "y": 0.16,
+      "x": 0.679,
+      "y": 0.145,
       "align": "right",
       "size": 34,
       "color": "#ff7ad9",
@@ -12264,15 +12519,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.87,
+        "y": 0.16,
+        "size": 34
+      }
     },
     {
       "id": "scene-048-equalizer-17",
-      "start": 244.551,
-      "end": 249.802,
+      "start": 243.209,
+      "end": 248.46,
       "text": "ain't",
-      "x": 0.866,
-      "y": 0.19,
+      "x": 0.724,
+      "y": 0.285,
       "align": "right",
       "size": 37,
       "color": "#a5b4fc",
@@ -12292,15 +12552,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.866,
+        "y": 0.19,
+        "size": 37
+      }
     },
     {
       "id": "scene-048-equalizer-18",
-      "start": 244.717,
-      "end": 249.63,
+      "start": 243.375,
+      "end": 248.288,
       "text": "Skynet,",
-      "x": 0.862,
-      "y": 0.219,
+      "x": 0.851,
+      "y": 0.435,
       "align": "right",
       "size": 40,
       "color": "#9ef0ff",
@@ -12321,15 +12586,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.862,
+        "y": 0.219,
+        "size": 40
+      }
     },
     {
       "id": "scene-048-equalizer-19",
-      "start": 245.432,
-      "end": 250.008,
+      "start": 244.09,
+      "end": 248.666,
       "text": "this",
-      "x": 0.859,
-      "y": 0.249,
+      "x": 0.341,
+      "y": 0.569,
       "align": "right",
       "size": 43,
       "color": "#f7e9a4",
@@ -12347,15 +12617,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.859,
+        "y": 0.249,
+        "size": 43
+      }
     },
     {
       "id": "scene-048-equalizer-20",
-      "start": 245.552,
-      "end": 249.858,
+      "start": 244.21,
+      "end": 248.516,
       "text": "is",
-      "x": 0.855,
-      "y": 0.278,
+      "x": 0.496,
+      "y": 0.593,
       "align": "right",
       "size": 36,
       "color": "#7ee787",
@@ -12373,15 +12648,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.855,
+        "y": 0.278,
+        "size": 36
+      }
     },
     {
       "id": "scene-048-equalizer-21",
-      "start": 245.783,
-      "end": 249.819,
+      "start": 244.441,
+      "end": 248.477,
       "text": "sky's",
-      "x": 0.851,
-      "y": 0.308,
+      "x": 0.872,
+      "y": 0.611,
       "align": "right",
       "size": 37,
       "color": "#ffb86c",
@@ -12401,15 +12681,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.851,
+        "y": 0.308,
+        "size": 37
+      }
     },
     {
       "id": "scene-048-equalizer-22",
-      "start": 246.059,
-      "end": 249.824,
+      "start": 244.717,
+      "end": 248.482,
       "text": "the",
-      "x": 0.847,
-      "y": 0.337,
+      "x": 0.33,
+      "y": 0.77,
       "align": "right",
       "size": 42,
       "color": "#ff7ad9",
@@ -12430,15 +12715,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.847,
+        "y": 0.337,
+        "size": 42
+      }
     },
     {
       "id": "scene-048-equalizer-23",
-      "start": 246.234,
-      "end": 249.729,
+      "start": 244.892,
+      "end": 248.387,
       "text": "limit,",
-      "x": 0.843,
-      "y": 0.367,
+      "x": 0.816,
+      "y": 0.8,
       "align": "right",
       "size": 43,
       "color": "#a5b4fc",
@@ -12456,15 +12746,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.843,
+        "y": 0.367,
+        "size": 43
+      }
     },
     {
       "id": "scene-053-kefrens-bars-1",
-      "start": 246.813,
-      "end": 250.038,
+      "start": 245.471,
+      "end": 248.696,
       "text": "Why",
-      "x": 0.84,
-      "y": 0.396,
+      "x": 0.235,
+      "y": 0.13,
       "align": "right",
       "size": 36,
       "color": "#9ef0ff",
@@ -12482,15 +12777,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.84,
+        "y": 0.396,
+        "size": 36
+      }
     },
     {
       "id": "scene-053-kefrens-bars-2",
-      "start": 246.961,
-      "end": 250.013,
+      "start": 245.619,
+      "end": 248.671,
       "text": "you",
-      "x": 0.836,
-      "y": 0.426,
+      "x": 0.44,
+      "y": 0.133,
       "align": "right",
       "size": 39,
       "color": "#f7e9a4",
@@ -12510,15 +12810,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.836,
+        "y": 0.426,
+        "size": 39
+      }
     },
     {
       "id": "scene-053-kefrens-bars-3",
-      "start": 247.207,
-      "end": 250.086,
+      "start": 245.865,
+      "end": 248.744,
       "text": "mad",
-      "x": 0.832,
-      "y": 0.455,
+      "x": 0.333,
+      "y": 0.297,
       "align": "right",
       "size": 42,
       "color": "#7ee787",
@@ -12539,15 +12844,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.832,
+        "y": 0.455,
+        "size": 42
+      }
     },
     {
       "id": "scene-053-kefrens-bars-4",
-      "start": 247.423,
-      "end": 250.129,
+      "start": 246.081,
+      "end": 248.787,
       "text": "that",
-      "x": 0.828,
-      "y": 0.485,
+      "x": 0.992,
+      "y": 0.069,
       "align": "right",
       "size": 43,
       "color": "#ffb86c",
@@ -12565,15 +12875,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.828,
+        "y": 0.485,
+        "size": 43
+      }
     },
     {
       "id": "scene-053-kefrens-bars-5",
-      "start": 247.614,
-      "end": 250.146,
+      "start": 246.272,
+      "end": 248.804,
       "text": "when",
-      "x": 0.824,
-      "y": 0.514,
+      "x": 0.99,
+      "y": 0.206,
       "align": "right",
       "size": 34,
       "color": "#ff7ad9",
@@ -12591,15 +12906,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.824,
+        "y": 0.514,
+        "size": 34
+      }
     },
     {
       "id": "scene-053-kefrens-bars-6",
-      "start": 247.778,
-      "end": 250.137,
+      "start": 246.436,
+      "end": 248.795,
       "text": "you",
-      "x": 0.82,
-      "y": 0.544,
+      "x": 0.999,
+      "y": 0.325,
       "align": "right",
       "size": 39,
       "color": "#a5b4fc",
@@ -12619,15 +12939,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.82,
+        "y": 0.544,
+        "size": 39
+      }
     },
     {
       "id": "scene-053-kefrens-bars-7",
-      "start": 247.934,
-      "end": 250.12,
+      "start": 246.592,
+      "end": 248.778,
       "text": "have",
-      "x": 0.817,
-      "y": 0.573,
+      "x": 0.304,
+      "y": 0.901,
       "align": "right",
       "size": 40,
       "color": "#9ef0ff",
@@ -12648,15 +12973,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.817,
+        "y": 0.573,
+        "size": 40
+      }
     },
     {
       "id": "scene-053-kefrens-bars-8",
-      "start": 248.061,
-      "end": 249.974,
+      "start": 246.719,
+      "end": 248.632,
       "text": "an",
-      "x": 0.813,
-      "y": 0.603,
+      "x": 0.475,
+      "y": 0.901,
       "align": "right",
       "size": 45,
       "color": "#f7e9a4",
@@ -12674,15 +13004,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.813,
+        "y": 0.603,
+        "size": 45
+      }
     },
     {
       "id": "scene-053-kefrens-bars-9",
-      "start": 248.205,
-      "end": 249.845,
+      "start": 246.863,
+      "end": 248.503,
       "text": "idea",
-      "x": 0.809,
-      "y": 0.632,
+      "x": 0.856,
+      "y": 0.877,
       "align": "right",
       "size": 44,
       "color": "#7ee787",
@@ -12700,15 +13035,20 @@
           "weight": "900",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.809,
+        "y": 0.632,
+        "size": 44
+      }
     },
     {
       "id": "scene-053-kefrens-bars-10",
-      "start": 248.505,
-      "end": 249.871,
+      "start": 247.163,
+      "end": 248.529,
       "text": "you",
-      "x": 0.805,
-      "y": 0.662,
+      "x": 0.312,
+      "y": 0.011,
       "align": "right",
       "size": 39,
       "color": "#ffb86c",
@@ -12728,15 +13068,20 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.805,
+        "y": 0.662,
+        "size": 39
+      }
     },
     {
       "id": "scene-053-kefrens-bars-11",
-      "start": 248.958,
-      "end": 250.051,
+      "start": 247.616,
+      "end": 248.709,
       "text": "can",
-      "x": 0.801,
-      "y": 0.691,
+      "x": 0.542,
+      "y": 0.017,
       "align": "right",
       "size": 42,
       "color": "#ff7ad9",
@@ -12757,18 +13102,23 @@
           "weight": "bold",
           "font": "Courier New"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.801,
+        "y": 0.691,
+        "size": 42
+      }
     },
     {
       "id": "scene-053-kefrens-bars-12",
-      "start": 249.128,
-      "end": 249.948,
+      "start": 247.786,
+      "end": 248.606,
       "text": "magically",
-      "x": 0.798,
-      "y": 0.721,
+      "x": 0.974,
+      "y": 0.477,
       "align": "right",
-      "size": 53,
-      "color": "#a5b4fc",
+      "size": 57,
+      "color": "#07209c",
       "units": "normalized",
       "effects": {
         "shadow": true,
@@ -12778,52 +13128,66 @@
       "spans": [
         {
           "text": "magically",
-          "color": "#a5b4fc",
+          "font": "Bruno Ace",
+          "color": "#07209c",
           "size": 57,
-          "weight": "900",
-          "font": "Courier New"
+          "weight": "900"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.798,
+        "y": 0.721,
+        "size": 53
+      },
+      "blend": "hard-light",
+      "outlineWidth": 2,
+      "outlineColor": "#daff24"
     },
     {
       "id": "scene-056-amiga-showcase-1",
-      "start": 249.56,
-      "end": 250.107,
+      "start": 248.218,
+      "end": 248.765,
       "text": "appear",
-      "x": 0.794,
-      "y": 0.75,
+      "x": 0.54,
+      "y": 0.697,
       "align": "right",
-      "size": 34,
+      "size": 45,
       "color": "#9ef0ff",
       "units": "normalized",
       "effects": {
         "shadow": true,
         "scanlineMask": 0.12,
-        "glitchIn": true
+        "glitchIn": false
       },
       "spans": [
         {
           "text": "appear",
+          "font": "Doto",
           "color": "#9ef0ff",
-          "size": 34,
-          "weight": "bold",
-          "font": "Courier New"
+          "size": 45,
+          "weight": "bold"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.794,
+        "y": 0.75,
+        "size": 34
+      },
+      "outlineWidth": 1
     },
     {
       "id": "scene-056-amiga-showcase-2",
-      "start": 249.864,
-      "end": 250.137,
+      "start": 248.522,
+      "end": 248.795,
       "text": "it?",
-      "x": 0.79,
-      "y": 0.78,
+      "x": 0.792,
+      "y": 0.715,
       "align": "right",
       "size": 39,
       "color": "#f7e9a4",
       "units": "normalized",
       "effects": {
-        "shadow": true,
+        "shadow": false,
         "scanlineMask": 0.16,
         "typewriter": {
           "speed": 40
@@ -12832,17 +13196,23 @@
       "spans": [
         {
           "text": "it?",
+          "font": "Doto",
           "color": "#f7e9a4",
           "size": 39,
-          "weight": "bold",
-          "font": "Courier New"
+          "weight": "bold"
         }
-      ]
+      ],
+      "mobile": {
+        "x": 0.79,
+        "y": 0.78,
+        "size": 39
+      },
+      "outlineWidth": 2
     },
     {
       "id": "scene-056-amiga-showcase-3",
-      "start": 250.12,
-      "end": 251.723,
+      "start": 248.778,
+      "end": 250.381,
       "text": "I",
       "x": 0.5,
       "y": 0.18,
@@ -12869,8 +13239,8 @@
     },
     {
       "id": "scene-056-amiga-showcase-4",
-      "start": 250.252,
-      "end": 251.646,
+      "start": 248.91,
+      "end": 250.304,
       "text": "hear",
       "x": 0.5,
       "y": 0.287,
@@ -12898,8 +13268,8 @@
     },
     {
       "id": "scene-056-amiga-showcase-5",
-      "start": 250.353,
-      "end": 251.538,
+      "start": 249.011,
+      "end": 250.196,
       "text": "’em",
       "x": 0.5,
       "y": 0.393,
@@ -12924,8 +13294,8 @@
     },
     {
       "id": "scene-056-amiga-showcase-6",
-      "start": 250.507,
-      "end": 251.482,
+      "start": 249.165,
+      "end": 250.14,
       "text": "ask",
       "x": 0.5,
       "y": 0.5,
@@ -12950,8 +13320,8 @@
     },
     {
       "id": "scene-056-amiga-showcase-7",
-      "start": 251.004,
-      "end": 251.77,
+      "start": 249.662,
+      "end": 250.428,
       "text": "“where’s",
       "x": 0.5,
       "y": 0.607,
@@ -12978,8 +13348,8 @@
     },
     {
       "id": "scene-056-amiga-showcase-8",
-      "start": 251.148,
-      "end": 251.659,
+      "start": 249.806,
+      "end": 250.317,
       "text": "the",
       "x": 0.5,
       "y": 0.713,
@@ -13007,8 +13377,8 @@
     },
     {
       "id": "scene-056-amiga-showcase-9",
-      "start": 251.287,
-      "end": 251.543,
+      "start": 249.945,
+      "end": 250.201,
       "text": "soul?”",
       "x": 0.5,
       "y": 0.82,
@@ -13033,8 +13403,8 @@
     },
     {
       "id": "scene-056-amiga-showcase-10",
-      "start": 251.448,
-      "end": 252.556,
+      "start": 250.106,
+      "end": 251.214,
       "text": "yeah,",
       "x": 0.13,
       "y": 0.14,
@@ -13062,8 +13432,8 @@
     },
     {
       "id": "scene-056-amiga-showcase-11",
-      "start": 251.858,
-      "end": 252.711,
+      "start": 250.516,
+      "end": 251.369,
       "text": "“where’s",
       "x": 0.157,
       "y": 0.36,
@@ -13088,8 +13458,8 @@
     },
     {
       "id": "scene-056-amiga-showcase-12",
-      "start": 252.206,
-      "end": 252.775,
+      "start": 250.864,
+      "end": 251.433,
       "text": "the",
       "x": 0.183,
       "y": 0.58,
@@ -13114,8 +13484,8 @@
     },
     {
       "id": "scene-056-amiga-showcase-13",
-      "start": 252.521,
-      "end": 252.805,
+      "start": 251.179,
+      "end": 251.463,
       "text": "feeling?”",
       "x": 0.21,
       "y": 0.8,
@@ -13142,8 +13512,8 @@
     },
     {
       "id": "scene-056-amiga-showcase-14",
-      "start": 252.818,
-      "end": 255.695,
+      "start": 251.476,
+      "end": 254.353,
       "text": "I",
       "x": 0.87,
       "y": 0.16,
@@ -13168,8 +13538,8 @@
     },
     {
       "id": "scene-056-amiga-showcase-15",
-      "start": 252.956,
-      "end": 255.665,
+      "start": 251.614,
+      "end": 254.323,
       "text": "know",
       "x": 0.863,
       "y": 0.212,
@@ -13194,8 +13564,8 @@
     },
     {
       "id": "scene-056-amiga-showcase-16",
-      "start": 253.137,
-      "end": 255.678,
+      "start": 251.795,
+      "end": 254.336,
       "text": "it's",
       "x": 0.857,
       "y": 0.263,
@@ -13222,8 +13592,8 @@
     },
     {
       "id": "scene-056-amiga-showcase-17",
-      "start": 253.297,
-      "end": 255.669,
+      "start": 251.955,
+      "end": 254.327,
       "text": "there",
       "x": 0.85,
       "y": 0.315,
@@ -13251,8 +13621,8 @@
     },
     {
       "id": "scene-056-amiga-showcase-18",
-      "start": 253.478,
-      "end": 255.682,
+      "start": 252.136,
+      "end": 254.34,
       "text": "—",
       "x": 0.843,
       "y": 0.367,
@@ -13277,8 +13647,8 @@
     },
     {
       "id": "scene-056-amiga-showcase-19",
-      "start": 253.681,
-      "end": 255.717,
+      "start": 252.339,
+      "end": 254.375,
       "text": "cos",
       "x": 0.837,
       "y": 0.418,
@@ -13303,8 +13673,8 @@
     },
     {
       "id": "scene-056-amiga-showcase-20",
-      "start": 253.823,
-      "end": 255.699,
+      "start": 252.481,
+      "end": 254.357,
       "text": "I’ve",
       "x": 0.83,
       "y": 0.47,
@@ -13331,8 +13701,8 @@
     },
     {
       "id": "scene-056-amiga-showcase-21",
-      "start": 253.978,
-      "end": 255.695,
+      "start": 252.636,
+      "end": 254.353,
       "text": "felt",
       "x": 0.823,
       "y": 0.522,
@@ -13360,8 +13730,8 @@
     },
     {
       "id": "scene-056-amiga-showcase-22",
-      "start": 254.099,
-      "end": 255.656,
+      "start": 252.757,
+      "end": 254.314,
       "text": "it",
       "x": 0.817,
       "y": 0.573,
@@ -13386,8 +13756,8 @@
     },
     {
       "id": "scene-060-flyover-1",
-      "start": 254.294,
-      "end": 255.691,
+      "start": 252.952,
+      "end": 254.349,
       "text": "true",
       "x": 0.81,
       "y": 0.625,
@@ -13412,8 +13782,8 @@
     },
     {
       "id": "scene-060-flyover-2",
-      "start": 254.617,
-      "end": 255.665,
+      "start": 253.275,
+      "end": 254.323,
       "text": "deep",
       "x": 0.803,
       "y": 0.677,
@@ -13440,8 +13810,8 @@
     },
     {
       "id": "scene-060-flyover-3",
-      "start": 254.859,
-      "end": 255.558,
+      "start": 253.517,
+      "end": 254.216,
       "text": "real",
       "x": 0.5,
       "y": 0.728,
@@ -13469,8 +13839,8 @@
     },
     {
       "id": "scene-060-flyover-4",
-      "start": 255.157,
-      "end": 255.506,
+      "start": 253.815,
+      "end": 254.164,
       "text": "meaning.",
       "x": 0.79,
       "y": 0.78,
@@ -13495,8 +13865,8 @@
     },
     {
       "id": "scene-060-flyover-5",
-      "start": 255.558,
-      "end": 255.797,
+      "start": 254.216,
+      "end": 254.455,
       "text": "A.I.",
       "x": 0.5,
       "y": 0.5,
@@ -13521,8 +13891,8 @@
     },
     {
       "id": "scene-060-flyover-6",
-      "start": 255.9,
-      "end": 261.584,
+      "start": 254.558,
+      "end": 260.242,
       "text": "art",
       "x": 0.5,
       "y": 0.14,
@@ -13549,8 +13919,8 @@
     },
     {
       "id": "scene-060-flyover-7",
-      "start": 256.183,
-      "end": 261.627,
+      "start": 254.841,
+      "end": 260.285,
       "text": "can",
       "x": 0.134,
       "y": 0.17,
@@ -13578,8 +13948,8 @@
     },
     {
       "id": "scene-060-flyover-8",
-      "start": 256.357,
-      "end": 261.562,
+      "start": 255.015,
+      "end": 260.22,
       "text": "have",
       "x": 0.137,
       "y": 0.2,
@@ -13604,8 +13974,8 @@
     },
     {
       "id": "scene-060-flyover-9",
-      "start": 256.541,
-      "end": 261.506,
+      "start": 255.199,
+      "end": 260.164,
       "text": "soul,",
       "x": 0.5,
       "y": 0.23,
@@ -13630,8 +14000,8 @@
     },
     {
       "id": "scene-060-flyover-10",
-      "start": 256.841,
-      "end": 261.567,
+      "start": 255.499,
+      "end": 260.225,
       "text": "it",
       "x": 0.145,
       "y": 0.26,
@@ -13658,8 +14028,8 @@
     },
     {
       "id": "scene-060-flyover-11",
-      "start": 257.062,
-      "end": 261.532,
+      "start": 255.72,
+      "end": 260.19,
       "text": "comes",
       "x": 0.148,
       "y": 0.29,
@@ -13687,8 +14057,8 @@
     },
     {
       "id": "scene-060-flyover-12",
-      "start": 257.291,
-      "end": 261.506,
+      "start": 255.949,
+      "end": 260.164,
       "text": "from",
       "x": 0.152,
       "y": 0.32,
@@ -13713,8 +14083,8 @@
     },
     {
       "id": "scene-060-flyover-13",
-      "start": 257.436,
-      "end": 261.395,
+      "start": 256.094,
+      "end": 260.053,
       "text": "the",
       "x": 0.155,
       "y": 0.35,
@@ -13739,8 +14109,8 @@
     },
     {
       "id": "scene-060-flyover-14",
-      "start": 257.55,
-      "end": 261.253,
+      "start": 256.208,
+      "end": 259.911,
       "text": "human",
       "x": 0.5,
       "y": 0.38,
@@ -13767,8 +14137,8 @@
     },
     {
       "id": "scene-060-flyover-15",
-      "start": 257.809,
-      "end": 261.257,
+      "start": 256.467,
+      "end": 259.915,
       "text": "steering,",
       "x": 0.163,
       "y": 0.41,
@@ -13796,8 +14166,8 @@
     },
     {
       "id": "scene-060-flyover-16",
-      "start": 258.349,
-      "end": 261.541,
+      "start": 257.007,
+      "end": 260.199,
       "text": "It",
       "x": 0.166,
       "y": 0.44,
@@ -13822,8 +14192,8 @@
     },
     {
       "id": "scene-060-flyover-17",
-      "start": 258.525,
-      "end": 261.494,
+      "start": 257.183,
+      "end": 260.152,
       "text": "was",
       "x": 0.17,
       "y": 0.47,
@@ -13848,8 +14218,8 @@
     },
     {
       "id": "scene-060-flyover-18",
-      "start": 258.674,
-      "end": 261.42,
+      "start": 257.332,
+      "end": 260.078,
       "text": "never",
       "x": 0.174,
       "y": 0.5,
@@ -13876,8 +14246,8 @@
     },
     {
       "id": "scene-064-textmode-charset-1",
-      "start": 258.94,
-      "end": 261.463,
+      "start": 257.598,
+      "end": 260.121,
       "text": "’bout",
       "x": 0.177,
       "y": 0.53,
@@ -13905,8 +14275,8 @@
     },
     {
       "id": "scene-064-textmode-charset-2",
-      "start": 259.195,
-      "end": 261.494,
+      "start": 257.853,
+      "end": 260.152,
       "text": "the",
       "x": 0.181,
       "y": 0.56,
@@ -13931,8 +14301,8 @@
     },
     {
       "id": "scene-064-textmode-charset-3",
-      "start": 259.344,
-      "end": 261.42,
+      "start": 258.002,
+      "end": 260.078,
       "text": "method,",
       "x": 0.185,
       "y": 0.59,
@@ -13957,8 +14327,8 @@
     },
     {
       "id": "scene-064-textmode-charset-4",
-      "start": 259.718,
-      "end": 261.571,
+      "start": 258.376,
+      "end": 260.229,
       "text": "nah,",
       "x": 0.188,
       "y": 0.62,
@@ -13985,8 +14355,8 @@
     },
     {
       "id": "scene-064-textmode-charset-5",
-      "start": 260.013,
-      "end": 261.601,
+      "start": 258.671,
+      "end": 260.259,
       "text": "it",
       "x": 0.192,
       "y": 0.65,
@@ -14014,8 +14384,8 @@
     },
     {
       "id": "scene-064-textmode-charset-6",
-      "start": 260.152,
-      "end": 261.476,
+      "start": 258.81,
+      "end": 260.134,
       "text": "'bout",
       "x": 0.195,
       "y": 0.68,
@@ -14040,8 +14410,8 @@
     },
     {
       "id": "scene-064-textmode-charset-7",
-      "start": 260.258,
-      "end": 261.317,
+      "start": 258.916,
+      "end": 259.975,
       "text": "what",
       "x": 0.199,
       "y": 0.71,
@@ -14066,8 +14436,8 @@
     },
     {
       "id": "scene-064-textmode-charset-8",
-      "start": 260.39,
-      "end": 261.184,
+      "start": 259.048,
+      "end": 259.842,
       "text": "truth",
       "x": 0.5,
       "y": 0.74,
@@ -14094,8 +14464,8 @@
     },
     {
       "id": "scene-064-textmode-charset-9",
-      "start": 260.724,
-      "end": 261.253,
+      "start": 259.382,
+      "end": 259.911,
       "text": "you’re",
       "x": 0.206,
       "y": 0.77,
@@ -14123,8 +14493,8 @@
     },
     {
       "id": "scene-064-textmode-charset-10",
-      "start": 260.954,
-      "end": 261.219,
+      "start": 259.612,
+      "end": 259.877,
       "text": "revealing.",
       "x": 0.21,
       "y": 0.8,
@@ -14149,8 +14519,8 @@
     },
     {
       "id": "scene-064-textmode-charset-11",
-      "start": 261.494,
-      "end": 266.92,
+      "start": 260.152,
+      "end": 265.578,
       "text": "It’s",
       "x": 0.87,
       "y": 0.16,
@@ -14178,8 +14548,8 @@
     },
     {
       "id": "scene-064-textmode-charset-12",
-      "start": 261.655,
-      "end": 266.911,
+      "start": 260.313,
+      "end": 265.569,
       "text": "mad",
       "x": 0.867,
       "y": 0.186,
@@ -14204,8 +14574,8 @@
     },
     {
       "id": "scene-064-textmode-charset-13",
-      "start": 261.829,
-      "end": 266.915,
+      "start": 260.487,
+      "end": 265.573,
       "text": "that",
       "x": 0.863,
       "y": 0.212,
@@ -14230,8 +14600,8 @@
     },
     {
       "id": "scene-064-textmode-charset-14",
-      "start": 262.008,
-      "end": 266.924,
+      "start": 260.666,
+      "end": 265.582,
       "text": "from",
       "x": 0.86,
       "y": 0.237,
@@ -14258,8 +14628,8 @@
     },
     {
       "id": "scene-064-textmode-charset-15",
-      "start": 262.174,
-      "end": 266.92,
+      "start": 260.832,
+      "end": 265.578,
       "text": "a",
       "x": 0.857,
       "y": 0.263,
@@ -14287,8 +14657,8 @@
     },
     {
       "id": "scene-064-textmode-charset-16",
-      "start": 262.417,
-      "end": 266.993,
+      "start": 261.075,
+      "end": 265.651,
       "text": "thought,",
       "x": 0.853,
       "y": 0.289,
@@ -14313,8 +14683,8 @@
     },
     {
       "id": "scene-064-textmode-charset-17",
-      "start": 262.698,
-      "end": 267.104,
+      "start": 261.356,
+      "end": 265.762,
       "text": "from",
       "x": 0.85,
       "y": 0.315,
@@ -14339,8 +14709,8 @@
     },
     {
       "id": "scene-064-textmode-charset-18",
-      "start": 263.133,
-      "end": 267.259,
+      "start": 261.791,
+      "end": 265.917,
       "text": "dreaming",
       "x": 0.847,
       "y": 0.341,
@@ -14367,8 +14737,8 @@
     },
     {
       "id": "scene-067-rain-1",
-      "start": 263.412,
-      "end": 267.259,
+      "start": 262.07,
+      "end": 265.917,
       "text": "of",
       "x": 0.843,
       "y": 0.367,
@@ -14396,8 +14766,8 @@
     },
     {
       "id": "scene-067-rain-2",
-      "start": 263.692,
-      "end": 267.259,
+      "start": 262.35,
+      "end": 265.917,
       "text": "random",
       "x": 0.84,
       "y": 0.392,
@@ -14422,8 +14792,8 @@
     },
     {
       "id": "scene-067-rain-3",
-      "start": 263.978,
-      "end": 267.199,
+      "start": 262.636,
+      "end": 265.857,
       "text": "shit,",
       "x": 0.837,
       "y": 0.418,
@@ -14448,8 +14818,8 @@
     },
     {
       "id": "scene-067-rain-4",
-      "start": 264.384,
-      "end": 267.259,
+      "start": 263.042,
+      "end": 265.917,
       "text": "We",
       "x": 0.833,
       "y": 0.444,
@@ -14476,8 +14846,8 @@
     },
     {
       "id": "scene-067-rain-5",
-      "start": 264.586,
-      "end": 267.259,
+      "start": 263.244,
+      "end": 265.917,
       "text": "can",
       "x": 0.83,
       "y": 0.47,
@@ -14505,8 +14875,8 @@
     },
     {
       "id": "scene-067-rain-6",
-      "start": 264.789,
-      "end": 267.259,
+      "start": 263.447,
+      "end": 265.917,
       "text": "build",
       "x": 0.827,
       "y": 0.496,
@@ -14531,8 +14901,8 @@
     },
     {
       "id": "scene-067-rain-7",
-      "start": 264.991,
-      "end": 267.259,
+      "start": 263.649,
+      "end": 265.917,
       "text": "whole",
       "x": 0.823,
       "y": 0.522,
@@ -14557,8 +14927,8 @@
     },
     {
       "id": "scene-067-rain-8",
-      "start": 265.194,
-      "end": 267.259,
+      "start": 263.852,
+      "end": 265.917,
       "text": "worlds,",
       "x": 0.5,
       "y": 0.547,
@@ -14585,8 +14955,8 @@
     },
     {
       "id": "scene-067-rain-9",
-      "start": 265.396,
-      "end": 267.259,
+      "start": 264.054,
+      "end": 265.917,
       "text": "all",
       "x": 0.817,
       "y": 0.573,
@@ -14614,8 +14984,8 @@
     },
     {
       "id": "scene-067-rain-10",
-      "start": 265.706,
-      "end": 267.259,
+      "start": 264.364,
+      "end": 265.917,
       "text": "we",
       "x": 0.813,
       "y": 0.599,
@@ -14640,8 +15010,8 @@
     },
     {
       "id": "scene-067-rain-11",
-      "start": 266.017,
-      "end": 267.259,
+      "start": 264.675,
+      "end": 265.917,
       "text": "have",
       "x": 0.81,
       "y": 0.625,
@@ -14666,8 +15036,8 @@
     },
     {
       "id": "scene-067-rain-12",
-      "start": 266.228,
-      "end": 267.16,
+      "start": 264.886,
+      "end": 265.818,
       "text": "to",
       "x": 0.807,
       "y": 0.651,
@@ -14694,8 +15064,8 @@
     },
     {
       "id": "scene-067-rain-13",
-      "start": 266.522,
-      "end": 267.143,
+      "start": 265.18,
+      "end": 265.801,
       "text": "do",
       "x": 0.803,
       "y": 0.677,
@@ -14723,8 +15093,8 @@
     },
     {
       "id": "scene-067-rain-14",
-      "start": 266.755,
-      "end": 267.066,
+      "start": 265.413,
+      "end": 265.724,
       "text": "is",
       "x": 0.8,
       "y": 0.702,
@@ -14749,8 +15119,8 @@
     },
     {
       "id": "scene-067-rain-15",
-      "start": 266.911,
-      "end": 267.221,
+      "start": 265.569,
+      "end": 265.879,
       "text": "ask",
       "x": 0.5,
       "y": 0.728,
@@ -14775,8 +15145,8 @@
     },
     {
       "id": "scene-067-rain-16",
-      "start": 267.04,
-      "end": 267.351,
+      "start": 265.698,
+      "end": 266.009,
       "text": "for",
       "x": 0.793,
       "y": 0.754,
@@ -14803,8 +15173,8 @@
     },
     {
       "id": "scene-067-rain-17",
-      "start": 267.18,
-      "end": 267.49,
+      "start": 265.838,
+      "end": 266.148,
       "text": "it",
       "x": 0.79,
       "y": 0.78,
