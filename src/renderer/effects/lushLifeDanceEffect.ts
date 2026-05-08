@@ -222,6 +222,8 @@ export class LushLifeDanceEffect implements Effect {
       rk: project(pose.rightKneeX, pose.rightKneeY),
       rf: project(pose.rightFootX, pose.rightFootY)
     };
+    joints.rh = [lerp(joints.rh[0], joints.hip[0] + dancerScale * 0.14, 0.62), lerp(joints.rh[1], joints.hip[1] + dancerScale * 0.02, 0.62)];
+    joints.re = [lerp(joints.re[0], joints.hip[0] + dancerScale * 0.18, 0.4), lerp(joints.re[1], joints.hip[1] - dancerScale * 0.16, 0.4)];
     const headRadius = Math.max(9, dancerScale * 0.05);
     const anchors = buildLushLifeOutfitAnchors({ chest: joints.chest, hip: joints.hip }, dancerScale);
 
@@ -280,38 +282,38 @@ export class LushLifeDanceEffect implements Effect {
     };
     const drawHair = (): void => {
       const sway = Math.sin(beats * 0.7) * headRadius * 0.1 + drive * headRadius * 0.06;
-      const hairW = headRadius * 1.7;
-      const hairDrop = headRadius * 1.15;
+      const hairW = headRadius * 1.95;
+      const hairDrop = headRadius * 1.35;
       ctx.save();
       ctx.globalAlpha = 0.88;
       ctx.shadowColor = `hsla(${cfg.hairHue.toFixed(1)} 95% 65% / 0.42)`;
       ctx.shadowBlur = 9 + 5 * cfg.fashionDetail;
       ctx.fillStyle = `hsl(${cfg.hairHue.toFixed(1)} 95% 61%)`;
       ctx.beginPath();
-      ctx.moveTo(joints.head[0] - hairW * 0.62, joints.head[1] - headRadius * 0.34);
+      ctx.moveTo(joints.head[0] - hairW * 0.55, joints.head[1] - headRadius * 0.52);
       ctx.bezierCurveTo(
-        joints.head[0] - hairW * 0.95,
-        joints.head[1] + headRadius * 0.06,
-        joints.head[0] - hairW * 0.68,
-        joints.head[1] + hairDrop * 0.82,
-        joints.head[0] - hairW * 0.05,
-        joints.head[1] + hairDrop * 0.92
+        joints.head[0] - hairW * 1.0,
+        joints.head[1] - headRadius * 0.12,
+        joints.head[0] - hairW * 0.88,
+        joints.head[1] + hairDrop * 0.74,
+        joints.head[0] - hairW * 0.22,
+        joints.head[1] + hairDrop * 0.95
       );
       ctx.bezierCurveTo(
-        joints.head[0] + hairW * 0.44 + sway * 0.4,
-        joints.head[1] + hairDrop * 0.98,
-        joints.head[0] + hairW * 0.92 + sway,
-        joints.head[1] + hairDrop * 0.52,
-        joints.head[0] + hairW * 0.68 + sway,
-        joints.head[1] + headRadius * 0.06
+        joints.head[0] + hairW * 0.44 + sway * 0.3,
+        joints.head[1] + hairDrop * 1.02,
+        joints.head[0] + hairW * 0.96 + sway,
+        joints.head[1] + hairDrop * 0.46,
+        joints.head[0] + hairW * 0.72 + sway,
+        joints.head[1] - headRadius * 0.1
       );
       ctx.bezierCurveTo(
-        joints.head[0] + hairW * 0.4,
-        joints.head[1] - headRadius * 0.54,
-        joints.head[0] - hairW * 0.18,
-        joints.head[1] - headRadius * 0.62,
-        joints.head[0] - hairW * 0.62,
-        joints.head[1] - headRadius * 0.34
+        joints.head[0] + hairW * 0.35,
+        joints.head[1] - headRadius * 0.72,
+        joints.head[0] - hairW * 0.24,
+        joints.head[1] - headRadius * 0.78,
+        joints.head[0] - hairW * 0.55,
+        joints.head[1] - headRadius * 0.52
       );
       ctx.closePath();
       ctx.fill();
@@ -422,6 +424,38 @@ export class LushLifeDanceEffect implements Effect {
       ctx.restore();
     };
 
+    const drawMicrophone = (): void => {
+      ctx.save();
+      const hand = joints.lh;
+      const elbow = joints.le;
+      const dx = hand[0] - elbow[0];
+      const dy = hand[1] - elbow[1];
+      const len = Math.hypot(dx, dy) || 1;
+      const ux = dx / len;
+      const uy = dy / len;
+      const px = -uy;
+      const py = ux;
+      const headX = hand[0] + ux * dancerScale * 0.028;
+      const headY = hand[1] + uy * dancerScale * 0.028;
+      ctx.strokeStyle = `hsl(${cfg.metalHue.toFixed(1)} 85% 78%)`;
+      ctx.lineWidth = Math.max(2.2, dancerScale * 0.013);
+      ctx.beginPath();
+      ctx.moveTo(hand[0] - ux * dancerScale * 0.028, hand[1] - uy * dancerScale * 0.028);
+      ctx.lineTo(hand[0] - ux * dancerScale * 0.11, hand[1] - uy * dancerScale * 0.11);
+      ctx.stroke();
+      ctx.fillStyle = `hsl(${cfg.outfitHue.toFixed(1)} 90% 62%)`;
+      ctx.beginPath();
+      ctx.ellipse(headX, headY, dancerScale * 0.018, dancerScale * 0.014, Math.atan2(uy, ux), 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = `hsla(${cfg.accentHue.toFixed(1)} 100% 70% / 0.4)`;
+      ctx.lineWidth = Math.max(1, dancerScale * 0.005);
+      ctx.beginPath();
+      ctx.moveTo(headX - px * dancerScale * 0.012, headY - py * dancerScale * 0.012);
+      ctx.lineTo(headX + px * dancerScale * 0.012, headY + py * dancerScale * 0.012);
+      ctx.stroke();
+      ctx.restore();
+    };
+
     const drawSparkles = (): void => {
       ctx.save();
       ctx.lineCap = "round";
@@ -482,6 +516,7 @@ export class LushLifeDanceEffect implements Effect {
 
     drawPalmAndFingers(joints.lh, joints.le, -1);
     drawPalmAndFingers(joints.rh, joints.re, 1);
+    drawMicrophone();
     ctx.restore();
 
     drawOutfit();
