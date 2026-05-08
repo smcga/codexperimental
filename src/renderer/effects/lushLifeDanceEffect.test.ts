@@ -4,6 +4,7 @@ import {
   buildLushLifeOutfitAnchors,
   buildHandFingerSegments,
   LUSH_LIFE_DANCE_DEFAULTS,
+  resolveLushLifeHairProfile,
   resolveLushLifeDanceParams,
   resolveLushLifePoseProgress,
   sampleLushLifePose
@@ -59,6 +60,13 @@ describe("lushLifeDanceEffect helpers", () => {
     const hipSpan = anchors.rightHip[0] - anchors.leftHip[0];
     expect(waistSpan).toBeLessThan(shoulderSpan);
     expect(waistSpan).toBeLessThan(hipSpan);
+  });
+
+  it("builds a fuller hair profile as fashion detail increases", () => {
+    const low = resolveLushLifeHairProfile(0);
+    const high = resolveLushLifeHairProfile(1);
+    expect(high.widthMul).toBeGreaterThan(low.widthMul);
+    expect(high.dropMul).toBeGreaterThan(low.dropMul);
   });
 
   it("keeps defaults stable for docs", () => {
