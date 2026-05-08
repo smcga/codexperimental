@@ -53,6 +53,7 @@ export const effectChronologyEntries: EffectChronologyEntry[] = [
   { key: "lens_wobbler", yearFit: 1994, confidence: "low", lineage: '' },
   { key: "lightning", yearFit: 1993, confidence: "low", lineage: '' },
   { key: "lissajous", yearFit: 1985, confidence: "medium", lineage: '' },
+  { key: "lush_life_dance", yearFit: 2016, confidence: "low", lineage: 'concert pop choreography visualizers' },
   { key: "marble", yearFit: 1992, confidence: "low", lineage: '' },
   { key: "matrix_rain", yearFit: 1999, confidence: "medium", lineage: '' },
   { key: "metaballs", yearFit: 1990, confidence: "high", lineage: '' },
