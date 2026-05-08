@@ -99,6 +99,7 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 | `voxel_world_builder` | 2014 | medium | instanced voxel builder |
 | `god_rays` | 2015 | medium |  |
 | `skyboxTransition` | 2015 | low |  |
+| `lush_life_dance` | 2016 | low | concert pop choreography visualizers |
 | `prism_bloom` | 2018 | low | painterly bloom composition |
 | `velvet_dreamscape` | 2018 | low | painterly bloom composition |
 | `effect_evolution` | 2020 | low | meta era-recap composition |

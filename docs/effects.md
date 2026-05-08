@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **98**.
+Total effects: **99**.
 
 ## Table of contents
 
@@ -49,6 +49,7 @@ Total effects: **98**.
 - [Effect: lens_wobbler](#effect-lens-wobbler)
 - [Effect: lightning](#effect-lightning)
 - [Effect: lissajous](#effect-lissajous)
+- [Effect: lush_life_dance](#effect-lush-life-dance)
 - [Effect: marble](#effect-marble)
 - [Effect: matrix_rain](#effect-matrix-rain)
 - [Effect: metaballs](#effect-metaballs)
@@ -126,10 +127,10 @@ Total effects: **98**.
 - `speed` (used in 48 effects)
 - `seed` (used in 46 effects)
 - `audioReact` (used in 34 effects)
-- `glow` (used in 19 effects)
+- `glow` (used in 20 effects)
 - `beatKick` (used in 14 effects)
-- `audioReactive` (used in 13 effects)
-- `trail` (used in 10 effects)
+- `audioReactive` (used in 14 effects)
+- `trail` (used in 11 effects)
 - `scale` (used in 10 effects)
 - `palette` (used in 10 effects)
 - `hueShift` (used in 9 effects)
@@ -239,6 +240,7 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 | `voxel_world_builder` | 2014 | medium | instanced voxel builder |
 | `god_rays` | 2015 | medium |  |
 | `skyboxTransition` | 2015 | low |  |
+| `lush_life_dance` | 2016 | low | concert pop choreography visualizers |
 | `prism_bloom` | 2018 | low | painterly bloom composition |
 | `velvet_dreamscape` | 2018 | low | painterly bloom composition |
 | `effect_evolution` | 2020 | low | meta era-recap composition |
@@ -1747,6 +1749,45 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 ```json
 {
   "effect": "lissajous",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: lush_life_dance
+
+- **Registry key:** `lush_life_dance`
+- **Implementation:** `src/renderer/effects/lushLifeDanceEffect.ts` (class `LushLifeDanceEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Concert-pop silhouette dance loop with stylized hair, outfit, sparkle, and stage lights.
+- **Audio features:** bass, beat, beatStrength, rms
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.accentHue` | number | 186 | min 0, max 360 | Accent Hue | yes |
+| `params.amplitude` | number | 1 | min 0.4, max 1.8 | Amplitude | yes |
+| `params.audioReactive` | number | 0.6 | min 0, max 1 | Audio Reactive | yes |
+| `params.bounce` | number | 0.7 | min 0, max 1.2 | Bounce | yes |
+| `params.bpm` | number | 120 | min 60, max 180 | BPM | yes |
+| `params.fashionDetail` | number | 0.75 | min 0, max 1 | Fashion Detail | yes |
+| `params.glow` | number | 0.55 | min 0, max 1 | Glow | yes |
+| `params.hairHue` | number | 48 | min 0, max 360 | Hair Hue | yes |
+| `params.metalHue` | number | 200 | min 0, max 360 | Metal Hue | yes |
+| `params.outfitHue` | number | 316 | min 0, max 360 | Outfit Hue | yes |
+| `params.silhouetteScale` | number | 1 | min 0.5, max 1.5 | Silhouette Scale | yes |
+| `params.sparkle` | number | 0.65 | min 0, max 1 | Sparkle | yes |
+| `params.stageHue` | number | 316 | min 0, max 360 | Stage Hue | yes |
+| `params.trail` | number | 0.28 | min 0, max 0.9 | Trail | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "lush_life_dance",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
