@@ -183,8 +183,8 @@ export const buildLushLifeOutfitAnchors = (joints: { chest: Point2D; hip: Point2
 };
 
 export const resolveLushLifeHairProfile = (fashionDetail: number): HairProfile => ({
-  widthMul: lerp(1.78, 1.96, clamp(fashionDetail, 0, 1)),
-  dropMul: lerp(1.26, 1.42, clamp(fashionDetail, 0, 1)),
+  widthMul: lerp(1.92, 2.12, clamp(fashionDetail, 0, 1)),
+  dropMul: lerp(1.3, 1.48, clamp(fashionDetail, 0, 1)),
   waveMul: lerp(0.92, 1.08, clamp(fashionDetail, 0, 1))
 });
 
@@ -299,44 +299,44 @@ export class LushLifeDanceEffect implements Effect {
       ctx.shadowBlur = 9 + 5 * cfg.fashionDetail;
       ctx.fillStyle = `hsl(${cfg.hairHue.toFixed(1)} 95% 61%)`;
       ctx.beginPath();
-      ctx.moveTo(joints.head[0] - hairW * 0.52, joints.head[1] - headRadius * 0.5);
+      ctx.moveTo(joints.head[0] - hairW * 0.56, joints.head[1] - headRadius * 0.56);
       ctx.bezierCurveTo(
-        joints.head[0] - hairW * 0.98,
-        joints.head[1] - headRadius * 0.2,
-        joints.head[0] - hairW * 0.86,
-        joints.head[1] + hairDrop * 0.78,
-        joints.head[0] - hairW * 0.24,
-        joints.head[1] + hairDrop * 0.96
+        joints.head[0] - hairW * 1.02,
+        joints.head[1] - headRadius * 0.1,
+        joints.head[0] - hairW * 0.92,
+        joints.head[1] + hairDrop * 0.82,
+        joints.head[0] - hairW * 0.32,
+        joints.head[1] + hairDrop * 0.98
       );
       ctx.bezierCurveTo(
-        joints.head[0] + hairW * 0.44 + sway * 0.28,
-        joints.head[1] + hairDrop * 1.03,
+        joints.head[0] + hairW * 0.38 + sway * 0.24,
+        joints.head[1] + hairDrop * 1.02,
         joints.head[0] + hairW * 0.97 + sway * wave,
-        joints.head[1] + hairDrop * 0.52,
-        joints.head[0] + hairW * 0.74 + sway * 0.5,
-        joints.head[1] - headRadius * 0.02
+        joints.head[1] + hairDrop * 0.48,
+        joints.head[0] + hairW * 0.72 + sway * 0.4,
+        joints.head[1] - headRadius * 0.12
       );
       ctx.bezierCurveTo(
-        joints.head[0] + hairW * 0.34,
+        joints.head[0] + hairW * 0.3,
         joints.head[1] - headRadius * 0.84,
-        joints.head[0] - hairW * 0.34,
+        joints.head[0] - hairW * 0.42,
         joints.head[1] - headRadius * 0.9,
-        joints.head[0] - hairW * 0.52,
-        joints.head[1] - headRadius * 0.5
+        joints.head[0] - hairW * 0.56,
+        joints.head[1] - headRadius * 0.56
       );
       ctx.closePath();
       ctx.fill();
 
       ctx.beginPath();
-      ctx.moveTo(joints.head[0] - hairW * 0.48, joints.head[1] + hairDrop * 0.74);
-      ctx.quadraticCurveTo(joints.head[0] - hairW * 0.78, joints.head[1] + hairDrop * 1.06, joints.head[0] - hairW * 0.56, joints.head[1] + hairDrop * 0.96);
-      ctx.quadraticCurveTo(joints.head[0] - hairW * 0.34, joints.head[1] + hairDrop * 0.86, joints.head[0] - hairW * 0.48, joints.head[1] + hairDrop * 0.74);
+      ctx.moveTo(joints.head[0] - hairW * 0.43, joints.head[1] + hairDrop * 0.52);
+      ctx.quadraticCurveTo(joints.head[0] - hairW * 0.63, joints.head[1] + hairDrop * 0.73, joints.head[0] - hairW * 0.35, joints.head[1] + hairDrop * 0.66);
+      ctx.quadraticCurveTo(joints.head[0] - hairW * 0.17, joints.head[1] + hairDrop * 0.58, joints.head[0] - hairW * 0.43, joints.head[1] + hairDrop * 0.52);
       ctx.fill();
 
       ctx.beginPath();
-      ctx.moveTo(joints.head[0] + hairW * 0.5, joints.head[1] + hairDrop * 0.74);
-      ctx.quadraticCurveTo(joints.head[0] + hairW * 0.82 + sway * 0.28, joints.head[1] + hairDrop * 1.06, joints.head[0] + hairW * 0.58, joints.head[1] + hairDrop * 0.98);
-      ctx.quadraticCurveTo(joints.head[0] + hairW * 0.36, joints.head[1] + hairDrop * 0.88, joints.head[0] + hairW * 0.5, joints.head[1] + hairDrop * 0.74);
+      ctx.moveTo(joints.head[0] + hairW * 0.46, joints.head[1] + hairDrop * 0.52);
+      ctx.quadraticCurveTo(joints.head[0] + hairW * 0.74 + sway * 0.24, joints.head[1] + hairDrop * 0.74, joints.head[0] + hairW * 0.4, joints.head[1] + hairDrop * 0.66);
+      ctx.quadraticCurveTo(joints.head[0] + hairW * 0.2, joints.head[1] + hairDrop * 0.58, joints.head[0] + hairW * 0.46, joints.head[1] + hairDrop * 0.52);
       ctx.fill();
 
       ctx.fillStyle = `hsla(${(cfg.hairHue + 12).toFixed(1)} 100% 75% / 0.42)`;

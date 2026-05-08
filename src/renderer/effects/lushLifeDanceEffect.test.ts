@@ -65,6 +65,7 @@ describe("lushLifeDanceEffect helpers", () => {
   it("builds a fuller hair profile as fashion detail increases", () => {
     const low = resolveLushLifeHairProfile(0);
     const high = resolveLushLifeHairProfile(1);
+    expect(low.widthMul).toBeGreaterThan(1.8);
     expect(high.widthMul).toBeGreaterThan(low.widthMul);
     expect(high.dropMul).toBeGreaterThan(low.dropMul);
   });
