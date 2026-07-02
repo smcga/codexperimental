@@ -48,6 +48,7 @@ import { moire_gridManifest } from "./moire_grid.manifest";
 import { moving_shadow_mapManifest } from "./moving_shadow_map.manifest";
 import { neonManifest } from "./neon.manifest";
 import { neon_alleyManifest } from "./neon_alley.manifest";
+import { neural_constellationManifest } from "./neural_constellation.manifest";
 import { particlesManifest } from "./particles.manifest";
 import { particleAttractorsManifest } from "./particleAttractors.manifest";
 import { physics_pileManifest } from "./physics_pile.manifest";
@@ -148,6 +149,7 @@ export const generatedEffectManifests = [
   moving_shadow_mapManifest,
   neonManifest,
   neon_alleyManifest,
+  neural_constellationManifest,
   particlesManifest,
   particleAttractorsManifest,
   physics_pileManifest,

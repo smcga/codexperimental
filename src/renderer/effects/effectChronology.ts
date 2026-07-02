@@ -60,6 +60,7 @@ export const effectChronologyEntries: EffectChronologyEntry[] = [
   { key: "moving_shadow_map", yearFit: 2008, confidence: "low", lineage: '' },
   { key: "neon", yearFit: 1990, confidence: "low", lineage: '' },
   { key: "neon_alley", yearFit: 2012, confidence: "low", lineage: 'raymarched neon city shader' },
+  { key: "neural_constellation", yearFit: 2016, confidence: "medium", lineage: 'neural network visualization' },
   { key: "particleAttractors", yearFit: 1992, confidence: "low", lineage: '' },
   { key: "particles", yearFit: 1991, confidence: "medium", lineage: '' },
   { key: "physics_pile", yearFit: 2004, confidence: "medium", lineage: 'rigid-body simulation part' },

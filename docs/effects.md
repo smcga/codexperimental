@@ -2,7 +2,7 @@
 
 Generated from `src/renderer/effects/manifest/index.ts`.
 
-Total effects: **98**.
+Total effects: **99**.
 
 ## Table of contents
 
@@ -56,6 +56,7 @@ Total effects: **98**.
 - [Effect: moving_shadow_map](#effect-moving-shadow-map)
 - [Effect: neon](#effect-neon)
 - [Effect: neon_alley](#effect-neon-alley)
+- [Effect: neural_constellation](#effect-neural-constellation)
 - [Effect: particleAttractors](#effect-particleAttractors)
 - [Effect: particles](#effect-particles)
 - [Effect: physics_pile](#effect-physics-pile)
@@ -124,9 +125,9 @@ Total effects: **98**.
 ### Common parameter patterns
 
 - `speed` (used in 48 effects)
-- `seed` (used in 46 effects)
-- `audioReact` (used in 34 effects)
-- `glow` (used in 19 effects)
+- `seed` (used in 47 effects)
+- `audioReact` (used in 35 effects)
+- `glow` (used in 20 effects)
 - `beatKick` (used in 14 effects)
 - `audioReactive` (used in 13 effects)
 - `trail` (used in 10 effects)
@@ -239,6 +240,7 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 | `voxel_world_builder` | 2014 | medium | instanced voxel builder |
 | `god_rays` | 2015 | medium |  |
 | `skyboxTransition` | 2015 | low |  |
+| `neural_constellation` | 2016 | medium | neural network visualization |
 | `prism_bloom` | 2018 | low | painterly bloom composition |
 | `velvet_dreamscape` | 2018 | low | painterly bloom composition |
 | `effect_evolution` | 2020 | low | meta era-recap composition |
@@ -1993,6 +1995,39 @@ Years are approximate "first-fit" dates in demoscene practice and not strict cla
 ```json
 {
   "effect": "neon_alley",
+  "opacity": 1,
+  "blend": "source-over",
+  "params": {}
+}
+```
+
+## Effect: neural_constellation
+
+- **Registry key:** `neural_constellation`
+- **Implementation:** `src/renderer/effects/neuralConstellation.ts` (class `NeuralConstellationEffect`)
+- **Renderer:** Canvas2D
+- **Description:** Glowing deep-network constellation with inference pulse waves sweeping input to output; audio energy boosts glow and pulse intensity.
+- **Audio features:** bass, beatStrength, rms, treble
+- **Performance notes:** None noted.
+
+### Parameters
+
+| JSON path | Type | Default | Range/constraints | Behaviour notes | Automatable |
+| --- | --- | --- | --- | --- | --- |
+| `params.audioReact` | number | 1 | min 0, max 2 | Audio React | yes |
+| `params.drift` | number | 0.6 | min 0, max 2 | Node Drift | yes |
+| `params.glow` | number | 1 | min 0, max 2 | Glow | yes |
+| `params.hue` | number | 205 | min 0, max 360 | Base Hue | yes |
+| `params.layers` | number | 5 | min 3, max 8 | Layers | yes |
+| `params.neurons` | number | 8 | min 3, max 16 | Neurons Per Layer | yes |
+| `params.pulseSpeed` | number | 1.2 | min 0.1, max 4 | Pulse Speed | yes |
+| `params.seed` | number | 7 | min 1, max 9999 | Seed | yes |
+
+### Minimal layer usage
+
+```json
+{
+  "effect": "neural_constellation",
   "opacity": 1,
   "blend": "source-over",
   "params": {}
