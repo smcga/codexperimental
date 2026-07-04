@@ -20,6 +20,21 @@ describe("effect preview audio loop", () => {
     expect(controller.getPlaybackTime()).toBe(0);
   });
 
+
+  it("keeps advancing preview timeline when audio initialization fails", async () => {
+    const controller = new EffectPreviewAudioController(EFFECT_PREVIEW_AUDIO_SRC);
+
+    await expect(controller.start()).resolves.toBeUndefined();
+
+    const nowSpy = vi.spyOn(performance, "now");
+    nowSpy.mockReturnValueOnce(2000);
+    // @ts-expect-error private field access for deterministic timeline clock test
+    controller.timelineLastTickMs = 1500;
+
+    expect(controller.getPlaybackTime()).toBeCloseTo(0.5, 4);
+    nowSpy.mockRestore();
+  });
+
   it("advances synthetic timeline time while running", () => {
     const controller = new EffectPreviewAudioController(EFFECT_PREVIEW_AUDIO_SRC);
     const nowSpy = vi.spyOn(performance, "now");

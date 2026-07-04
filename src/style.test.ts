@@ -8,6 +8,7 @@ describe("effect idea modal styling", () => {
     expect(css).toContain("#effect-idea-modal .doodle-panel");
     expect(css).toContain("max-height: min(92vh, 56rem);");
     expect(css).toContain("overflow-y: auto;");
+    expect(css).toContain("scrollbar-gutter: stable;");
     expect(css).toContain("overscroll-behavior: contain;");
   });
 
