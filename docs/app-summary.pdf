@@ -1,0 +1,126 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Count 1 /Kids [3 0 R] >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+6 0 obj
+<< /Length 3026 >>
+stream
+BT
+1 0 0 1 54 756 Tm
+/F2 18 Tf
+(Demoscene AI 2022 Demo - One-Page Summary) Tj
+0 -15 Td
+/F1 10 Tf
+(Generated from repository evidence on 2026-04-08.) Tj
+0 -15 Td
+0 -15 Td
+/F2 12 Tf
+(What it is) Tj
+0 -15 Td
+/F1 10 Tf
+(A single-page, music-synced demoscene web app built with Vite + TypeScript, Canvas 2D, and Web Audio API.) Tj
+0 -15 Td
+/F1 10 Tf
+(It plays a curated timeline of visual effects, transitions, and text cues over a soundtrack.) Tj
+0 -15 Td
+0 -15 Td
+/F2 12 Tf
+(Who it is for) Tj
+0 -15 Td
+/F1 10 Tf
+(Primary persona: a demo creator/editor who wants to author or tweak audio-timed effect sections for a browser-based show.) Tj
+0 -15 Td
+0 -15 Td
+/F2 12 Tf
+(What it does) Tj
+0 -15 Td
+/F1 10 Tf
+(- Runs a full-screen intro + section timeline with per-section effects, transitions, layering, and text cues.) Tj
+0 -15 Td
+/F1 10 Tf
+(- Synchronizes visuals to audio features \(RMS/bass/mid/treble/beat\) and supports manual beat injection via canvas taps.) Tj
+0 -15 Td
+/F1 10 Tf
+(- Supports many built-in effects plus WebGL2 effects with automatic Canvas2D fallback when WebGL2 is unavailable.) Tj
+0 -15 Td
+/F1 10 Tf
+(- Provides debug/editor controls, quality presets, framing modes, and URL-based rendering/performance tuning.) Tj
+0 -15 Td
+/F1 10 Tf
+(- Tracks live view counts using /api/views with GET/POST handling and KV-backed persistence when configured.) Tj
+0 -15 Td
+/F1 10 Tf
+(- Includes community workflows for submitting doodles and AI-generated effect ideas with moderation/review endpoints.) Tj
+0 -15 Td
+0 -15 Td
+/F2 12 Tf
+(How it works \(repo-evidenced architecture\)) Tj
+0 -15 Td
+/F1 10 Tf
+(- Frontend app: src/main.ts wires canvas/UI, loads timeline config, initializes AudioPlayer, Timeline, and Renderer.) Tj
+0 -15 Td
+/F1 10 Tf
+(- Config layer: src/config/loadConfig.ts validates/normalizes raw JSON \(audio, intro, sections, layers, transitions, cues\).) Tj
+0 -15 Td
+/F1 10 Tf
+(- Playback core: src/timeline/timeline.ts computes intro/section mode, active transition windows, and active text cues by time.) Tj
+0 -15 Td
+/F1 10 Tf
+(- Audio analysis: src/audio/audioPlayer.ts uses Web Audio analyser data to emit beat + band energy features each frame.) Tj
+0 -15 Td
+/F1 10 Tf
+(- Rendering: src/renderer/renderer.ts and effect registry modules render the selected effect stack and transition blending.) Tj
+0 -15 Td
+/F1 10 Tf
+(- Service endpoints: api/views.ts, api/doodles.ts, api/effects.ts expose JSON APIs; they use createKvClients\(\) for persistence.) Tj
+0 -15 Td
+/F1 10 Tf
+(- Data flow: timeline.release.json + song.mp3 -> load/normalize -> frame loop reads audio+time -> timeline state -> renderer output.) Tj
+0 -15 Td
+0 -15 Td
+/F2 12 Tf
+(How to run \(minimal\)) Tj
+0 -15 Td
+/F1 10 Tf
+(1\) Install Node.js 18+.) Tj
+0 -15 Td
+/F1 10 Tf
+(2\) Run: npm install) Tj
+0 -15 Td
+/F1 10 Tf
+(3\) Run: npm run dev) Tj
+0 -15 Td
+/F1 10 Tf
+(4\) Open the local Vite URL and press Start.) Tj
+0 -15 Td
+/F1 10 Tf
+(5\) Optional: replace public/song.mp3 and edit public/timeline.release.json for custom timing/effects.) Tj
+ET
+endstream
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000000321 00000 n 
+0000000396 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+3474
+%%EOF
