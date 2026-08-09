@@ -1,6 +1,8 @@
 import { createKvClients } from "./kv.js";
+import { createDbClient, getDbDiagnostics } from "./db.js";
 
 const { readClient, writeClient } = createKvClients();
+const dbClient = createDbClient();
 
 const EFFECTS_KEY = "effects:items";
 const PENDING_EFFECTS_KEY = "effects:pending";
@@ -161,17 +163,44 @@ type GenerateFailureLog = {
   userErrorMessage: string;
 };
 
+function getDatastoreMeta(): { label: string; note?: string } {
+  const diagnostics = getDbDiagnostics();
+  if (dbClient && (readClient || writeClient)) {
+    return { label: "postgres+upstash-kv" };
+  }
+  if (dbClient) {
+    return { label: "postgres" };
+  }
+  if (diagnostics.configured && (readClient || writeClient)) {
+    return { label: "upstash-kv-fallback", note: diagnostics.initError ?? "db_client_unavailable" };
+  }
+  if (readClient || writeClient) {
+    return { label: "upstash-kv" };
+  }
+  return { label: "none", ...(diagnostics.configured ? { note: diagnostics.initError ?? "db_client_unavailable" } : {}) };
+}
+
 function sendJson(res: ResponseLike, status: number, body: JsonResponse): void {
+  const datastore = getDatastoreMeta();
   res.statusCode = status;
   res.setHeader("Content-Type", "application/json");
   res.setHeader("Cache-Control", "no-store");
+  res.setHeader("X-Data-Store", datastore.label);
+  if (datastore.note) {
+    res.setHeader("X-Data-Store-Note", datastore.note);
+  }
   res.end(JSON.stringify(body));
 }
 
 function sendHtml(res: ResponseLike, status: number, title: string, message: string): void {
+  const datastore = getDatastoreMeta();
   res.statusCode = status;
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.setHeader("Cache-Control", "no-store");
+  res.setHeader("X-Data-Store", datastore.label);
+  if (datastore.note) {
+    res.setHeader("X-Data-Store-Note", datastore.note);
+  }
   res.end(`<!doctype html><html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>${title}</title><style>body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#05070f;color:#e8f7ff;display:grid;place-items:center;min-height:100vh;padding:24px}.card{max-width:520px;padding:24px;border:1px solid rgba(142,249,255,.25);background:rgba(2,6,10,.95);box-shadow:0 0 32px rgba(0,0,0,.45)}h1{margin:0 0 12px;font-size:1.4rem;letter-spacing:.06em;text-transform:uppercase}p{margin:0;color:rgba(232,247,255,.82);line-height:1.6}</style></head><body><div class="card"><h1>${title}</h1><p>${message}</p></div></body></html>`);
 }
 
@@ -788,6 +817,28 @@ function normalizePendingEffects(value: unknown): EffectRecord[] {
 }
 
 async function readApprovedEffects(): Promise<EffectRecord[]> {
+  if (dbClient) {
+    try {
+      const rows = await dbClient.effectIdea.findMany({
+        where: { status: "approved" },
+        orderBy: { createdAt: "desc" },
+        take: MAX_EFFECTS
+      });
+      return rows.map((row) => ({
+        id: row.id,
+        name: row.name,
+        prompt: row.prompt,
+        typescriptCode: row.typescriptCode,
+        runtimeCode: row.runtimeCode,
+        ...(Array.isArray(row.params) ? { params: sanitizeGeneratedParams(row.params) } : {}),
+        ...(sanitizeGeneratedDocs(row.docs) ? { docs: sanitizeGeneratedDocs(row.docs) } : {}),
+        createdAt: row.createdAt.getTime()
+      }));
+    } catch {
+      return [];
+    }
+  }
+
   if (!readClient) {
     return [];
   }
@@ -799,6 +850,28 @@ async function readApprovedEffects(): Promise<EffectRecord[]> {
 }
 
 async function readPendingEffects(client: { get: (key: string) => Promise<unknown> } | null): Promise<EffectRecord[]> {
+  if (dbClient) {
+    try {
+      const rows = await dbClient.effectIdea.findMany({
+        where: { status: "pending" },
+        orderBy: { createdAt: "desc" },
+        take: MAX_PENDING_EFFECTS
+      });
+      return rows.map((row) => ({
+        id: row.id,
+        name: row.name,
+        prompt: row.prompt,
+        typescriptCode: row.typescriptCode,
+        runtimeCode: row.runtimeCode,
+        ...(Array.isArray(row.params) ? { params: sanitizeGeneratedParams(row.params) } : {}),
+        ...(sanitizeGeneratedDocs(row.docs) ? { docs: sanitizeGeneratedDocs(row.docs) } : {}),
+        createdAt: row.createdAt.getTime()
+      }));
+    } catch {
+      return [];
+    }
+  }
+
   if (!client) {
     return [];
   }
@@ -1258,7 +1331,7 @@ async function handleModerationAction(res: ResponseLike, url: URL): Promise<bool
     sendHtml(res, 401, "Unauthorized", "This moderation link is invalid or missing a valid token.");
     return true;
   }
-  if (!writeClient) {
+  if (!writeClient && !dbClient) {
     sendHtml(res, 503, "Moderation unavailable", "Effect moderation storage is currently unavailable.");
     return true;
   }
@@ -1268,18 +1341,35 @@ async function handleModerationAction(res: ResponseLike, url: URL): Promise<bool
     return true;
   }
 
-  const pending = await readPendingEffects(writeClient);
-  const target = pending.find((entry) => entry.id === id);
-  if (!target) {
-    sendHtml(res, 404, "Already handled", "That effect was already approved or rejected.");
-    return true;
-  }
+  let targetName = "unknown";
+  if (dbClient) {
+    const existing = await dbClient.effectIdea.findUnique({
+      where: { id }
+    });
+    if (!existing || existing.status !== "pending") {
+      sendHtml(res, 404, "Already handled", "That effect was already approved or rejected.");
+      return true;
+    }
+    targetName = existing.name;
+    await dbClient.effectIdea.update({
+      where: { id },
+      data: { status: action === "approve" ? "approved" : "rejected", moderatedAt: new Date() }
+    });
+  } else if (writeClient) {
+    const pending = await readPendingEffects(writeClient);
+    const target = pending.find((entry) => entry.id === id);
+    if (!target) {
+      sendHtml(res, 404, "Already handled", "That effect was already approved or rejected.");
+      return true;
+    }
+    targetName = target.name;
 
-  const remaining = pending.filter((entry) => entry.id !== id);
-  await writePendingEffects(writeClient, remaining);
-  if (action === "approve") {
-    await writeClient.lpush(EFFECTS_KEY, target);
-    await writeClient.ltrim(EFFECTS_KEY, 0, MAX_EFFECTS - 1);
+    const remaining = pending.filter((entry) => entry.id !== id);
+    await writePendingEffects(writeClient, remaining);
+    if (action === "approve") {
+      await writeClient.lpush(EFFECTS_KEY, target);
+      await writeClient.ltrim(EFFECTS_KEY, 0, MAX_EFFECTS - 1);
+    }
   }
 
   sendHtml(
@@ -1287,8 +1377,8 @@ async function handleModerationAction(res: ResponseLike, url: URL): Promise<bool
     200,
     action === "approve" ? "Effect approved" : "Effect rejected",
     action === "approve"
-      ? `The effect "${target.name}" is approved and can now appear in effect selectors.`
-      : `The effect "${target.name}" was rejected and will not be shown in effect selectors.`
+      ? `The effect "${targetName}" is approved and can now appear in effect selectors.`
+      : `The effect "${targetName}" was rejected and will not be shown in effect selectors.`
   );
   return true;
 }
@@ -1590,7 +1680,7 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
       sendJson(res, 200, { paramLimits });
       return;
     }
-    if (!writeClient) {
+    if (!writeClient && !dbClient) {
       sendJson(res, 503, { error: "Effect storage unavailable." });
       return;
     }
@@ -1616,8 +1706,24 @@ export default async function handler(req: RequestLike, res: ResponseLike): Prom
       createdAt: Date.now()
     };
 
-    const pending = await readPendingEffects(writeClient);
-    await writePendingEffects(writeClient, [effect, ...pending]);
+    if (dbClient) {
+      await dbClient.effectIdea.create({
+        data: {
+          id: effect.id,
+          name: effect.name,
+          prompt: effect.prompt,
+          typescriptCode: effect.typescriptCode,
+          runtimeCode: effect.runtimeCode,
+          ...(effect.params ? { params: effect.params } : {}),
+          ...(effect.docs ? { docs: effect.docs } : {}),
+          createdAt: new Date(effect.createdAt),
+          status: "pending"
+        }
+      });
+    } else if (writeClient) {
+      const pending = await readPendingEffects(writeClient);
+      await writePendingEffects(writeClient, [effect, ...pending]);
+    }
     await sendModerationNotification(effect, url);
     sendJson(res, 200, { effect, moderationStatus: "pending", reviewUrl: getReviewUrl(effect.id, getModerationBaseUrl(url), getModerationToken()) });
     return;

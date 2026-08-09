@@ -199,6 +199,28 @@ body,
   z-index: 5;
 }
 
+.datastore-debug {
+  position: absolute;
+  top: 3.9rem;
+  right: 1.5rem;
+  width: min(28rem, 88vw);
+  padding: 0.4rem 0.55rem;
+  border: 1px solid rgba(142, 249, 255, 0.22);
+  background: rgba(0, 0, 0, 0.58);
+  color: rgba(232, 247, 255, 0.92);
+  font-size: 0.64rem;
+  line-height: 1.4;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: pre-line;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.datastore-debug.hidden {
+  display: none;
+}
+
 .debug-panel {
   width: min(320px, 90vw);
   max-height: min(80vh, 46rem);

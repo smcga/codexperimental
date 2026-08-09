@@ -10,6 +10,7 @@ function sendJson(res: { statusCode: number; setHeader: (key: string, value: str
   res.statusCode = status;
   res.setHeader("Content-Type", "application/json");
   res.setHeader("Cache-Control", "no-store");
+  res.setHeader("X-Data-Store", readClient || writeClient ? "upstash-kv" : "none");
   res.end(JSON.stringify(body));
 }
 

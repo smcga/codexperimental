@@ -1,6 +1,7 @@
 import ts from "typescript";
 
 import { Effect } from "./renderer/effects/types";
+import { pushDatastoreDebugMessage } from "./debug/datastoreStatus";
 
 export type GeneratedEffectParamOption = {
   label: string;
@@ -241,6 +242,7 @@ function normalizeEffects(value: unknown): EffectIdeaRecord[] {
 }
 
 async function requestEffects(path = "/api/effects", init?: RequestInit): Promise<EffectsResponse> {
+  const method = (init?.method ?? "GET").toUpperCase();
   const response = await fetch(path, {
     headers: {
       Accept: "application/json",
@@ -248,9 +250,16 @@ async function requestEffects(path = "/api/effects", init?: RequestInit): Promis
     },
     ...init
   });
+  const dataStore = response.headers?.get?.("x-data-store") ?? "unknown";
+  pushDatastoreDebugMessage(`${method} effects → ${dataStore}`);
+  const storeNote = response.headers?.get?.("x-data-store-note");
+  if (storeNote) {
+    pushDatastoreDebugMessage(`effects fallback: ${storeNote}`, "warn");
+  }
 
   const payload = (await response.json()) as EffectsResponse;
   if (!response.ok) {
+    pushDatastoreDebugMessage(`effects ${response.status}`, "warn");
     const message = typeof payload.error === "string" && payload.error.trim().length > 0
       ? payload.error
       : `Effect idea request failed: ${response.status}`;
