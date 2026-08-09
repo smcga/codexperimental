@@ -7,6 +7,8 @@ type Star = {
   size: number;
   brightness: number;
   drift: number;
+  twinkle: number;
+  phase: number;
 };
 
 type SilhouetteBlock = {
@@ -51,9 +53,16 @@ export const initStars = (seed: number, count: number): Star[] => {
       y: rng(),
       size: lerp(0.6, 1.8, depth),
       brightness: lerp(0.45, 1, depth),
-      drift: lerp(0.01, 0.05, depth)
+      drift: lerp(0.01, 0.05, depth),
+      twinkle: lerp(0.35, 0.95, rng()),
+      phase: rng() * Math.PI * 2
     };
   });
+};
+
+export const getStarAlpha = (star: Star, time: number, trebleBoost: number): number => {
+  const pulse = 0.72 + Math.sin(time * (1.4 + star.twinkle * 1.8) + star.phase) * 0.28;
+  return clamp(star.brightness * trebleBoost * pulse, 0.1, 1);
 };
 
 export const generateSilhouettes = (seed: number, count: number): SilhouetteBlock[] => {
@@ -112,6 +121,13 @@ const drawSkyGradient = (ctx: CanvasRenderingContext2D, width: number, horizonY:
   gradient.addColorStop(1, "#39f1ff");
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, width, horizonY);
+
+  const bloom = ctx.createRadialGradient(width / 2, horizonY * 0.92, 8, width / 2, horizonY * 0.92, horizonY * 0.9);
+  bloom.addColorStop(0, "rgba(255, 145, 210, 0.32)");
+  bloom.addColorStop(0.55, "rgba(255, 120, 190, 0.12)");
+  bloom.addColorStop(1, "rgba(255, 100, 180, 0)");
+  ctx.fillStyle = bloom;
+  ctx.fillRect(0, 0, width, horizonY);
 };
 
 const drawStarfield = (
@@ -127,7 +143,7 @@ const drawStarfield = (
   for (const star of stars) {
     const y = ((star.y + time * star.drift) % 1) * horizonY;
     const x = star.x * width;
-    const alpha = clamp(star.brightness * trebleBoost, 0.1, 1);
+    const alpha = getStarAlpha(star, time, trebleBoost);
     ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
     ctx.fillRect(x, y, star.size, star.size);
   }
@@ -176,6 +192,12 @@ const drawSea = (
   const bandCount = Math.ceil(seaHeight / bandSpacing) + 2;
   const topColor = { r: 120, g: 210, b: 255 };
   const bottomColor = { r: 35, g: 18, b: 70 };
+  const warmGlow = ctx.createLinearGradient(0, horizonY, 0, horizonY + seaHeight * 0.5);
+  warmGlow.addColorStop(0, "rgba(255, 130, 200, 0.22)");
+  warmGlow.addColorStop(1, "rgba(255, 130, 200, 0)");
+
+  ctx.fillStyle = warmGlow;
+  ctx.fillRect(0, horizonY, width, seaHeight * 0.5);
 
   for (let i = 0; i < bandCount; i += 1) {
     const y = horizonY + ((i * bandSpacing + travel) % seaHeight);
@@ -192,6 +214,12 @@ const drawSea = (
     const highlightAlpha = bandIntensity * (1 - depth) * 0.8;
     ctx.fillStyle = `rgba(255, 170, 220, ${highlightAlpha})`;
     ctx.fillRect(width / 2 - highlightWidth / 2, y, highlightWidth, 1.5);
+
+    const sparkAlpha = clamp((1 - depth) * 0.35 + rms * audioReactive * 0.4, 0, 0.75);
+    const sparkWidth = highlightWidth * 0.45;
+    const sparkOffset = Math.sin(time * 1.7 + depth * 22) * width * 0.04;
+    ctx.fillStyle = `rgba(255, 245, 210, ${sparkAlpha})`;
+    ctx.fillRect(width / 2 - sparkWidth / 2 + sparkOffset, y, sparkWidth, 0.75);
   }
 };
 

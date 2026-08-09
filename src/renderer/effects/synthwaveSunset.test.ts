@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { generateSilhouettes, initStars } from "./synthwaveSunset";
+import { generateSilhouettes, getStarAlpha, initStars } from "./synthwaveSunset";
 
 describe("synthwaveSunset helpers", () => {
   it("creates deterministic starfields from the same seed", () => {
@@ -22,5 +22,22 @@ describe("synthwaveSunset helpers", () => {
 
     expect(silhouettes).toHaveLength(8);
     expect(silhouettes[0]?.width).toBeGreaterThan(0);
+  });
+
+  it("keeps computed star alpha clamped and animated over time", () => {
+    const star = initStars(999, 1)[0];
+    expect(star).toBeDefined();
+    if (!star) {
+      return;
+    }
+
+    const alphaA = getStarAlpha(star, 0, 1);
+    const alphaB = getStarAlpha(star, 5, 1);
+
+    expect(alphaA).toBeGreaterThanOrEqual(0.1);
+    expect(alphaA).toBeLessThanOrEqual(1);
+    expect(alphaB).toBeGreaterThanOrEqual(0.1);
+    expect(alphaB).toBeLessThanOrEqual(1);
+    expect(alphaA).not.toBe(alphaB);
   });
 });
