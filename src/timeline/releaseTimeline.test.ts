@@ -269,6 +269,41 @@ describe("release timeline", () => {
     expect(toSeconds(rapLaunch?.start ?? 0)).toBeGreaterThanOrEqual(3 * 60 + 24);
   });
 
+  it("ramps speed and glow continuously into the locked rap launch anchor", () => {
+    const byId = new Map(timeline.sections.map((section) => [section.id, section]));
+    const preRapBuildup = byId.get("this-callout-pre-rap-buildup");
+    const dnbReturn = byId.get("this-callout-dnb-return");
+    const drumFillLeadIn = byId.get("this-callout-drum-fill-lead-in");
+
+    expect(preRapBuildup?.automation).toBeDefined();
+    expect(dnbReturn?.automation).toBeDefined();
+    expect(drumFillLeadIn?.automation).toBeDefined();
+
+    const findArc = (section: (typeof timeline.sections)[number] | undefined, param: string) =>
+      section?.automation?.find((entry) => entry.param === param);
+
+    const preSpeed = findArc(preRapBuildup, "speed");
+    const preGlow = findArc(preRapBuildup, "glow");
+    const dnbSpeed = findArc(dnbReturn, "speed");
+    const dnbGlow = findArc(dnbReturn, "glow");
+    const fillSpeed = findArc(drumFillLeadIn, "speed");
+    const fillGlow = findArc(drumFillLeadIn, "glow");
+
+    expect(preSpeed).toMatchObject({ from: 0.78, to: 0.9, t0: "03:09.6", t1: "03:15.7" });
+    expect(preGlow).toMatchObject({ from: 0.28, to: 0.36, t0: "03:09.6", t1: "03:15.7" });
+    expect(dnbSpeed).toMatchObject({ from: 0.9, to: 1.14, t0: "03:15.7", t1: "03:24" });
+    expect(dnbGlow).toMatchObject({ from: 0.36, to: 0.56, t0: "03:15.7", t1: "03:24" });
+    expect(fillSpeed).toMatchObject({ from: 1.14, to: 1.22, t0: "03:24", t1: "03:25.012" });
+    expect(fillGlow).toMatchObject({ from: 0.56, to: 0.62, t0: "03:24", t1: "03:25.012" });
+
+    expect(preSpeed?.to).toBe(dnbSpeed?.from);
+    expect(preGlow?.to).toBe(dnbGlow?.from);
+    expect(dnbSpeed?.to).toBe(fillSpeed?.from);
+    expect(dnbGlow?.to).toBe(fillGlow?.from);
+    expect(fillSpeed?.t1).toBe("03:25.012");
+    expect(fillGlow?.t1).toBe("03:25.012");
+  });
+
   it("gives every registry effect a primary release spotlight", () => {
     const primaryEffects = new Set(timeline.sections.map((section) => section.effect));
     const registryEffects = getEffectRegistryKeys();
